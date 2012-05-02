@@ -117,16 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DefaultServerConfiguration" xml:space="preserve">
-    <value>Default Servers</value>
-  </data>
-  <data name="DescriptionDefaultServers" xml:space="preserve">
-    <value>Please check the servers that should be used as defaults for the application.</value>
-  </data>
   <data name="DescriptionFileStoreChanged" xml:space="preserve">
     <value>If you wish to keep your existing studies, you must manually copy them to the new
 location before restarting the local service. Otherwise, you should restart the local service
 and immediately re-index.</value>
+  </data>
+  <data name="DescriptionPriorsServers" xml:space="preserve">
+    <value>Please check the servers that should be automatically searched for priors.</value>
   </data>
   <data name="DicomConfiguration" xml:space="preserve">
     <value>DICOM</value>
@@ -225,6 +222,9 @@ Streaming Image Port: {1}</value>
   <data name="MessageFailedToRetrieveDicomServerConfiguration" xml:space="preserve">
     <value>Failed to retrieve the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again.</value>
   </data>
+  <data name="MessageFailedToSavePriorsServers" xml:space="preserve">
+    <value>Failed to save priors server changes.</value>
+  </data>
   <data name="MessageFailedToUpdateDicomServerConfiguration" xml:space="preserve">
     <value>Failed to update the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again.</value>
   </data>
@@ -284,6 +284,9 @@ Streaming Image Port: {1}</value>
   </data>
   <data name="PathContextMenuConfiguration" xml:space="preserve">
     <value>Context Menu (Image)</value>
+  </data>
+  <data name="PriorsServersConfiguration" xml:space="preserve">
+    <value>Priors Servers</value>
   </data>
   <data name="PublishingConfiguration" xml:space="preserve">
     <value>Publishing</value>

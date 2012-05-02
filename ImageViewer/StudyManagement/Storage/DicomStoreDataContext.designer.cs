@@ -2026,6 +2026,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private System.Nullable<int> _StreamingImagePort;
 		
+		private string _ExtendedData;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -2050,6 +2052,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnStreamingHeaderPortChanged();
     partial void OnStreamingImagePortChanging(System.Nullable<int> value);
     partial void OnStreamingImagePortChanged();
+    partial void OnExtendedDataChanging(string value);
+    partial void OnExtendedDataChanged();
     #endregion
 		
 		public Device()
@@ -2253,6 +2257,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._StreamingImagePort = value;
 					this.SendPropertyChanged("StreamingImagePort");
 					this.OnStreamingImagePortChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtendedData", DbType="NText NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
+		public string ExtendedData
+		{
+			get
+			{
+				return this._ExtendedData;
+			}
+			set
+			{
+				if ((this._ExtendedData != value))
+				{
+					this.OnExtendedDataChanging(value);
+					this.SendPropertyChanging();
+					this._ExtendedData = value;
+					this.SendPropertyChanged("ExtendedData");
+					this.OnExtendedDataChanged();
 				}
 			}
 		}

@@ -12,59 +12,67 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     {
         internal DicomServiceNode(DicomServerConfiguration localConfiguration)
         {
-            Real = new ApplicationEntity(localConfiguration.AETitle, "<local>", "", "")
+            Server = new ApplicationEntity(localConfiguration.AETitle, "<local>", "", "")
                        {
                            ScpParameters = new ScpParameters(localConfiguration.HostName, localConfiguration.Port)
                        };
 
             IsLocal = true;
+            ExtendedData = new ServerData {IsPriorsServer = true};
         }
 
-        internal DicomServiceNode(IApplicationEntity server)
+        internal DicomServiceNode(ServerDirectoryEntry directoryEntry)
         {
-            Platform.CheckForNullReference(server, "server");
-            Real = (ApplicationEntity) server;
+            Platform.CheckForNullReference(directoryEntry, "directoryEntry");
+            Server = directoryEntry.Server;
+            ExtendedData = directoryEntry.Data ?? new ServerData();
         }
 
+        internal DicomServiceNode(IApplicationEntity applicationEntity)
+            : this(new ServerDirectoryEntry(new ApplicationEntity(applicationEntity)))
+        {
+        }
+
+        protected internal ServerData ExtendedData { get; set; }
         //TODO (Marmot): Don't hold on to it, just look it up via the directory?
-        protected ApplicationEntity Real { get; private set; }
+        protected internal ApplicationEntity Server { get; private set; }
 
         #region Implementation of IDicomServiceNode
 
         public bool IsLocal { get; private set; }
-        
+
         #endregion
 
         #region Implementation of IApplicationEntity
 
         public string AETitle
         {
-            get { return Real.AETitle; }
+            get { return Server.AETitle; }
         }
 
         public string Name
         {
-            get { return Real.Name; }
+            get { return Server.Name; }
         }
 
         public string Description
         {
-            get { return Real.Description; }
+            get { return Server.Description; }
         }
 
         public string Location
         {
-            get { return Real.Location; }
+            get { return Server.Location; }
         }
 
         public IScpParameters ScpParameters
         {
-            get { return Real.ScpParameters; }
+            get { return Server.ScpParameters; }
         }
 
         public IStreamingParameters StreamingParameters
         {
-            get { return Real.StreamingParameters; }
+            get { return Server.StreamingParameters; }
         }
 
         #endregion
@@ -93,7 +101,6 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         public override T GetService<T>()
         {
-            //TODO (Marmot): Is this weird??
             if (IsLocal)
             {
                 if (typeof(T) == typeof(IWorkItemService) && WorkItemActivityMonitor.IsSupported)
@@ -116,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         public override string ToString()
         {
-            return Real.ToString();
+            return Server.ToString();
         }
     }
 }

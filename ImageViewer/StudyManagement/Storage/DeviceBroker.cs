@@ -11,16 +11,16 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
     public static class DeviceExtensions
     {
-        public static ApplicationEntity ToDataContract(this Device device)
+        public static ServerDirectoryEntry ToDataContract(this Device device)
         {
             bool isStreaming = device.StreamingHeaderPort != null && device.StreamingImagePort != null;
             var server = new ApplicationEntity
@@ -34,33 +34,43 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 
             if (isStreaming)
                 server.StreamingParameters = new StreamingParameters(device.StreamingHeaderPort.Value, device.StreamingImagePort.Value);
-            
-            return server;
+
+            ServerData extendedData = null;
+            if (device.ExtendedData != null)
+                extendedData  = JsmlSerializer.Deserialize<ServerData>(device.ExtendedData);
+
+            return new ServerDirectoryEntry(server) {Data = extendedData};
         }
 
-        public static Device ToDevice(this IApplicationEntity server)
+        public static Device ToDevice(this ServerDirectoryEntry serverDirectoryEntry)
         {
-            Platform.CheckForNullReference(server, "server");
-            Platform.CheckMemberIsSet(server.ScpParameters, "ScpParameters");
+            Platform.CheckForNullReference(serverDirectoryEntry, "serverDirectoryEntry");
+            Platform.CheckMemberIsSet(serverDirectoryEntry.Server, "Server");
+            Platform.CheckMemberIsSet(serverDirectoryEntry.Server.ScpParameters, "ScpParameters");
 
             int? streamingHeaderPort = null;
             int? streamingImagePort = null;
-            if (server.StreamingParameters != null)
+            if (serverDirectoryEntry.Server.StreamingParameters != null)
             {
-                streamingHeaderPort = server.StreamingParameters.HeaderServicePort;
-                streamingImagePort = server.StreamingParameters.WadoServicePort;
+                streamingHeaderPort = serverDirectoryEntry.Server.StreamingParameters.HeaderServicePort;
+                streamingImagePort = serverDirectoryEntry.Server.StreamingParameters.WadoServicePort;
             }
-            
+
+            string extendedData = null;
+            if (serverDirectoryEntry.Data != null)
+                extendedData = JsmlSerializer.Serialize(serverDirectoryEntry.Data, "ExtendedData");
+
             return new Device
                        {
-                           Name = server.Name,
-                           AETitle = server.AETitle,
-                           HostName = server.ScpParameters.HostName,
-                           Port = server.ScpParameters.Port,
-                           Location = server.Location,
-                           Description = server.Description,
+                           Name = serverDirectoryEntry.Server.Name,
+                           AETitle = serverDirectoryEntry.Server.AETitle,
+                           HostName = serverDirectoryEntry.Server.ScpParameters.HostName,
+                           Port = serverDirectoryEntry.Server.ScpParameters.Port,
+                           Location = serverDirectoryEntry.Server.Location,
+                           Description = serverDirectoryEntry.Server.Description,
                            StreamingHeaderPort = streamingHeaderPort,
-                           StreamingImagePort = streamingImagePort
+                           StreamingImagePort = streamingImagePort,
+                           ExtendedData = extendedData
                        };
          }
     }

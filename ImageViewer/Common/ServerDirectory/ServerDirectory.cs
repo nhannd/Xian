@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
 using ClearCanvas.Common;
 
@@ -71,6 +72,13 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             {
                 return bridge.GetServers();
             }
+        }
+
+        public static IList<IDicomServiceNode> GetPriorsServers(bool includeLocal)
+        {
+            List<ServerDirectoryEntry> entries = null;
+            Platform.GetService<IServerDirectory>(s => entries = s.GetServers(new GetServersRequest()).ServerEntries);
+            return entries.Where(e => e.Data.IsPriorsServer).Select(e => e.ToServiceNode()).ToList();
         }
 
         public abstract GetServersResult GetServers(GetServersRequest request);

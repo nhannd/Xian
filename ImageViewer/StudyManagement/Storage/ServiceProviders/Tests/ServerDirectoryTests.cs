@@ -11,10 +11,9 @@
 
 #if UNIT_TESTS
 
-using System;
-using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
@@ -31,7 +30,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
             var extensionFactory = new UnitTestExtensionFactory
                                        {
                                             { typeof(ServiceProviderExtensionPoint), typeof(DicomServerConfigurationServiceProvider) },
-                                            { typeof (ServiceProviderExtensionPoint), typeof (ServerDirectoryServiceProvider) }
+                                            { typeof (ServiceProviderExtensionPoint), typeof (ServerDirectoryServiceProvider) },
+
                                        };
 
             Platform.SetExtensionFactory(extensionFactory);
@@ -51,17 +51,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
             var directory = Platform.GetService<IServerDirectory>();
 
             var server = CreateServer("streaming", true);
-            directory.AddServer(new AddServerRequest { Server = server });
-            var servers = directory.GetServers(new GetServersRequest()).Servers;
+            directory.AddServer(new AddServerRequest { ServerEntry = new ServerDirectoryEntry(server) });
+            var servers = directory.GetServers(new GetServersRequest()).ServerEntries;
             Assert.AreEqual(1, servers.Count);
 
             server = CreateServer("normal", false);
-            directory.AddServer(new AddServerRequest { Server = server });
+            directory.AddServer(new AddServerRequest { ServerEntry = new ServerDirectoryEntry(server) });
 
-            servers = directory.GetServers(new GetServersRequest()).Servers;
+            servers = directory.GetServers(new GetServersRequest()).ServerEntries;
             Assert.AreEqual(2, servers.Count);
 
-            servers = directory.GetServers(new GetServersRequest{Name = "normal"}).Servers;
+            servers = directory.GetServers(new GetServersRequest{Name = "normal"}).ServerEntries;
             Assert.AreEqual(1, servers.Count);
 
             Assert.AreEqual(server, servers[0]);
@@ -75,15 +75,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
             var directory = Platform.GetService<IServerDirectory>();
 
             var server = CreateServer("test", true);
-            directory.AddServer(new AddServerRequest { Server = server });
+            directory.AddServer(new AddServerRequest { ServerEntry = new ServerDirectoryEntry(server) });
 
             server.AETitle = "ae2";
             server.ScpParameters = new ScpParameters("host2", 100);
             server.Description = "blah";
             server.Location = "blah";
 
-            directory.UpdateServer(new UpdateServerRequest { Server = server });
-            var servers = directory.GetServers(new GetServersRequest()).Servers;
+            directory.UpdateServer(new UpdateServerRequest { ServerEntry = new ServerDirectoryEntry(server) });
+            var servers = directory.GetServers(new GetServersRequest()).ServerEntries;
             Assert.AreEqual(1, servers.Count);
 
             Assert.AreEqual(server, servers[0]);
@@ -97,10 +97,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
             var directory = Platform.GetService<IServerDirectory>();
 
             var server = CreateServer("test", true);
-            directory.AddServer(new AddServerRequest { Server = server });
-            directory.DeleteServer(new DeleteServerRequest { Server = server });
+            directory.AddServer(new AddServerRequest { ServerEntry = new ServerDirectoryEntry(server) });
+            directory.DeleteServer(new DeleteServerRequest { ServerEntry = new ServerDirectoryEntry(server) });
 
-            var servers = directory.GetServers(new GetServersRequest()).Servers;
+            var servers = directory.GetServers(new GetServersRequest()).ServerEntries;
             Assert.AreEqual(0, servers.Count);
         }
 
@@ -113,9 +113,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
             var directory = Platform.GetService<IServerDirectory>();
 
             var server = CreateServer("test", true);
-            directory.AddServer(new AddServerRequest { Server = server });
+            directory.AddServer(new AddServerRequest { ServerEntry = new ServerDirectoryEntry(server) });
 
-            directory.AddServer(new AddServerRequest { Server = server });
+            directory.AddServer(new AddServerRequest { ServerEntry = new ServerDirectoryEntry(server) });
         }
 
         [Test]
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
             var directory = Platform.GetService<IServerDirectory>();
 
             var server = CreateServer("test", true);
-            directory.UpdateServer(new UpdateServerRequest { Server = server });
+            directory.UpdateServer(new UpdateServerRequest { ServerEntry = new ServerDirectoryEntry(server) });
         }
 
         [Test]
@@ -139,7 +139,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
             var directory = Platform.GetService<IServerDirectory>();
 
             var server = CreateServer("test", true);
-            directory.DeleteServer(new DeleteServerRequest { Server = server });
+            directory.DeleteServer(new DeleteServerRequest { ServerEntry = new ServerDirectoryEntry(server) });
         }
 
         private ApplicationEntity CreateServer(string name, bool streaming)

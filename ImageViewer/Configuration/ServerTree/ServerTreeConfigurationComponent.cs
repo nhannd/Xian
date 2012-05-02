@@ -11,10 +11,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+using System.Linq;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
 
@@ -44,66 +42,28 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			}
 		}
 
-		private readonly ServerTreeComponentHost _serverTreeHost;
-		private readonly ServerTreeComponent _serverTreeComponent;
-		private readonly ReadOnlyCollection<string> _readOnlySelectedServerPaths;
-		private List<string> _selectedServerPaths;
-		private string _description;
+		private ServerTreeComponentHost _serverTreeHost;
+		private ServerTreeComponent _serverTreeComponent;
+        private DicomServiceNodeList _checkedServers;
+		
+        private string _description;
 
-		protected ServerTreeConfigurationComponent(string description)
+        protected ServerTreeConfigurationComponent(string description, DicomServiceNodeList checkedServers)
 		{
 			_description = description ?? "";
-
-			_serverTreeComponent = new ServerTreeComponent();
-
-			_serverTreeComponent.IsReadOnly = true;
-			_serverTreeComponent.ShowCheckBoxes = true;
-			_serverTreeComponent.ShowLocalServerNode = false;
-			_serverTreeComponent.ShowTitlebar = false;
-			_serverTreeComponent.ShowTools = false;
-
-			StringCollection paths = DefaultServerSettings.Default.DefaultServerPaths ?? new StringCollection();
-			_selectedServerPaths = new List<string>();
-			_readOnlySelectedServerPaths = new ReadOnlyCollection<string>(_selectedServerPaths);
-
-			foreach (string path in paths)
-			{
-				var server = _serverTreeComponent.ServerTree.FindServer(path);
-				if (server != null && !_selectedServerPaths.Contains(path))
-				{
-					_selectedServerPaths.Add(path);
-					server.IsChecked = true;
-				}
-			}
-
-			_serverTreeComponent.ServerTree.ServerTreeUpdated += OnServerTreeUpdated;
-			_serverTreeHost = new ServerTreeComponentHost(this);
+            _checkedServers = checkedServers;
 		}
 
-		private void OnServerTreeUpdated(object sender, EventArgs e)
-		{
-			var checkedServers = _serverTreeComponent.ServerTree.RootServerGroup.GetCheckedServers(true);
+	    protected DicomServiceNodeList CheckedServers
+	    {
+	        get { return _checkedServers ?? (_checkedServers = new DicomServiceNodeList()); }
+            private set { _checkedServers = value; }
+	    }
 
-            List<string> selectedPaths = CollectionUtils.Map(checkedServers,
-												delegate(IServerTreeNode node) { return node.Path; });
-
-			if (!CollectionUtils.Equal<string>(_selectedServerPaths, selectedPaths, false))
-			{
-				_selectedServerPaths.Clear();
-				_selectedServerPaths.AddRange(selectedPaths);
-				Modified = true;
-			}
-		}
-
-		protected ReadOnlyCollection<string> SelectedServerPaths
+	    public string Description
 		{
-			get { return _readOnlySelectedServerPaths; }
-		}
-		
-		public string Description
-		{
-			get { return _description; }	
-			set
+            get { return _description; }
+	        set
 			{
 				if (_description == value)
 					return;
@@ -118,12 +78,43 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			get { return _serverTreeHost; }	
 		}
 
-		/// <summary>
+        private void InitializeCheckedServers()
+        {
+            var all = _serverTreeComponent.ServerTree.RootServerGroup.GetAllServers();
+            foreach (var server in all)
+            {
+                var @checked = CheckedServers.FirstOrDefault(s => s.Name == server.Name);
+                server.IsChecked = @checked != null;
+            }
+        }
+
+        private void OnServerTreeUpdated(object sender, EventArgs e)
+        {
+            var checkedServers = _serverTreeComponent.ServerTree.RootServerGroup.GetCheckedServers(true);
+            CheckedServers = new DicomServiceNodeList(checkedServers.SelectMany(s => s.ToDicomServiceNodes()));
+            Modified = true;
+        }
+
+	    /// <summary>
 		/// Called by the host to initialize the application component.
 		/// </summary>
 		public override void Start()
 		{
-			base.Start();
+            _serverTreeComponent = new ServerTreeComponent
+            {
+                IsReadOnly = true,
+                ShowCheckBoxes = true,
+                ShowLocalServerNode = false,
+                ShowTitlebar = false,
+                ShowTools = false
+            };
+
+            InitializeCheckedServers();
+
+            _serverTreeComponent.ServerTree.ServerTreeUpdated += OnServerTreeUpdated;
+            _serverTreeHost = new ServerTreeComponentHost(this);
+            
+            base.Start();
 			_serverTreeHost.StartComponent();
 		}
 

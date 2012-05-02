@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			string aeTitle = (request.AETitle ?? "").Trim();
 			if (String.IsNullOrEmpty(aeTitle))
 			{
-				explorerComponent.SelectDefaultServers();
+				explorerComponent.SelectPriorsServers();
 			}
 			else
 			{

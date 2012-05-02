@@ -17,6 +17,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -164,14 +165,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		    int failedCount = 0;
 		    int successCount = 0;
 
-		    foreach (var query in DefaultServers.GetQueryInterfaces(true))
+            foreach (var priorsServer in ServerDirectory.GetPriorsServers(true))
 		    {
                 if (_cancel)
                     break;
 
 		        try
 		        {
-                    using (var bridge = new StudyRootQueryBridge(query))
+                    using (var bridge = new StudyRootQueryBridge(priorsServer.GetService<IStudyRootQuery>()))
                     {
                         foreach (string patientId in patientIds.Keys)
                         {
@@ -203,7 +204,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		        catch (Exception e)
 		        {
 		            ++failedCount;
-                    Platform.Log(LogLevel.Error, e, "Failed to query server: {0}", query);
+                    Platform.Log(LogLevel.Error, e, "Failed to query server: {0}", priorsServer.Name);
 		        }
 		    }
 

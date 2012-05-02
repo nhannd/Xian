@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
@@ -120,7 +121,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                     devices = context.GetDeviceBroker().GetDevices();
 
                 var converted = devices.Select(d => d.ToDataContract()).ToList();
-                return new GetServersResult {Servers = converted };
+                return new GetServersResult {ServerEntries = converted };
             }
         }
 
@@ -130,17 +131,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             {
                 var broker = context.GetDeviceBroker();
 
-                var existing = broker.GetDeviceByName(request.Server.Name);
+                var existing = broker.GetDeviceByName(request.ServerEntry.Server.Name);
                 if (existing != null)
                     throw new ArgumentException();
 
-                var server = (IApplicationEntity)request.Server;
-                var device = server.ToDevice();
+                var device = request.ServerEntry.ToDevice();
                 broker.AddDevice(device);
 
                 context.Commit();
 
-                return new AddServerResult { Server = device.ToDataContract() };
+                return new AddServerResult { ServerEntry = device.ToDataContract() };
             }
         }
 
@@ -150,11 +150,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             {
                 var broker = context.GetDeviceBroker();
 
-                var existing = broker.GetDeviceByName(request.Server.Name);
+                var existing = broker.GetDeviceByName(request.ServerEntry.Server.Name);
                 if (existing == null)
                     throw new ArgumentException();
 
-                var ae = (IApplicationEntity) request.Server;
+                var ae = request.ServerEntry.Server;
 
                 existing.AETitle = ae.AETitle;
                 existing.HostName = ae.ScpParameters.HostName;
@@ -173,8 +173,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                     existing.StreamingImagePort = null;
                 }
 
+                existing.ExtendedData = JsmlSerializer.Serialize(request.ServerEntry.Data, "data");
                 context.Commit();
-                return new UpdateServerResult { Server = existing.ToDataContract() };
+                return new UpdateServerResult { ServerEntry = existing.ToDataContract() };
             }
         }
 
@@ -183,7 +184,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetDeviceBroker();
-                var existing = broker.GetDeviceByName(request.Server.Name);
+                var existing = broker.GetDeviceByName(request.ServerEntry.Server.Name);
                 if (existing == null)
                     throw new ArgumentException();
                     

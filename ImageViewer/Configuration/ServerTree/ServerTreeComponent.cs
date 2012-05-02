@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 			if (_serverTree.CurrentNode != null)
 			{
-			    _selectedServers = new DicomServiceNodeList(_serverTree.CurrentNode.ToDicomServiceNodes())
+                _selectedServers = new DicomServiceNodeList(_serverTree.CurrentNode.ToDicomServiceNodes())
 			                           {Name = _serverTree.CurrentNode.DisplayName, Id = _serverTree.CurrentNode.Path};
 			}
 			else
