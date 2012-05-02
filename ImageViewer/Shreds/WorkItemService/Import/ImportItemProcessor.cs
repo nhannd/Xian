@@ -76,6 +76,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 Proxy.Cancel();
             else if (StopPending)
                 Proxy.Postpone();
+            else if (Progress.NumberOfImportFailures > 0)
+                Proxy.Fail(WorkItemFailureType.Fatal);
             else
                 Proxy.Complete();
         }
