@@ -155,6 +155,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                 if (storageInstance.SendStatus == DicomStatuses.ProcessingFailure)
                     continue;
 
+                storageInstance.LoadInfo();
                 SupportedSop sop;
                 if (!dic.TryGetValue(storageInstance.SopClass,out sop))
                 {
@@ -276,11 +277,24 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                     foreach (IDicomCodecFactory codec in codecs)
                         if (codec.CodecTransferSyntax.Equals(TransferSyntax.Jpeg2000ImageCompression))
                         {
-
-                            message.ChangeTransferSyntax(TransferSyntax.Jpeg2000ImageCompression, codec.GetDicomCodec(),
-                                                         codec.GetCodecParameters(doc));
-                            message.TransferSyntax = TransferSyntax.Jpeg2000ImageCompression;
-                            return pcid;
+                            try
+                            {
+                                if (message.TransferSyntax.Encapsulated)
+                                {
+                                    message.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
+                                    message.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+                                }
+                                message.ChangeTransferSyntax(TransferSyntax.Jpeg2000ImageCompression,
+                                                             codec.GetDicomCodec(),
+                                                             codec.GetCodecParameters(doc));
+                                message.TransferSyntax = TransferSyntax.Jpeg2000ImageCompression;
+                                return pcid;
+                            }
+                            catch (Exception e)
+                            {
+                                Platform.Log(LogLevel.Warn, e, "Unexpected exception changing transfer syntax to {0}.",
+                                             TransferSyntax.Jpeg2000ImageCompression.Name);
+                            }
                         }
                 }
             }
@@ -312,12 +326,28 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
 
                         IDicomCodecFactory[] codecs = DicomCodecRegistry.GetCodecFactories();
                         foreach (IDicomCodecFactory codec in codecs)
-                            if (codec.CodecTransferSyntax.Equals(TransferSyntax.Jpeg2000ImageCompression))
+                            if (codec.CodecTransferSyntax.Equals(TransferSyntax.JpegBaselineProcess1))
                             {
-                                message.ChangeTransferSyntax(TransferSyntax.JpegBaselineProcess1, codec.GetDicomCodec(),
-                                                             codec.GetCodecParameters(doc));
-                                message.TransferSyntax = TransferSyntax.JpegBaselineProcess1;
-                                return pcid;
+                                try
+                                {
+                                    if (message.TransferSyntax.Encapsulated)
+                                    {
+                                        message.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
+                                        message.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+                                    }
+
+                                    message.ChangeTransferSyntax(TransferSyntax.JpegBaselineProcess1,
+                                                                 codec.GetDicomCodec(),
+                                                                 codec.GetCodecParameters(doc));
+                                    message.TransferSyntax = TransferSyntax.JpegBaselineProcess1;
+                                    return pcid;
+                                }
+                                catch (Exception e)
+                                {
+                                    Platform.Log(LogLevel.Warn, e,
+                                                 "Unexpected exception changing transfer syntax to {0}.",
+                                                 TransferSyntax.JpegBaselineProcess1.Name);
+                                }
                             }
                     }
                 }
@@ -345,12 +375,28 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
 
                         IDicomCodecFactory[] codecs = DicomCodecRegistry.GetCodecFactories();
                         foreach (IDicomCodecFactory codec in codecs)
-                            if (codec.CodecTransferSyntax.Equals(TransferSyntax.Jpeg2000ImageCompression))
+                            if (codec.CodecTransferSyntax.Equals(TransferSyntax.JpegExtendedProcess24))
                             {
-                                message.ChangeTransferSyntax(TransferSyntax.JpegExtendedProcess24, codec.GetDicomCodec(),
-                                                             codec.GetCodecParameters(doc));
-                                message.TransferSyntax = TransferSyntax.JpegExtendedProcess24;
-                                return pcid;
+                                try
+                                {
+                                    if (message.TransferSyntax.Encapsulated)
+                                    {
+                                        message.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
+                                        message.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+                                    }
+
+                                    message.ChangeTransferSyntax(TransferSyntax.JpegExtendedProcess24,
+                                                                 codec.GetDicomCodec(),
+                                                                 codec.GetCodecParameters(doc));
+                                    message.TransferSyntax = TransferSyntax.JpegExtendedProcess24;
+                                    return pcid;
+                                }
+                                catch (Exception e)
+                                {
+                                    Platform.Log(LogLevel.Warn, e,
+                                                 "Unexpected exception changing transfer syntax to {0}.",
+                                                 TransferSyntax.JpegExtendedProcess24.Name);
+                                }
                             }
                     }
                 }
