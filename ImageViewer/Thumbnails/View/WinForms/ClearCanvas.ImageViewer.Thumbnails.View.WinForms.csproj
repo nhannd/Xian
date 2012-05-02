@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ThumbnailComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ThumbnailComponentControl.Designer.cs">
       <DependentUpon>ThumbnailComponentControl.cs</DependentUpon>
