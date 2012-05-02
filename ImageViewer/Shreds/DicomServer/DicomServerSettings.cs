@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -9,318 +9,100 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.Configuration;
-using ClearCanvas.Server.ShredHost;
-using System.IO;
-using ClearCanvas.Common.Utilities;
-using System.Xml;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Xml.Serialization;
 using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
-	#region Custom Configuration classes
-
-	public class SopClassConfigurationElement : ConfigurationElement
+	internal sealed partial class DicomServerSettings : IMigrateSettings
 	{
-		public SopClassConfigurationElement()
+		private static readonly Proxy _instance = new Proxy();
+
+		public static Proxy Instance
 		{
+			get { return _instance; }
 		}
 
-		public SopClassConfigurationElement(string uid, string description)
+		public sealed class Proxy
 		{
-			Uid = uid;
-			Description = description;
-		}
+			internal Proxy() {}
 
-		[ConfigurationProperty("Uid", IsKey = true, IsRequired = true)]
-		public string Uid
-		{
-			get { return this["Uid"] as string; }
-			set { this["Uid"] = value; }
-		}
-
-		[ConfigurationProperty("Description", IsKey = false, IsRequired = false)]
-		public string Description
-		{
-			get { return this["Description"] as string; }
-			set { this["Description"] = value; }
-		}
-	}
-
-	public class ImageSopClassConfigurationElementCollection : SopClassConfigurationElementCollection
-	{
-		public ImageSopClassConfigurationElementCollection()
-		{
-		}
-
-		protected override void InitializeDefault()
-		{
-			base.Initialize("ImageSopClasses.xml");
-		}
-
-		internal static ImageSopClassConfigurationElementCollection Create()
-		{
-			ImageSopClassConfigurationElementCollection config = new ImageSopClassConfigurationElementCollection();
-			config.Initialize("ImageSopClasses.xml");
-			return config;
-		}
-	}
-
-	public class NonImageSopClassConfigurationElementCollection : SopClassConfigurationElementCollection
-	{
-		public NonImageSopClassConfigurationElementCollection()
-		{
-		}
-
-		protected override void InitializeDefault()
-		{
-			base.Initialize("NonImageSopClasses.xml");
-		}
-
-		internal static NonImageSopClassConfigurationElementCollection Create()
-		{
-			NonImageSopClassConfigurationElementCollection config = new NonImageSopClassConfigurationElementCollection();
-			config.Initialize("NonImageSopClasses.xml");
-			return config;
-		}
-	}
-
-	public abstract class SopClassConfigurationElementCollection : ConfigurationElementCollection
-	{
-		protected override ConfigurationElement CreateNewElement()
-		{
-			return new SopClassConfigurationElement();
-		}
-
-		protected override object GetElementKey(ConfigurationElement element)
-		{
-			return ((SopClassConfigurationElement)element).Uid;
-		}
-
-		protected void Initialize(string xmlResourceName)
-		{
-			using (Stream stream = new ResourceResolver(typeof(SopClassConfigurationElementCollection).Assembly).OpenResource(xmlResourceName))
+			private object this[string propertyName]
 			{
-				XmlDocument document = new XmlDocument();
-				document.Load(stream);
-				foreach (XmlElement sopClass in document.SelectNodes("//sop-class"))
-					Add(sopClass.Attributes["uid"].InnerText, sopClass.Attributes["description"].InnerText);
+				get { return Default[propertyName]; }
+				set { ApplicationSettingsExtensions.SetSharedPropertyValue(Default, propertyName, value); }
+			}
 
-				stream.Close();
+			[DefaultValue("localhost")]
+			public string HostName
+			{
+				get { return (string) this["HostName"]; }
+				set { this["HostName"] = value; }
+			}
+
+			[DefaultValue("CLEARCANVAS")]
+			public string AETitle
+			{
+				get { return (string) this["AETitle"]; }
+				set { this["AETitle"] = value; }
+			}
+
+			[DefaultValue("104")]
+			public int Port
+			{
+				get { return (int) this["Port"]; }
+				set { this["Port"] = value; }
+			}
+
+			[DefaultValue(".\\dicom_interim")]
+			public string InterimStorageDirectory
+			{
+				get { return (string) this["InterimStorageDirectory"]; }
+				set { this["InterimStorageDirectory"] = value; }
+			}
+
+			[DefaultValue(true)]
+			public bool AllowUnknownCaller
+			{
+				get { return (bool) this["AllowUnknownCaller"]; }
+				set { this["AllowUnknownCaller"] = value; }
+			}
+
+			public ImageSopClassConfigurationElementCollection ImageStorageSopClasses
+			{
+				get { return (ImageSopClassConfigurationElementCollection) this["ImageStorageSopClasses"]; }
+				set { this["ImageStorageSopClasses"] = value; }
+			}
+
+			public NonImageSopClassConfigurationElementCollection NonImageStorageSopClasses
+			{
+				get { return (NonImageSopClassConfigurationElementCollection) this["NonImageStorageSopClasses"]; }
+				set { this["NonImageStorageSopClasses"] = value; }
+			}
+
+			public TransferSyntaxConfigurationElementCollection StorageTransferSyntaxes
+			{
+				get { return (TransferSyntaxConfigurationElementCollection) this["StorageTransferSyntaxes"]; }
+				set { this["StorageTransferSyntaxes"] = value; }
+			}
+
+			[DefaultValue(false)]
+			public bool QueryResponsesInUtf8
+			{
+				get { return (bool) this["QueryResponsesInUtf8"]; }
+				set { this["QueryResponsesInUtf8"] = value; }
+			}
+
+			public void Save()
+			{
+				Default.Save();
 			}
 		}
-
-		public void Add(string uid, string description)
-		{
-			if (base.BaseGet(uid) != null)
-				base.BaseRemove(uid);
-
-			base.BaseAdd(new SopClassConfigurationElement(uid, description), false);
-		}
-
-		public void Remove(string uid)
-		{
-			if (base.BaseGet(uid) != null)
-				base.BaseRemove(uid);
-		}
-	}
-
-	public class TransferSyntaxConfigurationElement : ConfigurationElement
-	{
-		public TransferSyntaxConfigurationElement()
-		{
-		}
-
-		public TransferSyntaxConfigurationElement(string uid, string description)
-		{
-			Uid = uid;
-			Description = description;
-		}
-
-		[ConfigurationProperty("Uid", IsKey = true, IsRequired = true)]
-		public string Uid
-		{
-			get { return this["Uid"] as string; }
-			set { this["Uid"] = value; }
-		}
-
-		[ConfigurationProperty("Description", IsKey = false, IsRequired = false)]
-		public string Description
-		{
-			get { return this["Description"] as string; }
-			set { this["Description"] = value; }
-		}
-	}
-
-	public class TransferSyntaxConfigurationElementCollection : ConfigurationElementCollection
-	{
-		protected override ConfigurationElement CreateNewElement()
-		{
-			return new TransferSyntaxConfigurationElement();
-		}
-
-		protected override object GetElementKey(ConfigurationElement element)
-		{
-			return ((TransferSyntaxConfigurationElement)element).Uid;
-		}
-
-		protected override void InitializeDefault()
-		{
-			using (Stream stream = new ResourceResolver(typeof(SopClassConfigurationElementCollection).Assembly).OpenResource("TransferSyntaxes.xml"))
-			{
-				XmlDocument document = new XmlDocument();
-				document.Load(stream);
-				foreach (XmlElement transferSyntax in document.SelectNodes("//transfer-syntax"))
-					Add(transferSyntax.Attributes["uid"].InnerText, transferSyntax.Attributes["description"].InnerText);
-			}
-		}
-
-		public void Add(string uid, string description)
-		{
-			if (base.BaseGet(uid) != null)
-				base.BaseRemove(uid);
-
-			base.BaseAdd(new TransferSyntaxConfigurationElement(uid, description), false);
-		}
-
-		public void Remove(string uid)
-		{
-			if (base.BaseGet(uid) != null)
-				base.BaseRemove(uid);
-		}
-
-		public static TransferSyntaxConfigurationElementCollection Create()
-		{
-			TransferSyntaxConfigurationElementCollection config = new TransferSyntaxConfigurationElementCollection();
-			config.InitializeDefault();
-			return config;
-		}
-	}
-
-	#endregion
-
-	internal class DicomServerSettings : ShredConfigSection, IMigrateSettings
-    {
-        private static DicomServerSettings _instance;
-
-		private DicomServerSettings()
-        {
-        }
-
-        public static string SettingName
-        {
-            get { return "DicomServerSettings"; }
-        }
-
-        public static DicomServerSettings Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = ShredConfigManager.GetConfigSection(DicomServerSettings.SettingName) as DicomServerSettings;
-                    if (_instance == null)
-                    {
-                        _instance = new DicomServerSettings();
-                        ShredConfigManager.UpdateConfigSection(DicomServerSettings.SettingName, _instance);
-                    }
-                }
-
-                return _instance;
-            }
-        }
-
-        public static void Save()
-        {
-            ShredConfigManager.UpdateConfigSection(DicomServerSettings.SettingName, _instance);
-        }
-
-        #region Public Properties
-
-        [ConfigurationProperty("HostName", DefaultValue = "localhost")]
-        public string HostName
-        {
-            get { return (string)this["HostName"]; }
-            set { this["HostName"] = value; }
-        }
-
-        [ConfigurationProperty("AETitle", DefaultValue = "CLEARCANVAS")]
-        public string AETitle
-        {
-            get { return (string)this["AETitle"]; }
-            set { this["AETitle"] = value; }
-        }
-
-        [ConfigurationProperty("Port", DefaultValue = "104")]
-        public int Port
-        {
-            get { return (int)this["Port"]; }
-            set { this["Port"] = value; }
-        }
-
-        [ConfigurationProperty("InterimStorageDirectory", DefaultValue = ".\\dicom_interim")]
-        public string InterimStorageDirectory
-        {
-            get { return (string)this["InterimStorageDirectory"]; }
-            set { this["InterimStorageDirectory"] = value; }
-        }
-
-		[ConfigurationProperty("AllowUnknownCaller", DefaultValue = true)]
-		public bool AllowUnknownCaller
-		{
-			get { return (bool)this["AllowUnknownCaller"]; }
-			set { this["AllowUnknownCaller"] = value; }
-		}
-
-		[ConfigurationProperty("ImageStorageSopClasses")]
-		public ImageSopClassConfigurationElementCollection ImageStorageSopClasses
-		{
-			get { return (ImageSopClassConfigurationElementCollection)this["ImageStorageSopClasses"]; }
-			set { this["ImageStorageSopClasses"] = value; }
-		}
-
-		[ConfigurationProperty("NonImageStorageSopClasses")]
-		public NonImageSopClassConfigurationElementCollection NonImageStorageSopClasses
-		{
-			get { return (NonImageSopClassConfigurationElementCollection)this["NonImageStorageSopClasses"]; }
-			set { this["NonImageStorageSopClasses"] = value; }
-		}
-
-		[ConfigurationProperty("StorageTransferSyntaxes")]
-		public TransferSyntaxConfigurationElementCollection StorageTransferSyntaxes
-		{
-			get { return (TransferSyntaxConfigurationElementCollection)this["StorageTransferSyntaxes"]; }
-			set { this["StorageTransferSyntaxes"] = value; }
-		}
-
-        [ConfigurationProperty("QueryResponsesInUtf8", DefaultValue = false)]
-        public bool QueryResponsesInUtf8
-        {
-            get { return (bool)this["QueryResponsesInUtf8"]; }
-            set { this["QueryResponsesInUtf8"] = value; }
-        }
-
-		#endregion
-
-        public override object Clone()
-        {
-            DicomServerSettings clone = new DicomServerSettings();
-
-            clone.HostName = _instance.HostName;
-            clone.AETitle = _instance.AETitle;
-            clone.Port = _instance.Port;
-			clone.AllowUnknownCaller = _instance.AllowUnknownCaller;
-            
-			clone.InterimStorageDirectory = _instance.InterimStorageDirectory;
-			clone.StorageTransferSyntaxes = _instance.StorageTransferSyntaxes;
-			clone.ImageStorageSopClasses = _instance.ImageStorageSopClasses;
-			clone.NonImageStorageSopClasses = _instance.NonImageStorageSopClasses;
-            clone.QueryResponsesInUtf8 = _instance.QueryResponsesInUtf8;
-
-            return clone;
-        }
 
 		#region IMigrateSettings Members
 
@@ -333,14 +115,211 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				case "Port":
 				case "InterimStorageDirectory":
 				case "AllowUnknownCaller":
-                case "QueryResponsesInUtf8":
-                    migrationValues.CurrentValue = migrationValues.PreviousValue;
+				case "QueryResponsesInUtf8":
+					migrationValues.CurrentValue = migrationValues.PreviousValue;
 					break;
-                default: //Don't migrate the storage sop classes or transfer syntaxes
+				default: //Don't migrate the storage sop classes or transfer syntaxes
 					break;
-    }
+			}
 		}
 
 		#endregion
 	}
+
+	#region Custom Configuration classes
+
+	[XmlType("SopClass")]
+	public class SopClassConfigurationElement : IEquatable<SopClassConfigurationElement>
+	{
+		public SopClassConfigurationElement() {}
+
+		public SopClassConfigurationElement(string uid, string description)
+		{
+			Uid = uid;
+			Description = description;
+		}
+
+		[XmlAttribute("Uid")]
+		public string Uid { get; set; }
+
+		[XmlAttribute("Description")]
+		public string Description { get; set; }
+
+		public bool Equals(SopClassConfigurationElement other)
+		{
+			return other != null && Uid == other.Uid;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return obj is SopClassConfigurationElement && Equals((SopClassConfigurationElement) obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return 0x444CB7C9 ^ (Uid != null ? Uid.GetHashCode() : 0);
+		}
+
+		public override string ToString()
+		{
+			return string.Format(@"{0}={1}", Uid, Description);
+		}
+	}
+
+	[XmlType("ImageSopClassCollection")]
+	public class ImageSopClassConfigurationElementCollection : SopClassConfigurationElementCollection {}
+
+	[XmlType("NonImageSopClassCollection")]
+	public class NonImageSopClassConfigurationElementCollection : SopClassConfigurationElementCollection {}
+
+	[XmlType("SopClassCollection")]
+	public abstract class SopClassConfigurationElementCollection : ConfigurationElementCollection<SopClassConfigurationElement>
+	{
+		[XmlArray(@"SopClasses")]
+		public SopClassConfigurationElement[] SopClasses
+		{
+			get { return Items; }
+			set { Items = value; }
+		}
+	}
+
+	[XmlType("TransferSyntax")]
+	public class TransferSyntaxConfigurationElement : IEquatable<TransferSyntaxConfigurationElement>
+	{
+		public TransferSyntaxConfigurationElement() {}
+
+		public TransferSyntaxConfigurationElement(string uid, string description)
+		{
+			Uid = uid;
+			Description = description;
+		}
+
+		[XmlAttribute("Uid")]
+		public string Uid { get; set; }
+
+		[XmlAttribute("Description")]
+		public string Description { get; set; }
+
+		public bool Equals(TransferSyntaxConfigurationElement other)
+		{
+			return other != null && Uid == other.Uid;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return obj is TransferSyntaxConfigurationElement && Equals((TransferSyntaxConfigurationElement) obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return 0x0898858D ^ (Uid != null ? Uid.GetHashCode() : 0);
+		}
+
+		public override string ToString()
+		{
+			return string.Format(@"{0}={1}", Uid, Description);
+		}
+	}
+
+	[XmlType("TransferSyntaxCollection")]
+	public class TransferSyntaxConfigurationElementCollection : ConfigurationElementCollection<TransferSyntaxConfigurationElement>
+	{
+		[XmlArray(@"TransferSyntaxes")]
+		public TransferSyntaxConfigurationElement[] TransferSyntaxes
+		{
+			get { return Items; }
+			set { Items = value; }
+		}
+	}
+
+	public abstract class ConfigurationElementCollection<T> : IList<T>
+	{
+		private List<T> _items;
+
+		protected T[] Items
+		{
+			get { return _items != null ? _items.ToArray() : null; }
+			set { _items = value != null ? new List<T>(value) : null; }
+		}
+
+		public override string ToString()
+		{
+			if (_items == null) return @"{}";
+			return '{' + string.Join(@", ", _items.Select(i => i.ToString()).ToArray()) + '}';
+		}
+
+		#region Implementation of IList<T>
+
+		public T this[int index]
+		{
+			get { return _items[index]; }
+			set { _items[index] = value; }
+		}
+
+		public int Count
+		{
+			get { return _items.Count; }
+		}
+
+		bool ICollection<T>.IsReadOnly
+		{
+			get { return false; }
+		}
+
+		public void Add(T item)
+		{
+			_items.Add(item);
+		}
+
+		public void Clear()
+		{
+			_items.Clear();
+		}
+
+		public bool Contains(T item)
+		{
+			return _items.Contains(item);
+		}
+
+		public void CopyTo(T[] array, int arrayIndex)
+		{
+			_items.CopyTo(array, arrayIndex);
+		}
+
+		public int IndexOf(T item)
+		{
+			return _items.IndexOf(item);
+		}
+
+		public void Insert(int index, T item)
+		{
+			_items.Insert(index, item);
+		}
+
+		public bool Remove(T item)
+		{
+			return _items.Remove(item);
+		}
+
+		public void RemoveAt(int index)
+		{
+			_items.RemoveAt(index);
+		}
+
+		public IEnumerator<T> GetEnumerator()
+		{
+			if (_items == null) yield break;
+			foreach (var item in _items)
+				yield return item;
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		#endregion
+	}
+
+	#endregion
 }

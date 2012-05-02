@@ -229,7 +229,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				DicomServerSettings.Instance.AETitle = newConfiguration.AETitle;
 				DicomServerSettings.Instance.Port = newConfiguration.Port;
 				DicomServerSettings.Instance.InterimStorageDirectory = newConfiguration.InterimStorageDirectory;
-				DicomServerSettings.Save();
+				DicomServerSettings.Instance.Save();
 
 				OnConfigurationChanged();
 			}

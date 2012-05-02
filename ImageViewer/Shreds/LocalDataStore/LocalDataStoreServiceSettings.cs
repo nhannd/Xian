@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -9,12 +9,12 @@
 
 #endregion
 
-using System.Configuration;
-using ClearCanvas.Server.ShredHost;
+using System.ComponentModel;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	internal sealed class LocalDataStoreServiceSettings : ShredConfigSection
+	internal sealed partial class LocalDataStoreServiceSettings
 	{
 		public const string DefaultStorageDirectory = @"c:\dicom_datastore\filestore\";
 		public const string DefaultBadFileDirectory = @"c:\dicom_datastore\badfiles\";
@@ -22,90 +22,62 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		public const uint DefaultDatabaseUpdateFrequencyMilliseconds = 5000;
 		public const uint DefaultPurgeTimeMinutes = 120;
 
-		private static LocalDataStoreServiceSettings _instance;
+		private static readonly Proxy _instance = new Proxy();
 
-		private LocalDataStoreServiceSettings()
+		public static Proxy Instance
 		{
+			get { return _instance; }
 		}
 
-		public static string SettingName
+		public sealed class Proxy
 		{
-			get { return "LocalDataStoreServiceSettings"; }
-		}
+			internal Proxy() {}
 
-		public static LocalDataStoreServiceSettings Instance
-		{
-			get
+			private object this[string propertyName]
 			{
-				if (_instance == null)
-				{
-					_instance = ShredConfigManager.GetConfigSection(LocalDataStoreServiceSettings.SettingName) as LocalDataStoreServiceSettings;
-					if (_instance == null)
-					{
-						_instance = new LocalDataStoreServiceSettings();
-						ShredConfigManager.UpdateConfigSection(LocalDataStoreServiceSettings.SettingName, _instance);
-					}
-				}
-
-				return _instance;
+				get { return Default[propertyName]; }
+				set { ApplicationSettingsExtensions.SetSharedPropertyValue(Default, propertyName, value); }
 			}
-		}
 
-		public static void Save()
-		{
-			ShredConfigManager.UpdateConfigSection(LocalDataStoreServiceSettings.SettingName, _instance);
-		}
+			[DefaultValue(DefaultStorageDirectory)]
+			public string StorageDirectory
+			{
+				get { return (string) this["StorageDirectory"]; }
+				set { this["StorageDirectory"] = value; }
+			}
 
-		#region Public Properties
+			[DefaultValue(DefaultBadFileDirectory)]
+			public string BadFileDirectory
+			{
+				get { return (string) this["BadFileDirectory"]; }
+				set { this["BadFileDirectory"] = value; }
+			}
 
-		[ConfigurationProperty("StorageDirectory", DefaultValue = LocalDataStoreServiceSettings.DefaultStorageDirectory)]
-		public string StorageDirectory
-		{
-			get { return (string)this["StorageDirectory"]; }
-			set { this["StorageDirectory"] = value; }
-		}
+			[DefaultValue(DefaultSendReceiveImportConcurrency)]
+			public uint SendReceiveImportConcurrency
+			{
+				get { return (uint) this["SendReceiveImportConcurrency"]; }
+				set { this["SendReceiveImportConcurrency"] = value; }
+			}
 
-		[ConfigurationProperty("BadFileDirectory", DefaultValue = LocalDataStoreServiceSettings.DefaultBadFileDirectory)]
-		public string BadFileDirectory
-		{
-			get { return (string)this["BadFileDirectory"]; }
-			set { this["BadFileDirectory"] = value; }
-		}
+			[DefaultValue(DefaultDatabaseUpdateFrequencyMilliseconds)]
+			public uint DatabaseUpdateFrequencyMilliseconds
+			{
+				get { return (uint) this["DatabaseUpdateFrequencyMilliseconds"]; }
+				set { this["DatabaseUpdateFrequencyMilliseconds"] = value; }
+			}
 
-		[ConfigurationProperty("SendReceiveImportConcurrency", DefaultValue = LocalDataStoreServiceSettings.DefaultSendReceiveImportConcurrency)]
-		public uint SendReceiveImportConcurrency
-		{
-			get { return (uint)this["SendReceiveImportConcurrency"]; }
-			set { this["SendReceiveImportConcurrency"] = value; }
-		}
+			[DefaultValue(DefaultPurgeTimeMinutes)]
+			public uint PurgeTimeMinutes
+			{
+				get { return (uint) this["PurgeTimeMinutes"]; }
+				set { this["PurgeTimeMinutes"] = value; }
+			}
 
-		[ConfigurationProperty("DatabaseUpdateFrequencyMilliseconds", DefaultValue = LocalDataStoreServiceSettings.DefaultDatabaseUpdateFrequencyMilliseconds)]
-		public uint DatabaseUpdateFrequencyMilliseconds
-		{
-			get { return (uint)this["DatabaseUpdateFrequencyMilliseconds"]; }
-			set { this["DatabaseUpdateFrequencyMilliseconds"] = value; }
-		}
-
-		[ConfigurationProperty("PurgeTimeMinutes", DefaultValue = LocalDataStoreServiceSettings.DefaultPurgeTimeMinutes)]
-		public uint PurgeTimeMinutes
-		{
-			get { return (uint)this["PurgeTimeMinutes"]; }
-			set { this["PurgeTimeMinutes"] = value; }
-		}
-
-		#endregion
-
-		public override object Clone()
-		{
-			LocalDataStoreServiceSettings clone = new LocalDataStoreServiceSettings();
-
-			clone.StorageDirectory = _instance.StorageDirectory;
-			clone.BadFileDirectory = _instance.BadFileDirectory;
-			clone.SendReceiveImportConcurrency = _instance.SendReceiveImportConcurrency;
-			clone.DatabaseUpdateFrequencyMilliseconds = _instance.DatabaseUpdateFrequencyMilliseconds;
-			clone.PurgeTimeMinutes = _instance.PurgeTimeMinutes;
-
-			return clone;
+			public void Save()
+			{
+				Default.Save();
+			}
 		}
 	}
 }

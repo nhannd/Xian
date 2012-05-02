@@ -48,12 +48,20 @@
   <ItemGroup>
     <Compile Include="DicomServer\AssociationVerifier.cs" />
     <Compile Include="DicomServer\DataStoreQueryHelper.cs" />
+    <Compile Include="DicomServer\DicomServerLegacySettings.cs" />
     <Compile Include="DicomServer\DicomServerManager.cs" />
+    <Compile Include="DicomServer\DicomServerSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DicomServer\DicomServerSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>DicomServerSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="DicomServer\FindScpExtension.cs" />
     <Compile Include="DicomServer\DicomServer.cs" />
     <Compile Include="DicomServer\DicomServerExtension.cs" />
     <Compile Include="DicomServer\DicomServerServiceType.cs" />
-    <Compile Include="DicomServer\DicomServerSettings.cs" />
     <Compile Include="DicomServer\DicomSendServiceType.cs" />
     <Compile Include="DicomServer\LocalDataStoreEventPublisher.cs" />
     <Compile Include="DicomServer\MoveScpExtension.cs" />
@@ -63,11 +71,19 @@
     <Compile Include="DicomServer\DicomSendManager.cs" />
     <Compile Include="DicomServer\StoreScpExtension.cs" />
     <Compile Include="DicomServer\VerifyScpExtension.cs" />
+    <Compile Include="DiskspaceManager\DiskspaceManagerLegacySettings.cs" />
+    <Compile Include="DiskspaceManager\DiskspaceManagerSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DiskspaceManager\DiskspaceManagerSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>DiskspaceManagerSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="DiskspaceManager\DiskUsageInfo.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerExtension.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerProcessor.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerServiceType.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerSettings.cs" />
     <Compile Include="LocalDataStore\DicomFileImporter.cs" />
     <Compile Include="LocalDataStore\FileRemover.cs" />
     <Compile Include="LocalDataStore\ImportProcessor.cs" />
@@ -77,7 +93,15 @@
     <Compile Include="LocalDataStore\LocalDataStoreActivityPublisher.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreService.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreServiceExtension.cs" />
-    <Compile Include="LocalDataStore\LocalDataStoreServiceSettings.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreServiceLegacySettings.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreServiceSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LocalDataStore\LocalDataStoreServiceSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>LocalDataStoreServiceSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="LocalDataStore\LocalDataStoreServiceType.cs" />
     <Compile Include="LocalDataStore\PublishManager.cs" />
     <Compile Include="LocalDataStore\ReceivedFileProcessor.cs" />
@@ -124,9 +148,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DicomServer\ImageSopClasses.xml" />
-    <EmbeddedResource Include="DicomServer\NonImageSopClasses.xml" />
-    <EmbeddedResource Include="DicomServer\TransferSyntaxes.xml" />
+    <None Include="app.config" />
+    <None Include="DicomServer\DicomServerSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DicomServerSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="DiskspaceManager\DiskspaceManagerSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DiskspaceManagerSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="LocalDataStore\LocalDataStoreServiceSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>LocalDataStoreServiceSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

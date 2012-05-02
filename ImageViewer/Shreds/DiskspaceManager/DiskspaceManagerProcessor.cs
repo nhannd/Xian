@@ -337,7 +337,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 				DiskspaceManagerSettings.Instance.CheckFrequency = newConfiguration.CheckFrequency;
 				DiskspaceManagerSettings.Instance.EnforceStudyLimit = newConfiguration.EnforceStudyLimit;
 				DiskspaceManagerSettings.Instance.StudyLimit = newConfiguration.StudyLimit;
-				DiskspaceManagerSettings.Save();
+				DiskspaceManagerSettings.Instance.Save();
 
 				_settingsChanged = true;
 				Monitor.Pulse(_settingsSyncLock);
