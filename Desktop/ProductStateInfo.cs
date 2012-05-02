@@ -63,7 +63,7 @@ namespace ClearCanvas.Desktop
 
         static ProductStateInfo()
         {
-            _licenseInterpreter = (IDesktopProductLicenseInfoInterpreter)new DesktopLicenseInfoInterpreterExtensionPoint().CreateExtension();
+            _licenseInterpreter = DesktopLicenseInfoInterpreterExtensionPoint.CreateInstance();
         }
 
         public static bool IsEvaluationCopy

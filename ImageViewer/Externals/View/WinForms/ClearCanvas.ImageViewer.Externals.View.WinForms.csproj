@@ -60,7 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="General\CommandLineExternalPropertiesComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="General\CommandLineExternalPropertiesComponentControl.Designer.cs">
       <DependentUpon>CommandLineExternalPropertiesComponentControl.cs</DependentUpon>
