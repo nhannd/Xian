@@ -262,6 +262,7 @@
   <!--Plugins common to all-->
   <ItemGroup>
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Common\bin\$(Configuration)\ClearCanvas.ImageViewer.Common.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Dicom\Core\bin\$(Configuration)\ClearCanvas.ImageViewer.Dicom.Core.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="$(DesktopBuild)">
@@ -300,7 +301,6 @@
 
   <ItemGroup Condition="$(ShredHostBuild)">
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Shreds\bin\$(Configuration)\ClearCanvas.ImageViewer.Shreds.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Dicom\Core\bin\$(Configuration)\ClearCanvas.ImageViewer.Dicom.Core.dll" />
   </ItemGroup>
 
   <ItemGroup>

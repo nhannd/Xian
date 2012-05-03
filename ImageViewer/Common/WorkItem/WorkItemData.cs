@@ -22,7 +22,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [EnumMember]
         Stat = 1,
         [EnumMember]
-        Normal = 2
+        High = 2,
+        [EnumMember]
+        Normal = 3
     }
 
     [DataContract(Name = "WorkItemStatus", Namespace = ImageViewerNamespace.Value)]

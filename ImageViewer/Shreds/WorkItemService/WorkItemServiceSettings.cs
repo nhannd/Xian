@@ -16,8 +16,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
 	internal sealed class WorkItemServiceSettings : ShredConfigSection
 	{
-		public const int DefaultNormalThreadCount = 4;
-		public const int DefaultStatThreadCount = 4;
+		public const int DefaultNormalThreadCount = 6;
+		public const int DefaultStatThreadCount = 2;
         public const uint DefaultPostponeSeconds = 15;
         public const int DefaultExpireDelaySeconds = 60;
         public const uint DefaultDeleteDelayMinutes = 120;

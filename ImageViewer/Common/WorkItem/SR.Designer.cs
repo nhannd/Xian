@@ -322,7 +322,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing Files from {0} location.
+        ///   Looks up a localized string similar to Processing files for import from {0} location.
         /// </summary>
         internal static string ImportFilesRequest_ActivityDescription {
             get {
@@ -331,7 +331,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing Files from {0} locations.
+        ///   Looks up a localized string similar to Processing files for import from {0} locations.
         /// </summary>
         internal static string ImportFilesRequest_ActivityDescriptionPlural {
             get {
@@ -444,6 +444,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         internal static string StudyProcessProgress_Status {
             get {
                 return ResourceManager.GetString("StudyProcessProgress_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to High.
+        /// </summary>
+        internal static string WorkItemPriorityEnumHigh {
+            get {
+                return ResourceManager.GetString("WorkItemPriorityEnumHigh", resourceCulture);
             }
         }
         

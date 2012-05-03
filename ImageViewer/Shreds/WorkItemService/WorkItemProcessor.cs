@@ -140,12 +140,17 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 List<WorkItem> list = null;
                 if (_threadPool.StatThreadsAvailable > 0)
                 {
-                    list = GetWorkItems(_threadPool.StatThreadsAvailable, true);
+                    list = GetWorkItems(_threadPool.StatThreadsAvailable, WorkItemPriorityEnum.Stat);
                 }
-                
+
                 if ((list == null || list.Count == 0) && _threadPool.NormalThreadsAvailable > 0)
                 {
-                    list = GetWorkItems(_threadPool.NormalThreadsAvailable, false);
+                    list = GetWorkItems(_threadPool.NormalThreadsAvailable, WorkItemPriorityEnum.High);
+                }
+
+                if ((list == null || list.Count == 0) && _threadPool.NormalThreadsAvailable > 0)
+                {
+                    list = GetWorkItems(_threadPool.NormalThreadsAvailable, WorkItemPriorityEnum.Normal);
                 }
 
                 if ((list == null || list.Count == 0) && _threadPool.NormalThreadsAvailable > 0)
@@ -156,14 +161,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 if ( list == null)
                 {
                     /* No threads available, wait for one to complete. */
-                    if (_threadStop.WaitOne(5000, false))
+                    if (_threadStop.WaitOne(2500, false))
                         _threadStop.Reset();
                     continue;
                 }
                 if  (list.Count == 0)
                 {
                     // No result found 
-                    if (_threadStop.WaitOne(5000, false))
+                    if (_threadStop.WaitOne(2500, false))
                         _threadStop.Reset(); 
                     continue;
                 }
@@ -289,13 +294,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// Method for getting next <see cref="StudyManagement.Storage.WorkItem"/> entry.
 		/// </summary>
 		/// <param name="count">The count.</param>
-		/// <param name="stat">Search for stat items.</param>
+		/// <param name="priority">Search for stat items.</param>
 		/// <remarks>
 		/// </remarks>
 		/// <returns>
 		/// A <see cref="StudyManagement.Storage.WorkItem"/> entry if found, or else null;
 		/// </returns>
-        private List<WorkItem> GetWorkItems(int count, bool stat)
+        private List<WorkItem> GetWorkItems(int count, WorkItemPriorityEnum priority)
         {
             try
             {
@@ -304,8 +309,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     var workItemBroker = context.GetWorkItemBroker();
 
                     List<WorkItem> workItems;
-                    if (stat)
-                        workItems = workItemBroker.GetStatPendingWorkItems(count);
+                    if (priority == WorkItemPriorityEnum.Stat)
+                        workItems = workItemBroker.GetPendingWorkItemsByPriority(count, priority);
+                    else if (priority == WorkItemPriorityEnum.High)
+                        workItems = workItemBroker.GetPendingWorkItemsByPriority(count, priority);
                     else
                         workItems = workItemBroker.GetPendingWorkItems(count);
 
@@ -320,7 +327,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
             catch (Exception x)
             {
-                Platform.Log(LogLevel.Warn, x, "Unexpected error querying for {0} {1} priority WorkItems", count, stat ? "Stat" : "Normal");
+                Platform.Log(LogLevel.Warn, x, "Unexpected error querying for {0} {1} priority WorkItems", count, priority.GetDescription() );
                 return null;
             }
         }

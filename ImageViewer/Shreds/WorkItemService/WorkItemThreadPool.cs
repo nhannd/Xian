@@ -71,6 +71,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 		private int _statPriorityCount;
 		private int _totalThreadCount;
 	    private readonly int _normalThreads;
+        private readonly int _statThreads;
 
 		private readonly List<WorkItemThreadParameter> _queuedItems;
 		#endregion
@@ -88,7 +89,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             get
             {
-                int available = _normalThreads - (QueueCount + ActiveCount);
+                int available = Concurrency - (QueueCount + ActiveCount);
+                if (_statPriorityCount < _statThreads)
+                    available -= _statThreads - _statPriorityCount;
                 return available < 0 ? 0 : available;
             }
         }
@@ -104,6 +107,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 			: base(statThreadCount + normalThreadCount)
 		{
 		    _normalThreads = normalThreadCount;
+		    _statThreads = statThreadCount;
             _queuedItems = new List<WorkItemThreadParameter>(statThreadCount + normalThreadCount);		    
 		}
 		#endregion

@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                               {
                                   FromAETitle = SourceAE,
                                   Type = ImportType,
-                                  Priority = WorkItemPriorityEnum.Stat,
+                                  Priority = WorkItemPriorityEnum.High,
                                   Patient = new WorkItemPatient(message.DataSet),
                                   Study = new WorkItemStudy(message.DataSet)
                               };
@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
             var request = new ImportStudyRequest
                               {
                                   Type = ImportType,
-                                  Priority = WorkItemPriorityEnum.Stat,
+                                  Priority = WorkItemPriorityEnum.High,
                                   Patient = new WorkItemPatient(message.DataSet),
                                   Study = new WorkItemStudy(message.DataSet)
                               };

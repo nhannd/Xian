@@ -88,7 +88,6 @@
     <Compile Include="DataContracts.cs" />
     <Compile Include="DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Diagnostics.cs" />
-    <Compile Include="DicomFilePublisher.cs" />
     <Compile Include="ConfigureLocalServerApplication.cs" />
     <Compile Include="DicomServer\DataContracts.cs" />
     <Compile Include="DicomServer\DicomServer.cs" />
@@ -151,6 +150,7 @@
     <Compile Include="SubscriptionManager.cs" />
     <Compile Include="Tests\DiskspaceTests.cs" />
     <Compile Include="WorkItem\EnumExtensions.cs" />
+    <Compile Include="WorkItem\Tests\AutoRouteScheduledTimeTests.cs" />
     <Compile Include="WorkItem\Tests\TestActivityMonitor.cs" />
     <Compile Include="WorkItem\Tests\TestServiceProvider.cs" />
     <Compile Include="WorkItem\Tests\TestUISynchronizationContext.cs" />

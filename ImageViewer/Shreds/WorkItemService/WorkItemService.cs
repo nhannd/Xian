@@ -154,7 +154,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     if (request.Priority.HasValue)
                         workItem.Priority = request.Priority.Value;
                     if (request.Status.HasValue && workItem.Status != WorkItemStatusEnum.InProgress)
+                    {
                         workItem.Status = request.Status.Value;
+                        if (request.Status.Value == WorkItemStatusEnum.Canceled)
+                            workItem.DeleteTime = Platform.Time.AddMinutes(WorkItemServiceSettings.Instance.DeleteDelayMinutes);              
+                    }
                     if (request.ScheduledTime.HasValue)
                         workItem.ScheduledTime = request.ScheduledTime.Value;
 
