@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Shreds.FilestoreManagement
 					context.Commit();
 				}
                 if (item != null)
-                        WorkItemActivityPublisher.WorkItemChanged(WorkItemHelper.FromWorkItem(item));
+                        WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemHelper.FromWorkItem(item));
 
 			}
 			catch (Exception)

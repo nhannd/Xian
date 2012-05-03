@@ -101,6 +101,7 @@
     <Compile Include="IBlockingEnumerator.cs" />
     <Compile Include="LargeObjectContainer.cs" />
     <Compile Include="LargeObjectContainerCache.cs" />
+    <Compile Include="PublishManager.cs" />
     <Compile Include="ServerDirectory\ServerDirectory.cs" />
     <Compile Include="StudyManagement\DataContracts.cs" />
     <Compile Include="StudyManagement\IStorageConfiguration.cs" />
@@ -147,6 +148,7 @@
     <Compile Include="StudyManagement\StudyStoreBridge.cs" />
     <Compile Include="StudyManagement\Tests\StorageConfigurationTests.cs" />
     <Compile Include="StudyManagement\Tests\StudyStoreTests.cs" />
+    <Compile Include="SubscriptionManager.cs" />
     <Compile Include="Tests\DiskspaceTests.cs" />
     <Compile Include="WorkItem\EnumExtensions.cs" />
     <Compile Include="WorkItem\Tests\TestActivityMonitor.cs" />
@@ -159,6 +161,7 @@
     <Compile Include="WorkItem\IWorkItemService.cs" />
     <Compile Include="WorkItem\Tests\ActivityMonitorTests.cs" />
     <Compile Include="WorkItem\Tests\ActivityMonitorTestApplication.cs" />
+    <Compile Include="WorkItem\WorkItemPublishSubscribeHelper.cs" />
     <Compile Include="WorkItem\WorkItemsChangedEventArgs.cs" />
     <Compile Include="WorkItem\WorkItemClient.cs" />
     <Compile Include="WorkItem\WorkItemServiceClient.cs" />

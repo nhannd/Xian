@@ -252,7 +252,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         private void Publish()
         {
             Item.Progress = Progress;
-			WorkItemActivityPublisher.WorkItemChanged(WorkItemHelper.FromWorkItem(Item));
+			WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemHelper.FromWorkItem(Item));
         }
 
         #endregion

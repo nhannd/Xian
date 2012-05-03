@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 
             try
             {
-                WorkItemActivityPublisher.StudiesCleared();
+                WorkItemPublishSubscribeHelper.PublishStudiesCleared();
             }
             catch (Exception e)
             {

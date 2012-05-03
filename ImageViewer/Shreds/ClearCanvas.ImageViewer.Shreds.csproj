@@ -80,8 +80,6 @@
     <Compile Include="DicomServer\VerifyScpExtension.cs" />
     <Compile Include="FilestoreManagement\FilestoreManagementProcessor.cs" />
     <Compile Include="FilestoreManagement\FilestoreManagementShred.cs" />
-    <Compile Include="PublishManager.cs" />
-    <Compile Include="SubscriptionManager.cs" />
     <Compile Include="ServiceClientImpersonationContext.cs" />
     <Compile Include="UserIdentityContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -99,7 +97,6 @@
     <Compile Include="WorkItemService\Import\ImportItemProcessor.cs" />
     <Compile Include="WorkItemService\IWorkItemProcessor.cs" />
     <Compile Include="WorkItemService\IWorkItemProcessorFactory.cs" />
-    <Compile Include="WorkItemActivityPublisher.cs" />
     <Compile Include="WorkItemService\ReapplyRules\ReapplyRulesFactory.cs" />
     <Compile Include="WorkItemService\ReapplyRules\ReapplyRulesItemProcessor.cs" />
     <Compile Include="WorkItemService\Reindex\ReindexFactory.cs" />

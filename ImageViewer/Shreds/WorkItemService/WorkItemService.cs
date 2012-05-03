@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 response.Item = WorkItemHelper.FromWorkItem(item);
             }
 
-			WorkItemActivityPublisher.WorkItemChanged(response.Item);
+			WorkItemPublishSubscribeHelper.PublishWorkItemChanged(response.Item);
             if (WorkItemProcessor.Instance != null)
                 WorkItemProcessor.Instance.SignalThread();
 
@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 response.Item = WorkItemHelper.FromWorkItem(workItem);
             } 
 
-			WorkItemActivityPublisher.WorkItemChanged(response.Item);
+			WorkItemPublishSubscribeHelper.PublishWorkItemChanged(response.Item);
 
             return response;
         }

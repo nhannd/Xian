@@ -25,12 +25,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             try
             {
-                SubscriptionManager<IWorkItemActivityCallback>.Subscribe(_callback, "WorkItemsChanged");
+				WorkItemPublishSubscribeHelper.SubscribeWorkItemsChanged(_callback);
                 return new WorkItemSubscribeResponse();
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Error, e);
                 var message = SR.ExceptionErrorProcessingSubscribe;
                 var exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
                 throw new WorkItemServiceException(exceptionMessage);
@@ -41,12 +40,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             try
             {
-                SubscriptionManager<IWorkItemActivityCallback>.Unsubscribe(_callback, "WorkItemsChanged");
-                return new WorkItemUnsubscribeResponse();
+				WorkItemPublishSubscribeHelper.UnsubscribeWorkItemsChanged(_callback);
+				return new WorkItemUnsubscribeResponse();
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Error, e);
                 var message = SR.ExceptionErrorProcessingUnsubscribe;
                 var exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
                 throw new WorkItemServiceException(exceptionMessage);
@@ -69,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 							// send in batches of 200
 							foreach (var batch in BatchItems(dbList, 200))
 							{
-								WorkItemActivityPublisher.WorkItemsChanged(batch.Select(WorkItemHelper.FromWorkItem).ToList());
+								WorkItemPublishSubscribeHelper.PublishWorkItemsChanged(batch.Select(WorkItemHelper.FromWorkItem).ToList());
 							}
 						}
 					}
@@ -91,8 +89,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             try
             {
-                SubscriptionManager<IWorkItemActivityCallback>.Unsubscribe(_callback, null);
-            }
+				WorkItemPublishSubscribeHelper.UnsubscribeWorkItemsChanged(_callback);
+			}
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Error, e);
