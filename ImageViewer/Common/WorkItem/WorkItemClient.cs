@@ -60,6 +60,23 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             WorkItem = response.Item;
         }
 
+        public void Reprioritize(WorkItemPriorityEnum priority)
+        {
+            if (WorkItem == null)
+                return;
+
+            WorkItemUpdateResponse response = null;
+
+            Platform.GetService<IWorkItemService>(s => response = s.Update(new WorkItemUpdateRequest
+            {
+                Priority = priority,
+                Identifier = WorkItem.Identifier,
+                ScheduledTime = priority == WorkItemPriorityEnum.Stat ? Platform.Time : default(DateTime?)
+            }));
+            WorkItem = response.Item;
+        }
+
+
         public void Delete()
         {
             if (WorkItem == null)
