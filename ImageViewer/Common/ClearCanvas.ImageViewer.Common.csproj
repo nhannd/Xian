@@ -88,7 +88,6 @@
     <Compile Include="DataContracts.cs" />
     <Compile Include="DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Diagnostics.cs" />
-    <Compile Include="DicomFilePublisher.cs" />
     <Compile Include="ConfigureLocalServerApplication.cs" />
     <Compile Include="DicomServer\DataContracts.cs" />
     <Compile Include="DicomServer\DicomServer.cs" />

@@ -430,7 +430,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
-
     /// <summary>
     /// DICOM Retrieve Request
     /// </summary>

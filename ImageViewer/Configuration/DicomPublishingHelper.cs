@@ -18,6 +18,7 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
 using System.Linq;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Dicom.Core;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {

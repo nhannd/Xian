@@ -129,6 +129,10 @@
       <Project>{89DF567B-A0D1-456A-A28F-043FD57D7F9A}</Project>
       <Name>ClearCanvas.ImageViewer.Configuration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ImageViewer\Dicom\Core\ClearCanvas.ImageViewer.Dicom.Core.csproj">
+      <Project>{0F0F30A1-189F-4F5F-BF59-A50D2004EFF4}</Project>
+      <Name>ClearCanvas.ImageViewer.Dicom.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ImageViewer\Explorer\Dicom\ClearCanvas.ImageViewer.Explorer.Dicom.csproj">
       <Project>{14111EC7-C62E-4483-8573-7C04986D048F}</Project>
       <Name>ClearCanvas.ImageViewer.Explorer.Dicom</Name>
