@@ -317,9 +317,42 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             ActivityType = ActivityTypeEnum.AutoRoute;
         }
 
+        [DataMember(IsRequired = false)]
+        public int? TimeWindowStart { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public int? TimeWindowEnd { get; set; }
+
         public override string ActivityDescription
         {
             get { return string.Format(SR.DicomAutoRouteRequest_ActivityDescription, Destination, Patient.PatientsName); }
+        }
+
+        public DateTime GetScheduledTime(DateTime currentTime, int postponeSeconds)
+        {
+            if (!TimeWindowStart.HasValue || !TimeWindowEnd.HasValue)
+                return currentTime;
+
+            if (TimeWindowStart.Value > TimeWindowEnd.Value)
+            {
+                if (currentTime.Hour >= TimeWindowStart.Value
+                    || currentTime.Hour < TimeWindowEnd.Value)
+                {
+                    return currentTime.AddSeconds(postponeSeconds);
+                }
+
+                return currentTime.Date.AddHours(TimeWindowStart.Value);
+            }
+
+            if (currentTime.Hour >= TimeWindowStart.Value
+                && currentTime.Hour < TimeWindowEnd.Value)
+            {
+                return currentTime.AddSeconds(postponeSeconds);
+            }
+
+            return currentTime.Hour < TimeWindowStart.Value
+                       ? currentTime.Date.AddHours(TimeWindowStart.Value)
+                       : currentTime.Date.Date.AddDays(1d).AddHours(TimeWindowStart.Value);
         }
     }
 

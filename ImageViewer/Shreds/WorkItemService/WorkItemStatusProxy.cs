@@ -70,10 +70,32 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         }
 
         /// <summary>
-        /// Simple routine for failing a <see cref="WorkItem"/>.
+        /// Simple routine for failing a <see cref="WorkItem"/> and save a reason.
+        /// </summary>
+        /// <param name="reason">A non-localized reason for the failure.</param>
+        /// <param name="failureType">The type of failure.</param>
+        /// <param name="scheduledTime">The time to reschedule the WorkItem if it isn't a fatal error. </param>
+        public void Fail(string reason, WorkItemFailureType failureType, DateTime scheduledTime)
+        {
+            Progress.StatusDetails = reason;
+            Fail(failureType, scheduledTime);
+        }
+
+        /// <summary>
+        /// SImple routine for failing a <see cref="WorkItem"/>
         /// </summary>
         /// <param name="failureType"></param>
         public void Fail(WorkItemFailureType failureType)
+        {
+            Fail(failureType, Platform.Time.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds));
+        }
+
+        /// <summary>
+        /// Simple routine for failing a <see cref="WorkItem"/> and rescheduling it at a specified time.
+        /// </summary>
+        /// <param name="failureType"></param>
+        /// <param name="scheduledTime">The time to reschedule the WorkItem if it isn't a fatal error. </param>
+        public void Fail(WorkItemFailureType failureType, DateTime scheduledTime)
         {
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
@@ -94,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 }
                 else
                 {
-                    Item.ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+                    Item.ScheduledTime = scheduledTime;
                     if (Item.ExpirationTime < Item.ScheduledTime)
                         Item.ExpirationTime = Item.ScheduledTime;
                     Item.Status = WorkItemStatusEnum.Pending;
@@ -110,25 +132,36 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// <summary>
         /// Postpone a <see cref="WorkItem"/>
         /// </summary>
-        public void Postpone()
+        /// <param name="scheduledTime">The time to postpone the entry to.</param>
+        public void Postpone(DateTime scheduledTime)
         {
             DateTime now = Platform.Time;
-            DateTime newScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+          
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var workItemBroker = context.GetWorkItemBroker();
 
                 Item = workItemBroker.GetWorkItem(Item.Oid);
                 Item.Progress = Progress;
-                Item.ScheduledTime = newScheduledTime;
-                if (Item.ScheduledTime > Item.ExpirationTime && Item.ExpirationTime > now)
-                    Item.ScheduledTime = Item.ExpirationTime;
+                Item.ScheduledTime = scheduledTime;
+                if (Item.ScheduledTime > Item.ExpirationTime)
+                    Item.ExpirationTime = Item.ScheduledTime;
                 Item.Status = WorkItemStatusEnum.Pending;
                 context.Commit();
             }
 
             Publish();
             Platform.Log(LogLevel, "Postponing {0} WorkItem for OID {1} until {2}, expires {3}", Item.Type, Item.Oid, Item.ScheduledTime.ToLongTimeString(), Item.ExpirationTime.ToLongTimeString());
+        }
+
+        /// <summary>
+        /// Postpone a <see cref="WorkItem"/>
+        /// </summary>
+        public void Postpone()
+        {
+            DateTime now = Platform.Time;
+            DateTime newScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+            Postpone(newScheduledTime);
         }
 
         /// <summary>

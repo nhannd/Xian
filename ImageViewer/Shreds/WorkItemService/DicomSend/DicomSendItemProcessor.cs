@@ -121,6 +121,18 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
 
             }
 
+            if (AutoRoute != null)
+            {
+                DateTime now = Platform.Time;
+                DateTime scheduledTime = AutoRoute.GetScheduledTime(now, 0);
+                if (now != scheduledTime)
+                {
+                    Platform.Log(LogLevel.Info, "Rescheduling AutoRoute WorkItem {0} back into the scheduled time window: {1}", Proxy.Item.Oid, scheduledTime);
+                    Proxy.Postpone(scheduledTime);
+                    return;
+                }
+            }
+
             _scu = new ImageViewerStorageScu(configuration.AETitle, remoteAE);
             
             LoadImagesToSend();
@@ -154,7 +166,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             } 
             else if (_scu.Failed || _scu.FailureSubOperations > 0)
             {
-                Proxy.Fail(_scu.FailureDescription,WorkItemFailureType.NonFatal);
+                if (AutoRoute != null)
+                {
+                    Proxy.Fail(_scu.FailureDescription, WorkItemFailureType.NonFatal, AutoRoute.GetScheduledTime(Platform.Time, (int)WorkItemServiceSettings.Instance.PostponeSeconds));
+                }
+                else
+                    Proxy.Fail(_scu.FailureDescription,WorkItemFailureType.NonFatal);
             }
             else
             {

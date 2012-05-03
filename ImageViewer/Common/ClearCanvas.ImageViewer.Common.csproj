@@ -149,6 +149,7 @@
     <Compile Include="StudyManagement\Tests\StudyStoreTests.cs" />
     <Compile Include="Tests\DiskspaceTests.cs" />
     <Compile Include="WorkItem\EnumExtensions.cs" />
+    <Compile Include="WorkItem\Tests\AutoRouteScheduledTimeTests.cs" />
     <Compile Include="WorkItem\Tests\TestActivityMonitor.cs" />
     <Compile Include="WorkItem\Tests\TestServiceProvider.cs" />
     <Compile Include="WorkItem\Tests\TestUISynchronizationContext.cs" />
