@@ -234,17 +234,20 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 	public abstract class ConfigurationElementCollection<T> : IList<T>
 	{
-		private List<T> _items;
+		private readonly List<T> _items = new List<T>();
 
 		protected T[] Items
 		{
-			get { return _items != null ? _items.ToArray() : null; }
-			set { _items = value != null ? new List<T>(value) : null; }
+			get { return _items.ToArray(); }
+			set
+			{
+				_items.Clear();
+				if (value != null) _items.AddRange(value);
+			}
 		}
 
 		public override string ToString()
 		{
-			if (_items == null) return @"{}";
 			return '{' + string.Join(@", ", _items.Select(i => i.ToString()).ToArray()) + '}';
 		}
 
@@ -308,9 +311,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			if (_items == null) yield break;
-			foreach (var item in _items)
-				yield return item;
+			return _items.GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
