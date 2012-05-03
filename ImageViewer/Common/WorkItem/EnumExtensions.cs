@@ -72,7 +72,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 					return SR.WorkItemPriorityEnumNormal;
 				case WorkItemPriorityEnum.Stat:
 					return SR.WorkItemPriorityEnumStat;
-			}
+                case WorkItemPriorityEnum.High:
+                    return SR.WorkItemPriorityEnumHigh;
+            }
 			throw new NotImplementedException();
 		}
 

@@ -28,13 +28,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         /// </summary>
         /// <param name="n"></param>
         /// <returns></returns>
-        public List<WorkItem> GetStatPendingWorkItems(int n)
+        public List<WorkItem> GetPendingWorkItemsByPriority(int n, WorkItemPriorityEnum priority)
         {
             return (from w in this.Context.WorkItems
                     where (w.Status == WorkItemStatusEnum.Pending
                            || w.Status == WorkItemStatusEnum.Idle)
                           && w.ScheduledTime < DateTime.Now
-                          && w.Priority == WorkItemPriorityEnum.Stat
+                          && w.Priority == priority
                     orderby w.ScheduledTime ascending
                     select w).Take(n).ToList();
         }

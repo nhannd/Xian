@@ -306,4 +306,7 @@
   <data name="DicomRetreiveSeriesRequest_ActivityDescription" xml:space="preserve">
     <value>Retrieve of Series from {0}</value>
   </data>
+  <data name="WorkItemPriorityEnumHigh" xml:space="preserve">
+    <value>High</value>
+  </data>
 </root>

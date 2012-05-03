@@ -448,6 +448,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to High.
+        /// </summary>
+        internal static string WorkItemPriorityEnumHigh {
+            get {
+                return ResourceManager.GetString("WorkItemPriorityEnumHigh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Normal.
         /// </summary>
         internal static string WorkItemPriorityEnumNormal {

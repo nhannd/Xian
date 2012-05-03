@@ -400,7 +400,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public ImportFilesRequest()
         {
             Type = WorkItemTypeEnum.Import;
-            Priority = WorkItemPriorityEnum.Stat;
+            Priority = WorkItemPriorityEnum.High;
             ActivityType = ActivityTypeEnum.ImportFiles;
         }
 
@@ -496,7 +496,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         protected ProcessStudyRequest()
         {
             Type = WorkItemTypeEnum.ProcessStudy;
-            Priority = WorkItemPriorityEnum.Stat;
+            Priority = WorkItemPriorityEnum.High;
         }
     }
 
@@ -550,7 +550,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public ReindexRequest()
         {
             Type = WorkItemTypeEnum.ReIndex;
-            Priority = WorkItemPriorityEnum.Stat;
+            Priority = WorkItemPriorityEnum.High;
             ActivityType = ActivityTypeEnum.ReIndex;
         }
 
@@ -599,7 +599,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public DeleteStudyRequest()
         {
             Type = WorkItemTypeEnum.DeleteStudy;
-            Priority = WorkItemPriorityEnum.Stat;
+            Priority = WorkItemPriorityEnum.High;
             ActivityType = ActivityTypeEnum.DeleteStudy;
         }
 
@@ -619,7 +619,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public DeleteSeriesRequest()
         {
             Type = WorkItemTypeEnum.DeleteSeries;
-            Priority = WorkItemPriorityEnum.Stat;
+            Priority = WorkItemPriorityEnum.High;
             ActivityType = ActivityTypeEnum.DeleteSeries;
         }
 

@@ -378,7 +378,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 var request = new PublishFilesRequest
                                   {
                                       Destination = remoteAEInfo.Name,
-                                      Priority = WorkItemPriorityEnum.Stat,
+                                      Priority = WorkItemPriorityEnum.High,
                                       DeletionBehaviour = behaviour,
                                       Study = new WorkItemStudy(study),
                                       Patient = new WorkItemPatient(study),
