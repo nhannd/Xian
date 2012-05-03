@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
@@ -127,7 +128,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					_failedWorkItems.Add(item.Identifier);
 
-					var message = string.Format(SR.MessageWorkItemFailed, item.Request.ActivityType.GetDescription());
+					var studyDate = DateParser.Parse(item.Study.StudyDate);
+					var message = string.Format(SR.MessageWorkItemFailed,
+									item.Request.ActivityType.GetDescription(),
+									item.Patient.PatientsName,
+									studyDate.HasValue ? Format.Date(studyDate.Value) : string.Empty,
+									item.Study.AccessionNumber);
 					_window.ShowAlert(AlertLevel.Error, message, SR.LinkOpenActivityMonitor, window => _showActivityMonitor());
 				}
 
@@ -157,7 +163,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 							_failedWorkItems.Add(item.Identifier);
 						}
 
-						var message = string.Format(SR.MessageTotalFailedWorkItems, _failedWorkItems.Count);
+						var message = _failedWorkItems.Count == 1 ? SR.MessageOneFailedWorkItem
+							: string.Format(SR.MessageTotalFailedWorkItems, _failedWorkItems.Count);
 						_window.ShowAlert(AlertLevel.Error, message, SR.LinkOpenActivityMonitor, window => _showActivityMonitor());
 					});
 

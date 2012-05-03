@@ -173,6 +173,9 @@ make room, or increase the maximum usage.</value>
   <data name="MessageMaximumDiskUsageExceeded" xml:space="preserve">
     <value>Maximum disk usage exceeded</value>
   </data>
+  <data name="MessageOneFailedWorkItem" xml:space="preserve">
+    <value>There is 1 failed work item.</value>
+  </data>
   <data name="MessageReindexInProgress" xml:space="preserve">
     <value>A re-index operation is already in progress.</value>
   </data>
@@ -186,7 +189,7 @@ make room, or increase the maximum usage.</value>
     <value>There are {0} failed work items.</value>
   </data>
   <data name="MessageWorkItemFailed" xml:space="preserve">
-    <value>{0} failed.</value>
+    <value>{0} for {1} [{2}, A#:{3}] failed.</value>
   </data>
   <data name="NameCancelWorkItem" xml:space="preserve">
     <value>Cancel</value>

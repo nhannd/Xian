@@ -225,6 +225,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is 1 failed work item..
+        /// </summary>
+        public static string MessageOneFailedWorkItem {
+            get {
+                return ResourceManager.GetString("MessageOneFailedWorkItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A re-index operation is already in progress..
         /// </summary>
         public static string MessageReindexInProgress {
@@ -261,7 +270,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} failed..
+        ///   Looks up a localized string similar to {0} for {1} [{2}, A#:{3}] failed..
         /// </summary>
         public static string MessageWorkItemFailed {
             get {
