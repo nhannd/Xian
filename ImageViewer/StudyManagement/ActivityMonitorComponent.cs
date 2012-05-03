@@ -101,10 +101,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				_data = data;
 			}
 
-		    public WorkItemData Data
-		    {
-                get { return _data; }
-		    }
+			public WorkItemData Data
+			{
+				get { return _data; }
+			}
 
 			public long Id
 			{
@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					var p = _data.Patient;
 					if (p == null)
 						return null;
-                    return string.Format("{0} \u00B7 {1}", new PersonName(p.PatientsName).FormattedName, p.PatientId);
+					return string.Format("{0} \u00B7 {1}", new PersonName(p.PatientsName).FormattedName, p.PatientId);
 				}
 			}
 
@@ -147,10 +147,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get { return _data.Study != null ? _data.Study.StudyDate : null; }
 			}
 
-            public string StudyTime
-            {
-                get { return _data.Study != null ? _data.Study.StudyTime : null; }
-            }
+			public string StudyTime
+			{
+				get { return _data.Study != null ? _data.Study.StudyTime : null; }
+			}
 
 			public string AccessionNumber
 			{
@@ -166,28 +166,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				get
 				{
-                    if (_data.Study == null) return string.Empty;
+					if (_data.Study == null) return string.Empty;
 
-                    // TODO (Marmot) Code taken from DicomImageSetDescriptor.GetName()  Should be consolidated?  TBD
-                    DateTime studyDate;
-                    DateParser.Parse(StudyDate, out studyDate);
-                    DateTime studyTime;
-                    TimeParser.Parse(StudyTime, out studyTime);
+					// TODO (Marmot) Code taken from DicomImageSetDescriptor.GetName()  Should be consolidated?  TBD
+					DateTime studyDate;
+					DateParser.Parse(StudyDate, out studyDate);
+					DateTime studyTime;
+					TimeParser.Parse(StudyTime, out studyTime);
 
-                    string modalitiesInStudy = null;
-                    if (_data.Study != null && _data.Study.ModalitiesInStudy != null)
-                        modalitiesInStudy = StringUtilities.Combine(_data.Study.ModalitiesInStudy, ", ");
+					string modalitiesInStudy = null;
+					if (_data.Study != null && _data.Study.ModalitiesInStudy != null)
+						modalitiesInStudy = StringUtilities.Combine(_data.Study.ModalitiesInStudy, ", ");
 
-                    var nameBuilder = new StringBuilder();
-                    nameBuilder.AppendFormat("{0} {1}", studyDate.ToString(Format.DateFormat),
-                                                        studyTime.ToString(Format.TimeFormat));
+					var nameBuilder = new StringBuilder();
+					nameBuilder.AppendFormat("{0} {1}", studyDate.ToString(Format.DateFormat),
+														studyTime.ToString(Format.TimeFormat));
 
-                    if (!String.IsNullOrEmpty(AccessionNumber))
-                        nameBuilder.AppendFormat(", A#: {0}", AccessionNumber);
+					if (!String.IsNullOrEmpty(AccessionNumber))
+						nameBuilder.AppendFormat(", A#: {0}", AccessionNumber);
 
-                    nameBuilder.AppendFormat(", [{0}] {1}", modalitiesInStudy ?? string.Empty, StudyDescription);
+					nameBuilder.AppendFormat(", [{0}] {1}", modalitiesInStudy ?? string.Empty, StudyDescription);
 
-                    return nameBuilder.ToString();
+					return nameBuilder.ToString();
 				}
 			}
 
@@ -257,7 +257,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			private bool ContainsText(string text, params Func<WorkItem, string>[] fields)
 			{
-			    text = text.ToLower();
+				text = text.ToLower();
 				return fields.Any(f =>
 									{
 										var value = f(this);
@@ -393,30 +393,30 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
-        #region LocalServerWatcher class
+		#region LocalServerWatcher class
 
-        class LocalServerWatcher : IDisposable
+		class LocalServerWatcher : IDisposable
 		{
 			private Diskspace _diskspace;
 			private readonly Timer _refreshTimer;
 
-		    private DicomServerConfiguration _dicomServerConfiguration;
-		    private StorageConfiguration _storageConfiguration;
+			private DicomServerConfiguration _dicomServerConfiguration;
+			private StorageConfiguration _storageConfiguration;
 
-            private readonly System.Action _dicomServerConfigurationChanged;
-		    private readonly System.Action _studyStorageConfigurationChanged;
-            private readonly System.Action _diskSpaceUsageChanged;
+			private readonly System.Action _dicomServerConfigurationChanged;
+			private readonly System.Action _studyStorageConfigurationChanged;
+			private readonly System.Action _diskSpaceUsageChanged;
 
-            public LocalServerWatcher(System.Action dicomServerConfigurationChanged, System.Action studyStorageConfigurationChanged, System.Action diskSpaceUsageChanged)
+			public LocalServerWatcher(System.Action dicomServerConfigurationChanged, System.Action studyStorageConfigurationChanged, System.Action diskSpaceUsageChanged)
 			{
 				_refreshTimer = new Timer(OnTimerElapsed, null, TimeSpan.FromSeconds(20));
 
-                _dicomServerConfigurationChanged = dicomServerConfigurationChanged;
-                _studyStorageConfigurationChanged = studyStorageConfigurationChanged;
-                _diskSpaceUsageChanged = diskSpaceUsageChanged;
+				_dicomServerConfigurationChanged = dicomServerConfigurationChanged;
+				_studyStorageConfigurationChanged = studyStorageConfigurationChanged;
+				_diskSpaceUsageChanged = diskSpaceUsageChanged;
 			}
 
-		    public void Start()
+			public void Start()
 			{
 				_refreshTimer.Start();
 			}
@@ -426,75 +426,75 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				_refreshTimer.Dispose();
 			}
 
-            private DicomServerConfiguration DicomServerConfiguration
-            {
-                get { return _dicomServerConfiguration ?? (_dicomServerConfiguration = DicomServer.GetConfiguration()); }
-                set
-                {
-                    if (Equals(value, _dicomServerConfiguration))
-                        return;
+			private DicomServerConfiguration DicomServerConfiguration
+			{
+				get { return _dicomServerConfiguration ?? (_dicomServerConfiguration = DicomServer.GetConfiguration()); }
+				set
+				{
+					if (Equals(value, _dicomServerConfiguration))
+						return;
 
-                    _dicomServerConfiguration = value;
-                    _dicomServerConfigurationChanged();
-                }
-            }
+					_dicomServerConfiguration = value;
+					_dicomServerConfigurationChanged();
+				}
+			}
 
-            private StorageConfiguration StorageConfiguration
-            {
-                get { return _storageConfiguration ?? (_storageConfiguration = StudyStore.GetConfiguration()); }
-                set
-                {
-                    if (Equals(value, _storageConfiguration))
-                        return;
+			private StorageConfiguration StorageConfiguration
+			{
+				get { return _storageConfiguration ?? (_storageConfiguration = StudyStore.GetConfiguration()); }
+				set
+				{
+					if (Equals(value, _storageConfiguration))
+						return;
 
-                    _storageConfiguration = value;
-                    _studyStorageConfigurationChanged();
-                }
-            }
-            
-		    public string AETitle
-		    {
-                get { return DicomServerConfiguration.AETitle; }
-		    }
+					_storageConfiguration = value;
+					_studyStorageConfigurationChanged();
+				}
+			}
 
-            public string HostName
-            {
-                get { return DicomServerConfiguration.HostName; }
-            }
+			public string AETitle
+			{
+				get { return DicomServerConfiguration.AETitle; }
+			}
 
-            public int Port
-            {
-                get { return DicomServerConfiguration.Port; }
-            }
+			public string HostName
+			{
+				get { return DicomServerConfiguration.HostName; }
+			}
 
-            public string FileStoreDirectory
-            {
-                get { return StorageConfiguration.FileStoreDirectory; }
-            }
-            
-            public Diskspace Diskspace
+			public int Port
+			{
+				get { return DicomServerConfiguration.Port; }
+			}
+
+			public string FileStoreDirectory
+			{
+				get { return StorageConfiguration.FileStoreDirectory; }
+			}
+
+			public Diskspace Diskspace
 			{
 				get
 				{
 					if (_diskspace == null)
 						_diskspace = new Diskspace(StorageConfiguration.FileStoreDriveName);
 
-                    return _diskspace;
+					return _diskspace;
 				}
 			}
 
-            public bool IsMaximumDiskspaceUsageExceeded
-            {
-                get { return StorageConfiguration.IsMaximumUsedSpaceExceeded; }
-            }
-
-            private void OnTimerElapsed(object state)
+			public bool IsMaximumDiskspaceUsageExceeded
 			{
-			    StorageConfiguration = StudyStore.GetConfiguration();
-                DicomServerConfiguration = DicomServer.GetConfiguration();
-				
-                _diskspace = null;	// invalidate disk usage
-			    _diskSpaceUsageChanged();
+				get { return StorageConfiguration.IsMaximumUsedSpaceExceeded; }
+			}
+
+			private void OnTimerElapsed(object state)
+			{
+				StorageConfiguration = StudyStore.GetConfiguration();
+				DicomServerConfiguration = DicomServer.GetConfiguration();
+
+				_diskspace = null;	// invalidate disk usage
+				_diskSpaceUsageChanged();
 			}
 		}
 
@@ -504,115 +504,129 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		class WorkItemActionModel : SimpleActionModel
 		{
-		    private const string _deleteKey = "delete";
-            private const string _cancelKey = "cancel";
-            private const string _restartKey = "restart";
+			private readonly ActivityMonitorComponent _owner;
+			private readonly IItemCollection<WorkItem> _workItems;
+			private IList<long> _selectedWorkItemIDs;
 
-		    private readonly IItemCollection<WorkItem> _workItems;
-            private IList<long> _selectedWorkItemIDs;
-
-            public WorkItemActionModel(IItemCollection<WorkItem> workItems)
+			public WorkItemActionModel(IItemCollection<WorkItem> workItems, ActivityMonitorComponent owner)
 				: base(new ApplicationThemeResourceResolver(typeof(ActivityMonitorComponent).Assembly, new ApplicationThemeResourceResolver(typeof(CrudActionModel).Assembly)))
 			{
-                AddAction(_cancelKey, SR.NameCancelWorkItem, "CancelToolSmall.png", SR.TooltipCancelWorkItem, CancelSelectedWorkItems);
-                AddAction(_restartKey, SR.NameRestartWorkItem, "RestartToolSmall.png", SR.TooltipRestartWorkItem, RestartSelectedWorkItems);
-                AddAction(_deleteKey, SR.NameDeleteWorkItem, "DeleteToolSmall.png", SR.TooltipDeleteWorkItem, DeleteSelectedWorkItems);
+				_workItems = workItems;
+				_owner = owner;
+				this.CancelAction = AddAction("cancel", SR.NameCancelWorkItem, "CancelToolSmall.png", SR.TooltipCancelWorkItem, CancelSelectedWorkItems);
+				this.RestartAction = AddAction("restart", SR.NameRestartWorkItem, "RestartToolSmall.png", SR.TooltipRestartWorkItem, RestartSelectedWorkItems);
+				this.DeleteAction = AddAction("delete", SR.NameDeleteWorkItem, "DeleteToolSmall.png", SR.TooltipDeleteWorkItem, DeleteSelectedWorkItems);
+			}
 
-                _workItems = workItems;
-            }
+			public IList<long> SelectedWorkItemIDs
+			{
+				get { return _selectedWorkItemIDs ?? (_selectedWorkItemIDs = new List<long>()); }
+				set
+				{
+					_selectedWorkItemIDs = value;
+					UpdateActionEnablement();
+				}
+			}
 
-            public IList<long> SelectedWorkItemIDs
-            {
-                get { return _selectedWorkItemIDs ?? (_selectedWorkItemIDs = new List<long>()); }
-                set
-                {
-                    _selectedWorkItemIDs = value;
-                    UpdateActionEnablement();
-                }
-            }
+			private IEnumerable<WorkItem> SelectedWorkItems
+			{
+				get { return _workItems.Where(w => SelectedWorkItemIDs.Contains(w.Id)); }
+			}
 
-		    private IEnumerable<WorkItem> SelectedWorkItems
-		    {
-                get { return _workItems.Where(w => SelectedWorkItemIDs.Contains(w.Id)); }
-		    }
+			public void OnWorkItemsChanged(IEnumerable<WorkItem> items)
+			{
+				if (items.Any(item => SelectedWorkItemIDs.Contains(item.Id)))
+					UpdateActionEnablement();
+			}
 
-		    private Action DeleteAction { get { return this[_deleteKey]; } }
-            private Action CancelAction { get { return this[_cancelKey]; } }
-            private Action RestartAction { get { return this[_restartKey]; } }
+			private void UpdateActionEnablement()
+			{
+				DeleteAction.Enabled = SelectedWorkItems.All(IsDeletable);
+				CancelAction.Enabled = SelectedWorkItems.All(IsCancelable);
+				RestartAction.Enabled = SelectedWorkItems.All(IsRestartable);
+			}
 
-            public void OnWorkItemsChanged(IEnumerable<WorkItem> items)
-            {
-                if (items.Any(item => SelectedWorkItemIDs.Contains(item.Id)))
-                    UpdateActionEnablement();
-            }
+			private bool IsDeletable(WorkItem w)
+			{
+				return w.Status == WorkItemStatusEnum.Complete
+					   || w.Status == WorkItemStatusEnum.Failed
+					   || w.Status == WorkItemStatusEnum.Canceled;
+			}
+			private bool IsCancelable(WorkItem w)
+			{
+				return w.Status == WorkItemStatusEnum.InProgress
+						 || w.Status == WorkItemStatusEnum.Idle
+						 || w.Status == WorkItemStatusEnum.Pending;
+			}
+			private bool IsRestartable(WorkItem w)
+			{
+				return w.Status == WorkItemStatusEnum.Canceled
+						 || w.Status == WorkItemStatusEnum.Failed;
+			}
 
-            private void UpdateActionEnablement()
-            {
-		        DeleteAction.Enabled = SelectedWorkItems.All(
-                    w => w.Status == WorkItemStatusEnum.Complete
-                         || w.Status == WorkItemStatusEnum.Failed
-                         || w.Status == WorkItemStatusEnum.Canceled);
+			private void RestartSelectedWorkItems()
+			{
+				try
+				{
+					var client = new WorkItemClient();
+					foreach (var workItem in SelectedWorkItems)
+					{
+						client.WorkItem = workItem.Data;
+						client.Reset();
+					}
+				}
+				catch (Exception e)
+				{
+					ExceptionHandler.Report(e, _owner.Host.DesktopWindow);
+				}
+			}
 
-                CancelAction.Enabled = SelectedWorkItems.All(
-                    w => w.Status == WorkItemStatusEnum.InProgress
-                         || w.Status == WorkItemStatusEnum.Idle
-                         || w.Status == WorkItemStatusEnum.Pending);
+			private void CancelSelectedWorkItems()
+			{
+				var items = this.SelectedWorkItems.ToList();
+				if(items.Any(item => item.ActivityType.CancellationCanResultInPartialStudy()))
+				{
+					var action = _owner.Host.ShowMessageBox(SR.MessageConfirmCancelWorkItems, MessageBoxActions.YesNo);
+					if (action == DialogBoxAction.No)
+						return;
+				}
 
-                RestartAction.Enabled = SelectedWorkItems.All(
-                    w => w.Status == WorkItemStatusEnum.Canceled
-                         || w.Status == WorkItemStatusEnum.Failed);
-            }
+				try
+				{
+					var client = new WorkItemClient();
+					foreach (var workItem in items)
+					{
+						client.WorkItem = workItem.Data;
+						client.Cancel();
+					}
+				}
+				catch (Exception e)
+				{
+					ExceptionHandler.Report(e, _owner.Host.DesktopWindow);
+				}
+			}
 
-		    private void RestartSelectedWorkItems()
-		    {
-                try
-                {
-                    var client = new WorkItemClient();
-                    foreach (var workItem in SelectedWorkItems)
-                    {
-                        client.WorkItem = workItem.Data;
-                        client.Reset();
-                    }
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
-                }
-		    }
+			private void DeleteSelectedWorkItems()
+			{
+				try
+				{
+					var client = new WorkItemClient();
+					foreach (var workItem in SelectedWorkItems)
+					{
+						client.WorkItem = workItem.Data;
+						client.Delete();
+					}
+				}
+				catch (Exception e)
+				{
+					ExceptionHandler.Report(e, _owner.Host.DesktopWindow);
+				}
+			}
 
-            private void CancelSelectedWorkItems()
-            {
-                try
-                {
-                    var client = new WorkItemClient();
-                    foreach (var workItem in SelectedWorkItems)
-                    {
-                        client.WorkItem = workItem.Data;
-                        client.Cancel();
-                    }
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
-                }
-            }
+			private Action DeleteAction { get; set; }
+			private Action CancelAction { get; set; }
+			private Action RestartAction { get; set; }
 
-		    private void DeleteSelectedWorkItems()
-            {
-                try
-                {
-                    var client = new WorkItemClient();
-                    foreach (var workItem in SelectedWorkItems)
-                    {
-                        client.WorkItem = workItem.Data;
-                        client.Delete();
-                    }
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
-                }
-            }
 		}
 
 		#endregion
@@ -633,7 +647,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private ConnectionState _connectionState;
 		private StatusFilterValue? _statusFilter;
-        private ActivityTypeEnum? _activityFilter;
+		private ActivityTypeEnum? _activityFilter;
 
 		private string _textFilter;
 		private readonly Timer _textFilterTimer;
@@ -643,14 +657,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private readonly IActivityMonitorQuickLinkHandler[] _linkHandlers;
 
-	    public ActivityMonitorComponent()
+		public ActivityMonitorComponent()
 		{
 			_connectionState = new DisconnectedState(this);
 			_textFilterTimer = new Timer(OnTextFilterTimerElapsed, null, 1000);
 			_localServerWatcher = new LocalServerWatcher(OnDicomServerConfigurationChanged, OnStorageConfigurationChanged, OnDiskspaceChanged);
 			_studyCountWatcher = new StudyCountWatcher(OnStudyCountChanged);
 			_workItemManager = new WorkItemUpdateManager(_workItems.Items, Include);
-            _workItemActionModel = new WorkItemActionModel(_workItems.Items);
+			_workItemActionModel = new WorkItemActionModel(_workItems.Items, this);
 			_linkHandlers = (new ActivityMonitorQuickLinkHandlerExtensionPoint()).CreateExtensions().Cast<IActivityMonitorQuickLinkHandler>().ToArray();
 		}
 
@@ -658,15 +672,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			base.Start();
 
-            _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPatient, w => w.PatientInfo));
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPatient, w => w.PatientInfo));
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStudy, w => w.StudyInfo));
-            _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnActivityDescription, w => w.ActivityDescription) { WidthFactor = .8f });
-            _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatus, w => w.Status.GetDescription()) { WidthFactor = .4f });
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnActivityDescription, w => w.ActivityDescription) { WidthFactor = .8f });
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatus, w => w.Status.GetDescription()) { WidthFactor = .4f });
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatusDescription, w => w.ProgressStatus));
-            _workItems.Columns.Add(new DateTimeTableColumn<WorkItem>(SR.ColumnScheduledTime, w => w.ScheduledTime) { WidthFactor = .6f });
-            _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPriority, w => w.Priority.GetDescription()) { WidthFactor = .3f });
-			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>(SR.ColumnProgress, w => w.ProgressIcon)
-			                     	{WidthFactor = .5f, Comparison = (x, y) => x.ProgressValue.CompareTo(y.ProgressValue)});
+			_workItems.Columns.Add(new DateTimeTableColumn<WorkItem>(SR.ColumnScheduledTime, w => w.ScheduledTime) { WidthFactor = .6f });
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPriority, w => w.Priority.GetDescription()) { WidthFactor = .3f });
+			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>(SR.ColumnProgress, w => w.ProgressIcon) { WidthFactor = .5f, Comparison = (x, y) => x.ProgressValue.CompareTo(y.ProgressValue) });
 
 			this.ActivityMonitor = WorkItemActivityMonitor.Create(true);
 			_connectionState = _connectionState.Update();
@@ -676,7 +689,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_localServerWatcher.Start();
 		}
 
-	    public override void Stop()
+		public override void Stop()
 		{
 			ActivityMonitor.WorkItemsChanged -= WorkItemsChanged;
 			ActivityMonitor.IsConnectedChanged -= ActivityMonitorIsConnectedChanged;
@@ -704,67 +717,67 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public string HostName
 		{
-            get { return _localServerWatcher.HostName; }
+			get { return _localServerWatcher.HostName; }
 		}
 
 		public int Port
 		{
-            get { return _localServerWatcher.Port; }
+			get { return _localServerWatcher.Port; }
 		}
 
 		public string FileStore
 		{
-            get { return _localServerWatcher.FileStoreDirectory; }
+			get { return _localServerWatcher.FileStoreDirectory; }
 		}
 
-        public string DiskspaceUsed
-        {
-            get
-            {
-                var ds = _localServerWatcher.Diskspace;
-                return string.Format(SR.DiskspaceTemplate,
-                                        Diskspace.FormatBytes(ds.UsedSpace),
-                                        Diskspace.FormatBytes(ds.TotalSpace),
-                                        ds.UsedSpacePercent.ToString("F1"));
-                                }
-        }
-        
-        public int DiskspaceUsedPercent
+		public string DiskspaceUsed
+		{
+			get
+			{
+				var ds = _localServerWatcher.Diskspace;
+				return string.Format(SR.DiskspaceTemplate,
+										Diskspace.FormatBytes(ds.UsedSpace),
+										Diskspace.FormatBytes(ds.TotalSpace),
+										ds.UsedSpacePercent.ToString("F1"));
+			}
+		}
+
+		public int DiskspaceUsedPercent
 		{
 			get { return (int)Math.Round(_localServerWatcher.Diskspace.UsedSpacePercent); }
 		}
 
-	    public bool IsMaximumDiskspaceUsageExceeded
-	    {
-            get { return _localServerWatcher.IsMaximumDiskspaceUsageExceeded; }
-	    }
+		public bool IsMaximumDiskspaceUsageExceeded
+		{
+			get { return _localServerWatcher.IsMaximumDiskspaceUsageExceeded; }
+		}
 
-        public string DiskSpaceWarningMessage
-        {
-            get
-            {
-                if (!IsMaximumDiskspaceUsageExceeded)
-                    return String.Empty;
-                
-                return SR.MessageMaximumDiskUsageExceeded;
-            }
-        }
+		public string DiskSpaceWarningMessage
+		{
+			get
+			{
+				if (!IsMaximumDiskspaceUsageExceeded)
+					return String.Empty;
 
-        public string DiskSpaceWarningDescription
-        {
-            get
-            {
-                if (!IsMaximumDiskspaceUsageExceeded)
-                    return String.Empty;
+				return SR.MessageMaximumDiskUsageExceeded;
+			}
+		}
 
-                return SR.DescriptionMaximumDiskUsageExceeded;
-            }
-        }
+		public string DiskSpaceWarningDescription
+		{
+			get
+			{
+				if (!IsMaximumDiskspaceUsageExceeded)
+					return String.Empty;
 
-	    public int TotalStudies
-	    {
-            get { return _studyCountWatcher.StudyCount; }
-	    }
+				return SR.DescriptionMaximumDiskUsageExceeded;
+			}
+		}
+
+		public int TotalStudies
+		{
+			get { return _studyCountWatcher.StudyCount; }
+		}
 
 		public int Failures
 		{
@@ -781,6 +794,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _workItems; }
 		}
 
+		public void SetWorkItemSelection(ISelection selection)
+		{
+			_workItemActionModel.SelectedWorkItemIDs = selection.Items.Cast<WorkItem>().Select(w => w.Id).ToList();
+		}
+
 		public IList StatusFilterChoices
 		{
 			get { return new[] { NoFilter }.Concat(Enum.GetValues(typeof(StatusFilterValue)).Cast<object>().OrderBy<object, string>(FormatStatusFilter)).ToList(); }
@@ -788,7 +806,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public string FormatStatusFilter(object value)
 		{
-			if(value == NoFilter)
+			if (value == NoFilter)
 				return SR.NoFilterItem;
 			switch ((StatusFilterValue)value)
 			{
@@ -835,7 +853,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _activityFilter.HasValue ? _activityFilter.Value : NoFilter; }
 			set
 			{
-                var v = (value == NoFilter) ? (ActivityTypeEnum?)null : (ActivityTypeEnum)value;
+				var v = (value == NoFilter) ? (ActivityTypeEnum?)null : (ActivityTypeEnum)value;
 				if (_activityFilter != v)
 				{
 					_activityFilter = v;
@@ -863,15 +881,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-        public void SetSelection(ISelection selection)
-        {
-            SelectedWorkItemIDs = _workItemActionModel.SelectedWorkItemIDs = selection.Items.Cast<WorkItem>().Select(w => w.Id).ToList();
-        }
-
-        public void StartReindex()
-        {
-            ReindexTool.StartReindex(Host.DesktopWindow);
-        }
+		public void StartReindex()
+		{
+			ReindexTool.StartReindex(Host.DesktopWindow);
+		}
 
 		public void OpenFileStore()
 		{
@@ -895,13 +908,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			HandleLink(ActivityMonitorQuickLink.StudyManagementRules);
 		}
 
-	    #endregion
+		#endregion
 
-        private IList<long> SelectedWorkItemIDs { get; set; }
-        
-        private IWorkItemActivityMonitor ActivityMonitor { get; set; }
+		private IWorkItemActivityMonitor ActivityMonitor { get; set; }
 
-	    private static IconSet GetProgressIcon(WorkItemProgress progress, WorkItemStatusEnum status)
+		private static IconSet GetProgressIcon(WorkItemProgress progress, WorkItemStatusEnum status)
 		{
 			if (progress == null)
 				return null;
@@ -922,9 +933,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				case WorkItemStatusEnum.Pending:
 				case WorkItemStatusEnum.Idle:
-                    return ProgressBarState.Paused;
+					return ProgressBarState.Paused;
 
-                case WorkItemStatusEnum.Failed:
+				case WorkItemStatusEnum.Failed:
 					return ProgressBarState.Error;
 			}
 			throw new NotImplementedException();
@@ -952,9 +963,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			NotifyPropertyChanged("Failures");
 		}
 
-	    private void RefreshInternal()
-	    {
-	    	_workItemManager.Clear();
+		private void RefreshInternal()
+		{
+			_workItemManager.Clear();
 
 			try
 			{
@@ -969,7 +980,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private bool Include(WorkItem item)
 		{
-            if (_activityFilter.HasValue && item.ActivityType != _activityFilter.Value)
+			if (_activityFilter.HasValue && item.ActivityType != _activityFilter.Value)
 				return false;
 
 			if (_statusFilter.HasValue && WorkItemStatuses(_statusFilter.Value).All(s => s != item.Status))
@@ -992,40 +1003,40 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			NotifyPropertyChanged("TotalStudies");
 		}
 
-        private void OnDicomServerConfigurationChanged()
-        {
-            NotifyPropertyChanged("AeTitle");
-            NotifyPropertyChanged("HostName");
-            NotifyPropertyChanged("Port");
-        }
+		private void OnDicomServerConfigurationChanged()
+		{
+			NotifyPropertyChanged("AeTitle");
+			NotifyPropertyChanged("HostName");
+			NotifyPropertyChanged("Port");
+		}
 
-        private void OnStorageConfigurationChanged()
-        {
-            NotifyPropertyChanged("FileStore");
+		private void OnStorageConfigurationChanged()
+		{
+			NotifyPropertyChanged("FileStore");
 
-            // if FileStore path changed, diskspace may have changed too
-            NotifyPropertyChanged("DiskspaceUsedPercent");
-            NotifyPropertyChanged("DiskspaceUsed");
-            NotifyPropertyChanged("IsMaximumDiskspaceUsageExceeded");
-            NotifyPropertyChanged("DiskSpaceWarningLabel");
-            NotifyPropertyChanged("DiskSpaceWarningMessage");
-        }
+			// if FileStore path changed, diskspace may have changed too
+			NotifyPropertyChanged("DiskspaceUsedPercent");
+			NotifyPropertyChanged("DiskspaceUsed");
+			NotifyPropertyChanged("IsMaximumDiskspaceUsageExceeded");
+			NotifyPropertyChanged("DiskSpaceWarningLabel");
+			NotifyPropertyChanged("DiskSpaceWarningMessage");
+		}
 
 		private void OnDiskspaceChanged()
 		{
 			NotifyPropertyChanged("DiskspaceUsed");
 			NotifyPropertyChanged("DiskspaceUsedPercent");
-            NotifyPropertyChanged("IsMaximumDiskspaceUsageExceeded");
-            NotifyPropertyChanged("DiskSpaceWarningLabel");
-            NotifyPropertyChanged("DiskSpaceWarningMessage");
-        }
+			NotifyPropertyChanged("IsMaximumDiskspaceUsageExceeded");
+			NotifyPropertyChanged("DiskSpaceWarningLabel");
+			NotifyPropertyChanged("DiskSpaceWarningMessage");
+		}
 
 		private void HandleLink(ActivityMonitorQuickLink link)
 		{
 			try
 			{
 				var handler = _linkHandlers.FirstOrDefault(h => h.CanHandle(link));
-				if(handler != null)
+				if (handler != null)
 				{
 					handler.Handle(link, this.Host.DesktopWindow);
 				}
@@ -1041,7 +1052,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			switch (filterValue)
 			{
 				case StatusFilterValue.Active:
-					return new[]{WorkItemStatusEnum.Pending, WorkItemStatusEnum.InProgress, WorkItemStatusEnum.Idle};
+					return new[] { WorkItemStatusEnum.Pending, WorkItemStatusEnum.InProgress, WorkItemStatusEnum.Idle };
 				case StatusFilterValue.Complete:
 					return new[] { WorkItemStatusEnum.Complete };
 				case StatusFilterValue.Canceled:
@@ -1052,5 +1063,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					throw new ArgumentOutOfRangeException("filterValue");
 			}
 		}
-    }
+	}
 }

@@ -161,6 +161,9 @@ make room, or increase the maximum usage.</value>
   <data name="MenuReindex" xml:space="preserve">
     <value>Re-index File Store</value>
   </data>
+  <data name="MessageConfirmCancelWorkItems" xml:space="preserve">
+    <value>Canceling the selected work item(s) may result in incomplete study data.  Are you sure you want to cancel?</value>
+  </data>
   <data name="MessageFailedToOpenImages" xml:space="preserve">
     <value>Failed to open the selected images.</value>
   </data>

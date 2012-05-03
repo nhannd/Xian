@@ -82,8 +82,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_component.PropertyChanged += _component_PropertyChanged;
 
 			_workItemsTableView.Table = _component.WorkItemTable;
-		    _component.SetSelection(_workItemsTableView.Selection);
-		    _workItemsTableView.SelectionChanged += (s, e) => _component.SetSelection(_workItemsTableView.Selection);
+			_workItemsTableView.MenuModel = _component.WorkItemActions;
+		    _component.SetWorkItemSelection(_workItemsTableView.Selection);
+		    _workItemsTableView.SelectionChanged += (s, e) => _component.SetWorkItemSelection(_workItemsTableView.Selection);
 			UpdateTooltips();
 
 			// only show study rules link if this feature is actually available

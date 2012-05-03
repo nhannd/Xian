@@ -109,5 +109,25 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
             throw new NotImplementedException();
         }
+
+		public static bool CancellationCanResultInPartialStudy(this ActivityTypeEnum value)
+		{
+			switch (value)
+			{
+				case ActivityTypeEnum.DicomReceive:
+				case ActivityTypeEnum.ImportStudy:
+				case ActivityTypeEnum.ImportFiles:
+				case ActivityTypeEnum.DicomRetrieve:
+				case ActivityTypeEnum.DicomSendStudy:
+				case ActivityTypeEnum.DicomSendSeries:
+				case ActivityTypeEnum.DicomSendSop:
+				case ActivityTypeEnum.AutoRoute:
+				case ActivityTypeEnum.PublishFiles:
+					return true;
+
+				default:
+					return false;
+			}
+		}
 	}
 }

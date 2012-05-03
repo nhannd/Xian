@@ -189,6 +189,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Canceling the selected work item(s) may result in incomplete study data.  Are you sure you want to cancel?.
+        /// </summary>
+        public static string MessageConfirmCancelWorkItems {
+            get {
+                return ResourceManager.GetString("MessageConfirmCancelWorkItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to open the selected images..
         /// </summary>
         public static string MessageFailedToOpenImages {

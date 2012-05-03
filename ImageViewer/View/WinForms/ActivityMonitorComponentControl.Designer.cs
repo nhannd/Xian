@@ -35,7 +35,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._overviewPanel = new System.Windows.Forms.Panel();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			this.label2 = new System.Windows.Forms.Label();
-			this._studyRulesLink = new System.Windows.Forms.LinkLabel();
 			this.panel2 = new System.Windows.Forms.Panel();
 			this._aeTitle = new System.Windows.Forms.Label();
 			this._hostName = new System.Windows.Forms.Label();
@@ -50,9 +49,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._diskSpaceWarningIcon = new System.Windows.Forms.PictureBox();
 			this._diskSpaceWarningMessage = new System.Windows.Forms.Label();
 			this._diskSpace = new System.Windows.Forms.Label();
-			this._localServerConfigLink = new System.Windows.Forms.LinkLabel();
 			this._reindexLink = new System.Windows.Forms.LinkLabel();
 			this._openFileStoreLink = new System.Windows.Forms.LinkLabel();
+			this._localServerConfigLink = new System.Windows.Forms.LinkLabel();
+			this._studyRulesLink = new System.Windows.Forms.LinkLabel();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this._workItemToolStrip = new System.Windows.Forms.ToolStrip();
@@ -84,7 +84,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._workItemsTableView.ColumnHeaderTooltip = null;
 			this._workItemsTableView.Location = new System.Drawing.Point(0, 30);
 			this._workItemsTableView.Margin = new System.Windows.Forms.Padding(4);
-			this._workItemsTableView.MultiSelect = false;
 			this._workItemsTableView.Name = "_workItemsTableView";
 			this._workItemsTableView.ReadOnly = false;
 			this._workItemsTableView.ShowToolbar = false;
@@ -149,18 +148,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.label2.Size = new System.Drawing.Size(74, 13);
 			this.label2.TabIndex = 33;
 			this.label2.Text = "Quick Links";
-			// 
-			// _studyRulesLink
-			// 
-			this._studyRulesLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._studyRulesLink.AutoSize = true;
-			this._studyRulesLink.Location = new System.Drawing.Point(492, 104);
-			this._studyRulesLink.Name = "_studyRulesLink";
-			this._studyRulesLink.Size = new System.Drawing.Size(129, 13);
-			this._studyRulesLink.TabIndex = 24;
-			this._studyRulesLink.TabStop = true;
-			this._studyRulesLink.Text = "Study Management Rules";
-			this._studyRulesLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._studyRulesLink_LinkClicked);
 			// 
 			// panel2
 			// 
@@ -320,18 +307,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._diskSpace.Text = "disk space";
 			this._diskSpace.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
-			// _localServerConfigLink
-			// 
-			this._localServerConfigLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._localServerConfigLink.AutoSize = true;
-			this._localServerConfigLink.Location = new System.Drawing.Point(492, 82);
-			this._localServerConfigLink.Name = "_localServerConfigLink";
-			this._localServerConfigLink.Size = new System.Drawing.Size(132, 13);
-			this._localServerConfigLink.TabIndex = 23;
-			this._localServerConfigLink.TabStop = true;
-			this._localServerConfigLink.Text = "Local Server Configuration";
-			this._localServerConfigLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._localServerConfigLink_LinkClicked);
-			// 
 			// _reindexLink
 			// 
 			this._reindexLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -355,6 +330,30 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._openFileStoreLink.TabStop = true;
 			this._openFileStoreLink.Text = "Open file store";
 			this._openFileStoreLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._openFileStoreLink_LinkClicked);
+			// 
+			// _localServerConfigLink
+			// 
+			this._localServerConfigLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._localServerConfigLink.AutoSize = true;
+			this._localServerConfigLink.Location = new System.Drawing.Point(492, 82);
+			this._localServerConfigLink.Name = "_localServerConfigLink";
+			this._localServerConfigLink.Size = new System.Drawing.Size(132, 13);
+			this._localServerConfigLink.TabIndex = 23;
+			this._localServerConfigLink.TabStop = true;
+			this._localServerConfigLink.Text = "Local Server Configuration";
+			this._localServerConfigLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._localServerConfigLink_LinkClicked);
+			// 
+			// _studyRulesLink
+			// 
+			this._studyRulesLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._studyRulesLink.AutoSize = true;
+			this._studyRulesLink.Location = new System.Drawing.Point(492, 104);
+			this._studyRulesLink.Name = "_studyRulesLink";
+			this._studyRulesLink.Size = new System.Drawing.Size(129, 13);
+			this._studyRulesLink.TabIndex = 24;
+			this._studyRulesLink.TabStop = true;
+			this._studyRulesLink.Text = "Study Management Rules";
+			this._studyRulesLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._studyRulesLink_LinkClicked);
 			// 
 			// splitContainer1
 			// 
