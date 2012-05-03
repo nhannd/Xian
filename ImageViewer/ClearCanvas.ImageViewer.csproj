@@ -970,6 +970,9 @@
   <ItemGroup>
     <EmbeddedResource Include="StudyManagement\Icons\CancelToolSmall.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="StudyManagement\Icons\StatToolSmall.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />
   <PropertyGroup>

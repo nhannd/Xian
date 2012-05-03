@@ -644,7 +644,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					foreach (var workItem in SelectedWorkItems)
 					{
 						client.WorkItem = workItem.Data;
-						//client.Delete();
+						client.Reprioritize(WorkItemPriorityEnum.Stat);
 					}
 				}
 				catch (Exception e)
