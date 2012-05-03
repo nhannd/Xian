@@ -11,6 +11,8 @@ namespace ClearCanvas.ImageViewer.Common
     public interface IDicomServiceNode : IServiceNode, IApplicationEntity
     {
         bool IsLocal { get; }
+
+        //object GetData(string key);
     }
 
     public interface IServiceNode
@@ -132,7 +134,7 @@ namespace ClearCanvas.ImageViewer.Common
         {
             Platform.CheckExpectedType(serviceNode, typeof(DicomServiceNode));
             var node = (DicomServiceNode) serviceNode;
-            return new ServerDirectoryEntry(node.Server){Data = node.ExtendedData};
+            return new ServerDirectoryEntry(node.Server){IsPriorsServer = node.IsPriorsServer, Data = node.ExtensionData};
         }
 
         public static bool ResolveServer(this Identifier identifier, bool defaultToLocal)

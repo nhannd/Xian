@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
@@ -12,20 +13,24 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     {
         internal DicomServiceNode(DicomServerConfiguration localConfiguration)
         {
-            Server = new ApplicationEntity(localConfiguration.AETitle, "<local>", "", "")
+            Server = new ApplicationEntity
                        {
+                           Name = "<local>",
+                           AETitle = localConfiguration.AETitle,
                            ScpParameters = new ScpParameters(localConfiguration.HostName, localConfiguration.Port)
                        };
 
             IsLocal = true;
-            ExtendedData = new ServerData {IsPriorsServer = true};
+            IsPriorsServer = true;
+            ExtensionData = new Dictionary<string, object>();
         }
 
         internal DicomServiceNode(ServerDirectoryEntry directoryEntry)
         {
             Platform.CheckForNullReference(directoryEntry, "directoryEntry");
             Server = directoryEntry.Server;
-            ExtendedData = directoryEntry.Data ?? new ServerData();
+            IsPriorsServer = directoryEntry.IsPriorsServer;
+            ExtensionData = directoryEntry.Data;
         }
 
         internal DicomServiceNode(IApplicationEntity applicationEntity)
@@ -33,13 +38,24 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         {
         }
 
-        protected internal ServerData ExtendedData { get; set; }
+        public Dictionary<string, object> ExtensionData { get; private set; }
         //TODO (Marmot): Don't hold on to it, just look it up via the directory?
-        protected internal ApplicationEntity Server { get; private set; }
+        public ApplicationEntity Server { get; private set; }
+
+        public bool IsPriorsServer { get; private set; }
 
         #region Implementation of IDicomServiceNode
 
         public bool IsLocal { get; private set; }
+
+        public object GetData(string key)
+        {
+            if (ExtensionData == null)
+                return null;
+
+            object value;
+            return ExtensionData.TryGetValue(key, out value) ? value : null;
+        }
 
         #endregion
 

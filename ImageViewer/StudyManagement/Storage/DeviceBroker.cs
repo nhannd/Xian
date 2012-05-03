@@ -11,7 +11,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
@@ -35,11 +34,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
             if (isStreaming)
                 server.StreamingParameters = new StreamingParameters(device.StreamingHeaderPort.Value, device.StreamingImagePort.Value);
 
-            ServerData extendedData = null;
-            if (device.ExtendedData != null)
-                extendedData  = JsmlSerializer.Deserialize<ServerData>(device.ExtendedData);
+            Dictionary<string, object> extensionData = null;
+            if (device.ExtensionData != null)
+                extensionData = Serializer.DeserializeServerExtensionData(device.ExtensionData);
 
-            return new ServerDirectoryEntry(server) {Data = extendedData};
+            return new ServerDirectoryEntry(server) {IsPriorsServer = device.IsPriorsServer, Data = extensionData};
         }
 
         public static Device ToDevice(this ServerDirectoryEntry serverDirectoryEntry)
@@ -56,9 +55,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                 streamingImagePort = serverDirectoryEntry.Server.StreamingParameters.WadoServicePort;
             }
 
-            string extendedData = null;
+            string extensionData = null;
             if (serverDirectoryEntry.Data != null)
-                extendedData = JsmlSerializer.Serialize(serverDirectoryEntry.Data, "ExtendedData");
+                extensionData = Serializer.SerializeServerExtensionData(serverDirectoryEntry.Data);
 
             return new Device
                        {
@@ -70,7 +69,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
                            Description = serverDirectoryEntry.Server.Description,
                            StreamingHeaderPort = streamingHeaderPort,
                            StreamingImagePort = streamingImagePort,
-                           ExtendedData = extendedData
+                           IsPriorsServer = serverDirectoryEntry.IsPriorsServer,
+                           ExtensionData = extensionData
                        };
          }
     }

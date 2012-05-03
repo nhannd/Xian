@@ -149,20 +149,6 @@ namespace ClearCanvas.Dicom.ServiceModel
 			AETitle = aeTitle;
 		}
 		
-        public ApplicationEntity(string aeTitle, string name)
-		{
-            Name = name;
-            AETitle = aeTitle;
-		}
-
-        public ApplicationEntity(string aeTitle, string name, string description, string location)
-			: this(aeTitle)
-		{
-			Description = description;
-			Name = name;
-			Location = location;
-		}
-
         public ApplicationEntity(IApplicationEntity other)
         {
             Name = other.Name;

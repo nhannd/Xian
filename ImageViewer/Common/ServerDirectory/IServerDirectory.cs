@@ -19,9 +19,5 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         [OperationContract]
         [FaultContract(typeof(ServerNotFoundFault))]
         DeleteServerResult DeleteServer(DeleteServerRequest request);
-
-        [OperationContract]
-        [FaultContract(typeof(ServerNotFoundFault))]
-        DeleteAllServersResult DeleteAllServers(DeleteAllServersRequest request);
     }
 }

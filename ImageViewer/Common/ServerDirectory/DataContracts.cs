@@ -1,11 +1,10 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom.ServiceModel;
-using System;
 
 namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 {
@@ -32,50 +31,30 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         public string AETitle { get; set; }
     }
 
-    //public class ServerExtensionDataContractAttribute : PolymorphicDataContractAttribute
-    //{
-    //    public ServerExtensionDataContractAttribute(string dataContractGuid)
-    //        : base(dataContractGuid)
-    //    {
-    //    }
-    //}
-
-    //[KnownType("GetExtendedDataTypes")]
-    [DataContract(Namespace = ServerDirectoryNamespace.Value)]
-    public class ServerData : DataContractBase
+    /// <summary>
+    /// In order to store custom information in <see cref="ServerDirectoryEntry.Data"/>,
+    /// decorate your class with both this attribute, as well as the regular <see cref="DataContractAttribute"/>.
+    /// </summary>
+    public class ServerDataContractAttribute : PolymorphicDataContractAttribute
     {
-        //public interface ITypeProvider
-        //{
-        //    IEnumerable<Type> GetTypes();
-        //}
-
-        //public sealed class ExtendedDataTypeProviderExtensionPoint : ExtensionPoint<ITypeProvider> { }
-
-        [DataMember(IsRequired = true)]
-        public bool IsPriorsServer { get; set; }
-
-        //[DataMember(IsRequired = false)]
-        //public IDictionary<object, object> Data { get; set; } 
-
-        //public static Type[] GetExtendedDataTypes()
-        //{
-        //    try
-        //    {
-        //        return new ExtendedDataTypeProviderExtensionPoint().CreateExtensions()
-        //                    .Cast<ITypeProvider>().SelectMany(t => t.GetTypes()).ToArray();
-        //    }
-        //    catch (NotSupportedException)
-        //    {
-        //    }
-
-        //    return new Type[0];
-        //}
+        public ServerDataContractAttribute(string dataContractGuid)
+            : base(dataContractGuid)
+        {
+        }
     }
 
     [DataContract(Namespace = ServerDirectoryNamespace.Value)]
+    [KnownType("GetKnownTypes")]
     public class ServerDirectoryEntry : DataContractBase
     {
-        private ServerData _data;
+        public interface IDataTypeProvider
+        {
+            IEnumerable<Type> GetTypes();
+        }
+
+        public sealed class DataTypeProviderExtensionPoint : ExtensionPoint<IDataTypeProvider>{}
+
+        private Dictionary<string, object> _data;
 
         public ServerDirectoryEntry()
         {
@@ -89,11 +68,32 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         [DataMember(IsRequired = true)]
         public ApplicationEntity Server { get; set; }
 
+        [DataMember(IsRequired = true)]
+        public bool IsPriorsServer { get; set; }
+
+        /// <summary>
+        /// Used to store additional custom data about a <see cref="Server"/>.
+        /// </summary>
+        /// <remarks>Custom types must be decorated with both <see cref="ServerDataContractAttribute"/>
+        /// and the regular <see cref="DataContractAttribute"/>. It is also recommended that they key
+        /// used be the same GUID from the <see cref="ServerDataContractAttribute"/> as the value, in order to avoid collisions.</remarks>
         [DataMember(IsRequired = false)]
-        public ServerData Data
+        public Dictionary<string, object> Data
         {
-            get { return _data ?? (_data = new ServerData()); }
+            get { return _data ?? (_data = new Dictionary<string, object>()); }
             set { _data = value; }
+        }
+
+        public static Type[] GetKnownTypes()
+        {
+            try
+            {
+                return new DataTypeProviderExtensionPoint().CreateExtensions().Cast<IDataTypeProvider>().SelectMany(e => e.GetTypes()).ToArray();
+            }
+            catch (NotSupportedException)
+            {
+                return new Type[0];
+            }
         }
     }
 

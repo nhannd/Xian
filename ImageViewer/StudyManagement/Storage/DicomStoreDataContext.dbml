@@ -91,14 +91,15 @@
       <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Version" Type="System.Data.Linq.Binary" DbType="rowversion" CanBeNull="true" IsVersion="true" />
       <Column Name="Name" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
-      <Column Name="Description" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="true" />
-      <Column Name="Location" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(64) NULL" CanBeNull="true" />
+      <Column Name="Location" Type="System.String" DbType="NVarChar(64) NULL" CanBeNull="true" />
       <Column Name="AETitle" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
       <Column Name="HostName" Type="System.String" DbType="NVarChar(64) NOT NULL" CanBeNull="false" />
       <Column Name="Port" Type="System.Int32" DbType="Int" CanBeNull="false" />
       <Column Name="StreamingHeaderPort" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="StreamingImagePort" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="ExtendedData" Type="System.String" DbType="NText NOT NULL" CanBeNull="false" />
+      <Column Name="IsPriorsServer" Type="System.Boolean" DbType="BIT NOT NULL" CanBeNull="false" />
+      <Column Name="ExtensionData" Type="System.String" DbType="NText" CanBeNull="false" />
     </Type>
   </Table>
   <Table Name="Configuration" Member="Configurations">

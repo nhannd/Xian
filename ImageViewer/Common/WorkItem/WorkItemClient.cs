@@ -204,6 +204,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 Console.WriteLine("Failed to start re-index.");
             }
 
+            //TODO (Marmot): 
             Environment.ExitCode = 1;
         }
 

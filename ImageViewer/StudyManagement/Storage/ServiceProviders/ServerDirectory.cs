@@ -14,8 +14,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Serialization;
-using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
@@ -65,11 +63,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
         public DeleteServerResult DeleteServer(DeleteServerRequest request)
         {
             return Call(_real.DeleteServer, request);
-        }
-
-        public DeleteAllServersResult DeleteAllServers(DeleteAllServersRequest request)
-        {
-            return Call(_real.DeleteAllServers, request);
         }
 
         #endregion
@@ -161,7 +154,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                 existing.Port = ae.ScpParameters.Port;
                 existing.Location = ae.Location;
                 existing.Description = ae.Description;
-                    
+                existing.IsPriorsServer = request.ServerEntry.IsPriorsServer;
+
                 if (ae.StreamingParameters != null)
                 {
                     existing.StreamingHeaderPort = ae.StreamingParameters.HeaderServicePort;
@@ -173,7 +167,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                     existing.StreamingImagePort = null;
                 }
 
-                existing.ExtendedData = JsmlSerializer.Serialize(request.ServerEntry.Data, "data");
+                existing.ExtensionData = request.ServerEntry.Data == null 
+                                            ? null : Serializer.SerializeServerExtensionData(request.ServerEntry.Data);
                 context.Commit();
                 return new UpdateServerResult { ServerEntry = existing.ToDataContract() };
             }

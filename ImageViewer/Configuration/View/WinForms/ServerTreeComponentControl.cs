@@ -496,11 +496,15 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         {
            if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
             {
-                Point pt = ((TreeView)sender).PointToClient(new Point(e.X, e.Y));
-                TreeNode destinationNode = ((TreeView)sender).GetNodeAt(pt);
-                TreeNode draggingNode = (TreeNode)e.Data.GetData("System.Windows.Forms.TreeNode");
-                IServerTreeNode draggingDataNode = draggingNode.Tag as IServerTreeNode;
-                IServerTreeNode destinationDataNode = destinationNode.Tag as IServerTreeNode;
+               Point pt = ((TreeView)sender).PointToClient(new Point(e.X, e.Y));
+               TreeNode destinationNode = ((TreeView)sender).GetNodeAt(pt);
+               TreeNode draggingNode = (TreeNode)e.Data.GetData("System.Windows.Forms.TreeNode");
+
+               IServerTreeNode draggingDataNode = draggingNode.Tag as IServerTreeNode;
+               IServerTreeNode destinationDataNode = destinationNode.Tag as IServerTreeNode;
+
+               if (draggingDataNode == null || destinationDataNode == null)
+                   return;
 
                 // turn off the white-on-blue highlight of a destination node
                 destinationNode.BackColor = Color.White;

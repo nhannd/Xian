@@ -52,6 +52,9 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         public static IDicomServiceNode GetRemoteServerByName(string name)
         {
+            if (String.IsNullOrEmpty(name))
+                return null;
+
             using (var bridge = new ServerDirectoryBridge())
             {
                 return bridge.GetServerByName(name);
@@ -60,6 +63,9 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         public static IList<IDicomServiceNode> GetRemoteServersByAETitle(string aeTitle)
         {
+            if (String.IsNullOrEmpty(aeTitle))
+                return new List<IDicomServiceNode>();
+
             using (var bridge = new ServerDirectoryBridge())
             {
                 return bridge.GetServersByAETitle(aeTitle);
@@ -78,7 +84,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         {
             List<ServerDirectoryEntry> entries = null;
             Platform.GetService<IServerDirectory>(s => entries = s.GetServers(new GetServersRequest()).ServerEntries);
-            var priorsServers = entries.Where(e => e.Data.IsPriorsServer).Select(e => e.ToServiceNode()).ToList();
+            var priorsServers = entries.Where(e => e.IsPriorsServer).Select(e => e.ToServiceNode()).ToList();
             if (includeLocal)
                 priorsServers.Add(GetLocalServer());
             return priorsServers;

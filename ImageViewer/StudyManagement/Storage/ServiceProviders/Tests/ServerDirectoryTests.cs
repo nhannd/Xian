@@ -11,9 +11,13 @@
 
 #if UNIT_TESTS
 
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.Serialization;
 using System.ServiceModel;
+using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Serialization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
@@ -21,9 +25,37 @@ using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
 {
+    [DataContract]
+    [ServerDataContractAttribute("309FCB6E-80EB-4385-9732-CCA7E4B88544")]
+    internal struct TestValue
+    {
+        [DataMember]
+        public string Value;
+    }
+    [DataContract]
+    [ServerDataContractAttribute("309FCB6E-80EB-4385-9732-CCA7E4B88543")]
+    internal struct TestValue2
+    {
+        [DataMember]
+        public string Value;
+    }
+
     [TestFixture]
     public class ServerDirectoryTests
     {
+        internal class DataTypeProvider : ServerDirectoryEntry.IDataTypeProvider
+        {
+            #region IDataTypeProvider Members
+
+            public System.Collections.Generic.IEnumerable<System.Type> GetTypes()
+            {
+                yield return typeof (TestValue);
+                yield return typeof(TestValue2);
+            }
+
+            #endregion
+        }
+
         [TestFixtureSetUp]
         public void Initialize()
         {
@@ -31,7 +63,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
                                        {
                                             { typeof(ServiceProviderExtensionPoint), typeof(DicomServerConfigurationServiceProvider) },
                                             { typeof (ServiceProviderExtensionPoint), typeof (ServerDirectoryServiceProvider) },
-
+                                            { typeof (ServerDirectoryEntry.DataTypeProviderExtensionPoint), typeof (DataTypeProvider) }
                                        };
 
             Platform.SetExtensionFactory(extensionFactory);
@@ -40,7 +72,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
         public void DeleteAllServers()
         {
             var directory = Platform.GetService<IServerDirectory>();
-            directory.DeleteAllServers(new DeleteAllServersRequest());
+            var entries = directory.GetServers(new GetServersRequest()).ServerEntries;
+            foreach (var entry in entries)
+                directory.DeleteServer(new DeleteServerRequest { ServerEntry = entry });
         }
 
         [Test]
@@ -140,6 +174,34 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
 
             var server = CreateServer("test", true);
             directory.DeleteServer(new DeleteServerRequest { ServerEntry = new ServerDirectoryEntry(server) });
+        }
+
+        [Test]
+        public void TestExtensionDataSerialization()
+        {
+            var entry = new ServerDirectoryEntry();
+            entry.Data["test1"] = new TestValue {Value = "value1"};
+            entry.Data["test2"] = new TestValue2 { Value = "value2" };
+
+            var serialized = Serializer.SerializeServerExtensionData(entry.Data);
+            var deserialized = Serializer.DeserializeServerExtensionData(serialized);
+
+            Assert.AreEqual(2, deserialized.Count);
+            Assert.AreEqual(deserialized["test1"], new TestValue{Value = "value1"});
+            Assert.AreEqual(deserialized["test2"], new TestValue2 { Value = "value2" });
+
+            var serializer = new DataContractSerializer(typeof(ServerDirectoryEntry), ServerDirectoryEntry.GetKnownTypes()); 
+            using (var stream = new MemoryStream())
+            {
+                serializer.WriteObject(stream, entry);
+                stream.Position = 0;
+                var deserializedEntry = serializer.ReadObject(stream) as ServerDirectoryEntry;
+                deserialized = deserializedEntry.Data;
+
+                Assert.AreEqual(2, deserialized.Count);
+                Assert.AreEqual(deserialized["test1"], new TestValue { Value = "value1" });
+                Assert.AreEqual(deserialized["test2"], new TestValue2 { Value = "value2" });
+            }
         }
 
         private ApplicationEntity CreateServer(string name, bool streaming)

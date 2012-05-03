@@ -52,10 +52,10 @@ namespace ClearCanvas.ImageViewer.Configuration
                 foreach (var existingEntry in allEntries)
                 {
                     var isChecked = CheckedServers.Any(s => s.Name == existingEntry.Server.Name);
-                    if (existingEntry.Data.IsPriorsServer == isChecked)
+                    if (existingEntry.IsPriorsServer == isChecked)
                         continue;
 
-                    existingEntry.Data.IsPriorsServer = isChecked;
+                    existingEntry.IsPriorsServer = isChecked;
                     changedEntries.Add(existingEntry);
                 }
                 
