@@ -24,6 +24,17 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
     public partial class TableView : UserControl
     {
+    	private static readonly Bitmap _checkmarkBitmap;
+		static TableView()
+		{
+			var resolver = new ResourceResolver(typeof(TableView).Assembly);
+			using (var s = resolver.OpenResource("checkmark.png"))
+			{
+				_checkmarkBitmap = new Bitmap(s);
+			}
+		}
+
+
         private event EventHandler _itemDoubleClicked;
         private event EventHandler _selectionChanged;
         private readonly DelayedEventPublisher _delayedSelectionChangedPublisher;
@@ -669,33 +680,34 @@ namespace ClearCanvas.Desktop.View.WinForms
                 {
                     // this is ugly but somebody's gotta do it
                     DataGridViewColumn dgcol;
-                    if (col.ColumnType == typeof(bool))
-                        dgcol = new DataGridViewCheckBoxColumn();
-                    else if (col.ColumnType == typeof(Image) || col.ColumnType == typeof(IconSet))
-                    {
-                        dgcol = new DataGridViewImageColumn();
-
-                        dgcol.SortMode = DataGridViewColumnSortMode.Automatic;
-
-                        // Set the default to display nothing if not icons are provided.
-                        // Otherwise WinForms will by default display an ugly icon with 'x'
-                        dgcol.DefaultCellStyle.NullValue = null;
-                    }
-                    else if (col.HasClickableLink)
-                    {
-                        dgcol = new DataGridViewLinkColumn();
-                        var linkColumn = (DataGridViewLinkColumn)dgcol;
-                        linkColumn.LinkBehavior = LinkBehavior.SystemDefault;
-                        linkColumn.TrackVisitedState = false;
-                        linkColumn.SortMode = DataGridViewColumnSortMode.Automatic;
-                    }
-                    else
-                    {
-                        // assume any other type of column will be displayed as text
+					if (col.ColumnType == typeof(bool))
+					{
+						// if read-only, we use an image column so we can display our own checkbox
+						dgcol = col.ReadOnly ? (DataGridViewColumn)
+							new DataGridViewImageColumn {SortMode = DataGridViewColumnSortMode.Automatic, DefaultCellStyle = {NullValue = null}} :
+							new DataGridViewCheckBoxColumn();
+					}
+					else if (col.ColumnType == typeof(Image) || col.ColumnType == typeof(IconSet))
+					{
+						// Set the default to display nothing if not icons are provided.
+						// Otherwise WinForms will by default display an ugly icon with 'x'
+						dgcol = new DataGridViewImageColumn {SortMode = DataGridViewColumnSortMode.Automatic, DefaultCellStyle = {NullValue = null}};
+					}
+					else if (col.HasClickableLink)
+					{
+						dgcol = new DataGridViewLinkColumn();
+						var linkColumn = (DataGridViewLinkColumn)dgcol;
+						linkColumn.LinkBehavior = LinkBehavior.SystemDefault;
+						linkColumn.TrackVisitedState = false;
+						linkColumn.SortMode = DataGridViewColumnSortMode.Automatic;
+					}
+					else
+					{
+						// assume any other type of column will be displayed as text
 						// if it provides a custom editor, then we need to use a sub-class of the text box column
-                        dgcol = (col.GetCellEditor() != null) ? 
-							(DataGridViewColumn) new CustomEditableTableViewColumn(_table, col) : new DataGridViewTextBoxColumn();
-                    }
+						dgcol = (col.GetCellEditor() != null) ?
+							(DataGridViewColumn)new CustomEditableTableViewColumn(_table, col) : new DataGridViewTextBoxColumn();
+					}
 
                     // initialize the necessary properties
                     dgcol.Name = col.Name;
@@ -1219,11 +1231,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 				{
 					Platform.Log(LogLevel.Error, ex);
 				}
+				return;
 			}
-			else
+
+			// special case: for a readonly boolean cell, we convert the value to a representative icon
+			if (column.ColumnType == typeof(bool) && column.ReadOnly)
 			{
-				e.Value = column.FormatValue(e.Value);
+				var b = (bool) e.Value;
+				e.Value = b ? _checkmarkBitmap : null;
+				return;
 			}
+
+    		e.Value = column.FormatValue(e.Value);
 		}
 
 		private void _dataGridView_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
