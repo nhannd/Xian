@@ -513,9 +513,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				_workItems = workItems;
 				_owner = owner;
-				this.CancelAction = AddAction("cancel", SR.NameCancelWorkItem, "CancelToolSmall.png", SR.TooltipCancelWorkItem, CancelSelectedWorkItems);
-				this.RestartAction = AddAction("restart", SR.NameRestartWorkItem, "RestartToolSmall.png", SR.TooltipRestartWorkItem, RestartSelectedWorkItems);
-				this.DeleteAction = AddAction("delete", SR.NameDeleteWorkItem, "DeleteToolSmall.png", SR.TooltipDeleteWorkItem, DeleteSelectedWorkItems);
+				this.CancelAction = AddAction("cancel", SR.MenuCancelWorkItem, "CancelToolSmall.png", SR.TooltipCancelWorkItem, CancelSelectedWorkItems);
+				this.RestartAction = AddAction("restart", SR.MenuRestartWorkItem, "RestartToolSmall.png", SR.TooltipRestartWorkItem, RestartSelectedWorkItems);
+				this.DeleteAction = AddAction("delete", SR.MenuDeleteWorkItem, "DeleteToolSmall.png", SR.TooltipDeleteWorkItem, DeleteSelectedWorkItems);
+				this.StatAction = AddAction("stat", SR.MenuStatWorkItem, "StatToolSmall.png", SR.TooltipStatWorkItem, StatSelectedWorkItems);
 			}
 
 			public IList<long> SelectedWorkItemIDs
@@ -544,6 +545,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				DeleteAction.Enabled = SelectedWorkItems.All(IsDeletable);
 				CancelAction.Enabled = SelectedWorkItems.All(IsCancelable);
 				RestartAction.Enabled = SelectedWorkItems.All(IsRestartable);
+				StatAction.Enabled = SelectedWorkItems.All(IsStatable);
 			}
 
 			private bool IsDeletable(WorkItem w)
@@ -562,6 +564,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return w.Status == WorkItemStatusEnum.Canceled
 						 || w.Status == WorkItemStatusEnum.Failed;
+			}
+			private bool IsStatable(WorkItem w)
+			{
+				// if the item is already stat, can't change it
+				if (w.Priority == WorkItemPriorityEnum.Stat)
+					return false;
+
+				// item must be in an "active" status
+				return w.Status == WorkItemStatusEnum.Pending
+				       || w.Status == WorkItemStatusEnum.InProgress
+				       || w.Status == WorkItemStatusEnum.Idle;
 			}
 
 			private void RestartSelectedWorkItems()
@@ -623,10 +636,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				}
 			}
 
+			private void StatSelectedWorkItems()
+			{
+				try
+				{
+					var client = new WorkItemClient();
+					foreach (var workItem in SelectedWorkItems)
+					{
+						client.WorkItem = workItem.Data;
+						//client.Delete();
+					}
+				}
+				catch (Exception e)
+				{
+					ExceptionHandler.Report(e, _owner.Host.DesktopWindow);
+				}
+			}
+
 			private Action DeleteAction { get; set; }
 			private Action CancelAction { get; set; }
 			private Action RestartAction { get; set; }
-
+			private Action StatAction { get; set; }
 		}
 
 		#endregion

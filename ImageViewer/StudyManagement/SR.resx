@@ -155,11 +155,23 @@ make room, or increase the maximum usage.</value>
   <data name="MenuActivityMonitor" xml:space="preserve">
     <value>Activity Monitor</value>
   </data>
+  <data name="MenuCancelWorkItem" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="MenuDeleteWorkItem" xml:space="preserve">
+    <value>Delete</value>
+  </data>
   <data name="MenuLocalServer" xml:space="preserve">
     <value>Local Server</value>
   </data>
   <data name="MenuReindex" xml:space="preserve">
     <value>Re-index File Store</value>
+  </data>
+  <data name="MenuRestartWorkItem" xml:space="preserve">
+    <value>Restart</value>
+  </data>
+  <data name="MenuStatWorkItem" xml:space="preserve">
+    <value>Make Stat</value>
   </data>
   <data name="MessageConfirmCancelWorkItems" xml:space="preserve">
     <value>Canceling the selected work item(s) may result in incomplete study data.  Are you sure you want to cancel?</value>
@@ -194,15 +206,6 @@ make room, or increase the maximum usage.</value>
   <data name="MessageWorkItemFailed" xml:space="preserve">
     <value>{0} for {1} [{2}, A#:{3}] failed.</value>
   </data>
-  <data name="NameCancelWorkItem" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="NameDeleteWorkItem" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="NameRestartWorkItem" xml:space="preserve">
-    <value>Restart</value>
-  </data>
   <data name="NoFilterItem" xml:space="preserve">
     <value>(all)</value>
   </data>
@@ -213,12 +216,15 @@ make room, or increase the maximum usage.</value>
     <value>Activity Monitor</value>
   </data>
   <data name="TooltipCancelWorkItem" xml:space="preserve">
-    <value>Cancel selected work item</value>
+    <value>Cancel selected work item(s)</value>
   </data>
   <data name="TooltipDeleteWorkItem" xml:space="preserve">
-    <value>Delete selected work item</value>
+    <value>Delete selected work item(s)</value>
   </data>
   <data name="TooltipRestartWorkItem" xml:space="preserve">
-    <value>Restart selected work item</value>
+    <value>Restart selected work item(s)</value>
+  </data>
+  <data name="TooltipStatWorkItem" xml:space="preserve">
+    <value>Raise priority of selected work item(s) to 'Stat'</value>
   </data>
 </root>

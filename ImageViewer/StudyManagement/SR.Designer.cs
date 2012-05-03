@@ -171,6 +171,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string MenuCancelWorkItem {
+            get {
+                return ResourceManager.GetString("MenuCancelWorkItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string MenuDeleteWorkItem {
+            get {
+                return ResourceManager.GetString("MenuDeleteWorkItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Local Server.
         /// </summary>
         public static string MenuLocalServer {
@@ -185,6 +203,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         public static string MenuReindex {
             get {
                 return ResourceManager.GetString("MenuReindex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart.
+        /// </summary>
+        public static string MenuRestartWorkItem {
+            get {
+                return ResourceManager.GetString("MenuRestartWorkItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make Stat.
+        /// </summary>
+        public static string MenuStatWorkItem {
+            get {
+                return ResourceManager.GetString("MenuStatWorkItem", resourceCulture);
             }
         }
         
@@ -288,33 +324,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancel.
-        /// </summary>
-        public static string NameCancelWorkItem {
-            get {
-                return ResourceManager.GetString("NameCancelWorkItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete.
-        /// </summary>
-        public static string NameDeleteWorkItem {
-            get {
-                return ResourceManager.GetString("NameDeleteWorkItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Restart.
-        /// </summary>
-        public static string NameRestartWorkItem {
-            get {
-                return ResourceManager.GetString("NameRestartWorkItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to (all).
         /// </summary>
         public static string NoFilterItem {
@@ -342,7 +351,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancel selected work item.
+        ///   Looks up a localized string similar to Cancel selected work item(s).
         /// </summary>
         public static string TooltipCancelWorkItem {
             get {
@@ -351,7 +360,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete selected work item.
+        ///   Looks up a localized string similar to Delete selected work item(s).
         /// </summary>
         public static string TooltipDeleteWorkItem {
             get {
@@ -360,11 +369,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Restart selected work item.
+        ///   Looks up a localized string similar to Restart selected work item(s).
         /// </summary>
         public static string TooltipRestartWorkItem {
             get {
                 return ResourceManager.GetString("TooltipRestartWorkItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Raise priority of selected work item(s) to &apos;Stat&apos;.
+        /// </summary>
+        public static string TooltipStatWorkItem {
+            get {
+                return ResourceManager.GetString("TooltipStatWorkItem", resourceCulture);
             }
         }
     }
