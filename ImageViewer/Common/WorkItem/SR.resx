@@ -133,7 +133,7 @@
     <value>{0} of {1} files imported, {2} failed</value>
   </data>
   <data name="ImportFilesRequest_ActivityDescription" xml:space="preserve">
-    <value>Importing Files from {0} location</value>
+    <value>Process files for import from {0} location</value>
   </data>
   <data name="ImportStudyRequest_AcitivityDescription" xml:space="preserve">
     <value>Import Study</value>
@@ -298,7 +298,7 @@
     <value>{0} Image Deleted</value>
   </data>
   <data name="ImportFilesRequest_ActivityDescriptionPlural" xml:space="preserve">
-    <value>Importing Files from {0} locations</value>
+    <value>Process files for import from {0} locations</value>
   </data>
   <data name="DicomRetrieveProgress_Status" xml:space="preserve">
     <value>{0} Images Retrieved, {1} Images Failed, {2} Images Pending</value>
