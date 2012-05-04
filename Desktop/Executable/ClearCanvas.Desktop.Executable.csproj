@@ -133,7 +133,12 @@
     <Folder Include="Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\Common\ClearCanvas.Strings.targets" />
+  <Target Name="BeforeBuild">
+    <!-- Do not strong name plugin launcher executables due to side effect of forcing all same-version launchers to use the same user config regardless of location -->
+    <CreateProperty Value="False">
+      <Output TaskParameter="Value" PropertyName="SignAssembly" />
+    </CreateProperty>
+  </Target>
   <PropertyGroup>
     <PreBuildEvent />
     <PostBuildEvent>"$(MSBuildBinPath)\Msbuild" "$(ProjectDir)\PostBuild_dist.proj" "/p:SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(ConfigurationName);ProjectName=$(ProjectName);ProjectDir=$(ProjectDir);OutDir=$(OutDir);StrongNameKeyFile=$(AssemblyOriginatorKeyFile);DistributionDir=$(DistributionDir);Options=$(Options);Localizations=$(Localizations)"</PostBuildEvent>

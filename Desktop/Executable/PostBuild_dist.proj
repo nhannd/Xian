@@ -118,11 +118,7 @@
 
   <!-- Re-signs the desktop executable's strong name if modified for PE flags after strong name is originally applied -->
   <Target Name="ReSignExeSN" Condition="'$(StrongNameKeyFile)' != '' and Exists('$(StrongNameKeyFile)')">
-    <GetFrameworkSdkPath>
-      <Output TaskParameter="Path" PropertyName="SdkPath" />
-    </GetFrameworkSdkPath>
-    <Exec Command="sn -Ra &quot;$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe&quot; &quot;$(StrongNameKeyFile)&quot;" WorkingDirectory="$(SdkPath)\bin\" />
-    <Warning Text="corflags warning CF011 can be ignored - the strong-named assembly in question has been re-signed" />
+    <!-- Do not strong name plugin launcher executables due to side effect of forcing all same-version launchers to use the same user config regardless of location -->
   </Target>
 
   <!-- Flags the CIL desktop executable as requiring 32-bit execution even on a 64-bit machine -->
