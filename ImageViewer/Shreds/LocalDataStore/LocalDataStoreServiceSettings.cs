@@ -10,10 +10,13 @@
 #endregion
 
 using System.ComponentModel;
+using System.Configuration;
 using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
+	[SettingsGroupDescription("Configuration for the local data store service.")]
+	[SettingsProvider(typeof (LocalFileSettingsProvider))]
 	internal sealed partial class LocalDataStoreServiceSettings
 	{
 		public const string DefaultStorageDirectory = @"c:\dicom_datastore\filestore\";
@@ -22,21 +25,26 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		public const uint DefaultDatabaseUpdateFrequencyMilliseconds = 5000;
 		public const uint DefaultPurgeTimeMinutes = 120;
 
-		private static readonly Proxy _instance = new Proxy();
+		private static Proxy _instance;
 
 		public static Proxy Instance
 		{
-			get { return _instance; }
+			get { return _instance ?? (_instance = new Proxy(Default)); }
 		}
 
 		public sealed class Proxy
 		{
-			internal Proxy() {}
+			private readonly LocalDataStoreServiceSettings _settings;
+
+			public Proxy(LocalDataStoreServiceSettings settings)
+			{
+				_settings = settings;
+			}
 
 			private object this[string propertyName]
 			{
-				get { return Default[propertyName]; }
-				set { ApplicationSettingsExtensions.SetSharedPropertyValue(Default, propertyName, value); }
+				get { return _settings[propertyName]; }
+				set { ApplicationSettingsExtensions.SetSharedPropertyValue(_settings, propertyName, value); }
 			}
 
 			[DefaultValue(DefaultStorageDirectory)]
@@ -76,7 +84,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			public void Save()
 			{
-				Default.Save();
+				_settings.Save();
 			}
 		}
 	}

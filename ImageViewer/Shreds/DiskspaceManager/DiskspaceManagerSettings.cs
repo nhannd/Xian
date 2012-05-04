@@ -11,10 +11,13 @@
 
 using System;
 using System.ComponentModel;
+using System.Configuration;
 using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 {
+	[SettingsGroupDescription("Configuration for the diskspace management service.")]
+	[SettingsProvider(typeof (LocalFileSettingsProvider))]
 	internal sealed partial class DiskspaceManagerSettings
 	{
 		public const float LowWaterMarkDefault = 60F;
@@ -24,21 +27,26 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 		public const int MinStudyLimitDefault = 30;
 		public const int MaxStudyLimitDefault = 10000;
 
-		private static readonly Proxy _instance = new Proxy();
+		private static Proxy _instance;
 
 		public static Proxy Instance
 		{
-			get { return _instance; }
+			get { return _instance ?? (_instance = new Proxy(Default)); }
 		}
 
 		public sealed class Proxy
 		{
-			internal Proxy() {}
+			private readonly DiskspaceManagerSettings _settings;
+
+			public Proxy(DiskspaceManagerSettings settings)
+			{
+				_settings = settings;
+			}
 
 			private object this[string propertyName]
 			{
-				get { return Default[propertyName]; }
-				set { ApplicationSettingsExtensions.SetSharedPropertyValue(Default, propertyName, value); }
+				get { return _settings[propertyName]; }
+				set { ApplicationSettingsExtensions.SetSharedPropertyValue(_settings, propertyName, value); }
 			}
 
 			[DefaultValue(LowWaterMarkDefault)]
@@ -92,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
 			public void Save()
 			{
-				Default.Save();
+				_settings.Save();
 			}
 		}
 	}

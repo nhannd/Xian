@@ -13,29 +13,37 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Linq;
 using System.Xml.Serialization;
 using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
+	[SettingsGroupDescription("Configuration for the DICOM server shred.")]
+	[SettingsProvider(typeof (LocalFileSettingsProvider))]
 	internal sealed partial class DicomServerSettings : IMigrateSettings
 	{
-		private static readonly Proxy _instance = new Proxy();
+		private static Proxy _instance;
 
 		public static Proxy Instance
 		{
-			get { return _instance; }
+			get { return _instance ?? (_instance = new Proxy(Default)); }
 		}
 
 		public sealed class Proxy
 		{
-			internal Proxy() {}
+			private readonly DicomServerSettings _settings;
+
+			public Proxy(DicomServerSettings settings)
+			{
+				_settings = settings;
+			}
 
 			private object this[string propertyName]
 			{
-				get { return Default[propertyName]; }
-				set { ApplicationSettingsExtensions.SetSharedPropertyValue(Default, propertyName, value); }
+				get { return _settings[propertyName]; }
+				set { ApplicationSettingsExtensions.SetSharedPropertyValue(_settings, propertyName, value); }
 			}
 
 			[DefaultValue("localhost")]
@@ -100,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			public void Save()
 			{
-				Default.Save();
+				_settings.Save();
 			}
 		}
 
