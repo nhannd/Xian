@@ -330,7 +330,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public DateTime GetScheduledTime(DateTime currentTime, int postponeSeconds)
         {
-            if (!TimeWindowStart.HasValue || !TimeWindowEnd.HasValue)
+            if (!TimeWindowStart.HasValue || !TimeWindowEnd.HasValue || Priority == WorkItemPriorityEnum.Stat)
                 return currentTime;
 
             if (TimeWindowStart.Value > TimeWindowEnd.Value)

@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                                    Type = request.Request.Type,
                                    Priority = request.Request.Priority,
                                    InsertTime = now,
-                                   ScheduledTime = now.AddSeconds(5),
+                                   ScheduledTime = now,
                                    DeleteTime = now.AddMinutes(WorkItemServiceSettings.Instance.DeleteDelayMinutes),
                                    ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Instance.ExpireDelaySeconds),
                                    Status = WorkItemStatusEnum.Pending
