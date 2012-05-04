@@ -47,8 +47,9 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             if (serviceNode.IsLocal)
                 return 0; //local first.
 
+            //TODO (Marmot): !!!!! This should be IsSupported<IStudyLoader>(), but it's in the wrong assembly !!!!!!
             //Ones that can load, followed by those that can't.
-            return serviceNode.IsSupported<IStudyLoader>() ? 1 : 2;
+            return serviceNode.StreamingParameters != null ? 1 : 2;
         }
 
         private static List<IDicomServiceNode> SortServers(IEnumerable<IDicomServiceNode> servers)

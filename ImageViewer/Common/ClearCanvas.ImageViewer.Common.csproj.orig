@@ -100,7 +100,11 @@
     <Compile Include="IBlockingEnumerator.cs" />
     <Compile Include="LargeObjectContainer.cs" />
     <Compile Include="LargeObjectContainerCache.cs" />
+<<<<<<< local
+    <Compile Include="ServerDirectory\IStudyLoader.cs" />
+=======
     <Compile Include="PublishManager.cs" />
+>>>>>>> other
     <Compile Include="ServerDirectory\ServerDirectory.cs" />
     <Compile Include="ServerDirectory\Tests\ServerDirectoryTests.cs" />
     <Compile Include="DicomServer\Tests\DicomServerTestServiceProvider.cs" />
@@ -150,8 +154,11 @@
     <Compile Include="StudyManagement\StudyStoreBridge.cs" />
     <Compile Include="StudyManagement\Tests\StorageConfigurationTests.cs" />
     <Compile Include="StudyManagement\Tests\StudyStoreTests.cs" />
-    <Compile Include="SubscriptionManager.cs" />
+<<<<<<< local
     <Compile Include="StudyManagement\Tests\StudyStoreTestServiceProvider.cs" />
+=======
+    <Compile Include="SubscriptionManager.cs" />
+>>>>>>> other
     <Compile Include="Tests\DiskspaceTests.cs" />
     <Compile Include="WorkItem\EnumExtensions.cs" />
     <Compile Include="WorkItem\Tests\AutoRouteScheduledTimeTests.cs" />
