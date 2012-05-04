@@ -85,20 +85,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
             var directory = Platform.GetService<IServerDirectory>();
 
             var server = CreateServer("streaming", true);
-            directory.AddServer(new AddServerRequest { ServerEntry = new ServerDirectoryEntry(server) });
-            var servers = directory.GetServers(new GetServersRequest()).ServerEntries;
-            Assert.AreEqual(1, servers.Count);
+            directory.AddServer(new AddServerRequest { ServerEntry = new ServerDirectoryEntry(server){IsPriorsServer = true} });
+            var entries = directory.GetServers(new GetServersRequest()).ServerEntries;
+            Assert.AreEqual(1, entries.Count);
+            Assert.AreEqual(true, entries[0].IsPriorsServer);
 
             server = CreateServer("normal", false);
             directory.AddServer(new AddServerRequest { ServerEntry = new ServerDirectoryEntry(server) });
 
-            servers = directory.GetServers(new GetServersRequest()).ServerEntries;
-            Assert.AreEqual(2, servers.Count);
+            entries = directory.GetServers(new GetServersRequest()).ServerEntries;
+            Assert.AreEqual(2, entries.Count);
 
-            servers = directory.GetServers(new GetServersRequest{Name = "normal"}).ServerEntries;
-            Assert.AreEqual(1, servers.Count);
-
-            Assert.AreEqual(server, servers[0]);
+            entries = directory.GetServers(new GetServersRequest{Name = "normal"}).ServerEntries;
+            Assert.AreEqual(1, entries.Count);
+            Assert.AreEqual(server, entries[0].Server);
         }
 
         [Test]
@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders.Tests
             var servers = directory.GetServers(new GetServersRequest()).ServerEntries;
             Assert.AreEqual(1, servers.Count);
 
-            Assert.AreEqual(server, servers[0]);
+            Assert.AreEqual(server, servers[0].Server);
         }
 
         [Test]

@@ -14,6 +14,9 @@
 using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Common.DicomServer.Tests;
+using ClearCanvas.ImageViewer.Common.ServerDirectory.Tests;
+using ClearCanvas.ImageViewer.Common.StudyManagement.Tests;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
@@ -26,7 +29,9 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         {
             var factory = new UnitTestExtensionFactory
                               {
-                                  { typeof (ServiceProviderExtensionPoint), typeof (TestServiceProvider) },
+                                  { typeof (ServiceProviderExtensionPoint), typeof (DicomServerTestServiceProvider) },
+                                  { typeof (ServiceProviderExtensionPoint), typeof (StudyStoreTestServiceProvider) },
+                                  { typeof (ServiceProviderExtensionPoint), typeof (ServerDirectoryTestServiceProvider) }
                               };
             Platform.SetExtensionFactory(factory);
         }
@@ -65,10 +70,10 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
             var ae = serviceNodes.First();
 
             Assert.AreEqual(@"<local>", ae.Name);
-            Assert.AreEqual(string.Empty, ae.Location);
-            Assert.AreEqual("Test", ae.AETitle);
+            Assert.AreEqual(string.Empty, ae.Location ?? "");
+            Assert.AreEqual("Local", ae.AETitle);
             Assert.AreEqual("localhost", ae.ScpParameters.HostName);
-            Assert.AreEqual(103, ae.ScpParameters.Port);
+            Assert.AreEqual(104, ae.ScpParameters.Port);
             Assert.IsNull(ae.StreamingParameters);
         }
 

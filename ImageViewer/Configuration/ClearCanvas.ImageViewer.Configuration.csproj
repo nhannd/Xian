@@ -127,7 +127,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ServerTree\Tests\TestHelper.cs" />
-    <Compile Include="ServerTree\Tests\TestServiceProvider.cs" />
     <Compile Include="ServerTree\Tests\UtilityTests.cs" />
     <Compile Include="ServerTree\Tests\ServerTreeTests.cs" />
     <Compile Include="ServerTree\VerifyServerTool.cs" />

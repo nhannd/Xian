@@ -42,6 +42,21 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         public static bool IsSupported { get; private set; }
 
+        private static int GetSortKey(IDicomServiceNode serviceNode)
+        {
+            if (serviceNode.IsLocal)
+                return 0; //local first.
+
+            //Ones that can load, followed by those that can't.
+            return serviceNode.IsSupported<IStudyLoader>() ? 1 : 2;
+        }
+
+        private static List<IDicomServiceNode> SortServers(IEnumerable<IDicomServiceNode> servers)
+        {
+            //Sort servers
+            return servers.OrderBy(GetSortKey).ToList();
+        }
+
         public static IDicomServiceNode GetLocalServer()
         {
             using (var bridge = new ServerDirectoryBridge())
@@ -68,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
             using (var bridge = new ServerDirectoryBridge())
             {
-                return bridge.GetServersByAETitle(aeTitle);
+                return SortServers(bridge.GetServersByAETitle(aeTitle));
             }
         }
 
@@ -76,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         {
             using (var bridge = new ServerDirectoryBridge())
             {
-                return bridge.GetServers();
+                return SortServers(bridge.GetServers());
             }
         }
 
@@ -85,9 +100,11 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
             List<ServerDirectoryEntry> entries = null;
             Platform.GetService<IServerDirectory>(s => entries = s.GetServers(new GetServersRequest()).ServerEntries);
             var priorsServers = entries.Where(e => e.IsPriorsServer).Select(e => e.ToServiceNode()).ToList();
-            if (includeLocal)
+
+            if (includeLocal) //local server always first.
                 priorsServers.Add(GetLocalServer());
-            return priorsServers;
+
+            return SortServers(priorsServers);
         }
 
         public abstract GetServersResult GetServers(GetServersRequest request);

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.ServiceModel;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
-using ClearCanvas.ImageViewer.Common.WorkItem;
 using StorageConfigurationContract = ClearCanvas.ImageViewer.Common.StudyManagement.StorageConfiguration;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
