@@ -215,7 +215,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                 }
             }
 
-            // If lossless compressed & requesting lossy syntax, just send as is
+            // If lossless compressed & requesting lossless syntax, just send as is
             if (file.TransferSyntax.Encapsulated
                 && file.TransferSyntax.LosslessCompressed
                 && ((_sendRequest.CompressionType == CompressionType.Rle
