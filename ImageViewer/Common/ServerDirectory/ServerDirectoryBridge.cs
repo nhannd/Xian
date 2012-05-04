@@ -36,19 +36,19 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         public List<IDicomServiceNode> GetServers()
         {
-            var servers = Real.GetServers(new GetServersRequest()).Servers;
+            var servers = Real.GetServers(new GetServersRequest()).ServerEntries;
             return servers.Select(s => s.ToServiceNode()).ToList();
         }
 
         public List<IDicomServiceNode> GetServersByAETitle(string aeTitle)
         {
-            var servers = Real.GetServers(new GetServersRequest { AETitle = aeTitle }).Servers;
+            var servers = Real.GetServers(new GetServersRequest { AETitle = aeTitle }).ServerEntries;
             return servers.Select(s => s.ToServiceNode()).ToList();
         }
 
         public IDicomServiceNode GetServerByName(string name)
         {
-            var servers = Real.GetServers(new GetServersRequest { Name = name }).Servers;
+            var servers = Real.GetServers(new GetServersRequest { Name = name }).ServerEntries;
             return servers.Select(s => s.ToServiceNode()).FirstOrDefault();
         }
 

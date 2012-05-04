@@ -9,6 +9,8 @@
 
 #endregion
 
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using NUnit.Framework;
@@ -20,6 +22,25 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
     [TestFixture]
     public class StudyStoreTests
     {
+        [TestFixtureSetUp]
+        public void Initialize1()
+        {
+            Platform.SetExtensionFactory(new UnitTestExtensionFactory
+                                             {
+                                                 { typeof(ServiceProviderExtensionPoint), typeof(StudyManagement.Tests.StudyStoreTestServiceProvider) }
+                                             });
+
+            //Force IsSupported to be re-evaluated.
+            StudyStore.InitializeIsSupported();
+        }
+
+        public void Initialize2()
+        {
+            Platform.SetExtensionFactory(new NullExtensionFactory());
+            //Force IsSupported to be re-evaluated.
+            StudyStore.InitializeIsSupported();
+        }
+
         [Test]
         public void TestStudyEntry_ToDicomAttributeCollection()
         {
@@ -39,16 +60,19 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
 
             var collection = entry.ToDicomAttributeCollection();
 
-            string ts = string.Format("{0}\\{1}", TransferSyntax.ExplicitVrLittleEndian.UidString, TransferSyntax.ImplicitVrLittleEndian.UidString);
-            Assert.AreEqual(ts, collection[DicomTags.TransferSyntaxUid].ToString());
-
             Assert.AreEqual("PACS1\\PACS2", collection[DicomTags.SourceApplicationEntityTitle].ToString());
             Assert.AreEqual("STN1\\STN2", collection[DicomTags.StationName].ToString());
             Assert.AreEqual("INST1\\INST2", collection[DicomTags.InstitutionName].ToString());
+        }
 
-            Assert.AreEqual("MONOCHROME1\\MONOCHROME2", collection[DicomTags.PhotometricInterpretation].ToString());
-            Assert.AreEqual("16\\8", collection[DicomTags.BitsAllocated].ToString());
-            Assert.AreEqual("16\\15\\11", collection[DicomTags.BitsStored].ToString());
+        [Test]
+        public void TestIsSupported()
+        {
+            Initialize1();
+            Assert.IsTrue(StudyStore.IsSupported);
+
+            Initialize2();
+            Assert.IsFalse(StudyStore.IsSupported);
         }
     }
 }

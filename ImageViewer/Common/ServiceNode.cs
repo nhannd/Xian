@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.DicomServer;
@@ -12,6 +11,8 @@ namespace ClearCanvas.ImageViewer.Common
     public interface IDicomServiceNode : IServiceNode, IApplicationEntity
     {
         bool IsLocal { get; }
+
+        //object GetData(string key);
     }
 
     public interface IServiceNode
@@ -77,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Common
             {
                 withService(service);
             }
-            catch (Exception)
+            finally
             {
                 var disposable = service as IDisposable;
                 if (disposable != null)
@@ -91,8 +92,6 @@ namespace ClearCanvas.ImageViewer.Common
                         Platform.Log(LogLevel.Warn, ex, "Error disposing service object of type '{0}'", typeof(T).FullName);
                     }
                 }
-
-                throw;
             }
         }
     }
@@ -105,19 +104,37 @@ namespace ClearCanvas.ImageViewer.Common
             return new DicomServiceNode(serverConfiguration);
         }
 
+        public static IDicomServiceNode ToServiceNode(this ServerDirectoryEntry directoryEntry)
+        {
+            Platform.CheckForNullReference(directoryEntry, "directoryEntry");
+            return new DicomServiceNode(directoryEntry);
+        }
+
         public static IDicomServiceNode ToServiceNode(this IApplicationEntity server)
         {
             Platform.CheckForNullReference(server, "server");
             var dicomServiceNode = server as IDicomServiceNode;
             if (dicomServiceNode != null)
                 return dicomServiceNode;
-            
-            return new DicomServiceNode(server);
+
+            IDicomServiceNode serviceNode = null;
+            if (!String.IsNullOrEmpty(server.Name))
+                serviceNode = ServerDirectory.ServerDirectory.GetRemoteServerByName(server.Name);
+
+            if (serviceNode == null)
+                serviceNode = ServerDirectory.ServerDirectory.GetRemoteServersByAETitle(server.AETitle).FirstOrDefault();
+
+            if (serviceNode == null)
+                return new DicomServiceNode(server);
+
+            return serviceNode;
         }
 
-        public static ApplicationEntity ToDataContract(this IDicomServiceNode serviceNode)
+        public static ServerDirectoryEntry ToDataContract(this IDicomServiceNode serviceNode)
         {
-            return new ApplicationEntity(serviceNode);
+            Platform.CheckExpectedType(serviceNode, typeof(DicomServiceNode));
+            var node = (DicomServiceNode) serviceNode;
+            return new ServerDirectoryEntry(node.Server){IsPriorsServer = node.IsPriorsServer, Data = node.ExtensionData};
         }
 
         public static bool ResolveServer(this Identifier identifier, bool defaultToLocal)

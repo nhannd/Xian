@@ -88,6 +88,7 @@
     <Compile Include="DataContracts.cs" />
     <Compile Include="DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Diagnostics.cs" />
+    <Compile Include="DicomFilePublisher.cs" />
     <Compile Include="ConfigureLocalServerApplication.cs" />
     <Compile Include="DicomServer\DataContracts.cs" />
     <Compile Include="DicomServer\DicomServer.cs" />
@@ -100,8 +101,12 @@
     <Compile Include="IBlockingEnumerator.cs" />
     <Compile Include="LargeObjectContainer.cs" />
     <Compile Include="LargeObjectContainerCache.cs" />
-    <Compile Include="PublishManager.cs" />
+	<Compile Include="PublishManager.cs" />
+    <Compile Include="ServerDirectory\IStudyLoader.cs" />
     <Compile Include="ServerDirectory\ServerDirectory.cs" />
+    <Compile Include="ServerDirectory\Tests\ServerDirectoryTests.cs" />
+    <Compile Include="DicomServer\Tests\DicomServerTestServiceProvider.cs" />
+    <Compile Include="ServerDirectory\Tests\ServerDirectoryTestServiceProvider.cs" />
     <Compile Include="StudyManagement\DataContracts.cs" />
     <Compile Include="StudyManagement\IStorageConfiguration.cs" />
     <Compile Include="StudyManagement\IStudyStoreQuery.cs" />
@@ -148,6 +153,7 @@
     <Compile Include="StudyManagement\Tests\StorageConfigurationTests.cs" />
     <Compile Include="StudyManagement\Tests\StudyStoreTests.cs" />
     <Compile Include="SubscriptionManager.cs" />
+	<Compile Include="StudyManagement\Tests\StudyStoreTestServiceProvider.cs" />
     <Compile Include="Tests\DiskspaceTests.cs" />
     <Compile Include="WorkItem\EnumExtensions.cs" />
     <Compile Include="WorkItem\Tests\AutoRouteScheduledTimeTests.cs" />

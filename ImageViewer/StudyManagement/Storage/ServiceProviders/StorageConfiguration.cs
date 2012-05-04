@@ -1,10 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.ServiceModel;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
-using ClearCanvas.ImageViewer.Common.WorkItem;
 using StorageConfigurationContract = ClearCanvas.ImageViewer.Common.StudyManagement.StorageConfiguration;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
@@ -88,28 +85,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             Platform.CheckForEmptyString(request.Configuration.FileStoreDirectory, "FileStoreDirectory");
             //Platform.CheckTrue(request.Configuration.MinimumFreeSpaceBytes.HasValue, "MinimumFreeSpaceBytes");
 
-            using (var workItemActivityMonitor = WorkItemActivityMonitor.Create(false))
-            {
-                if (workItemActivityMonitor.IsConnected)
-                {
-                    var fault = new ServiceStateFault{CurrentState = ServiceStateEnum.Started, RequiredState = ServiceStateEnum.Stopped};
-                    throw new FaultException<ServiceStateFault>(fault);
-                }
-            }
-
-            var configuration = request.Configuration.Clone();
+            var newConfiguration = request.Configuration.Clone();
 
             //Trim before saving.
-            configuration.FileStoreDirectory = request.Configuration.FileStoreDirectory.Trim();
-            Complete(configuration);
+            newConfiguration.FileStoreDirectory = request.Configuration.FileStoreDirectory.Trim();
+            Complete(newConfiguration);
 
             using (var context = new DataAccessContext())
             {
-                context.GetConfigurationBroker().SetDataContractValue(_configurationKey, configuration);
+                var currentConfiguration = context.GetConfigurationBroker().GetDataContractValue<StorageConfigurationContract>(_configurationKey) ?? new StorageConfigurationContract();
+                Complete(currentConfiguration);
+
+                context.GetConfigurationBroker().SetDataContractValue(_configurationKey, newConfiguration);
                 context.Commit();
 
                 //Make a copy because the one in the request is a reference object that the caller could change afterwards.
-                Cache<StorageConfigurationContract>.CachedValue = configuration;
+                Cache<StorageConfigurationContract>.CachedValue = newConfiguration;
             }
 
             return new UpdateStorageConfigurationResult();

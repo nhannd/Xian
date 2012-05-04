@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 11.875" name="DicomStoreDataContext">
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 12.25" name="DicomStoreDataContext">
   <DataContextMoniker Name="/DicomStoreDataContext" />
   <nestedChildShapes>
     <classShape Id="b8b17ee5-881b-4daf-bbc6-a4c11f2874e3" absoluteBounds="6.375, 0.5, 4, 8.8860498046875">
@@ -27,10 +27,10 @@
         <classShapeMoniker Id="c305dcb7-4d2f-4362-8990-a9ecc2737e09" />
       </nodes>
     </associationConnector>
-    <classShape Id="ef86e219-c873-4fb9-93a0-ea0294e466fe" absoluteBounds="3.25, 8.875, 3, 2.7324039713541666">
+    <classShape Id="ef86e219-c873-4fb9-93a0-ea0294e466fe" absoluteBounds="3.25, 8.875, 3, 3.1170068359375005">
       <DataClassMoniker Name="/DicomStoreDataContext/Device" />
       <nestedChildShapes>
-        <elementListCompartment Id="4604e8db-b823-4dd3-8318-c0492c3107ac" absoluteBounds="3.265, 9.335, 2.9699999999999998, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="4604e8db-b823-4dd3-8318-c0492c3107ac" absoluteBounds="3.265, 9.335, 2.9699999999999998, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="acf03b42-edf7-449e-8f9b-11bcacc909bb" absoluteBounds="1.125, 7.25, 2, 1.5785953776041666">

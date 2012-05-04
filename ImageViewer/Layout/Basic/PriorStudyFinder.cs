@@ -17,6 +17,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -164,20 +165,23 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		    int failedCount = 0;
 		    int successCount = 0;
 
-		    foreach (var query in DefaultServers.GetQueryInterfaces(true))
+            foreach (var priorsServer in ServerDirectory.GetPriorsServers(true))
 		    {
                 if (_cancel)
                     break;
 
 		        try
 		        {
-                    using (var bridge = new StudyRootQueryBridge(query))
+                    using (var bridge = new StudyRootQueryBridge(priorsServer.GetService<IStudyRootQuery>()))
                     {
                         foreach (string patientId in patientIds.Keys)
                         {
                             var identifier = new StudyRootStudyIdentifier { PatientId = patientId };
 
                             IList<StudyRootStudyIdentifier> studies = bridge.StudyQuery(identifier);
+                            
+                            Platform.Log(LogLevel.Debug, "Found {0} prior studies on server '{1}'", studies.Count, priorsServer.Name);
+
                             foreach (StudyRootStudyIdentifier study in studies)
                             {
                                 if (_cancel)
@@ -186,7 +190,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                                 //Eliminate false positives right away.
                                 IPatientData reconciled = reconciliationStrategy.ReconcilePatientInformation(study);
                                 if (reconciled == null)
+                                {
+                                    Platform.Log(LogLevel.Debug, "Found {0} prior studies on server '{1}'", studies.Count, priorsServer.Name);
                                     continue;
+                                }
 
                                 StudyItem studyItem = ConvertToStudyItem(study);
                                 if (studyItem == null || results.ContainsKey(studyItem.StudyInstanceUid))
@@ -203,7 +210,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		        catch (Exception e)
 		        {
 		            ++failedCount;
-                    Platform.Log(LogLevel.Error, e, "Failed to query server: {0}", query);
+                    Platform.Log(LogLevel.Error, e, "Failed to query server: {0}", priorsServer.Name);
 		        }
 		    }
 
@@ -226,6 +233,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                 PriorStudyLoaderExceptionPolicy.NotifySuccessfulQuery();
             }
 
+            Platform.Log(LogLevel.Debug, "Found {0} prior studies in total.", results.Count);
 
             return new PriorStudyFinderResult(new StudyItemList(results.Values), failedCount == 0);
         }

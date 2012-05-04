@@ -2026,6 +2026,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		
 		private System.Nullable<int> _StreamingImagePort;
 		
+		private bool _IsPriorsServer;
+		
+		private string _ExtensionData;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -2050,6 +2054,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
     partial void OnStreamingHeaderPortChanged();
     partial void OnStreamingImagePortChanging(System.Nullable<int> value);
     partial void OnStreamingImagePortChanged();
+    partial void OnIsPriorsServerChanging(bool value);
+    partial void OnIsPriorsServerChanged();
+    partial void OnExtensionDataChanging(string value);
+    partial void OnExtensionDataChanged();
     #endregion
 		
 		public Device()
@@ -2117,7 +2125,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(64) NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(64) NULL", UpdateCheck=UpdateCheck.Never)]
 		public string Description
 		{
 			get
@@ -2137,7 +2145,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Location", DbType="NVarChar(64) NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Location", DbType="NVarChar(64) NULL", UpdateCheck=UpdateCheck.Never)]
 		public string Location
 		{
 			get
@@ -2253,6 +2261,46 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 					this._StreamingImagePort = value;
 					this.SendPropertyChanged("StreamingImagePort");
 					this.OnStreamingImagePortChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsPriorsServer", DbType="BIT NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		public bool IsPriorsServer
+		{
+			get
+			{
+				return this._IsPriorsServer;
+			}
+			set
+			{
+				if ((this._IsPriorsServer != value))
+				{
+					this.OnIsPriorsServerChanging(value);
+					this.SendPropertyChanging();
+					this._IsPriorsServer = value;
+					this.SendPropertyChanged("IsPriorsServer");
+					this.OnIsPriorsServerChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExtensionData", DbType="NText", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
+		public string ExtensionData
+		{
+			get
+			{
+				return this._ExtensionData;
+			}
+			set
+			{
+				if ((this._ExtensionData != value))
+				{
+					this.OnExtensionDataChanging(value);
+					this.SendPropertyChanging();
+					this._ExtensionData = value;
+					this.SendPropertyChanged("ExtensionData");
+					this.OnExtensionDataChanged();
 				}
 			}
 		}

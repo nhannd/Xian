@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom.ServiceModel;
 
@@ -28,11 +31,77 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         public string AETitle { get; set; }
     }
 
+    /// <summary>
+    /// In order to store custom information in <see cref="ServerDirectoryEntry.Data"/>,
+    /// decorate your class with both this attribute, as well as the regular <see cref="DataContractAttribute"/>.
+    /// </summary>
+    public class ServerDataContractAttribute : PolymorphicDataContractAttribute
+    {
+        public ServerDataContractAttribute(string dataContractGuid)
+            : base(dataContractGuid)
+        {
+        }
+    }
+
+    [DataContract(Namespace = ServerDirectoryNamespace.Value)]
+    [KnownType("GetKnownTypes")]
+    public class ServerDirectoryEntry : DataContractBase
+    {
+        public interface IDataTypeProvider
+        {
+            IEnumerable<Type> GetTypes();
+        }
+
+        public sealed class DataTypeProviderExtensionPoint : ExtensionPoint<IDataTypeProvider>{}
+
+        private Dictionary<string, object> _data;
+
+        public ServerDirectoryEntry()
+        {
+        }
+
+        public ServerDirectoryEntry(ApplicationEntity server)
+        {
+            Server = server;
+        }
+
+        [DataMember(IsRequired = true)]
+        public ApplicationEntity Server { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public bool IsPriorsServer { get; set; }
+
+        /// <summary>
+        /// Used to store additional custom data about a <see cref="Server"/>.
+        /// </summary>
+        /// <remarks>Custom types must be decorated with both <see cref="ServerDataContractAttribute"/>
+        /// and the regular <see cref="DataContractAttribute"/>. It is also recommended that they key
+        /// used be the same GUID from the <see cref="ServerDataContractAttribute"/> as the value, in order to avoid collisions.</remarks>
+        [DataMember(IsRequired = false)]
+        public Dictionary<string, object> Data
+        {
+            get { return _data ?? (_data = new Dictionary<string, object>()); }
+            set { _data = value; }
+        }
+
+        public static Type[] GetKnownTypes()
+        {
+            try
+            {
+                return new DataTypeProviderExtensionPoint().CreateExtensions().Cast<IDataTypeProvider>().SelectMany(e => e.GetTypes()).ToArray();
+            }
+            catch (NotSupportedException)
+            {
+                return new Type[0];
+            }
+        }
+    }
+
     [DataContract(Namespace = ServerDirectoryNamespace.Value)]
     public class GetServersResult : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public List<ApplicationEntity> Servers { get; set; }
+        public List<ServerDirectoryEntry> ServerEntries { get; set; }
     }
 
     #endregion
@@ -43,14 +112,14 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     public class UpdateServerRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public ApplicationEntity Server { get; set; }
+        public ServerDirectoryEntry ServerEntry { get; set; }
     }
 
     [DataContract(Namespace = ServerDirectoryNamespace.Value)]
     public class UpdateServerResult : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public ApplicationEntity Server { get; set; }
+        public ServerDirectoryEntry ServerEntry { get; set; }
     }
 
     #endregion
@@ -61,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     public class DeleteServerRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public ApplicationEntity Server { get; set; }
+        public ServerDirectoryEntry ServerEntry { get; set; }
     }
 
     [DataContract(Namespace = ServerDirectoryNamespace.Value)]
@@ -87,14 +156,14 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     public class AddServerRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public ApplicationEntity Server { get; set; }
+        public ServerDirectoryEntry ServerEntry { get; set; }
     }
 
     [DataContract(Namespace = ServerDirectoryNamespace.Value)]
     public class AddServerResult : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public ApplicationEntity Server { get; set; }
+        public ServerDirectoryEntry ServerEntry { get; set; }
     }
 
     #endregion

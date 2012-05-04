@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
@@ -12,59 +13,82 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
     {
         internal DicomServiceNode(DicomServerConfiguration localConfiguration)
         {
-            Real = new ApplicationEntity(localConfiguration.AETitle, "<local>", "", "")
+            Server = new ApplicationEntity
                        {
+                           Name = "<local>",
+                           AETitle = localConfiguration.AETitle,
                            ScpParameters = new ScpParameters(localConfiguration.HostName, localConfiguration.Port)
                        };
 
             IsLocal = true;
+            IsPriorsServer = true;
+            ExtensionData = new Dictionary<string, object>();
         }
 
-        internal DicomServiceNode(IApplicationEntity server)
+        internal DicomServiceNode(ServerDirectoryEntry directoryEntry)
         {
-            Platform.CheckForNullReference(server, "server");
-            Real = (ApplicationEntity) server;
+            Platform.CheckForNullReference(directoryEntry, "directoryEntry");
+            Server = directoryEntry.Server;
+            IsPriorsServer = directoryEntry.IsPriorsServer;
+            ExtensionData = directoryEntry.Data;
         }
 
+        internal DicomServiceNode(IApplicationEntity applicationEntity)
+            : this(new ServerDirectoryEntry(new ApplicationEntity(applicationEntity)))
+        {
+        }
+
+        public Dictionary<string, object> ExtensionData { get; private set; }
         //TODO (Marmot): Don't hold on to it, just look it up via the directory?
-        protected ApplicationEntity Real { get; private set; }
+        public ApplicationEntity Server { get; private set; }
+
+        public bool IsPriorsServer { get; private set; }
 
         #region Implementation of IDicomServiceNode
 
         public bool IsLocal { get; private set; }
-        
+
+        public object GetData(string key)
+        {
+            if (ExtensionData == null)
+                return null;
+
+            object value;
+            return ExtensionData.TryGetValue(key, out value) ? value : null;
+        }
+
         #endregion
 
         #region Implementation of IApplicationEntity
 
         public string AETitle
         {
-            get { return Real.AETitle; }
+            get { return Server.AETitle; }
         }
 
         public string Name
         {
-            get { return Real.Name; }
+            get { return Server.Name; }
         }
 
         public string Description
         {
-            get { return Real.Description; }
+            get { return Server.Description; }
         }
 
         public string Location
         {
-            get { return Real.Location; }
+            get { return Server.Location; }
         }
 
         public IScpParameters ScpParameters
         {
-            get { return Real.ScpParameters; }
+            get { return Server.ScpParameters; }
         }
 
         public IStreamingParameters StreamingParameters
         {
-            get { return Real.StreamingParameters; }
+            get { return Server.StreamingParameters; }
         }
 
         #endregion
@@ -93,7 +117,6 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         public override T GetService<T>()
         {
-            //TODO (Marmot): Is this weird??
             if (IsLocal)
             {
                 if (typeof(T) == typeof(IWorkItemService) && WorkItemActivityMonitor.IsSupported)
@@ -116,7 +139,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         public override string ToString()
         {
-            return Real.ToString();
+            return Server.ToString();
         }
     }
 }

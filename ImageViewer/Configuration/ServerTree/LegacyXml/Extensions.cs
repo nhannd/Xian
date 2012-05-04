@@ -17,8 +17,11 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.LegacyXml
     {
         public static ApplicationEntity ToDataContract(this Server server)
         {
-            var ae = new ApplicationEntity(server.AETitle, server.Host, "", server.Location)
+            var ae = new ApplicationEntity
                          {
+                             Name = server.NameOfServer,
+                             AETitle = server.AETitle,
+                             Location = server.Location,
                              ScpParameters = new ScpParameters(server.Host, server.Port)
                          };
 

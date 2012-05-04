@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ServiceModel;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement
@@ -6,6 +7,11 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     public abstract class StudyStore : IStudyStoreQuery
     {
         static StudyStore()
+        {
+            InitializeIsSupported();
+        }
+
+        internal static void InitializeIsSupported()
         {
             try
             {
@@ -15,7 +21,17 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
                 if (disposable != null)
                     disposable.Dispose();
             }
+            catch(EndpointNotFoundException)
+            {
+                //This doesn't mean it's not supported, it means it's not running.
+                IsSupported = true;
+            }
             catch (NotSupportedException)
+            {
+                IsSupported = false;
+                Platform.Log(LogLevel.Debug, "Study Store is not supported.");
+            }
+            catch (UnknownServiceException)
             {
                 IsSupported = false;
                 Platform.Log(LogLevel.Debug, "Study Store is not supported.");

@@ -12,24 +12,21 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
 	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
-	public class DefaultServersConfigurationPageProvider : IConfigurationPageProvider
+	public class PriorServersConfigurationPageProvider : IConfigurationPageProvider
 	{
-		public DefaultServersConfigurationPageProvider()
-		{
-		}
-
 		#region IConfigurationPageProvider Members
 
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			if (PermissionsHelper.IsInRoles(AuthorityTokens.Configuration.DefaultServers))
-				listPages.Add(new ConfigurationPage<DefaultServersConfigurationComponent>("DicomConfiguration/DefaultServerConfiguration"));
+			if (PermissionsHelper.IsInRoles(AuthorityTokens.Configuration.PriorsServers) && ServerDirectory.IsSupported)
+                listPages.Add(new ConfigurationPage<PriorsServersConfigurationComponent>("DicomConfiguration/PriorsServersConfiguration"));
 			
 			return listPages.AsReadOnly();
 		}

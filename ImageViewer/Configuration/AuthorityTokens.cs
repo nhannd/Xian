@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Configuration
                     false,
 				    new string[] 
 				    {
-						AuthorityTokens.Configuration.DefaultServers
+						AuthorityTokens.Configuration.PriorsServers
 				   }),
 
 				new AuthorityGroupDefinition(DefaultAuthorityGroups.Technologists,
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Configuration
                     false,
 				    new string[] 
 				    {
-						AuthorityTokens.Configuration.DefaultServers
+						AuthorityTokens.Configuration.PriorsServers
 				   }),
 
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Configuration
                     false,
 				    new string[] 
 				    {
-						AuthorityTokens.Configuration.DefaultServers
+						AuthorityTokens.Configuration.PriorsServers
 				   }),
 
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Configuration
                     false,
 				    new string[] 
 				    {
-						AuthorityTokens.Configuration.DefaultServers
+						AuthorityTokens.Configuration.PriorsServers
 				   }),
 
                 new AuthorityGroupDefinition(DefaultAuthorityGroups.EmergencyPhysicians,
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Configuration
                     false,
 				    new string[] 
 				    {
-						AuthorityTokens.Configuration.DefaultServers
+						AuthorityTokens.Configuration.PriorsServers
 				   })
             };
 		}
@@ -75,8 +75,8 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		public static class Configuration
 		{
-			[AuthorityToken(Description = "Allow configuration of default servers.")]
-			public const string DefaultServers = "Viewer/Configuration/Default Servers";
+            [AuthorityToken(Description = "Allow configuration of priors servers.", Formerly = "Viewer/Configuration/Default Servers")]
+			public const string PriorsServers = "Viewer/Configuration/Priors Servers";
 
 		    [AuthorityToken(Description = "Allow configuration of data publishing options.", Formerly = "Viewer/Administration/Key Images")]
 			public const string Publishing = "Viewer/Configuration/Publishing";

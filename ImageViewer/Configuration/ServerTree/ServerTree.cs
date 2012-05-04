@@ -117,8 +117,8 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
             {
                 List<ApplicationEntity> servers = null;
                 Platform.GetService<IServerDirectory>(
-                    directory => servers = directory.GetServers(new GetServersRequest()).Servers);
-                return servers.OfType<ApplicationEntity>().ToList();
+                    directory => servers = directory.GetServers(new GetServersRequest()).ServerEntries.Select(e => e.Server).ToList());
+                return servers.ToList();
             }
             catch (Exception e)
             {
@@ -215,37 +215,47 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
         internal void SaveServersToDirectory(IServerDirectory directory)
         {
-            //Get all the DICOM servers from the directory.
-            var directoryServers = directory.GetServers(new GetServersRequest()).Servers.ToList();
+            //NOTE: The server tree currently doesn't handle any of the "extended" server data, so we just abstract that part away
+            //and only deal with it when we are saving the servers back to the directory.
 
-            //Convert the tree items to data contracts.
+            //Get all the entries from the directory.
+            var serverDirectoryEntries = directory.GetServers(new GetServersRequest()).ServerEntries.ToList();
+
+            //Convert the tree items to data contracts (ApplicationEntity).
             var treeServers = RootServerGroup.GetAllServers().OfType<IServerTreeDicomServer>().Select(a => a.ToDataContract());
             
-            //Figure out which items have been deleted.
-            var deleted = from d in directoryServers where !treeServers.Any(t => t.Name == d.Name) select d;
-            //Figure out which items are new.
-            var added = (from t in treeServers where !directoryServers.Any(d => t.Name == d.Name) select t);
-            //Figure out which items have changed.
-            var changed = (from t in treeServers where directoryServers.Any(d => t.Name == d.Name && !t.Equals(d)) select t);
+            //Figure out which entries have been deleted.
+            IEnumerable<ServerDirectoryEntry> deletedEntries = from d in serverDirectoryEntries where !treeServers.Any(t => t.Name == d.Server.Name) select d;
+            //Figure out which are new.
+            IEnumerable<ApplicationEntity> addedServers = (from t in treeServers where !serverDirectoryEntries.Any(d => t.Name == d.Server.Name) select t);
+            //Figure out which have changed.
+            IEnumerable<ApplicationEntity> changedServers = (from t in treeServers where serverDirectoryEntries.Any(d => t.Name == d.Server.Name && !t.Equals(d.Server)) select t);
 
             //Most updates are done one server at a time, anyway, so we'll just do this.
             //Could implement bulk update methods on the service, too.
-            foreach (var d in deleted)
+            foreach (var d in deletedEntries)
             {
                 try
                 {
-                    directory.DeleteServer(new DeleteServerRequest { Server = d });
+                    directory.DeleteServer(new DeleteServerRequest { ServerEntry = d });
                 }
                 catch (Exception e)
                 {
-                    Platform.Log(LogLevel.Warn, e, "Server being deleted ('{0}') does not exist in directory.", d.Name);
+                    Platform.Log(LogLevel.Warn, e, "Server being deleted ('{0}') does not exist in directory.", d.Server.Name);
                 }
             }
 
-            foreach (var c in changed)
-              directory.UpdateServer(new UpdateServerRequest{Server = c});
-            foreach (var a in added)
-              directory.AddServer(new AddServerRequest { Server = a });
+            foreach (var c in changedServers)
+            {
+                //Find the corresponding entry and update IT because we don't want to lose the "extended" data.
+                var changedEntry = serverDirectoryEntries.First(e => e.Server.Name == c.Name);
+                changedEntry.Server = c;
+                directory.UpdateServer(new UpdateServerRequest{ServerEntry = changedEntry});
+            }
+            foreach (var a in addedServers)
+            {
+                directory.AddServer(new AddServerRequest { ServerEntry = new ServerDirectoryEntry(a) });
+            }
         }
 
         private void SaveToSettings()

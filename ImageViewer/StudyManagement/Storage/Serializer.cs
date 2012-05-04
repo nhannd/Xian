@@ -10,7 +10,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common.Serialization;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
@@ -22,6 +24,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		private static readonly IJsmlSerializerHook _workItemRequestHook = new PolymorphicDataContractHook<WorkItemRequestDataContractAttribute>();
 		private static readonly IJsmlSerializerHook _workItemProgressHook = new PolymorphicDataContractHook<WorkItemProgressDataContractAttribute>();
 		private static readonly IJsmlSerializerHook _ruleHook = new PolymorphicDataContractHook<StudyRuleDataContractAttribute>();
+        private static readonly IJsmlSerializerHook _serverExtensionDataHook = new PolymorphicDataContractHook<ServerDataContractAttribute>();
 
 		public static string SerializeWorkItemRequest(WorkItemRequest data)
 		{
@@ -72,5 +75,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		{
 			return AttributeUtils.HasAttribute<StudyRuleDataContractAttribute>(t);
 		}
+
+        private static bool IsServerExtensionDataContract(Type t)
+		{
+			return AttributeUtils.HasAttribute<ServerDataContractAttribute>(t);
+		}
+
+        public static string SerializeServerExtensionData(Dictionary<string, object> serverExtensionData)
+        {
+            return JsmlSerializer.Serialize(serverExtensionData, "data",
+                new JsmlSerializer.SerializeOptions { Hook = _serverExtensionDataHook, DataContractTest = IsServerExtensionDataContract });
+        }
+
+        public static Dictionary<string, object> DeserializeServerExtensionData(string data)
+        {
+            return JsmlSerializer.Deserialize<Dictionary<string, object>>(data,
+                new JsmlSerializer.DeserializeOptions { Hook = _serverExtensionDataHook, DataContractTest = IsServerExtensionDataContract });
+        }
 	}
 }

@@ -61,24 +61,6 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Default Servers.
-        /// </summary>
-        internal static string DefaultServerConfiguration {
-            get {
-                return ResourceManager.GetString("DefaultServerConfiguration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please check the servers that should be used as defaults for the application..
-        /// </summary>
-        internal static string DescriptionDefaultServers {
-            get {
-                return ResourceManager.GetString("DescriptionDefaultServers", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to If you wish to keep your existing studies, you must manually copy them to the new
         ///location before restarting the local service. Otherwise, you should restart the local service
         ///and immediately re-index..
@@ -86,6 +68,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         internal static string DescriptionFileStoreChanged {
             get {
                 return ResourceManager.GetString("DescriptionFileStoreChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please check the servers that should be automatically searched for priors..
+        /// </summary>
+        internal static string DescriptionPriorsServers {
+            get {
+                return ResourceManager.GetString("DescriptionPriorsServers", resourceCulture);
             }
         }
         
@@ -355,6 +346,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to save priors server changes..
+        /// </summary>
+        internal static string MessageFailedToSavePriorsServers {
+            get {
+                return ResourceManager.GetString("MessageFailedToSavePriorsServers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to update the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again..
         /// </summary>
         internal static string MessageFailedToUpdateDicomServerConfiguration {
@@ -531,6 +531,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         internal static string PathContextMenuConfiguration {
             get {
                 return ResourceManager.GetString("PathContextMenuConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Priors Servers.
+        /// </summary>
+        internal static string PriorsServersConfiguration {
+            get {
+                return ResourceManager.GetString("PriorsServersConfiguration", resourceCulture);
             }
         }
         

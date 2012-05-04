@@ -28,7 +28,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 	    private readonly IApplicationEntity _remoteAE;
 
 		public DicomStudyRootQuery(string localAETitle, string remoteAETitle, string remoteHost, int remotePort)
-            : this(localAETitle, new ApplicationEntity(remoteAETitle, remoteAETitle, String.Empty, String.Empty){ScpParameters = new ScpParameters(remoteHost, remotePort)})
+            : this(localAETitle, new ApplicationEntity{Name = remoteAETitle, AETitle  = remoteAETitle, ScpParameters = new ScpParameters(remoteHost, remotePort)})
 		{
 		}
 

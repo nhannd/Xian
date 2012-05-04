@@ -24,8 +24,11 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
         public static ApplicationEntity ToDataContract(this IServerTreeDicomServer server)
         {
             Platform.CheckForNullReference(server, "server");
-            var ae = new ApplicationEntity(server.AETitle, server.Name, "", server.Location)
+            var ae = new ApplicationEntity
                          {
+                             Name = server.Name, 
+                             AETitle = server.AETitle,
+                             Location = server.Location,
                              ScpParameters = new ScpParameters(server.HostName, server.Port)
                          };
 

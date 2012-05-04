@@ -23,7 +23,8 @@ namespace ClearCanvas.ImageViewer.Common
 
         private DriveInfo _driveInfo;
 
-        //For unit testing.
+        //Mostly for unit testing.
+        private bool? _isAvailable;
         private long? _totalSpace;
         private long? _freeSpace;
         
@@ -43,6 +44,14 @@ namespace ClearCanvas.ImageViewer.Common
             DriveInfo = driveInfo;
         }
 
+        /// <summary>
+        /// Constructor for unit testing.
+        /// </summary>
+        internal Diskspace()
+        {
+            _isAvailable = true;
+        }
+
 	    public DriveInfo DriveInfo
 	    {
 	        get { return _driveInfo; }
@@ -52,13 +61,6 @@ namespace ClearCanvas.ImageViewer.Common
                 Refresh();
 	        }
 	    }
-
-	    /// <summary>
-        /// Constructor for unit testing.
-        /// </summary>
-        internal Diskspace()
-        {
-        }
 
 	    public void Refresh()
         {
@@ -99,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 	    public bool IsAvailable
 	    {
-            get { return _driveInfo.IsReady; }
+            get { return _isAvailable.HasValue? _isAvailable.Value : _driveInfo.IsReady; }
 	    }
 
         public long TotalSpace

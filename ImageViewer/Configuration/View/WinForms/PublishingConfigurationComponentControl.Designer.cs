@@ -59,42 +59,42 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PublishingConfigurationComponentControl));
-			this._publishingGroup = new System.Windows.Forms.GroupBox();
-			this._publishLocalToSourceAE = new System.Windows.Forms.CheckBox();
-			this._publishToDefaultServers = new System.Windows.Forms.CheckBox();
-			this._publishingGroup.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// _publishingGroup
-			// 
-			this._publishingGroup.Controls.Add(this._publishLocalToSourceAE);
-			this._publishingGroup.Controls.Add(this._publishToDefaultServers);
-			resources.ApplyResources(this._publishingGroup, "_publishingGroup");
-			this._publishingGroup.Name = "_publishingGroup";
-			this._publishingGroup.TabStop = false;
-			// 
-			// _publishLocalToSourceAE
-			// 
-			resources.ApplyResources(this._publishLocalToSourceAE, "_publishLocalToSourceAE");
-			this._publishLocalToSourceAE.Name = "_publishLocalToSourceAE";
-			this._publishLocalToSourceAE.UseVisualStyleBackColor = true;
-			// 
-			// _publishToDefaultServers
-			// 
-			resources.ApplyResources(this._publishToDefaultServers, "_publishToDefaultServers");
-			this._publishToDefaultServers.Name = "_publishToDefaultServers";
-			this._publishToDefaultServers.UseVisualStyleBackColor = true;
-			// 
-			// PublishingConfigurationComponentControl
-			// 
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._publishingGroup);
-			this.Name = "PublishingConfigurationComponentControl";
-			this._publishingGroup.ResumeLayout(false);
-			this._publishingGroup.PerformLayout();
-			this.ResumeLayout(false);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PublishingConfigurationComponentControl));
+            this._publishingGroup = new System.Windows.Forms.GroupBox();
+            this._publishLocalToSourceAE = new System.Windows.Forms.CheckBox();
+            this._publishToDefaultServers = new System.Windows.Forms.CheckBox();
+            this._publishingGroup.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // _publishingGroup
+            // 
+            this._publishingGroup.Controls.Add(this._publishLocalToSourceAE);
+            this._publishingGroup.Controls.Add(this._publishToDefaultServers);
+            resources.ApplyResources(this._publishingGroup, "_publishingGroup");
+            this._publishingGroup.Name = "_publishingGroup";
+            this._publishingGroup.TabStop = false;
+            // 
+            // _publishLocalToSourceAE
+            // 
+            resources.ApplyResources(this._publishLocalToSourceAE, "_publishLocalToSourceAE");
+            this._publishLocalToSourceAE.Name = "_publishLocalToSourceAE";
+            this._publishLocalToSourceAE.UseVisualStyleBackColor = true;
+            // 
+            // _publishToDefaultServers
+            // 
+            resources.ApplyResources(this._publishToDefaultServers, "_publishToDefaultServers");
+            this._publishToDefaultServers.Name = "_publishToDefaultServers";
+            this._publishToDefaultServers.UseVisualStyleBackColor = true;
+            // 
+            // PublishingConfigurationComponentControl
+            // 
+            resources.ApplyResources(this, "$this");
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._publishingGroup);
+            this.Name = "PublishingConfigurationComponentControl";
+            this._publishingGroup.ResumeLayout(false);
+            this._publishingGroup.PerformLayout();
+            this.ResumeLayout(false);
 
         }
 

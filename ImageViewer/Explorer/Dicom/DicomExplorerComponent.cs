@@ -16,6 +16,7 @@ using System.Security.Policy;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.Common;
@@ -124,7 +125,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			var searchPanelComponent 
                 = CreateComponentFromExtensionPoint<SearchPanelComponentExtensionPoint, ISearchPanelComponent>()
 				?? new SearchPanelComponent();
-			SelectDefaultServerNode(serverTreeComponent);
+			SelectPriorsServerNode(serverTreeComponent);
 
 			var leftPane = new SplitPane(SR.TitleServerTreePane, serverTreeComponent, 0.25f);
 			var rightPane = new SplitPane(SR.TitleStudyBrowserPane, studyBrowserComponent, 0.75f);
@@ -183,30 +184,31 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		internal void SelectDefaultServers()
+		internal void SelectPriorsServers()
 		{
-			SelectDefaultServers(_serverTreeComponent);
+			SelectPriorsServers(_serverTreeComponent);
 		}
 
-		private static void SelectDefaultServerNode(ServerTreeComponent serverTreeComponent)
+		private static void SelectPriorsServerNode(ServerTreeComponent serverTreeComponent)
 		{
+		    //TODO (Marmot):
 			if (serverTreeComponent.ShowLocalServerNode && !DicomExplorerConfigurationSettings.Default.SelectDefaultServerOnStartup)
 			{
 				serverTreeComponent.SetSelection(serverTreeComponent.ServerTree.LocalServer);
 			}
 			else
 			{
-				SelectDefaultServers(serverTreeComponent);
+				SelectPriorsServers(serverTreeComponent);
 			}
 		}
 
-        private static void SelectDefaultServers(ServerTreeComponent serverTreeComponent)
+        private static void SelectPriorsServers(ServerTreeComponent serverTreeComponent)
 		{
             ServerTree serverTree = serverTreeComponent.ServerTree;
 
-            var defaultServers = DefaultServers.GetAll();
-            CheckDefaultServers(serverTree, defaultServers);
-            IServerTreeNode initialSelection = GetFirstDefaultServerOrGroup(serverTree.RootServerGroup);
+            var priorsServers = ServerDirectory.GetPriorsServers(false);
+            CheckPriorsServers(serverTree, priorsServers);
+            IServerTreeNode initialSelection = GetFirstPriorsServerOrGroup(serverTree.RootServerGroup);
             UncheckAllServers(serverTree);
 
             if (initialSelection == null)
@@ -220,7 +222,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             serverTreeComponent.SetSelection(initialSelection);
 		}
 
-        private static IServerTreeNode GetFirstDefaultServerOrGroup(IServerTreeGroup serverGroup)
+        private static IServerTreeNode GetFirstPriorsServerOrGroup(IServerTreeGroup serverGroup)
         {
             if (serverGroup.IsEntireGroupChecked())
                 return serverGroup;
@@ -241,20 +243,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             //repeat for children of the groups at this level
             foreach (IServerTreeGroup group in serverGroup.ChildGroups)
             {
-                IServerTreeNode defaultServerOrGroup = GetFirstDefaultServerOrGroup(group);
-                if (defaultServerOrGroup != null)
-                    return defaultServerOrGroup;
+                IServerTreeNode priorsServerOrGroup = GetFirstPriorsServerOrGroup(group);
+                if (priorsServerOrGroup != null)
+                    return priorsServerOrGroup;
             }
 
             return null;
         }
 
-        private static void CheckDefaultServers(ServerTree serverTree, List<IDicomServiceNode> defaultServers)
+        private static void CheckPriorsServers(ServerTree serverTree, IList<IDicomServiceNode> priorsServers)
         {
             foreach (var server in serverTree.RootServerGroup.GetAllServers())
             {
                 var treeServer = server;
-                if (defaultServers.Any(s => s.Name == treeServer.Name))
+                if (priorsServers.Any(s => s.Name == treeServer.Name))
                     server.IsChecked = true;
             }
         }

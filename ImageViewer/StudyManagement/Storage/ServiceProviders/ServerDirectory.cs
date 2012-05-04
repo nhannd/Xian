@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
@@ -66,11 +65,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             return Call(_real.DeleteServer, request);
         }
 
-        public DeleteAllServersResult DeleteAllServers(DeleteAllServersRequest request)
-        {
-            return Call(_real.DeleteAllServers, request);
-        }
-
         #endregion
 
         private TResult Call<TInput, TResult>(Func<TInput, TResult> function, TInput input)
@@ -120,7 +114,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                     devices = context.GetDeviceBroker().GetDevices();
 
                 var converted = devices.Select(d => d.ToDataContract()).ToList();
-                return new GetServersResult {Servers = converted };
+                return new GetServersResult {ServerEntries = converted };
             }
         }
 
@@ -130,17 +124,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             {
                 var broker = context.GetDeviceBroker();
 
-                var existing = broker.GetDeviceByName(request.Server.Name);
+                var existing = broker.GetDeviceByName(request.ServerEntry.Server.Name);
                 if (existing != null)
                     throw new ArgumentException();
 
-                var server = (IApplicationEntity)request.Server;
-                var device = server.ToDevice();
+                var device = request.ServerEntry.ToDevice();
                 broker.AddDevice(device);
 
                 context.Commit();
 
-                return new AddServerResult { Server = device.ToDataContract() };
+                return new AddServerResult { ServerEntry = device.ToDataContract() };
             }
         }
 
@@ -150,18 +143,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             {
                 var broker = context.GetDeviceBroker();
 
-                var existing = broker.GetDeviceByName(request.Server.Name);
+                var existing = broker.GetDeviceByName(request.ServerEntry.Server.Name);
                 if (existing == null)
                     throw new ArgumentException();
 
-                var ae = (IApplicationEntity) request.Server;
+                var ae = request.ServerEntry.Server;
 
                 existing.AETitle = ae.AETitle;
                 existing.HostName = ae.ScpParameters.HostName;
                 existing.Port = ae.ScpParameters.Port;
                 existing.Location = ae.Location;
                 existing.Description = ae.Description;
-                    
+                existing.IsPriorsServer = request.ServerEntry.IsPriorsServer;
+
                 if (ae.StreamingParameters != null)
                 {
                     existing.StreamingHeaderPort = ae.StreamingParameters.HeaderServicePort;
@@ -173,8 +167,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
                     existing.StreamingImagePort = null;
                 }
 
+                existing.ExtensionData = request.ServerEntry.Data == null 
+                                            ? null : Serializer.SerializeServerExtensionData(request.ServerEntry.Data);
                 context.Commit();
-                return new UpdateServerResult { Server = existing.ToDataContract() };
+                return new UpdateServerResult { ServerEntry = existing.ToDataContract() };
             }
         }
 
@@ -183,7 +179,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetDeviceBroker();
-                var existing = broker.GetDeviceByName(request.Server.Name);
+                var existing = broker.GetDeviceByName(request.ServerEntry.Server.Name);
                 if (existing == null)
                     throw new ArgumentException();
                     
