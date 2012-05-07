@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
@@ -18,6 +19,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         public WorkItemsChangedEventArgs(List<WorkItemData> items)
         {
+			Platform.CheckForNullReference(items, "items");
 			ChangedItems = items;
         }
 
