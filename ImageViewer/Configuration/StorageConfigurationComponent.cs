@@ -264,6 +264,14 @@ namespace ClearCanvas.ImageViewer.Configuration
             }
         }
 
+        public string HelpMessage
+        {
+            get
+            {
+                return SR.MessageStorageHelp;
+            }
+        }
+
         public void ChangeFileStore()
         {
             var args = new SelectFolderDialogCreationArgs(FileStoreDirectory) { Prompt = SR.TitleSelectFileStore, AllowCreateNewFolder = true };
@@ -292,6 +300,11 @@ namespace ClearCanvas.ImageViewer.Configuration
                 Platform.Log(LogLevel.Debug, e);
                 Host.DesktopWindow.ShowMessageBox(SR.MessageUnableToStopLocalService, MessageBoxActions.Ok);
             }
+        }
+
+        public void Help()
+        {
+            Host.DesktopWindow.ShowMessageBox(SR.DescriptionStorageOptions, MessageBoxActions.Ok);
         }
 
         #endregion

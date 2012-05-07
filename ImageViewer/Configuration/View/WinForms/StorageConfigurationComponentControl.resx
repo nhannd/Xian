@@ -136,7 +136,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_changeFileStore.Location" type="System.Drawing.Point, System.Drawing">
-    <value>368, 3</value>
+    <value>391, 3</value>
   </data>
   <data name="_changeFileStore.Size" type="System.Drawing.Size, System.Drawing">
     <value>64, 23</value>
@@ -166,7 +166,7 @@
     <value>69, 5</value>
   </data>
   <data name="_fileStoreDirectory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>273, 20</value>
+    <value>296, 20</value>
   </data>
   <data name="_fileStoreDirectory.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
@@ -187,7 +187,7 @@
     <value>Left, Right</value>
   </data>
   <data name="_usedDiskSpaceDisplay.Location" type="System.Drawing.Point, System.Drawing">
-    <value>368, 81</value>
+    <value>391, 81</value>
   </data>
   <data name="_usedDiskSpaceDisplay.Size" type="System.Drawing.Size, System.Drawing">
     <value>64, 20</value>
@@ -211,7 +211,7 @@
     <value>Left, Right</value>
   </data>
   <data name="_upDownMaxDiskSpace.Location" type="System.Drawing.Point, System.Drawing">
-    <value>278, 113</value>
+    <value>301, 113</value>
   </data>
   <data name="_upDownMaxDiskSpace.Size" type="System.Drawing.Size, System.Drawing">
     <value>64, 20</value>
@@ -235,7 +235,7 @@
     <value>Left, Right</value>
   </data>
   <data name="_maxDiskSpaceDisplay.Location" type="System.Drawing.Point, System.Drawing">
-    <value>368, 113</value>
+    <value>391, 113</value>
   </data>
   <data name="_maxDiskSpaceDisplay.Size" type="System.Drawing.Size, System.Drawing">
     <value>64, 20</value>
@@ -306,7 +306,7 @@
     <value>NoControl</value>
   </data>
   <data name="_totalDiskSpaceDisplay.Location" type="System.Drawing.Point, System.Drawing">
-    <value>177, 64</value>
+    <value>200, 64</value>
   </data>
   <data name="_totalDiskSpaceDisplay.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 9, 0</value>
@@ -345,7 +345,7 @@
     <value>NoControl</value>
   </data>
   <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>348, 117</value>
+    <value>371, 117</value>
   </data>
   <data name="label4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
@@ -381,7 +381,7 @@
     <value>NoControl</value>
   </data>
   <data name="label5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>348, 85</value>
+    <value>371, 85</value>
   </data>
   <data name="label5.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
@@ -477,7 +477,7 @@
     <value>Left, Right</value>
   </data>
   <data name="_usedDiskSpace.Location" type="System.Drawing.Point, System.Drawing">
-    <value>278, 81</value>
+    <value>301, 81</value>
   </data>
   <data name="_usedDiskSpace.Size" type="System.Drawing.Size, System.Drawing">
     <value>64, 20</value>
@@ -502,6 +502,9 @@
   </data>
   <data name="label8.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
+  </data>
+  <data name="label8.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
     <value>13, 8</value>
@@ -549,7 +552,7 @@
     <value>9, 3, 9, 3</value>
   </data>
   <data name="_usedSpaceMeter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 20</value>
+    <value>214, 20</value>
   </data>
   <data name="_usedSpaceMeter.TabIndex" type="System.Int32, mscorlib">
     <value>17</value>
@@ -585,7 +588,7 @@
     <value>3, 5, 3, 0</value>
   </data>
   <data name="_diskSpaceWarningMessage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>166, 43</value>
+    <value>189, 22</value>
   </data>
   <data name="_diskSpaceWarningMessage.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
@@ -665,7 +668,7 @@
     <value>3, 2, 3, 0</value>
   </data>
   <data name="_fileStoreWarningMessage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>166, 25</value>
+    <value>189, 25</value>
   </data>
   <data name="_fileStoreWarningMessage.TabIndex" type="System.Int32, mscorlib">
     <value>21</value>
@@ -691,8 +694,11 @@
   <data name="_stopLocalService.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="_stopLocalService.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="_stopLocalService.Location" type="System.Drawing.Point, System.Drawing">
-    <value>245, 30</value>
+    <value>268, 30</value>
   </data>
   <data name="_stopLocalService.Size" type="System.Drawing.Size, System.Drawing">
     <value>97, 13</value>
@@ -715,6 +721,64 @@
   <data name="&gt;&gt;_stopLocalService.ZOrder" xml:space="preserve">
     <value>18</value>
   </data>
+  <data name="_helpIcon.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="_helpIcon.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAARmSURBVFhH1ZbNa1xlFMa70lVd6Ur9C/wDRIKQmOyCkUICrrpI1QolC4MRQsFALZhNQQKxixRB
+        Clm4SpykcWKgTaeattaoxUzwoxcU6kAXnUUXs3DxeH5v33P73js3k1Gq4MDhXu59z3me85yPO0eO/B9/
+        s7t6ZuaqBt5t6BjGPc/+tVwWftFTk5s6NlHXh+/sqDl3Q62lfbU++VHtRbOF22rx7K2Gmpx5c1tj+DwW
+        Qm83NGhBP567rv1Pb6vT+F2dW3+os3evaDz7MlNn2QjNfaV9fE5sauAfk5je1vPjdc2SWf03tW/eL1rD
+        AAHFuC+/X7mj9nvX1CIGsf4WkalLenJ0XRfev6EM8PpdtbdL5koEAqZK+T0+kURGLGL2ReKNy3oOhyWr
+        KwFyMyI1k7jZktoddf3aD6RdexcIm6W+C9+qNbqqC8Q+lMT4umanrii7+Ks12U9qY8tmBNy7rwroIhcU
+        4Sw+7k+sE1vKiN2TwHhNg3awRVfT5djFaGXwzp8PleiUKPGckrifxyHm8cvKJmp6qZLE5DUdHVqzbrfG
+        mbfGmzfZkA7Hxe8NywL7j3s6fiUqQ9apDllbwi+YxSAWMWlKMMDqIjG6prGJTX139payYD8oO2eG47JJ
+        moLXflaHHlmywH69UyqPgxID87hjW9oBq4vA8CWdQaLp68pOJ4YjMt68Z2NoRrcvfmPLxxWKV/ZCqoID
+        prGIfXxTGVjdBDa0y8uTDSPhViJC0HNuMTOyY/mk4HcfqFMAjvGIHQgYVoHAqzU9PbKl5uvbak6anTQl
+        sGnMnE5jRuasW0KEPmAEyyXCxxPxeMQGY+QLNcHMSQyt60UevgYJMw5ip75WM5AwCyTMnARKAF5eCEzA
+        3BW13I8YHg9wMMACMydgD0ZHavayikRUpEDCiNAHrRI8fcAUVYIbMOBgQADMRwRWEwL2MqgQlTiVKuHl
+        sOteafQYSzIP0ptiZI5vyD4qGxKsIjC0YiVwBSIBL0WBQFKKdAHRAzl4BQFiYTkBwwIzV2CQJrSHoQ9K
+        BEIvmKW9MG8yp7VvWPbeI7n80S80XgUBMAuTMPy5dp2AN+NBKnxwtdh8dVtULn2X/JFAWn+wuvdATWdy
+        Ageo4FMxtaEWJLCwYktdn9e+KnuLPWxYXQRGaMQN7XidXDZvRi9FToKPVtzzvjO88XoSMAywuggMrOqo
+        MfuoUoV0N8R+SEeQ8QvN6l2fdH7afCQHBliVX8ThNb0cZ7SwE9KxRAkyLy8gtp4vnELjpd0PAcPo+Z/A
+        pmGGJvFSpA3pRKh7SoDPsxPw0oXME/DQ5Bb70H9Er9T0rB08n5YiHU2fDP/6+X+DFLgse1DVYhL7UAIc
+        eOEzPYFDQYm4I1JF/COTz3mSsSsYMz9PzL7A/VBUYqasRF4aJ9TjGjOf6TvzKoY0TZgOxifu8YNI+HvO
+        4nNow/UrCWPD7LJAoqTU1L9qD+/NeMcZzo4dNGr9gvY6xx4PHzCWlxn3Xbv9cQD9FzH+AhpBkOGnkBaM
+        AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="_helpIcon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="_helpIcon.Location" type="System.Drawing.Point, System.Drawing">
+    <value>431, 168</value>
+  </data>
+  <data name="_helpIcon.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 0, 3, 3</value>
+  </data>
+  <data name="_helpIcon.Size" type="System.Drawing.Size, System.Drawing">
+    <value>24, 24</value>
+  </data>
+  <data name="_helpIcon.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
+    <value>Zoom</value>
+  </data>
+  <data name="_helpIcon.TabIndex" type="System.Int32, mscorlib">
+    <value>22</value>
+  </data>
+  <data name="&gt;&gt;_helpIcon.Name" xml:space="preserve">
+    <value>_helpIcon</value>
+  </data>
+  <data name="&gt;&gt;_helpIcon.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_helpIcon.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;_helpIcon.ZOrder" xml:space="preserve">
+    <value>19</value>
+  </data>
   <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
     <value>10, 12</value>
   </data>
@@ -722,7 +786,7 @@
     <value>7</value>
   </data>
   <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>440, 233</value>
+    <value>463, 204</value>
   </data>
   <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>19</value>
@@ -740,7 +804,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="_changeFileStore" Row="0" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="_fileStoreDirectory" Row="0" RowSpan="1" Column="1" ColumnSpan="3" /&gt;&lt;Control Name="_usedDiskSpaceDisplay" Row="3" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="_upDownMaxDiskSpace" Row="4" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="_maxDiskSpaceDisplay" Row="4" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="_diskSpaceWarningIcon" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_totalDiskSpaceDisplay" Row="2" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="label4" Row="4" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label5" Row="3" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label1" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_maxDiskSpace" Row="4" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="_usedDiskSpace" Row="3" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="label8" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_usedSpaceMeter" Row="3" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="_diskSpaceWarningMessage" Row="5" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_fileStoreWarningIcon" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_fileStoreWarningMessage" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_stopLocalService" Row="1" RowSpan="1" Column="2" ColumnSpan="2" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,66,Percent,100,Absolute,37,Absolute,70,Absolute,20,Absolute,70,Absolute,5" /&gt;&lt;Rows Styles="Absolute,30,Absolute,27,Absolute,20,Absolute,29,Absolute,35,Absolute,48,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="_changeFileStore" Row="0" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="_fileStoreDirectory" Row="0" RowSpan="1" Column="1" ColumnSpan="3" /&gt;&lt;Control Name="_usedDiskSpaceDisplay" Row="3" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="_upDownMaxDiskSpace" Row="4" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="_maxDiskSpaceDisplay" Row="4" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="_diskSpaceWarningIcon" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_totalDiskSpaceDisplay" Row="2" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="label4" Row="4" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label5" Row="3" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label1" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_maxDiskSpace" Row="4" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="_usedDiskSpace" Row="3" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="label8" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_usedSpaceMeter" Row="3" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="_diskSpaceWarningMessage" Row="5" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_fileStoreWarningIcon" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_fileStoreWarningMessage" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_stopLocalService" Row="1" RowSpan="1" Column="2" ColumnSpan="2" /&gt;&lt;Control Name="_helpIcon" Row="6" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,66,Percent,100,Absolute,37,Absolute,70,Absolute,20,Absolute,70,Absolute,5" /&gt;&lt;Rows Styles="Absolute,30,Absolute,27,Absolute,20,Absolute,29,Absolute,35,Absolute,27,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="_maxDiskSpace.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -752,7 +816,7 @@
     <value>1, 6, 1, 0</value>
   </data>
   <data name="_maxDiskSpace.Size" type="System.Drawing.Size, System.Drawing">
-    <value>207, 29</value>
+    <value>230, 29</value>
   </data>
   <data name="_maxDiskSpace.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -785,7 +849,7 @@
     <value>2, 2, 2, 2</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>458, 265</value>
+    <value>481, 227</value>
   </data>
   <data name="&gt;&gt;_tooltip.Name" xml:space="preserve">
     <value>_tooltip</value>

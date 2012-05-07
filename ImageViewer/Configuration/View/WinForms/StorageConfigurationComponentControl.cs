@@ -70,6 +70,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             OnComponentPropertyChanged(this, new PropertyChangedEventArgs("FileStoreDirectory"));
             OnComponentPropertyChanged(this, new PropertyChangedEventArgs("FileStoreChangedDescription"));
             OnComponentPropertyChanged(this, new PropertyChangedEventArgs("MaximumUsedSpaceExceededDescription"));
+            OnComponentPropertyChanged(this, new PropertyChangedEventArgs("HelpMessage"));
         }
 
         private void OnComponentPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
@@ -87,6 +88,10 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             {
                 _tooltip.SetToolTip(_diskSpaceWarningMessage, _component.MaximumUsedSpaceExceededDescription);
                 _tooltip.SetToolTip(_diskSpaceWarningIcon, _component.MaximumUsedSpaceExceededDescription);
+            }
+            if (propertyChangedEventArgs.PropertyName == "HelpMessage")
+            {
+                _tooltip.SetToolTip(_helpIcon, _component.HelpMessage);
             }
         }
 
@@ -122,6 +127,11 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         private void _stopLocalServices_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             _component.StopLocalService();
+        }
+
+        private void _helpIcon_Click(object sender, EventArgs e)
+        {
+            _component.Help();
         }
     }
 }

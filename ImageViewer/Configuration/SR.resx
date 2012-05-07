@@ -125,6 +125,18 @@ and immediately re-index.</value>
   <data name="DescriptionPriorsServers" xml:space="preserve">
     <value>Please check the servers that should be automatically searched for prior studies.</value>
   </data>
+  <data name="DescriptionStorageOptions" xml:space="preserve">
+    <value>The file store location cannot be changed unless the local service is stopped.
+Once the file store has changed, you must either manually copy files over
+from the old location before restarting the local service, or simply restart the
+local service and immediately re-index.
+
+If the maximum disk usage is exceeded, the Workstation will refuse to import
+images or receive them over the network in order to avoid exhausting the disk.
+If the used space is reaching the maximum, it is recommended you
+increase the maximum usage, delete some studies, or move the file store
+to a disk with more capacity.</value>
+  </data>
   <data name="DicomConfiguration" xml:space="preserve">
     <value>DICOM</value>
   </data>
@@ -263,6 +275,9 @@ Streaming Image Port: {1}</value>
   </data>
   <data name="MessageServerNameCannotBeEmpty" xml:space="preserve">
     <value>The Server Name cannot be empty.</value>
+  </data>
+  <data name="MessageStorageHelp" xml:space="preserve">
+    <value>Click for an explanation of study storage options.</value>
   </data>
   <data name="MessageUnableToStopLocalService" xml:space="preserve">
     <value>Failed to stop the local service. See the logs for more details.</value>

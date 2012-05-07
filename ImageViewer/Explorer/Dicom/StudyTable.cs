@@ -4,7 +4,6 @@ using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -157,7 +156,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 item => FormatDicomDA(item.PatientsBirthDate),
                 null,
                 0.3F,
-                //TODO (Marmot):
                 (one, two) => one.PatientsBirthDate.CompareTo(two.PatientsBirthDate));
 
             Columns.Add(ColumnDateOfBirth);
@@ -191,7 +189,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             ColumnModality = new TableColumn<StudyTableItem, string>(
                 ColumnNameModality,
                 SR.ColumnHeadingModality,
-                item => DicomStringHelper.GetDicomStringArray(SortModalities(item.ModalitiesInStudy)),
+                item => StringUtilities.Combine(SortModalities(item.ModalitiesInStudy), ", "),
                 0.25f);
 
             Columns.Add(ColumnModality);
@@ -247,7 +245,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 ColumnNameDeleteOn,
                 SR.ColumnHeadingDeleteOn,
                 entry => FormatDeleteOn(entry.DeleteTime),
-                0.3f);
+                null,
+                0.3f, 
+                delegate(StudyTableItem entry1, StudyTableItem entry2)
+                    {
+                        if (!entry1.DeleteTime.HasValue)
+                        {
+                            if (!entry2.DeleteTime.HasValue)
+                                return 0;
+                            return 1;
+                        }
+                        if (!entry2.DeleteTime.HasValue)
+                            return -1;
+
+                        return entry1.DeleteTime.Value.CompareTo(entry2.DeleteTime.Value);
+                    });
 
             Columns.Add(ColumnDeleteOn);
 
@@ -268,17 +280,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 												 item => FormatInstitutionNames(item.InstitutionNamesInStudy),
 												 0.3f);
 			Columns.Add(ColumnInstitutionName);
-
-			ColumnSourceAeTitle = new TableColumn<StudyTableItem, string>(ColumnNameSourceAeTitle, SR.ColumnHeadingSourceAETitle,
+            ColumnInstitutionName.Visible = false;
+			
+            ColumnSourceAeTitle = new TableColumn<StudyTableItem, string>(ColumnNameSourceAeTitle, SR.ColumnHeadingSourceAETitle,
 												 item => FormatSourceAETitles(item.SourceAETitlesInStudy),
 												 0.3f);
 			Columns.Add(ColumnSourceAeTitle);
+            ColumnSourceAeTitle.Visible = false;
 
 			ColumnStationName = new TableColumn<StudyTableItem, string>(ColumnNameStationName, SR.ColumnHeadingStationName,
 												 item => FormatStationNames(item.StationNamesInStudy),
 												 0.3f);
 			Columns.Add(ColumnStationName);
-		}
+            ColumnStationName.Visible = false;
+        }
 
     	private void AddExtensionColumns()
         {
@@ -386,20 +401,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private string FormatStationNames(string[] values)
 		{
             if (values == null) return string.Empty; 
-            return string.Join(", ", values);
+            return StringUtilities.Combine(values, ", ");
 		}
 
 		private string FormatSourceAETitles(string[] values)
 		{
             if (values == null) return string.Empty;
-			return string.Join(", ", values);
-		}
+            return StringUtilities.Combine(values, ", ");
+        }
 
 		private string FormatInstitutionNames(string[] values)
 		{
             if (values == null) return string.Empty;
-			return string.Join(", ", values);
-		}
-
+            return StringUtilities.Combine(values, ", ");
+        }
 	}
 }

@@ -84,11 +84,13 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this._fileStoreWarningIcon = new System.Windows.Forms.PictureBox();
             this._fileStoreWarningMessage = new System.Windows.Forms.Label();
             this._stopLocalService = new System.Windows.Forms.LinkLabel();
+            this._helpIcon = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this._maxDiskSpace)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._upDownMaxDiskSpace)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._fileStoreWarningIcon)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this._helpIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // _maxDiskSpace
@@ -213,6 +215,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this._fileStoreWarningIcon, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this._fileStoreWarningMessage, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this._stopLocalService, 2, 1);
+            this.tableLayoutPanel1.Controls.Add(this._helpIcon, 5, 6);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // _fileStoreWarningIcon
@@ -237,6 +240,13 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this._stopLocalService.TabStop = true;
             this._stopLocalService.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._stopLocalServices_LinkClicked);
             // 
+            // _helpIcon
+            // 
+            resources.ApplyResources(this._helpIcon, "_helpIcon");
+            this._helpIcon.Name = "_helpIcon";
+            this._helpIcon.TabStop = false;
+            this._helpIcon.Click += new System.EventHandler(this._helpIcon_Click);
+            // 
             // StorageConfigurationComponentControl
             // 
             resources.ApplyResources(this, "$this");
@@ -249,6 +259,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._fileStoreWarningIcon)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this._helpIcon)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -276,5 +287,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         private System.Windows.Forms.LinkLabel _stopLocalService;
         private System.Windows.Forms.PictureBox _fileStoreWarningIcon;
         private System.Windows.Forms.Label _fileStoreWarningMessage;
+        private System.Windows.Forms.PictureBox _helpIcon;
     }
 }

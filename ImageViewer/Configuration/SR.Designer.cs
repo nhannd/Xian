@@ -81,6 +81,23 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The file store location cannot be changed unless the local service is stopped.
+        ///Once the file store has changed, you must either manually copy files over
+        ///from the old location before restarting the local service, or simply restart the
+        ///local service and immediately re-index.
+        ///
+        ///If the maximum disk usage is exceeded, the Workstation will refuse to import
+        ///images or receive them over the network in order to avoid exhausting the disk.
+        ///If the used space is reaching the maximum, it is recommended you
+        ///increase [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DescriptionStorageOptions {
+            get {
+                return ResourceManager.GetString("DescriptionStorageOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DICOM.
         /// </summary>
         internal static string DicomConfiguration {
@@ -468,6 +485,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         internal static string MessageServerNameCannotBeEmpty {
             get {
                 return ResourceManager.GetString("MessageServerNameCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click for an explanation of study storage options..
+        /// </summary>
+        internal static string MessageStorageHelp {
+            get {
+                return ResourceManager.GetString("MessageStorageHelp", resourceCulture);
             }
         }
         
