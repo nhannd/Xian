@@ -123,7 +123,7 @@ location before restarting the local service. Otherwise, you should restart the 
 and immediately re-index.</value>
   </data>
   <data name="DescriptionPriorsServers" xml:space="preserve">
-    <value>Please check the servers that should be automatically searched for priors.</value>
+    <value>Please check the servers that should be automatically searched for prior studies.</value>
   </data>
   <data name="DicomConfiguration" xml:space="preserve">
     <value>DICOM</value>
@@ -219,14 +219,8 @@ Streaming Image Port: {1}</value>
   <data name="MessageConfirmDeleteServerGroup" xml:space="preserve">
     <value>Are you sure you want to delete the selected server group?</value>
   </data>
-  <data name="MessageFailedToRetrieveDicomServerConfiguration" xml:space="preserve">
-    <value>Failed to retrieve the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again.</value>
-  </data>
   <data name="MessageFailedToSavePriorsServers" xml:space="preserve">
     <value>Failed to save priors server changes.</value>
-  </data>
-  <data name="MessageFailedToUpdateDicomServerConfiguration" xml:space="preserve">
-    <value>Failed to update the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again.</value>
   </data>
   <data name="MessageFileStoreChanged" xml:space="preserve">
     <value>File store has changed</value>
@@ -361,9 +355,7 @@ Streaming Image Port: {1}</value>
     <value>The specified path is invalid.</value>
   </data>
   <data name="ValidationMessageCannotChangeFileStore" xml:space="preserve">
-    <value>The local service must be stopped before the file store can be changed. It is also
-recommended that you wait for all Work Items to complete before stopping the service.
-
+    <value>The local service must be stopped before the file store can be changed.
 You can click the "Stop Local Service" link now, or cancel your changes.</value>
   </data>
   <data name="ValidationPortOutOfRange" xml:space="preserve">

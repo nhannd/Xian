@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please check the servers that should be automatically searched for priors..
+        ///   Looks up a localized string similar to Please check the servers that should be automatically searched for prior studies..
         /// </summary>
         internal static string DescriptionPriorsServers {
             get {
@@ -337,29 +337,11 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to retrieve the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again..
-        /// </summary>
-        internal static string MessageFailedToRetrieveDicomServerConfiguration {
-            get {
-                return ResourceManager.GetString("MessageFailedToRetrieveDicomServerConfiguration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Failed to save priors server changes..
         /// </summary>
         internal static string MessageFailedToSavePriorsServers {
             get {
                 return ResourceManager.GetString("MessageFailedToSavePriorsServers", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to update the DICOM Server configuration.  Please ensure the ClearCanvas Service is running and try again..
-        /// </summary>
-        internal static string MessageFailedToUpdateDicomServerConfiguration {
-            get {
-                return ResourceManager.GetString("MessageFailedToUpdateDicomServerConfiguration", resourceCulture);
             }
         }
         
@@ -760,9 +742,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The local service must be stopped before the file store can be changed. It is also
-        ///recommended that you wait for all Work Items to complete before stopping the service.
-        ///
+        ///   Looks up a localized string similar to The local service must be stopped before the file store can be changed.
         ///You can click the &quot;Stop Local Service&quot; link now, or cancel your changes..
         /// </summary>
         internal static string ValidationMessageCannotChangeFileStore {
