@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Shreds.FilestoreManagement
 
 		protected override IList<QueueProcessor> GetProcessors()
 		{
-			return new QueueProcessor[] {new FilestoreManagementProcessor(10, TimeSpan.FromMinutes(10))};
+			return new QueueProcessor[] {new FilestoreManagementProcessor(10, TimeSpan.FromSeconds(60))};
 		}
 	}
 }
