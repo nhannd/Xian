@@ -10,12 +10,11 @@
 #endregion
 
 using System;
-using System.IO;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Utilities.Anonymization;
 using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Common.Auditing;
@@ -25,8 +24,6 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.StudyManagement.Core;
-using Path=System.IO.Path;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
@@ -42,7 +39,6 @@ namespace ClearCanvas.Utilities.DicomEditor
 	public class AnonymizeStudyTool : StudyBrowserTool
 	{
 		private volatile AnonymizeStudyComponent _component;
-		private string _tempPath;
 		
 		public void AnonymizeStudy()
 		{
@@ -59,13 +55,11 @@ namespace ClearCanvas.Utilities.DicomEditor
 				catch(Exception e)
 				{
 					Platform.Log(LogLevel.Error, e);
-					string message = String.Format(SR.MessageFormatStudyMustBeDeletedManually, _tempPath);
+					string message = String.Format(SR.MessageFormatStudyMustBeDeletedManually, string.Empty);
 					Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
 				}
 				finally
-				{
-					_tempPath = null;
-
+				{					
 					if (task != null)
 						task.Dispose();
 				}
@@ -91,10 +85,6 @@ namespace ClearCanvas.Utilities.DicomEditor
 
             try
             {
-                _tempPath = Path.Combine(Path.GetTempPath(), "ClearCanvas");
-                _tempPath = Path.Combine(_tempPath, "Anonymization");
-                _tempPath = Path.Combine(_tempPath, Path.GetRandomFileName());
-                Directory.CreateDirectory(_tempPath);
 
                 context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageAnonymizingStudy));
 
@@ -113,8 +103,6 @@ namespace ClearCanvas.Utilities.DicomEditor
 
                 // Setup the ImportFilesUtility to perform the import
                 var configuration = GetServerConfiguration();
-                var importContext = new ImportStudyContext(configuration.AETitle, StudyStore.GetConfiguration());
-                var importUtility = new ImportFilesUtility(importContext);
 
                 // setup auditing information
                 var result = EventResult.Success;
@@ -135,7 +123,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                             var localSopDataSource = sop.DataSource as ILocalSopDataSource;
                             if (localSopDataSource != null)
                             {
-                                string filename = Path.Combine(_tempPath, string.Format("{0}.dcm", i));
+                                string filename = string.Format("{0}.dcm", i);
                                 DicomFile file = (localSopDataSource).File;
 
                                 // make sure we anonymize a new instance, not the same instance that the Sop cache holds!!
@@ -143,25 +131,19 @@ namespace ClearCanvas.Utilities.DicomEditor
                                 anonymizer.Anonymize(file);
 
                                 // Do the import
-                                var importResult = importUtility.Import(file, BadFileBehaviourEnum.Ignore,
-                                                                        FileImportBehaviourEnum.Save);
-                                if (importResult.DicomStatus != DicomStatuses.Success)
-                                {
-                                    Platform.Log(LogLevel.Warn, "Unable to import published file: {0}",
-                                                 importResult.ErrorMessage);
-                                }
+                                Platform.GetService((IPublishFiles w) => w.PublishLocal(new List<DicomFile> {file}));
 
                                 string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
                                 string patientId = file.DataSet[DicomTags.PatientId].ToString();
                                 string patientsName = file.DataSet[DicomTags.PatientsName].ToString();
                                 anonymizedInstances.AddInstance(patientId, patientsName, studyInstanceUid);
+
+                                var progressPercent = (int)Math.Floor((i + 1) / (float)numberOfSops * 100);
+                                var progressMessage = String.Format(SR.MessageAnonymizingStudy, file.MediaStorageSopInstanceUid);
+                                context.ReportProgress(new BackgroundTaskProgress(progressPercent, progressMessage));
                             }
                         }
-                    }
-
-                    int progressPercent = (int) Math.Floor((i + 1)/(float) numberOfSops*100);
-                    string progressMessage = String.Format(SR.MessageAnonymizingStudy, _tempPath);
-                    context.ReportProgress(new BackgroundTaskProgress(progressPercent, progressMessage));
+                    }                 
                 }
 
                 AuditHelper.LogCreateInstances(new[]{configuration.AETitle}, anonymizedInstances, EventSource.CurrentUser, result);

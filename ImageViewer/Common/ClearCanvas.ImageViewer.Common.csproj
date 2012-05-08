@@ -106,6 +106,7 @@
     <Compile Include="DicomServer\Tests\DicomServerTestServiceProvider.cs" />
     <Compile Include="ServerDirectory\Tests\ServerDirectoryTestServiceProvider.cs" />
     <Compile Include="StudyManagement\DataContracts.cs" />
+    <Compile Include="StudyManagement\IPublishFiles.cs" />
     <Compile Include="StudyManagement\IStorageConfiguration.cs" />
     <Compile Include="StudyManagement\IStudyStoreQuery.cs" />
     <Compile Include="StudyManagement\Rules\IRulesEngineAction.cs" />

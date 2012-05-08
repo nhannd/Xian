@@ -18,7 +18,6 @@ using ClearCanvas.ImageViewer.Common;
 using System.Linq;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
-using ClearCanvas.ImageViewer.StudyManagement.Core;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -189,10 +188,10 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			try
 			{
-				DicomFilePublisher.PublishLocal(files);
+			    Platform.GetService((IPublishFiles service) => service.PublishLocal(files));
 				return true;
 			}
-			catch (DicomFilePublishingException ex)
+			catch (Exception ex)
 			{
 				Platform.Log(LogLevel.Error, ex, "An error occurred while attempting to publish files locally.");
 			}
@@ -203,10 +202,10 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			try
 			{
-			    DicomFilePublisher.PublishRemote(files, destination);
+                Platform.GetService((IPublishFiles service) => service.PublishRemote(files,destination));
 				return true;
 			}
-			catch (DicomFilePublishingException ex)
+            catch (Exception ex)
 			{
 				Platform.Log(LogLevel.Error, ex, "An error occurred while attempting to publish files to server {0}.", destination.AETitle);
 			}

@@ -165,10 +165,6 @@
       <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
       <Name>ClearCanvas.ImageViewer.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\StudyManagement\Core\ClearCanvas.ImageViewer.StudyManagement.Core.csproj">
-      <Project>{624BC225-49A8-4E92-942D-CDC976292EB9}</Project>
-      <Name>ClearCanvas.ImageViewer.StudyManagement.Core</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\AddServerGroupToolLarge.png" />

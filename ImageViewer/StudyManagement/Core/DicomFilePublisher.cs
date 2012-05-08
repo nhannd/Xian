@@ -1,4 +1,15 @@
-﻿using System;
+﻿#region License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
@@ -14,13 +25,29 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
+    [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
+    internal class PublishFilesServiceProvider : IServiceProvider
+    {
+        #region IServiceProvider Members
+
+        public object GetService(Type serviceType)
+        {
+            if (serviceType != typeof(IPublishFiles))
+                return null;
+
+            return new DicomFilePublisher();
+        }
+
+        #endregion
+    }
+
     public class DicomFilePublishingException : Exception
     {
         internal DicomFilePublishingException(string message, Exception innerException)
             : base(message, innerException) { }
     }
 
-    public static class DicomFilePublisher
+    public class DicomFilePublisher : IPublishFiles
     {
         private static void DeleteEmptyFolders(string directory)
         {
@@ -117,7 +144,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             return configuration;
         }
 
-        public static void PublishLocal(ICollection<DicomFile> files)
+        public void PublishLocal(ICollection<DicomFile> files)
         {
             if (files == null || files.Count == 0)
                 return;
@@ -155,7 +182,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             }            
         }
 
-        public static void PublishRemote(ICollection<DicomFile> files, IDicomServiceNode destinationServer)
+        public void PublishRemote(ICollection<DicomFile> files, IDicomServiceNode destinationServer)
         {
             if (files == null || files.Count == 0)
                 return;
