@@ -115,6 +115,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                                                                catch (Exception x)
                                                                {
                                                                    Platform.Log(LogLevel.Error, x);
+                                                                   fileList.Clear(); // Clear out the failed entries
                                                                }
                                                            }, true);
                 if (fileList.Count > 0)
