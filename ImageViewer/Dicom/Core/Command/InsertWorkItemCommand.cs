@@ -29,6 +29,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
     public class InsertWorkItemCommand : DataAccessCommand
     {
         private readonly WorkItemRequest _request;
+        private readonly WorkItemProgress _progress;
         private readonly string _studyInstanceUid;
 
         public int ExpirationDelaySeconds { get; set; }
@@ -37,9 +38,10 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
 
         public WorkItem WorkItem { get; set; }
 
-        public InsertWorkItemCommand(WorkItemRequest request, string studyInstanceUid, string seriesInstanceUid, string sopInstanceUid) : base("Insert a WorkItem")
+        public InsertWorkItemCommand(WorkItemRequest request, WorkItemProgress progress, string studyInstanceUid, string seriesInstanceUid, string sopInstanceUid) : base("Insert a WorkItem")
         {
             _request = request;
+            _progress = progress;
             _studyInstanceUid = studyInstanceUid;
             ExpirationDelaySeconds = 60;
 
@@ -75,10 +77,11 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
         }
 
 
-        public InsertWorkItemCommand(WorkItemRequest request, string studyInstanceUid, string seriesInstanceUid, string sopInstanceUid, string filename)
+        public InsertWorkItemCommand(WorkItemRequest request, WorkItemProgress progress, string studyInstanceUid, string seriesInstanceUid, string sopInstanceUid, string filename)
             : base("Insert a WorkItem")
         {
             _request = request;
+            _progress = progress;
             _studyInstanceUid = studyInstanceUid;
             ExpirationDelaySeconds = 60;
 
@@ -147,7 +150,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core.Command
                                        DeleteTime = now.AddHours(2),
                                        ExpirationTime = now.AddSeconds(ExpirationDelaySeconds),
                                        StudyInstanceUid = _studyInstanceUid,
-                                       Status = WorkItemStatusEnum.Pending
+                                       Status = WorkItemStatusEnum.Pending,
+                                       Progress = _progress
                                    };
 
                     workItemBroker.AddWorkItem(WorkItem);

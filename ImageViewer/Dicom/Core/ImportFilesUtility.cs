@@ -296,14 +296,14 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                         WorkItem workItem;
                         command = _context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem)
                             ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName)
-                            : new InsertWorkItemCommand(_context.CreateRequest(file), studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName);             
+                            : new InsertWorkItemCommand(_context.CreateRequest(file), new ProcessStudyProgress(),  studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName);             
                     }
                     else
                     {
                         WorkItem workItem;
                         command = _context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem)
                             ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid)
-                            : new InsertWorkItemCommand(_context.CreateRequest(file), studyInstanceUid, seriesInstanceUid, sopInstanceUid);                        
+                            : new InsertWorkItemCommand(_context.CreateRequest(file), new ProcessStudyProgress {TotalFilesToProcess = 1}, studyInstanceUid, seriesInstanceUid, sopInstanceUid);                        
                     }
                     command.ExpirationDelaySeconds = _context.ExpirationDelaySeconds;
                     commandProcessor.AddCommand(command);
@@ -318,6 +318,18 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                             _context.StudyWorkItems.Add(studyInstanceUid, command.WorkItem);
 
                             WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemHelper.FromWorkItem(command.WorkItem));
+                        }
+                        else
+                        {
+                            var progress = command.WorkItem.Progress as ProcessStudyProgress;
+                            if (progress != null)
+                            {
+                                progress.TotalFilesToProcess++;
+                                command.WorkItem.Progress = progress;
+                                WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemHelper.FromWorkItem(command.WorkItem));
+                            }
+                            // Save the updated WorkItem
+                            _context.StudyWorkItems[studyInstanceUid] = command.WorkItem;
                         }
                 	}
                 	else
