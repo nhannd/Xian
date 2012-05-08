@@ -66,6 +66,8 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                 var studyXml = Location.LoadStudyXml();
                 var fileList = new List<ProcessStudyUtility.ProcessorFile>();
 
+                // This code will cleanup a folder and move images around to the proper location.
+                // It in essence allows you to just copy a bunch of files into the filestore, and reindex will clean them up and organize them.
                 FileProcessor.Process(Location.StudyFolder, "*.dcm", delegate(string file)
                                                            {
                                                                try
@@ -115,6 +117,7 @@ namespace ClearCanvas.ImageViewer.Dicom.Core
                                                                catch (Exception x)
                                                                {
                                                                    Platform.Log(LogLevel.Error, x);
+                                                                   fileList.Clear(); // Clear out the failed entries
                                                                }
                                                            }, true);
                 if (fileList.Count > 0)

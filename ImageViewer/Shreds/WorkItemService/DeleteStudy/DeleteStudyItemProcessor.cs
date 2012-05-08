@@ -69,6 +69,16 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteStudy
                 reason = "There are related WorkItems for the study being processed.";
                 return false;
             }
+
+            // Pending, InProgress, Idle ProcessStudy entries existing.
+            relatedList = FindRelatedWorkItems(new List<WorkItemTypeEnum> { WorkItemTypeEnum.ProcessStudy }, new List<WorkItemStatusEnum> { WorkItemStatusEnum.InProgress, WorkItemStatusEnum.Idle, WorkItemStatusEnum.Pending });
+
+            if (relatedList.Count > 0)
+            {
+                reason = "There are related WorkItems for the study being processed.";
+                return false;
+            }
+
             return true;
         }
     }

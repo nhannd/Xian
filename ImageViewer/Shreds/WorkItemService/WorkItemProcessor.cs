@@ -344,40 +344,48 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// </returns>
         private List<WorkItem> GetWorkItemsToDelete(int count)
         {
-            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+            try
             {
-                var workItemBroker = context.GetWorkItemBroker();
 
-                var workItems = workItemBroker.GetWorkItemsToDelete(count);
-
-                foreach (var item in workItems)
+                using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
                 {
-                    item.Status = WorkItemStatusEnum.DeleteInProgress;
+                    var workItemBroker = context.GetWorkItemBroker();
+
+                    var workItems = workItemBroker.GetWorkItemsToDelete(count);
+
+                    foreach (var item in workItems)
+                    {
+                        item.Status = WorkItemStatusEnum.DeleteInProgress;
+                    }
+
+                    context.Commit();
+                    if (workItems.Count > 0)
+                        return workItems;
                 }
 
-                context.Commit();
-                if (workItems.Count > 0)
+                // Get entries already marked as deleted by the GUI.
+                using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+                {
+                    var workItemBroker = context.GetWorkItemBroker();
+
+                    var workItems = workItemBroker.GetWorkItems(null, WorkItemStatusEnum.Deleted, null);
+
+                    if (workItems.Count > count)
+                        workItems = workItems.GetRange(0, count);
+
+                    foreach (var item in workItems)
+                    {
+                        item.Status = WorkItemStatusEnum.DeleteInProgress;
+                    }
+
+                    context.Commit();
+
                     return workItems;
-            }
-
-            // Get entries already marked as deleted by the GUI.
-            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
-            {
-                var workItemBroker = context.GetWorkItemBroker();
-
-                var workItems = workItemBroker.GetWorkItems(null, WorkItemStatusEnum.Deleted, null);
-
-                if (workItems.Count > count)
-                    workItems = workItems.GetRange(0, count);
-
-                foreach (var item in workItems)
-                {
-                    item.Status = WorkItemStatusEnum.DeleteInProgress;
                 }
-
-                context.Commit();
-
-                return workItems;
+            }
+            catch (Exception)
+            {
+                return new List<WorkItem>();
             }
         }
 
