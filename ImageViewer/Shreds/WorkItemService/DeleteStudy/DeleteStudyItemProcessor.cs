@@ -11,7 +11,7 @@
 
 using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Common.WorkItem;
-using ClearCanvas.ImageViewer.Dicom.Core;
+using ClearCanvas.ImageViewer.StudyManagement.Core;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteStudy
 {

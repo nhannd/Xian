@@ -15,7 +15,7 @@ using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Dicom.Core.Command
+namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
 {
     /// <summary>
     /// Insert a <see cref="WorkItem"/> and <see cref="WorkItemUid"/> entry for a specific SOP Instance UID.  

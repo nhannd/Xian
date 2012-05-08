@@ -12,7 +12,7 @@
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Dicom.Core.Command
+namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
 {
     /// <summary>
     /// Complete a specific <see cref="WorkItemUid"/> record in the database.

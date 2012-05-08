@@ -11,7 +11,7 @@
 
 using ClearCanvas.Dicom.Utilities.Command;
 
-namespace ClearCanvas.ImageViewer.Dicom.Core.Command
+namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
 {
     public class ViewerCommandProcessor : CommandProcessor
     {

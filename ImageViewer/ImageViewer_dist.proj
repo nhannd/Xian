@@ -262,7 +262,7 @@
   <!--Plugins common to all-->
   <ItemGroup>
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Common\bin\$(Configuration)\ClearCanvas.ImageViewer.Common.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Dicom\Core\bin\$(Configuration)\ClearCanvas.ImageViewer.Dicom.Core.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyManagement\Core\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyManagement.Core.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="$(DesktopBuild)">

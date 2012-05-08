@@ -18,7 +18,7 @@ using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Dicom.Core
+namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
     /// <summary>
     /// Reapply Rules Utility class.

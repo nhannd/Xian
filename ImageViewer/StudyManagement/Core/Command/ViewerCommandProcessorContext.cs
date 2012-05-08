@@ -15,7 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Dicom.Core.Command
+namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
 {
     /// <summary>
     /// Context object used by the <see cref="ViewerCommandProcessor"/>.

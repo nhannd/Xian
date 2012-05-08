@@ -16,10 +16,10 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.ImageViewer.Dicom.Core.Command;
+using ClearCanvas.ImageViewer.StudyManagement.Core.Command;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Dicom.Core
+namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
     /// <summary>
     /// Utility for processing files within a study.

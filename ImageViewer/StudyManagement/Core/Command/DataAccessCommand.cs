@@ -12,7 +12,7 @@
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Dicom.Core.Command
+namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
 {
     public abstract class DataAccessCommand : CommandBase
     {

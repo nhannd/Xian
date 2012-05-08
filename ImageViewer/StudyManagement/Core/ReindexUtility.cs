@@ -17,7 +17,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Dicom.Core
+namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
     /// <summary>
     /// Class for performing a Reindex of the database.

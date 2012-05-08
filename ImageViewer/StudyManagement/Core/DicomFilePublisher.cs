@@ -12,7 +12,7 @@ using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 
-namespace ClearCanvas.ImageViewer.Dicom.Core
+namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
     public class DicomFilePublishingException : Exception
     {

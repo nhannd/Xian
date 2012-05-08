@@ -18,10 +18,10 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
-using ClearCanvas.ImageViewer.Dicom.Core.Command;
+using ClearCanvas.ImageViewer.StudyManagement.Core.Command;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Dicom.Core
+namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
 
     /// <summary>

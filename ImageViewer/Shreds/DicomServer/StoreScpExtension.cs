@@ -16,7 +16,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.ImageViewer.Common.WorkItem;
-using ClearCanvas.ImageViewer.Dicom.Core;
+using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.Shreds.WorkItemService;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
