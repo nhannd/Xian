@@ -584,7 +584,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				try
 				{
-					var client = new WorkItemClient();
+					var client = new WorkItemBridge();
 					foreach (var workItem in SelectedWorkItems)
 					{
 						client.WorkItem = workItem.Data;
@@ -609,7 +609,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				try
 				{
-					var client = new WorkItemClient();
+					var client = new WorkItemBridge();
 					foreach (var workItem in items)
 					{
 						client.WorkItem = workItem.Data;
@@ -626,7 +626,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				try
 				{
-					var client = new WorkItemClient();
+					var client = new WorkItemBridge();
 					foreach (var workItem in SelectedWorkItems)
 					{
 						client.WorkItem = workItem.Data;
@@ -643,7 +643,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				try
 				{
-					var client = new WorkItemClient();
+					var client = new WorkItemBridge();
 					foreach (var workItem in SelectedWorkItems)
 					{
 						client.WorkItem = workItem.Data;

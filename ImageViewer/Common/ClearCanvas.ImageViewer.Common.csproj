@@ -168,7 +168,7 @@
     <Compile Include="WorkItem\Tests\ActivityMonitorTestApplication.cs" />
     <Compile Include="WorkItem\WorkItemPublishSubscribeHelper.cs" />
     <Compile Include="WorkItem\WorkItemsChangedEventArgs.cs" />
-    <Compile Include="WorkItem\WorkItemClient.cs" />
+    <Compile Include="WorkItem\WorkItemBridge.cs" />
     <Compile Include="WorkItem\WorkItemServiceClient.cs" />
     <Compile Include="WorkItem\SR.Designer.cs">
       <AutoGen>True</AutoGen>

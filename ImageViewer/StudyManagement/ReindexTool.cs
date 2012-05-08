@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             try
             {
                 string message;
-                var client = new ReindexClient();
+                var client = new ReindexFilestoreBridge();
                 client.Reindex();
 
                 if (client.WorkItem.Status == WorkItemStatusEnum.InProgress)

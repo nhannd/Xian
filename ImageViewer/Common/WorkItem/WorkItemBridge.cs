@@ -20,7 +20,7 @@ using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
-    public class WorkItemClient
+    public class WorkItemBridge
     {
         public WorkItemData WorkItem { get; set; }
         public WorkItemRequest Request { get; set; }
@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
-    public class DicomFileImportClient : WorkItemClient
+    public class DicomFileImportBridge : WorkItemBridge
     {
         public void ImportFileList(List<string> fileList,BadFileBehaviourEnum badFileBehaviour, FileImportBehaviourEnum fileImportBehavior )
         {
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             try
             {
-                var client = new ReindexClient();
+                var client = new ReindexFilestoreBridge();
                 client.Reindex();
                 Console.WriteLine("The re-index has been scheduled.");
             }
@@ -174,7 +174,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         #endregion
     }
 
-    public class ReindexClient : WorkItemClient
+    public class ReindexFilestoreBridge : WorkItemBridge
     {
         public void Reindex()
         {
@@ -193,7 +193,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
-    public class ReapplyRulesClient : WorkItemClient
+    public class ReapplyRulesBridge : WorkItemBridge
     {
         public void ReapplyRules(string ruleId, string ruleName, RulesEngineContext context)
         {
@@ -217,7 +217,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
-    public class DeleteClient : WorkItemClient
+    public class DeleteBridge : WorkItemBridge
     {
         public void DeleteStudy(IStudyRootData study)
         {
@@ -277,7 +277,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
-    public class DicomSendClient : WorkItemClient
+    public class DicomSendBridge : WorkItemBridge
     {
         public void MoveStudy(IDicomServiceNode remoteAEInfo, IStudyRootData study, WorkItemPriorityEnum priority)
         {
@@ -425,7 +425,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
-    public class DicomRetrieveClient : WorkItemClient
+    public class DicomRetrieveBridge : WorkItemBridge
     {
         public void RetrieveStudy(IDicomServiceNode remoteAEInfo, IStudyRootData study)
         {

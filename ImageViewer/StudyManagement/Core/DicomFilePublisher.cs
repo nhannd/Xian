@@ -194,7 +194,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
             try
             {
-                var client = new DicomSendClient();
+                var client = new DicomSendBridge();
                 client.PublishFiles(destinationServer, new StudyRootStudyIdentifier(CollectionUtils.FirstElement(files).DataSet),
                                     DeletionBehaviour.DeleteOnSuccess, savedFiles);
             }

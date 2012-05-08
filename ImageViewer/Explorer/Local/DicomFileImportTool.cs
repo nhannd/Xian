@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 			try
 			{
 			    string linkText = SR.LinkOpenActivityMonitor;   
-                var importClient = new DicomFileImportClient();
+                var importClient = new DicomFileImportBridge();
                 importClient.ImportFileList(filePaths, BadFileBehaviourEnum.Ignore, FileImportBehaviourEnum.Copy);
                 Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(SR.MessageFormatImportingFiles, filePaths.Count), linkText, ActivityMonitorManager.Show);
 			}

@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return;
 			}
 
-            var client = new DicomSendClient();
+            var client = new DicomSendBridge();
             foreach (var study in Context.SelectedStudies)
             {
                 foreach (var destination in serverTreeComponent.SelectedServers)

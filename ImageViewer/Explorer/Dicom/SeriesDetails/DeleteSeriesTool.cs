@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
             try
             {
-                var client = new DeleteClient();
+                var client = new DeleteBridge();
                 var seriesList = Context.SelectedSeries.Select(series => series.SeriesInstanceUid).ToList();
                 client.DeleteSeries(Context.Study, seriesList);
                 

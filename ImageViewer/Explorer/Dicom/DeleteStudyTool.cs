@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             try
             {
-                var client = new DeleteClient();
+                var client = new DeleteBridge();
                 foreach (var study in Context.SelectedStudies)
                 {
                     client.DeleteStudy(study);

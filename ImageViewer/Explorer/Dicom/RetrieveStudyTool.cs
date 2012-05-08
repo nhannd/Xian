@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             try
             {
-                var client = new DicomRetrieveClient();
+                var client = new DicomRetrieveBridge();
 
                 foreach (StudyTableItem study in Context.SelectedStudies)
                 {

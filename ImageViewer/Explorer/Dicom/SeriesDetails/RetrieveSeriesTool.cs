@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			if (!Enabled || SelectedSeries.Count == 0)
 				return;
 
-		    var client = new DicomRetrieveClient();
+		    var client = new DicomRetrieveBridge();
             var seriesUids = Context.SelectedSeries.Select(item => item.SeriesInstanceUid).ToList();
 		 
 			try

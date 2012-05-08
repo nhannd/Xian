@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
                     return;
             }
 
-            var client = new DicomSendClient();
+            var client = new DicomSendBridge();
             var seriesUids = Context.SelectedSeries.Select(item => item.SeriesInstanceUid).ToList();
 
             foreach (var destination in serverTreeComponent.SelectedServers)
