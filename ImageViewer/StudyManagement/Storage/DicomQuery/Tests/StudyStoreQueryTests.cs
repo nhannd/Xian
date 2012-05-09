@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
 
             Platform.SetExtensionFactory(extensionFactory);
 
-            SqlCeDatabaseHelper.CreateDatabase(_testDatabaseFilename, SqlCeDatabaseHelper.GetDatabaseFilePath(_testDatabaseFilename));
+            SqlCeDatabaseHelper<DicomStoreDataContext>.CreateDatabase(_testDatabaseFilename);
         }
 
         private static DataAccessContext CreateContext()

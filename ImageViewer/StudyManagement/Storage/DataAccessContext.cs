@@ -160,16 +160,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		/// <returns></returns>
 		private IDbConnection CreateConnection(string databaseFile)
 	    {
-	        string filePath = SqlCeDatabaseHelper.GetDatabaseFilePath(databaseFile);
-            var connectString = string.Format("Data Source = {0}; Default Lock Timeout = 10000", filePath);
-
-            if (!File.Exists(filePath))
-                SqlCeDatabaseHelper.CreateDatabase(databaseFile, filePath);
-
-			// now we can create a long-lived connection
-			var connection = new SqlCeConnection(connectString);
-			connection.Open();
-			return connection;
+	    	return SqlCeDatabaseHelper<DicomStoreDataContext>.CreateConnection(databaseFile);
 		}
 	}
 }
