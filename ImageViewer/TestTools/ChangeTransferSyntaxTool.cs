@@ -57,10 +57,13 @@ namespace ClearCanvas.ImageViewer.TestTools
 
 		private IAction CreateAction(TransferSyntax syntax, IResourceResolver resolver)
 		{
-			ClickAction action = new ClickAction(syntax.UidString,
-					new ActionPath("dicomstudybrowser-contextmenu/Change Transfer Syntax/" + syntax.ToString(), resolver),
-					ClickActionFlags.None, resolver);
-			action.SetClickHandler(delegate { ChangeToSyntax(syntax); });
+		    var action = new ClickAction(syntax.UidString,
+		                                 new ActionPath("dicomstudybrowser-contextmenu/Change Transfer Syntax/" + syntax.ToString(), resolver),
+		                                 ClickActionFlags.None, resolver) {Enabled = Enabled};
+
+		    this.EnabledChanged += (sender, args) => action.Enabled = Enabled;
+
+            action.SetClickHandler(() => ChangeToSyntax(syntax));
 			action.Label = syntax.ToString();
 			return action;
 		}
