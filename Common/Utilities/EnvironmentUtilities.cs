@@ -22,7 +22,7 @@ namespace ClearCanvas.Common.Utilities
 	/// <summary>
 	/// Generic environment utilities.
 	/// </summary>
-	public sealed class EnvironmentUtilities
+	public static class EnvironmentUtilities
 	{
 		private static string _machineIdentifier;
 
@@ -56,7 +56,7 @@ namespace ClearCanvas.Common.Utilities
 					{
 						foreach (var processor in results)
 						{
-							var processorId = ReadString(processor, "ProcessorId");
+							var processorId = processor.GetString("ProcessorId");
 							if (processorId != null) processorId = processorId.Trim();
 							if (!string.IsNullOrEmpty(processorId))
 								return processorId;
@@ -71,12 +71,12 @@ namespace ClearCanvas.Common.Utilities
 					{
 						foreach (var processor in results)
 						{
-							var manufacturer = ReadString(processor, "Manufacturer");
-							var addressWidth = ReadUInt16(processor, "AddressWidth");
-							var architecture = ReadUInt16(processor, "Architecture");
-							var family = ReadUInt16(processor, "Family");
-							var level = ReadUInt16(processor, "Level");
-							var revision = ReadUInt16(processor, "Revision");
+							var manufacturer = processor.GetString("Manufacturer");
+							var addressWidth = processor.GetUInt16("AddressWidth");
+							var architecture = processor.GetUInt16("Architecture");
+							var family = processor.GetUInt16("Family");
+							var level = processor.GetUInt16("Level");
+							var revision = processor.GetUInt16("Revision");
 							return string.Format(CultureInfo.InvariantCulture, "CPU-{0}-{1}-{2:X2}-{3:X2}-{4}-{5:X4}", manufacturer, addressWidth, architecture, family, level, revision);
 						}
 					}
@@ -100,7 +100,7 @@ namespace ClearCanvas.Common.Utilities
 					{
 						foreach (var bios in results)
 						{
-							var serialNumber = ReadString(bios, "SerialNumber");
+							var serialNumber = bios.GetString("SerialNumber");
 							if (serialNumber != null) serialNumber = serialNumber.Trim();
 							if (!string.IsNullOrEmpty(serialNumber))
 								return serialNumber;
@@ -126,7 +126,7 @@ namespace ClearCanvas.Common.Utilities
 					{
 						foreach (var motherboard in results)
 						{
-							var serialNumber = ReadString(motherboard, "SerialNumber");
+							var serialNumber = motherboard.GetString("SerialNumber");
 							if (serialNumber != null) serialNumber = serialNumber.Trim();
 							if (!string.IsNullOrEmpty(serialNumber))
 								return serialNumber;
@@ -153,8 +153,8 @@ namespace ClearCanvas.Common.Utilities
 					{
 						foreach (var diskDrive in results)
 						{
-							var index = ReadUInt32(diskDrive, "Index");
-							var signature = ReadUInt32(diskDrive, "Signature");
+							var index = diskDrive.GetUInt32("Index");
+							var signature = diskDrive.GetUInt32("Signature");
 							if (index.HasValue && signature.HasValue)
 								diskDrives.Add(index.Value, signature.Value);
 						}
@@ -183,7 +183,7 @@ namespace ClearCanvas.Common.Utilities
 					{
 						foreach (var system in results)
 						{
-							var uuid = ReadString(system, "UUID");
+							var uuid = system.GetString("UUID");
 							if (uuid != null) uuid = uuid.Trim();
 							if (!string.IsNullOrEmpty(uuid))
 								return uuid;
@@ -198,7 +198,7 @@ namespace ClearCanvas.Common.Utilities
 			return string.Empty;
 		}
 
-		private static string ReadString(ManagementBaseObject wmiObject, string propertyName)
+		private static string GetString(this ManagementBaseObject wmiObject, string propertyName)
 		{
 			try
 			{
@@ -213,7 +213,7 @@ namespace ClearCanvas.Common.Utilities
 			return null;
 		}
 
-		private static ushort? ReadUInt16(ManagementBaseObject wmiObject, string propertyName)
+		private static ushort? GetUInt16(this ManagementBaseObject wmiObject, string propertyName)
 		{
 			try
 			{
@@ -228,7 +228,7 @@ namespace ClearCanvas.Common.Utilities
 			return null;
 		}
 
-		private static uint? ReadUInt32(ManagementBaseObject wmiObject, string propertyName)
+		private static uint? GetUInt32(this ManagementBaseObject wmiObject, string propertyName)
 		{
 			try
 			{
