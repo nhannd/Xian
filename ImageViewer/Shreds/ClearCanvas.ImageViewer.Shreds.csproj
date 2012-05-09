@@ -88,17 +88,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="WorkItemService\BaseItemProcessor.cs" />
     <Compile Include="WorkItemService\DicomRetrieve\ImageViewerMoveScu.cs" />
     <Compile Include="WorkItemService\DicomSend\DicomSendFactory.cs" />
     <Compile Include="WorkItemService\DicomSend\DicomSendItemProcessor.cs" />
     <Compile Include="WorkItemService\DicomSend\ImageViewerStorageScu.cs" />
     <Compile Include="WorkItemService\Import\ImportFactory.cs" />
     <Compile Include="WorkItemService\Import\ImportItemProcessor.cs" />
-    <Compile Include="WorkItemService\IWorkItemProcessor.cs" />
-    <Compile Include="WorkItemService\IWorkItemProcessorFactory.cs" />
-    <Compile Include="WorkItemService\ReapplyRules\ReapplyRulesFactory.cs" />
-    <Compile Include="WorkItemService\ReapplyRules\ReapplyRulesItemProcessor.cs" />
     <Compile Include="WorkItemService\Reindex\ReindexFactory.cs" />
     <Compile Include="WorkItemService\Reindex\ReindexItemProcessor.cs" />
     <Compile Include="WorkItemService\DeleteSeries\DeleteSeriesFactory.cs" />
@@ -110,14 +105,11 @@
     <Compile Include="WorkItemService\DicomRetrieve\DicomRetrieveItemProcessor.cs" />
     <Compile Include="WorkItemService\DicomRetrieve\DicomRetrieveFactory.cs" />
     <Compile Include="WorkItemService\WorkItemActivityMonitorServiceType.cs" />
-    <Compile Include="WorkItemService\WorkItemProcessorFactoryExtensionPoint.cs" />
     <Compile Include="WorkItemService\WorkItemProcessor.cs" />
     <Compile Include="WorkItemService\WorkItemProcessorExtension.cs" />
     <Compile Include="WorkItemService\WorkItemService.cs" />
     <Compile Include="WorkItemService\WorkItemServiceExtension.cs" />
-    <Compile Include="WorkItemService\WorkItemServiceSettings.cs" />
     <Compile Include="WorkItemService\WorkItemServiceType.cs" />
-    <Compile Include="WorkItemService\WorkItemStatusProxy.cs" />
     <Compile Include="WorkItemService\WorkItemThreadPool.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -161,7 +153,9 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="WorkItemService\ReapplyRules\" />
+  </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>

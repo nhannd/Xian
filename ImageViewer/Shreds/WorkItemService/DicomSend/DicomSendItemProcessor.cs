@@ -15,10 +15,11 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
-using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 using ClearCanvas.ImageViewer.Common.WorkItem;
+using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend

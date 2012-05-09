@@ -11,6 +11,7 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common.Shreds;
+using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {

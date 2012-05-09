@@ -14,7 +14,7 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
+namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 {
     /// <summary>
     /// Enum telling if a work queue entry had a fatal or nonfatal error.
@@ -135,8 +135,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// <param name="scheduledTime">The time to postpone the entry to.</param>
         public void Postpone(DateTime scheduledTime)
         {
-            DateTime now = Platform.Time;
-          
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var workItemBroker = context.GetWorkItemBroker();

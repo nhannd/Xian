@@ -13,6 +13,7 @@ using System;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.WorkItem;
+using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
 {

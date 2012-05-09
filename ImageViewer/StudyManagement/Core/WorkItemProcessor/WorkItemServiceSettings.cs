@@ -9,12 +9,15 @@
 
 #endregion
 
-using System.Configuration;
-using ClearCanvas.Server.ShredHost;
+//using System.Configuration;
+//using ClearCanvas.Server.ShredHost;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
+using System.Configuration;
+
+namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 {
-	internal sealed class WorkItemServiceSettings : ShredConfigSection
+	// TODO : this is temporarliy broken - but needs to be converted to app settings anyhow
+	public sealed class WorkItemServiceSettings : ConfigurationSection
 	{
 		public const int DefaultNormalThreadCount = 6;
 		public const int DefaultStatThreadCount = 2;
@@ -40,11 +43,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 			{
 				if (_instance == null)
 				{
-                    _instance = ShredConfigManager.GetConfigSection(SettingName) as WorkItemServiceSettings;
+                    //_instance = ShredConfigManager.GetConfigSection(SettingName) as WorkItemServiceSettings;
 					if (_instance == null)
 					{
                         _instance = new WorkItemServiceSettings();
-                        ShredConfigManager.UpdateConfigSection(SettingName, _instance);
+                        //ShredConfigManager.UpdateConfigSection(SettingName, _instance);
 					}
 				}
 
@@ -54,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
 		public static void Save()
 		{
-            ShredConfigManager.UpdateConfigSection(SettingName, _instance);
+            //ShredConfigManager.UpdateConfigSection(SettingName, _instance);
 		}
 
 		#region Public Properties
@@ -110,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         
 		#endregion
 
-		public override object Clone()
+		public /*override*/ object Clone()
 		{
 		    var clone = new WorkItemServiceSettings
 		                    {

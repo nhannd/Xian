@@ -13,6 +13,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
+using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 {

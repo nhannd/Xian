@@ -101,8 +101,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         	foreach (var item in args.ChangedItems)
         	{
-                if (item.Type.Equals(DicomSendRequest.WorkItemTypeString) || item.Type.Equals(ReapplyRulesRequest.WorkItemTypeString))
-                    return;
+				//todo
+                //if (item.Type.Equals(DicomSendRequest.WorkItemTypeString) || item.Type.Equals(ReapplyRulesRequest.WorkItemTypeString))
+                //    return;
 
                 if (item.Type.Equals(ReindexRequest.WorkItemTypeString))
                 {

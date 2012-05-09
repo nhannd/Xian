@@ -16,9 +16,9 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
-using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
+using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy

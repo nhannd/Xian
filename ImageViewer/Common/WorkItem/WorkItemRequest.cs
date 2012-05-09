@@ -20,7 +20,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
@@ -575,43 +574,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public override string ActivityTypeString
         {
             get { return SR.ActivityTypeEnumReIndex; }
-        }
-    }
-
-    /// <summary>
-    /// ReapplyRules Request
-    /// </summary>
-    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
-    [WorkItemRequestDataContract("9361447F-C14F-498C-B0EA-40664F2BB396")]
-    [WorkItemKnownType]
-    [WorkItemRequest]
-    public class ReapplyRulesRequest : WorkItemRequest
-    {
-        public static string WorkItemTypeString = "ReapplyRules";
-        
-        public ReapplyRulesRequest()
-        {
-            WorkItemType = WorkItemTypeString;
-            Priority = WorkItemPriorityEnum.Normal;
-        }
-
-        [DataMember(IsRequired = true)]
-        public string RuleId { get; set; }
-
-        [DataMember(IsRequired = true)]
-        public string RuleName { get; set; }
-
-        [DataMember(IsRequired = true)]
-        public RulesEngineContext RulesEngineContext { get; set; }
-
-        public override string ActivityDescription
-        {
-            get { return string.Format(SR.ReapplyRulesRequest_ActivityDescription, RuleName); }
-        }
-
-        public override string ActivityTypeString
-        {
-            get { return SR.ActivityTypeEnumReapplyRules; }
         }
     }
 

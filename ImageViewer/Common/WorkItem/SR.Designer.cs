@@ -160,15 +160,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reapply Rules.
-        /// </summary>
-        internal static string ActivityTypeEnumReapplyRules {
-            get {
-                return ResourceManager.GetString("ActivityTypeEnumReapplyRules", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Re-index.
         /// </summary>
         internal static string ActivityTypeEnumReIndex {

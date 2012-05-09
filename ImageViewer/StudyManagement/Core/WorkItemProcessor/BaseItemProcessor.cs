@@ -19,7 +19,7 @@ using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Storage;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
+namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 {
     /// <summary>
     /// Abstract base class for processing WorkItems.

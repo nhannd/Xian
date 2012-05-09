@@ -52,8 +52,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 		/// Apply the a Rule to all matching studies.
 		/// </summary>
 		/// <param name="context">The context in which to apply the rules</param>
-		/// <param name="rule">The rule to apply.</param>
 		/// <param name="study">The study to apply the rule to</param>
-		//void ApplyStudyToRule(RulesEngineContext context, StudyEntry study, RuleData rule);
+		/// <param name="ruleId"> The rule to apply.</param>
+		void ApplyStudyToRule(RulesEngineContext context, StudyEntry study, string ruleId);
 	}
 }

@@ -198,9 +198,6 @@
   <data name="ActivityTypeEnumImportStudy" xml:space="preserve">
     <value>Import Study</value>
   </data>
-  <data name="ActivityTypeEnumReapplyRules" xml:space="preserve">
-    <value>Reapply Rules</value>
-  </data>
   <data name="ActivityTypeEnumReIndex" xml:space="preserve">
     <value>Re-index</value>
   </data>
