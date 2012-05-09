@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.DicomQuery.Tests
 
             Platform.SetExtensionFactory(extensionFactory);
 
-            DatabaseHelper.CreateDatabase(_testDatabaseFilename, DatabaseHelper.GetDatabaseFilePath(_testDatabaseFilename));
+            SqlCeDatabaseHelper.CreateDatabase(_testDatabaseFilename, SqlCeDatabaseHelper.GetDatabaseFilePath(_testDatabaseFilename));
         }
 
         private static DataAccessContext CreateContext()

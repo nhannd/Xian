@@ -4,7 +4,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 {
-    internal class DatabaseHelper
+	public class SqlCeDatabaseHelper
     {
         public static string GetDatabaseDirectory()
         {
@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
             // ensure the parent directory exists before trying to create database
             Directory.CreateDirectory(Path.GetDirectoryName(databaseFilePath));
 
-            var resourceResolver = new ResourceResolver(typeof(DatabaseHelper).Assembly);
+            var resourceResolver = new ResourceResolver(typeof(SqlCeDatabaseHelper).Assembly);
             using (Stream resourceStream = resourceResolver.OpenResource(resourceName))
             {
                 using (var fileStream = new FileStream(databaseFilePath, FileMode.Create))

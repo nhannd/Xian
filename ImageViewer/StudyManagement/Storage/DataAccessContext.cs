@@ -120,11 +120,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 			return new StudyBroker(_context);
 		}
 
-		public RuleBroker GetRuleBroker()
-		{
-			return new RuleBroker(_context);
-		}
-
         public StudyStoreQuery GetStudyStoreQuery()
         {
             return new StudyStoreQuery(_context);
@@ -165,11 +160,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
 		/// <returns></returns>
 		private IDbConnection CreateConnection(string databaseFile)
 	    {
-	        string filePath = DatabaseHelper.GetDatabaseFilePath(databaseFile);
+	        string filePath = SqlCeDatabaseHelper.GetDatabaseFilePath(databaseFile);
             var connectString = string.Format("Data Source = {0}; Default Lock Timeout = 10000", filePath);
 
             if (!File.Exists(filePath))
-                DatabaseHelper.CreateDatabase(databaseFile, filePath);
+                SqlCeDatabaseHelper.CreateDatabase(databaseFile, filePath);
 
 			// now we can create a long-lived connection
 			var connection = new SqlCeConnection(connectString);

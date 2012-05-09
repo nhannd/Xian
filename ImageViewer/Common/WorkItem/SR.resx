@@ -261,9 +261,6 @@
   <data name="ReapplyRulesProgress_StatusNoStudies" xml:space="preserve">
     <value>No studies found when reapplying rules.</value>
   </data>
-  <data name="ReapplyRulesRequest_ActivityDescription" xml:space="preserve">
-    <value>Reapply Rules for {0}</value>
-  </data>
   <data name="DeleteProgress_Status" xml:space="preserve">
     <value>{0} Image Deleted</value>
   </data>

@@ -5,7 +5,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.StudyManagement.Storage.ServiceProviders
 {
     //TODO (Marmot):Add the ability to translate exceptions to faults?
-    internal class ServiceProxyHelper
+    public class ServiceProxyHelper
     {
         public static TResult Call<TInput, TResult>(Func<TInput, TResult> function, TInput input)
         {

@@ -147,9 +147,6 @@
   <data name="MessageFailedToSendStudy" xml:space="preserve">
     <value>Failed to send study. If this problem persists, please contact your system administrator.</value>
   </data>
-  <data name="MessageFailedToStartReapplyRules" xml:space="preserve">
-    <value>Failed to start reapply rules operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator.</value>
-  </data>
   <data name="MessageFailedToStartReindex" xml:space="preserve">
     <value>Failed to start reindex operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator.</value>
   </data>

@@ -85,6 +85,7 @@
     <Compile Include="BlockingThreadPool.cs" />
     <Compile Include="BufferCache.cs" />
     <Compile Include="Cache.cs" />
+    <Compile Include="CompressionType.cs" />
     <Compile Include="DataContracts.cs" />
     <Compile Include="DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Diagnostics.cs" />
@@ -100,20 +101,15 @@
     <Compile Include="IBlockingEnumerator.cs" />
     <Compile Include="LargeObjectContainer.cs" />
     <Compile Include="LargeObjectContainerCache.cs" />
-<<<<<<< local
-    <Compile Include="ServerDirectory\IStudyLoader.cs" />
-=======
     <Compile Include="PublishManager.cs" />
->>>>>>> other
     <Compile Include="ServerDirectory\ServerDirectory.cs" />
     <Compile Include="ServerDirectory\Tests\ServerDirectoryTests.cs" />
     <Compile Include="DicomServer\Tests\DicomServerTestServiceProvider.cs" />
     <Compile Include="ServerDirectory\Tests\ServerDirectoryTestServiceProvider.cs" />
     <Compile Include="StudyManagement\DataContracts.cs" />
+    <Compile Include="StudyManagement\IPublishFiles.cs" />
     <Compile Include="StudyManagement\IStorageConfiguration.cs" />
     <Compile Include="StudyManagement\IStudyStoreQuery.cs" />
-    <Compile Include="StudyManagement\Rules\IRulesEngineAction.cs" />
-    <Compile Include="StudyManagement\Rules\IRulesEngine.cs" />
     <Compile Include="StudyManagement\StoreEntries.cs" />
     <Compile Include="StudyManagement\StoreEntryExtensions.cs" />
     <Compile Include="StudyManagement\StoreStudyRootQuery.cs" />
@@ -141,24 +137,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="StudyManagement\Rules\ComparisonOperator.cs" />
-    <Compile Include="StudyManagement\Rules\CompressionType.cs" />
-    <Compile Include="StudyManagement\Rules\RuleCondition.cs" />
-    <Compile Include="StudyManagement\Rules\IStudyRulesService.cs" />
-    <Compile Include="StudyManagement\Rules\JunctionType.cs" />
-    <Compile Include="StudyManagement\Rules\RuleData.cs" />
-    <Compile Include="StudyManagement\Rules\RuleAction.cs" />
-    <Compile Include="StudyManagement\Rules\StudyRuleDataContractAttribute.cs" />
-    <Compile Include="StudyManagement\Rules\TimeOrigin.cs" />
-    <Compile Include="StudyManagement\Rules\TimeUnit.cs" />
     <Compile Include="StudyManagement\StudyStoreBridge.cs" />
     <Compile Include="StudyManagement\Tests\StorageConfigurationTests.cs" />
     <Compile Include="StudyManagement\Tests\StudyStoreTests.cs" />
-<<<<<<< local
-    <Compile Include="StudyManagement\Tests\StudyStoreTestServiceProvider.cs" />
-=======
     <Compile Include="SubscriptionManager.cs" />
->>>>>>> other
+    <Compile Include="StudyManagement\Tests\StudyStoreTestServiceProvider.cs" />
     <Compile Include="Tests\DiskspaceTests.cs" />
     <Compile Include="WorkItem\EnumExtensions.cs" />
     <Compile Include="WorkItem\Tests\AutoRouteScheduledTimeTests.cs" />
@@ -174,7 +157,7 @@
     <Compile Include="WorkItem\Tests\ActivityMonitorTestApplication.cs" />
     <Compile Include="WorkItem\WorkItemPublishSubscribeHelper.cs" />
     <Compile Include="WorkItem\WorkItemsChangedEventArgs.cs" />
-    <Compile Include="WorkItem\WorkItemClient.cs" />
+    <Compile Include="WorkItem\WorkItemBridge.cs" />
     <Compile Include="WorkItem\WorkItemServiceClient.cs" />
     <Compile Include="WorkItem\SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -219,9 +202,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="StudyManagement\Rules\Tests\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
