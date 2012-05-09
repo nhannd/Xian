@@ -24,7 +24,7 @@ using ClearCanvas.ImageViewer.StudyManagement.Storage;
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
 {
     /// <summary>
-    /// Processor for <see cref="WorkItemTypeEnum.ProcessStudy"/> entries.
+    /// Processor for <see cref="ProcessStudyRequest"/> entries.
     /// </summary>
     public class StudyProcessProcessor : BaseItemProcessor<ProcessStudyRequest,ProcessStudyProgress>
     {

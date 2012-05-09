@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         private event EventHandler<StudyEventArgs> _studyFolderProcessedEvent;
         private event EventHandler<StudyEventArgs> _studyProcessedEvent;
         private readonly object _syncLock = new object();
-
+        private bool _cancelRequested;
         #endregion
 
         #region Public Events
@@ -169,16 +169,52 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         {            
             ProcessStudiesInDatabase();
 
+            if (_cancelRequested)
+            {
+                ResetDeletedStudies();
+                return;
+            }
+
             ProcessFilesystem();
 
             // Before scanning the study folders, cleanup any empty directories.
             CleanupFilestoreDirectory();
+
+            if (_cancelRequested)
+            {
+                ResetDeletedStudies();
+            }
+        }
+
+        /// <summary>
+        /// Cancel the reindex
+        /// </summary>
+        public void Cancel()
+        {
+            _cancelRequested = true;
         }
 
         #endregion
 
         #region Private Methods
 
+        private void ResetDeletedStudies()
+        {
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+            {
+                var broker = context.GetStudyBroker();
+
+                StudyOidList = new List<long>();
+
+                var studyList = broker.GetStudies();
+                foreach (var study in studyList)
+                {
+                    study.Deleted = false;
+                    StudyOidList.Add(study.Oid);
+                }
+                context.Commit();
+            }
+        }
         private void CleanupFilestoreDirectory()
         {
             try
@@ -237,6 +273,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 {
                     Platform.Log(LogLevel.Warn, "Unexpected exception attempting to reindex StudyOid {0}: {1}", oid, x.Message);
                 }
+
+                if (_cancelRequested) return;
             }
         }
 
@@ -245,6 +283,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             foreach (string studyFolder in DirectoryList)
             {
                 ProcessStudyFolder(studyFolder);
+
+                if (_cancelRequested) return;
             }
         }
 
