@@ -18,11 +18,41 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 {
     internal class ReindexItemProcessor : BaseItemProcessor<ReindexRequest, ReindexProgress>
     {
+        private ReindexUtility _reindexUtility;
+
         public override bool Initialize(WorkItemStatusProxy proxy)
         {
             bool initResult = base.Initialize(proxy);
                        
             return initResult;
+        }
+
+        /// <summary>
+        /// Override of Cancel() routine.
+        /// </summary>
+        /// <remarks>
+        /// The Cancel must be overriden to call the ReindexUtility's Cancel routine.
+        /// </remarks>
+        public override void Cancel()
+        {
+            if (_reindexUtility != null)
+                _reindexUtility.Cancel();
+            
+            base.Cancel();
+        }
+
+        /// <summary>
+        /// Override of Stop() routine.
+        /// </summary>
+        /// <remarks>
+        /// The Stop must be override to call the ReindexUtility's Cancel routine.
+        /// </remarks>
+        public override void Stop()
+        {
+            if (_reindexUtility != null)
+                _reindexUtility.Cancel();
+
+            base.Stop();
         }
 
         public override void Process()
@@ -38,12 +68,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
                 return;
             }
 
-            Progress.IsCancelable = false;
+            Progress.IsCancelable = true;
             Proxy.UpdateProgress();
 
-            var processor = new ReindexUtility();
+            _reindexUtility = new ReindexUtility();
 
-            processor.Initialize();
+            _reindexUtility.Initialize();
 
             try
             {
@@ -55,8 +85,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             }
 
             // Reset progress, in case of retry
-            Progress.StudiesToProcess = processor.DatabaseStudiesToScan;
-            Progress.StudyFoldersToProcess = processor.StudyFoldersToScan;
+            Progress.StudiesToProcess = _reindexUtility.DatabaseStudiesToScan;
+            Progress.StudyFoldersToProcess = _reindexUtility.StudyFoldersToScan;
             Progress.StudiesDeleted = 0;
             Progress.StudyFoldersProcessed = 0;
             Progress.StudiesProcessed = 0;
@@ -64,14 +94,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 
             Proxy.UpdateProgress();
 
-            processor.StudyFolderProcessedEvent += delegate(object sender, ReindexUtility.StudyEventArgs e)
+            _reindexUtility.StudyFolderProcessedEvent += delegate(object sender, ReindexUtility.StudyEventArgs e)
                                              {
                                                  Progress.StudyFoldersProcessed++;
                                                  Proxy.Item.StudyInstanceUid = e.StudyInstanceUid;
                                                  Proxy.UpdateProgress();
                                              };
 
-            processor.StudyDeletedEvent += delegate
+            _reindexUtility.StudyDeletedEvent += delegate
                                                {
                                                    Progress.StudiesDeleted++;
                                                    Progress.StudiesProcessed++;
@@ -79,16 +109,29 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
                                                    Proxy.UpdateProgress();
                                                };
 
-            processor.StudyProcessedEvent += delegate
+            _reindexUtility.StudyProcessedEvent += delegate
                                                  {
                                                      Progress.StudiesProcessed++;
                                                      Proxy.Item.StudyInstanceUid = string.Empty;
                                                      Proxy.UpdateProgress();
                                                  };
-            processor.Process();
+            _reindexUtility.Process();
 
-            Progress.Complete = true;
-            Proxy.Complete();
+            if (StopPending)
+            {
+                Progress.Complete = true;
+                Proxy.Postpone();
+            }
+            else if (CancelPending)
+            {
+                Progress.Complete = true;
+                Proxy.Cancel();
+            }
+            else
+            {
+                Progress.Complete = true;
+                Proxy.Complete();
+            }           
         }
 
         public override bool CanStart(out string reason)

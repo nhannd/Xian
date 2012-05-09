@@ -83,6 +83,21 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                 context.Commit();
             }
 
+            if (PublishFiles != null && PublishFiles.DeletionBehaviour == DeletionBehaviour.DeleteAlways)
+            {
+                foreach (string file in PublishFiles.FilePaths)
+                {
+                    try
+                    {
+                        FileUtils.Delete(file);
+                    }
+                    catch (Exception e)
+                    {
+                        Platform.Log(LogLevel.Warn, "Unable to delete temporary publish file {0}: {1}", file, e.Message);
+                    }
+                }
+            }
+
             Proxy.Delete();
         }
 
