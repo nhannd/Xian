@@ -105,9 +105,6 @@
   <ItemGroup>
     <DatabaseLibraries Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\v4.0\$(PlatformSubFolder)\sqlce*.dll" />
     <DatabaseLibraries Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\v4.0\$(PlatformSubFolder)\System.Data.SqlServerCe.dll" />
-    <!-- We're using Castle for dynamic in-proc service proxies. It is actually separate from NHibernate. -->
-    <!--<DatabaseLibraries Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.1\Castle.DynamicProxy2.dll" />
-    <DatabaseLibraries Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.1\Castle.Core.dll" />-->
   </ItemGroup>
 
   <ItemGroup>
@@ -332,7 +329,6 @@
   
   <Target Name="Copy ShredHost App Config">
     <CombineAppConfigs SourceFiles="@(ShredHostAppConfigCreatorSourceFiles)" OutputFile="$(DistributionShredHostConfig)" />
-    <FileReplaceText FilePath="$(DistributionShredHostConfig)" TextToReplace="!filestore!" ReplacementText="$(FileStoreDirectory)"/>
     <Copy SourceFiles="@(CriticalConfigFiles)" DestinationFiles="$(DistributionShredHostCriticalConfig)" />
   </Target>
 
@@ -509,7 +505,7 @@
   <Target Name="Copy Executable Bootstrap for ShredHost">
     <CallTarget Targets="Copy Executable Bootstrap" />
     <Copy SourceFiles="$(DistributionShredHostConfig)" DestinationFiles="$(DistributionConsoleConfig)" />
-    <!--<Copy SourceFiles="$(DistributionShredHostCriticalConfig)" DestinationFiles="$(DistributionConsoleCriticalConfig)" />-->
+    <Copy SourceFiles="$(DistributionShredHostCriticalConfig)" DestinationFiles="$(DistributionConsoleCriticalConfig)" />
   </Target>
 
   <Target Name="Copy Desktop Files" DependsOnTargets="Copy ImageViewer App Config;Copy JScript Files;Copy License Files">

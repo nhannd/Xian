@@ -34,43 +34,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 	public class ChangeTransferSyntaxTool : StudyBrowserTool
 	{
 		private string _tempPath;
-		private static object _localStudyLoader = null;
 		private TransferSyntax _syntax;
-
-		public ChangeTransferSyntaxTool()
-		{
-		}
-
-		private static IStudyLoader LocalStudyLoader
-		{
-			get
-			{
-				if (_localStudyLoader == null)
-				{
-					try
-					{
-						StudyLoaderExtensionPoint xp = new StudyLoaderExtensionPoint();
-						foreach (IStudyLoader loader in xp.CreateExtensions())
-						{
-							if (loader.Name == "DICOM_LOCAL")
-							{
-								_localStudyLoader = loader;
-								break;
-							}
-						}
-					}
-					catch (NotSupportedException)
-					{
-						Platform.Log(LogLevel.Info, "Compressions tool disabled; no local study loader exists.");
-					}
-
-					if (_localStudyLoader == null)
-						_localStudyLoader = new object(); //there is no loader.
-				}
-
-				return _localStudyLoader as IStudyLoader;
-			}
-		}
 
 		public override IActionSet Actions
 		{
@@ -93,10 +57,13 @@ namespace ClearCanvas.ImageViewer.TestTools
 
 		private IAction CreateAction(TransferSyntax syntax, IResourceResolver resolver)
 		{
-			ClickAction action = new ClickAction(syntax.UidString,
-					new ActionPath("dicomstudybrowser-contextmenu/Change Transfer Syntax/" + syntax.ToString(), resolver),
-					ClickActionFlags.None, resolver);
-			action.SetClickHandler(delegate { ChangeToSyntax(syntax); });
+		    var action = new ClickAction(syntax.UidString,
+		                                 new ActionPath("dicomstudybrowser-contextmenu/Change Transfer Syntax/" + syntax.ToString(), resolver),
+		                                 ClickActionFlags.None, resolver) {Enabled = Enabled};
+
+		    this.EnabledChanged += (sender, args) => action.Enabled = Enabled;
+
+            action.SetClickHandler(() => ChangeToSyntax(syntax));
 			action.Label = syntax.ToString();
 			return action;
 		}
@@ -105,12 +72,10 @@ namespace ClearCanvas.ImageViewer.TestTools
 		{
 			_syntax = syntax;
 
-			StudyItem selectedStudy = this.Context.SelectedStudy;
-
 			BackgroundTask task = null;
 			try
 			{
-				task = new BackgroundTask(ChangeToSyntax, false, this.Context.SelectedStudy);
+				task = new BackgroundTask(ChangeToSyntax, false, Context.SelectedStudy);
 				ProgressDialog.Show(task, this.Context.DesktopWindow, true);
 			}
 			catch(Exception e)
@@ -130,7 +95,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 
 		private void ChangeToSyntax(IBackgroundTaskContext context)
 		{
-			StudyItem study = (StudyItem)context.UserState;
+			var study = (StudyTableItem)context.UserState;
 
 			try
 			{
@@ -140,14 +105,14 @@ namespace ClearCanvas.ImageViewer.TestTools
 
 				string message = String.Format("Changing transfer syntax to: {0}", _syntax);
 				context.ReportProgress(new BackgroundTaskProgress(0, message));
-
-				int numberOfSops = LocalStudyLoader.Start(new StudyLoaderArgs(study.StudyInstanceUid, null));
+			    var loader = study.Server.GetService<IStudyLoader>();
+                int numberOfSops = loader.Start(new StudyLoaderArgs(study.StudyInstanceUid, null));
 				if (numberOfSops <= 0)
 					return;
 
 				for (int i = 0; i < numberOfSops; ++i)
 				{
-					Sop sop = LocalStudyLoader.LoadNextSop();
+                    Sop sop = loader.LoadNextSop();
 					if (sop != null)
 					{
 						if (sop.DataSource is ILocalSopDataSource)
@@ -164,7 +129,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 				}
 
 				//trigger an import of the anonymized files.
-			    var client = new DicomFileImportClient();
+			    var client = new DicomFileImportBridge();
                 client.ImportFileList(new List<string> {_tempPath}, BadFileBehaviourEnum.Move, FileImportBehaviourEnum.Move);
 
                 context.Complete();
@@ -183,10 +148,9 @@ namespace ClearCanvas.ImageViewer.TestTools
 				return;
 			}
 
-			this.Enabled = LocalStudyLoader != null && 
-			               WorkItemActivityMonitor.IsRunning && 
-			               this.Context.SelectedStudies.Count == 1 && 
-			               this.Context.SelectedServerGroup.IsLocalDatastore;
+		    this.Enabled = this.Context.SelectedStudies.Count == 1 &&
+		                   Context.SelectedServers.IsLocalServer &&
+		                   WorkItemActivityMonitor.IsRunning;
 		}
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)

@@ -112,12 +112,12 @@
   <Choose>
     <When Condition="$(DistributionBuild) And '$(Configuration)' == 'Release' And '$(KeyFile)' != ''">
       <PropertyGroup>
-        <ImageViewerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile);Options=$(BuildOptions)$(PlatformBuildOptions)</ImageViewerProperties>
+        <ImageViewerProperties>Configuration=$(Configuration);Platform=Any CPU;TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile);Options=$(BuildOptions)$(PlatformBuildOptions)</ImageViewerProperties>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <ImageViewerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);Options=$(BuildOptions)$(PlatformBuildOptions)</ImageViewerProperties>
+        <ImageViewerProperties>Configuration=$(Configuration);Platform=Any CPU;TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);Options=$(BuildOptions)$(PlatformBuildOptions)</ImageViewerProperties>
       </PropertyGroup>
     </Otherwise>
   </Choose>

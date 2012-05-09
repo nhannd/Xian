@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 				IStudyLoader loader = (IStudyLoader)CollectionUtils.SelectFirst(xp.CreateExtensions(),
 					delegate(object extension) { return ((IStudyLoader) extension).Name == "DICOM_LOCAL";});
 
-				StudyItem selected = base.Context.SelectedStudy;
+				var selected = base.Context.SelectedStudy;
 
 				loader.Start(new StudyLoaderArgs(selected.StudyInstanceUid, selected.Server));
 				StudyXml xml = new StudyXml();
