@@ -17,9 +17,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
     [ExtensionOf(typeof(WorkItemProcessorFactoryExtensionPoint))]
     public class ReindexFactory : IWorkItemProcessorFactory
     {
-        public WorkItemTypeEnum GetWorkQueueType()
+        public string GetWorkQueueType()
         {
-            return WorkItemTypeEnum.ReIndex;
+            return ReindexRequest.WorkItemTypeString;
         }
 
         public IWorkItemProcessor GetItemProcessor()

@@ -71,7 +71,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             var request = new DicomReceiveRequest
                               {
                                   FromAETitle = SourceAE,
-                                  Type = ImportType,
                                   Priority = WorkItemPriorityEnum.High,
                                   Patient = new WorkItemPatient(message.DataSet),
                                   Study = new WorkItemStudy(message.DataSet)
@@ -105,7 +104,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         {
             var request = new ImportStudyRequest
                               {
-                                  Type = ImportType,
                                   Priority = WorkItemPriorityEnum.High,
                                   Patient = new WorkItemPatient(message.DataSet),
                                   Study = new WorkItemStudy(message.DataSet)
@@ -129,7 +127,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         protected ImportFilesContext(string sourceAE, StorageConfiguration configuration)
         {
             StudyWorkItems = new ObservableDictionary<string, WorkItem>();
-            ImportType = WorkItemTypeEnum.ProcessStudy;
             SourceAE = sourceAE;
             StorageConfiguration = configuration;
             ExpirationDelaySeconds = 45;
@@ -141,11 +138,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// Gets the source AE title where the image(s) are imported from
         /// </summary>
         public string SourceAE { get; private set; }
-
-        /// <summary>
-        /// The Type of WorkItem
-        /// </summary>
-        public WorkItemTypeEnum ImportType { get; private set; }
 
         /// <summary>
         /// Map of the studies and corresponding WorkItems items for the current context

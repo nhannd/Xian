@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 					var studyDate = DateParser.Parse(item.Study.StudyDate);
 					var message = string.Format(SR.MessageWorkItemFailed,
-									item.Request.ActivityType.GetDescription(),
+									item.Request.ActivityTypeString,
 									item.Patient.PatientsName,
 									studyDate.HasValue ? Format.Date(studyDate.Value) : string.Empty,
 									item.Study.AccessionNumber);

@@ -75,9 +75,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 DateTime now = Platform.Time;
                 var broker = context.GetWorkItemBroker();
 
-                if (request.Request.Type == WorkItemTypeEnum.ReIndex)
+                if (request.Request.WorkItemType.Equals(ReindexRequest.WorkItemTypeString))
                 {
-                    var list = broker.GetWorkItems(request.Request.Type, null, null);
+                    var list = broker.GetWorkItems(request.Request.WorkItemType, null, null);
                     foreach (var workItem in list)
                     {
                         if (workItem.Status == WorkItemStatusEnum.Pending
@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 var item = new WorkItem
                                {
                                    Request = request.Request,
-                                   Type = request.Request.Type,
+                                   Type = request.Request.WorkItemType,
                                    Priority = request.Request.Priority,
                                    InsertTime = now,
                                    ScheduledTime = now,
@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 {
                     item.StudyInstanceUid = studyRequest.Study.StudyInstanceUid;
 
-                    if (request.Request.Type == WorkItemTypeEnum.DeleteStudy)
+                    if (request.Request.WorkItemType.Equals(DeleteStudyRequest.WorkItemTypeString))
                     {
                         // Mark studies to delete as "deleted" in the database.
                         var studyBroker = context.GetStudyBroker();

@@ -131,6 +131,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get { return _data.Patient != null ? _data.Patient.PatientsSex : null; }
 			}
 
+		    public bool CancellationCanResultInPartialStudy
+		    {
+                get { return _data.Request.CancellationCanResultInPartialStudy; }
+		    }
+
 			public string PatientInfo
 			{
 				get
@@ -191,12 +196,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				}
 			}
 
-
-			public WorkItemTypeEnum Type
-			{
-				get { return _data.Type; }
-			}
-
 			public WorkItemPriorityEnum Priority
 			{
 				get { return _data.Priority; }
@@ -207,9 +206,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get { return _data.Status; }
 			}
 
-			public ActivityTypeEnum ActivityType
+			public string ActivityType
 			{
-				get { return _data.Request != null ? _data.Request.ActivityType : ActivityTypeEnum.ReIndex; }
+				get { return _data.Request != null ? _data.Request.ActivityTypeString : ReindexRequest.WorkItemTypeString; }
 			}
 
 			public string ActivityDescription
@@ -250,7 +249,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 									w => w.ActivityDescription,
 									w => w.ProgressStatus,
 									w => w.ProgressStatusDescription,
-									w => w.ActivityType.GetDescription(),
+									w => w.ActivityType,
 									w => w.Priority.GetDescription(),
 									w => w.Status.GetDescription());
 			}
@@ -600,7 +599,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			private void CancelSelectedWorkItems()
 			{
 				var items = this.SelectedWorkItems.ToList();
-				if(items.Any(item => item.ActivityType.CancellationCanResultInPartialStudy()))
+				if(items.Any(item => item.CancellationCanResultInPartialStudy))
 				{
 					var action = _owner.Host.ShowMessageBox(SR.MessageConfirmCancelWorkItems, MessageBoxActions.YesNo);
 					if (action == DialogBoxAction.No)
@@ -680,7 +679,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private ConnectionState _connectionState;
 		private StatusFilterValue? _statusFilter;
-		private ActivityTypeEnum? _activityFilter;
+		private string _activityFilter;
 
 		private string _textFilter;
 		private readonly Timer _textFilterTimer;
@@ -879,20 +878,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public IList ActivityTypeFilterChoices
 		{
-			get { return new[] { NoFilter }.Concat(Enum.GetValues(typeof(ActivityTypeEnum)).Cast<object>().OrderBy<object, string>(FormatActivityTypeFilter)).ToList(); }
+            get { return new[] { NoFilter }.Concat(ActivityTypeHelper.GetActivityTypeList().Cast<object>().OrderBy<object, string>(FormatActivityTypeFilter)).ToList(); }
 		}
 
 		public string FormatActivityTypeFilter(object value)
 		{
-			return value == NoFilter ? SR.NoFilterItem : ((ActivityTypeEnum)value).GetDescription();
+			return value == NoFilter ? SR.NoFilterItem : ((string)value);
 		}
 
 		public object ActivityTypeFilter
 		{
-			get { return _activityFilter.HasValue ? _activityFilter.Value : NoFilter; }
+			get { return !string.IsNullOrEmpty(_activityFilter) ? _activityFilter : NoFilter; }
 			set
 			{
-				var v = (value == NoFilter) ? (ActivityTypeEnum?)null : (ActivityTypeEnum)value;
+				var v = (value == NoFilter) ? (string)null : (string)value;
 				if (_activityFilter != v)
 				{
 					_activityFilter = v;
@@ -989,7 +988,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private void WorkItemsChanged(object sender, WorkItemsChangedEventArgs e)
 		{
 			var workItems = e.ChangedItems;
-			if (workItems.Any(item => item.Type != WorkItemTypeEnum.ReapplyRules && item.Type != WorkItemTypeEnum.DicomSend))
+			if (workItems.Any(item => @item.Type.Equals(ReapplyRulesRequest.WorkItemTypeString) && @item.Type.Equals(DicomSendRequest.WorkItemTypeString)))
 			{
 				_studyCountWatcher.Invalidate();
 			}
@@ -1019,7 +1018,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private bool Include(WorkItem item)
 		{
-			if (_activityFilter.HasValue && item.ActivityType != _activityFilter.Value)
+			if (!string.IsNullOrEmpty(_activityFilter) && @item.ActivityType.Equals(_activityFilter))
 				return false;
 
 			if (_statusFilter.HasValue && WorkItemStatuses(_statusFilter.Value).All(s => s != item.Status))

@@ -292,7 +292,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             }
             
             // Pending, InProgress, Idle ProcessStudy entries existing.
-            relatedList = FindRelatedWorkItems(new List<WorkItemTypeEnum>{ WorkItemTypeEnum.ProcessStudy }, new List<WorkItemStatusEnum> { WorkItemStatusEnum.InProgress, WorkItemStatusEnum.Idle, WorkItemStatusEnum.Pending });
+            relatedList = FindRelatedWorkItems(new List<string>{ ProcessStudyRequest.WorkItemTypeString }, new List<WorkItemStatusEnum> { WorkItemStatusEnum.InProgress, WorkItemStatusEnum.Idle, WorkItemStatusEnum.Pending });
 
             if (relatedList.Count > 0)
             {

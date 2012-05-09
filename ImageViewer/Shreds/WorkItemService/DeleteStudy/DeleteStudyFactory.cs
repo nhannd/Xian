@@ -17,9 +17,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteStudy
     [ExtensionOf(typeof (WorkItemProcessorFactoryExtensionPoint))]
     public class DeleteStudyFactory : IWorkItemProcessorFactory
     {
-        public WorkItemTypeEnum GetWorkQueueType()
+        public string GetWorkQueueType()
         {
-            return WorkItemTypeEnum.DeleteStudy;
+            return DeleteStudyRequest.WorkItemTypeString;
         }
 
         public IWorkItemProcessor GetItemProcessor()

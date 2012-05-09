@@ -47,27 +47,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [EnumMember]
         DeleteInProgress = 8,
     }
-
-    [DataContract(Name = "WorkItemType", Namespace = ImageViewerWorkItemNamespace.Value)]
-    public enum WorkItemTypeEnum
-    {
-        [EnumMember]
-        ProcessStudy = 1,
-        [EnumMember]
-        DeleteStudy = 2,
-        [EnumMember]
-        DeleteSeries = 3,
-        [EnumMember]
-        Import = 4,
-        [EnumMember]
-        DicomSend = 5,
-        [EnumMember]
-        DicomRetrieve = 6,
-        [EnumMember]
-        ReIndex = 7,
-        [EnumMember]
-        ReapplyRules = 8,
-    }
     
     /// <summary>
     /// Base WorkItem representing a unit of Work to be done.
@@ -94,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public WorkItemStatusEnum Status { get; set; }
 
         [DataMember(IsRequired = true)]
-        public WorkItemTypeEnum Type { get; set; }
+        public string Type { get; set; }
 
         [DataMember(IsRequired = false)]
         public string StudyInstanceUid { get; set; }

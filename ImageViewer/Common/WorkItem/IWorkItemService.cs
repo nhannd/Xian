@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public class WorkItemQueryRequest : DataContractBase
     {
         [DataMember]
-        public WorkItemTypeEnum? Type { get; set; }
+        public string Type { get; set; }
 
         [DataMember]
         public WorkItemStatusEnum? Status { get; set; }
@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public class WorkItemUnsubscribeRequest : DataContractBase
     {
         [DataMember]
-        public WorkItemTypeEnum? Type { get; set; }
+        public string Type { get; set; }
     }
 
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]

@@ -17,9 +17,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
     [ExtensionOf(typeof(WorkItemProcessorFactoryExtensionPoint))]
     public class ImportFactory : IWorkItemProcessorFactory
     {
-        public WorkItemTypeEnum GetWorkQueueType()
+        public string GetWorkQueueType()
         {
-            return WorkItemTypeEnum.Import;
+            return ImportFilesRequest.WorkItemTypeString;
         }
 
         public IWorkItemProcessor GetItemProcessor()

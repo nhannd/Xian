@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
         public event EventHandler IsConnectedChanged;
 
-        public WorkItemTypeEnum[] WorkItemTypeFilters { get; set; }
+        public string[] WorkItemTypeFilters { get; set; }
         public long[] WorkItemIdFilters { get; set; }
 
         public event EventHandler<WorkItemsChangedEventArgs> WorkItemsChanged;

@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         	{
 				if (workItem.Request != null)
 				{
-					Console.WriteLine("Received WorkItemsChanged event: {0}:{1}.", workItem.Request.ActivityType,
+					Console.WriteLine("Received WorkItemsChanged event: {0}:{1}.", workItem.Request.ActivityTypeString,
 									  workItem.Request.ActivityDescription);
 					if (workItem.Progress != null)
 						Console.WriteLine("  Progress: {0}, Details: {1}.", workItem.Progress.Status,

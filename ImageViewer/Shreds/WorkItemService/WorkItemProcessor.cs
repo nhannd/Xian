@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
     {
         #region Members
 
-        private readonly Dictionary<WorkItemTypeEnum, IWorkItemProcessorFactory> _extensions = new Dictionary<WorkItemTypeEnum, IWorkItemProcessorFactory>();
+        private readonly Dictionary<string, IWorkItemProcessorFactory> _extensions = new Dictionary<string, IWorkItemProcessorFactory>();
 		private readonly WorkItemThreadPool _threadPool;
         private readonly ManualResetEvent _threadStop;
         private readonly string _name;
@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     var factory = obj as IWorkItemProcessorFactory;
                     if (factory != null)
                     {
-                        WorkItemTypeEnum type = factory.GetWorkQueueType();
+                        var type = factory.GetWorkQueueType();
                         _extensions.Add(type, factory);
                     }
                     else
@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 {
                     foreach (var item in list)
                     {
-                        if (!_extensions.ContainsKey(item.Type))
+                        if (!_extensions.ContainsKey(item.Request.WorkItemType))
                         {
                             Platform.Log(LogLevel.Error,
                                          "No extensions loaded for WorkItem item type: {0}.  Failing item.",
@@ -191,7 +191,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                         try
                         {
-                            IWorkItemProcessorFactory factory = _extensions[item.Type];
+                            IWorkItemProcessorFactory factory = _extensions[item.Request.WorkItemType];
                             IWorkItemProcessor processor = factory.GetItemProcessor();
 
                             // Enqueue the actual processing of the item to the thread pool.  
@@ -242,7 +242,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 {
                     if (!processor.Initialize(proxy))
                     {
-                        Platform.Log(LogLevel.Error, "Unable to intialize WorkItem processor for: {0}.  Directly deleting.", proxy.Request.ActivityType);
+                        Platform.Log(LogLevel.Error, "Unable to intialize WorkItem processor for: {0}.  Directly deleting.", proxy.Request.ActivityTypeString);
                         proxy.Delete();
                         return;
                     }

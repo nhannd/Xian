@@ -18,9 +18,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
    [ExtensionOf(typeof(WorkItemProcessorFactoryExtensionPoint))]
     public class DicomSendFactory : IWorkItemProcessorFactory
     {
-        public WorkItemTypeEnum GetWorkQueueType()
+        public string GetWorkQueueType()
         {
-            return WorkItemTypeEnum.DicomSend;
+            return DicomSendRequest.WorkItemTypeString;
         }
 
         public IWorkItemProcessor GetItemProcessor()

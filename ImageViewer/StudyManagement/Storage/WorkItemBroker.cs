@@ -74,12 +74,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         /// <param name="status"></param>
         /// <param name="studyInstanceUid"></param>
         /// <returns></returns>
-        public List<WorkItem> GetWorkItems(WorkItemTypeEnum? type, WorkItemStatusEnum? status, string studyInstanceUid)
+        public List<WorkItem> GetWorkItems(string type, WorkItemStatusEnum? status, string studyInstanceUid)
         {
             IQueryable<WorkItem> query = from w in Context.WorkItems select w;
             
-            if (type.HasValue)
-                query = query.Where(w => w.Type == type.Value);
+            if (!string.IsNullOrEmpty(type))
+                query = query.Where(w => w.Type == type);
 
             if (status.HasValue)
                 query = query.Where(w => w.Status == status.Value);
@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage
         /// <param name="type"></param>
         /// <param name="studyInstanceUid"></param>
         /// <returns></returns>
-        public WorkItem GetPendingWorkItemForStudy(WorkItemTypeEnum type, string studyInstanceUid)
+        public WorkItem GetPendingWorkItemForStudy(string type, string studyInstanceUid)
         {
             var list = (from w in this.Context.WorkItems
                         where w.StudyInstanceUid == studyInstanceUid

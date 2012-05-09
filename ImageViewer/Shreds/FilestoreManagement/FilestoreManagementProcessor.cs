@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Shreds.FilestoreManagement
 			           		          		Study = new WorkItemStudy(study),
 			           		          		Patient = new WorkItemPatient(study)
 			           		          	},
-			           		Type = WorkItemTypeEnum.DeleteStudy,
+			           		Type = DeleteStudyRequest.WorkItemTypeString,
 			           		Priority = WorkItemPriorityEnum.Normal,
 			           		InsertTime = now,
 			           		ScheduledTime = now.AddSeconds(5),

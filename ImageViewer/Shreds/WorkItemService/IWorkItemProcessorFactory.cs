@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
     /// </summary>
     public interface IWorkItemProcessorFactory
     {
-        WorkItemTypeEnum GetWorkQueueType();
+        string GetWorkQueueType();
 
         IWorkItemProcessor GetItemProcessor();
     }

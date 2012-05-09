@@ -17,9 +17,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteSeries
     [ExtensionOf(typeof(WorkItemProcessorFactoryExtensionPoint))]
     public class SeriesDeleteFactory : IWorkItemProcessorFactory
     {
-        public WorkItemTypeEnum GetWorkQueueType()
+        public string GetWorkQueueType()
         {
-            return WorkItemTypeEnum.DeleteSeries;
+            return DeleteSeriesRequest.WorkItemTypeString;
         }
 
         public IWorkItemProcessor GetItemProcessor()

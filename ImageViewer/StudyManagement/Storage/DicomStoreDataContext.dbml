@@ -63,7 +63,7 @@
       <Column Name="ExpirationTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="DeleteTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="Status" Type="global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemStatusEnum" DbType="SmallInt NOT NULL" CanBeNull="false" />
-      <Column Name="Type" Type="global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemTypeEnum" DbType="SmallInt NOT NULL" CanBeNull="false" />
+      <Column Name="Type" Type="System.String" DbType="NVarChar(32)" CanBeNull="false" />
       <Column Name="Priority" Type="global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemPriorityEnum" DbType="SmallInt NOT NULL" CanBeNull="false" />
       <Column Name="StudyInstanceUid" Type="System.String" DbType="NVarChar(64)" CanBeNull="true" />
       <Column Name="SerializedProgress" Storage="_SerializedPatient" Type="System.String" DbType="NText" CanBeNull="true" />

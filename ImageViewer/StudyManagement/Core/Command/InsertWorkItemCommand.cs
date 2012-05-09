@@ -137,7 +137,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
             }
             else
             {
-                WorkItem = workItemBroker.GetPendingWorkItemForStudy(_request.Type, _studyInstanceUid);
+                WorkItem = workItemBroker.GetPendingWorkItemForStudy(_request.WorkItemType, _studyInstanceUid);
                 if (WorkItem == null)
                 {
                     WorkItem = new WorkItem
@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
                                        Request = _request,
                                        ScheduledTime = now.AddSeconds(5),
                                        Priority = _request.Priority,
-                                       Type = _request.Type,
+                                       Type = _request.WorkItemType,
                                        DeleteTime = now.AddHours(2),
                                        ExpirationTime = now.AddSeconds(ExpirationDelaySeconds),
                                        StudyInstanceUid = _studyInstanceUid,

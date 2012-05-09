@@ -24,38 +24,6 @@ using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
-
-    [DataContract(Name = "ActivityType", Namespace = ImageViewerWorkItemNamespace.Value)]
-    public enum ActivityTypeEnum
-    {
-        [EnumMember]
-        DicomReceive = 1,
-        [EnumMember]
-        ImportStudy = 2,
-        [EnumMember]
-        ImportFiles = 3,
-        [EnumMember]
-        DicomRetrieve = 4,
-        [EnumMember]
-        ReIndex = 5,
-        [EnumMember]
-        ReapplyRules = 6,
-        [EnumMember]
-        DicomSendStudy = 7,
-        [EnumMember]
-        DicomSendSeries = 8,
-        [EnumMember]
-        DicomSendSop = 9,
-        [EnumMember]
-        AutoRoute = 10,
-        [EnumMember]
-        PublishFiles = 11,
-        [EnumMember]
-        DeleteStudy = 12,
-        [EnumMember]
-        DeleteSeries = 13,
-    }
-
     public static class WorkItemRequestTypeProvider
     {
         private static List<Type> _knownTypes;
@@ -94,16 +62,16 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public WorkItemPriorityEnum Priority { get; set; }
 
         [DataMember]
-        public WorkItemTypeEnum Type { get; set; }
+        public string WorkItemType { get; set; }
 
         [DataMember]
         public string UserName { get; set; }
 
-        [DataMember]
-        public ActivityTypeEnum ActivityType { get; set; }
-
         public abstract string ActivityDescription { get; }
 
+        public abstract string ActivityTypeString { get; }
+
+        public bool CancellationCanResultInPartialStudy { get; protected set; }
     }
 
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
@@ -163,8 +131,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemKnownType]
     public abstract class DicomSendRequest : WorkItemStudyRequest
     {
-        public static string WorkItemType = "DicomSend";
-
+        public static string WorkItemTypeString = "DicomSend";
+        
         [DataMember]
         public string Destination { get; set; }
 
@@ -181,18 +149,24 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemRequestDataContract("F0C1BA64-06BD-4E97-BE55-183915656811")]
     [WorkItemKnownType]
+    [WorkItemRequest]
     public class DicomSendStudyRequest : DicomSendRequest
     {
         public DicomSendStudyRequest()
         {
-            Type = WorkItemTypeEnum.DicomSend;
+            WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.Normal;
-            ActivityType = ActivityTypeEnum.DicomSendStudy;
+            CancellationCanResultInPartialStudy = true;
         }
 
         public override string ActivityDescription
         {
             get { return string.Format(SR.DicomSendStudyRequest_ActivityDescription, Destination); }
+        }
+
+        public override string ActivityTypeString
+        {
+            get { return SR.ActivityTypeEnumDicomSendStudy; }
         }
     }
 
@@ -202,13 +176,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemRequestDataContract("EF7A33C7-6B8A-470D-98F4-796780D8E50E")]
     [WorkItemKnownType]
+    [WorkItemRequest]
     public class DicomSendSeriesRequest : DicomSendRequest
-    {        
+    {
         public DicomSendSeriesRequest()
         {
-            Type = WorkItemTypeEnum.DicomSend;
+            WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.Normal;
-            ActivityType = ActivityTypeEnum.DicomSendSeries;
+            CancellationCanResultInPartialStudy = true;
         }
 
         [DataMember(IsRequired = false)]
@@ -217,6 +192,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public override string ActivityDescription
         {
             get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, Destination); }
+        }
+
+        public override string ActivityTypeString
+        {
+            get { return SR.ActivityTypeEnumDicomSendSeries; }
         }
     }
 
@@ -227,13 +207,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemRequestDataContract("75BD907A-45D3-471B-AD0A-DE13D422A794")]
     [WorkItemKnownType]
+    [WorkItemRequest]
     public class DicomSendSopRequest : DicomSendRequest
     {
         public DicomSendSopRequest()
         {
-            Type = WorkItemTypeEnum.DicomSend;
+            WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.Normal;
-            ActivityType = ActivityTypeEnum.DicomSendSop;
+            CancellationCanResultInPartialStudy = true;
         }
 
         [DataMember(IsRequired = true)]
@@ -246,6 +227,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get { return string.Format(SR.DicomSendSopRequest_ActivityDescription, Destination); }
         }
+
+        public override string ActivityTypeString
+        {
+            get { return SR.ActivityTypeEnumDicomSendSop; }
+        }
     }
 
 
@@ -255,14 +241,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemRequestDataContract("46DCBBF6-A8B3-4F5E-8611-5712A2BBBEFC")]
     [WorkItemKnownType]
+    [WorkItemRequest]
     public class PublishFilesRequest : DicomSendRequest
     {
         public PublishFilesRequest()
         {
-            Type = WorkItemTypeEnum.DicomSend;
+            WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.Normal;
-            ActivityType = ActivityTypeEnum.PublishFiles;
             DeletionBehaviour = DeletionBehaviour.None;
+            CancellationCanResultInPartialStudy = true;
         }
 
         [DataMember(IsRequired = false)]
@@ -278,6 +265,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, Destination); }
         }
+
+        public override string ActivityTypeString
+        {
+            get { return SR.ActivityTypeEnumPublishFiles; }
+        }
     }
 
     /// <summary>
@@ -285,14 +277,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// </summary>
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemRequestDataContract("1c63c863-aa4e-4672-bee5-8aa3db16edd5")]
-    [WorkItemKnownType]    
+    [WorkItemKnownType]
+    [WorkItemRequest]
     public class DicomAutoRouteRequest : DicomSendRequest
     {
         public DicomAutoRouteRequest()
         {
-            Type = WorkItemTypeEnum.DicomSend;
+            WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.Normal;
-            ActivityType = ActivityTypeEnum.AutoRoute;
+            CancellationCanResultInPartialStudy = true;
         }
 
         [DataMember(IsRequired = false)]
@@ -306,6 +299,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return string.Format(SR.DicomAutoRouteRequest_ActivityDescription, Destination, Patient.PatientsName); }
         }
 
+        public override string ActivityTypeString
+        {
+            get { return SR.ActivityTypeEnumAutoRoute; }
+        }
+        
         public DateTime GetScheduledTime(DateTime currentTime, int postponeSeconds)
         {
             if (!TimeWindowStart.HasValue || !TimeWindowEnd.HasValue || Priority == WorkItemPriorityEnum.Stat)
@@ -373,14 +371,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// </summary>
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
 	[WorkItemRequestDataContract("02b7d427-1107-4458-ade3-67ee6779a766")]
-    [WorkItemKnownType]    
-	public class ImportFilesRequest : WorkItemRequest
+    [WorkItemKnownType]
+    [WorkItemRequest]
+    public class ImportFilesRequest : WorkItemRequest
     {
+        public static string WorkItemTypeString = "Import";
+      
         public ImportFilesRequest()
         {
-            Type = WorkItemTypeEnum.Import;
+            WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.High;
-            ActivityType = ActivityTypeEnum.ImportFiles;
+            CancellationCanResultInPartialStudy = true;
         }
 
         [DataMember(IsRequired = true)]
@@ -407,6 +408,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                          : SR.ImportFilesRequest_ActivityDescription, FilePaths.Count);
             }
         }
+
+        public override string ActivityTypeString
+        {
+            get { return SR.ActivityTypeEnumImportFiles; }
+        }
     }
 
     /// <summary>
@@ -417,6 +423,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemKnownType]
     public abstract class DicomRetrieveRequest : WorkItemStudyRequest
     {
+        public static string WorkItemTypeString = "DicomRetrieve";
+   
         [DataMember]
         public string Source { get; set; }
     }
@@ -427,18 +435,24 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemRequestDataContract("61AB2801-5284-480B-B054-F0314865D84F")]
     [WorkItemKnownType]
+    [WorkItemRequest]
     public class DicomRetrieveStudyRequest : DicomRetrieveRequest
     {
         public DicomRetrieveStudyRequest()
         {
-            Type = WorkItemTypeEnum.DicomRetrieve;
+            WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.Normal;
-            ActivityType = ActivityTypeEnum.DicomRetrieve;
+            CancellationCanResultInPartialStudy = true;
         }
 
         public override string ActivityDescription
         {
             get { return string.Format(SR.DicomRetreiveRequest_ActivityDescription, Source); }
+        }
+
+        public override string ActivityTypeString
+        {
+            get { return SR.ActivityTypeEnumDicomRetrieve; }
         }
     }
 
@@ -449,13 +463,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemRequestDataContract("09547DF4-E8B8-45E8-ABAF-33159E2C7098")]
     [WorkItemKnownType]
+    [WorkItemRequest]
     public class DicomRetrieveSeriesRequest : DicomRetrieveRequest
     {
         public DicomRetrieveSeriesRequest()
         {
-            Type = WorkItemTypeEnum.DicomRetrieve;
+            WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.Normal;
-            ActivityType = ActivityTypeEnum.DicomRetrieve;
+            CancellationCanResultInPartialStudy = true;
         }
 
         [DataMember(IsRequired = false)]
@@ -464,6 +479,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public override string ActivityDescription
         {
             get { return string.Format(SR.DicomRetreiveSeriesRequest_ActivityDescription, Source); }
+        }
+
+        public override string ActivityTypeString
+        {
+            get { return SR.ActivityTypeEnumDicomRetrieve; }
         }
     }
 
@@ -476,10 +496,13 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemKnownType]
     public abstract class ProcessStudyRequest : WorkItemStudyRequest
     {
+        public static string WorkItemTypeString = "ProcessStudy";
+
         protected ProcessStudyRequest()
         {
-            Type = WorkItemTypeEnum.ProcessStudy;
+            WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.High;
+            CancellationCanResultInPartialStudy = true;
         }
     }
 
@@ -490,19 +513,20 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemRequestDataContract("146cc54f-7b98-468b-948a-415eeffd3d7f")]
     [WorkItemKnownType]
+    [WorkItemRequest]
     public class DicomReceiveRequest : ProcessStudyRequest
     {
-        public DicomReceiveRequest()
-        {
-            ActivityType = ActivityTypeEnum.DicomReceive;
-        }
-
         [DataMember(IsRequired = true)]
         public string FromAETitle { get; set; }
 
         public override string ActivityDescription
         {
             get { return string.Format(SR.DicomReceiveRequest_ActivityDescription, FromAETitle); }
+        }
+
+        public override string ActivityTypeString
+        {
+            get { return SR.ActivityTypeEnumDicomReceive; }
         }
     }
 
@@ -512,16 +536,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemRequestDataContract("2def790a-8039-4fc5-85d6-f4d3be3f2d8e")]
     [WorkItemKnownType]
+    [WorkItemRequest]
     public class ImportStudyRequest : ProcessStudyRequest
     {
-        public ImportStudyRequest()
-        {
-            ActivityType = ActivityTypeEnum.ImportStudy;
-        }
-
         public override string ActivityDescription
         {
             get { return string.Format(SR.ImportStudyRequest_AcitivityDescription); }
+        }
+
+        public override string ActivityTypeString
+        {
+            get { return SR.ActivityTypeEnumImportStudy; }
         }
     }
 
@@ -531,18 +556,25 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemRequestDataContract("875D13F2-621D-4277-8A32-34D9BF5AE40B")]
     [WorkItemKnownType]
+    [WorkItemRequest]
     public class ReindexRequest : WorkItemRequest
     {
+        public static string WorkItemTypeString = "ReIndex";
+
         public ReindexRequest()
         {
-            Type = WorkItemTypeEnum.ReIndex;
+            WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.High;
-            ActivityType = ActivityTypeEnum.ReIndex;
         }
 
         public override string ActivityDescription
         {
             get { return SR.ReindexRequest_ActivityDescription; }
+        }
+
+        public override string ActivityTypeString
+        {
+            get { return SR.ActivityTypeEnumReIndex; }
         }
     }
 
@@ -552,13 +584,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemRequestDataContract("9361447F-C14F-498C-B0EA-40664F2BB396")]
     [WorkItemKnownType]
+    [WorkItemRequest]
     public class ReapplyRulesRequest : WorkItemRequest
     {
+        public static string WorkItemTypeString = "ReapplyRules";
+        
         public ReapplyRulesRequest()
         {
-            Type = WorkItemTypeEnum.ReapplyRules;
+            WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.Normal;
-            ActivityType = ActivityTypeEnum.ReapplyRules;
         }
 
         [DataMember(IsRequired = true)]
@@ -574,6 +608,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get { return string.Format(SR.ReapplyRulesRequest_ActivityDescription, RuleName); }
         }
+
+        public override string ActivityTypeString
+        {
+            get { return SR.ActivityTypeEnumReapplyRules; }
+        }
     }
 
     /// <summary>
@@ -582,18 +621,25 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemRequestDataContract("0A7BE406-E5BE-4E10-997F-BCA37D53FED7")]
     [WorkItemKnownType]
+    [WorkItemRequest]
     public class DeleteStudyRequest : WorkItemStudyRequest
     {
+        public static string WorkItemTypeString = "DeleteStudy";
+        
         public DeleteStudyRequest()
         {
-            Type = WorkItemTypeEnum.DeleteStudy;
+            WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.High;
-            ActivityType = ActivityTypeEnum.DeleteStudy;
         }
 
         public override string ActivityDescription
         {
             get { return string.Format(SR.DeleteStudyRequest_ActivityDescription); }
+        }
+
+        public override string ActivityTypeString
+        {
+            get { return SR.ActivityTypeEnumDeleteStudy; }
         }
     }
 
@@ -603,13 +649,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemRequestDataContract("64BCF5FF-1AFD-409B-B0EB-1E576124D61E")]
     [WorkItemKnownType]
+    [WorkItemRequest]
     public class DeleteSeriesRequest : WorkItemStudyRequest
     {
+        public static string WorkItemTypeString = "DeleteSeries";
+        
         public DeleteSeriesRequest()
         {
-            Type = WorkItemTypeEnum.DeleteSeries;
+            WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.High;
-            ActivityType = ActivityTypeEnum.DeleteSeries;
         }
 
         [DataMember(IsRequired = false)]
@@ -618,6 +666,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public override string ActivityDescription
         {
             get { return string.Format(SR.DeleteSeriesRequest_ActivityDescription); }
+        }
+
+        public override string ActivityTypeString
+        {
+            get { return SR.ActivityTypeEnumDeleteSeries; }
         }
     }
 }

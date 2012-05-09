@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             var service = new TestWorkItemService{Callback = this};
             var callback = (IWorkItemActivityCallback) service;
 
-            var item = new WorkItemData { Type = WorkItemTypeEnum.DicomRetrieve };
+            var item = new WorkItemData { Type = DicomRetrieveRequest.WorkItemTypeString };
         	var items = new List<WorkItemData> {item};
 
 			callback.WorkItemsChanged(items);
@@ -213,7 +213,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         {
             ResetCallbackFields();
 
-            var item = new WorkItemData { Type = WorkItemTypeEnum.DicomRetrieve };
+            var item = new WorkItemData { Type = DicomRetrieveRequest.WorkItemTypeString };
 			var items = new List<WorkItemData> { item };
 			SubscribeAndPause(monitor, WorkItemChanged1);
 
@@ -228,7 +228,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             Assert.AreEqual(1, WorkItemChanged2Count);
             Assert.AreEqual(0, WorkItemChanged3Count);
 
-            item.Type = WorkItemTypeEnum.DicomSend;
+            item.Type = DicomSendRequest.WorkItemTypeString;
 			callback.WorkItemsChanged(items);
             Thread.Sleep(100);
             Assert.AreEqual(3, WorkItemChanged1Count);

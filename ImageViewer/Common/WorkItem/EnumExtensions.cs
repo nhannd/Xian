@@ -52,60 +52,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                     return SR.WorkItemPriorityEnumHigh;
             }
 			throw new NotImplementedException();
-		}
-
-        public static string GetDescription(this ActivityTypeEnum value)
-        {
-            switch (value)
-            {
-                case ActivityTypeEnum.AutoRoute:
-                    return SR.ActivityTypeEnumAutoRoute;
-                case ActivityTypeEnum.DicomReceive:
-                    return SR.ActivityTypeEnumDicomReceive;
-                case ActivityTypeEnum.DicomRetrieve:
-                    return SR.ActivityTypeEnumDicomRetrieve;
-                case ActivityTypeEnum.DicomSendSop:
-                    return SR.ActivityTypeEnumDicomSendSop;
-                case ActivityTypeEnum.DicomSendSeries:
-                    return SR.ActivityTypeEnumDicomSendSeries;
-                case ActivityTypeEnum.DicomSendStudy:
-                    return SR.ActivityTypeEnumDicomSendStudy;
-                case ActivityTypeEnum.PublishFiles:
-                    return SR.ActivityTypeEnumPublishFiles;
-                case ActivityTypeEnum.ImportFiles:
-                    return SR.ActivityTypeEnumImportFiles;
-                case ActivityTypeEnum.ImportStudy:
-                    return SR.ActivityTypeEnumImportStudy;
-                case ActivityTypeEnum.ReIndex:
-                    return SR.ActivityTypeEnumReIndex;
-                case ActivityTypeEnum.ReapplyRules:
-                    return SR.ActivityTypeEnumReapplyRules;
-                case ActivityTypeEnum.DeleteStudy:
-                    return SR.ActivityTypeEnumDeleteStudy;
-                case ActivityTypeEnum.DeleteSeries:
-                    return SR.ActivityTypeEnumDeleteSeries;
-            }
-            throw new NotImplementedException();
-        }
-
-		public static bool CancellationCanResultInPartialStudy(this ActivityTypeEnum value)
-		{
-			switch (value)
-			{
-				case ActivityTypeEnum.DicomReceive:
-				case ActivityTypeEnum.ImportStudy:
-				case ActivityTypeEnum.ImportFiles:
-				case ActivityTypeEnum.DicomRetrieve:
-				case ActivityTypeEnum.DicomSendStudy:
-				case ActivityTypeEnum.DicomSendSeries:
-				case ActivityTypeEnum.DicomSendSop:
-				case ActivityTypeEnum.AutoRoute:
-				case ActivityTypeEnum.PublishFiles:
-					return true;
-
-				default:
-					return false;
-			}
-		}
+		}    
 	}
 }

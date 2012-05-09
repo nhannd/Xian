@@ -283,7 +283,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// <param name="types"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        protected IList<WorkItem> FindRelatedWorkItems(IEnumerable<WorkItemTypeEnum> types,
+        protected IList<WorkItem> FindRelatedWorkItems(IEnumerable<string> types,
                                                        IEnumerable<WorkItemStatusEnum> status)
         {
             IList<WorkItem> list;
@@ -334,7 +334,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {
                 var broker = context.GetWorkItemBroker();
 
-                list = broker.GetWorkItems(WorkItemTypeEnum.ReIndex, null, null);
+                list = broker.GetWorkItems(ReindexRequest.WorkItemTypeString, null, null);
             }
 
             if (list == null || list.Count == 0)

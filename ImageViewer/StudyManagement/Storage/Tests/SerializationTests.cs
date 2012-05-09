@@ -27,6 +27,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.Tests
 		    {
                 get { return string.Empty; }
 		    }
+
+		    public override string ActivityTypeString
+		    {
+		        get { return string.Empty; }
+		    }
 		}
 
 		[WorkItemRequestDataContract("f6c90b95-d631-4b78-b9a1-a786dc23512a")]
@@ -36,7 +41,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Storage.Tests
 		    {
                 get { return string.Empty; }
             }
-		}
+
+            public override string ActivityTypeString
+            {
+                get { return string.Empty; }
+            }
+        }
 
 
 

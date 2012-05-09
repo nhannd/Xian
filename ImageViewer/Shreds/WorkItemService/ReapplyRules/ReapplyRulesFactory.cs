@@ -17,9 +17,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ReapplyRules
     [ExtensionOf(typeof(WorkItemProcessorFactoryExtensionPoint))]
     public class ReapplyRulesFactory : IWorkItemProcessorFactory
     {
-        public WorkItemTypeEnum GetWorkQueueType()
+        public string GetWorkQueueType()
         {
-            return WorkItemTypeEnum.ReapplyRules;
+            return ReapplyRulesRequest.WorkItemTypeString;
         }
 
         public IWorkItemProcessor GetItemProcessor()

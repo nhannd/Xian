@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 return;
             }
             
-            var request = new WorkItemQueryRequest { Type = WorkItemTypeEnum.ReIndex };
+            var request = new WorkItemQueryRequest { Type = ReindexRequest.WorkItemTypeString };
             IEnumerable<WorkItemData> reindexItems = null;
             
             try
@@ -101,17 +101,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         	foreach (var item in args.ChangedItems)
         	{
-				switch (item.Type)
-				{
-					case WorkItemTypeEnum.DicomSend:
-					case WorkItemTypeEnum.ReapplyRules:
-						return;
-					case WorkItemTypeEnum.ReIndex:
-						Reindexing = item.Status == WorkItemStatusEnum.InProgress;
-						break;
-				}
+                if (item.Type.Equals(DicomSendRequest.WorkItemTypeString) || item.Type.Equals(ReapplyRulesRequest.WorkItemTypeString))
+                    return;
 
-				if (!String.IsNullOrEmpty(item.StudyInstanceUid))
+                if (item.Type.Equals(ReindexRequest.WorkItemTypeString))
+                {
+                    Reindexing = item.Status == WorkItemStatusEnum.InProgress;
+                    break;
+                }
+
+        	    if (!String.IsNullOrEmpty(item.StudyInstanceUid))
 					_setChangedStudies[item.StudyInstanceUid] = item.StudyInstanceUid;
 
 				_processStudiesEventPublisher.Publish(this, EventArgs.Empty);
