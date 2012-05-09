@@ -33,6 +33,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             if (WorkItem.Progress != null && !WorkItem.Progress.IsCancelable) 
                 return;
 
+            if (WorkItem.Status == WorkItemStatusEnum.Deleted)
+                return;
+
             WorkItemUpdateResponse response = null;
 
             Platform.GetService<IWorkItemService>(s => response = s.Update(new WorkItemUpdateRequest
@@ -40,12 +43,18 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                                                    Cancel = true, 
                                                                                    Identifier = WorkItem.Identifier
                                                                                }));
-            WorkItem = response.Item;
+            if (response.Item == null)
+                WorkItem.Status = WorkItemStatusEnum.Deleted;
+            else
+                WorkItem = response.Item;
         }
 
         public void Reset()
         {
             if (WorkItem == null)
+                return;
+
+            if (WorkItem.Status == WorkItemStatusEnum.Deleted)
                 return;
 
             WorkItemUpdateResponse response = null;
@@ -56,12 +65,18 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                                                    ScheduledTime = Platform.Time, 
                                                                                    Identifier = WorkItem.Identifier
                                                                                }));
-            WorkItem = response.Item;
+            if (response.Item == null)
+                WorkItem.Status = WorkItemStatusEnum.Deleted;
+            else
+                WorkItem = response.Item;
         }
 
         public void Reprioritize(WorkItemPriorityEnum priority)
         {
             if (WorkItem == null)
+                return;
+
+            if (WorkItem.Status == WorkItemStatusEnum.Deleted)
                 return;
 
             WorkItemUpdateResponse response = null;
@@ -72,7 +87,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 Identifier = WorkItem.Identifier,
                 ScheduledTime = priority == WorkItemPriorityEnum.Stat ? Platform.Time : default(DateTime?)
             }));
-            WorkItem = response.Item;
+
+            if (response.Item == null)
+                WorkItem.Status = WorkItemStatusEnum.Deleted;
+            else
+                WorkItem = response.Item;
         }
 
 
@@ -81,14 +100,20 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             if (WorkItem == null)
                 return;
 
+            if (WorkItem.Status == WorkItemStatusEnum.Deleted)
+                return;
+
             WorkItemUpdateResponse response = null;
 
             Platform.GetService<IWorkItemService>(s => response = s.Update(new WorkItemUpdateRequest
                                                                                {
                                                                                    Delete = true, // TODO (Marmot) - This delete flag could be removed, and we could just use the status
                                                                                    Identifier = WorkItem.Identifier
-                                                                               }));        
-            WorkItem = response.Item;
+                                                                               }));
+            if (response.Item == null)
+                WorkItem.Status = WorkItemStatusEnum.Deleted;
+            else
+                WorkItem = response.Item;
         }
 
         protected void InsertRequest(WorkItemRequest request)
@@ -102,9 +127,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
             Platform.GetService<IWorkItemService>(s => response = s.Insert(new WorkItemInsertRequest { Request = request }));
 
-            if (response == null) return;
-
-            WorkItem = response.Item;
+            if (response.Item == null)
+                WorkItem.Status = WorkItemStatusEnum.Deleted;
+            else
+                WorkItem = response.Item;
         }
 
         private static string GetUserName()

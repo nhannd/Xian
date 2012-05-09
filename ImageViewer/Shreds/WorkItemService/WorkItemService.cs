@@ -138,6 +138,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {
                 var broker = context.GetWorkItemBroker();
                 var workItem = broker.GetWorkItem(request.Identifier);
+                if (workItem == null)
+                {
+                    response.Item = null;
+                    return response;
+                }
+
                 bool deleted = false;
 
                 if (request.Delete.HasValue && request.Delete.Value)
