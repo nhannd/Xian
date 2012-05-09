@@ -1019,7 +1019,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private bool Include(WorkItem item)
 		{
-			if (!string.IsNullOrEmpty(_activityFilter) && @item.ActivityType.Equals(_activityFilter))
+			if (!string.IsNullOrEmpty(_activityFilter) && !item.ActivityType.Equals(_activityFilter))
 				return false;
 
 			if (_statusFilter.HasValue && WorkItemStatuses(_statusFilter.Value).All(s => s != item.Status))
