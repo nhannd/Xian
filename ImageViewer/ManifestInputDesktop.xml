@@ -7,6 +7,14 @@
     <File name="install.log" ignore="true" />
     <File name="uninst.exe" ignore="true" />
     <File name="uninstall.log" ignore="true" />
+    <File name="EULA.rtf" />
+    <File name="PrivacyNotice.rtf" />
+    <File name="Logging.config" />
+    <File name="logs\" ignore="true" />
+    <File name="filestore\" ignore="true" />
+    <File name="manifest\" ignore="true" />
+    <File name="dicom_interim\" ignore="true" />
+    <File name="badfiles\" ignore="true" />
     <File name="ClearCanvas.Desktop.Executable.exe" checksum="true" />
     <File name="ClearCanvas.Desktop.Executable.exe.config" config="true" />
     <File name="ClearCanvas.Server.ShredHostService.exe" checksum="true" />
@@ -14,32 +22,23 @@
     <File name="ClearCanvas.Executable.exe" checksum="true" />
     <File name="ClearCanvas.Executable.exe.config" config="false" />
     <File name="DicomAEServers.xml" ignore="true"/>
-    <File name="EULA.rtf" />
-    <File name="PrivacyNotice.rtf" />
-    <File name="Logging.config" />
-    <File name="common\ClearCanvas.Common.dll" checksum="true" />
-    <File name="common\ClearCanvas.ImageViewer.Common.dll" checksum="true" />
-    <File name="common\ClearCanvas.ImageViewer.StudyManagement.Storage.dll" checksum="true" />
-    <File name="common\ClearCanvas.Dicom.dll" checksum="true" />
-    <File name="common\ClearCanvas.Server.ShredHost.dll" checksum="true" />
     <File name="common\DotNetMagic2005.DLL" />
     <File name="common\Iesi.Collections.dll" checksum="true" />
     <File name="common\log4net.dll" checksum="true" />
     <File name="common\Nhibernate.dll" checksum="true" />
-    <File name="common\sqlceca35.dll" checksum="true" />
-    <File name="common\sqlcecompact35.dll" checksum="true" />
-    <File name="common\sqlceer35EN.dll" checksum="true" />
-    <File name="common\sqlceme35.dll" checksum="true" />
-    <File name="common\sqlceoledb35.dll" checksum="true" />
-    <File name="common\sqlceqp35.dll" checksum="true" />
-    <File name="common\sqlcese35.dll" checksum="true" />
+    <File name="common\sqlceca40.dll" checksum="true" />
+    <File name="common\sqlcecompact40.dll" checksum="true" />
+    <File name="common\sqlceer40EN.dll" checksum="true" />
+    <File name="common\sqlceme40.dll" checksum="true" />
+    <File name="common\sqlceoledb40.dll" checksum="true" />
+    <File name="common\sqlceqp40.dll" checksum="true" />
+    <File name="common\sqlcese40.dll" checksum="true" />
     <File name="common\System.Data.SqlServerCe.dll" checksum="true" />
-    <File name="logs\" ignore="true" />
-    <File name="filestore\" ignore="true" />
-    <File name="manifest\" ignore="true" />
-    <File name="dicom_interim\" ignore="true" />
-    <File name="badfiles\" ignore="true" />
+    <File name="common\ClearCanvas.Common.dll" checksum="true" />
+    <File name="common\ClearCanvas.Dicom.dll" checksum="true" />
+    <File name="common\ClearCanvas.Server.ShredHost.dll" checksum="true" />
     <File name="plugins\BilinearInterpolation.dll" checksum="true" />
+    <File name="plugins\ClearCanvas.Controls.WinForms.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Desktop.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Desktop.ExtensionBrowser.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" checksum="true" />
@@ -47,17 +46,16 @@
     <File name="plugins\ClearCanvas.Desktop.View.WinForms.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Dicom.Codec.Jpeg.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Dicom.Codec.Rle.dll" checksum="true" />
+    <File name="plugins\ClearCanvas.ImageViewer.Common.dll" checksum="true" />
+    <File name="plugins\ClearCanvas.ImageViewer.StudyManagement.Storage.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.AnnotationProviders.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Clipboard.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Clipboard.View.WinForms.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Configuration.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Configuration.View.WinForms.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.dll" checksum="true" />
-    <File name="plugins\ClearCanvas.ImageViewer.StudyManagement.Core.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Layout.Basic.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Layout.Basic.View.WinForms.dll" checksum="true" />
-    <File name="plugins\ClearCanvas.ImageViewer.Shreds.dll" checksum="true" />
-    <File name="plugins\ClearCanvas.ImageViewer.StudyManagement.Storage.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Thumbnails.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Thumbnails.View.WinForms.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Tools.Measurement.dll" checksum="true" />
