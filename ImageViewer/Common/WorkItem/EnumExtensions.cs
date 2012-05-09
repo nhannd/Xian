@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 case ActivityTypeEnum.DeleteStudy:
                     return SR.ActivityTypeEnumDeleteStudy;
                 case ActivityTypeEnum.DeleteSeries:
-                    return SR.ActivityTypeEnumDeleteeries;
+                    return SR.ActivityTypeEnumDeleteSeries;
             }
             throw new NotImplementedException();
         }

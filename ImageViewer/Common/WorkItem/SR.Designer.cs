@@ -72,9 +72,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         /// <summary>
         ///   Looks up a localized string similar to Delete Series.
         /// </summary>
-        internal static string ActivityTypeEnumDeleteeries {
+        internal static string ActivityTypeEnumDeleteSeries {
             get {
-                return ResourceManager.GetString("ActivityTypeEnumDeleteeries", resourceCulture);
+                return ResourceManager.GetString("ActivityTypeEnumDeleteSeries", resourceCulture);
             }
         }
         
@@ -543,96 +543,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         internal static string WorkItemStatusEnumPending {
             get {
                 return ResourceManager.GetString("WorkItemStatusEnumPending", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete Series.
-        /// </summary>
-        internal static string WorkItemTypeEnumDeleteSeries {
-            get {
-                return ResourceManager.GetString("WorkItemTypeEnumDeleteSeries", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete Study.
-        /// </summary>
-        internal static string WorkItemTypeEnumDeleteStudy {
-            get {
-                return ResourceManager.GetString("WorkItemTypeEnumDeleteStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Retrieve.
-        /// </summary>
-        internal static string WorkItemTypeEnumDicomRetrieve {
-            get {
-                return ResourceManager.GetString("WorkItemTypeEnumDicomRetrieve", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Send.
-        /// </summary>
-        internal static string WorkItemTypeEnumDicomSend {
-            get {
-                return ResourceManager.GetString("WorkItemTypeEnumDicomSend", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Import.
-        /// </summary>
-        internal static string WorkItemTypeEnumImport {
-            get {
-                return ResourceManager.GetString("WorkItemTypeEnumImport", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Re-apply Rules.
-        /// </summary>
-        internal static string WorkItemTypeEnumReapplyRules {
-            get {
-                return ResourceManager.GetString("WorkItemTypeEnumReapplyRules", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Re-index.
-        /// </summary>
-        internal static string WorkItemTypeEnumReIndex {
-            get {
-                return ResourceManager.GetString("WorkItemTypeEnumReIndex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete Series.
-        /// </summary>
-        internal static string WorkItemTypeEnumSeriesDelete {
-            get {
-                return ResourceManager.GetString("WorkItemTypeEnumSeriesDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete Study.
-        /// </summary>
-        internal static string WorkItemTypeEnumStudyDelete {
-            get {
-                return ResourceManager.GetString("WorkItemTypeEnumStudyDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Process Study.
-        /// </summary>
-        internal static string WorkItemTypeEnumStudyProcess {
-            get {
-                return ResourceManager.GetString("WorkItemTypeEnumStudyProcess", resourceCulture);
             }
         }
     }

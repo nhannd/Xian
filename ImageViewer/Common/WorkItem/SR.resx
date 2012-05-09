@@ -180,30 +180,6 @@
   <data name="WorkItemStatusEnumPending" xml:space="preserve">
     <value>Pending</value>
   </data>
-  <data name="WorkItemTypeEnumDicomRetrieve" xml:space="preserve">
-    <value>Retrieve</value>
-  </data>
-  <data name="WorkItemTypeEnumDicomSend" xml:space="preserve">
-    <value>Send</value>
-  </data>
-  <data name="WorkItemTypeEnumImport" xml:space="preserve">
-    <value>Import</value>
-  </data>
-  <data name="WorkItemTypeEnumReapplyRules" xml:space="preserve">
-    <value>Re-apply Rules</value>
-  </data>
-  <data name="WorkItemTypeEnumReIndex" xml:space="preserve">
-    <value>Re-index</value>
-  </data>
-  <data name="WorkItemTypeEnumSeriesDelete" xml:space="preserve">
-    <value>Delete Series</value>
-  </data>
-  <data name="WorkItemTypeEnumStudyDelete" xml:space="preserve">
-    <value>Delete Study</value>
-  </data>
-  <data name="WorkItemTypeEnumStudyProcess" xml:space="preserve">
-    <value>Process Study</value>
-  </data>
   <data name="ActivityTypeEnumAutoRoute" xml:space="preserve">
     <value>Auto Route</value>
   </data>
@@ -261,7 +237,7 @@
   <data name="WorkItemStatusEnumDeleteInProgress" xml:space="preserve">
     <value>Delete In Progress</value>
   </data>
-  <data name="ActivityTypeEnumDeleteeries" xml:space="preserve">
+  <data name="ActivityTypeEnumDeleteSeries" xml:space="preserve">
     <value>Delete Series</value>
   </data>
   <data name="ActivityTypeEnumDeleteStudy" xml:space="preserve">
@@ -278,12 +254,6 @@
   </data>
   <data name="DicomSendProgress_Status" xml:space="preserve">
     <value>{0} Images Sent, {1} Images Failed, {2} Images Pending</value>
-  </data>
-  <data name="WorkItemTypeEnumDeleteSeries" xml:space="preserve">
-    <value>Delete Series</value>
-  </data>
-  <data name="WorkItemTypeEnumDeleteStudy" xml:space="preserve">
-    <value>Delete Study</value>
   </data>
   <data name="ReapplyRulesProgress_Status" xml:space="preserve">
     <value>{0} of {1} studies processed</value>
