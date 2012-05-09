@@ -170,16 +170,14 @@ namespace ClearCanvas.ImageViewer.TestTools
 				if (_browserToolContext.SelectedStudy == null)
 					return false;
 
-				foreach (StudyItem study in _browserToolContext.SelectedStudies)
+				foreach (var study in _browserToolContext.SelectedStudies)
 				{
 					if (study.Server == null)
 						return false;
-					else if (study.Server is IApplicationEntity)
-					{
-                        var ae = (IApplicationEntity)study.Server;
-						if (ae.StreamingParameters == null)
-							return false;
-					}
+
+                    var ae = (IApplicationEntity)study.Server;
+					if (ae.StreamingParameters == null)
+						return false;
 				}
 
 				return true;
@@ -190,7 +188,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 		{
 			BlockingOperation.Run(delegate
 			                      	{
-			                      		foreach (StudyItem study in _browserToolContext.SelectedStudies)
+			                      		foreach (var study in _browserToolContext.SelectedStudies)
 			                      			LoadStudy(study);
 			                      	});
 		}
@@ -255,13 +253,11 @@ namespace ClearCanvas.ImageViewer.TestTools
 			base.Stop();
 		}
 
-		private void LoadStudy(StudyItem study)
+		private void LoadStudy(StudyTableItem study)
 		{
-			IStudyLoader loader = (IStudyLoader)CollectionUtils.SelectFirst(new StudyLoaderExtensionPoint().CreateExtensions(),
-				delegate(object extension) { return ((IStudyLoader)extension).Name == "CC_STREAMING"; });
-
 			List<IFrameReference> frames = new List<IFrameReference>();
 
+		    var loader = study.Server.GetService<IStudyLoader>();
 			loader.Start(new StudyLoaderArgs(study.StudyInstanceUid, study.Server));
 			Sop sop;
 			while ((sop = loader.LoadNextSop()) != null)

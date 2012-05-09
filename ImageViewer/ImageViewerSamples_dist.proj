@@ -74,6 +74,7 @@
     <ImageViewerSampleFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Itk\ManagedITK.*.dll" />
     <!--Unconditionally copy x86 VTK regardless of build platform because samples only work on x86 -->
     <ImageViewerSampleFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtk*.dll" />
+    <ImageViewerSampleFiles Include="$(TrunkDirectory)\ImageViewer\TestTools\bin\$(Configuration)\ClearCanvas.ImageViewer.TestTools.dll" />
   </ItemGroup>
 
   <Target Name="SetExeX86Flag">
