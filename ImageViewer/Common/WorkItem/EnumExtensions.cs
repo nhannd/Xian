@@ -16,30 +16,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
 	public static class EnumExtensions
 	{
-		public static string GetDescription(this WorkItemTypeEnum value)
-		{
-			switch (value)
-			{
-				case WorkItemTypeEnum.DicomRetrieve:
-					return SR.WorkItemTypeEnumDicomRetrieve;
-				case WorkItemTypeEnum.DicomSend:
-					return SR.WorkItemTypeEnumDicomSend;
-				case WorkItemTypeEnum.Import:
-					return SR.WorkItemTypeEnumImport;
-				case WorkItemTypeEnum.ReapplyRules:
-					return SR.WorkItemTypeEnumReapplyRules;
-				case WorkItemTypeEnum.ReIndex:
-					return SR.WorkItemTypeEnumReIndex;
-				case WorkItemTypeEnum.DeleteSeries:
-					return SR.WorkItemTypeEnumSeriesDelete;
-				case WorkItemTypeEnum.DeleteStudy:
-					return SR.WorkItemTypeEnumStudyDelete;
-				case WorkItemTypeEnum.ProcessStudy:
-					return SR.WorkItemTypeEnumStudyProcess;
-            }
-			throw new NotImplementedException();
-		}
-
 		public static string GetDescription(this WorkItemStatusEnum value)
 		{
 			switch (value)

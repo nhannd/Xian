@@ -17,21 +17,26 @@ using ClearCanvas.Common.Serialization;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
-    [DataContract]
+    public static class ImageViewerWorkItemNamespace
+    {
+        public const string Value = ImageViewerNamespace.Value + "/workitem";
+    }
+
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemInsertRequest : DataContractBase
     {
         [DataMember]
         public WorkItemRequest Request { get; set; }
     }
 
-    [DataContract]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemInsertResponse : DataContractBase
     {
         [DataMember]
         public WorkItemData Item { get; set; }
     }
 
-    [DataContract]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemUpdateRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
@@ -57,14 +62,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
     }
 
-    [DataContract]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemUpdateResponse : DataContractBase
     {
         [DataMember]
         public WorkItemData Item { get; set; }
     }
 
-    [DataContract]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemQueryRequest : DataContractBase
     {
         [DataMember]
@@ -80,62 +85,63 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public long? Identifier { get; set; }
     }
 
-    [DataContract]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemQueryResponse : DataContractBase
     {
         [DataMember]
         public IEnumerable<WorkItemData> Items { get; set; }
     }
 
-    [DataContract]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemSubscribeRequest : DataContractBase
     {
         //[DataMember]
         //public CultureInfo Culture { get; set; }
     }
 
-    [DataContract]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemSubscribeResponse : DataContractBase
     {        
     }
 
-    [DataContract]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemUnsubscribeRequest : DataContractBase
     {
         [DataMember]
         public WorkItemTypeEnum? Type { get; set; }
     }
 
-    [DataContract]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemUnsubscribeResponse : DataContractBase
     {
     }
 
-    [DataContract]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemRefreshRequest : DataContractBase
     {
     }
 
-    [DataContract]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemRefreshResponse : DataContractBase
     {
     }
 
-    [DataContract]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemPublishRequest : DataContractBase
     {
         [DataMember]
         public WorkItemData Item { get; set; }
     }
 
-    [DataContract]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemPublishResponse : DataContractBase
     {
     }
 
     [ServiceContract(SessionMode = SessionMode.Required,
                         CallbackContract = typeof(IWorkItemActivityCallback),
-                        ConfigurationName = "IWorkItemActivityMonitorService")]
+                        ConfigurationName = "IWorkItemActivityMonitorService",
+                        Namespace = ImageViewerWorkItemNamespace.Value)]
     [ServiceKnownType("GetKnownTypes", typeof(WorkItemRequestTypeProvider))]
     public interface IWorkItemActivityMonitorService
     {
@@ -152,7 +158,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// <summary>
     /// Service for the creation, manipulation, and monitoring of WorkItems.
     /// </summary>
-    [ServiceContract(SessionMode = SessionMode.Required, ConfigurationName = "IWorkItemService")]
+    [ServiceContract(SessionMode = SessionMode.Required, 
+        ConfigurationName = "IWorkItemService",
+        Namespace = ImageViewerWorkItemNamespace.Value)]
     [ServiceKnownType("GetKnownTypes", typeof(WorkItemRequestTypeProvider))]
     public interface IWorkItemService
     {

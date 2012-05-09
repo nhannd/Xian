@@ -250,7 +250,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 									w => w.ActivityDescription,
 									w => w.ProgressStatus,
 									w => w.ProgressStatusDescription,
-									w => w.Type.GetDescription(),
+									w => w.ActivityType.GetDescription(),
 									w => w.Priority.GetDescription(),
 									w => w.Status.GetDescription());
 			}

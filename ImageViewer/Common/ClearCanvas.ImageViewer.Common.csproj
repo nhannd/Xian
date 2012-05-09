@@ -166,6 +166,7 @@
     <Compile Include="WorkItem\IWorkItemService.cs" />
     <Compile Include="WorkItem\Tests\ActivityMonitorTests.cs" />
     <Compile Include="WorkItem\Tests\ActivityMonitorTestApplication.cs" />
+    <Compile Include="WorkItem\WorkItemKnownTypeAttribute.cs" />
     <Compile Include="WorkItem\WorkItemPublishSubscribeHelper.cs" />
     <Compile Include="WorkItem\WorkItemsChangedEventArgs.cs" />
     <Compile Include="WorkItem\WorkItemBridge.cs" />

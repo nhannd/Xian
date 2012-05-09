@@ -11,20 +11,13 @@
 
 using System;
 using System.Runtime.Serialization;
-using System.Xml.Serialization;
 using ClearCanvas.Common.Serialization;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
-    [XmlInclude(typeof(ImportFilesProgress))]
-    [XmlInclude(typeof(ProcessStudyProgress))]
-    [XmlInclude(typeof(DeleteProgress))]
-    [XmlInclude(typeof(DicomRetrieveProgress))]
-    [XmlInclude(typeof(DicomSendProgress))]
-    [XmlInclude(typeof(ReapplyRulesProgress))]
-    [XmlInclude(typeof(ReindexProgress))]
-    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemProgressDataContract("b2dcf1f6-6e1a-48cd-b807-b720811a6575")]
+    [WorkItemKnownType]
     public abstract class WorkItemProgress : DataContractBase
     {
         public virtual string Status { get { return string.Empty; } }
@@ -38,8 +31,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public bool IsCancelable { get; set; }
     }
 
-    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemProgressDataContract("d3b84be6-edc7-40e1-911f-f6ec30c2a128")]
+    [WorkItemKnownType]
     public class ImportFilesProgress : WorkItemProgress
     {
         public ImportFilesProgress()
@@ -94,8 +88,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
-    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemProgressDataContract("8C994CAB-630E-4a92-AA5B-7BF5D6095D6D")]
+    [WorkItemKnownType]
     public class ProcessStudyProgress : WorkItemProgress
     {
         public ProcessStudyProgress()
@@ -142,8 +137,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
-    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemProgressDataContract("A1F64C74-FAE9-4a4c-A120-E82EE45EA21B")]
+    [WorkItemKnownType]
     public class ReindexProgress : WorkItemProgress
     {
         public ReindexProgress()
@@ -198,8 +194,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
-    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemProgressDataContract("D7040F82-8021-420E-B72B-0890053BE8C5")]
+    [WorkItemKnownType]
     public class ReapplyRulesProgress : WorkItemProgress
     {
         public ReapplyRulesProgress()
@@ -244,8 +241,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
-    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemProgressDataContract("68BCA074-F1F1-4870-8ABD-281B31E10B6A")]
+    [WorkItemKnownType]
     public class DicomSendProgress : WorkItemProgress
     {
         public DicomSendProgress()
@@ -295,8 +293,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
-    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemProgressDataContract("24DB4BC0-2759-468E-802B-07C54F91A68D")]
+    [WorkItemKnownType]
     public class DicomRetrieveProgress : WorkItemProgress
     {
         public DicomRetrieveProgress()
@@ -346,8 +345,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
-    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     [WorkItemProgressDataContract("179B5CD7-8C67-44C1-8211-5B800FE069C4")]
+    [WorkItemKnownType]
     public class DeleteProgress : WorkItemProgress
     {
         public DeleteProgress()

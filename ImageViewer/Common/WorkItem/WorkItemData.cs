@@ -16,7 +16,7 @@ using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
-    [DataContract(Name = "WorkItemPriority", Namespace = ImageViewerNamespace.Value)]
+    [DataContract(Name = "WorkItemPriority", Namespace = ImageViewerWorkItemNamespace.Value)]
     public enum WorkItemPriorityEnum
     {
         [EnumMember]
@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         Normal = 3
     }
 
-    [DataContract(Name = "WorkItemStatus", Namespace = ImageViewerNamespace.Value)]
+    [DataContract(Name = "WorkItemStatus", Namespace = ImageViewerWorkItemNamespace.Value)]
     public enum WorkItemStatusEnum
     {
         [EnumMember]
@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         DeleteInProgress = 8,
     }
 
-    [DataContract(Name = "WorkItemType", Namespace = ImageViewerNamespace.Value)]
+    [DataContract(Name = "WorkItemType", Namespace = ImageViewerWorkItemNamespace.Value)]
     public enum WorkItemTypeEnum
     {
         [EnumMember]
@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// <summary>
     /// Base WorkItem representing a unit of Work to be done.
     /// </summary>
-    [DataContract(Namespace = ImageViewerNamespace.Value)]
+    [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemData : DataContractBase
     {
         /// <summary>
