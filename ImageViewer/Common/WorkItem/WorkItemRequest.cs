@@ -18,7 +18,6 @@ using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
@@ -63,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                           //Non-Study related requests
                                                           typeof (ReindexRequest),
                                                           typeof (ImportFilesRequest),
-                                                          typeof (ReapplyRulesRequest),
+                                                          //typeof (ReapplyRulesRequest), todo: include dynamically
 
                                                           //Study related requests
                                                           typeof (WorkItemStudyRequest),
@@ -557,35 +556,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public override string ActivityDescription
         {
             get { return SR.ReindexRequest_ActivityDescription; }
-        }
-    }
-
-    /// <summary>
-    /// ReapplyRules Request
-    /// </summary>
-    [DataContract(Namespace = ImageViewerNamespace.Value)]
-    [WorkItemRequestDataContract("9361447F-C14F-498C-B0EA-40664F2BB396")]
-    public class ReapplyRulesRequest : WorkItemRequest
-    {
-        public ReapplyRulesRequest()
-        {
-            Type = WorkItemTypeEnum.ReapplyRules;
-            Priority = WorkItemPriorityEnum.Normal;
-            ActivityType = ActivityTypeEnum.ReapplyRules;
-        }
-
-        [DataMember(IsRequired = true)]
-        public string RuleId { get; set; }
-
-        [DataMember(IsRequired = true)]
-        public string RuleName { get; set; }
-
-        [DataMember(IsRequired = true)]
-        public RulesEngineContext RulesEngineContext { get; set; }
-
-        public override string ActivityDescription
-        {
-            get { return string.Format(SR.ReapplyRulesRequest_ActivityDescription, RuleName); }
         }
     }
 

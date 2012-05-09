@@ -16,7 +16,6 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common.Auditing;
-using ClearCanvas.ImageViewer.Common.StudyManagement.Rules;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
@@ -193,31 +192,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
-    public class ReapplyRulesBridge : WorkItemBridge
-    {
-        public void ReapplyRules(string ruleId, string ruleName, RulesEngineContext context)
-        {
-            var request = new ReapplyRulesRequest
-                              {
-                                  RuleId = ruleId,
-                                  RuleName = ruleName,
-                                  RulesEngineContext = context
-                              };
-
-            try
-            {
-                InsertRequest(request);
-            }
-            catch (Exception ex)
-            {
-                Exception = ex;
-                Platform.Log(LogLevel.Error, ex, Common.SR.MessageFailedToStartReapplyRules);
-                throw;
-            }
-        }
-    }
-
-    public class DeleteBridge : WorkItemBridge
+	public class DeleteBridge : WorkItemBridge
     {
         public void DeleteStudy(IStudyRootData study)
         {

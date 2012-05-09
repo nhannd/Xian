@@ -1,13 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="dicom_store" EntityNamespace="ClearCanvas.ImageViewer.StudyManagement.Storage" ContextNamespace="ClearCanvas.ImageViewer.StudyManagement.Storage" Class="DicomStoreDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Table Name="Rule" Member="Rules">
-    <Type Name="Rule">
-      <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Version" Type="System.Data.Linq.Binary" DbType="rowversion" CanBeNull="true" IsVersion="true" />
-      <Column Name="RuleId" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" UpdateCheck="Always" />
-      <Column Name="Name" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="SerializedRule" Type="System.String" DbType="NText NOT NULL" CanBeNull="false" />
-    </Type>
-  </Table>
   <Table Name="Study" Member="Studies">
     <Type Name="Study">
       <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
