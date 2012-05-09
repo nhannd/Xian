@@ -574,9 +574,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				if (w.Priority == WorkItemPriorityEnum.Stat)
 					return false;
 
-				// item must be in an "active" status
+				// item must be in Pending or Idle status
 				return w.Status == WorkItemStatusEnum.Pending
-				       || w.Status == WorkItemStatusEnum.InProgress
 				       || w.Status == WorkItemStatusEnum.Idle;
 			}
 
