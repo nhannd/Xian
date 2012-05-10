@@ -14,9 +14,9 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Shreds;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.WorkItem;
-using ClearCanvas.ImageViewer.Shreds.WorkItemService;
+using ClearCanvas.ImageViewer.StudyManagement.Core;
+using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
-using ClearCanvas.ImageViewer.StudyManagement.Storage;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Shreds.FilestoreManagement

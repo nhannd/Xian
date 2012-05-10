@@ -90,9 +90,9 @@
       <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
       <Name>ClearCanvas.ImageViewer.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\StudyManagement\Storage\ClearCanvas.ImageViewer.StudyManagement.Storage.csproj">
-      <Project>{E2907284-E484-4128-8499-0DA9A7B00669}</Project>
-      <Name>ClearCanvas.ImageViewer.StudyManagement.Storage</Name>
+    <ProjectReference Include="..\..\StudyManagement\Core\ClearCanvas.ImageViewer.StudyManagement.Core.csproj">
+      <Project>{624BC225-49A8-4E92-942D-CDC976292EB9}</Project>
+      <Name>ClearCanvas.ImageViewer.StudyManagement.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

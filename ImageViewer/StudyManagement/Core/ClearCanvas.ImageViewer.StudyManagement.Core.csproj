@@ -37,7 +37,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;UNIT_TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -52,15 +52,21 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="System.Runtime.Serialization">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -82,17 +88,75 @@
     <Compile Include="DeleteSeriesUtility.cs" />
     <Compile Include="DeleteStudyUtility.cs" />
     <Compile Include="DicomFilePublisher.cs" />
+    <Compile Include="Storage\DicomQuery\DateDicomPropertyFilter.cs" />
+    <Compile Include="Storage\DicomQuery\DicomPropertyFilter.cs" />
+    <Compile Include="Storage\DicomQuery\MultiValuedPropertyRule.cs" />
+    <Compile Include="Storage\DicomQuery\PropertyFilter.cs" />
+    <Compile Include="Storage\DicomQuery\PropertyFilters.cs" />
+    <Compile Include="Storage\DicomQuery\PropertyFilters\Common.cs" />
+    <Compile Include="Storage\DicomQuery\PropertyFilters\Patient.cs" />
+    <Compile Include="Storage\DicomQuery\PropertyFilters\PatientBreed.cs" />
+    <Compile Include="Storage\DicomQuery\PropertyFilters\PatientSpecies.cs" />
+    <Compile Include="Storage\DicomQuery\PropertyFilters\Responsibility.cs" />
+    <Compile Include="Storage\DicomQuery\PropertyFilters\Series.cs" />
+    <Compile Include="Storage\DicomQuery\PropertyFilters\SopInstance.cs" />
+    <Compile Include="Storage\DicomQuery\PropertyFilters\Study.cs" />
+    <Compile Include="Storage\DicomQuery\PropertyFilters\StudyData.cs" />
+    <Compile Include="Storage\DicomQuery\QueryUtilities.cs" />
+    <Compile Include="Storage\DicomQuery\StringDicomPropertyFilter.cs" />
+    <Compile Include="Storage\DicomQuery\StudyStoreQuery.cs" />
+    <Compile Include="Storage\DicomQuery\Tests\MiscellaneousTests.cs" />
+    <Compile Include="Storage\DicomQuery\Tests\PropertyFilterTests.cs" />
+    <Compile Include="Storage\DicomQuery\Tests\SeriesQueryTests.cs" />
+    <Compile Include="Storage\DicomQuery\Tests\SopInstanceQueryTests.cs" />
+    <Compile Include="Storage\DicomQuery\Tests\StudyRootQueryTests.cs" />
+    <Compile Include="Storage\DicomQuery\Tests\StudyStoreQueryTests.cs" />
+    <Compile Include="Storage\DicomQuery\Tests\TestBase.cs" />
+    <Compile Include="Storage\DicomQuery\TimeDicomPropertyFilter.cs" />
+    <Compile Include="Storage\DicomQuery\UidDicomPropertyFilter.cs" />
     <Compile Include="IRulesEngine.cs" />
+    <Compile Include="ISopInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReindexUtility.cs" />
     <Compile Include="ReprocessStudyFolder.cs" />
     <Compile Include="ImportFilesUtility.cs" />
     <Compile Include="ProcessStudyUtility.cs" />
+    <Compile Include="ServiceProviders\Cache.cs" />
+    <Compile Include="ServiceProviders\DicomServerConfiguration.cs" />
+    <Compile Include="ServiceProviders\ServerDirectory.cs" />
+    <Compile Include="ServiceProviders\ServiceProxyHelper.cs" />
+    <Compile Include="ServiceProviders\StorageConfiguration.cs" />
+    <Compile Include="ServiceProviders\StudyStore.cs" />
+    <Compile Include="ServiceProviders\Tests\ServerDirectoryTests.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="Storage\Broker.cs" />
+    <Compile Include="Storage\ConfigurationBroker.cs" />
+    <Compile Include="Storage\DataAccessContext.cs" />
+    <Compile Include="Storage\DeviceBroker.cs" />
+    <Compile Include="Storage\DicomStoreDataContext.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DicomStoreDataContext.dbml</DependentUpon>
+    </Compile>
+    <Compile Include="ISeries.cs" />
+    <Compile Include="IStudy.cs" />
+    <Compile Include="Storage\Serializer.cs" />
+    <Compile Include="Storage\Series.cs" />
+    <Compile Include="Storage\SopInstance.cs" />
+    <Compile Include="Storage\SqlCeDatabaseHelper.cs" />
+    <Compile Include="Storage\Study.cs" />
+    <Compile Include="Storage\StudyBroker.cs" />
+    <Compile Include="Storage\StudyLocation.cs" />
+    <Compile Include="Storage\Tests\SerializationTests.cs" />
+    <Compile Include="Utilities.cs" />
+    <Compile Include="Storage\WorkItem.cs" />
+    <Compile Include="Storage\WorkItemBroker.cs" />
+    <Compile Include="WorkItemHelper.cs" />
+    <Compile Include="Storage\WorkItemUidBroker.cs" />
     <Compile Include="WorkItemProcessor\BaseItemProcessor.cs" />
     <Compile Include="WorkItemProcessor\IWorkItemProcessor.cs" />
     <Compile Include="WorkItemProcessor\IWorkItemProcessorFactory.cs" />
@@ -112,10 +176,6 @@
     <ProjectReference Include="..\..\Common\ClearCanvas.ImageViewer.Common.csproj">
       <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
       <Name>ClearCanvas.ImageViewer.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\StudyManagement\Storage\ClearCanvas.ImageViewer.StudyManagement.Storage.csproj">
-      <Project>{E2907284-E484-4128-8499-0DA9A7B00669}</Project>
-      <Name>ClearCanvas.ImageViewer.StudyManagement.Storage</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -140,6 +200,28 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Storage\DicomQuery\Tests\test_store_insert_studies.sqlce" />
+    <None Include="Storage\DicomStoreDataContext.dbml.layout">
+      <DependentUpon>DicomStoreDataContext.dbml</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Storage\DicomQuery\Tests\test_store.sdf" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Storage\dbml_gen.bat" />
+    <None Include="Storage\DicomStoreDataContext.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>DicomStoreDataContext.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Storage\dicom_store.sqlce" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Storage\dicom_store.sdf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

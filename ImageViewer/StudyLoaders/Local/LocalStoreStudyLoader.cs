@@ -14,8 +14,9 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.StudyManagement.Storage;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.StudyManagement.Core;
+using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Local
 {

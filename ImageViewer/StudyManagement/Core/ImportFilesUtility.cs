@@ -21,7 +21,7 @@ using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Command;
-using ClearCanvas.ImageViewer.StudyManagement.Storage;
+using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
