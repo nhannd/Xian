@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <ProjectName>ClearCanvas.Dicom.Codec.Jpeg2000</ProjectName>
     <ProjectGuid>{B389F627-F243-4B7E-8A04-90E1071B2754}</ProjectGuid>
     <RootNamespace>DicomJpeg2000</RootNamespace>
