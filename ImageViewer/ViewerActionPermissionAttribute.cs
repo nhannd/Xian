@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer
 			authorityTokens = authorityTokens ?? new string[0];
 			string[] viewerTokens = new string[authorityTokens.Length + 1];
 			
-			viewerTokens[0] = ImageViewer.AuthorityTokens.ViewerVisible;
+			viewerTokens[0] = AuthorityTokens.ViewerVisible;
 			
 			for (int i = 0; i < authorityTokens.Length; ++i)
 				viewerTokens[i + 1] = authorityTokens[i];
