@@ -48,7 +48,6 @@
     <File name="plugins\ClearCanvas.Dicom.Codec.Jpeg.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Dicom.Codec.Rle.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Common.dll" checksum="true" />
-    <File name="plugins\ClearCanvas.ImageViewer.StudyManagement.Storage.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.AnnotationProviders.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Clipboard.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Clipboard.View.WinForms.dll" checksum="true" />
