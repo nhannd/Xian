@@ -17,15 +17,16 @@
     <File name="badfiles\" ignore="true" />
     <File name="ClearCanvas.Desktop.Executable.exe" checksum="true" />
     <File name="ClearCanvas.Desktop.Executable.exe.config" config="true" />
+    <File name="ClearCanvas.Desktop.Executable.exe.critical.config" checksum="true" config="true" />
     <File name="ClearCanvas.Server.ShredHostService.exe" checksum="true" />
     <File name="ClearCanvas.Server.ShredHostService.exe.config" config="false" />
+    <File name="ClearCanvas.Server.ShredHostService.exe.critical.config"  checksum="true" config="true" />
     <File name="ClearCanvas.Executable.exe" checksum="true" />
     <File name="ClearCanvas.Executable.exe.config" config="false" />
+    <File name="ClearCanvas.Executable.exe.critical.config" checksum="true" config="false" />
     <File name="DicomAEServers.xml" ignore="true"/>
     <File name="common\DotNetMagic2005.DLL" />
-    <File name="common\Iesi.Collections.dll" checksum="true" />
     <File name="common\log4net.dll" checksum="true" />
-    <File name="common\Nhibernate.dll" checksum="true" />
     <File name="common\sqlceca40.dll" checksum="true" />
     <File name="common\sqlcecompact40.dll" checksum="true" />
     <File name="common\sqlceer40EN.dll" checksum="true" />

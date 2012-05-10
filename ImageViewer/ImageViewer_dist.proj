@@ -134,15 +134,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <LicenseFiles Include="$(TrunkDirectory)\..\Docs\Workstation\EULA.rtf" />
-    <LicenseFiles Include="$(TrunkDirectory)\Docs\PrivacyNotice.rtf" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <HelpFiles Include="$(TrunkDirectory)\..\Docs\Workstation\UsersGuide\CCWorkstationCommunityUsersGuide.chm" />
-  </ItemGroup>
-
-  <ItemGroup>
     <CodecFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Rle.dll" />
     <CodecFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll" />
   </ItemGroup>
@@ -308,14 +299,6 @@
     <ExecutableBootstrapFiles Include="$(TrunkDirectory)\Executable\bin\$(Configuration)\ClearCanvas.Executable.exe" />
   </ItemGroup>
 
-  <Target Name="Copy License Files" Condition="$(DesktopBuild)">
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
-  </Target>
-
-  <Target Name="Copy Help Files">
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(HelpFiles)" DestinationFiles="$(DistributionDirectory)\CCWorkstationCommunityUsersGuide.chm" ContinueOnError="true"/>
-  </Target>
-
   <Target Name="Copy ImageViewer App Config">
     <CombineAppConfigs SourceFiles="@(ImageViewerAppConfigCreatorSourceFiles)" OutputFile="$(DistributionDesktopConfig)" />
     <Copy SourceFiles="@(CriticalConfigFiles)" DestinationFiles="$(DistributionDesktopCriticalConfig)" />
@@ -392,9 +375,6 @@
 
   <Target Name="Copy Optional Viewer Plugins" Condition="$(DesktopBuild)">
 
-    <RegexIsMatch Pattern="ExcludeHelpFiles" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="ExcludeHelpFiles" />
-    </RegexIsMatch>
     <RegexIsMatch Pattern="ExcludeStudyBrowser" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeStudyBrowser" />
     </RegexIsMatch>
@@ -441,7 +421,6 @@
       <Output TaskParameter="IsMatch" PropertyName="IncludeTestTools" />
     </RegexIsMatch>
 
-    <CallTarget Condition="!$(ExcludeHelpFiles)" Targets="Copy Help Files" />
     <CallTarget Condition="!$(ExcludeStudyBrowser)" Targets="Copy Study Browser" />
     <CallTarget Condition="!$(ExcludeDesktopServices)" Targets="Copy Desktop Services" />
     <CallTarget Condition="!$(ExcludeStudyComposer)" Targets="Copy Study Composer" />
@@ -508,7 +487,7 @@
     <Copy SourceFiles="$(DistributionShredHostCriticalConfig)" DestinationFiles="$(DistributionConsoleCriticalConfig)" />
   </Target>
 
-  <Target Name="Copy Desktop Files" DependsOnTargets="Copy ImageViewer App Config;Copy JScript Files;Copy License Files">
+  <Target Name="Copy Desktop Files" DependsOnTargets="Copy ImageViewer App Config;Copy JScript Files">
     <CallTarget Targets="Copy Project Files" />
 
     <RegexIsMatch Pattern="ExcludeHttpDesktopServices" Input="$(OptionsFlags)" >
@@ -521,7 +500,7 @@
 
   </Target>
 
-  <Target Name="Copy ShredHost Files" DependsOnTargets="Copy ShredHost App Config;Copy License Files">
+  <Target Name="Copy ShredHost Files" DependsOnTargets="Copy ShredHost App Config">
     <CallTarget Targets="Copy Project Files" />
 
     <!--Only copy console executable to ShredHost folder if not doing distribution build-->
