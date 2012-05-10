@@ -55,13 +55,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     {
                         DateTime? studyDate = DateParser.Parse(study.StudyDate);
                         Context.DesktopWindow.ShowAlert(AlertLevel.Info,
-                                                        string.Format(SR.MessageFormatRetrieveStudyScheduled,
-                                                                      study.Server.Name,
+                                                        string.Format(SR.MessageFormatRetrieveStudyScheduled,                                                                      
                                                                       study.PatientsName.FormattedName,
                                                                       studyDate.HasValue
                                                                           ? Format.Date(studyDate.Value)
                                                                           : string.Empty,
-                                                                      study.AccessionNumber),
+                                                                      study.AccessionNumber,
+                                                                      study.Server.Name),
                                                         SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
                     }
                 }

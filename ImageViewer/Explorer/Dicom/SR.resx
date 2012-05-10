@@ -404,6 +404,6 @@ Please ensure the ClearCanvas Service is running or contact your system administ
     <value>{0} studies have been scheduled for retrieval.</value>
   </data>
   <data name="MessageFormatRetrieveStudyScheduled" xml:space="preserve">
-    <value>The retrieve of {0} for {1} [{2}, A#:{3}] has been scheduled.</value>
+    <value>The retrieve of a study for {0} [{1}, A#:{2}] from {3} has been scheduled.</value>
   </data>
 </root>
