@@ -87,9 +87,9 @@ namespace ClearCanvas.ImageViewer.Shreds.FilestoreManagement
 			           		Type = DeleteStudyRequest.WorkItemTypeString,
 			           		Priority = WorkItemPriorityEnum.Normal,
 			           		InsertTime = now,
-			           		ScheduledTime = now.AddSeconds(5),
-			           		DeleteTime = now.AddMinutes(WorkItemServiceSettings.Instance.DeleteDelayMinutes),
-			           		ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Instance.ExpireDelaySeconds),
+                            ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Default.InsertDelaySeconds),
+			           		DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes),
+			           		ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Default.ExpireDelaySeconds),
 			           		Status = WorkItemStatusEnum.Pending,
 			           		StudyInstanceUid = study.StudyInstanceUid
 			           	};

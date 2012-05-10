@@ -97,9 +97,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                                    Type = request.Request.WorkItemType,
                                    Priority = request.Request.Priority,
                                    InsertTime = now,
-                                   ScheduledTime = now,
-                                   DeleteTime = now.AddMinutes(WorkItemServiceSettings.Instance.DeleteDelayMinutes),
-                                   ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Instance.ExpireDelaySeconds),
+                                   ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Default.InsertDelaySeconds),
+                                   DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes),
+                                   ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Default.ExpireDelaySeconds),
                                    Status = WorkItemStatusEnum.Pending
                                };
 
@@ -165,7 +165,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     {
                         workItem.Status = request.Status.Value;
                         if (request.Status.Value == WorkItemStatusEnum.Canceled)
-                            workItem.DeleteTime = Platform.Time.AddMinutes(WorkItemServiceSettings.Instance.DeleteDelayMinutes);              
+                            workItem.DeleteTime = Platform.Time.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);              
                     }
                     if (request.ScheduledTime.HasValue)
                         workItem.ScheduledTime = request.ScheduledTime.Value;

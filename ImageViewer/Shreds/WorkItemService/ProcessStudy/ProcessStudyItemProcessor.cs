@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
             while (successfulProcessCount > lastSuccessProcessCount)
             {
                 // If we're just doing a few at a time, less than the batch size, Postpone for now
-                if (lastSuccessProcessCount != -1 && (successfulProcessCount - lastSuccessProcessCount) < WorkItemServiceSettings.Instance.StudyProcessBatchSize)
+                if (lastSuccessProcessCount != -1 && (successfulProcessCount - lastSuccessProcessCount) < WorkItemServiceSettings.Default.StudyProcessBatchSize)
                     break;
 
                 lastSuccessProcessCount = successfulProcessCount;
@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                 Progress.TotalFilesToProcess = WorkQueueUidList.Count;
                 Proxy.UpdateProgress();
 
-                int maxBatch = WorkItemServiceSettings.Instance.StudyProcessBatchSize;
+                int maxBatch = WorkItemServiceSettings.Default.StudyProcessBatchSize;
                 var fileList = new List<WorkItemUid>(maxBatch);
                 
                 foreach (WorkItemUid sop in WorkQueueUidList)

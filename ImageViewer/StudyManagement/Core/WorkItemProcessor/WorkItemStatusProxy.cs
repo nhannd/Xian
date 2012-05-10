@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         /// <param name="failureType"></param>
         public void Fail(WorkItemFailureType failureType)
         {
-            Fail(failureType, Platform.Time.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds));
+            Fail(failureType, Platform.Time.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds));
         }
 
         /// <summary>
@@ -106,8 +106,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 
                 Item.Progress = Progress;
                 Item.FailureCount = Item.FailureCount + 1;
-                Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Instance.DeleteDelayMinutes);
-                if (Item.FailureCount >= WorkItemServiceSettings.Instance.RetryCount
+                Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);
+                if (Item.FailureCount >= WorkItemServiceSettings.Default.RetryCount
                     || failureType == WorkItemFailureType.Fatal )
                 {
                     Item.Status = WorkItemStatusEnum.Failed;
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         public void Postpone()
         {
             DateTime now = Platform.Time;
-            DateTime newScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+            DateTime newScheduledTime = now.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds);
             Postpone(newScheduledTime);
         }
 
@@ -178,7 +178,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 Item.Progress = Progress;
                 Item.ScheduledTime = now;
                 Item.ExpirationTime = now;
-                Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Instance.DeleteDelayMinutes);
+                Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);
                 Item.Status = WorkItemStatusEnum.Complete;
 
                 var uidBroker = context.GetWorkItemUidBroker();
@@ -208,7 +208,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 DateTime now = Platform.Time;
 
                 Item.Progress = Progress;
-                Item.ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+                Item.ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds);
                 if (Item.ScheduledTime > Item.ExpirationTime)
                     Item.ScheduledTime = Item.ExpirationTime;
                 Item.Status = WorkItemStatusEnum.Idle;
@@ -235,7 +235,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 
                 Item.ScheduledTime = now;
                 Item.ExpirationTime = now;
-                Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Instance.DeleteDelayMinutes);
+                Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);
                 Item.Status = WorkItemStatusEnum.Canceled;
                 Item.Progress = Progress;
                 
