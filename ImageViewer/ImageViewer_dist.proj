@@ -308,7 +308,7 @@
     <ExecutableBootstrapFiles Include="$(TrunkDirectory)\Executable\bin\$(Configuration)\ClearCanvas.Executable.exe" />
   </ItemGroup>
 
-  <Target Name="Copy License Files">
+  <Target Name="Copy License Files" Condition="$(DesktopBuild)">
     <Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
   </Target>
 
