@@ -83,65 +83,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Broker.cs" />
-    <Compile Include="ConfigurationBroker.cs" />
-    <Compile Include="DicomStoreDataContext.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DicomStoreDataContext.dbml</DependentUpon>
-    </Compile>
-    <Compile Include="SqlCeDatabaseHelper.cs" />
-    <Compile Include="DeviceBroker.cs" />
-    <Compile Include="DicomQuery\DicomPropertyFilter.cs" />
-    <Compile Include="DicomQuery\MultiValuedPropertyRule.cs" />
-    <Compile Include="DicomQuery\PropertyFilter.cs" />
-    <Compile Include="DicomQuery\PropertyFilters.cs" />
-    <Compile Include="DicomQuery\PropertyFilters\Common.cs" />
-    <Compile Include="DicomQuery\PropertyFilters\Patient.cs" />
-    <Compile Include="DicomQuery\PropertyFilters\PatientSpecies.cs" />
-    <Compile Include="DicomQuery\PropertyFilters\PatientBreed.cs" />
-    <Compile Include="DicomQuery\DateDicomPropertyFilter.cs" />
-    <Compile Include="DicomQuery\PropertyFilters\Responsibility.cs" />
-    <Compile Include="DicomQuery\PropertyFilters\Series.cs" />
-    <Compile Include="DicomQuery\PropertyFilters\SopInstance.cs" />
-    <Compile Include="DicomQuery\PropertyFilters\StudyData.cs" />
-    <Compile Include="DicomQuery\QueryUtilities.cs" />
-    <Compile Include="DicomQuery\StringDicomPropertyFilter.cs" />
-    <Compile Include="DicomQuery\PropertyFilters\Study.cs" />
-    <Compile Include="DicomQuery\Tests\SopInstanceQueryTests.cs" />
-    <Compile Include="DicomQuery\Tests\SeriesQueryTests.cs" />
-    <Compile Include="DicomQuery\Tests\StudyStoreQueryTests.cs" />
-    <Compile Include="DicomQuery\Tests\TestBase.cs" />
-    <Compile Include="DicomQuery\TimeDicomPropertyFilter.cs" />
-    <Compile Include="DicomQuery\UidDicomPropertyFilter.cs" />
-    <Compile Include="DicomQuery\StudyStoreQuery.cs" />
-    <Compile Include="DicomQuery\Tests\MiscellaneousTests.cs" />
-    <Compile Include="DicomQuery\Tests\PropertyFilterTests.cs" />
-    <Compile Include="DicomQuery\Tests\StudyRootQueryTests.cs" />
-    <Compile Include="ServiceProviders\Cache.cs" />
-    <Compile Include="ServiceProviders\ServiceProxyHelper.cs" />
-    <Compile Include="ServiceProviders\StorageConfiguration.cs" />
-    <Compile Include="Utilities.cs" />
-    <Compile Include="ISeries.cs" />
-    <Compile Include="ISopInstance.cs" />
-    <Compile Include="IStudy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DataAccessContext.cs" />
-    <Compile Include="Series.cs" />
-    <Compile Include="ServiceProviders\StudyStore.cs" />
-    <Compile Include="SopInstance.cs" />
-    <Compile Include="Study.cs" />
-    <Compile Include="ServiceProviders\DicomServerConfiguration.cs" />
-    <Compile Include="ServiceProviders\ServerDirectory.cs" />
-    <Compile Include="ServiceProviders\Tests\ServerDirectoryTests.cs" />
-    <Compile Include="StudyBroker.cs" />
-    <Compile Include="StudyLocation.cs" />
-    <Compile Include="WorkItemBroker.cs" />
-    <Compile Include="Tests\SerializationTests.cs" />
-    <Compile Include="WorkItem.cs" />
-    <Compile Include="Serializer.cs" />
-    <Compile Include="WorkItemHelper.cs" />
-    <Compile Include="WorkItemUidBroker.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
@@ -156,21 +98,6 @@
       <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
       <Name>ClearCanvas.ImageViewer.Common</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="DicomQuery\Tests\test_store_insert_studies.sqlce" />
-    <None Include="DicomStoreDataContext.dbml">
-      <Generator>MSLinqToSQLGenerator</Generator>
-      <LastGenOutput>DicomStoreDataContext.designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="dicom_store.sqlce" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="dbml_gen.bat" />
-    <None Include="DicomStoreDataContext.dbml.layout">
-      <DependentUpon>DicomStoreDataContext.dbml</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
@@ -211,10 +138,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="dicom_store.sdf" />
-    <EmbeddedResource Include="DicomQuery\Tests\test_store.sdf" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

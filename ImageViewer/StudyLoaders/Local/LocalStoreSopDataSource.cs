@@ -11,7 +11,7 @@
 
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.StudyManagement.Storage;
+using ClearCanvas.ImageViewer.StudyManagement.Core;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Local
 {

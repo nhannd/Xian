@@ -111,7 +111,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <DatabasePlugins Include="$(TrunkDirectory)\ImageViewer\StudyManagement\Storage\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyManagement.Storage.dll" />
+    <DatabasePlugins Include="$(TrunkDirectory)\ImageViewer\StudyManagement\Core\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyManagement.Core.dll" />
   </ItemGroup>
   
   <ItemGroup>

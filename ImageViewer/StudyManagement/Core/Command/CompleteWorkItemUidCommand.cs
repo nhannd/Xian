@@ -10,7 +10,7 @@
 #endregion
 
 using ClearCanvas.Dicom.Utilities.Command;
-using ClearCanvas.ImageViewer.StudyManagement.Storage;
+using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
 {

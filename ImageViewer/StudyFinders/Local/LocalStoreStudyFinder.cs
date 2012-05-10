@@ -20,7 +20,7 @@ using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.Macros;
-using ClearCanvas.ImageViewer.StudyManagement.Storage;
+using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 
 namespace ClearCanvas.ImageViewer.StudyFinders.Local
 {
