@@ -16,6 +16,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Utilities.Command;
+using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Command;
@@ -52,6 +54,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
     public class DicomReceiveImportContext : ImportFilesContext
     {
         private readonly IWorkItemActivityMonitor _monitor;
+        private readonly IDicomServiceNode _dicomServerNode;
 
         /// <summary>
         /// Constructor.
@@ -62,6 +65,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         {
             _monitor = WorkItemActivityMonitor.Create(false);
             _monitor.WorkItemsChanged += WorkItemsChanged;
+
+            var serverList = ServerDirectory.GetRemoteServersByAETitle(sourceAE);
+            if (serverList.Count > 0)
+                _dicomServerNode = CollectionUtils.FirstElement(serverList);
         }
 
         /// <summary>
@@ -73,7 +80,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         {
             var request = new DicomReceiveRequest
                               {
-                                  FromAETitle = SourceAE,
+                                  FromAETitle = _dicomServerNode == null ? SourceAE : _dicomServerNode.Name,
                                   Priority = WorkItemPriorityEnum.High,
                                   Patient = new WorkItemPatient(message.DataSet),
                                   Study = new WorkItemStudy(message.DataSet)
