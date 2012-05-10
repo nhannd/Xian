@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 	public class PathProfileComponent : RoiAnalysisComponent
 	{
 		private int[] _pixelIndices;
-		private int[] _pixelValues;
+		private double[] _pixelValues;
 
 		/// <summary>
 		/// Constructor
@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			get { return _pixelIndices; }
 		}
 
-		public int[] PixelValues
+		public double[] PixelValues
 		{
 			get { return _pixelValues; }
 		}
@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			List<Point> pixels = BresenhamLine(pt1, pt2);
 
 			_pixelIndices = new int[pixels.Count];
-			_pixelValues = new int[pixels.Count];
+            _pixelValues = new double[pixels.Count];
 
 			int i = 0;
 
