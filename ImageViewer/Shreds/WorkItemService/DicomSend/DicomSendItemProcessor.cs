@@ -184,7 +184,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             {
                 if (AutoRoute != null)
                 {
-                    Proxy.Fail(_scu.FailureDescription, WorkItemFailureType.NonFatal, AutoRoute.GetScheduledTime(Platform.Time, (int)WorkItemServiceSettings.Instance.PostponeSeconds));
+                    Proxy.Fail(_scu.FailureDescription, WorkItemFailureType.NonFatal, AutoRoute.GetScheduledTime(Platform.Time, WorkItemServiceSettings.Default.PostponeSeconds));
                 }
                 else
                     Proxy.Fail(_scu.FailureDescription,WorkItemFailureType.NonFatal);

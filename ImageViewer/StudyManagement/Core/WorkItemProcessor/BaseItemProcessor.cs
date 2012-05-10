@@ -182,7 +182,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 else
                     sop.FailureCount = (byte) (sop.FailureCount.Value + 1);
 
-                if (sop.FailureCount > WorkItemServiceSettings.Instance.RetryCount)
+                if (sop.FailureCount > WorkItemServiceSettings.Default.RetryCount)
                     sop.Failed = true;
 
                 context.Commit();

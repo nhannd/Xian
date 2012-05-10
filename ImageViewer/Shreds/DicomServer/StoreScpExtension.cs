@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 _importContext = new DicomReceiveImportContext(association.CallingAE, Context.StorageConfiguration)
                                      {
                                          ExpirationDelaySeconds =
-                                             WorkItemServiceSettings.Instance.ExpireDelaySeconds
+                                             WorkItemServiceSettings.Default.ExpireDelaySeconds
                                      };
 
                 // Publish new WorkItems as they're added to the context

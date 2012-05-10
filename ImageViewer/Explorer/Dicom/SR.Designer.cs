@@ -467,7 +467,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The retrieve of {0} for {1} [{2}, A#:{3}] has been scheduled..
+        ///   Looks up a localized string similar to The retrieve of a study for {0} [{1}, A#:{2}] from {3} has been scheduled..
         /// </summary>
         internal static string MessageFormatRetrieveStudyScheduled {
             get {

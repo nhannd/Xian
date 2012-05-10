@@ -14,6 +14,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
+using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
 {
@@ -144,7 +145,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
                                    {
                                        InsertTime = now,
                                        Request = _request,
-                                       ScheduledTime = now.AddSeconds(5),
+                                       ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Default.InsertDelaySeconds),
                                        Priority = _request.Priority,
                                        Type = _request.WorkItemType,
                                        DeleteTime = now.AddHours(2),

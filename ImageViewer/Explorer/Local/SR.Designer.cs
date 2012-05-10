@@ -125,11 +125,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing files from {0} locations..
+        ///   Looks up a localized string similar to Importing files from {0} location..
         /// </summary>
         public static string MessageFormatImportingFiles {
             get {
                 return ResourceManager.GetString("MessageFormatImportingFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing files from {0} locations..
+        /// </summary>
+        public static string MessageFormatImportingFilesPlural {
+            get {
+                return ResourceManager.GetString("MessageFormatImportingFilesPlural", resourceCulture);
             }
         }
         

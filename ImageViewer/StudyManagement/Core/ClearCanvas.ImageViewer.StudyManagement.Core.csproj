@@ -161,6 +161,11 @@
     <Compile Include="WorkItemProcessor\IWorkItemProcessor.cs" />
     <Compile Include="WorkItemProcessor\IWorkItemProcessorFactory.cs" />
     <Compile Include="WorkItemProcessor\WorkItemProcessorFactoryExtensionPoint.cs" />
+    <Compile Include="WorkItemProcessor\WorkItemServiceSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>WorkItemServiceSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="WorkItemProcessor\WorkItemServiceSettings.cs" />
     <Compile Include="WorkItemProcessor\WorkItemStatusProxy.cs" />
   </ItemGroup>
@@ -200,9 +205,14 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="Storage\DicomQuery\Tests\test_store_insert_studies.sqlce" />
     <None Include="Storage\DicomStoreDataContext.dbml.layout">
       <DependentUpon>DicomStoreDataContext.dbml</DependentUpon>
+    </None>
+    <None Include="WorkItemProcessor\WorkItemServiceSettings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>WorkItemServiceSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
