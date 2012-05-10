@@ -51,15 +51,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
     /// </summary>
     public class DicomReceiveImportContext : ImportFilesContext
     {
+        private readonly IWorkItemActivityMonitor _monitor;
+
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="sourceAE">The AE title of the remote application sending the SOP Instances.</param>
         /// <param name="configuration">Storage configuration. </param>
         public DicomReceiveImportContext(string sourceAE, StorageConfiguration configuration) : base(sourceAE, configuration)
-        {    
+        {
+            _monitor = WorkItemActivityMonitor.Create(false);
+            _monitor.WorkItemsChanged += WorkItemsChanged;
         }
-
 
         /// <summary>
         /// Create a StudyProcessRequest object for a specific SOP Instance.
@@ -77,6 +80,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                               };
 
             return request;
+        }
+
+        private void WorkItemsChanged(object sender, WorkItemsChangedEventArgs e)
+        {
+            foreach (var item in e.ChangedItems)
+            {
+                if (item.Request is DicomReceiveRequest)
+                {
+                    WorkItem workItem;
+                    if (StudyWorkItems.TryGetValue(item.StudyInstanceUid, out workItem))
+                    {
+                        if (workItem.Oid == item.Identifier)
+                        {
+                            workItem.Status = item.Status;
+                            workItem.Progress = item.Progress;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -246,6 +268,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 return result;
             }
 
+               WorkItem workItem;
+               if (_context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem))
+               {
+                   if (workItem.Status == WorkItemStatusEnum.Deleted || workItem.Status == WorkItemStatusEnum.Canceled)
+                   {
+                       result.SetError(DicomStatuses.StorageStorageOutOfResources, "Receive canceled by user");
+                       return result;                       
+                   }
+               }
+
+
             // Use the command processor for rollback capabilities.
             using (var commandProcessor = new ViewerCommandProcessor(String.Format("Processing Sop Instance {0}", sopInstanceUid)))
             {
@@ -285,15 +318,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     InsertWorkItemCommand command;                 
                     if (duplicateFile)
                     {
-                        WorkItem workItem;
-                        command = _context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem)
+                        
+                        command = workItem != null
                             ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName)
                             : new InsertWorkItemCommand(_context.CreateRequest(file), new ProcessStudyProgress(),  studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName);             
                     }
                     else
                     {
-                        WorkItem workItem;
-                        command = _context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem)
+                        command = workItem != null
                             ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid)
                             : new InsertWorkItemCommand(_context.CreateRequest(file), new ProcessStudyProgress {TotalFilesToProcess = 1}, studyInstanceUid, seriesInstanceUid, sopInstanceUid);                        
                     }
@@ -303,8 +335,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 	if (commandProcessor.Execute())
                 	{
                 		result.DicomStatus = DicomStatuses.Success;
-
-                	    WorkItem workItem;
+                	    
                         if (!_context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem))
                         {
                             _context.StudyWorkItems.Add(studyInstanceUid, command.WorkItem);

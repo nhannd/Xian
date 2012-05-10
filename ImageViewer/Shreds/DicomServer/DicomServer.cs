@@ -24,11 +24,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		public class DicomServerContext : IDicomServerContext
 		{
 			private readonly DicomServer _server;
-		    
+		
 			internal DicomServerContext(DicomServer server)
 			{
 				_server = server;
-			}
+     		}
 
 			#region IDicomServerContext Members
 
