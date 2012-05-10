@@ -14,6 +14,7 @@
 
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Reflection;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
@@ -167,7 +168,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 
 					if (cloneAngles != null)
 					{
-						foreach (ICalloutGraphic calloutGraphic in CollectionUtils.Select(cloneAngles.Graphics, IsOfType<ICalloutGraphic>))
+						foreach (ICalloutGraphic calloutGraphic in cloneAngles.Graphics.Where(IsOfType<ICalloutGraphic>))
 						{
 							if (calloutGraphic.Visible)
 							{
@@ -182,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 		private static ShowAnglesTool.ShowAnglesToolCompositeGraphic FindShowAnglesToolComposite(IPresentationImage image)
 		{
 			IOverlayGraphicsProvider imageOverlayGraphics = (IOverlayGraphicsProvider) image;
-			IGraphic graphic = CollectionUtils.SelectFirst(imageOverlayGraphics.OverlayGraphics, IsOfType<ShowAnglesTool.ShowAnglesToolCompositeGraphic>);
+			IGraphic graphic = imageOverlayGraphics.OverlayGraphics.FirstOrDefault(IsOfType<ShowAnglesTool.ShowAnglesToolCompositeGraphic>);
 			if (graphic is CompositeGraphic)
 				((CompositeGraphic) graphic).OnDrawing();
 			return (ShowAnglesTool.ShowAnglesToolCompositeGraphic) graphic;
@@ -190,7 +191,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 
 		private static ShowAnglesTool.ShowAnglesToolGraphic FindShowAnglesTool(IEnumerable<IGraphic> graphicCollection)
 		{
-			return (ShowAnglesTool.ShowAnglesToolGraphic) CollectionUtils.SelectFirst(graphicCollection, IsOfType<ShowAnglesTool.ShowAnglesToolGraphic>);
+			return (ShowAnglesTool.ShowAnglesToolGraphic) graphicCollection.FirstOrDefault(IsOfType<ShowAnglesTool.ShowAnglesToolGraphic>);
 		}
 
 		private static bool IsOfType<T>(object @object)
