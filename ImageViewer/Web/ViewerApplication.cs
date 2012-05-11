@@ -408,10 +408,11 @@ namespace ClearCanvas.ImageViewer.Web
             int headerPort = WebViewerServices.Default.ArchiveServerHeaderPort;
             int wadoPort = WebViewerServices.Default.ArchiveServerWADOPort;
 
-            var serverAe = new ApplicationEntity(identifier.RetrieveAeTitle)
+            var serverAe = new ApplicationEntity
                                {
                                    ScpParameters = new ScpParameters(host, port),
-                                   StreamingParameters = new StreamingParameters(headerPort, wadoPort)
+                                   StreamingParameters = new StreamingParameters(headerPort, wadoPort),
+                                   AETitle = identifier.RetrieveAeTitle
                                };
 
 

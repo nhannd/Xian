@@ -181,8 +181,9 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 int headerPort = WebViewerServices.Default.ArchiveServerHeaderPort;
                 int wadoPort = WebViewerServices.Default.ArchiveServerWADOPort;
 
-			    applicationEntity = new ApplicationEntity(study.RetrieveAeTitle)
+			    applicationEntity = new ApplicationEntity()
 			                            {
+                                            AETitle = study.RetrieveAeTitle,
 			                                ScpParameters = new ScpParameters(host, port),
 			                                StreamingParameters = new StreamingParameters(headerPort, wadoPort)
 			                            };
@@ -194,10 +195,8 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 
                 if (theDevice != null)
 			    {
-		            studyLoaderName = "DICOM_REMOTE";
-                    // TODO (Marmot) - Need to get this to work with changes in marmot
-			        applicationEntity = new ApplicationEntity(theDevice.AeTitle)
-			                                {ScpParameters = new ScpParameters(theDevice.IpAddress, theDevice.Port)};
+		            // TODO (Marmot) - Need to get this to work with changes in marmot
+			        applicationEntity = new ApplicationEntity() { ScpParameters = new ScpParameters(theDevice.IpAddress, theDevice.Port), AETitle = theDevice.AeTitle };
 			    }
 			    else // (node == null)
 			    {
