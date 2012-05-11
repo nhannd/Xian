@@ -12,8 +12,10 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Principal;
+using System.ServiceModel;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common.Auditing;
 
@@ -177,23 +179,61 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     internal class ReindexApplication : IApplicationRoot
     {
+        private class CmdLine : CommandLine
+        {
+            public CmdLine()
+            {
+                Timeout = 30;
+            }
+
+            [CommandLineParameter("t", "Timeout", "Specifies the amount of time, in seconds, to wait for the re-index to be started before quitting.")]
+            public int Timeout { get; set; }
+        }
+
         #region IApplicationRoot Members
 
         public void RunApplication(string[] args)
         {
-            try
+            var cmdLine = new CmdLine();
+            int timeoutMillisecondsRemaining = cmdLine.Timeout*1000;
+            int tryCount = 0;
+            while (timeoutMillisecondsRemaining > 0)
             {
-                var client = new ReindexFilestoreBridge();
-                client.Reindex();
-                Console.WriteLine("The re-index has been scheduled.");
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to start re-index.");
+                ++tryCount;
+                if (tryCount > 1)
+                {
+                    Platform.Log(LogLevel.Info, "Previous attempt to start re-index failed - trying again (attempt #{0})", tryCount);
+                    Console.WriteLine("Previous attempt to start re-index failed - trying again (attempt #{0})", tryCount);
+                }
+
+                int startTicks = Environment.TickCount;
+
+                try
+                {
+                    var client = new ReindexFilestoreBridge();
+                    client.Reindex();
+                    Console.WriteLine("The re-index has been scheduled.");
+                    Environment.ExitCode = 0;
+                    return;
+                }
+                catch (EndpointNotFoundException)
+                {
+                    Platform.Log(LogLevel.Warn, "Failed to start re-index because the Work Item service isn't running.");
+                    Thread.Sleep(2000);
+                    var elapsedMilliseconds = Environment.TickCount - startTicks;
+                    timeoutMillisecondsRemaining -= elapsedMilliseconds;
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error, e, "Failed to start re-index.");
+                    Console.WriteLine("Failed to start re-index.");
+                }
             }
 
-            //TODO (Marmot): 
-            Environment.ExitCode = 1;
+            Platform.Log(LogLevel.Warn, "Unable to start re-index after {0} attempts", tryCount);
+            Console.WriteLine("Unable to start re-index after {0} attempts", tryCount);
+
+            Environment.ExitCode = -1;
         }
 
         #endregion
