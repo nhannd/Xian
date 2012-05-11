@@ -65,6 +65,11 @@ namespace ClearCanvas.Common.Serialization.Tests
 				var other = obj as TestContract1;
 				return Equals(this.Foo, other.Foo);
 			}
+
+            public override int GetHashCode()
+            {
+                return base.GetHashCode();
+            }
 		}
 
 		/// <summary>
@@ -143,6 +148,11 @@ namespace ClearCanvas.Common.Serialization.Tests
 							? Equals(this.ExtendedProperties, other.ExtendedProperties)
 							: CollectionUtils.Equal((ICollection)this.ExtendedProperties, other.ExtendedProperties, true));
 			}
+
+            public override int GetHashCode()
+            {
+                return base.GetHashCode();
+            }
 		}
 
 		/// </summary>
@@ -210,6 +220,18 @@ namespace ClearCanvas.Common.Serialization.Tests
 				var that = obj as TestContract5;
 				return that != null && that.Data == this.Data;
 			}
+
+		    public bool Equals(TestContract5 other)
+		    {
+		        if (ReferenceEquals(null, other)) return false;
+		        if (ReferenceEquals(this, other)) return true;
+		        return Equals(other.Data, Data);
+		    }
+
+		    public override int GetHashCode()
+		    {
+		        return Data.GetHashCode();
+		    }
 		}
 
 		[DataContract]
@@ -693,11 +715,11 @@ namespace ClearCanvas.Common.Serialization.Tests
 			output = JsmlSerializer.Deserialize<TestContract4>(serialized,
 				new JsmlSerializer.DeserializeOptions { Hook = new PolymorphicDataContractHook<TestPolyDataContractAttribute>() });
 
-			Assert.IsInstanceOfType(typeof(TestContract4_A), output);
+            Assert.IsInstanceOf(typeof(TestContract4_A), output);
 			Assert.AreEqual("foo", output.Data);
 
 			Assert.AreEqual("bar", ((TestContract4_A) output).DataA);
-			Assert.IsInstanceOfType(typeof(TestContract4_B), output.Child);
+            Assert.IsInstanceOf(typeof(TestContract4_B), output.Child);
 			Assert.AreEqual("x", output.Child.Data);
 			Assert.AreEqual("b", ((TestContract4_B)output.Child).DataB);
 		}

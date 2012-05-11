@@ -557,7 +557,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
                     {
                         DisposeExtension(ext);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         Platform.Log(LogLevel.Warn, "Error occurred while disposing {0} ImageBox extension", ext.Name);
                     }

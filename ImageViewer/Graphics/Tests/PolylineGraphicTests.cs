@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			graphic.Points.Add(new PointF(0, 0));
 			graphic.Points.Add(new PointF(0, 1));
 			var roi = graphic.GetRoi();
-			Assert.IsInstanceOfType(typeof (LinearRoi), roi, "PolylineGraphic.GetRoi() should return LinearRoi for shape {0}", Format(graphic.Points));
+			Assert.IsInstanceOf(typeof (LinearRoi), roi, "PolylineGraphic.GetRoi() should return LinearRoi for shape {0}", Format(graphic.Points));
 		}
 
 		[Test]
@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			graphic.Points.Add(new PointF(1, 1));
 			graphic.Points.Add(graphic.Points[0]);
 			var roi = graphic.GetRoi();
-			Assert.IsInstanceOfType(typeof (PolygonalRoi), roi, "PolylineGraphic.GetRoi() should return PolygonalRoi for shape {0}", Format(graphic.Points));
+            Assert.IsInstanceOf(typeof(PolygonalRoi), roi, "PolylineGraphic.GetRoi() should return PolygonalRoi for shape {0}", Format(graphic.Points));
 
 			var graphic2 = new PolylineGraphic();
 			graphic2.Points.Add(new PointF(0, 0));
@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			graphic2.Points.Add(new PointF(1, 0));
 			graphic2.Points.Add(graphic2.Points[0]);
 			var roi2 = graphic2.GetRoi();
-			Assert.IsInstanceOfType(typeof (PolygonalRoi), roi2, "PolylineGraphic.GetRoi() should return PolygonalRoi for shape {0}", Format(graphic2.Points));
+            Assert.IsInstanceOf(typeof(PolygonalRoi), roi2, "PolylineGraphic.GetRoi() should return PolygonalRoi for shape {0}", Format(graphic2.Points));
 
 			var graphic3 = new PolylineGraphic();
 			graphic3.Points.Add(new PointF(0, 0));
@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			graphic3.Points.Add(new PointF(1000, 1000));
 			graphic3.Points.Add(graphic3.Points[0]);
 			var roi3 = graphic3.GetRoi();
-			Assert.IsInstanceOfType(typeof (PolygonalRoi), roi3, "PolylineGraphic.GetRoi() should return PolygonalRoi for shape {0}", Format(graphic3.Points));
+            Assert.IsInstanceOf(typeof(PolygonalRoi), roi3, "PolylineGraphic.GetRoi() should return PolygonalRoi for shape {0}", Format(graphic3.Points));
 		}
 
 		private static string Format<T>(IEnumerable<T> collection)

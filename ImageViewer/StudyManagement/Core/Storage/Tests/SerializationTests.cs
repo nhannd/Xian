@@ -74,8 +74,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.Tests
 			var b = Serializer.SerializeWorkItemRequest(requestB);
 
 			// ensure that we get instances of the correct sub-classes back, even if we ask for the base-class
-			Assert.IsInstanceOfType(typeof(TestRequestA), Serializer.DeserializeWorkItemRequest(a));
-			Assert.IsInstanceOfType(typeof(TestRequestB), Serializer.DeserializeWorkItemRequest(b));
+            Assert.IsInstanceOf(typeof(TestRequestA), Serializer.DeserializeWorkItemRequest(a));
+            Assert.IsInstanceOf(typeof(TestRequestB), Serializer.DeserializeWorkItemRequest(b));
 		}
 	}
 }

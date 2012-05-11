@@ -27,7 +27,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         #region Private Members
 
         private static WorkItemService _instance;
-        private bool _disabled;
 
         #endregion
 
@@ -51,9 +50,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         #region Public Methods
 
         public void Start()
-        {
-            CheckDisabled();          
-          
+        {         
             try
             {
             }
@@ -65,7 +62,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         public void Stop()
         {
-            CheckDisabled();
         }
 
         public WorkItemInsertResponse Insert(WorkItemInsertRequest request)
@@ -215,16 +211,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 response.Items = results.ToArray();
             }
             return response;
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private void CheckDisabled()
-        {
-            if (_disabled)
-                throw new Exception(SR.ExceptionServiceHasBeenDisabled);
         }
 
         #endregion
