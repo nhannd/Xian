@@ -12,11 +12,13 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
+using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
@@ -141,12 +143,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 _importContext = new DicomReceiveImportContext(association.CallingAE, Context.StorageConfiguration)
                                      {
                                          ExpirationDelaySeconds =
-                                             WorkItemServiceSettings.Instance.ExpireDelaySeconds
+                                             WorkItemServiceSettings.Default.ExpireDelaySeconds
                                      };
 
                 // Publish new WorkItems as they're added to the context
-                _importContext.StudyWorkItems.ItemAdded +=
-					(sender, e) => WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemHelper.FromWorkItem(e.Item));
+                _importContext.StudyWorkItems.ItemAdded += (sender, args) => Platform.GetService(
+                    (IWorkItemActivityMonitorService service) => service.Publish(new WorkItemPublishRequest {Item = WorkItemHelper.FromWorkItem(args.Item)}));
             }
 
 		    var importer = new ImportFilesUtility(_importContext);

@@ -143,11 +143,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
         {
             var configuration = GetServerConfiguration();
 
-            var context = new ImportStudyContext(configuration.AETitle, StudyStore.GetConfiguration());
-            context.ExpirationDelaySeconds = WorkItemServiceSettings.Instance.ExpireDelaySeconds;
+            var context = new ImportStudyContext(configuration.AETitle, StudyStore.GetConfiguration())
+                              {ExpirationDelaySeconds = WorkItemServiceSettings.Default.ExpireDelaySeconds};
 
             // Publish the creation of the StudyImport WorkItems
-			context.StudyWorkItems.ItemAdded += (sender, e) => WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemHelper.FromWorkItem(e.Item));
+            context.StudyWorkItems.ItemAdded += (sender, args) => Platform.GetService(
+                (IWorkItemActivityMonitorService service) =>
+                service.Publish(new WorkItemPublishRequest {Item = WorkItemHelper.FromWorkItem(args.Item)}));
 
             var extensions = new List<string>();
 

@@ -187,7 +187,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The retrieve of {0} series from {1} for {2} [{3},A#:{4}] has been scheduled..
+        ///   Looks up a localized string similar to The retrieve of {0} series for {2} [{3},A#:{4}] from {1} has been scheduled..
         /// </summary>
         internal static string MessageFormatRetrieveSeriesScheduled {
             get {

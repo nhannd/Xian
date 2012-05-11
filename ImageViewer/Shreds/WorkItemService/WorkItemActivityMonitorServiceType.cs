@@ -82,6 +82,20 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 				});
         }
 
+        public WorkItemPublishResponse Publish(WorkItemPublishRequest request)
+        {
+            try
+            {
+                WorkItemPublishSubscribeHelper.PublishWorkItemChanged(request.Item);
+                return new WorkItemPublishResponse();
+            }
+            catch (Exception e)
+            {
+                var message = SR.ExceptionErrorProcessingPublish;
+                var exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
+                throw new WorkItemServiceException(exceptionMessage);
+            }
+        }
         #endregion
 
         #region Implementation of IDisposable

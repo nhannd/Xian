@@ -140,6 +140,9 @@ Please ensure the '{0}' is running or contact your system administrator for assi
     <value>{0} images failed to load.</value>
   </data>
   <data name="MessageFormatImportingFiles" xml:space="preserve">
+    <value>Importing files from {0} location.</value>
+  </data>
+  <data name="MessageFormatImportingFilesPlural" xml:space="preserve">
     <value>Importing files from {0} locations.</value>
   </data>
   <data name="MessagePermissionToOpenFilesDenied" xml:space="preserve">

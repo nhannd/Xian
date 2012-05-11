@@ -153,6 +153,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         [OperationContract(IsOneWay = true)]
         void Refresh(WorkItemRefreshRequest request);
+
+        [OperationContract]
+        WorkItemPublishResponse Publish(WorkItemPublishRequest request);
     }
 
     /// <summary>

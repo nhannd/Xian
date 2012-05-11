@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 			    string linkText = SR.LinkOpenActivityMonitor;   
                 var importClient = new DicomFileImportBridge();
                 importClient.ImportFileList(filePaths, BadFileBehaviourEnum.Ignore, FileImportBehaviourEnum.Copy);
-                Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(SR.MessageFormatImportingFiles, filePaths.Count), linkText, ActivityMonitorManager.Show);
+                Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(filePaths.Count > 1 ? SR.MessageFormatImportingFilesPlural : SR.MessageFormatImportingFiles, filePaths.Count), linkText, ActivityMonitorManager.Show);
 			}
 			catch (EndpointNotFoundException)
 			{

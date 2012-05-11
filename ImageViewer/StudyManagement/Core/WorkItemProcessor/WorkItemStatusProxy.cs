@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         /// <param name="failureType"></param>
         public void Fail(WorkItemFailureType failureType)
         {
-            Fail(failureType, Platform.Time.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds));
+            Fail(failureType, Platform.Time.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds));
         }
 
         /// <summary>
@@ -106,8 +106,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 
                 Item.Progress = Progress;
                 Item.FailureCount = Item.FailureCount + 1;
-                Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Instance.DeleteDelayMinutes);
-                if (Item.FailureCount >= WorkItemServiceSettings.Instance.RetryCount
+                Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);
+                if (Item.FailureCount >= WorkItemServiceSettings.Default.RetryCount
                     || failureType == WorkItemFailureType.Fatal )
                 {
                     Item.Status = WorkItemStatusEnum.Failed;
@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 context.Commit();
             }
 
-            Publish();
+            Publish(false);
             Platform.Log(LogLevel, "Failing {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
@@ -148,7 +148,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 context.Commit();
             }
 
-            Publish();
+            Publish(false);
             Platform.Log(LogLevel, "Postponing {0} WorkItem for OID {1} until {2}, expires {3}", Item.Type, Item.Oid, Item.ScheduledTime.ToLongTimeString(), Item.ExpirationTime.ToLongTimeString());
         }
 
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         public void Postpone()
         {
             DateTime now = Platform.Time;
-            DateTime newScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+            DateTime newScheduledTime = now.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds);
             Postpone(newScheduledTime);
         }
 
@@ -178,7 +178,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 Item.Progress = Progress;
                 Item.ScheduledTime = now;
                 Item.ExpirationTime = now;
-                Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Instance.DeleteDelayMinutes);
+                Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);
                 Item.Status = WorkItemStatusEnum.Complete;
 
                 var uidBroker = context.GetWorkItemUidBroker();
@@ -190,7 +190,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 context.Commit();
             }
 
-            Publish();
+            Publish(false);
             Platform.Log(LogLevel, "Completing {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
@@ -208,7 +208,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 DateTime now = Platform.Time;
 
                 Item.Progress = Progress;
-                Item.ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Instance.PostponeSeconds);
+                Item.ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds);
                 if (Item.ScheduledTime > Item.ExpirationTime)
                     Item.ScheduledTime = Item.ExpirationTime;
                 Item.Status = WorkItemStatusEnum.Idle;
@@ -216,7 +216,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 context.Commit();
             }
 
-            Publish();
+            Publish(false);
             Platform.Log(LogLevel, "Idling {0} WorkItem for OID {1} until {2}, expires {3}", Item.Type, Item.Oid, Item.ScheduledTime.ToLongTimeString(), Item.ExpirationTime.ToLongTimeString());
         }
 
@@ -235,14 +235,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 
                 Item.ScheduledTime = now;
                 Item.ExpirationTime = now;
-                Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Instance.DeleteDelayMinutes);
+                Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);
                 Item.Status = WorkItemStatusEnum.Canceled;
                 Item.Progress = Progress;
                 
                 context.Commit();
             }
 
-            Publish();
+            Publish(false);
             Platform.Log(LogLevel, "Canceling {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
@@ -262,7 +262,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 context.Commit();
             }
 
-            Publish();
+            Publish(false);
             Platform.Log(LogLevel, "Deleting {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
@@ -273,16 +273,40 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         {
             // We were originally committing to the database here, but decided to only commit when done processing the WorkItem.
             // This could lead to some misleading progress if a Refresh is done.
-             Publish();
+             Publish(false);
         }
 
+        /// <summary>
+        /// Update the progress for a <see cref="WorkItem"/>.  Progress will be published.
+        /// </summary>
+        public void UpdateProgress(bool updateDatabase)
+        {
+            // We were originally committing to the database here, but decided to only commit when done processing the WorkItem.
+            // This could lead to some misleading progress if a Refresh is done.
+            Publish(updateDatabase);
+        }
         #endregion
 
         #region Private Methods
 
-        private void Publish()
+        private void Publish(bool saveToDatabase)
         {
-            Item.Progress = Progress;
+            if (saveToDatabase)
+            {
+                using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+                {
+                    var broker = context.GetWorkItemBroker();
+
+                    Item = broker.GetWorkItem(Item.Oid);
+
+                    Item.Progress = Progress;
+
+                    context.Commit();
+                }
+            }
+            else
+                Item.Progress = Progress;
+
 			WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemHelper.FromWorkItem(Item));
         }
 
