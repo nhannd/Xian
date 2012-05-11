@@ -92,10 +92,7 @@
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
-    <Reference Include="System">
-      <Name>System</Name>
-      <HintPath>C:\WINDOWS\assembly\GAC_MSIL\System\2.0.0.0__b77a5c561934e089\System.dll</HintPath>
-    </Reference>
+    <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
