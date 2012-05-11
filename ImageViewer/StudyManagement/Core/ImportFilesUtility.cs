@@ -347,16 +347,33 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                         {
                             _context.StudyWorkItems.Add(studyInstanceUid, command.WorkItem);
 
-                            WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemHelper.FromWorkItem(command.WorkItem));
+                            Platform.GetService(
+                                (IWorkItemActivityMonitorService service) =>
+                                service.Publish(new WorkItemPublishRequest { Item = WorkItemHelper.FromWorkItem(command.WorkItem) }));
                         }
                         else
                         {
                             var progress = command.WorkItem.Progress as ProcessStudyProgress;
                             if (progress != null)
                             {
-                                progress.TotalFilesToProcess++;
-                                command.WorkItem.Progress = progress;
-                                WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemHelper.FromWorkItem(command.WorkItem));
+                                using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+                                {
+                                    var broker = context.GetWorkItemBroker();
+
+                                    command.WorkItem = broker.GetWorkItem(command.WorkItem.Oid);
+                                    progress = command.WorkItem.Progress as ProcessStudyProgress;
+                                    if (progress != null) 
+                                        progress.TotalFilesToProcess++;
+                                    command.WorkItem.Progress = progress;
+
+                                    context.Commit();
+                                }
+                                
+                                Platform.GetService(
+                                    (IWorkItemActivityMonitorService service) =>
+                                    service.Publish(new WorkItemPublishRequest
+                                                        {Item = WorkItemHelper.FromWorkItem(command.WorkItem)}));
+
                             }
                             // Save the updated WorkItem
                             _context.StudyWorkItems[studyInstanceUid] = command.WorkItem;

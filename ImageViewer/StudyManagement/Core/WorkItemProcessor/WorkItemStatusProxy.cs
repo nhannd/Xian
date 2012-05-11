@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 context.Commit();
             }
 
-            Publish();
+            Publish(false);
             Platform.Log(LogLevel, "Failing {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
@@ -148,7 +148,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 context.Commit();
             }
 
-            Publish();
+            Publish(false);
             Platform.Log(LogLevel, "Postponing {0} WorkItem for OID {1} until {2}, expires {3}", Item.Type, Item.Oid, Item.ScheduledTime.ToLongTimeString(), Item.ExpirationTime.ToLongTimeString());
         }
 
@@ -190,7 +190,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 context.Commit();
             }
 
-            Publish();
+            Publish(false);
             Platform.Log(LogLevel, "Completing {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
@@ -216,7 +216,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 context.Commit();
             }
 
-            Publish();
+            Publish(false);
             Platform.Log(LogLevel, "Idling {0} WorkItem for OID {1} until {2}, expires {3}", Item.Type, Item.Oid, Item.ScheduledTime.ToLongTimeString(), Item.ExpirationTime.ToLongTimeString());
         }
 
@@ -242,7 +242,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 context.Commit();
             }
 
-            Publish();
+            Publish(false);
             Platform.Log(LogLevel, "Canceling {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
@@ -262,7 +262,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 context.Commit();
             }
 
-            Publish();
+            Publish(false);
             Platform.Log(LogLevel, "Deleting {0} WorkItem for OID {1}", Item.Type, Item.Oid);
         }
 
@@ -273,16 +273,40 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         {
             // We were originally committing to the database here, but decided to only commit when done processing the WorkItem.
             // This could lead to some misleading progress if a Refresh is done.
-             Publish();
+             Publish(false);
         }
 
+        /// <summary>
+        /// Update the progress for a <see cref="WorkItem"/>.  Progress will be published.
+        /// </summary>
+        public void UpdateProgress(bool updateDatabase)
+        {
+            // We were originally committing to the database here, but decided to only commit when done processing the WorkItem.
+            // This could lead to some misleading progress if a Refresh is done.
+            Publish(updateDatabase);
+        }
         #endregion
 
         #region Private Methods
 
-        private void Publish()
+        private void Publish(bool saveToDatabase)
         {
-            Item.Progress = Progress;
+            if (saveToDatabase)
+            {
+                using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+                {
+                    var broker = context.GetWorkItemBroker();
+
+                    Item = broker.GetWorkItem(Item.Oid);
+
+                    Item.Progress = Progress;
+
+                    context.Commit();
+                }
+            }
+            else
+                Item.Progress = Progress;
+
 			WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemHelper.FromWorkItem(Item));
         }
 

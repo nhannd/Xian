@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                 LoadUids();
 
                 Progress.TotalFilesToProcess = WorkQueueUidList.Count;
-                Proxy.UpdateProgress();
+                Proxy.UpdateProgress(true);
 
                 int maxBatch = WorkItemServiceSettings.Default.StudyProcessBatchSize;
                 var fileList = new List<WorkItemUid>(maxBatch);
@@ -276,7 +276,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                 processor.ProcessBatch(fileList, studyXml);
 
                 Progress.NumberOfFilesProcessed += fileList.Count;
-                Proxy.UpdateProgress();
+                Proxy.UpdateProgress(true);
                 Study = processor.StudyLocation.Study;
                 return true;
             }
@@ -307,7 +307,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                     }
                 }
                 
-                Proxy.UpdateProgress();  
+                Proxy.UpdateProgress(true);  
 
                 return false;
             }

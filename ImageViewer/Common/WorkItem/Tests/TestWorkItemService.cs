@@ -37,6 +37,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         {
         }
 
+        public WorkItemPublishResponse Publish(WorkItemPublishRequest request)
+        {            
+            return new WorkItemPublishResponse();
+        }
+
         #endregion
 
         void IWorkItemActivityCallback.WorkItemsChanged(List<WorkItemData> workItems)
