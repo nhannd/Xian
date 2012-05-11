@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<ProjectGuid>{497CEAC5-C575-47A7-9230-610D6A3B6A2A}</ProjectGuid>
     <RootNamespace>OpenJPEG</RootNamespace>
   </PropertyGroup>

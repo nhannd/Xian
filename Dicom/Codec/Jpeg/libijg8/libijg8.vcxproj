@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <ProjectGuid>{A0385D99-56DF-45BB-9DB2-1E170B219F5E}</ProjectGuid>
     <RootNamespace>libijg8</RootNamespace>
   </PropertyGroup>
