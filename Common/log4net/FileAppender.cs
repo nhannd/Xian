@@ -376,7 +376,7 @@ namespace ClearCanvas.Common.log4net
                             }
                             catch (Exception e)
                             {
-                                LogLog.Error("FileAppender: INTERNAL ERROR.  Unable to see file: " + e.Message);
+                                LogLog.Error(typeof(FileAppender),"FileAppender: INTERNAL ERROR.  Unable to see file: " + e.Message);
                             }
 
                             ret = true;
@@ -708,7 +708,7 @@ namespace ClearCanvas.Common.log4net
                 catch (UnauthorizedAccessException)
                 {
                     // The named mutex exists, but the user does not have the security access required to use it.
-                    LogLog.Warn("The named mutex exists, but the user does not have the security access required to use it.");
+                    LogLog.Warn(typeof(FileAppender), "The named mutex exists, but the user does not have the security access required to use it.");
                     try
                     {
                         m_mutex = Mutex.OpenExisting(m_mutexname, MutexRights.ReadPermissions | MutexRights.ChangePermissions);
@@ -725,14 +725,14 @@ namespace ClearCanvas.Common.log4net
                         // Update the ACL. This requires MutexRights.ChangePermissions.
                         m_mutex.SetAccessControl(mSec);
 
-                        LogLog.Debug("Updated mutex security.");
+                        LogLog.Debug(typeof(FileAppender), "Updated mutex security.");
 
                        m_mutex = Mutex.OpenExisting(m_mutexname);
 
                     }
                     catch (UnauthorizedAccessException ex)
                     {
-                        LogLog.Error("Unable to change permissions on mutex.", ex);
+                        LogLog.Error(typeof(FileAppender), "Unable to change permissions on mutex.", ex);
                         m_mutex = new Mutex(false, m_mutexname);
                     }
                 }
@@ -987,8 +987,8 @@ namespace ClearCanvas.Common.log4net
             }
             else
             {
-                LogLog.Warn("FileAppender: File option not set for appender [" + Name + "].");
-                LogLog.Warn("FileAppender: Are you using FileAppender instead of ConsoleAppender?");
+                LogLog.Warn(typeof(FileAppender), "FileAppender: File option not set for appender [" + Name + "].");
+                LogLog.Warn(typeof(FileAppender), "FileAppender: Are you using FileAppender instead of ConsoleAppender?");
             }
         }
 
@@ -1240,7 +1240,7 @@ namespace ClearCanvas.Common.log4net
                 }
                 if (!isPathRooted)
                 {
-                    LogLog.Error("FileAppender: INTERNAL ERROR. OpenFile(" + fileName + "): File name is not fully qualified.");
+                    LogLog.Error(typeof(FileAppender), "FileAppender: INTERNAL ERROR. OpenFile(" + fileName + "): File name is not fully qualified.");
                 }
             }
 
@@ -1248,7 +1248,7 @@ namespace ClearCanvas.Common.log4net
             {
                 Reset();
 
-                LogLog.Debug("FileAppender: Opening file for writing [" + fileName + "] append [" + append + "]");
+                LogLog.Debug(typeof(FileAppender), "FileAppender: Opening file for writing [" + fileName + "] append [" + append + "]");
 
                 // Save these for later, allowing retries if file open fails
                 m_fileName = fileName;
