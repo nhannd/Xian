@@ -72,6 +72,7 @@ namespace ClearCanvas.ImageViewer.Common
             {
                 Console.WriteLine(e.Message); 
                 Platform.Log(LogLevel.Warn, e);
+                Environment.Exit(-1);
             }
 
             try
@@ -90,6 +91,7 @@ namespace ClearCanvas.ImageViewer.Common
             {
                 Console.WriteLine(e.Message);
                 Platform.Log(LogLevel.Warn, e);
+                Environment.Exit(-1);
             }
         }
 
