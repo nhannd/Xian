@@ -13,22 +13,25 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Configuration;
 
-namespace ClearCanvas.Desktop.Configuration
+namespace ClearCanvas.ImageViewer.Configuration
 {
     /// <summary>
     /// An extension point for <see cref="IConfigurationPageProvider"/>s.
     /// </summary>
     [ExtensionPoint]
-    public sealed class ConfigurationPageProviderExtensionPoint : ExtensionPoint<IConfigurationPageProvider>
+    public sealed class SharedConfigurationPageProviderExtensionPoint : ExtensionPoint<IConfigurationPageProvider>
     {
     }
 
-	public static class ConfigurationDialog
+	public static class SharedConfigurationDialog
 	{
 	    /// <summary>
-        /// Shows all <see cref="IConfigurationPage"/>s returned by extensions of <see cref="ConfigurationPageProviderExtensionPoint"/>
-		/// in a dialog, with a navigable tree to select the pages.
+        /// Shows all <see cref="IConfigurationPage"/>s returned by extensions of
+        /// <see cref="SharedConfigurationPageProviderExtensionPoint"/>
+        /// in a dialog, with a navigable tree to select the pages.
 		/// </summary>
 		public static ApplicationComponentExitCode Show(IDesktopWindow desktopWindow)
 		{
@@ -36,13 +39,14 @@ namespace ClearCanvas.Desktop.Configuration
 		}
 
 		/// <summary>
-        /// Shows all <see cref="IConfigurationPage"/>s returned by extensions of <see cref="ConfigurationPageProviderExtensionPoint"/>
+        /// Shows all <see cref="IConfigurationPage"/>s returned by extensions of
+        /// <see cref="SharedConfigurationPageProviderExtensionPoint"/>
 		/// in a dialog, with a navigable tree to select the pages.
 		/// </summary>
 		public static ApplicationComponentExitCode Show(IDesktopWindow desktopWindow, string initialPageIdentifier)
 		{
             var container = new ConfigurationDialogComponent(GetPages(), initialPageIdentifier);
-			var exitCode = ApplicationComponent.LaunchAsDialog(desktopWindow, container, SR.TitleMenuOptions);
+            var exitCode = ApplicationComponent.LaunchAsDialog(desktopWindow, container, SR.TitleSharedConfiguration);
 
 			return exitCode;
 		}
@@ -51,7 +55,7 @@ namespace ClearCanvas.Desktop.Configuration
         {
             try
             {
-                return new ConfigurationPageProviderExtensionPoint().CreateExtensions()
+                return new SharedConfigurationPageProviderExtensionPoint().CreateExtensions()
                     .Cast<IConfigurationPageProvider>().SelectMany(p => p.GetPages()).ToList();
             }
             catch (NotSupportedException)

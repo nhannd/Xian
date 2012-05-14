@@ -72,17 +72,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorityTokens.cs" />
-    <Compile Include="ConfigurationPageProvider.cs" />
+    <Compile Include="SharedConfigurationDialog.cs" />
+    <Compile Include="SharedConfigurationPageProvider.cs" />
     <Compile Include="CustomizeViewerActionModelsComponent.cs" />
     <Compile Include="CustomizeViewerActionModelTool.cs" />
-    <Compile Include="PriorServersConfigurationPageProvider.cs" />
+    <Compile Include="SharedConfigurationTool.cs" />
     <Compile Include="PriorsServersConfigurationComponent.cs" />
     <Compile Include="DefaultServerSettings.cs" />
     <Compile Include="DicomPublishingHelper.cs" />
     <Compile Include="DicomServerConfigurationComponent.cs" />
     <Compile Include="StorageConfigurationComponent.cs" />
     <Compile Include="PublishingConfigurationComponent.cs" />
-    <Compile Include="PublishingConfigurationPageProvider.cs" />
     <Compile Include="PublishingSettings.cs" />
     <Compile Include="PublishingSettings.Designer.cs">
       <AutoGen>True</AutoGen>

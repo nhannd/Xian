@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DescriptionFileStoreChanged" xml:space="preserve">
     <value>If you wish to keep your existing studies, you must manually copy them to the new
@@ -136,9 +136,6 @@ images or receive them over the network in order to avoid exhausting the disk.
 If the used space is reaching the maximum, it is recommended you
 increase the maximum usage, delete some studies, or move the file store
 to a disk with more capacity.</value>
-  </data>
-  <data name="DicomConfiguration" xml:space="preserve">
-    <value>DICOM</value>
   </data>
   <data name="ExampleGroup" xml:space="preserve">
     <value>Example Group</value>
@@ -209,6 +206,9 @@ Streaming Image Port: {1}</value>
   </data>
   <data name="MenuEdit" xml:space="preserve">
     <value>Edit</value>
+  </data>
+  <data name="MenuSharedConfiguration" xml:space="preserve">
+    <value>Configure ...</value>
   </data>
   <data name="MenuVerify" xml:space="preserve">
     <value>Verify</value>
@@ -326,6 +326,9 @@ Streaming Image Port: {1}</value>
   </data>
   <data name="TitleSelectFileStore" xml:space="preserve">
     <value>Select File Store Folder</value>
+  </data>
+  <data name="TitleSharedConfiguration" xml:space="preserve">
+    <value>Configuration</value>
   </data>
   <data name="ToolbarAddServer" xml:space="preserve">
     <value>Add server</value>

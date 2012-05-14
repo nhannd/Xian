@@ -13,16 +13,19 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
-	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
+	[ExtensionOf(typeof(SharedConfigurationPageProviderExtensionPoint))]
 	[ExtensionOf(typeof(ActivityMonitorQuickLinkHandlerExtensionPoint))]
-	public class ConfigurationPageProvider : IConfigurationPageProvider, IActivityMonitorQuickLinkHandler
+	public class SharedConfigurationPageProvider : IConfigurationPageProvider, IActivityMonitorQuickLinkHandler
 	{
-		private const string ServerConfigurationPath = "DicomConfiguration/ServerConfiguration";
-		private const string StorageConfigurationPath = "DicomConfiguration/StorageConfiguration";
+	    private const string ServerConfigurationPath = "ServerConfiguration";
+		private const string StorageConfigurationPath = "StorageConfiguration";
+        private const string PublishingConfigurationPath = "PublishingConfiguration";
+        private const string PriorsServerConfigurationPath = "PriorsServersConfiguration";
 
 		#region IConfigurationPageProvider Members
 
@@ -35,7 +38,13 @@ namespace ClearCanvas.ImageViewer.Configuration
 
             if (PermissionsHelper.IsInRole(Services.AuthorityTokens.Administration.Storage) && Common.StudyManagement.StudyStore.IsSupported)
 				listPages.Add(new ConfigurationPage<StorageConfigurationComponent>(StorageConfigurationPath));
-            
+
+            if (PermissionsHelper.IsInRoles(AuthorityTokens.Configuration.PriorsServers) && ServerDirectory.IsSupported)
+                listPages.Add(new ConfigurationPage<PriorsServersConfigurationComponent>(PriorsServerConfigurationPath));
+
+            if (PermissionsHelper.IsInRole(AuthorityTokens.Configuration.Publishing))
+                listPages.Add(new ConfigurationPage(PublishingConfigurationPath, new PublishingConfigurationComponent()));
+
             return listPages.AsReadOnly();
 		}
 
@@ -50,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			if (link == ActivityMonitorQuickLink.LocalServerConfiguration)
 			{
-				ConfigurationDialog.Show(window, ServerConfigurationPath);
+				SharedConfigurationDialog.Show(window, ServerConfigurationPath);
 			}
 		}
 	}
