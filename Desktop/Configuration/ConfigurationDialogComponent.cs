@@ -25,7 +25,7 @@ namespace ClearCanvas.Desktop.Configuration
 	[AssociateView(typeof(ConfigurationDialogComponentViewExtensionPoint))]
 	public class ConfigurationDialogComponent : NavigatorComponentContainer
 	{
-		private class NavigatorPagePathComparer : IComparer<NavigatorPage>
+	    private class NavigatorPagePathComparer : IComparer<NavigatorPage>
 		{
 			#region IComparer<NavigatorPage> Members
 
@@ -52,21 +52,20 @@ namespace ClearCanvas.Desktop.Configuration
 		}
 
 		private readonly int _initialPageIndex;
-		private readonly ConfigurationPageManager _configurationPageManager;
 		private SettingsStoreWatcher _settingsStoreWatcher;
 		private string _configurationWarning;
+        private readonly IEnumerable<IConfigurationPage> _configurationPages;
 
-		internal ConfigurationDialogComponent(string initialPagePath)
+        public ConfigurationDialogComponent(IEnumerable<IConfigurationPage> configurationPages, string initialPagePath)
 			: base(ConfigurationDialogSettings.Default.ShowApplyButton)
 		{
-			// We want to validate all configuration pages
+		    _configurationPages = configurationPages;
+		    // We want to validate all configuration pages
 			this.ValidationStrategy = new StartedComponentsValidationStrategy();
 
-			_configurationPageManager = new ConfigurationPageManager();
+			var pages = new List<NavigatorPage>();
 
-			List<NavigatorPage> pages = new List<NavigatorPage>();
-
-			foreach (IConfigurationPage configurationPage in this.ConfigurationPages)
+            foreach (IConfigurationPage configurationPage in _configurationPages)
 				pages.Add(new NavigatorPage(configurationPage.GetPath(), configurationPage.GetComponent()));
 
 			pages.Sort(new NavigatorPagePathComparer());
@@ -91,11 +90,6 @@ namespace ClearCanvas.Desktop.Configuration
 		public string ConfigurationWarning
 		{
 			get { return _configurationWarning; }
-		}
-
-		public IEnumerable<IConfigurationPage> ConfigurationPages
-		{
-			get { return _configurationPageManager.Pages; }
 		}
 
 		public override void Start()
@@ -166,7 +160,7 @@ namespace ClearCanvas.Desktop.Configuration
 		{
 			try
 			{
-				foreach (IConfigurationPage configurationPage in this.ConfigurationPages)
+                foreach (IConfigurationPage configurationPage in _configurationPages)
 				{
 					if (configurationPage.GetComponent().Modified)
 						configurationPage.SaveConfiguration();
