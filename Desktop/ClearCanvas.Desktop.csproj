@@ -150,7 +150,6 @@
     <Compile Include="Configuration\ConfigurationDialog.cs" />
     <Compile Include="Configuration\ConfigurationDialogComponent.cs" />
     <Compile Include="Configuration\ConfigurationPage.cs" />
-    <Compile Include="Configuration\ConfigurationPageManager.cs" />
     <Compile Include="Configuration\IConfigurationApplicationComponent.cs" />
     <Compile Include="Configuration\IConfigurationPage.cs" />
     <Compile Include="Configuration\IConfigurationPageProvider.cs" />
