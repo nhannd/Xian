@@ -10,11 +10,14 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -33,12 +36,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
     public class SendStudyTool : StudyBrowserTool
     {
-        private void SendStudy()
-        {
-			BlockingOperation.Run(SendStudyInternal);
-        }
-
-		private void SendStudyInternal()
+		public void SendStudy()
 		{
 			if (!Enabled)
 				return;
@@ -53,12 +51,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		                                  };
 
 		    var dialogContainer = new SimpleComponentContainer(serverTreeComponent);
-
-			ApplicationComponentExitCode code =
-				ApplicationComponent.LaunchAsDialog(
-					Context.DesktopWindow,
-					dialogContainer,
-					SR.TitleSendStudy);
+			var code = ApplicationComponent.LaunchAsDialog(Context.DesktopWindow, dialogContainer, SR.TitleSendStudy);
 
 			if (code != ApplicationComponentExitCode.Accepted)
 				return;
@@ -75,46 +68,31 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return;
 			}
 
-            var client = new DicomSendBridge();
-            foreach (var study in Context.SelectedStudies)
-            {
-                foreach (var destination in serverTreeComponent.SelectedServers)
-                {
-                    try
-                    {
-                        client.MoveStudy(destination, study, WorkItemPriorityEnum.Normal);
-                        if (Context.SelectedStudies.Count == 1)
-                        {
-                            DateTime? studyDate = DateParser.Parse(study.StudyDate);
-                            Context.DesktopWindow.ShowAlert(AlertLevel.Info,
-                                                            string.Format(SR.MessageFormatSendStudyScheduled,
-                                                                          destination.Name,
-                                                                          study.PatientsName.FormattedName,
-                                                                          studyDate.HasValue
-                                                                              ? Format.Date(studyDate.Value)
-                                                                              : string.Empty,
-                                                                          study.AccessionNumber),
-                                                            SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
-                        }
-                    }
-                    catch (EndpointNotFoundException)
-                    {
-                        Context.DesktopWindow.ShowMessageBox(SR.MessageSendDicomServerServiceNotRunning, MessageBoxActions.Ok);
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, SR.MessageFailedToSendStudy, Context.DesktopWindow);
-                    }
-                }
-            }
-            if (Context.SelectedStudies.Count > 1)
-            {
-                Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(SR.MessageFormatSendStudiesScheduled,Context.SelectedStudies.Count),
-                                                      SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
-            }
+			try
+			{
+				if (Context.SelectedStudies.Count > 1)
+				{
+					var count = ProcessItemsAsync(Context.SelectedStudies, study => SendStudy(study, serverTreeComponent.SelectedServers), false);
+					AlertMultipleStudiesSent(count);
+				}
+				else if (Context.SelectedStudies.Count == 1)
+				{
+					var study = Context.SelectedStudies.First();
+					SendStudy(study, serverTreeComponent.SelectedServers);
+					AlertStudySent(study, serverTreeComponent.SelectedServers);
+				}
+			}
+			catch (EndpointNotFoundException)
+			{
+				Context.DesktopWindow.ShowMessageBox(SR.MessageSendDicomServerServiceNotRunning, MessageBoxActions.Ok);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, SR.MessageErrorSendingStudies, Context.DesktopWindow);
+			}
 		}
 
-        protected override void OnSelectedStudyChanged(object sender, EventArgs e)
+		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
         {
         	UpdateEnabled();
         }
@@ -129,6 +107,36 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			Enabled = Context.SelectedStudies.Count > 0
 			          && Context.SelectedServers.AllSupport<IWorkItemService>()
                       && WorkItemActivityMonitor.IsRunning;
+		}
+
+		private void SendStudy(StudyTableItem study, DicomServiceNodeList destinations)
+		{
+			var client = new DicomSendBridge();
+			foreach (var destination in destinations)
+			{
+				client.MoveStudy(destination, study, WorkItemPriorityEnum.Normal);
+			}
+		}
+
+		private void AlertMultipleStudiesSent(int count)
+		{
+			Context.DesktopWindow.ShowAlert(AlertLevel.Info,
+											string.Format(SR.MessageFormatSendStudiesScheduled, count),
+											SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+		}
+
+		private void AlertStudySent(StudyTableItem study, IEnumerable<IDicomServiceNode> destinations)
+		{
+			var studyDate = DateParser.Parse(study.StudyDate);
+			Context.DesktopWindow.ShowAlert(AlertLevel.Info,
+											string.Format(SR.MessageFormatSendStudyScheduled,
+														  string.Join(", ", destinations.Select(d => d.Name)),
+														  study.PatientsName.FormattedName,
+														  studyDate.HasValue
+															? Format.Date(studyDate.Value)
+															: string.Empty,
+														  study.AccessionNumber),
+											SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
 		}
 	}
 }

@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ColumnHeadingAccessionNumber" xml:space="preserve">
     <value>Accession Number</value>
@@ -211,11 +211,11 @@ Are you sure you want to continue?</value>
   <data name="MessageFailedToOpenStudy" xml:space="preserve">
     <value>Failed to open the selected study.</value>
   </data>
-  <data name="MessageFailedToRetrieveStudy" xml:space="preserve">
-    <value>Failed to initiate a retrieval of the selected items.</value>
+  <data name="MessageErrorRetrievingStudies" xml:space="preserve">
+    <value>An error occurred while processing retrieval of the selected items.</value>
   </data>
-  <data name="MessageFailedToSendStudy" xml:space="preserve">
-    <value>Failed to initiate sending of the selected items.</value>
+  <data name="MessageErrorSendingStudies" xml:space="preserve">
+    <value>An error occurred while processing sending of the selected items.</value>
   </data>
   <data name="MessageFormatXNonStreamingStudiesCannotBeOpened" xml:space="preserve">
     <value>{0} of the selected studies are on a non-streaming server and cannot be opened.</value>
@@ -240,21 +240,19 @@ Are you sure you want to continue?</value>
     <value>Permission to view a study is denied.</value>
   </data>
   <data name="MessageRetrieveDicomServerServiceNotRunning" xml:space="preserve">
-    <value>Failed to retrieve the selected studies because the DICOM Server service is not running.
-Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
+    <value>The Local Server must running in order to retrieve studies.</value>
   </data>
   <data name="MessageSearchStudyPermissionDenied" xml:space="preserve">
     <value>Permission to search studies is denied.</value>
   </data>
   <data name="MessageSelectDestination" xml:space="preserve">
-    <value>Please select a destination.</value>
+    <value>You must select a destination to send to.</value>
   </data>
   <data name="MessageSelectedStudyInUse" xml:space="preserve">
     <value>The selected study is currently in use.  Please close all relevant workspaces before deleting.</value>
   </data>
   <data name="MessageSendDicomServerServiceNotRunning" xml:space="preserve">
-    <value>Failed to send the selected studies because the DICOM Server service is not running.
-Please ensure the ClearCanvas Service is running or contact your system administrator for assistance.</value>
+    <value>The Local Server must running in order to send studies.</value>
   </data>
   <data name="MessageFormatSendStudyScheduled" xml:space="preserve">
     <value>The send to {0} for {1} [{2}, A#:{3}] has been scheduled.</value>
@@ -361,8 +359,8 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   <data name="ValidationInvalidLastNameSearch" xml:space="preserve">
     <value>The value contains invalid characters or is incorrectly formatted (Example: Doe, J)</value>
   </data>
-  <data name="MessageFailedToDeleteStudy" xml:space="preserve">
-    <value>Failed to initiate deletion of the selected items.</value>
+  <data name="MessageErrorDeletingStudies" xml:space="preserve">
+    <value>An error occurred while processing deletion of the selected items.</value>
   </data>
   <data name="MessageFormatDeleteStudyScheduled" xml:space="preserve">
     <value>A study for {0} [{1}, A#:{2}] has been scheduled for deletion.</value>
@@ -405,5 +403,8 @@ Please ensure the ClearCanvas Service is running or contact your system administ
   </data>
   <data name="MessageFormatRetrieveStudyScheduled" xml:space="preserve">
     <value>The retrieve of a study for {0} [{1}, A#:{2}] from {3} has been scheduled.</value>
+  </data>
+  <data name="MessageProcessedItemsProgress" xml:space="preserve">
+    <value>Processed {0} of {1} items...</value>
   </data>
 </root>

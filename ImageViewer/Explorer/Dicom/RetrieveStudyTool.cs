@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -47,30 +48,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             try
             {
                 var client = new DicomRetrieveBridge();
-
-                foreach (StudyTableItem study in Context.SelectedStudies)
-                {
-                    client.RetrieveStudy(study.Server, study);
-                    if (Context.SelectedStudies.Count == 1)
-                    {
-                        DateTime? studyDate = DateParser.Parse(study.StudyDate);
-                        Context.DesktopWindow.ShowAlert(AlertLevel.Info,
-                                                        string.Format(SR.MessageFormatRetrieveStudyScheduled,                                                                      
-                                                                      study.PatientsName.FormattedName,
-                                                                      studyDate.HasValue
-                                                                          ? Format.Date(studyDate.Value)
-                                                                          : string.Empty,
-                                                                      study.AccessionNumber,
-                                                                      study.Server.Name),
-                                                        SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
-                    }
-                }
-
-                if (Context.SelectedStudies.Count > 1)
-                {
-                    Context.DesktopWindow.ShowAlert(AlertLevel.Info, string.Format(SR.MessageFormatRetrieveStudiesScheduled, Context.SelectedStudies.Count),
-                                                   SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
-                }
+				if (Context.SelectedStudies.Count > 1)
+				{
+					var count = ProcessItemsAsync(Context.SelectedStudies, study => client.RetrieveStudy(study.Server, study), false);
+					AlertMultipleStudiesRetrieved(count);
+				}
+				else if (Context.SelectedStudies.Count == 1)
+				{
+					var study = Context.SelectedStudies.First();
+					client.RetrieveStudy(study.Server, study);
+					AlertStudyRetrieved(study);
+				}
             }
             catch (EndpointNotFoundException)
             {
@@ -78,8 +66,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, SR.MessageFailedToRetrieveStudy, Context.DesktopWindow);
+                ExceptionHandler.Report(e, SR.MessageErrorRetrievingStudies, Context.DesktopWindow);
             }        
+		}
+
+		private void AlertMultipleStudiesRetrieved(int count)
+		{
+			Context.DesktopWindow.ShowAlert(AlertLevel.Info,
+			                                string.Format(SR.MessageFormatRetrieveStudiesScheduled, count),
+			                                SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+		}
+
+		private void AlertStudyRetrieved(StudyTableItem study)
+		{
+			DateTime? studyDate = DateParser.Parse(study.StudyDate);
+			Context.DesktopWindow.ShowAlert(AlertLevel.Info,
+			                                string.Format(SR.MessageFormatRetrieveStudyScheduled,
+			                                              study.PatientsName.FormattedName,
+			                                              studyDate.HasValue
+			                                              	? Format.Date(studyDate.Value)
+			                                              	: string.Empty,
+			                                              study.AccessionNumber,
+			                                              study.Server.Name),
+			                                SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
 		}
 
 		private bool GetAtLeastOneServerSupportsLoading()

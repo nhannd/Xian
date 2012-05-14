@@ -15,7 +15,6 @@ using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -46,33 +45,26 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             try
             {
-                var client = new DeleteBridge();
-                foreach (var study in Context.SelectedStudies)
-                {
-                    client.DeleteStudy(study);
-                    if (Context.SelectedStudies.Count == 1)
-                    {
-                        DateTime? studyDate = DateParser.Parse(study.StudyDate);
-                        Context.DesktopWindow.ShowAlert(AlertLevel.Info,
-                                                        string.Format(SR.MessageFormatDeleteStudyScheduled,
-                                                                      study.PatientsName.FormattedName,
-                                                                      studyDate.HasValue ? Format.Date(studyDate.Value) : string.Empty,
-                                                                          study.AccessionNumber),
-                                                        SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
-                    }
-                }
-                if (Context.SelectedStudies.Count > 1)
-                    Context.DesktopWindow.ShowAlert(AlertLevel.Info,
-                          string.Format(SR.MessageFormatDeleteStudiesScheduled, Context.SelectedStudies.Count),
-                          SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+				var client = new DeleteBridge();
+				if (Context.SelectedStudies.Count > 1)
+				{
+					var count = ProcessItemsAsync(Context.SelectedStudies, client.DeleteStudy, false);
+					AlertMultipleStudiesDeleted(count);
+				}
+				else if(Context.SelectedStudies.Count == 1)
+				{
+					var study = Context.SelectedStudies.First();
+					client.DeleteStudy(study);
+					AlertStudyDeleted(study);
+				}
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, SR.MessageFailedToDeleteStudy, Context.DesktopWindow);
+                ExceptionHandler.Report(e, SR.MessageErrorDeletingStudies, Context.DesktopWindow);
             }
         }
 
-	    protected override void OnSelectedStudyChanged(object sender, EventArgs e)
+		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
 		{
 			UpdateEnabled();
 		}
@@ -159,5 +151,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		    return Context.DesktopWindow.Workspaces
                 .Select(ImageViewerComponent.GetAsImageViewer).Where(viewer => viewer != null).ToList();
 		}
+
+		private void AlertStudyDeleted(StudyTableItem study)
+		{
+			var studyDate = DateParser.Parse(study.StudyDate);
+			Context.DesktopWindow.ShowAlert(AlertLevel.Info,
+											string.Format(SR.MessageFormatDeleteStudyScheduled,
+														  study.PatientsName.FormattedName,
+														  studyDate.HasValue ? Format.Date(studyDate.Value) : string.Empty,
+														  study.AccessionNumber),
+											SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+		}
+
+		private void AlertMultipleStudiesDeleted(int count)
+		{
+			Context.DesktopWindow.ShowAlert(AlertLevel.Info,
+											string.Format(SR.MessageFormatDeleteStudiesScheduled, count),
+											SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+		}
+
 	}
 }

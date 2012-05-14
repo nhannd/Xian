@@ -404,11 +404,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to initiate deletion of the selected items..
+        ///   Looks up a localized string similar to An error occurred while processing deletion of the selected items..
         /// </summary>
-        internal static string MessageFailedToDeleteStudy {
+        internal static string MessageErrorDeletingStudies {
             get {
-                return ResourceManager.GetString("MessageFailedToDeleteStudy", resourceCulture);
+                return ResourceManager.GetString("MessageErrorDeletingStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while processing retrieval of the selected items..
+        /// </summary>
+        internal static string MessageErrorRetrievingStudies {
+            get {
+                return ResourceManager.GetString("MessageErrorRetrievingStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while processing sending of the selected items..
+        /// </summary>
+        internal static string MessageErrorSendingStudies {
+            get {
+                return ResourceManager.GetString("MessageErrorSendingStudies", resourceCulture);
             }
         }
         
@@ -418,24 +436,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string MessageFailedToOpenStudy {
             get {
                 return ResourceManager.GetString("MessageFailedToOpenStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to initiate a retrieval of the selected items..
-        /// </summary>
-        internal static string MessageFailedToRetrieveStudy {
-            get {
-                return ResourceManager.GetString("MessageFailedToRetrieveStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to initiate sending of the selected items..
-        /// </summary>
-        internal static string MessageFailedToSendStudy {
-            get {
-                return ResourceManager.GetString("MessageFailedToSendStudy", resourceCulture);
             }
         }
         
@@ -552,8 +552,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to retrieve the selected studies because the DICOM Server service is not running.
-        ///Please ensure the ClearCanvas Service is running or contact your system administrator for assistance..
+        ///   Looks up a localized string similar to Processed {0} of {1} items....
+        /// </summary>
+        internal static string MessageProcessedItemsProgress {
+            get {
+                return ResourceManager.GetString("MessageProcessedItemsProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Local Server must running in order to retrieve studies..
         /// </summary>
         internal static string MessageRetrieveDicomServerServiceNotRunning {
             get {
@@ -571,7 +579,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please select a destination..
+        ///   Looks up a localized string similar to You must select a destination to send to..
         /// </summary>
         internal static string MessageSelectDestination {
             get {
@@ -589,8 +597,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to send the selected studies because the DICOM Server service is not running.
-        ///Please ensure the ClearCanvas Service is running or contact your system administrator for assistance..
+        ///   Looks up a localized string similar to The Local Server must running in order to send studies..
         /// </summary>
         internal static string MessageSendDicomServerServiceNotRunning {
             get {

@@ -10,6 +10,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Common.Utilities;
 
@@ -55,5 +58,41 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			add { _enabledChangedEvent += value; }
 			remove { _enabledChangedEvent -= value; }
 		}
+
+		protected int ProcessItemsAsync<T>(IEnumerable<T> studies, Action<T> processAction, bool cancelable)
+		{
+			var itemsToProcess = studies.ToList();	// make a copy
+			var processedCount = 0;
+			var task = new BackgroundTask(delegate(IBackgroundTaskContext context)
+											{
+												try
+												{
+													foreach (var item in itemsToProcess)
+													{
+														if (context.CancelRequested)
+														{
+															context.Cancel();
+															return;
+														}
+
+														processAction(item);
+														processedCount++;
+														var msg = string.Format(SR.MessageProcessedItemsProgress, processedCount, itemsToProcess.Count);
+														context.ReportProgress(new BackgroundTaskProgress(processedCount - 1, itemsToProcess.Count, msg));
+													}
+													context.Complete();
+												}
+												catch (Exception e)
+												{
+													context.Error(e);
+												}
+											}, cancelable);
+
+			//note: any exceptions occurring on the background task will be re-thrown from this call
+			ProgressDialog.Show(task, this.Context.DesktopWindow, true);
+
+			return processedCount;
+		}
+
 	}
 }
