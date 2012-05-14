@@ -52,6 +52,7 @@ namespace ClearCanvas.Common
 	internal class DecryptedProductSettings
 	{
 		private string _name;
+        private string _family;
 		private string _product;
 		private string _component;
 		private string _edition;
@@ -80,6 +81,21 @@ namespace ClearCanvas.Common
 				return _name;
 			}
 		}
+
+
+        /// <summary>
+        /// Gets the product's family name.
+        /// </summary>
+        public string FamilyName
+        {
+            get
+            {
+                if (_family == null)
+                    _family = Decrypt(_settings.FamilyName);
+                return _family;
+            }
+        }
+
 
 		/// <summary>
 		/// Gets the component name.
@@ -259,6 +275,18 @@ namespace ClearCanvas.Common
 			}
 		}
 
+        /// <summary>
+        /// Gets the product's family name.
+        /// </summary>
+        public static string FamilyName
+        {
+            get
+            {
+                return _settings.FamilyName;
+            }
+        }
+
+
 		/// <summary>
 		/// Gets the component name.
 		/// </summary>
@@ -332,6 +360,7 @@ namespace ClearCanvas.Common
 		{
 			return Concatenate(Name, GetNameSuffix(includeEdition, includeRelease));
 		}
+
 
 		/// <summary>
 		/// Gets the suffixes to the component name (i.e. the product edition and/or release type).
