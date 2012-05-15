@@ -135,6 +135,35 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 WorkItem = response.Item;
         }
 
+        protected WorkItemData GetMatchingRequest(WorkItemRequest request)
+        {
+            WorkItemData returnedItem = null;
+
+            Platform.GetService(delegate(IWorkItemService s)
+                                    {
+                                        var response = s.Query(new WorkItemQueryRequest
+                                                                   {
+                                                                       Type = request.WorkItemType,
+                                                                       StudyInstanceUid =
+                                                                           (request is WorkItemStudyRequest)
+                                                                               ? (request as WorkItemStudyRequest).Study.StudyInstanceUid
+                                                                               : null
+                                                                   });
+                                        foreach (var relatedItem in response.Items)
+                                        {
+                                            if (relatedItem.Status == WorkItemStatusEnum.Idle
+                                                || relatedItem.Status == WorkItemStatusEnum.Pending
+                                                || relatedItem.Status == WorkItemStatusEnum.InProgress)
+                                            {
+                                                returnedItem = relatedItem;
+                                                break;
+                                            }
+                                        }
+                                    });
+
+            return returnedItem;
+        }
+
         private static string GetUserName()
         {
             IPrincipal p = Thread.CurrentPrincipal;
@@ -480,6 +509,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                     Patient = new WorkItemPatient(study)
 
                 };
+
+                var data = GetMatchingRequest(request);
+                if (data != null)
+                {
+                    var existingRequest = data.Request as DicomRetrieveStudyRequest;
+                    if (existingRequest != null && remoteAEInfo.Name == existingRequest.Source)
+                    {
+                        Request = data.Request;
+                        return;
+                    }
+                }
 
                 InsertRequest(request);
             }
