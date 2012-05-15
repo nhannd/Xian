@@ -635,4 +635,44 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return SR.ActivityTypeEnumDeleteSeries; }
         }
     }
+
+	/// <summary>
+	/// ReapplyRules Request
+	/// </summary>
+	[DataContract(Namespace = ImageViewerNamespace.Value)]
+	[WorkItemRequestDataContract("9361447F-C14F-498C-B0EA-40664F2BB396")]
+	[WorkItemKnownType]
+	[WorkItemRequest]
+	public class ReapplyRulesRequest : WorkItemRequest
+	{
+		public static string WorkItemTypeString = "ReapplyRules";
+
+		public ReapplyRulesRequest()
+		{
+			WorkItemType = WorkItemTypeString;
+			Priority = WorkItemPriorityEnum.Normal;
+		}
+
+		[DataMember(IsRequired = true)]
+		public string RuleId { get; set; }
+
+		[DataMember(IsRequired = true)]
+		public string RuleName { get; set; }
+
+		[DataMember(IsRequired = true)]
+		public bool ApplyRouteActions { get; set; }
+
+		[DataMember(IsRequired = true)]
+		public bool ApplyDeleteActions { get; set; }
+
+		public override string ActivityDescription
+		{
+			get { return string.Format(SR.ReapplyRulesRequest_ActivityDescription, RuleName); }
+		}
+
+		public override string ActivityTypeString
+		{
+			get { return SR.ActivityTypeEnumReapplyRules; }
+		}
+	}
 }

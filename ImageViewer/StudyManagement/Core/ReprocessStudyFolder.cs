@@ -133,11 +133,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                               ApplyDeleteActions = true,
                                               ApplyRouteActions = false
                                           };
-                    StudyEntry studyEntry = p.StudyLocation.Study.ToStoreEntry();
-                    foreach (IRulesEngine engine in ep.CreateExtensions())
-                    {
-                        engine.ApplyStudyRules(ruleContext, studyEntry);
-                    }
+					RulesEngine.Create().ApplyStudyRules(ruleContext, p.StudyLocation.Study.ToStoreEntry());
                 }
 
             }

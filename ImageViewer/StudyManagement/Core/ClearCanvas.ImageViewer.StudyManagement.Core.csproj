@@ -92,6 +92,8 @@
     <Compile Include="DeleteSeriesUtility.cs" />
     <Compile Include="DeleteStudyUtility.cs" />
     <Compile Include="DicomFilePublisher.cs" />
+    <Compile Include="ReapplyRulesUtility.cs" />
+    <Compile Include="RulesEngine.cs" />
     <Compile Include="Storage\DicomQuery\DateDicomPropertyFilter.cs" />
     <Compile Include="Storage\DicomQuery\DicomPropertyFilter.cs" />
     <Compile Include="Storage\DicomQuery\MultiValuedPropertyRule.cs" />

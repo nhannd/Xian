@@ -113,7 +113,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                     Proxy.Postpone();
                 else if (now > Proxy.Item.ExpirationTime)
                 {
-                    var ep = new RulesEngineExtensionPoint();
                     if (Study == null)
                         Study = LoadRelatedStudy();
 
@@ -122,11 +121,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                                               ApplyDeleteActions = true,
                                               ApplyRouteActions = true
                                           };
-                    StudyEntry studyEntry = Study.ToStoreEntry();
-                    foreach (IRulesEngine engine in ep.CreateExtensions())
-                    {
-                        engine.ApplyStudyRules(ruleContext, studyEntry);
-                    }
+					RulesEngine.Create().ApplyStudyRules(ruleContext, Study.ToStoreEntry());
 
                     Proxy.Complete();
                 }
