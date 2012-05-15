@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ColumnActivityDescription" xml:space="preserve">
     <value>Activity</value>
@@ -187,6 +187,9 @@ make room, or increase the maximum usage.</value>
   </data>
   <data name="MessageMaximumDiskUsageExceeded" xml:space="preserve">
     <value>Maximum disk usage exceeded</value>
+  </data>
+  <data name="MessageNonStudyWorkItemFailed" xml:space="preserve">
+    <value>{0} failed.</value>
   </data>
   <data name="MessageOneFailedWorkItem" xml:space="preserve">
     <value>There is 1 failed work item.</value>
