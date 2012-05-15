@@ -180,17 +180,14 @@
   <data name="MenuDeleteStudy" xml:space="preserve">
     <value>Delete</value>
   </data>
-  <data name="MenuOpenStudies" xml:space="preserve">
-    <value>Open</value>
-  </data>
   <data name="MenuOpenStudy" xml:space="preserve">
     <value>Open</value>
   </data>
   <data name="MenuRetrieveStudy" xml:space="preserve">
-    <value>Retrieve Study</value>
+    <value>Retrieve</value>
   </data>
   <data name="MenuSendStudy" xml:space="preserve">
-    <value>Send Study</value>
+    <value>Send</value>
   </data>
   <data name="MessageCannotOpenNonStreamingStudy" xml:space="preserve">
     <value>The selected study is on a non-streaming server and cannot be opened.</value>
@@ -305,9 +302,6 @@ Are you sure you want to continue?</value>
   <data name="TitleSearchPanelPane" xml:space="preserve">
     <value>Search Panel</value>
   </data>
-  <data name="TitleSend" xml:space="preserve">
-    <value>Send</value>
-  </data>
   <data name="TitleSendStudy" xml:space="preserve">
     <value>Send Study</value>
   </data>
@@ -338,17 +332,14 @@ Are you sure you want to continue?</value>
   <data name="TooltipHideDuplicateStudies" xml:space="preserve">
     <value>Hide duplicate studies</value>
   </data>
-  <data name="TooltipOpenStudies" xml:space="preserve">
-    <value>Open</value>
-  </data>
   <data name="TooltipOpenStudy" xml:space="preserve">
     <value>Open study</value>
   </data>
   <data name="TooltipRetrieveStudy" xml:space="preserve">
-    <value>Retrieve Study</value>
+    <value>Retrieve study</value>
   </data>
   <data name="TooltipSendStudy" xml:space="preserve">
-    <value>Send Study</value>
+    <value>Send study</value>
   </data>
   <data name="TooltipShowAllStudies" xml:space="preserve">
     <value>Show all studies</value>

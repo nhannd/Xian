@@ -62,14 +62,12 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PublishingConfigurationComponentControl));
             this._publishingGroup = new System.Windows.Forms.GroupBox();
             this._publishLocalToSourceAE = new System.Windows.Forms.CheckBox();
-            this._publishToDefaultServers = new System.Windows.Forms.CheckBox();
             this._publishingGroup.SuspendLayout();
             this.SuspendLayout();
             // 
             // _publishingGroup
             // 
             this._publishingGroup.Controls.Add(this._publishLocalToSourceAE);
-            this._publishingGroup.Controls.Add(this._publishToDefaultServers);
             resources.ApplyResources(this._publishingGroup, "_publishingGroup");
             this._publishingGroup.Name = "_publishingGroup";
             this._publishingGroup.TabStop = false;
@@ -79,12 +77,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             resources.ApplyResources(this._publishLocalToSourceAE, "_publishLocalToSourceAE");
             this._publishLocalToSourceAE.Name = "_publishLocalToSourceAE";
             this._publishLocalToSourceAE.UseVisualStyleBackColor = true;
-            // 
-            // _publishToDefaultServers
-            // 
-            resources.ApplyResources(this._publishToDefaultServers, "_publishToDefaultServers");
-            this._publishToDefaultServers.Name = "_publishToDefaultServers";
-            this._publishToDefaultServers.UseVisualStyleBackColor = true;
             // 
             // PublishingConfigurationComponentControl
             // 
@@ -101,7 +93,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         #endregion
 
 		private System.Windows.Forms.GroupBox _publishingGroup;
-		private System.Windows.Forms.CheckBox _publishLocalToSourceAE;
-		private System.Windows.Forms.CheckBox _publishToDefaultServers;
+        private System.Windows.Forms.CheckBox _publishLocalToSourceAE;
     }
 }

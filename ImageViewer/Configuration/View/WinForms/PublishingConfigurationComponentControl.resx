@@ -112,33 +112,33 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="_publishLocalToSourceAE.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_publishLocalToSourceAE.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 46</value>
+    <value>10, 23</value>
   </data>
   <data name="_publishLocalToSourceAE.Size" type="System.Drawing.Size, System.Drawing">
-    <value>275, 17</value>
+    <value>256, 17</value>
   </data>
   <data name="_publishLocalToSourceAE.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
   <data name="_publishLocalToSourceAE.Text" xml:space="preserve">
-    <value>Publish to Source AE server identified in parent study</value>
+    <value>Publish to source server identified in parent study</value>
   </data>
   <data name="&gt;&gt;_publishLocalToSourceAE.Name" xml:space="preserve">
     <value>_publishLocalToSourceAE</value>
   </data>
   <data name="&gt;&gt;_publishLocalToSourceAE.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;_publishLocalToSourceAE.Parent" xml:space="preserve">
     <value>_publishingGroup</value>
@@ -146,34 +146,7 @@
   <data name="&gt;&gt;_publishLocalToSourceAE.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="_publishToDefaultServers.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="_publishToDefaultServers.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 23</value>
-  </data>
-  <data name="_publishToDefaultServers.Size" type="System.Drawing.Size, System.Drawing">
-    <value>267, 17</value>
-  </data>
-  <data name="_publishToDefaultServers.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="_publishToDefaultServers.Text" xml:space="preserve">
-    <value>Publish to Priors Servers that have the parent study</value>
-  </data>
-  <data name="&gt;&gt;_publishToDefaultServers.Name" xml:space="preserve">
-    <value>_publishToDefaultServers</value>
-  </data>
-  <data name="&gt;&gt;_publishToDefaultServers.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_publishToDefaultServers.Parent" xml:space="preserve">
-    <value>_publishingGroup</value>
-  </data>
-  <data name="&gt;&gt;_publishToDefaultServers.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="_publishingGroup.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
   </data>
@@ -184,7 +157,7 @@
     <value>7, 7, 7, 7</value>
   </data>
   <data name="_publishingGroup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>419, 81</value>
+    <value>419, 59</value>
   </data>
   <data name="_publishingGroup.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -196,7 +169,7 @@
     <value>_publishingGroup</value>
   </data>
   <data name="&gt;&gt;_publishingGroup.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;_publishingGroup.Parent" xml:space="preserve">
     <value>$this</value>
@@ -204,7 +177,7 @@
   <data name="&gt;&gt;_publishingGroup.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
@@ -214,7 +187,7 @@
     <value>10, 10, 10, 10</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>439, 191</value>
+    <value>439, 92</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>PublishingConfigurationComponentControl</value>

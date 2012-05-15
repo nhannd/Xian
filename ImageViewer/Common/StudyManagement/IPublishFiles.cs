@@ -18,6 +18,5 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     {
         void PublishLocal(ICollection<DicomFile> files);
         void PublishRemote(ICollection<DicomFile> files, IDicomServiceNode destinationServer);
-
     }
 }

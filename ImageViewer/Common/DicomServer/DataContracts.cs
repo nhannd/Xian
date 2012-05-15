@@ -94,6 +94,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
             return false;
         }
 
+        //TODO (Marmot):Get rid of this.
         #region IEquatable<DicomServerConfiguration> Members
 
         public bool Equals(DicomServerConfiguration other)
