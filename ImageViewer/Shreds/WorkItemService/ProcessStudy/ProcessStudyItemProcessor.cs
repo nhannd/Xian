@@ -120,12 +120,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                     var ruleContext = new RulesEngineContext
                                           {
                                               ApplyDeleteActions = true,
-                                              ApplySendStudyActions = true
+                                              ApplyRouteActions = true
                                           };
                     StudyEntry studyEntry = Study.ToStoreEntry();
                     foreach (IRulesEngine engine in ep.CreateExtensions())
                     {
-                        engine.ApplyStudyRules(ruleContext, studyEntry, WorkItemHelper.FromWorkItem( Proxy.Item));
+                        engine.ApplyStudyRules(ruleContext, studyEntry);
                     }
 
                     Proxy.Complete();

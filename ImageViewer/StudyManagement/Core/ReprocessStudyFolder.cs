@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     var ruleContext = new RulesEngineContext
                                           {
                                               ApplyDeleteActions = true,
-                                              ApplySendStudyActions = false
+                                              ApplyRouteActions = false
                                           };
                     StudyEntry studyEntry = p.StudyLocation.Study.ToStoreEntry();
                     foreach (IRulesEngine engine in ep.CreateExtensions())

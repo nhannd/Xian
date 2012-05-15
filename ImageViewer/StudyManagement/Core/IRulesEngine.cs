@@ -23,24 +23,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 	{
 		public RulesEngineContext()
 		{
-			ApplySendStudyActions = true;
+			ApplyRouteActions = true;
 			ApplyDeleteActions = true;
 		}
 
-		public bool ApplySendStudyActions { get; set; }
+		public bool ApplyRouteActions { get; set; }
 		public bool ApplyDeleteActions { get; set; }
 	}
 
 	public interface IRulesEngine
 	{
-		/// <summary>
-		/// Apply the Study level rules to a Study.
-		/// </summary>
-		/// <param name="context">The context in which to apply the rules</param>
-		/// <param name="study">The study to apply the rules to.</param>
-		/// <param name="workItem">The WorkItem applying the rules.</param>
-		void ApplyStudyRules(RulesEngineContext context, StudyEntry study, WorkItemData workItem);
-
 		/// <summary>
 		/// Apply the Study level rules to a Study.
 		/// </summary>
