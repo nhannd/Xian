@@ -83,11 +83,11 @@
     <Compile Include="DicomServerConfigurationComponent.cs" />
     <Compile Include="StorageConfigurationComponent.cs" />
     <Compile Include="PublishingConfigurationComponent.cs" />
-    <Compile Include="PublishingSettings.cs" />
-    <Compile Include="PublishingSettings.Designer.cs">
+    <Compile Include="DicomPublishingSettings.cs" />
+    <Compile Include="DicomPublishingSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>PublishingSettings.settings</DependentUpon>
+      <DependentUpon>DicomPublishingSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="LocalFileOrDefaultValueSettingsProvider.cs" />
     <Compile Include="MonitorConfigurationApplicationComponent.cs" />
@@ -213,9 +213,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="PublishingSettings.settings">
+    <None Include="DicomPublishingSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>PublishingSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>DicomPublishingSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ServerTree\ServerTreeSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

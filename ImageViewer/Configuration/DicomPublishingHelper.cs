@@ -16,7 +16,6 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
 using System.Linq;
-using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Configuration
@@ -87,18 +86,8 @@ namespace ClearCanvas.ImageViewer.Configuration
 			{
 				var servers = new List<IDicomServiceNode>();
 
-				// if configured to publish to default servers, add those to list of destinations
-				if (PublishingSettings.Default.PublishToDefaultServers)
-				{
-					foreach (var defaultServer in ServerDirectory.GetPriorsServers(false))
-					{
-						if (defaultServer != null && !ContainsServer(servers, defaultServer))
-							servers.Add(defaultServer);
-					}
-				}
-
 				// if configured to publish to the original server, resolve the origin and add to list of destinations
-				if (PublishingSettings.Default.PublishLocalToSourceAE)
+				if (DicomPublishingSettings.Default.SendLocalToStudySourceAE)
 				{
                     if (OriginServer != null && !OriginServer.IsLocal && !ContainsServer(servers, OriginServer))
                         servers.Add(OriginServer);

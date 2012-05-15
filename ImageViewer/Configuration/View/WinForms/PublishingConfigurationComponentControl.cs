@@ -30,7 +30,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			_component = component;
 			InitializeComponent();
 
-			_publishToDefaultServers.DataBindings.Add("Checked", _component, "PublishToDefaultServers", false, DataSourceUpdateMode.OnPropertyChanged);
 			_publishLocalToSourceAE.DataBindings.Add("Checked", _component, "PublishLocalToSourceAE", false, DataSourceUpdateMode.OnPropertyChanged);
 		}
 	}
