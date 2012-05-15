@@ -11,39 +11,31 @@
 
 using System;
 
-namespace ClearCanvas.ImageViewer.Common
+namespace ClearCanvas.ImageViewer.Common.StudyManagement
 {
-	public enum TimeUnit
+	public enum TimeOrigin
 	{
-		Weeks,
-		Days,
-		Hours,
-		Minutes,
+		ReceivedDate,
+		StudyDate,
 	}
 
-	public static class TimeUnitEnumExtensions
+	public static class TimeOriginEnumExtensions
 	{
 		/// <summary>
 		/// Gets a user-friendly description of this value.
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public static string GetDescription(this TimeUnit value)
+		public static string GetDescription(this TimeOrigin value)
 		{
 			switch (value)
 			{
-				case TimeUnit.Weeks:
-					return SR.TimeUnitWeeks;
-				case TimeUnit.Days:
-					return SR.TimeUnitDays;
-				case TimeUnit.Hours:
-					return SR.TimeUnitHours;
-				case TimeUnit.Minutes:
-					return SR.TimeUnitMinutes;
+				case TimeOrigin.ReceivedDate:
+					return SR.TimeOriginReceivedDate;
+				case TimeOrigin.StudyDate:
+					return SR.TimeOriginStudyDate;
 			}
 			throw new ArgumentOutOfRangeException();
 		}
 	}
-
-
 }

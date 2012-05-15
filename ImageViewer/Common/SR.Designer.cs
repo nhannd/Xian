@@ -169,6 +169,24 @@ namespace ClearCanvas.ImageViewer.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to study was received/imported.
+        /// </summary>
+        internal static string TimeOriginReceivedDate {
+            get {
+                return ResourceManager.GetString("TimeOriginReceivedDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to study date/time.
+        /// </summary>
+        internal static string TimeOriginStudyDate {
+            get {
+                return ResourceManager.GetString("TimeOriginStudyDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to day(s).
         /// </summary>
         internal static string TimeUnitDays {

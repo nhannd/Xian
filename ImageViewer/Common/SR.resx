@@ -153,6 +153,12 @@
   <data name="MessageReindexStatusUnknown" xml:space="preserve">
     <value>Reindex status unknown</value>
   </data>
+  <data name="TimeOriginReceivedDate" xml:space="preserve">
+    <value>study was received/imported</value>
+  </data>
+  <data name="TimeOriginStudyDate" xml:space="preserve">
+    <value>study date/time</value>
+  </data>
   <data name="TimeUnitDays" xml:space="preserve">
     <value>day(s)</value>
   </data>

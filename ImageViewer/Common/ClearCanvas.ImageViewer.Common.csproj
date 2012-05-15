@@ -144,7 +144,8 @@
     <Compile Include="SubscriptionManager.cs" />
     <Compile Include="StudyManagement\Tests\StudyStoreTestServiceProvider.cs" />
     <Compile Include="Tests\DiskspaceTests.cs" />
-    <Compile Include="TimeUnit.cs" />
+    <Compile Include="StudyManagement\TimeOrigin.cs" />
+    <Compile Include="StudyManagement\TimeUnit.cs" />
     <Compile Include="WorkItem\EnumExtensions.cs" />
     <Compile Include="WorkItem\Tests\AutoRouteScheduledTimeTests.cs" />
     <Compile Include="WorkItem\Tests\TestActivityMonitor.cs" />
