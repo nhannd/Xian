@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to study was received/imported.
+        ///   Looks up a localized string similar to after study receipt/import.
         /// </summary>
         internal static string TimeOriginReceivedDate {
             get {
@@ -178,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to study date/time.
+        ///   Looks up a localized string similar to after study date/time.
         /// </summary>
         internal static string TimeOriginStudyDate {
             get {
