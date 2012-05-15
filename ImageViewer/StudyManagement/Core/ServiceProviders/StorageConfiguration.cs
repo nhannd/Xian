@@ -125,16 +125,4 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
             return (long)(driveInfo.TotalSize*0.05);
         }
     }
-
-    internal static class StorageConfigurationExtensions
-    {
-        public static StorageConfigurationContract Clone(this StorageConfigurationContract storageConfiguration)
-        {
-            return new StorageConfigurationContract
-                       {
-                           FileStoreDirectory = storageConfiguration.FileStoreDirectory,
-                           MinimumFreeSpacePercent = storageConfiguration.MinimumFreeSpacePercent
-                       };
-        }
-    }
 }

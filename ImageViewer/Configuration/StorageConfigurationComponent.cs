@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -306,6 +307,59 @@ namespace ClearCanvas.ImageViewer.Configuration
         {
             Host.DesktopWindow.ShowMessageBox(SR.DescriptionStorageOptions, MessageBoxActions.Ok);
         }
+
+    	public bool DeleteStudies
+    	{
+			get { return _configuration.DefaultDeletionRule.Enabled; }
+			set
+			{
+				if (value != _configuration.DefaultDeletionRule.Enabled)
+				{
+					_configuration.DefaultDeletionRule.Enabled = value;
+					this.Modified = true;
+					NotifyPropertyChanged("DeleteStudies");
+				}
+			}
+    	}
+
+    	public int DeleteTimeValue
+    	{
+    		get { return _configuration.DefaultDeletionRule.TimeValue; }
+    		set
+			{
+				if (value != _configuration.DefaultDeletionRule.TimeValue)
+				{
+					_configuration.DefaultDeletionRule.TimeValue = value;
+					this.Modified = true;
+					NotifyPropertyChanged("DeleteTimeValue");
+				}
+			}
+		}
+
+    	public IList DeleteTimeUnits
+		{
+			get { return Enum.GetValues(typeof(TimeUnit)); }
+		}
+
+		public string FormatTimeUnit(object obj)
+		{
+			var unit = (TimeUnit)obj;
+			return unit.GetDescription();
+		}
+
+		public TimeUnit DeleteTimeUnit
+    	{
+			get { return _configuration.DefaultDeletionRule.TimeUnit; }
+    		set
+			{
+				if (value != _configuration.DefaultDeletionRule.TimeUnit)
+				{
+					_configuration.DefaultDeletionRule.TimeUnit = value;
+					this.Modified = true;
+					NotifyPropertyChanged("DeleteTimeUnit");
+				}
+			}
+		}
 
         #endregion
 

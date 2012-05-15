@@ -11,6 +11,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
@@ -65,7 +66,17 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             _diskSpaceWarningMessage.DataBindings.Add("Visible", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
             _diskSpaceWarningMessage.DataBindings.Add("Text", _component, "MaximumUsedSpaceExceededMessage", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _component.PropertyChanged += OnComponentPropertyChanged;
+			_deleteStudiesCheck.DataBindings.Add("Checked", _component, "DeleteStudies", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_deleteTimeValue.DataBindings.Add("Value", _component, "DeleteTimeValue", true, DataSourceUpdateMode.OnPropertyChanged);
+			_deleteTimeValue.DataBindings.Add("Enabled", _component, "DeleteStudies");
+
+			_deleteTimeUnits.Items.AddRange(_component.DeleteTimeUnits.Cast<object>().ToArray());
+			_deleteTimeUnits.DataBindings.Add("SelectedItem", _component, "DeleteTimeUnit", true, DataSourceUpdateMode.OnPropertyChanged);
+			_deleteTimeUnits.DataBindings.Add("Enabled", _component, "DeleteStudies");
+			_deleteTimeUnits.Format += (sender, e) => { e.Value = _component.FormatTimeUnit(e.ListItem); };
+
+			_component.PropertyChanged += OnComponentPropertyChanged;
             //Set initial values.
             OnComponentPropertyChanged(this, new PropertyChangedEventArgs("FileStoreDirectory"));
             OnComponentPropertyChanged(this, new PropertyChangedEventArgs("FileStoreChangedDescription"));

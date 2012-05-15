@@ -195,12 +195,40 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     [DataContract(Namespace = StudyManagementNamespace.Value)]
     public class StorageConfiguration : IEquatable<StorageConfiguration>
     {
+		[DataContract(Namespace = StudyManagementNamespace.Value)]
+		public class DeletionRule
+		{
+			[DataMember(IsRequired = true)]
+			public bool Enabled { get; set; }
+
+			[DataMember(IsRequired = true)]
+			public int TimeValue { get; set; }
+
+			[DataMember(IsRequired = true)]
+			public TimeUnit TimeUnit { get; set; }
+
+			public DeletionRule Clone()
+			{
+				return new DeletionRule
+				{
+					Enabled = this.Enabled,
+					TimeUnit = this.TimeUnit,
+					TimeValue = this.TimeValue
+				};
+			}
+		}
+
         public const double AutoMinimumFreeSpace = -1;
 
         private string _fileStoreDirectory;
         private bool _fileStoreDiskspaceInitialized;
         private Diskspace _fileStoreDiskspace;
         private double _minimumFreeSpacePercent = AutoMinimumFreeSpace;
+
+    	public StorageConfiguration()
+    	{
+    		this.DefaultDeletionRule = new DeletionRule();
+    	}
 
         [DataMember(IsRequired = true)]
         public string FileStoreDirectory
@@ -353,7 +381,20 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
             }
         }
 
-        public override int GetHashCode()
+		[DataMember(IsRequired = true)]
+		public DeletionRule DefaultDeletionRule { get; set; }
+
+		public StorageConfiguration Clone()
+		{
+			return new StorageConfiguration
+			{
+				FileStoreDirectory = this.FileStoreDirectory,
+				MinimumFreeSpacePercent = this.MinimumFreeSpacePercent,
+				DefaultDeletionRule = this.DefaultDeletionRule
+			};
+		}
+
+		public override int GetHashCode()
         {
             int hash = 0x2453671;
 
