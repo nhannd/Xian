@@ -536,6 +536,7 @@ namespace ClearCanvas.Desktop
     		}
     		set
     		{
+    			value = value ?? CultureInfo.InstalledUICulture;
     			if (_currentUICulture != value)
     			{
     				lock (_currentUICultureSyncLock)
