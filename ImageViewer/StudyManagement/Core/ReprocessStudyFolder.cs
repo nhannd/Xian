@@ -27,6 +27,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
     /// </summary>
     public class ReprocessStudyFolder
     {
+        #region Private Members
+
+        private bool _cancelRequested;
+        
+        #endregion
+
         #region Public Properties
 
         public StudyLocation Location { get; private set; }
@@ -54,6 +60,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 RebuildStudyXml();
         }
 
+        public void Cancel()
+        {
+            _cancelRequested = true;
+        }
+
         #endregion
 
         #region Private Methods
@@ -67,8 +78,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                 // This code will cleanup a folder and move images around to the proper location.
                 // It in essence allows you to just copy a bunch of files into the filestore, and reindex will clean them up and organize them.
-                FileProcessor.Process(Location.StudyFolder, "*.dcm", delegate(string file)
+                FileProcessor.Process(Location.StudyFolder, "*.dcm", delegate(string file, out bool cancel)
                                                            {
+                                                               cancel = _cancelRequested;
                                                                try
                                                                {
                                                                    var dicomFile = new DicomFile(file);
@@ -115,7 +127,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                                                }
                                                                catch (Exception x)
                                                                {
-                                                                   Platform.Log(LogLevel.Error, x);
+                                                                   Platform.Log(LogLevel.Error, x, "Exception when reindexing files");
                                                                    fileList.Clear(); // Clear out the failed entries
                                                                }
                                                            }, true);
@@ -139,14 +151,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                         engine.ApplyStudyRules(ruleContext, studyEntry);
                     }
                 }
-
             }
             catch (Exception x)
             {
                 Platform.Log(LogLevel.Error, x, "Unexpected exception reindexing folder: {0}", Location.StudyFolder);
             }
 
-            Platform.Log(LogLevel.Info, "Reprocessed study folder: {0}", Location.Study.StudyInstanceUid);
+            if (_cancelRequested)
+                Platform.Log(LogLevel.Info, "Cancel requested while reprocessing folder: {0}", Location.StudyFolder);
+            else
+                Platform.Log(LogLevel.Info, "Reprocessed study folder: {0}", Location.Study.StudyInstanceUid);
         }    
 
         private void RebuildStudyXml()
@@ -156,8 +170,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 var studyXml = new StudyXml(Location.Study.StudyInstanceUid);
 
                 DicomFile lastFile = null;
-                FileProcessor.Process(Location.StudyFolder, "*.dcm", delegate(string file)
+                FileProcessor.Process(Location.StudyFolder, "*.dcm", delegate(string file, out bool cancel)
                                                            {
+                                                               cancel = _cancelRequested;
                                                                try
                                                                {
                                                                    lastFile = new DicomFile(file);
@@ -188,8 +203,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                                                            }, false);
 
-                
-                if (lastFile !=null)
+                // This saves the study Xml to disk, and ensures the database is updated and the study is not marked as "deleted".
+                // If a cancel was requested, don't save the file, and it will remain "as is"
+                if (lastFile !=null && !_cancelRequested)
                 {
                     var p = new ProcessStudyUtility(Location);
 
@@ -201,7 +217,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 Platform.Log(LogLevel.Error, x, "Unexpected exception reindexing folder: {0}", Location.StudyFolder);
             }
 
-            Platform.Log(LogLevel.Info, "Rebuilt Study XML: {0}", Location.Study.StudyInstanceUid);
+            if (_cancelRequested)
+                Platform.Log(LogLevel.Info, "Cancel requested while rebuilding Study XML in folder: {0}", Location.StudyFolder);
+            else
+                Platform.Log(LogLevel.Info, "Rebuilt Study XML for study: {0}", Location.Study.StudyInstanceUid);
         }
 
         private bool CheckIfStudyExists()
