@@ -552,7 +552,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Local Server must running in order to retrieve studies..
+        ///   Looks up a localized string similar to The Local Server must be running in order to retrieve studies..
         /// </summary>
         internal static string MessageRetrieveDicomServerServiceNotRunning {
             get {
