@@ -995,7 +995,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private void WorkItemsChanged(object sender, WorkItemsChangedEventArgs e)
 		{
 			var workItems = e.ChangedItems;
-			if (workItems.Any(item => @item.Type.Equals(ReapplyRulesRequest.WorkItemTypeString) && @item.Type.Equals(DicomSendRequest.WorkItemTypeString)))
+			if (workItems.Any(item => !item.Type.Equals(ReapplyRulesRequest.WorkItemTypeString) && !item.Type.Equals(DicomSendRequest.WorkItemTypeString)))
 			{
 				_studyCountWatcher.Invalidate();
 			}
