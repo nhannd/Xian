@@ -132,6 +132,31 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 			}
 			return true;
 		}
+
+        /// <summary>
+        /// Method called when a <see cref="WorkItem"/> item completes.
+        /// </summary>
+        /// <param name="item">The work item completing.</param>
+        private void ThreadComplete(WorkItem item)
+        {
+            lock (_syncLock)
+            {
+                if (item.Priority.Equals(WorkItemPriorityEnum.Stat))
+                    _statPriorityCount--;
+
+                _totalThreadCount--;
+
+                foreach (WorkItemThreadParameter queuedItem in _queuedItems)
+                {
+                    if (queuedItem.Item.Oid.Equals(item.Oid))
+                    {
+                        _queuedItems.Remove(queuedItem);
+                        break;
+                    }
+                }
+            }
+        }
+
 		#endregion
 
 		#region Public Methods
@@ -148,30 +173,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 				return
 					String.Format("WorkItemThreadPool: {0} stat priority, {1} total threads in use",
 					              _statPriorityCount, _totalThreadCount);
-			}
-		}
-
-		/// <summary>
-		/// Method called when a <see cref="WorkItem"/> item completes.
-		/// </summary>
-		/// <param name="item">The work item completing.</param>
-        private void ThreadComplete(WorkItem item)
-		{
-			lock (_syncLock)
-			{
-				if (item.Priority.Equals(WorkItemPriorityEnum.Stat))
-					_statPriorityCount--;
-
-				_totalThreadCount--;
-
-				foreach(WorkItemThreadParameter queuedItem in _queuedItems)
-				{
-					if (queuedItem.Item.Oid.Equals(item.Oid))
-					{
-						_queuedItems.Remove(queuedItem);
-						break;
-					}
-				}
 			}
 		}
 
@@ -203,6 +204,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 			                       	});
 		}
 
+        /// <summary>
+        /// Check if the specified <see cref="WorkItem"/> is in the thread pool and cancel if it is.
+        /// </summary>
+        /// <param name="workQueueOid"></param>
         public void Cancel(long workQueueOid)
         {
             foreach (WorkItemThreadParameter queuedItem in _queuedItems)

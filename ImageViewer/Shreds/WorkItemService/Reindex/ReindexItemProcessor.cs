@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
@@ -20,7 +19,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 {
     internal class ReindexItemProcessor : BaseItemProcessor<ReindexRequest, ReindexProgress>
     {
+        #region Private Members
+
         private ReindexUtility _reindexUtility;
+
+        #endregion
+
+        #region Public Methods
 
         public override bool Initialize(WorkItemStatusProxy proxy)
         {
@@ -142,5 +147,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 
             return !InProgressWorkItems();
         }
+
+        #endregion
     }
 }

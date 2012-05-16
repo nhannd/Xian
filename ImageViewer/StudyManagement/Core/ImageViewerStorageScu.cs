@@ -25,12 +25,12 @@ using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
+namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
     /// <summary>
     /// Internal inherited <see cref="StorageScu"/> class.
     /// </summary>
-    internal class ImageViewerStorageScu : StorageScu
+    public class ImageViewerStorageScu : StorageScu
     {
         #region Private Members
 

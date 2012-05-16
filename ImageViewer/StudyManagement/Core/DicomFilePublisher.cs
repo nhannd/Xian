@@ -47,7 +47,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             : base(message, innerException) { }
     }
 
-    public class DicomFilePublisher : IPublishFiles
+    /// <summary>
+    /// Internal class for publishing files.  Must be accessed through service provider for <see cref="IPublishFiles"/>.
+    /// </summary>
+    internal class DicomFilePublisher : IPublishFiles
     {
         private static void DeleteEmptyFolders(string directory)
         {
@@ -176,7 +179,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             }
             finally
             {
-                //TODO (Marmot) Move this to the SopInstanceImporter & pass the current user through the Request?
                 // audit attempt to import these instances to local store
                 AuditHelper.LogImportStudies(auditedInstances, EventSource.CurrentUser, result);
             }            

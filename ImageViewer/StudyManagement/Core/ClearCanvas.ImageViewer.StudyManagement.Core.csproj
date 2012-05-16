@@ -92,6 +92,8 @@
     <Compile Include="DeleteSeriesUtility.cs" />
     <Compile Include="DeleteStudyUtility.cs" />
     <Compile Include="DicomFilePublisher.cs" />
+    <Compile Include="ImageViewerMoveScu.cs" />
+    <Compile Include="ImageViewerStorageScu.cs" />
     <Compile Include="ReapplyRulesUtility.cs" />
     <Compile Include="RulesEngine.cs" />
     <Compile Include="Storage\DicomQuery\DateDicomPropertyFilter.cs" />
@@ -161,7 +163,7 @@
     <Compile Include="Utilities.cs" />
     <Compile Include="Storage\WorkItem.cs" />
     <Compile Include="Storage\WorkItemBroker.cs" />
-    <Compile Include="WorkItemHelper.cs" />
+    <Compile Include="WorkItemDataHelper.cs" />
     <Compile Include="Storage\WorkItemUidBroker.cs" />
     <Compile Include="WorkItemProcessor\BaseItemProcessor.cs" />
     <Compile Include="WorkItemProcessor\IWorkItemProcessor.cs" />

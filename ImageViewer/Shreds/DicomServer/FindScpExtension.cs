@@ -23,7 +23,7 @@ using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
 	[ExtensionOf(typeof(DicomScpExtensionPoint<IDicomServerContext>))]
-	public class FindScpExtension : ScpExtension, IDicomScp<IDicomServerContext>
+	public class FindScpExtension : ScpExtension
 	{
 		public FindScpExtension()
 			: base(GetSupportedSops())
@@ -32,9 +32,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private static IEnumerable<SupportedSop> GetSupportedSops()
 		{
-			SupportedSop sop = new SupportedSop();
-			sop.SopClass = SopClass.StudyRootQueryRetrieveInformationModelFind;
-			sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
+		    var sop = new SupportedSop
+		                  {
+		                      SopClass = SopClass.StudyRootQueryRetrieveInformationModelFind
+		                  };
+		    sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
 			sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
 			yield return sop;
 		}
@@ -101,7 +103,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 					try
 					{
-						DicomMessage errorResponse = new DicomMessage();
+						var errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 						                         DicomStatuses.QueryRetrieveUnableToProcess);
 
@@ -116,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 				try
 				{
-					DicomMessage finalResponse = new DicomMessage();
+					var finalResponse = new DicomMessage();
 					server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
 
 					AuditHelper.LogQueryReceived(association.CallingAE, GetRemoteHostName(association), EventResult.Success,

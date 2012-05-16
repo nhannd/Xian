@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 							// send in batches of 200
 							foreach (var batch in BatchItems(dbList, 200))
 							{
-								WorkItemPublishSubscribeHelper.PublishWorkItemsChanged(batch.Select(WorkItemHelper.FromWorkItem).ToList());
+								WorkItemPublishSubscribeHelper.PublishWorkItemsChanged(batch.Select(WorkItemDataHelper.FromWorkItem).ToList());
 							}
 						}
 					}

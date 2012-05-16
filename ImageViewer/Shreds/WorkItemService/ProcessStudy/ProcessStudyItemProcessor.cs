@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
     /// <summary>
     /// Processor for <see cref="ProcessStudyRequest"/> entries.
     /// </summary>
-    public class StudyProcessProcessor : BaseItemProcessor<ProcessStudyRequest,ProcessStudyProgress>
+    internal class StudyProcessProcessor : BaseItemProcessor<ProcessStudyRequest,ProcessStudyProgress>
     {
         public Study Study { get; set; }
 

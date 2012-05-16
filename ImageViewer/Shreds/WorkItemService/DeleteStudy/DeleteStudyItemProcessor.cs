@@ -21,13 +21,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteStudy
     /// </summary>
     internal class DeleteStudyItemProcessor : BaseItemProcessor<DeleteStudyRequest, DeleteProgress>
     {
-        public override bool Initialize(WorkItemStatusProxy proxy)
-        {
-            bool initResult = base.Initialize(proxy);
-                       
-            return initResult;
-        }
-
         public override void Process()
         {
             if (CancelPending)

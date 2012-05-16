@@ -100,7 +100,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 }
             }
 
-
             if (_workItemServiceWCFInitialized)
             {
                 try

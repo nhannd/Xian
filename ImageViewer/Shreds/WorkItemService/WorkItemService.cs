@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                         if (workItem.Status == WorkItemStatusEnum.Pending
                             || workItem.Status == WorkItemStatusEnum.InProgress)
                         {
-                            response.Item = WorkItemHelper.FromWorkItem(workItem);
+                            response.Item = WorkItemDataHelper.FromWorkItem(workItem);
                             return response;
                         }
                     }
@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 
                 context.Commit();
 
-                response.Item = WorkItemHelper.FromWorkItem(item);
+                response.Item = WorkItemDataHelper.FromWorkItem(item);
             }
 
 			WorkItemPublishSubscribeHelper.PublishWorkItemChanged(response.Item);
@@ -184,7 +184,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 context.Commit();
 
-                response.Item = WorkItemHelper.FromWorkItem(workItem);
+                response.Item = WorkItemDataHelper.FromWorkItem(workItem);
             } 
 
 			WorkItemPublishSubscribeHelper.PublishWorkItemChanged(response.Item);
@@ -205,7 +205,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 foreach (var dbItem in dbList)
                 {
-                    results.Add(WorkItemHelper.FromWorkItem(dbItem));
+                    results.Add(WorkItemDataHelper.FromWorkItem(dbItem));
                 }
 
                 response.Items = results.ToArray();

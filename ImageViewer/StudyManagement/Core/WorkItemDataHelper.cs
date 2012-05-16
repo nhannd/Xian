@@ -14,7 +14,7 @@ using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
-    public static class WorkItemHelper
+    public static class WorkItemDataHelper
     {
         public static WorkItemData FromWorkItem(WorkItem item)
         {

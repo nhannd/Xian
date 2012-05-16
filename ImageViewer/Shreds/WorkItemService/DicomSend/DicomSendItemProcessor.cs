@@ -20,6 +20,7 @@ using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.WorkItem;
+using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 
@@ -305,8 +306,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             var relatedList = FindRelatedWorkItems(null, new List<WorkItemStatusEnum> { WorkItemStatusEnum.InProgress });
             if (relatedList.Count > 0)
             {
-                reason = "There are related WorkItems for the study being processed.";
-                return false;
+                foreach (var item in relatedList)
+                {
+                    // Allow multiple send requests for the same study, but not other types of work items.
+                    if (!item.Type.Equals(DicomSendRequest.WorkItemTypeString))
+                    {
+                        reason = "There are related WorkItems for the study being processed.";
+                        return false;
+                    }
+                }
             }
             
             // Pending, InProgress, Idle ProcessStudy entries existing.

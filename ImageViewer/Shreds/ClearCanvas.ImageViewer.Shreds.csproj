@@ -89,10 +89,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="WorkItemService\DicomRetrieve\ImageViewerMoveScu.cs" />
     <Compile Include="WorkItemService\DicomSend\DicomSendFactory.cs" />
     <Compile Include="WorkItemService\DicomSend\DicomSendItemProcessor.cs" />
-    <Compile Include="WorkItemService\DicomSend\ImageViewerStorageScu.cs" />
     <Compile Include="WorkItemService\Import\ImportFactory.cs" />
     <Compile Include="WorkItemService\Import\ImportItemProcessor.cs" />
     <Compile Include="WorkItemService\ReapplyRules\ReapplyRulesFactory.cs" />

@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
     {
         #region Private members
 
-        private event EventHandler<ReindexUtility.StudyEventArgs> _studyProcessedEvent;
+        private event EventHandler<StudyEventArgs> _studyProcessedEvent;
         private readonly object _syncLock = new object();
         private readonly ReapplyRulesRequest _request;
 
@@ -37,9 +37,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         public class StudyEventArgs : EventArgs
         {
             public string StudyInstanceUid;
-        }    
-    
-        public event EventHandler<ReindexUtility.StudyEventArgs> StudyProcessedEvent
+        }
+
+        public event EventHandler<StudyEventArgs> StudyProcessedEvent
         {
             add
             {
@@ -79,8 +79,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         #region Public Methods
 
         /// <summary>
-        /// Initialize the Reindex.  Determine the number of studies in the database and the number of folders on disk to be used
-        /// for progress.
+        /// Initialize the Reapply Rules.  Loast a list of studies.
         /// </summary>
         public void Initialize()
         {
@@ -136,12 +135,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 							rulesEngine.ApplyStudyRules(studyEntry, rulesEngineOptions);
 						}
 
-                        EventsHelper.Fire(_studyProcessedEvent, this, new ReindexUtility.StudyEventArgs { StudyInstanceUid = study.StudyInstanceUid });
+                        EventsHelper.Fire(_studyProcessedEvent, this, new StudyEventArgs { StudyInstanceUid = study.StudyInstanceUid });
                     }                    
                 }
                 catch (Exception x)
                 {
-                    Platform.Log(LogLevel.Warn, "Unexpected exception attempting to reindex StudyOid {0}: {1}", oid, x.Message);
+                    Platform.Log(LogLevel.Warn, "Unexpected exception attempting to reapply rules for StudyOid {0}: {1}", oid, x.Message);
                 }
             }
         }
