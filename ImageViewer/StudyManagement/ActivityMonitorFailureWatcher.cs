@@ -137,14 +137,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
                                                     studyDate.HasValue ? Format.Date(studyDate.Value) : string.Empty,
                                                     item.Study.AccessionNumber);
                         _window.ShowAlert(AlertLevel.Error, message, SR.LinkOpenActivityMonitor,
-                                          window => _showActivityMonitor());
+                                          window => _showActivityMonitor(), true);
                     }
                     else
                     {
                         var message = string.Format(SR.MessageNonStudyWorkItemFailed,
                                                 item.Request.ActivityTypeString);
                         _window.ShowAlert(AlertLevel.Error, message, SR.LinkOpenActivityMonitor,
-                                          window => _showActivityMonitor());
+                                          window => _showActivityMonitor(), true);
                     }
 				}
 
@@ -176,7 +176,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 						var message = _failedWorkItems.Count == 1 ? SR.MessageOneFailedWorkItem
 							: string.Format(SR.MessageTotalFailedWorkItems, _failedWorkItems.Count);
-						_window.ShowAlert(AlertLevel.Error, message, SR.LinkOpenActivityMonitor, window => _showActivityMonitor());
+						_window.ShowAlert(AlertLevel.Error, message, SR.LinkOpenActivityMonitor, window => _showActivityMonitor(), true);
 					});
 
 			}

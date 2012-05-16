@@ -157,17 +157,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			var studyDate = DateParser.Parse(study.StudyDate);
 			Context.DesktopWindow.ShowAlert(AlertLevel.Info,
 											string.Format(SR.MessageFormatDeleteStudyScheduled,
-														  study.PatientsName.FormattedName,
-														  studyDate.HasValue ? Format.Date(studyDate.Value) : string.Empty,
-														  study.AccessionNumber),
-											SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+											              study.PatientsName.FormattedName,
+											              studyDate.HasValue ? Format.Date(studyDate.Value) : string.Empty,
+											              study.AccessionNumber),
+											SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show, true);
 		}
 
 		private void AlertMultipleStudiesDeleted(int count)
 		{
 			Context.DesktopWindow.ShowAlert(AlertLevel.Info,
 											string.Format(SR.MessageFormatDeleteStudiesScheduled, count),
-											SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+											SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show, true);
 		}
 
 	}

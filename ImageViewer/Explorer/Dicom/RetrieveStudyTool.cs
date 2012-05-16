@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			Context.DesktopWindow.ShowAlert(AlertLevel.Info,
 			                                string.Format(SR.MessageFormatRetrieveStudiesScheduled, count),
-			                                SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+			                                SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show, true);
 		}
 
 		private void AlertStudyRetrieved(StudyTableItem study)
@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			                                              	: string.Empty,
 			                                              study.AccessionNumber,
 			                                              study.Server.Name),
-			                                SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+			                                SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show, true);
 		}
 
 		private bool GetAtLeastOneServerSupportsLoading()

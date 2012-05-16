@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			Context.DesktopWindow.ShowAlert(AlertLevel.Info,
 											string.Format(SR.MessageFormatSendStudiesScheduled, count),
-											SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+											SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show, true);
 		}
 
 		private void AlertStudySent(StudyTableItem study, IEnumerable<IDicomServiceNode> destinations)
@@ -130,13 +130,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			var studyDate = DateParser.Parse(study.StudyDate);
 			Context.DesktopWindow.ShowAlert(AlertLevel.Info,
 											string.Format(SR.MessageFormatSendStudyScheduled,
-														  string.Join(", ", destinations.Select(d => d.Name)),
-														  study.PatientsName.FormattedName,
-														  studyDate.HasValue
-															? Format.Date(studyDate.Value)
-															: string.Empty,
-														  study.AccessionNumber),
-											SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+											              string.Join(", ", destinations.Select(d => d.Name)),
+											              study.PatientsName.FormattedName,
+											              studyDate.HasValue
+											              	? Format.Date(studyDate.Value)
+											              	: string.Empty,
+											              study.AccessionNumber),
+											SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show, true);
 		}
 	}
 }

@@ -53,8 +53,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
                 DateTime? studyDate = DateParser.Parse(Context.Study.StudyDate);
                 Context.DesktopWindow.ShowAlert(AlertLevel.Info,
                                 String.Format(SR.MessageFormatDeleteSeriesScheduled, Context.SelectedSeries.Count, Context.Study.PatientsName.FormattedName, studyDate.HasValue ? Format.Date(studyDate.Value) : string.Empty,
-                                                                          Context.Study.AccessionNumber),
-                                SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+                                              Context.Study.AccessionNumber),
+                                SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show, true);
 
             }
             catch (Exception e)

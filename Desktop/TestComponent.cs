@@ -113,14 +113,14 @@ namespace ClearCanvas.Desktop
 			{
 				case AlertLevel.Info:
 					this.Host.DesktopWindow.ShowAlert(level, "Wherever you go, there you are.",
-								  "Go there", window => HandleLink(window, "there you are"));
+								  "Go there", window => HandleLink(window, "there you are"), true);
 					break;
 				case AlertLevel.Warning:
 					this.Host.DesktopWindow.ShowAlert(level, "Power corrupts; absolute power corrupts absolutely.");
 					break;
 				case AlertLevel.Error:
 					this.Host.DesktopWindow.ShowAlert(level, "Disco inferno!",
-								  "Go to the disco", window => HandleLink(window, "disco"));
+								  "Go to the disco", window => HandleLink(window, "disco"), false);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException("level");

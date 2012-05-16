@@ -225,12 +225,14 @@ namespace ClearCanvas.Desktop
 		/// <param name="message">The message to display.</param>
 		/// <param name="linkText">The link text to display.</param>
 		/// <param name="linkAction">The link action to display.</param>
-		public void ShowAlert(AlertLevel level, string message, string linkText, Action<DesktopWindow> linkAction)
+		/// <param name="dismissOnLinkClicked"> </param>
+		public void ShowAlert(AlertLevel level, string message, string linkText, Action<DesktopWindow> linkAction, bool dismissOnLinkClicked)
 		{
 			var args = new AlertNotificationArgs(level, message)
 			{
 				LinkText = linkText,
 				LinkAction = linkAction,
+				DismissOnLinkClicked = dismissOnLinkClicked
 			};
 			ShowAlert(args);
 		}

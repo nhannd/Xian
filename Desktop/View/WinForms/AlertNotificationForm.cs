@@ -102,13 +102,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 
     	public Action LinkHandler { get; set; }
 
-    	public string OpenLogLinkText
+		public bool DismissOnLinkClicked { get; set; }
+
+		public string OpenLogLinkText
     	{
 			get { return _openLogLink.Text; }
 			set { _openLogLink.Text = value; }
     	}
 
-		public void Popup(int slot)
+
+    	public void Popup(int slot)
 		{
 			// reset all the parameters
 			_slot = slot;
@@ -132,6 +135,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void _contextualLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
+			if(DismissOnLinkClicked)
+			{
+				Dismiss(false);
+			}
+
 			if (LinkHandler != null)
 			{
 				LinkHandler();

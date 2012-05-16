@@ -47,8 +47,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
                 Context.DesktopWindow.ShowAlert(AlertLevel.Info,
                                 string.Format(SR.MessageFormatRetrieveSeriesScheduled, seriesUids.Count,
                                               Server.Name, Context.Study.PatientsName.FormattedName, studyDate.HasValue ? Format.Date(studyDate.Value) : string.Empty,
-                                                      Context.Study.AccessionNumber),
-                                SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show);
+                                              Context.Study.AccessionNumber),
+                                SR.LinkOpenActivityMonitor, ActivityMonitorManager.Show, true);
                   
 			}
 			catch (EndpointNotFoundException)

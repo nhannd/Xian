@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
                 else
                     message = SR.MessageFailedToStartReindex;
 
-				desktopWindow.ShowAlert(AlertLevel.Info, message, linkText, ActivityMonitorManager.Show);
+				desktopWindow.ShowAlert(AlertLevel.Info, message, linkText, ActivityMonitorManager.Show, true);
             }
             catch (Exception e)
             {

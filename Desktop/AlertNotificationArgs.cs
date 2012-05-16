@@ -49,5 +49,10 @@ namespace ClearCanvas.Desktop
 		/// Gets or sets the link action, if the alert has a contextual link.
 		/// </summary>
 		public Action<DesktopWindow> LinkAction { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value that determines whether the alert notification is dismissed upon clicking the link.
+		/// </summary>
+		public bool DismissOnLinkClicked { get; set; }
 	}
 }

@@ -621,6 +621,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				dialog.Message = args.Message;
 				dialog.LinkText = args.LinkText ?? "";
 				dialog.LinkHandler = AlertLinkHandler(args.LinkAction);
+				dialog.DismissOnLinkClicked = args.DismissOnLinkClicked;
 				dialog.Popup(_errorNotificationDialog.Visible ? 1 : 0);
 			}
 			else
@@ -639,6 +640,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 					dialog.Message = args.Message;
 					dialog.LinkText = args.LinkText ?? "";
 					dialog.LinkHandler = AlertLinkHandler(args.LinkAction);
+					dialog.DismissOnLinkClicked = args.DismissOnLinkClicked;
 					dialog.Popup(0);
 				}
 			}
