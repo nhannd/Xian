@@ -131,10 +131,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get { return _data.Patient != null ? _data.Patient.PatientsSex : null; }
 			}
 
-		    public bool CancellationCanResultInPartialStudy
-		    {
-                get { return _data.Request.CancellationCanResultInPartialStudy; }
-		    }
+			public bool CancellationCanResultInPartialStudy
+			{
+				get { return _data.Request.CancellationCanResultInPartialStudy; }
+			}
 
 			public string PatientInfo
 			{
@@ -575,7 +575,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				// item must be in Pending or Idle status
 				return w.Status == WorkItemStatusEnum.Pending
-				       || w.Status == WorkItemStatusEnum.Idle;
+					   || w.Status == WorkItemStatusEnum.Idle;
 			}
 
 			private void RestartSelectedWorkItems()
@@ -583,11 +583,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				try
 				{
 					var client = new WorkItemBridge();
-					foreach (var workItem in SelectedWorkItems)
+					ProcessItems(SelectedWorkItems, workItem =>
 					{
 						client.WorkItem = workItem.Data;
 						client.Reset();
-					}
+					}, false);
 				}
 				catch (Exception e)
 				{
@@ -598,7 +598,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			private void CancelSelectedWorkItems()
 			{
 				var items = this.SelectedWorkItems.ToList();
-				if(items.Any(item => item.CancellationCanResultInPartialStudy))
+				if (items.Any(item => item.CancellationCanResultInPartialStudy))
 				{
 					var action = _owner.Host.ShowMessageBox(SR.MessageConfirmCancelWorkItems, MessageBoxActions.YesNo);
 					if (action == DialogBoxAction.No)
@@ -608,11 +608,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				try
 				{
 					var client = new WorkItemBridge();
-					foreach (var workItem in items)
+					ProcessItems(items, workItem =>
 					{
 						client.WorkItem = workItem.Data;
 						client.Cancel();
-					}
+					}, false);
 				}
 				catch (Exception e)
 				{
@@ -625,11 +625,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				try
 				{
 					var client = new WorkItemBridge();
-					foreach (var workItem in SelectedWorkItems)
+					ProcessItems(SelectedWorkItems, workItem =>
 					{
 						client.WorkItem = workItem.Data;
 						client.Delete();
-					}
+					}, false);
 				}
 				catch (Exception e)
 				{
@@ -642,16 +642,38 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				try
 				{
 					var client = new WorkItemBridge();
-					foreach (var workItem in SelectedWorkItems)
+					ProcessItems(SelectedWorkItems, workItem =>
 					{
 						client.WorkItem = workItem.Data;
 						client.Reprioritize(WorkItemPriorityEnum.Stat);
-					}
+					}, false);
 				}
 				catch (Exception e)
 				{
 					ExceptionHandler.Report(e, _owner.Host.DesktopWindow);
 				}
+			}
+
+			private void ProcessItems<T>(IEnumerable<T> items, Action<T> processAction, bool cancelable)
+			{
+				var itemsToProcess = items.ToList();
+
+				// if just one item, process it synchronously
+				if (itemsToProcess.Count == 1)
+				{
+					processAction(itemsToProcess[0]);
+					return;
+				}
+
+				// otherwise do progress dialog
+				ProgressDialog.Show(_owner.Host.DesktopWindow,
+					itemsToProcess,
+					(item, i) =>
+					{
+						processAction(item);
+						return string.Format(SR.MessageProcessedItemsProgress, i + 1, itemsToProcess.Count);
+					},
+					cancelable);
 			}
 
 			private Action DeleteAction { get; set; }
@@ -705,14 +727,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPatient, w => w.PatientInfo));
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStudy, w => w.StudyInfo));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnActivityDescription, w => w.ActivityDescription) { WidthFactor = .8f});
-		    _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatus, w => w.Status.GetDescription())
-		                               {
-		                                   WidthFactor = .4f,
-		                                   TooltipTextProvider = w => string.IsNullOrEmpty(w.ProgressStatusDescription)
-		                                                                ? string.Empty
-		                                                                : w.ProgressStatusDescription
-		                               });
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnActivityDescription, w => w.ActivityDescription) { WidthFactor = .8f });
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatus, w => w.Status.GetDescription())
+									   {
+										   WidthFactor = .4f,
+										   TooltipTextProvider = w => string.IsNullOrEmpty(w.ProgressStatusDescription)
+																		? string.Empty
+																		: w.ProgressStatusDescription
+									   });
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatusDescription, w => w.ProgressStatus));
 			_workItems.Columns.Add(new DateTimeTableColumn<WorkItem>(SR.ColumnScheduledTime, w => w.ScheduledTime) { WidthFactor = .6f });
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPriority, w => w.Priority.GetDescription()) { WidthFactor = .3f });
@@ -877,7 +899,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public IList ActivityTypeFilterChoices
 		{
-            get { return new[] { NoFilter }.Concat(ActivityTypeHelper.GetActivityTypeList().OrderBy<object, string>(FormatActivityTypeFilter)).ToList(); }
+			get { return new[] { NoFilter }.Concat(ActivityTypeHelper.GetActivityTypeList().OrderBy<object, string>(FormatActivityTypeFilter)).ToList(); }
 		}
 
 		public string FormatActivityTypeFilter(object value)
