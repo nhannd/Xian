@@ -122,18 +122,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                      
                         var studyEntry = study.ToStoreEntry();
-                    	var rulesEngineContext = new RuleApplicationOptions
+                    	var rulesEngineOptions = new RulesEngineOptions
                     	                         	{
                     	                         		ApplyDeleteActions = _request.ApplyDeleteActions,
                     	                         		ApplyRouteActions = _request.ApplyRouteActions
                     	                         	};
 						if(!string.IsNullOrEmpty(_request.RuleId))
 						{
-							rulesEngine.ApplyStudyRule(studyEntry, _request.RuleId, rulesEngineContext);
+							rulesEngine.ApplyStudyRule(studyEntry, _request.RuleId, rulesEngineOptions);
 						}
 						else
 						{
-							rulesEngine.ApplyStudyRules(studyEntry, rulesEngineContext);
+							rulesEngine.ApplyStudyRules(studyEntry, rulesEngineOptions);
 						}
 
                         EventsHelper.Fire(_studyProcessedEvent, this, new ReindexUtility.StudyEventArgs { StudyInstanceUid = study.StudyInstanceUid });

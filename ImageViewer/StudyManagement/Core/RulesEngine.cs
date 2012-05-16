@@ -25,17 +25,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 		/// </summary>
 		class DefaultEngine : IRulesEngine
 		{
-			public void ApplyStudyRules(StudyEntry study, RuleApplicationOptions options)
+			public void ApplyStudyRules(StudyEntry study, RulesEngineOptions options)
 			{
 				ApplyDefaultDeletionRule(options, study);
 			}
 
-			public void ApplyStudyRule(StudyEntry study, string ruleId, RuleApplicationOptions options)
+			public void ApplyStudyRule(StudyEntry study, string ruleId, RulesEngineOptions options)
 			{
 				ApplyDefaultDeletionRule(options, study);
 			}
 
-			private void ApplyDefaultDeletionRule(RuleApplicationOptions context, StudyEntry study)
+			private void ApplyDefaultDeletionRule(RulesEngineOptions context, StudyEntry study)
 			{
 				if (!context.ApplyDeleteActions)
 					return;

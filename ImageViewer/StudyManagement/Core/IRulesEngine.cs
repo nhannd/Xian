@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 		/// </summary>
 		/// <param name="study">The study to apply the rules to.</param>
 		/// <param name="options"> </param>
-		void ApplyStudyRules(StudyEntry study, RuleApplicationOptions options);
+		void ApplyStudyRules(StudyEntry study, RulesEngineOptions options);
 
 		/// <summary>
 		/// Apply the specified rule to the specified study.
@@ -33,6 +33,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 		/// <param name="study">The study to apply the rule to</param>
 		/// <param name="ruleId"> The rule to apply.</param>
 		/// <param name="options"> </param>
-		void ApplyStudyRule(StudyEntry study, string ruleId, RuleApplicationOptions options);
+		void ApplyStudyRule(StudyEntry study, string ruleId, RulesEngineOptions options);
 	}
 }

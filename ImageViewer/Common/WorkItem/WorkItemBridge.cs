@@ -545,7 +545,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 		/// <param name="ruleId"></param>
 		/// <param name="ruleName"></param>
 		/// <param name="context"></param>
-		public void Reapply(string ruleId, string ruleName, RuleApplicationOptions context)
+		public void Reapply(string ruleId, string ruleName, RulesEngineOptions context)
 		{
 			var request = new ReapplyRulesRequest
 			{
@@ -571,7 +571,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 		/// Reapply all rules.
 		/// </summary>
 		/// <param name="context"></param>
-		public void ReapplyAll(RuleApplicationOptions context)
+		public void ReapplyAll(RulesEngineOptions context)
 		{
 			Reapply(null, null, context);
 		}

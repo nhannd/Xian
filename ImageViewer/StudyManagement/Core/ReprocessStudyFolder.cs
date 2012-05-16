@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     // Now apply Deletion rules
                     var ep = new RulesEngineExtensionPoint();
 
-                    var ruleContext = new RuleApplicationOptions
+                    var ruleContext = new RulesEngineOptions
                                           {
                                               ApplyDeleteActions = true,
                                               ApplyRouteActions = false

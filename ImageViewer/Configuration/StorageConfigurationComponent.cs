@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Configuration
             UpdateFileStoreDriveName();
             MaximumUsedSpaceChanged();
 
-			_originalDeletionRule = _configuration.DefaultDeletionRule;
+			_originalDeletionRule = _configuration.DefaultDeletionRule.Clone();
 			
 			base.Start();
 		}
@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 				if(!Equals(_configuration.DefaultDeletionRule, _originalDeletionRule))
 				{
 					var client = new ReapplyRulesBridge();
-					client.ReapplyAll(new RuleApplicationOptions { ApplyDeleteActions = true });
+					client.ReapplyAll(new RulesEngineOptions { ApplyDeleteActions = true });
 				}
 
 		    }

@@ -11,12 +11,10 @@
 
 namespace ClearCanvas.ImageViewer.Common
 {
-	public class RuleApplicationOptions
+	public class RulesEngineOptions
 	{
-		public RuleApplicationOptions()
+		public RulesEngineOptions()
 		{
-			ApplyRouteActions = true;
-			ApplyDeleteActions = true;
 		}
 
 		public bool ApplyRouteActions { get; set; }
