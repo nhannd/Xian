@@ -804,7 +804,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel2.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label1" Row="3" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="1" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="label10" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_statusLight" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label11" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_totalStudies" Row="3" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="_failures" Row="4" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="_reindexLink" Row="3" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_openFileStoreLink" Row="2" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_localServerConfigLink" Row="4" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_studyRulesLink" Row="5" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_logFileLink" Row="6" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="panel2" Row="1" RowSpan="2" Column="1" ColumnSpan="5" /&gt;&lt;Control Name="_diskSpacePanel" Row="4" RowSpan="3" Column="4" ColumnSpan="2" /&gt;&lt;Control Name="_diskSpace" Row="3" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,30,AutoSize,0,Absolute,70,Absolute,20,AutoSize,0,Absolute,175,Absolute,20,AutoSize,0,Absolute,10" /&gt;&lt;Rows Styles="Absolute,14,AutoSize,0,Percent,20,Percent,20,Percent,20,Percent,20,Percent,20,Absolute,10" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label1" Row="3" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="1" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="label10" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_statusLight" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label11" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_totalStudies" Row="3" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="_failures" Row="4" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="_reindexLink" Row="3" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_openFileStoreLink" Row="2" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_localServerConfigLink" Row="4" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_studyRulesLink" Row="5" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_logFileLink" Row="6" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="panel2" Row="1" RowSpan="2" Column="1" ColumnSpan="5" /&gt;&lt;Control Name="_diskSpacePanel" Row="4" RowSpan="3" Column="4" ColumnSpan="2" /&gt;&lt;Control Name="_diskSpace" Row="3" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,30,AutoSize,0,Absolute,70,Absolute,20,AutoSize,0,Absolute,175,Absolute,20,AutoSize,0,Absolute,224" /&gt;&lt;Rows Styles="Absolute,14,AutoSize,0,Percent,20,Percent,20,Percent,20,Percent,20,Percent,20,Absolute,10" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="_overviewPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -857,6 +857,51 @@
   <metadata name="_workItemToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="_workItemToolStrip.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="toolStripLabel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 22</value>
+  </data>
+  <data name="toolStripLabel1.Text" xml:space="preserve">
+    <value>Activity</value>
+  </data>
+  <data name="_activityFilter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 25</value>
+  </data>
+  <data name="toolStripLabel2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>39, 22</value>
+  </data>
+  <data name="toolStripLabel2.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="_statusFilter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 25</value>
+  </data>
+  <data name="toolStripLabel3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>42, 22</value>
+  </data>
+  <data name="toolStripLabel3.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="_textFilter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 25</value>
+  </data>
+  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>6, 25</value>
+  </data>
+  <data name="_workItemToolStrip.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="_workItemToolStrip.Size" type="System.Drawing.Size, System.Drawing">
+    <value>485, 25</value>
+  </data>
+  <data name="_workItemToolStrip.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="_workItemToolStrip.Text" xml:space="preserve">
+    <value>toolStrip1</value>
+  </data>
   <data name="&gt;&gt;_workItemToolStrip.Name" xml:space="preserve">
     <value>_workItemToolStrip</value>
   </data>
@@ -925,66 +970,6 @@
   </data>
   <data name="&gt;&gt;splitContainer1.ZOrder" xml:space="preserve">
     <value>0</value>
-  </data>
-  <metadata name="_workItemToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="_workItemToolStrip.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="_workItemToolStrip.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="_workItemToolStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>485, 25</value>
-  </data>
-  <data name="_workItemToolStrip.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="_workItemToolStrip.Text" xml:space="preserve">
-    <value>toolStrip1</value>
-  </data>
-  <data name="&gt;&gt;_workItemToolStrip.Name" xml:space="preserve">
-    <value>_workItemToolStrip</value>
-  </data>
-  <data name="&gt;&gt;_workItemToolStrip.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_workItemToolStrip.Parent" xml:space="preserve">
-    <value>panel1</value>
-  </data>
-  <data name="&gt;&gt;_workItemToolStrip.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="toolStripLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>47, 22</value>
-  </data>
-  <data name="toolStripLabel1.Text" xml:space="preserve">
-    <value>Activity</value>
-  </data>
-  <data name="_activityFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 25</value>
-  </data>
-  <data name="toolStripLabel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>39, 22</value>
-  </data>
-  <data name="toolStripLabel2.Text" xml:space="preserve">
-    <value>Status</value>
-  </data>
-  <data name="_statusFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 25</value>
-  </data>
-  <data name="toolStripLabel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>42, 22</value>
-  </data>
-  <data name="toolStripLabel3.Text" xml:space="preserve">
-    <value>Search</value>
-  </data>
-  <data name="_textFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 25</value>
-  </data>
-  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>6, 25</value>
   </data>
   <metadata name="_toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>174, 17</value>
