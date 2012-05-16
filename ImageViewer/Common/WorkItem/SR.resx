@@ -277,6 +277,12 @@
     <value>Reapply Rules</value>
   </data>
   <data name="ReapplyRulesRequest_ActivityDescription" xml:space="preserve">
-    <value>Reapply Rules for {0}</value>
+    <value>Re-apply rule '{0}'</value>
+  </data>
+  <data name="MessageFailedToStartReapplyRules" xml:space="preserve">
+    <value>Failed to start reapply rules operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator.</value>
+  </data>
+  <data name="ReapplyRulesRequestMultiple_ActivityDescription" xml:space="preserve">
+    <value>Re-apply multiple rules</value>
   </data>
 </root>

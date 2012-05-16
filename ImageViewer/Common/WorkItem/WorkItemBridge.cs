@@ -536,4 +536,44 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
     }
+
+	public class ReapplyRulesBridge : WorkItemBridge
+	{
+		/// <summary>
+		/// Reapply specified rule.
+		/// </summary>
+		/// <param name="ruleId"></param>
+		/// <param name="ruleName"></param>
+		/// <param name="context"></param>
+		public void Reapply(string ruleId, string ruleName, RuleApplicationOptions context)
+		{
+			var request = new ReapplyRulesRequest
+			{
+				RuleId = ruleId,
+				RuleName = ruleName,
+				ApplyDeleteActions = context.ApplyDeleteActions,
+				ApplyRouteActions = context.ApplyRouteActions
+			};
+
+			try
+			{
+				InsertRequest(request);
+			}
+			catch (Exception ex)
+			{
+				Exception = ex;
+				Platform.Log(LogLevel.Error, ex, SR.MessageFailedToStartReapplyRules);
+				throw;
+			}
+		}
+
+		/// <summary>
+		/// Reapply all rules.
+		/// </summary>
+		/// <param name="context"></param>
+		public void ReapplyAll(RuleApplicationOptions context)
+		{
+			Reapply(null, null, context);
+		}
+	}
 }

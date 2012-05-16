@@ -10,6 +10,7 @@
 #endregion
 
 using System.Linq;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 
@@ -24,17 +25,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 		/// </summary>
 		class DefaultEngine : IRulesEngine
 		{
-			public void ApplyStudyRules(RulesEngineContext context, StudyEntry study)
+			public void ApplyStudyRules(StudyEntry study, RuleApplicationOptions options)
 			{
-				ApplyDefaultDeletionRule(context, study);
+				ApplyDefaultDeletionRule(options, study);
 			}
 
-			public void ApplyStudyRule(RulesEngineContext context, StudyEntry study, string ruleId)
+			public void ApplyStudyRule(StudyEntry study, string ruleId, RuleApplicationOptions options)
 			{
-				ApplyDefaultDeletionRule(context, study);
+				ApplyDefaultDeletionRule(options, study);
 			}
 
-			private void ApplyDefaultDeletionRule(RulesEngineContext context, StudyEntry study)
+			private void ApplyDefaultDeletionRule(RuleApplicationOptions context, StudyEntry study)
 			{
 				if (!context.ApplyDeleteActions)
 					return;

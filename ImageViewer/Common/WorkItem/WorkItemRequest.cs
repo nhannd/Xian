@@ -653,10 +653,16 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 			Priority = WorkItemPriorityEnum.Normal;
 		}
 
-		[DataMember(IsRequired = true)]
+		/// <summary>
+		/// The rule to re-apply.  May be null, in which case all rules are re-applied.
+		/// </summary>
+		[DataMember]
 		public string RuleId { get; set; }
 
-		[DataMember(IsRequired = true)]
+		/// <summary>
+		/// The name of the rule to re-apply.  May be null in the case where all rules are being re-applied.
+		/// </summary>
+		[DataMember]
 		public string RuleName { get; set; }
 
 		[DataMember(IsRequired = true)]
@@ -667,7 +673,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
 		public override string ActivityDescription
 		{
-			get { return string.Format(SR.ReapplyRulesRequest_ActivityDescription, RuleName); }
+			get { return string.IsNullOrEmpty(RuleId) ? SR.ReapplyRulesRequestMultiple_ActivityDescription : string.Format(SR.ReapplyRulesRequest_ActivityDescription, RuleName); }
 		}
 
 		public override string ActivityTypeString

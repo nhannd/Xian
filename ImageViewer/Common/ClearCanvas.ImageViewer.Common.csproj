@@ -111,6 +111,7 @@
     <Compile Include="StudyManagement\IPublishFiles.cs" />
     <Compile Include="StudyManagement\IStorageConfiguration.cs" />
     <Compile Include="StudyManagement\IStudyStoreQuery.cs" />
+    <Compile Include="RulesApplicationOptions.cs" />
     <Compile Include="StudyManagement\StoreEntries.cs" />
     <Compile Include="StudyManagement\StoreEntryExtensions.cs" />
     <Compile Include="StudyManagement\StoreStudyRootQuery.cs" />

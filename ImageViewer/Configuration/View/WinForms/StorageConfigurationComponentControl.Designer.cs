@@ -89,6 +89,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			this._deleteTimeValue = new System.Windows.Forms.NumericUpDown();
 			this._deleteTimeUnits = new System.Windows.Forms.ComboBox();
 			this._deleteStudiesCheck = new System.Windows.Forms.CheckBox();
+			this.label6 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this._maxDiskSpace)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._upDownMaxDiskSpace)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).BeginInit();
@@ -290,10 +291,16 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			this._deleteStudiesCheck.Name = "_deleteStudiesCheck";
 			this._deleteStudiesCheck.UseVisualStyleBackColor = true;
 			// 
+			// label6
+			// 
+			resources.ApplyResources(this.label6, "label6");
+			this.label6.Name = "label6";
+			// 
 			// StorageConfigurationComponentControl
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.label6);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this._deleteTimeValue);
 			this.Controls.Add(this._deleteTimeUnits);
@@ -341,5 +348,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 		private System.Windows.Forms.NumericUpDown _deleteTimeValue;
 		private System.Windows.Forms.ComboBox _deleteTimeUnits;
 		private System.Windows.Forms.CheckBox _deleteStudiesCheck;
+		private System.Windows.Forms.Label label6;
     }
 }

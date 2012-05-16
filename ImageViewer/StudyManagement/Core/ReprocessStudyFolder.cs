@@ -16,6 +16,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
@@ -128,12 +129,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     // Now apply Deletion rules
                     var ep = new RulesEngineExtensionPoint();
 
-                    var ruleContext = new RulesEngineContext
+                    var ruleContext = new RuleApplicationOptions
                                           {
                                               ApplyDeleteActions = true,
                                               ApplyRouteActions = false
                                           };
-					RulesEngine.Create().ApplyStudyRules(ruleContext, p.StudyLocation.Study.ToStoreEntry());
+					RulesEngine.Create().ApplyStudyRules(p.StudyLocation.Study.ToStoreEntry(), ruleContext);
                 }
 
             }

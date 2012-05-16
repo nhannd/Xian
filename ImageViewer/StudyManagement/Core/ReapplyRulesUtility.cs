@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 
@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         {
         	var rulesEngine = RulesEngine.Create();
  
-            foreach (long oid in StudyOidList)
+            foreach (var oid in StudyOidList)
             {
                 try
                 {
@@ -121,14 +121,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                         var study = broker.GetStudy(oid);
 
                      
-                        StudyEntry studyEntry = study.ToStoreEntry();
-
-                    	var rulesEngineContext = new RulesEngineContext
+                        var studyEntry = study.ToStoreEntry();
+                    	var rulesEngineContext = new RuleApplicationOptions
                     	                         	{
                     	                         		ApplyDeleteActions = _request.ApplyDeleteActions,
                     	                         		ApplyRouteActions = _request.ApplyRouteActions
                     	                         	};
-						rulesEngine.ApplyStudyRule(rulesEngineContext, studyEntry, _request.RuleId);
+						if(!string.IsNullOrEmpty(_request.RuleId))
+						{
+							rulesEngine.ApplyStudyRule(studyEntry, _request.RuleId, rulesEngineContext);
+						}
+						else
+						{
+							rulesEngine.ApplyStudyRules(studyEntry, rulesEngineContext);
+						}
 
                         EventsHelper.Fire(_studyProcessedEvent, this, new ReindexUtility.StudyEventArgs { StudyInstanceUid = study.StudyInstanceUid });
                     }                    

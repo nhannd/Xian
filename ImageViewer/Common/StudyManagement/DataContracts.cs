@@ -196,7 +196,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     public class StorageConfiguration : IEquatable<StorageConfiguration>
     {
 		[DataContract(Namespace = StudyManagementNamespace.Value)]
-		public class DeletionRule
+		public class DeletionRule : IEquatable<DeletionRule>
 		{
 			[DataMember(IsRequired = true)]
 			public bool Enabled { get; set; }
@@ -215,6 +215,32 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 					TimeUnit = this.TimeUnit,
 					TimeValue = this.TimeValue
 				};
+			}
+
+			public bool Equals(DeletionRule other)
+			{
+				if (ReferenceEquals(null, other)) return false;
+				if (ReferenceEquals(this, other)) return true;
+				return other.Enabled.Equals(Enabled) && other.TimeValue == TimeValue && Equals(other.TimeUnit, TimeUnit);
+			}
+
+			public override bool Equals(object obj)
+			{
+				if (ReferenceEquals(null, obj)) return false;
+				if (ReferenceEquals(this, obj)) return true;
+				if (obj.GetType() != typeof (DeletionRule)) return false;
+				return Equals((DeletionRule) obj);
+			}
+
+			public override int GetHashCode()
+			{
+				unchecked
+				{
+					int result = Enabled.GetHashCode();
+					result = (result*397) ^ TimeValue;
+					result = (result*397) ^ TimeUnit.GetHashCode();
+					return result;
+				}
 			}
 		}
 

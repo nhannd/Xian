@@ -43,6 +43,7 @@ namespace ClearCanvas.ImageViewer.Configuration
         private string _fileStoreDriveName;
         private string _currentFileStoreDirectory;
         private string _originalFileStoreDirectory;
+    	private StorageConfiguration.DeletionRule _originalDeletionRule;
 
         private IWorkItemActivityMonitor _activityMonitor;
 
@@ -57,7 +58,10 @@ namespace ClearCanvas.ImageViewer.Configuration
             
             UpdateFileStoreDriveName();
             MaximumUsedSpaceChanged();
-            base.Start();
+
+			_originalDeletionRule = _configuration.DefaultDeletionRule;
+			
+			base.Start();
 		}
 
         public override void Stop()
@@ -83,6 +87,14 @@ namespace ClearCanvas.ImageViewer.Configuration
 		    try
 		    {
                 StudyStore.UpdateConfiguration(_configuration);
+
+				// if the default deletion rule was modified, kick-off a re-apply rules work item
+				if(!Equals(_configuration.DefaultDeletionRule, _originalDeletionRule))
+				{
+					var client = new ReapplyRulesBridge();
+					client.ReapplyAll(new RuleApplicationOptions { ApplyDeleteActions = true });
+				}
+
 		    }
 		    catch (Exception e)
 		    {
