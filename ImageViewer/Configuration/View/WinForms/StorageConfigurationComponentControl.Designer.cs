@@ -90,6 +90,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			this._deleteTimeUnits = new System.Windows.Forms.ComboBox();
 			this._deleteStudiesCheck = new System.Windows.Forms.CheckBox();
 			this.label6 = new System.Windows.Forms.Label();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			((System.ComponentModel.ISupportInitialize)(this._maxDiskSpace)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._upDownMaxDiskSpace)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).BeginInit();
@@ -97,6 +98,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			((System.ComponentModel.ISupportInitialize)(this._fileStoreWarningIcon)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._helpIcon)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._deleteTimeValue)).BeginInit();
+			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _maxDiskSpace
@@ -296,15 +298,22 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			resources.ApplyResources(this.label6, "label6");
 			this.label6.Name = "label6";
 			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this._deleteStudiesCheck);
+			this.groupBox1.Controls.Add(this.label6);
+			this.groupBox1.Controls.Add(this._deleteTimeUnits);
+			this.groupBox1.Controls.Add(this.label3);
+			this.groupBox1.Controls.Add(this._deleteTimeValue);
+			resources.ApplyResources(this.groupBox1, "groupBox1");
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.TabStop = false;
+			// 
 			// StorageConfigurationComponentControl
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.label6);
-			this.Controls.Add(this.label3);
-			this.Controls.Add(this._deleteTimeValue);
-			this.Controls.Add(this._deleteTimeUnits);
-			this.Controls.Add(this._deleteStudiesCheck);
+			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "StorageConfigurationComponentControl";
 			((System.ComponentModel.ISupportInitialize)(this._maxDiskSpace)).EndInit();
@@ -315,8 +324,9 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			((System.ComponentModel.ISupportInitialize)(this._fileStoreWarningIcon)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._helpIcon)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._deleteTimeValue)).EndInit();
+			this.groupBox1.ResumeLayout(false);
+			this.groupBox1.PerformLayout();
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
         }
 
@@ -349,5 +359,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 		private System.Windows.Forms.ComboBox _deleteTimeUnits;
 		private System.Windows.Forms.CheckBox _deleteStudiesCheck;
 		private System.Windows.Forms.Label label6;
+		private System.Windows.Forms.GroupBox groupBox1;
     }
 }

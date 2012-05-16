@@ -22,10 +22,10 @@ namespace ClearCanvas.ImageViewer.Configuration
 	[ExtensionOf(typeof(ActivityMonitorQuickLinkHandlerExtensionPoint))]
 	public class SharedConfigurationPageProvider : IConfigurationPageProvider, IActivityMonitorQuickLinkHandler
 	{
-	    private const string ServerConfigurationPath = "ServerConfiguration";
-		private const string StorageConfigurationPath = "StorageConfiguration";
-        private const string PublishingConfigurationPath = "PublishingConfiguration";
-        private const string PriorsServerConfigurationPath = "PriorsServersConfiguration";
+		public const string ServerConfigurationPath = "ServerConfiguration";
+		public const string StorageConfigurationPath = "StorageConfiguration";
+		public const string PublishingConfigurationPath = "PublishingConfiguration";
+		public const string PriorsServerConfigurationPath = "PriorsServersConfiguration";
 
 		#region IConfigurationPageProvider Members
 
