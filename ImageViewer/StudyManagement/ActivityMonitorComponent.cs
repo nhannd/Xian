@@ -946,6 +946,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			HandleLink(ActivityMonitorQuickLink.StudyManagementRules);
 		}
 
+		public void OpenLogFiles()
+		{
+			var logdir = Platform.LogDirectory;
+			if (!string.IsNullOrEmpty(logdir) && Directory.Exists(logdir))
+				Process.Start(logdir);
+		}
+
 		#endregion
 
 		private IWorkItemActivityMonitor ActivityMonitor { get; set; }

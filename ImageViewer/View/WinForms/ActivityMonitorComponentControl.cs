@@ -170,6 +170,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_component.OpenStudyManagementRules();
 		}
 
+		private void _logFileLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			_component.OpenLogFiles();
+		}
+
+
 
 		private void UpdateTooltips()
 		{
