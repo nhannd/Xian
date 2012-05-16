@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
@@ -138,6 +139,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
         public override bool CanStart(out string reason)
         {            
             reason = string.Empty;
+
             return !InProgressWorkItems();
         }
     }

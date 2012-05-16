@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Network;
@@ -84,13 +85,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                 context.Commit();
             }
 
-            if (PublishFiles != null && PublishFiles.DeletionBehaviour == DeletionBehaviour.DeleteAlways)
+            if (PublishFiles != null && (PublishFiles.DeletionBehaviour == DeletionBehaviour.DeleteAlways || PublishFiles.DeletionBehaviour == DeletionBehaviour.DeleteOnSuccess))
             {
                 foreach (string file in PublishFiles.FilePaths)
                 {
                     try
                     {
                         FileUtils.Delete(file);
+                        DirectoryUtility.DeleteIfEmpty(Path.GetDirectoryName(file));
                     }
                     catch (Exception e)
                     {

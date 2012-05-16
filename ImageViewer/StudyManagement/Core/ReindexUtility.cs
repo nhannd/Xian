@@ -12,10 +12,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
+using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
@@ -24,6 +27,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
     /// </summary>
     public class ReindexUtility
     {
+        #region Private Class
+
+        private class ThreadPoolStopProxy
+        {
+            private readonly ReprocessStudyFolder _r;
+
+            public ThreadPoolStopProxy(ReprocessStudyFolder r)
+            {
+                _r = r;
+            }
+
+            public void ProxyDelegate(object sender, ItemEventArgs<ThreadPoolBase.StartStopState> e)
+            {
+                if (e.Item == ThreadPoolBase.StartStopState.Stopping)
+                    _r.Cancel();
+            }
+        }
+
+        #endregion
+
         #region Private members
 
         private event EventHandler<StudyEventArgs> _studyDeletedEvent;
@@ -31,6 +54,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         private event EventHandler<StudyEventArgs> _studyProcessedEvent;
         private readonly object _syncLock = new object();
         private bool _cancelRequested;
+        private readonly ItemProcessingThreadPool<ReprocessStudyFolder> _threadPool = new ItemProcessingThreadPool<ReprocessStudyFolder>(WorkItemServiceSettings.Default.NormalThreadCount);
         #endregion
 
         #region Public Events
@@ -117,6 +141,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         {
             FilestoreDirectory = GetFileStoreDirectory();
             DirectoryList = new List<string>();
+            _threadPool.ThreadPoolName = "Re-index";
         }
 
         #endregion
@@ -159,7 +184,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 context.Commit();
             }
 
-            DatabaseStudiesToScan = StudyOidList.Count;           
+            DatabaseStudiesToScan = StudyOidList.Count;   
+        
+            _threadPool.Start();
         }
 
         /// <summary>
@@ -202,15 +229,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         {
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
-                var broker = context.GetStudyBroker();
+                var studyBroker = context.GetStudyBroker();
+                var workItemBroker = context.GetWorkItemBroker();
 
-                StudyOidList = new List<long>();
-
-                var studyList = broker.GetStudies();
+                var studyList = studyBroker.GetStudies();
                 foreach (var study in studyList)
                 {
-                    study.Deleted = false;
-                    StudyOidList.Add(study.Oid);
+                    var workItemList = workItemBroker.GetWorkItems(DeleteStudyRequest.WorkItemTypeString, null, study.StudyInstanceUid);
+                    if (workItemList.Count == 0)
+                        workItemList = workItemBroker.GetWorkItems(DeleteSeriesRequest.WorkItemTypeString, null,
+                                                                   study.StudyInstanceUid);
+
+                    if (workItemList.Count == 0)
+                        study.Deleted = false;
                 }
                 context.Commit();
             }
@@ -284,8 +315,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             {
                 ProcessStudyFolder(studyFolder);
 
-                if (_cancelRequested) return;
+                if (_cancelRequested)
+                    break;
             }
+
+            while (_threadPool.Active && _threadPool.QueueCount > 0 && _threadPool.ActiveCount > 0)
+            {
+                Thread.Sleep(1000);
+                if (_cancelRequested)
+                    break;
+            }
+
+            _threadPool.Stop(false);
         }
 
         private void ProcessStudyFolder(string folder)
@@ -295,11 +336,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 string studyInstanceUid = Path.GetFileName(folder);
                 var location = new StudyLocation(studyInstanceUid);
 
-                var reprocessor = new ReprocessStudyFolder(location);
-       
-                reprocessor.Process();
-                
-                EventsHelper.Fire(_studyFolderProcessedEvent, this, new StudyEventArgs { StudyInstanceUid = studyInstanceUid });                
+                var reprocessStudyFolder = new ReprocessStudyFolder(location);
+
+                _threadPool.Enqueue(reprocessStudyFolder, delegate(ReprocessStudyFolder r)
+                                                              {
+                                                                  var del = new ThreadPoolStopProxy(r);
+                                                                  _threadPool.StartStopStateChangedEvent += del.ProxyDelegate;
+
+                                                                  r.Process();
+                                                                  lock (_syncLock)
+                                                                      EventsHelper.Fire(_studyFolderProcessedEvent, this,
+                                                                                        new StudyEventArgs
+                                                                                            {
+                                                                                                StudyInstanceUid = r.Location.Study.StudyInstanceUid
+                                                                                            });
+
+                                                                  _threadPool.StartStopStateChangedEvent -= del.ProxyDelegate;
+                                                              });
+
+
+
+
             }
             catch (Exception x)
             {

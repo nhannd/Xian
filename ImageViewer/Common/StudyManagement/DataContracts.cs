@@ -438,6 +438,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
             return storageConfiguration != null && Equals(storageConfiguration);
         }
 
+        //TODO (Marmot): get rid of this.
         #region IEquatable<StorageConfiguration> Members
 
         public bool Equals(StorageConfiguration other)

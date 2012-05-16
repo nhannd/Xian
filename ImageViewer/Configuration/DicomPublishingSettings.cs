@@ -15,11 +15,11 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
-	[SettingsGroupDescription("Settings related to publishing DICOM data.")]
+	[SettingsGroupDescription("Settings for publishing DICOM SOP Instances.")]
 	[SettingsProvider(typeof (StandardSettingsProvider))]
-	internal sealed partial class PublishingSettings
+	internal sealed partial class DicomPublishingSettings
 	{
-		private PublishingSettings()
+        private DicomPublishingSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}

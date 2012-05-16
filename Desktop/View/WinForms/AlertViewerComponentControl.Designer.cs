@@ -59,54 +59,54 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AlertViewerComponentControl));
-			this._alertTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
-			this._toolbar = new System.Windows.Forms.ToolStrip();
-			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-			this._filter = new System.Windows.Forms.ToolStripComboBox();
-			this._toolbar.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// _alertTableView
-			// 
-			resources.ApplyResources(this._alertTableView, "_alertTableView");
-			this._alertTableView.MultiLine = true;
-			this._alertTableView.MultiSelect = false;
-			this._alertTableView.Name = "_alertTableView";
-			this._alertTableView.ReadOnly = false;
-			this._alertTableView.ShowColumnHeading = false;
-			this._alertTableView.ShowToolbar = false;
-			// 
-			// _toolbar
-			// 
-			this._toolbar.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this._toolbar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AlertViewerComponentControl));
+            this._alertTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this._toolbar = new System.Windows.Forms.ToolStrip();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this._filter = new System.Windows.Forms.ToolStripComboBox();
+            this._toolbar.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // _alertTableView
+            // 
+            resources.ApplyResources(this._alertTableView, "_alertTableView");
+            this._alertTableView.MultiLine = true;
+            this._alertTableView.MultiSelect = false;
+            this._alertTableView.Name = "_alertTableView";
+            this._alertTableView.ReadOnly = false;
+            this._alertTableView.ShowColumnHeading = false;
+            this._alertTableView.ShowToolbar = false;
+            // 
+            // _toolbar
+            // 
+            this._toolbar.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this._toolbar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabel1,
             this._filter});
-			resources.ApplyResources(this._toolbar, "_toolbar");
-			this._toolbar.Name = "_toolbar";
-			// 
-			// toolStripLabel1
-			// 
-			this.toolStripLabel1.Name = "toolStripLabel1";
-			resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
-			// 
-			// _filter
-			// 
-			this._filter.Name = "_filter";
-			resources.ApplyResources(this._filter, "_filter");
-			// 
-			// AlertViewerComponentControl
-			// 
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._toolbar);
-			this.Controls.Add(this._alertTableView);
-			this.Name = "AlertViewerComponentControl";
-			this._toolbar.ResumeLayout(false);
-			this._toolbar.PerformLayout();
-			this.ResumeLayout(false);
-			this.PerformLayout();
+            resources.ApplyResources(this._toolbar, "_toolbar");
+            this._toolbar.Name = "_toolbar";
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
+            // 
+            // _filter
+            // 
+            this._filter.Name = "_filter";
+            resources.ApplyResources(this._filter, "_filter");
+            // 
+            // AlertViewerComponentControl
+            // 
+            resources.ApplyResources(this, "$this");
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._toolbar);
+            this.Controls.Add(this._alertTableView);
+            this.Name = "AlertViewerComponentControl";
+            this._toolbar.ResumeLayout(false);
+            this._toolbar.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

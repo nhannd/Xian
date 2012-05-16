@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
         /// <returns></returns>
         public override bool CanStart(out string reason)
         {
-            // Always Can start.
+            // Always Can start, even if there is a reindex.
             reason = string.Empty;
             return true;
         }
