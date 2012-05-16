@@ -225,7 +225,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Canceling the selected work item(s) may result in incomplete study data.  Are you sure you want to cancel?.
+        ///   Looks up a localized string similar to Canceling the selected work item(s) may result in partial study data, which could potentially lead to patient misdiagnosis.  Are you sure you want to cancel?.
         /// </summary>
         public static string MessageConfirmCancelWorkItems {
             get {

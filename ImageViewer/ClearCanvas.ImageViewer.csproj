@@ -767,10 +767,6 @@
     <Compile Include="ViewerShortcutManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ImageViewer\StudyManagement\Core\Rules\ClearCanvas.ImageViewer.StudyManagement.Core.Rules.csproj">
-      <Project>{3EFFB47B-75BF-44FE-9831-7AE1CC11660E}</Project>
-      <Name>ClearCanvas.ImageViewer.StudyManagement.Core.Rules</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>

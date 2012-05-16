@@ -28,7 +28,6 @@ using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
-using ClearCanvas.ImageViewer.StudyManagement.Core.Rules;
 using Action = ClearCanvas.Desktop.Actions.Action;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
