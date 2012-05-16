@@ -583,7 +583,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				try
 				{
 					var client = new WorkItemBridge();
-					ProcessItemsAsync(SelectedWorkItems, workItem =>
+					ProcessItems(SelectedWorkItems, workItem =>
 					{
 						client.WorkItem = workItem.Data;
 						client.Reset();
@@ -608,7 +608,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				try
 				{
 					var client = new WorkItemBridge();
-					ProcessItemsAsync(items, workItem =>
+					ProcessItems(items, workItem =>
 					{
 						client.WorkItem = workItem.Data;
 						client.Cancel();
@@ -625,7 +625,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				try
 				{
 					var client = new WorkItemBridge();
-					ProcessItemsAsync(SelectedWorkItems, workItem =>
+					ProcessItems(SelectedWorkItems, workItem =>
 					{
 						client.WorkItem = workItem.Data;
 						client.Delete();
@@ -642,7 +642,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				try
 				{
 					var client = new WorkItemBridge();
-					ProcessItemsAsync(SelectedWorkItems, workItem =>
+					ProcessItems(SelectedWorkItems, workItem =>
 					{
 						client.WorkItem = workItem.Data;
 						client.Reprioritize(WorkItemPriorityEnum.Stat);
@@ -654,10 +654,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				}
 			}
 
-			private int ProcessItemsAsync<T>(IEnumerable<T> items, Action<T> processAction, bool cancelable)
+			private void ProcessItems<T>(IEnumerable<T> items, Action<T> processAction, bool cancelable)
 			{
 				var itemsToProcess = items.ToList();
-				return ProgressDialog.Show(_owner.Host.DesktopWindow,
+
+				// if just one item, process it synchronously
+				if (itemsToProcess.Count == 1)
+				{
+					processAction(itemsToProcess[0]);
+					return;
+				}
+
+				// otherwise do progress dialog
+				ProgressDialog.Show(_owner.Host.DesktopWindow,
 					itemsToProcess,
 					(item, i) =>
 					{
