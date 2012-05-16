@@ -126,16 +126,9 @@ and immediately re-index.</value>
     <value>Please check the servers that should be automatically searched for prior studies.</value>
   </data>
   <data name="DescriptionStorageOptions" xml:space="preserve">
-    <value>The file store location cannot be changed unless the local service is stopped.
-Once the file store has changed, you must either manually copy files over
-from the old location before restarting the local service, or simply restart the
-local service and immediately re-index.
+    <value>The file store location cannot be changed unless the local service is stopped. Once the file store has changed, you must either manually copy files over from the old location before restarting the local service, or simply restart the local service and immediately re-index.
 
-If the maximum disk usage is exceeded, the Workstation will refuse to import
-images or receive them over the network in order to avoid exhausting the disk.
-If the used space is reaching the maximum, it is recommended you
-increase the maximum usage, delete some studies, or move the file store
-to a disk with more capacity.</value>
+If the maximum disk usage is exceeded, the Workstation will refuse to import images or receive them over the network in order to avoid exhausting the disk. If the used space is reaching the maximum, it is recommended you increase the maximum usage, delete some studies, or move the file store to a disk with more capacity.</value>
   </data>
   <data name="ExampleGroup" xml:space="preserve">
     <value>Example Group</value>
