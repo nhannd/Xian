@@ -214,8 +214,8 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this._diskSpaceWarningMessage, 1, 5);
             this.tableLayoutPanel1.Controls.Add(this._fileStoreWarningIcon, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this._fileStoreWarningMessage, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this._stopLocalService, 2, 1);
             this.tableLayoutPanel1.Controls.Add(this._helpIcon, 5, 6);
+            this.tableLayoutPanel1.Controls.Add(this._stopLocalService, 2, 1);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // _fileStoreWarningIcon
@@ -234,7 +234,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             // _stopLocalService
             // 
             resources.ApplyResources(this._stopLocalService, "_stopLocalService");
-            this.tableLayoutPanel1.SetColumnSpan(this._stopLocalService, 2);
+            this.tableLayoutPanel1.SetColumnSpan(this._stopLocalService, 4);
             this._stopLocalService.LinkBehavior = System.Windows.Forms.LinkBehavior.AlwaysUnderline;
             this._stopLocalService.Name = "_stopLocalService";
             this._stopLocalService.TabStop = true;
