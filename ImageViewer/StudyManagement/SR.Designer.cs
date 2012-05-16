@@ -288,6 +288,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Processed {0} of {1} items....
+        /// </summary>
+        public static string MessageProcessedItemsProgress {
+            get {
+                return ResourceManager.GetString("MessageProcessedItemsProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A re-index operation is already in progress..
         /// </summary>
         public static string MessageReindexInProgress {

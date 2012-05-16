@@ -194,6 +194,9 @@ make room, or increase the maximum usage.</value>
   <data name="MessageOneFailedWorkItem" xml:space="preserve">
     <value>There is 1 failed work item.</value>
   </data>
+  <data name="MessageProcessedItemsProgress" xml:space="preserve">
+    <value>Processed {0} of {1} items...</value>
+  </data>
   <data name="MessageReindexInProgress" xml:space="preserve">
     <value>A re-index operation is already in progress.</value>
   </data>
