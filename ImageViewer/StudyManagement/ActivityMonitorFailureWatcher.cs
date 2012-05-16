@@ -128,13 +128,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					_failedWorkItems.Add(item.Identifier);
 
-					var studyDate = DateParser.Parse(item.Study.StudyDate);
-					var message = string.Format(SR.MessageWorkItemFailed,
-									item.Request.ActivityTypeString,
-									item.Patient.PatientsName,
-									studyDate.HasValue ? Format.Date(studyDate.Value) : string.Empty,
-									item.Study.AccessionNumber);
-					_window.ShowAlert(AlertLevel.Error, message, SR.LinkOpenActivityMonitor, window => _showActivityMonitor());
+                    if (item.Patient != null && item.Study != null)
+                    {
+                        var studyDate = DateParser.Parse(item.Study.StudyDate);
+                        var message = string.Format(SR.MessageWorkItemFailed,
+                                                    item.Request.ActivityTypeString,
+                                                    item.Patient.PatientsName,
+                                                    studyDate.HasValue ? Format.Date(studyDate.Value) : string.Empty,
+                                                    item.Study.AccessionNumber);
+                        _window.ShowAlert(AlertLevel.Error, message, SR.LinkOpenActivityMonitor,
+                                          window => _showActivityMonitor());
+                    }
+                    else
+                    {
+                        var message = string.Format(SR.MessageNonStudyWorkItemFailed,
+                                                item.Request.ActivityTypeString);
+                        _window.ShowAlert(AlertLevel.Error, message, SR.LinkOpenActivityMonitor,
+                                          window => _showActivityMonitor());
+                    }
 				}
 
 				// if a previously failed item is re-tried, remove it from the set of failed items

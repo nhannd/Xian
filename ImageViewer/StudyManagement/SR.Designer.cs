@@ -270,6 +270,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} failed..
+        /// </summary>
+        public static string MessageNonStudyWorkItemFailed {
+            get {
+                return ResourceManager.GetString("MessageNonStudyWorkItemFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There is 1 failed work item..
         /// </summary>
         public static string MessageOneFailedWorkItem {
