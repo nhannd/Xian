@@ -167,5 +167,59 @@ namespace ClearCanvas.ImageViewer.Common {
                 return ResourceManager.GetString("MessageReindexStatusUnknown", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to after study receipt/import.
+        /// </summary>
+        internal static string TimeOriginReceivedDate {
+            get {
+                return ResourceManager.GetString("TimeOriginReceivedDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to after study date/time.
+        /// </summary>
+        internal static string TimeOriginStudyDate {
+            get {
+                return ResourceManager.GetString("TimeOriginStudyDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to day(s).
+        /// </summary>
+        internal static string TimeUnitDays {
+            get {
+                return ResourceManager.GetString("TimeUnitDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to hour(s).
+        /// </summary>
+        internal static string TimeUnitHours {
+            get {
+                return ResourceManager.GetString("TimeUnitHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to minute(s).
+        /// </summary>
+        internal static string TimeUnitMinutes {
+            get {
+                return ResourceManager.GetString("TimeUnitMinutes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to week(s).
+        /// </summary>
+        internal static string TimeUnitWeeks {
+            get {
+                return ResourceManager.GetString("TimeUnitWeeks", resourceCulture);
+            }
+        }
     }
 }

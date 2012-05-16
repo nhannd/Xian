@@ -160,6 +160,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reapply Rules.
+        /// </summary>
+        internal static string ActivityTypeEnumReapplyRules {
+            get {
+                return ResourceManager.GetString("ActivityTypeEnumReapplyRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Re-index.
         /// </summary>
         internal static string ActivityTypeEnumReIndex {
@@ -340,6 +349,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to start reapply rules operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator..
+        /// </summary>
+        internal static string MessageFailedToStartReapplyRules {
+            get {
+                return ResourceManager.GetString("MessageFailedToStartReapplyRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Completed..
         /// </summary>
         internal static string Progress_Complete {
@@ -381,6 +399,24 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         internal static string ReapplyRulesProgress_StatusNoStudies {
             get {
                 return ResourceManager.GetString("ReapplyRulesProgress_StatusNoStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Re-apply rule &apos;{0}&apos;.
+        /// </summary>
+        internal static string ReapplyRulesRequest_ActivityDescription {
+            get {
+                return ResourceManager.GetString("ReapplyRulesRequest_ActivityDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Re-apply multiple rules.
+        /// </summary>
+        internal static string ReapplyRulesRequestMultiple_ActivityDescription {
+            get {
+                return ResourceManager.GetString("ReapplyRulesRequestMultiple_ActivityDescription", resourceCulture);
             }
         }
         

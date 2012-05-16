@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -42,6 +43,7 @@ namespace ClearCanvas.ImageViewer.Configuration
         private string _fileStoreDriveName;
         private string _currentFileStoreDirectory;
         private string _originalFileStoreDirectory;
+    	private StorageConfiguration.DeletionRule _originalDeletionRule;
 
         private IWorkItemActivityMonitor _activityMonitor;
 
@@ -56,7 +58,10 @@ namespace ClearCanvas.ImageViewer.Configuration
             
             UpdateFileStoreDriveName();
             MaximumUsedSpaceChanged();
-            base.Start();
+
+			_originalDeletionRule = _configuration.DefaultDeletionRule.Clone();
+			
+			base.Start();
 		}
 
         public override void Stop()
@@ -82,6 +87,14 @@ namespace ClearCanvas.ImageViewer.Configuration
 		    try
 		    {
                 StudyStore.UpdateConfiguration(_configuration);
+
+				// if the default deletion rule was modified, kick-off a re-apply rules work item
+				if(!Equals(_configuration.DefaultDeletionRule, _originalDeletionRule))
+				{
+					var client = new ReapplyRulesBridge();
+					client.ReapplyAll(new RulesEngineOptions { ApplyDeleteActions = true });
+				}
+
 		    }
 		    catch (Exception e)
 		    {
@@ -306,6 +319,59 @@ namespace ClearCanvas.ImageViewer.Configuration
         {
             Host.DesktopWindow.ShowMessageBox(SR.DescriptionStorageOptions, MessageBoxActions.Ok);
         }
+
+    	public bool DeleteStudies
+    	{
+			get { return _configuration.DefaultDeletionRule.Enabled; }
+			set
+			{
+				if (value != _configuration.DefaultDeletionRule.Enabled)
+				{
+					_configuration.DefaultDeletionRule.Enabled = value;
+					this.Modified = true;
+					NotifyPropertyChanged("DeleteStudies");
+				}
+			}
+    	}
+
+    	public int DeleteTimeValue
+    	{
+    		get { return _configuration.DefaultDeletionRule.TimeValue; }
+    		set
+			{
+				if (value != _configuration.DefaultDeletionRule.TimeValue)
+				{
+					_configuration.DefaultDeletionRule.TimeValue = value;
+					this.Modified = true;
+					NotifyPropertyChanged("DeleteTimeValue");
+				}
+			}
+		}
+
+    	public IList DeleteTimeUnits
+		{
+			get { return Enum.GetValues(typeof(TimeUnit)); }
+		}
+
+		public string FormatTimeUnit(object obj)
+		{
+			var unit = (TimeUnit)obj;
+			return unit.GetDescription();
+		}
+
+		public TimeUnit DeleteTimeUnit
+    	{
+			get { return _configuration.DefaultDeletionRule.TimeUnit; }
+    		set
+			{
+				if (value != _configuration.DefaultDeletionRule.TimeUnit)
+				{
+					_configuration.DefaultDeletionRule.TimeUnit = value;
+					this.Modified = true;
+					NotifyPropertyChanged("DeleteTimeUnit");
+				}
+			}
+		}
 
         #endregion
 

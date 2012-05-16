@@ -39,6 +39,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._aeTitle = new System.Windows.Forms.Label();
 			this._hostName = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
+			this._diskSpace = new System.Windows.Forms.Label();
 			this._statusLight = new ClearCanvas.Desktop.View.WinForms.IndicatorLight();
 			this.label11 = new System.Windows.Forms.Label();
 			this._totalStudies = new System.Windows.Forms.Label();
@@ -48,7 +49,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._diskSpaceMeter = new ClearCanvas.Desktop.View.WinForms.Meter();
 			this._diskSpaceWarningIcon = new System.Windows.Forms.PictureBox();
 			this._diskSpaceWarningMessage = new System.Windows.Forms.Label();
-			this._diskSpace = new System.Windows.Forms.Label();
 			this._reindexLink = new System.Windows.Forms.LinkLabel();
 			this._openFileStoreLink = new System.Windows.Forms.LinkLabel();
 			this._localServerConfigLink = new System.Windows.Forms.LinkLabel();
@@ -64,11 +64,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._textFilter = new System.Windows.Forms.ToolStripTextBox();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this._toolTip = new System.Windows.Forms.ToolTip(this.components);
+			this._logFileLink = new System.Windows.Forms.LinkLabel();
 			this._overviewPanel.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.panel2.SuspendLayout();
 			this._diskSpacePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
@@ -110,12 +112,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 37F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 106F));
-			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 106F));
+			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 140F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 49F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 515F));
 			this.tableLayoutPanel2.Controls.Add(this.label2, 7, 0);
 			this.tableLayoutPanel2.Controls.Add(this.panel2, 1, 0);
 			this.tableLayoutPanel2.Controls.Add(this.label10, 1, 2);
+			this.tableLayoutPanel2.Controls.Add(this._diskSpace, 5, 2);
 			this.tableLayoutPanel2.Controls.Add(this._statusLight, 0, 0);
 			this.tableLayoutPanel2.Controls.Add(this.label11, 1, 3);
 			this.tableLayoutPanel2.Controls.Add(this._totalStudies, 2, 2);
@@ -126,6 +129,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.tableLayoutPanel2.Controls.Add(this._openFileStoreLink, 7, 1);
 			this.tableLayoutPanel2.Controls.Add(this._localServerConfigLink, 7, 3);
 			this.tableLayoutPanel2.Controls.Add(this._studyRulesLink, 7, 4);
+			this.tableLayoutPanel2.Controls.Add(this._logFileLink, 7, 5);
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 14);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
 			this.tableLayoutPanel2.RowCount = 6;
@@ -143,7 +147,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.label2.AutoSize = true;
 			this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label2.Location = new System.Drawing.Point(492, 16);
+			this.label2.Location = new System.Drawing.Point(526, 16);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(74, 13);
 			this.label2.TabIndex = 33;
@@ -191,6 +195,17 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.label10.Size = new System.Drawing.Size(82, 13);
 			this.label10.TabIndex = 24;
 			this.label10.Text = "Total Studies";
+			// 
+			// _diskSpace
+			// 
+			this._diskSpace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._diskSpace.AutoSize = true;
+			this._diskSpace.Location = new System.Drawing.Point(413, 60);
+			this._diskSpace.Name = "_diskSpace";
+			this._diskSpace.Size = new System.Drawing.Size(58, 13);
+			this._diskSpace.TabIndex = 28;
+			this._diskSpace.Text = "disk space";
+			this._diskSpace.TextAlign = System.Drawing.ContentAlignment.BottomRight;
 			// 
 			// _statusLight
 			// 
@@ -258,27 +273,26 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._diskSpacePanel.Controls.Add(this._diskSpaceMeter);
 			this._diskSpacePanel.Controls.Add(this._diskSpaceWarningIcon);
 			this._diskSpacePanel.Controls.Add(this._diskSpaceWarningMessage);
-			this._diskSpacePanel.Controls.Add(this._diskSpace);
 			this._diskSpacePanel.Location = new System.Drawing.Point(228, 73);
 			this._diskSpacePanel.Margin = new System.Windows.Forms.Padding(0);
 			this._diskSpacePanel.Name = "_diskSpacePanel";
 			this.tableLayoutPanel2.SetRowSpan(this._diskSpacePanel, 3);
-			this._diskSpacePanel.Size = new System.Drawing.Size(212, 67);
+			this._diskSpacePanel.Size = new System.Drawing.Size(246, 67);
 			this._diskSpacePanel.TabIndex = 29;
 			// 
 			// _diskSpaceMeter
 			// 
 			this._diskSpaceMeter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._diskSpaceMeter.Location = new System.Drawing.Point(6, 22);
+			this._diskSpaceMeter.Location = new System.Drawing.Point(3, 5);
 			this._diskSpaceMeter.Name = "_diskSpaceMeter";
-			this._diskSpaceMeter.Size = new System.Drawing.Size(203, 17);
+			this._diskSpaceMeter.Size = new System.Drawing.Size(240, 17);
 			this._diskSpaceMeter.TabIndex = 11;
 			// 
 			// _diskSpaceWarningIcon
 			// 
 			this._diskSpaceWarningIcon.Image = ((System.Drawing.Image)(resources.GetObject("_diskSpaceWarningIcon.Image")));
 			this._diskSpaceWarningIcon.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this._diskSpaceWarningIcon.Location = new System.Drawing.Point(6, 44);
+			this._diskSpaceWarningIcon.Location = new System.Drawing.Point(3, 27);
 			this._diskSpaceWarningIcon.Name = "_diskSpaceWarningIcon";
 			this._diskSpaceWarningIcon.Size = new System.Drawing.Size(16, 16);
 			this._diskSpaceWarningIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -290,28 +304,18 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._diskSpaceWarningMessage.AutoEllipsis = true;
 			this._diskSpaceWarningMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._diskSpaceWarningMessage.ForeColor = System.Drawing.Color.Red;
-			this._diskSpaceWarningMessage.Location = new System.Drawing.Point(28, 44);
+			this._diskSpaceWarningMessage.Location = new System.Drawing.Point(25, 27);
 			this._diskSpaceWarningMessage.Name = "_diskSpaceWarningMessage";
-			this._diskSpaceWarningMessage.Size = new System.Drawing.Size(181, 16);
+			this._diskSpaceWarningMessage.Size = new System.Drawing.Size(218, 16);
 			this._diskSpaceWarningMessage.TabIndex = 29;
 			this._diskSpaceWarningMessage.Text = "don\'t translate me";
 			this._diskSpaceWarningMessage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// _diskSpace
-			// 
-			this._diskSpace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._diskSpace.Location = new System.Drawing.Point(6, 9);
-			this._diskSpace.Name = "_diskSpace";
-			this._diskSpace.Size = new System.Drawing.Size(203, 13);
-			this._diskSpace.TabIndex = 28;
-			this._diskSpace.Text = "disk space";
-			this._diskSpace.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// _reindexLink
 			// 
 			this._reindexLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this._reindexLink.AutoSize = true;
-			this._reindexLink.Location = new System.Drawing.Point(492, 60);
+			this._reindexLink.Location = new System.Drawing.Point(526, 60);
 			this._reindexLink.Name = "_reindexLink";
 			this._reindexLink.Size = new System.Drawing.Size(91, 13);
 			this._reindexLink.TabIndex = 25;
@@ -323,7 +327,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			// 
 			this._openFileStoreLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this._openFileStoreLink.AutoSize = true;
-			this._openFileStoreLink.Location = new System.Drawing.Point(492, 38);
+			this._openFileStoreLink.Location = new System.Drawing.Point(526, 38);
 			this._openFileStoreLink.Name = "_openFileStoreLink";
 			this._openFileStoreLink.Size = new System.Drawing.Size(75, 13);
 			this._openFileStoreLink.TabIndex = 35;
@@ -335,7 +339,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			// 
 			this._localServerConfigLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this._localServerConfigLink.AutoSize = true;
-			this._localServerConfigLink.Location = new System.Drawing.Point(492, 82);
+			this._localServerConfigLink.Location = new System.Drawing.Point(526, 82);
 			this._localServerConfigLink.Name = "_localServerConfigLink";
 			this._localServerConfigLink.Size = new System.Drawing.Size(132, 13);
 			this._localServerConfigLink.TabIndex = 23;
@@ -347,7 +351,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			// 
 			this._studyRulesLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this._studyRulesLink.AutoSize = true;
-			this._studyRulesLink.Location = new System.Drawing.Point(492, 104);
+			this._studyRulesLink.Location = new System.Drawing.Point(526, 104);
 			this._studyRulesLink.Name = "_studyRulesLink";
 			this._studyRulesLink.Size = new System.Drawing.Size(129, 13);
 			this._studyRulesLink.TabIndex = 24;
@@ -442,6 +446,18 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
 			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
 			// 
+			// _logFileLink
+			// 
+			this._logFileLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._logFileLink.AutoSize = true;
+			this._logFileLink.Location = new System.Drawing.Point(526, 127);
+			this._logFileLink.Name = "_logFileLink";
+			this._logFileLink.Size = new System.Drawing.Size(56, 13);
+			this._logFileLink.TabIndex = 36;
+			this._logFileLink.TabStop = true;
+			this._logFileLink.Text = "Show logs";
+			this._logFileLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._logFileLink_LinkClicked);
+			// 
 			// ActivityMonitorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -459,6 +475,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).EndInit();
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
 			this.splitContainer1.ResumeLayout(false);
 			this.panel1.ResumeLayout(false);
 			this.panel1.PerformLayout();
@@ -503,6 +520,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         private System.Windows.Forms.ToolStripLabel toolStripLabel3;
         private System.Windows.Forms.ToolStripTextBox _textFilter;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+		private System.Windows.Forms.LinkLabel _logFileLink;
 
 	}
 }

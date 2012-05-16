@@ -95,6 +95,8 @@
     <Compile Include="WorkItemService\DicomSend\ImageViewerStorageScu.cs" />
     <Compile Include="WorkItemService\Import\ImportFactory.cs" />
     <Compile Include="WorkItemService\Import\ImportItemProcessor.cs" />
+    <Compile Include="WorkItemService\ReapplyRules\ReapplyRulesFactory.cs" />
+    <Compile Include="WorkItemService\ReapplyRules\ReapplyRulesItemProcessor.cs" />
     <Compile Include="WorkItemService\Reindex\ReindexFactory.cs" />
     <Compile Include="WorkItemService\Reindex\ReindexItemProcessor.cs" />
     <Compile Include="WorkItemService\DeleteSeries\DeleteSeriesFactory.cs" />

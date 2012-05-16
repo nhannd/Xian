@@ -15,7 +15,7 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
@@ -113,20 +113,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                     Proxy.Postpone();
                 else if (now > Proxy.Item.ExpirationTime)
                 {
-                    var ep = new RulesEngineExtensionPoint();
                     if (Study == null)
                         Study = LoadRelatedStudy();
 
-                    var ruleContext = new RulesEngineContext
+                    var ruleOptions = new RulesEngineOptions
                                           {
                                               ApplyDeleteActions = true,
                                               ApplyRouteActions = true
                                           };
-                    StudyEntry studyEntry = Study.ToStoreEntry();
-                    foreach (IRulesEngine engine in ep.CreateExtensions())
-                    {
-                        engine.ApplyStudyRules(ruleContext, studyEntry);
-                    }
+					RulesEngine.Create().ApplyStudyRules(Study.ToStoreEntry(), ruleOptions);
 
                     Proxy.Complete();
                 }

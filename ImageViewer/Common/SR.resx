@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LabelBytes" xml:space="preserve">
     <value>B</value>
@@ -152,5 +152,23 @@
   </data>
   <data name="MessageReindexStatusUnknown" xml:space="preserve">
     <value>Reindex status unknown</value>
+  </data>
+  <data name="TimeOriginReceivedDate" xml:space="preserve">
+    <value>after study receipt/import</value>
+  </data>
+  <data name="TimeOriginStudyDate" xml:space="preserve">
+    <value>after study date/time</value>
+  </data>
+  <data name="TimeUnitDays" xml:space="preserve">
+    <value>day(s)</value>
+  </data>
+  <data name="TimeUnitHours" xml:space="preserve">
+    <value>hour(s)</value>
+  </data>
+  <data name="TimeUnitMinutes" xml:space="preserve">
+    <value>minute(s)</value>
+  </data>
+  <data name="TimeUnitWeeks" xml:space="preserve">
+    <value>week(s)</value>
   </data>
 </root>

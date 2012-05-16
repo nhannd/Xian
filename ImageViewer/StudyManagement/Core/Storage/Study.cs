@@ -272,6 +272,37 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             #endregion
         }
 
+		public void SetDeleteTime(int value, TimeUnit units, TimeOrigin origin, bool growOnly)
+		{
+			var originTime = (origin == TimeOrigin.ReceivedDate && StoreTime.HasValue) ? StoreTime.Value
+			                      	: (origin == TimeOrigin.StudyDate && StudyDate.HasValue) ? StudyDate.Value
+									: Platform.Time; //todo: not sure whether assigning current time if other values are null is the right thing to do...
+
+			DateTime? newTime = null;
+			switch (units)
+			{
+				case TimeUnit.Days:
+					newTime = originTime.AddDays(value);
+					break;
+				case TimeUnit.Weeks:
+					newTime = originTime.AddDays(value * 7);
+					break;
+				case TimeUnit.Minutes:
+					newTime = originTime.AddMinutes(value);
+					break;
+				case TimeUnit.Hours:
+					newTime = originTime.AddHours(value);
+					break;
+			}
+			if (!growOnly || !this.DeleteTime.HasValue || newTime > this.DeleteTime.Value)
+				this.DeleteTime = newTime;
+		}
+
+    	public void ClearDeleteTime()
+    	{
+    		this.DeleteTime = null;
+    	}
+
         #endregion
         #region Private Properties
 

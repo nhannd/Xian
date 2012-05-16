@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DicomAutoRouteRequest_ActivityDescription" xml:space="preserve">
     <value>Auto Route to {0}</value>
@@ -272,5 +272,17 @@
   </data>
   <data name="WorkItemPriorityEnumHigh" xml:space="preserve">
     <value>High</value>
+  </data>
+  <data name="ActivityTypeEnumReapplyRules" xml:space="preserve">
+    <value>Reapply Rules</value>
+  </data>
+  <data name="ReapplyRulesRequest_ActivityDescription" xml:space="preserve">
+    <value>Re-apply rule '{0}'</value>
+  </data>
+  <data name="MessageFailedToStartReapplyRules" xml:space="preserve">
+    <value>Failed to start reapply rules operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator.</value>
+  </data>
+  <data name="ReapplyRulesRequestMultiple_ActivityDescription" xml:space="preserve">
+    <value>Re-apply multiple rules</value>
   </data>
 </root>

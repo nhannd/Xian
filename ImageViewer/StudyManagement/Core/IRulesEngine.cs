@@ -10,42 +10,29 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
-using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
 	public class RulesEngineExtensionPoint : ExtensionPoint<IRulesEngine>
 	{ }
 
-	[WorkItemRequestDataContract("6CC24EE6-882C-4366-AC76-FCF7FE95F962")]
-	public class RulesEngineContext
-	{
-		public RulesEngineContext()
-		{
-			ApplyRouteActions = true;
-			ApplyDeleteActions = true;
-		}
-
-		public bool ApplyRouteActions { get; set; }
-		public bool ApplyDeleteActions { get; set; }
-	}
-
 	public interface IRulesEngine
 	{
 		/// <summary>
 		/// Apply the Study level rules to a Study.
 		/// </summary>
-		/// <param name="context">The context in which to apply the rules</param>
 		/// <param name="study">The study to apply the rules to.</param>
-		void ApplyStudyRules(RulesEngineContext context, StudyEntry study);
+		/// <param name="options"> </param>
+		void ApplyStudyRules(StudyEntry study, RulesEngineOptions options);
 
 		/// <summary>
 		/// Apply the specified rule to the specified study.
 		/// </summary>
-		/// <param name="context">The context in which to apply the rules</param>
 		/// <param name="study">The study to apply the rule to</param>
 		/// <param name="ruleId"> The rule to apply.</param>
-		void ApplyStudyRule(RulesEngineContext context, StudyEntry study, string ruleId);
+		/// <param name="options"> </param>
+		void ApplyStudyRule(StudyEntry study, string ruleId, RulesEngineOptions options);
 	}
 }
