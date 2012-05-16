@@ -24,9 +24,9 @@ using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
     /// <summary>
-    /// Class for reprocessing Study.  Primarily used by <see cref="ReindexUtility"/>.
+    /// Class for reprocessing a Study on disk.  Primarily used by <see cref="ReindexUtility"/>.
     /// </summary>
-    public class ReprocessStudyFolder
+    internal class ReprocessStudyFolder
     {
         #region Private Members
 

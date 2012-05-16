@@ -17,7 +17,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ReapplyRules
 {
     internal class ReapplyRulesItemProcessor : BaseItemProcessor<ReapplyRulesRequest, ReapplyRulesProgress>
     {
-
         public override void Process()
         {
             if (CancelPending)
@@ -60,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ReapplyRules
         public override bool CanStart(out string reason)
         {            
             reason = string.Empty;
-            return true;
+            return !ReindexScheduled();
         }
     }
 }

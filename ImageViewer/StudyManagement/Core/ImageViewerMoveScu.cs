@@ -19,12 +19,12 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Auditing;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
+namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
     /// <summary>
-    /// Class for processing 
+    /// ImageViewer specific class customizing <see cref="StudyRootMoveScu"/>. 
     /// </summary>
-    internal class ImageViewerMoveScu : StudyRootMoveScu
+    public class ImageViewerMoveScu : StudyRootMoveScu
     {
         #region Private Fields
 
@@ -70,10 +70,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
         {
             var receivedInstances = new AuditedInstances();
             receivedInstances.AddInstance(_patientToRetrieve.PatientId, _patientToRetrieve.PatientsName, _studyToRetrieve.StudyInstanceUid);
-            if (noExceptions)
-                AuditHelper.LogReceivedInstances(RemoteAE, RemoteHost, receivedInstances, EventSource.CurrentProcess, EventResult.Success, EventReceiptAction.ActionUnknown);
-            else
-                AuditHelper.LogReceivedInstances(RemoteAE, RemoteHost, receivedInstances, EventSource.CurrentProcess, EventResult.MajorFailure, EventReceiptAction.ActionUnknown);
+            AuditHelper.LogReceivedInstances(RemoteAE, RemoteHost, receivedInstances, EventSource.CurrentProcess,
+                                             noExceptions ? EventResult.Success : EventResult.MajorFailure,
+                                             EventReceiptAction.ActionUnknown);
         }
 
         #endregion

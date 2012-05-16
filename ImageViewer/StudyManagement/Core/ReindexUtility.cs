@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
     /// </summary>
     public class ReindexUtility
     {
-        #region Private Class
+        #region Private Sub-Class
 
         private class ThreadPoolStopProxy
         {
@@ -63,7 +63,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         {
             public string StudyInstanceUid;
         }    
-    
 
         public event EventHandler<StudyEventArgs> StudyDeletedEvent
         {
@@ -246,6 +245,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 context.Commit();
             }
         }
+
         private void CleanupFilestoreDirectory()
         {
             try

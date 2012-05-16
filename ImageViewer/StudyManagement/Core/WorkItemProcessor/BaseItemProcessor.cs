@@ -277,8 +277,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 
 
         /// <summary>
-        /// Returns a list of related <see cref="StudyManagement.Storage.WorkItem"/> with specified types and status (both are optional).
-        /// and related to the given <see cref="StudyManagement.Storage.WorkItem"/> 
+        /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
+        /// and related to the given <see cref="WorkItem"/> 
         /// </summary>
         /// <param name="types"></param>
         /// <param name="status"></param>
@@ -322,8 +322,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         }
 
         /// <summary>
-        /// Returns a list of related <see cref="StudyManagement.Storage.WorkItem"/> with specified types and status (both are optional).
-        /// and related to the given <see cref="StudyManagement.Storage.WorkItem"/> 
+        /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
+        /// and related to the given <see cref="WorkItem"/> 
         /// </summary>
         /// <returns></returns>
         protected bool ReindexScheduled()
@@ -350,8 +350,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         }
 
         /// <summary>
-        /// Returns a list of related <see cref="StudyManagement.Storage.WorkItem"/> with specified types and status (both are optional).
-        /// and related to the given <see cref="StudyManagement.Storage.WorkItem"/> 
+        /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
+        /// and related to the given <see cref="WorkItem"/> 
         /// </summary>
         /// <returns></returns>
         protected bool InProgressWorkItems()
@@ -398,7 +398,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         }
 
         #endregion
-
-
     }
 }

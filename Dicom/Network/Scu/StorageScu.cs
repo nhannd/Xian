@@ -532,28 +532,26 @@ namespace ClearCanvas.Dicom.Network.Scu
 
                 if (fileToSend.TransferSyntax.Encapsulated)
                 {
-                    pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
-                                                                            fileToSend.TransferSyntax);
+                    pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
+                                                                            msg.TransferSyntax);
 
                     if (DicomCodecRegistry.GetCodec(fileToSend.TransferSyntax) != null)
                     {
                         if (pcid == 0)
-                            pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
-                                                                                    TransferSyntax.
-                                                                                        ExplicitVrLittleEndian);
+                            pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
+                                                                                    TransferSyntax.ExplicitVrLittleEndian);
                         if (pcid == 0)
-                            pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
-                                                                                    TransferSyntax.
-                                                                                        ImplicitVrLittleEndian);
+                            pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
+                                                                                    TransferSyntax.ImplicitVrLittleEndian);
                     }
                 }
                 else
                 {
                     if (pcid == 0)
-                        pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
+                        pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
                                                                                 TransferSyntax.ExplicitVrLittleEndian);
                     if (pcid == 0)
-                        pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
+                        pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
                                                                                 TransferSyntax.ImplicitVrLittleEndian);
                 }
             }

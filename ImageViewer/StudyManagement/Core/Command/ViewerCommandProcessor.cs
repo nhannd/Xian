@@ -13,6 +13,9 @@ using ClearCanvas.Dicom.Utilities.Command;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
 {
+    /// <summary>
+    /// ImageViewer specific <see cref="CommandProcessor"/>.  This command processor takes into account how the ImageViewer accesses its database.
+    /// </summary>
     public class ViewerCommandProcessor : CommandProcessor
     {
         public ViewerCommandProcessor(string description) 

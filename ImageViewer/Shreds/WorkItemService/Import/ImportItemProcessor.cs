@@ -24,10 +24,12 @@ using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 {
     /// <summary>
-    /// Processor for <see cref="WorkItemTypeEnum.Import"/> <see cref="WorkItem"/>s.
+    /// Processor for import of files.
     /// </summary>
-    public class ImportItemProcessor : BaseItemProcessor<ImportFilesRequest,ImportFilesProgress>
+    internal class ImportItemProcessor : BaseItemProcessor<ImportFilesRequest,ImportFilesProgress>
     {
+        #region Public Methods
+        
         public override bool Initialize(WorkItemStatusProxy proxy)
         {
             bool initResult = base.Initialize(proxy);
@@ -81,6 +83,17 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             else
                 Proxy.Complete();
         }
+
+        public override bool CanStart(out string reason)
+        {
+            reason = string.Empty;
+
+            return !ReindexScheduled();
+        }
+
+        #endregion
+
+        #region Private Methods
 
         private void ValidateRequest(ImportFilesRequest filesRequest)
         {
@@ -143,13 +156,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
         {
             var configuration = GetServerConfiguration();
 
-            var context = new ImportStudyContext(configuration.AETitle, StudyStore.GetConfiguration())
-                              {ExpirationDelaySeconds = WorkItemServiceSettings.Default.ExpireDelaySeconds};
+            var context = new ImportStudyContext(configuration.AETitle, StudyStore.GetConfiguration());
 
             // Publish the creation of the StudyImport WorkItems
             context.StudyWorkItems.ItemAdded += (sender, args) => Platform.GetService(
                 (IWorkItemActivityMonitorService service) =>
-                service.Publish(new WorkItemPublishRequest {Item = WorkItemHelper.FromWorkItem(args.Item)}));
+                service.Publish(new WorkItemPublishRequest {Item = WorkItemDataHelper.FromWorkItem(args.Item)}));
 
             var extensions = new List<string>();
 
@@ -209,11 +221,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             }
         }
 
-        public override bool CanStart(out string reason)
-        {
-            reason = string.Empty;
-
-            return !ReindexScheduled();
-        }
+        #endregion
     }
 }

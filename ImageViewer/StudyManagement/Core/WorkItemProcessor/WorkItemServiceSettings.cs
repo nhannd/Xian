@@ -9,14 +9,10 @@
 
 #endregion
 
-//using System.Configuration;
-//using ClearCanvas.Server.ShredHost;
-
 using System.Configuration;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 {
-	// TODO : this is temporarliy broken - but needs to be converted to app settings anyhow
     [SettingsGroupDescription("Settings for the WorkItemService.")]
     [SettingsProvider(typeof(LocalFileSettingsProvider))]
     public partial class WorkItemServiceSettings 

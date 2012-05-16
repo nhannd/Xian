@@ -25,12 +25,12 @@ using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 
-namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
+namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
     /// <summary>
     /// Internal inherited <see cref="StorageScu"/> class.
     /// </summary>
-    internal class ImageViewerStorageScu : StorageScu
+    public class ImageViewerStorageScu : StorageScu
     {
         #region Private Members
 
@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             _sendRequest = request;
 
             // Add a delegate to do the actual selection of the contexts;
-            PresentationContextSelectionDelegate = SelectPresentationContext;
+            PresentationContextSelectionDelegate += SelectPresentationContext;
 
             var dic = new Dictionary<SopClass, SupportedSop>();
      
@@ -194,41 +194,41 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
 
             // If Lossy compressed & we have a matching context, send
             // If we don't have a codec, just return
-            if (file.TransferSyntax.Encapsulated && file.TransferSyntax.LossyCompressed)
+            if (message.TransferSyntax.Encapsulated && message.TransferSyntax.LossyCompressed)
             {
-                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, file.TransferSyntax);                
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(message.SopClass, message.TransferSyntax);                
                 if (pcid != 0) return pcid;
 
-                if (DicomCodecRegistry.GetCodec(file.TransferSyntax) == null)
+                if (DicomCodecRegistry.GetCodec(message.TransferSyntax) == null)
                     return 0;
             }
 
             // If the image is lossless compressed & we don't have a codec, send if we
             // can as is.
-            if (file.TransferSyntax.Encapsulated && file.TransferSyntax.LosslessCompressed)
+            if (message.TransferSyntax.Encapsulated && message.TransferSyntax.LosslessCompressed)
             {
-                if (DicomCodecRegistry.GetCodec(file.TransferSyntax) == null)
+                if (DicomCodecRegistry.GetCodec(message.TransferSyntax) == null)
                 {
-                    pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, file.TransferSyntax);
+                    pcid = association.FindAbstractSyntaxWithTransferSyntax(message.SopClass, message.TransferSyntax);
                     return pcid;
                 }
             }
 
             // If lossless compressed & requesting lossless syntax, just send as is
-            if (file.TransferSyntax.Encapsulated
-                && file.TransferSyntax.LosslessCompressed
+            if (message.TransferSyntax.Encapsulated
+                && message.TransferSyntax.LosslessCompressed
                 && ((_sendRequest.CompressionType == CompressionType.Rle
                 || _sendRequest.CompressionType == CompressionType.JpegLossless
                 || _sendRequest.CompressionType == CompressionType.JpegLossless)))
             {
-                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, file.TransferSyntax);
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(message.SopClass, message.TransferSyntax);
                 if (pcid != 0) return pcid;
             }
 
 
             if (_sendRequest.CompressionType == CompressionType.Rle)
             {
-                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, TransferSyntax.RleLossless);
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(message.SopClass, TransferSyntax.RleLossless);
                 if (pcid != 0)
                 {
                     return pcid;
@@ -236,7 +236,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             }
             else if (_sendRequest.CompressionType == CompressionType.JpegLossless)
             {
-                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1);
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(message.SopClass, TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1);
                 if (pcid != 0)
                 {
                     return pcid;
@@ -244,7 +244,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             }
             else if (_sendRequest.CompressionType == CompressionType.J2KLossless)
             {
-                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, TransferSyntax.Jpeg2000ImageCompressionLosslessOnly);
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(message.SopClass, TransferSyntax.Jpeg2000ImageCompressionLosslessOnly);
                 if (pcid != 0)
                 {
                     return pcid;
@@ -252,7 +252,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             }
             else if (_sendRequest.CompressionType == CompressionType.J2KLossy)
             {
-                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass, TransferSyntax.Jpeg2000ImageCompression);
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(message.SopClass, TransferSyntax.Jpeg2000ImageCompression);
                 if (pcid != 0)
                 {
                     var doc = new XmlDocument();
@@ -303,7 +303,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
 
                 if (iod.BitsStored == 8)
                 {
-                    pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
+                    pcid = association.FindAbstractSyntaxWithTransferSyntax(message.SopClass,
                                                                             TransferSyntax.JpegBaselineProcess1);
                     if (pcid != 0)
                     {
@@ -352,7 +352,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                 }
                 else if (iod.BitsStored == 12)
                 {
-                    pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
+                    pcid = association.FindAbstractSyntaxWithTransferSyntax(message.SopClass,
                                                                             TransferSyntax.JpegExtendedProcess24);
                     if (pcid != 0)
                     {
@@ -402,10 +402,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             }
 
             if (pcid == 0)
-                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(message.SopClass,
                                                                         TransferSyntax.ExplicitVrLittleEndian);
             if (pcid == 0)
-                pcid = association.FindAbstractSyntaxWithTransferSyntax(file.SopClass,
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(message.SopClass,
                                                                         TransferSyntax.ImplicitVrLittleEndian);
 
             return pcid;

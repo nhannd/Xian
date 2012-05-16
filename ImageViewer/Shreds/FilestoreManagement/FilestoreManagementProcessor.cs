@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Shreds.FilestoreManagement
 					context.Commit();
 				}
                 if (item != null)
-                        WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemHelper.FromWorkItem(item));
+                        WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemDataHelper.FromWorkItem(item));
 
 			}
 			catch (Exception)

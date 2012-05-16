@@ -22,6 +22,7 @@ using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Command;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
+using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
@@ -53,8 +54,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
     /// </summary>
     public class DicomReceiveImportContext : ImportFilesContext
     {
+        #region Private Members
+
         private readonly IWorkItemActivityMonitor _monitor;
         private readonly IDicomServiceNode _dicomServerNode;
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Constructor.
@@ -70,6 +77,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             if (serverList.Count > 0)
                 _dicomServerNode = CollectionUtils.FirstElement(serverList);
         }
+
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Create a StudyProcessRequest object for a specific SOP Instance.
@@ -89,6 +100,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             return request;
         }
 
+        #endregion
+
+        #region Private Methods
+
         private void WorkItemsChanged(object sender, WorkItemsChangedEventArgs e)
         {
             foreach (var item in e.ChangedItems)
@@ -107,6 +122,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 }
             }
         }
+
+        #endregion
     }
 
     /// <summary>
@@ -114,6 +131,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
     /// </summary>
     public class ImportStudyContext : ImportFilesContext
     {
+        #region Contructor
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -123,6 +142,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             : base(sourceAE, configuration)
         {
         }
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Create a <see cref="ProcessStudyRequest"/> object for a specific SOP Instnace.
@@ -139,14 +162,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                               };
             return request;
         }
+
+        #endregion
     }
 
     /// <summary>
     /// Encapsulates the context of the application when <see cref="ImportFilesUtility"/> is called.
     /// </summary>
     public abstract class ImportFilesContext
-    {
-     
+    {     
         #region Constructors
 
         /// <summary>
@@ -158,10 +182,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             StudyWorkItems = new ObservableDictionary<string, WorkItem>();
             SourceAE = sourceAE;
             StorageConfiguration = configuration;
-            ExpirationDelaySeconds = 45;
+
+            ExpirationDelaySeconds = WorkItemServiceSettings.Default.ExpireDelaySeconds;
         }
 
         #endregion
+
+        #region Public Properties
 
         /// <summary>
         /// Gets the source AE title where the image(s) are imported from
@@ -174,21 +201,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         public ObservableDictionary<string,WorkItem> StudyWorkItems { get; private set; }
 
         /// <summary>
+        /// Storage configuration.
+        /// </summary>
+        public StorageConfiguration StorageConfiguration { get; private set; }
+
+        /// <summary>
+        /// Delay to expire inserted WorkItems
+        /// </summary>
+        public int ExpirationDelaySeconds { get; set; }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
         /// Abstract method for creating a <see cref="ProcessStudyRequest"/> object for the given DICOM message.
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
         public abstract ProcessStudyRequest CreateRequest(DicomMessageBase message);
 
-        /// <summary>
-        /// Storage configuration.
-        /// </summary>
-        public StorageConfiguration  StorageConfiguration { get; private set; }
-
-        /// <summary>
-        /// Delay to expire inserted WorkItems
-        /// </summary>
-        public int ExpirationDelaySeconds { get; set; }
+        #endregion
     }
 
     /// <summary>
@@ -324,8 +357,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                     InsertWorkItemCommand command;                 
                     if (duplicateFile)
-                    {
-                        
+                    {                        
                         command = workItem != null
                             ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName)
                             : new InsertWorkItemCommand(_context.CreateRequest(file), new ProcessStudyProgress(),  studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName);             
@@ -349,7 +381,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                             Platform.GetService(
                                 (IWorkItemActivityMonitorService service) =>
-                                service.Publish(new WorkItemPublishRequest { Item = WorkItemHelper.FromWorkItem(command.WorkItem) }));
+                                service.Publish(new WorkItemPublishRequest { Item = WorkItemDataHelper.FromWorkItem(command.WorkItem) }));
                         }
                         else
                         {
@@ -372,7 +404,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                 Platform.GetService(
                                     (IWorkItemActivityMonitorService service) =>
                                     service.Publish(new WorkItemPublishRequest
-                                                        {Item = WorkItemHelper.FromWorkItem(command.WorkItem)}));
+                                                        {Item = WorkItemDataHelper.FromWorkItem(command.WorkItem)}));
 
                             }
                             // Save the updated WorkItem

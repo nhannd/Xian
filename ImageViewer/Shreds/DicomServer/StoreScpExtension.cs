@@ -140,15 +140,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
             if (_importContext == null)
             {
-                _importContext = new DicomReceiveImportContext(association.CallingAE, Context.StorageConfiguration)
-                                     {
-                                         ExpirationDelaySeconds =
-                                             WorkItemServiceSettings.Default.ExpireDelaySeconds
-                                     };
+                _importContext = new DicomReceiveImportContext(association.CallingAE, Context.StorageConfiguration);
 
                 // Publish new WorkItems as they're added to the context
                 _importContext.StudyWorkItems.ItemAdded += (sender, args) => Platform.GetService(
-                    (IWorkItemActivityMonitorService service) => service.Publish(new WorkItemPublishRequest {Item = WorkItemHelper.FromWorkItem(args.Item)}));
+                    (IWorkItemActivityMonitorService service) => service.Publish(new WorkItemPublishRequest {Item = WorkItemDataHelper.FromWorkItem(args.Item)}));
             }
 
 		    var importer = new ImportFilesUtility(_importContext);

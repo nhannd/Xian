@@ -35,6 +35,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         #endregion
 
 		#region Constructor
+
         private WorkItemProcessor(int numberStatThreads, int numberNormalThreads, string name)
         {
             _name = name;
@@ -69,6 +70,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 }
             }
 	    }
+
 		#endregion
 
         #region Public Properties
@@ -85,13 +87,21 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         #endregion
 
-        #region Public Static Method
+        #region Public Static Methods
+
+        /// <summary>
+        /// Initialize the singleton <see cref="WorkItemProcessor"/>.
+        /// </summary>
+        /// <param name="numberStatThreads"></param>
+        /// <param name="numberNormalThreads"></param>
+        /// <param name="name"></param>
         public static void CreateProcessor(int numberStatThreads, int numberNormalThreads, string name)
         {
             if (Instance != null) throw new ApplicationException("Processor already created!");
 
             Instance = new WorkItemProcessor(numberStatThreads, numberNormalThreads, name);
         }
+
         #endregion
 
         #region Public Methods
@@ -292,14 +302,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 		}
 
         /// <summary>
-        /// Method for getting next <see cref="StudyManagement.Storage.WorkItem"/> entry.
+        /// Method for getting next <see cref="WorkItem"/> entry.
 		/// </summary>
 		/// <param name="count">The count.</param>
 		/// <param name="priority">Search for stat items.</param>
 		/// <remarks>
 		/// </remarks>
 		/// <returns>
-		/// A <see cref="StudyManagement.Storage.WorkItem"/> entry if found, or else null;
+		/// A <see cref="WorkItem"/> entry if found, or else null;
 		/// </returns>
         private List<WorkItem> GetWorkItems(int count, WorkItemPriorityEnum priority)
         {
@@ -335,19 +345,19 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
 
         /// <summary>
-        /// Method for getting next <see cref="StudyManagement.Storage.WorkItem"/> entry.
+        /// Method for getting next <see cref="WorkItem"/> entry.
         /// </summary>
         /// <param name="count">The count.</param>
         /// <remarks>
         /// </remarks>
         /// <returns>
-        /// A <see cref="StudyManagement.Storage.WorkItem"/> entry if found, or else null;
+        /// A <see cref="WorkItem"/> entry if found, or else null;
         /// </returns>
         private List<WorkItem> GetWorkItemsToDelete(int count)
         {
             try
             {
-
+                // Get WorkItems that have expired that need to be deleted
                 using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
                 {
                     var workItemBroker = context.GetWorkItemBroker();

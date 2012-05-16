@@ -13,6 +13,7 @@ using System;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.WorkItem;
+using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
@@ -84,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
                 _scu = new ImageViewerMoveScu(configuration.AETitle, remoteAE, RetrieveSeries.Patient, RetrieveSeries.Study, RetrieveSeries.SeriesInstanceUids);
             else
             {
-                Proxy.Fail(WorkItemFailureType.Fatal);
+                Proxy.Fail("Invalid request type.", WorkItemFailureType.Fatal);
                 return;
             }
 
