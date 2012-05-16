@@ -878,7 +878,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public IList ActivityTypeFilterChoices
 		{
-            get { return new[] { NoFilter }.Concat(ActivityTypeHelper.GetActivityTypeList().Cast<object>().OrderBy<object, string>(FormatActivityTypeFilter)).ToList(); }
+            get { return new[] { NoFilter }.Concat(ActivityTypeHelper.GetActivityTypeList().OrderBy<object, string>(FormatActivityTypeFilter)).ToList(); }
 		}
 
 		public string FormatActivityTypeFilter(object value)

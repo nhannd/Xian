@@ -15,7 +15,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
     public static class ActivityTypeHelper
     {
-        private static List<string> _activityTypes;
+        private static HashSet<string> _activityTypes;
         private static readonly object SyncLock = new Object();
 
         public static IEnumerable<string> GetActivityTypeList()
@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                  where (a != null)
                                  select t).ToList();
 
-                    _activityTypes = new List<string>();
+					_activityTypes = new HashSet<string>();
 
                     foreach (Type t in types)
                     {
