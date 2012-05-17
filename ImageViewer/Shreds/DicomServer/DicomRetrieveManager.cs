@@ -86,8 +86,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			private readonly Thread _thread;
 			private readonly IEnumerable<StudyInformation> _studiesToRetrieve;
 			private readonly IEnumerable<string> _seriesInstanceUids;
+		    private DicomStatus _lastStatus;
 
-			#endregion
+		    #endregion
 
 			public RetrieveScu(string localAETitle, AEInformation remoteAEInfo, IEnumerable<StudyInformation> studiesToRetrieve)
 				:base(localAETitle, remoteAEInfo.AETitle, remoteAEInfo.HostName, remoteAEInfo.Port, localAETitle)
@@ -121,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			public override void OnReceiveResponseMessage(ClearCanvas.Dicom.Network.DicomClient client, ClearCanvas.Dicom.Network.ClientAssociationParameters association, byte presentationID, ClearCanvas.Dicom.DicomMessage message)
 			{
 				base.OnReceiveResponseMessage(client, association, presentationID, message);
-
+			    _lastStatus = message.Status;
 				if (message.Status.Status == DicomState.Warning)
 				{
 					string msg = String.Format("Remote server returned a warning status ({0}: {1}).",
@@ -158,8 +159,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					}
 					else if (base.Status == ScuOperationStatus.Failed)
 					{
-						OnRetrieveError(String.Format("The Move operation failed ({0}: {1}).",
-							RemoteAE, base.FailureDescription ?? "no failure description provided"));
+                        var translatedErrorMessage = DicomStatusTranslator.TranslateError(_lastStatus);
+					    var errorMessage = string.IsNullOrEmpty(translatedErrorMessage)
+                            ? string.IsNullOrEmpty(base.FailureDescription)? "no failure description provided": base.FailureDescription
+					        : translatedErrorMessage;
+
+						OnRetrieveError(String.Format("The Move operation failed ({0}: {1}).", RemoteAE, errorMessage));
 					}
 					else if (base.Status == ScuOperationStatus.TimeoutExpired)
 					{

@@ -367,4 +367,7 @@ Please check the service logs for more details.</value>
   <data name="StudyLocator" xml:space="preserve">
     <value>Study Locator</value>
   </data>
+  <data name="DicomError_QRMoveDestinationUnknown" xml:space="preserve">
+    <value>Images could not be received because the remote device was having a problem reaching your computer, possibly due to misconfiguration.</value>
+  </data>
 </root>

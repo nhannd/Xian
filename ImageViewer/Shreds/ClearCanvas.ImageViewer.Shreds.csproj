@@ -62,6 +62,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>DicomServerSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="DicomServer\DicomStatusTranslator.cs" />
     <Compile Include="DicomServer\FindScpExtension.cs" />
     <Compile Include="DicomServer\DicomServer.cs" />
     <Compile Include="DicomServer\DicomServerExtension.cs" />
