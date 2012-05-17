@@ -23,6 +23,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	[ButtonAction("Open", "dicomstudybrowser-toolbar/ToolbarFilterStudy", "Open")]
 	[MenuAction("Open", "dicomstudybrowser-contextmenu/MenuFilterStudy", "Open")]
 	[EnabledStateObserver("Open", "Enabled", "EnabledChanged")]
+	[VisibleStateObserver("Open", "Visible", "VisibleChanged")]
 	[Tooltip("Open", "TooltipFilterStudy")]
 	[IconSet("Open", "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
 	[ViewerActionPermission("Open", AuthorityTokens.StudyFilters)]
@@ -101,6 +102,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 			base.Enabled = this.IsLocalStudyLoaderSupported
 						   && base.Context.SelectedServerGroup != null && base.Context.SelectedServerGroup.IsLocalDatastore
 						   && base.Context.SelectedStudies != null && base.Context.SelectedStudies.Count > 0;
+			base.Visible = base.Context.SelectedServerGroup != null && base.Context.SelectedServerGroup.IsLocalDatastore;
 		}
 
 		private static IStudyLoader CreateLoader()

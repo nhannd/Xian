@@ -31,6 +31,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 	[IconSet("show", "Icons.ShowSeriesDetailsToolSmall.png", "Icons.ShowSeriesDetailsToolMedium.png", "Icons.ShowSeriesDetailsToolLarge.png")]
 
 	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
+	[VisibleStateObserver("show", "Visible", "VisibleChanged")]
 
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class ShowSeriesDetailsTool : StudyBrowserTool
@@ -59,12 +60,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		private void UpdateEnabled()
 		{
 			if (base.Context.SelectedServerGroup == null)
+			{
 				base.Enabled = false;
+				base.Visible = false;
+			}
 			else if (base.Context.SelectedServerGroup.IsLocalDatastore)
+			{
 				base.Enabled = CanUseLocal() && base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1;
+				base.Visible = true;
+			}
 			else
+			{
 				base.Enabled = base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1 &&
 					GetServerForStudy(base.Context.SelectedStudy) != null;
+				base.Visible = true;
+			}
 		}
 
 		private IServerTreeNode GetServerForStudy(StudyItem studyItem)

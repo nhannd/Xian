@@ -28,6 +28,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarDeleteStudy", "DeleteStudy")]
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuDeleteStudy", "DeleteStudy")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[VisibleStateObserver("activate", "Visible", "VisibleChanged")]
 	[Tooltip("activate", "TooltipDeleteStudy")]
 	[IconSet("activate", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 
@@ -120,6 +121,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			this.Enabled = (this.Context.SelectedStudy != null &&
 			                this.Context.SelectedServerGroup.IsLocalDatastore &&
 			                LocalDataStoreActivityMonitor.IsConnected);
+			this.Visible = this.Context.SelectedServerGroup.IsLocalDatastore;
 		}
 
 		private bool ConfirmDeletion()

@@ -30,6 +30,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarRetrieveStudy", "RetrieveStudy")]
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuRetrieveStudy", "RetrieveStudy")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[VisibleStateObserver("activate", "Visible", "VisibleChanged")]
 	[Tooltip("activate", "TooltipRetrieveStudy")]
 	[IconSet("activate", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png")]
 
@@ -157,6 +158,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			Enabled = (Context.SelectedStudy != null &&
 			                !Context.SelectedServerGroup.IsLocalDatastore &&
 			                LocalDataStoreActivityMonitor.IsConnected);
+			Visible = !Context.SelectedServerGroup.IsLocalDatastore;
 		}
 	}
 }

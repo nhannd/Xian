@@ -28,6 +28,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarOpenStudy", "OpenStudy")]
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuOpenStudy", "OpenStudy")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[VisibleStateObserver("activate", "Visible", "VisibleChanged")]
 	[Tooltip("activate", "TooltipOpenStudy")]
 	[IconSet("activate", "Icons.OpenToolSmall.png", "Icons.OpenToolSmall.png", "Icons.OpenToolSmall.png")]
 
@@ -136,13 +137,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (Context.SelectedServerGroup.IsLocalDatastore)
 			{
 				Enabled = Context.SelectedStudy != null;
+				Visible = true;
 			}
 			else
 			{
-				if (Context.SelectedStudy != null)
-					Enabled = GetAtLeastOneServerSupportsLoading();
-				else
-					Enabled = false;
+				var loadingSupported = GetAtLeastOneServerSupportsLoading();
+				Enabled = loadingSupported && Context.SelectedStudy != null;
+				Visible = loadingSupported;
 			}
 
 			SetDoubleClickHandler();

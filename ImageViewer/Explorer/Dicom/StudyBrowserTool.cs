@@ -18,8 +18,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
     public abstract class StudyBrowserTool : Tool<IStudyBrowserToolContext>
 	{
-		private bool _enabled;
+		private bool _enabled = true;
 		private event EventHandler _enabledChangedEvent;
+
+		private bool _visible = true;
+		private event EventHandler _visibleChangedEvent;
 
 		protected const string LocalStudyLoaderName = "DICOM_LOCAL";
 		protected const string RemoteStudyLoaderName = "DICOM_REMOTE";
@@ -79,6 +82,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			add { _enabledChangedEvent += value; }
 			remove { _enabledChangedEvent -= value; }
+		}
+
+		public bool Visible
+		{
+			get { return _visible; }
+			protected set
+			{
+				if (_visible != value)
+				{
+					_visible = value;
+					EventsHelper.Fire(_visibleChangedEvent, this, EventArgs.Empty);
+				}
+			}
+		}
+
+		public event EventHandler VisibleChanged
+		{
+			add { _visibleChangedEvent += value; }
+			remove { _visibleChangedEvent -= value; }
 		}
 	}
 }

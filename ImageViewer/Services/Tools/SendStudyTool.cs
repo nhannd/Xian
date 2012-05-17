@@ -30,6 +30,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarSendStudy", "SendStudy")]
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuSendStudy", "SendStudy")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+    [VisibleStateObserver("activate", "Visible", "VisibleChanged")]
     [Tooltip("activate", "TooltipSendStudy")]
 	[IconSet("activate", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png")]
 
@@ -148,6 +149,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			Enabled = (this.Context.SelectedStudy != null &&
 			           this.Context.SelectedServerGroup.IsLocalDatastore &&
 			           LocalDataStoreActivityMonitor.IsConnected);
+			Visible = this.Context.SelectedServerGroup.IsLocalDatastore;
 		}
 	}
 }
