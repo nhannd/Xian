@@ -32,14 +32,15 @@ namespace ClearCanvas.Common
 		private static void Dump()
 		{
 			var settings = new DecryptedProductSettings();
-			Console.WriteLine(@"Name: {0}", settings.Name);
+            Console.WriteLine(@"Name: {0}", settings.Name);
 			Console.WriteLine(@"Product: {0}", settings.Product);
 			Console.WriteLine(@"Component: {0}", settings.Component);
 			Console.WriteLine(@"Edition: {0}", settings.Edition);
 			Console.WriteLine(@"Version: {0}", settings.Version);
 			Console.WriteLine(@"VersionSuffix: {0}", settings.VersionSuffix);
 			Console.WriteLine(@"Release: {0}", settings.Release);
-			Console.WriteLine(@"Copyright:\n{0}", settings.Copyright);
+            Console.WriteLine(@"Family: {0}", settings.FamilyName);
+            Console.WriteLine(@"Copyright:\n{0}", settings.Copyright);
 			Console.WriteLine(@"\nLicense:\n{0}", settings.License);
 		}
 
@@ -52,6 +53,7 @@ namespace ClearCanvas.Common
 	internal class DecryptedProductSettings
 	{
 		private string _name;
+        private string _family;
 		private string _product;
 		private string _component;
 		private string _edition;
@@ -80,6 +82,21 @@ namespace ClearCanvas.Common
 				return _name;
 			}
 		}
+
+
+        /// <summary>
+        /// Gets the product's family name.
+        /// </summary>
+        public string FamilyName
+        {
+            get
+            {
+                if (_family == null)
+                    _family = Decrypt(_settings.FamilyName);
+                return _family;
+            }
+        }
+
 
 		/// <summary>
 		/// Gets the component name.
@@ -259,6 +276,18 @@ namespace ClearCanvas.Common
 			}
 		}
 
+        /// <summary>
+        /// Gets the product's family name.
+        /// </summary>
+        public static string FamilyName
+        {
+            get
+            {
+                return _settings.FamilyName;
+            }
+        }
+
+
 		/// <summary>
 		/// Gets the component name.
 		/// </summary>
@@ -332,6 +361,7 @@ namespace ClearCanvas.Common
 		{
 			return Concatenate(Name, GetNameSuffix(includeEdition, includeRelease));
 		}
+
 
 		/// <summary>
 		/// Gets the suffixes to the component name (i.e. the product edition and/or release type).
