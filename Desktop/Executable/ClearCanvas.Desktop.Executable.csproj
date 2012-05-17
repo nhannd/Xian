@@ -172,6 +172,6 @@
   <Import Project="..\..\Common\ClearCanvas.Strings.targets" />
   <PropertyGroup>
     <PreBuildEvent />
-    <PostBuildEvent>"$(MSBuildBinPath)\Msbuild" "$(ProjectDir)\PostBuild_dist.proj" "/p:SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(ConfigurationName);ProjectName=$(ProjectName);ProjectDir=$(ProjectDir);OutDir=$(OutDir);DistributionDir=$(DistributionDir);Options=$(Options);Localizations=en+es;ReleaseType=$(ReleaseType);EditionName=$(EditionName)"</PostBuildEvent>
+    <PostBuildEvent>"$(MSBuildBinPath)\Msbuild" "$(ProjectDir)\PostBuild_dist.proj" "/p:SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(ConfigurationName);ProjectName=$(ProjectName);ProjectDir=$(ProjectDir);OutDir=$(OutDir);DistributionDir=$(DistributionDir);Options=$(Options);Localizations=$(Localizations);ReleaseType=$(ReleaseType);EditionName=$(EditionName)"</PostBuildEvent>
   </PropertyGroup>
 </Project>
