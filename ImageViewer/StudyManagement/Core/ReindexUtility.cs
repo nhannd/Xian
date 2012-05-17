@@ -322,8 +322,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 if (_cancelRequested)
                     break;
             }
-
-            _threadPool.Stop(true);
+            
+            _threadPool.Stop(false);
         }
 
         private void ProcessStudyFolder(string folder)
