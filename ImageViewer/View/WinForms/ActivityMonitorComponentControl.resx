@@ -153,260 +153,11 @@
   <data name="&gt;&gt;_workItemsTableView.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;tableLayoutPanel2.Name" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel2.Parent" xml:space="preserve">
-    <value>_overviewPanel</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel2.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="tableLayoutPanel2.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label1" Row="3" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="1" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="label10" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_statusLight" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label11" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_totalStudies" Row="3" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="_failures" Row="4" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="_reindexLink" Row="3" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_openFileStoreLink" Row="2" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_localServerConfigLink" Row="4" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_studyRulesLink" Row="5" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_logFileLink" Row="6" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="panel2" Row="1" RowSpan="2" Column="1" ColumnSpan="5" /&gt;&lt;Control Name="_diskSpacePanel" Row="4" RowSpan="3" Column="4" ColumnSpan="2" /&gt;&lt;Control Name="_diskSpace" Row="3" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,30,AutoSize,0,Absolute,70,Absolute,20,AutoSize,0,Absolute,175,Absolute,20,AutoSize,0,Absolute,224" /&gt;&lt;Rows Styles="Absolute,14,AutoSize,0,Percent,20,Percent,20,Percent,20,Percent,20,Percent,20,Absolute,10" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
-  <data name="_overviewPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="_overviewPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="_overviewPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>849, 175</value>
-  </data>
-  <data name="_overviewPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
-  </data>
-  <data name="_overviewPanel.Text" xml:space="preserve">
-    <value>Overview</value>
-  </data>
-  <data name="&gt;&gt;_overviewPanel.Name" xml:space="preserve">
-    <value>_overviewPanel</value>
-  </data>
-  <data name="&gt;&gt;_overviewPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_overviewPanel.Parent" xml:space="preserve">
-    <value>splitContainer1.Panel1</value>
-  </data>
-  <data name="&gt;&gt;_overviewPanel.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="tableLayoutPanel2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
   <data name="tableLayoutPanel2.ColumnCount" type="System.Int32, mscorlib">
     <value>9</value>
-  </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-    <value>label1</value>
-  </data>
-  <data name="&gt;&gt;label1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;label2.Name" xml:space="preserve">
-    <value>label2</value>
-  </data>
-  <data name="&gt;&gt;label2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;label10.Name" xml:space="preserve">
-    <value>label10</value>
-  </data>
-  <data name="&gt;&gt;label10.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label10.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;label10.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;_statusLight.Name" xml:space="preserve">
-    <value>_statusLight</value>
-  </data>
-  <data name="&gt;&gt;_statusLight.Type" xml:space="preserve">
-    <value>ClearCanvas.Desktop.View.WinForms.IndicatorLight, ClearCanvas.Desktop.View.WinForms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;_statusLight.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;_statusLight.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;label11.Name" xml:space="preserve">
-    <value>label11</value>
-  </data>
-  <data name="&gt;&gt;label11.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label11.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;label11.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;_totalStudies.Name" xml:space="preserve">
-    <value>_totalStudies</value>
-  </data>
-  <data name="&gt;&gt;_totalStudies.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_totalStudies.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;_totalStudies.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;_failures.Name" xml:space="preserve">
-    <value>_failures</value>
-  </data>
-  <data name="&gt;&gt;_failures.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_failures.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;_failures.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;_reindexLink.Name" xml:space="preserve">
-    <value>_reindexLink</value>
-  </data>
-  <data name="&gt;&gt;_reindexLink.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_reindexLink.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;_reindexLink.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;_openFileStoreLink.Name" xml:space="preserve">
-    <value>_openFileStoreLink</value>
-  </data>
-  <data name="&gt;&gt;_openFileStoreLink.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_openFileStoreLink.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;_openFileStoreLink.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;_localServerConfigLink.Name" xml:space="preserve">
-    <value>_localServerConfigLink</value>
-  </data>
-  <data name="&gt;&gt;_localServerConfigLink.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_localServerConfigLink.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;_localServerConfigLink.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;_studyRulesLink.Name" xml:space="preserve">
-    <value>_studyRulesLink</value>
-  </data>
-  <data name="&gt;&gt;_studyRulesLink.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_studyRulesLink.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;_studyRulesLink.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="&gt;&gt;_logFileLink.Name" xml:space="preserve">
-    <value>_logFileLink</value>
-  </data>
-  <data name="&gt;&gt;_logFileLink.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_logFileLink.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;_logFileLink.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
-  <data name="&gt;&gt;panel2.Name" xml:space="preserve">
-    <value>panel2</value>
-  </data>
-  <data name="&gt;&gt;panel2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;panel2.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;panel2.ZOrder" xml:space="preserve">
-    <value>12</value>
-  </data>
-  <data name="&gt;&gt;_diskSpacePanel.Name" xml:space="preserve">
-    <value>_diskSpacePanel</value>
-  </data>
-  <data name="&gt;&gt;_diskSpacePanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_diskSpacePanel.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;_diskSpacePanel.ZOrder" xml:space="preserve">
-    <value>13</value>
-  </data>
-  <data name="&gt;&gt;_diskSpace.Name" xml:space="preserve">
-    <value>_diskSpace</value>
-  </data>
-  <data name="&gt;&gt;_diskSpace.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_diskSpace.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;_diskSpace.ZOrder" xml:space="preserve">
-    <value>14</value>
-  </data>
-  <data name="tableLayoutPanel2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
-  </data>
-  <data name="tableLayoutPanel2.RowCount" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>843, 158</value>
-  </data>
-  <data name="tableLayoutPanel2.TabIndex" type="System.Int32, mscorlib">
-    <value>22</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel2.Name" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel2.Parent" xml:space="preserve">
-    <value>_overviewPanel</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel2.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="tableLayoutPanel2.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label1" Row="3" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="1" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="label10" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_statusLight" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label11" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_totalStudies" Row="3" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="_failures" Row="4" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="_reindexLink" Row="3" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_openFileStoreLink" Row="2" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_localServerConfigLink" Row="4" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_studyRulesLink" Row="5" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_logFileLink" Row="6" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="panel2" Row="1" RowSpan="2" Column="1" ColumnSpan="5" /&gt;&lt;Control Name="_diskSpacePanel" Row="4" RowSpan="3" Column="4" ColumnSpan="2" /&gt;&lt;Control Name="_diskSpace" Row="3" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,30,AutoSize,0,Absolute,70,Absolute,20,AutoSize,0,Absolute,175,Absolute,20,AutoSize,0,Absolute,224" /&gt;&lt;Rows Styles="Absolute,14,AutoSize,0,Percent,20,Percent,20,Percent,20,Percent,20,Percent,20,Absolute,10" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="label1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -723,120 +474,6 @@
   <data name="&gt;&gt;_localServerConfigLink.ZOrder" xml:space="preserve">
     <value>9</value>
   </data>
-  <data name="_studyRulesLink.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left</value>
-  </data>
-  <data name="_studyRulesLink.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="_studyRulesLink.Location" type="System.Drawing.Point, System.Drawing">
-    <value>484, 114</value>
-  </data>
-  <data name="_studyRulesLink.Size" type="System.Drawing.Size, System.Drawing">
-    <value>129, 13</value>
-  </data>
-  <data name="_studyRulesLink.TabIndex" type="System.Int32, mscorlib">
-    <value>24</value>
-  </data>
-  <data name="_studyRulesLink.Text" xml:space="preserve">
-    <value>Study Management Rules</value>
-  </data>
-  <data name="&gt;&gt;_studyRulesLink.Name" xml:space="preserve">
-    <value>_studyRulesLink</value>
-  </data>
-  <data name="&gt;&gt;_studyRulesLink.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_studyRulesLink.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;_studyRulesLink.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="_logFileLink.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left</value>
-  </data>
-  <data name="_logFileLink.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="_logFileLink.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="_logFileLink.Location" type="System.Drawing.Point, System.Drawing">
-    <value>484, 135</value>
-  </data>
-  <data name="_logFileLink.Size" type="System.Drawing.Size, System.Drawing">
-    <value>56, 13</value>
-  </data>
-  <data name="_logFileLink.TabIndex" type="System.Int32, mscorlib">
-    <value>36</value>
-  </data>
-  <data name="_logFileLink.Text" xml:space="preserve">
-    <value>Show logs</value>
-  </data>
-  <data name="&gt;&gt;_logFileLink.Name" xml:space="preserve">
-    <value>_logFileLink</value>
-  </data>
-  <data name="&gt;&gt;_logFileLink.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_logFileLink.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;_logFileLink.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
-  <data name="&gt;&gt;_aeTitle.Name" xml:space="preserve">
-    <value>_aeTitle</value>
-  </data>
-  <data name="&gt;&gt;_aeTitle.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_aeTitle.Parent" xml:space="preserve">
-    <value>panel2</value>
-  </data>
-  <data name="&gt;&gt;_aeTitle.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;_hostName.Name" xml:space="preserve">
-    <value>_hostName</value>
-  </data>
-  <data name="&gt;&gt;_hostName.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_hostName.Parent" xml:space="preserve">
-    <value>panel2</value>
-  </data>
-  <data name="&gt;&gt;_hostName.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="panel2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="panel2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>30, 14</value>
-  </data>
-  <data name="panel2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 0</value>
-  </data>
-  <data name="panel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>431, 50</value>
-  </data>
-  <data name="panel2.TabIndex" type="System.Int32, mscorlib">
-    <value>34</value>
-  </data>
-  <data name="&gt;&gt;panel2.Name" xml:space="preserve">
-    <value>panel2</value>
-  </data>
-  <data name="&gt;&gt;panel2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;panel2.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;panel2.ZOrder" xml:space="preserve">
-    <value>12</value>
-  </data>
   <data name="_aeTitle.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -897,68 +534,32 @@
   <data name="&gt;&gt;_hostName.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;_diskSpaceMeter.Name" xml:space="preserve">
-    <value>_diskSpaceMeter</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceMeter.Type" xml:space="preserve">
-    <value>ClearCanvas.Desktop.View.WinForms.Meter, ClearCanvas.Desktop.View.WinForms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceMeter.Parent" xml:space="preserve">
-    <value>_diskSpacePanel</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceMeter.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningIcon.Name" xml:space="preserve">
-    <value>_diskSpaceWarningIcon</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningIcon.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningIcon.Parent" xml:space="preserve">
-    <value>_diskSpacePanel</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningIcon.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningMessage.Name" xml:space="preserve">
-    <value>_diskSpaceWarningMessage</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningMessage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningMessage.Parent" xml:space="preserve">
-    <value>_diskSpacePanel</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningMessage.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="_diskSpacePanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="panel2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="_diskSpacePanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>208, 85</value>
+  <data name="panel2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>30, 14</value>
   </data>
-  <data name="_diskSpacePanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="panel2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
   </data>
-  <data name="_diskSpacePanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>253, 63</value>
+  <data name="panel2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>431, 50</value>
   </data>
-  <data name="_diskSpacePanel.TabIndex" type="System.Int32, mscorlib">
-    <value>29</value>
+  <data name="panel2.TabIndex" type="System.Int32, mscorlib">
+    <value>34</value>
   </data>
-  <data name="&gt;&gt;_diskSpacePanel.Name" xml:space="preserve">
-    <value>_diskSpacePanel</value>
+  <data name="&gt;&gt;panel2.Name" xml:space="preserve">
+    <value>panel2</value>
   </data>
-  <data name="&gt;&gt;_diskSpacePanel.Type" xml:space="preserve">
+  <data name="&gt;&gt;panel2.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;_diskSpacePanel.Parent" xml:space="preserve">
+  <data name="&gt;&gt;panel2.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
   </data>
-  <data name="&gt;&gt;_diskSpacePanel.ZOrder" xml:space="preserve">
-    <value>13</value>
+  <data name="&gt;&gt;panel2.ZOrder" xml:space="preserve">
+    <value>10</value>
   </data>
   <data name="_diskSpaceMeter.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -1055,6 +656,33 @@
   <data name="&gt;&gt;_diskSpaceWarningMessage.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
+  <data name="_diskSpacePanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_diskSpacePanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>208, 85</value>
+  </data>
+  <data name="_diskSpacePanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="_diskSpacePanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 63</value>
+  </data>
+  <data name="_diskSpacePanel.TabIndex" type="System.Int32, mscorlib">
+    <value>29</value>
+  </data>
+  <data name="&gt;&gt;_diskSpacePanel.Name" xml:space="preserve">
+    <value>_diskSpacePanel</value>
+  </data>
+  <data name="&gt;&gt;_diskSpacePanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_diskSpacePanel.Parent" xml:space="preserve">
+    <value>tableLayoutPanel2</value>
+  </data>
+  <data name="&gt;&gt;_diskSpacePanel.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
   <data name="_diskSpace.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -1086,7 +714,124 @@
     <value>tableLayoutPanel2</value>
   </data>
   <data name="&gt;&gt;_diskSpace.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="_logFileLink.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left</value>
+  </data>
+  <data name="_logFileLink.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="_logFileLink.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="_logFileLink.Location" type="System.Drawing.Point, System.Drawing">
+    <value>484, 114</value>
+  </data>
+  <data name="_logFileLink.Size" type="System.Drawing.Size, System.Drawing">
+    <value>56, 13</value>
+  </data>
+  <data name="_logFileLink.TabIndex" type="System.Int32, mscorlib">
+    <value>36</value>
+  </data>
+  <data name="_logFileLink.Text" xml:space="preserve">
+    <value>Show logs</value>
+  </data>
+  <data name="&gt;&gt;_logFileLink.Name" xml:space="preserve">
+    <value>_logFileLink</value>
+  </data>
+  <data name="&gt;&gt;_logFileLink.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_logFileLink.Parent" xml:space="preserve">
+    <value>tableLayoutPanel2</value>
+  </data>
+  <data name="&gt;&gt;_logFileLink.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="_studyRulesLink.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left</value>
+  </data>
+  <data name="_studyRulesLink.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="_studyRulesLink.Location" type="System.Drawing.Point, System.Drawing">
+    <value>484, 135</value>
+  </data>
+  <data name="_studyRulesLink.Size" type="System.Drawing.Size, System.Drawing">
+    <value>129, 13</value>
+  </data>
+  <data name="_studyRulesLink.TabIndex" type="System.Int32, mscorlib">
+    <value>24</value>
+  </data>
+  <data name="_studyRulesLink.Text" xml:space="preserve">
+    <value>Study Management Rules</value>
+  </data>
+  <data name="&gt;&gt;_studyRulesLink.Name" xml:space="preserve">
+    <value>_studyRulesLink</value>
+  </data>
+  <data name="&gt;&gt;_studyRulesLink.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_studyRulesLink.Parent" xml:space="preserve">
+    <value>tableLayoutPanel2</value>
+  </data>
+  <data name="&gt;&gt;_studyRulesLink.ZOrder" xml:space="preserve">
     <value>14</value>
+  </data>
+  <data name="tableLayoutPanel2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="tableLayoutPanel2.RowCount" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>843, 158</value>
+  </data>
+  <data name="tableLayoutPanel2.TabIndex" type="System.Int32, mscorlib">
+    <value>22</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.Name" xml:space="preserve">
+    <value>tableLayoutPanel2</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.Parent" xml:space="preserve">
+    <value>_overviewPanel</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel2.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tableLayoutPanel2.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="label1" Row="3" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="1" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="label10" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_statusLight" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label11" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_totalStudies" Row="3" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="_failures" Row="4" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="_reindexLink" Row="3" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_openFileStoreLink" Row="2" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_localServerConfigLink" Row="4" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="panel2" Row="1" RowSpan="2" Column="1" ColumnSpan="5" /&gt;&lt;Control Name="_diskSpacePanel" Row="4" RowSpan="3" Column="4" ColumnSpan="2" /&gt;&lt;Control Name="_diskSpace" Row="3" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="_logFileLink" Row="5" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="_studyRulesLink" Row="6" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,30,AutoSize,0,Absolute,70,Absolute,20,AutoSize,0,Absolute,175,Absolute,20,AutoSize,0,Absolute,224" /&gt;&lt;Rows Styles="Absolute,14,AutoSize,0,Percent,20,Percent,20,Percent,20,Percent,20,Percent,20,Absolute,10" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="_overviewPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_overviewPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="_overviewPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>849, 175</value>
+  </data>
+  <data name="_overviewPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="_overviewPanel.Text" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="&gt;&gt;_overviewPanel.Name" xml:space="preserve">
+    <value>_overviewPanel</value>
+  </data>
+  <data name="&gt;&gt;_overviewPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_overviewPanel.Parent" xml:space="preserve">
+    <value>splitContainer1.Panel1</value>
+  </data>
+  <data name="&gt;&gt;_overviewPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="splitContainer1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -1122,34 +867,34 @@
     <value>None</value>
   </data>
   <data name="toolStripLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>47, 22</value>
+    <value>47, 23</value>
   </data>
   <data name="toolStripLabel1.Text" xml:space="preserve">
     <value>Activity</value>
   </data>
   <data name="_activityFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 25</value>
+    <value>121, 26</value>
   </data>
   <data name="toolStripLabel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>39, 22</value>
+    <value>39, 23</value>
   </data>
   <data name="toolStripLabel2.Text" xml:space="preserve">
     <value>Status</value>
   </data>
   <data name="_statusFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 25</value>
+    <value>121, 26</value>
   </data>
   <data name="toolStripLabel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>42, 22</value>
+    <value>42, 23</value>
   </data>
   <data name="toolStripLabel3.Text" xml:space="preserve">
     <value>Search</value>
   </data>
   <data name="_textFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 25</value>
+    <value>100, 26</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>6, 25</value>
+    <value>6, 26</value>
   </data>
   <data name="_workItemToolStrip.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>

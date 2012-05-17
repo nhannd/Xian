@@ -105,11 +105,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.tableLayoutPanel2.Controls.Add(this._reindexLink, 7, 3);
 			this.tableLayoutPanel2.Controls.Add(this._openFileStoreLink, 7, 2);
 			this.tableLayoutPanel2.Controls.Add(this._localServerConfigLink, 7, 4);
-			this.tableLayoutPanel2.Controls.Add(this._studyRulesLink, 7, 5);
-			this.tableLayoutPanel2.Controls.Add(this._logFileLink, 7, 6);
 			this.tableLayoutPanel2.Controls.Add(this.panel2, 1, 1);
 			this.tableLayoutPanel2.Controls.Add(this._diskSpacePanel, 4, 4);
 			this.tableLayoutPanel2.Controls.Add(this._diskSpace, 5, 3);
+			this.tableLayoutPanel2.Controls.Add(this._logFileLink, 7, 5);
+			this.tableLayoutPanel2.Controls.Add(this._studyRulesLink, 7, 6);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
 			// 
 			// label1
