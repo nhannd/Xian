@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 13.875" name="DicomStoreDataContext">
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 14.125" name="DicomStoreDataContext">
   <DataContextMoniker Name="/DicomStoreDataContext" />
   <nestedChildShapes>
-    <classShape Id="58c8ed78-7d9b-404c-bc5f-c483f24789ca" absoluteBounds="3.75, 4.75, 2, 8.8860498046875023">
+    <classShape Id="58c8ed78-7d9b-404c-bc5f-c483f24789ca" absoluteBounds="3.75, 4.75, 2, 9.0783512369791648">
       <DataClassMoniker Name="/DicomStoreDataContext/Study" />
       <nestedChildShapes>
-        <elementListCompartment Id="751d3257-e641-40e0-b09d-cbcee67511d1" absoluteBounds="3.765, 5.21, 1.9700000000000002, 8.3260498046875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="751d3257-e641-40e0-b09d-cbcee67511d1" absoluteBounds="3.765, 5.21, 1.9700000000000002, 8.5183512369791661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="b34d54b1-bb2d-4f5e-b860-7b46da51bb4b" absoluteBounds="0.75, 1, 2, 3.3093082682291666">
@@ -32,7 +32,7 @@
         <elementListCompartment Id="b406186e-db76-43cd-b125-63bf230ee146" absoluteBounds="6.765, 5.21, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(2.75 : 2.64505126953125); (3.5 : 2.64505126953125)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(2.75 : 2.64505126953125); (3.5 : 2.64505126953125)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/DicomStoreDataContext/WorkItem/WorkItem_WorkItemUid" />
       <nodes>
         <classShapeMoniker Id="b34d54b1-bb2d-4f5e-b860-7b46da51bb4b" />

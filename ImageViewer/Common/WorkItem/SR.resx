@@ -285,4 +285,7 @@
   <data name="ReapplyRulesRequestMultiple_ActivityDescription" xml:space="preserve">
     <value>Re-apply multiple rules</value>
   </data>
+  <data name="WorkItemStatusEnumCanceling" xml:space="preserve">
+    <value>Canceling</value>
+  </data>
 </root>

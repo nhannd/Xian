@@ -53,8 +53,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
         /// </remarks>
         public override void Cancel()
         {
-            _scu.Cancel();
             base.Cancel();
+            _scu.Cancel();
         }
 
         /// <summary>

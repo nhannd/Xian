@@ -118,6 +118,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 
         public virtual void Cancel()
         {
+            Proxy.Canceling();
+
             lock (_syncRoot)
                 _cancelPending = true;
         }

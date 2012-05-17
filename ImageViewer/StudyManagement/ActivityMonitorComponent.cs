@@ -999,7 +999,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				case WorkItemStatusEnum.Pending:
 				case WorkItemStatusEnum.Idle:
-					return ProgressBarState.Paused;
+                case WorkItemStatusEnum.Canceling:
+                    return ProgressBarState.Paused;
 
 				case WorkItemStatusEnum.Failed:
 					return ProgressBarState.Error;
