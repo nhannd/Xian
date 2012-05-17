@@ -87,11 +87,11 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this._helpIcon = new System.Windows.Forms.PictureBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this._deleteStudiesCheck = new System.Windows.Forms.CheckBox();
+            this._deleteTimeValue = new System.Windows.Forms.NumericUpDown();
             this._deleteTimeUnits = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
-            this._deleteTimeValue = new System.Windows.Forms.NumericUpDown();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this._maxDiskSpace)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._upDownMaxDiskSpace)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).BeginInit();
@@ -99,8 +99,8 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             ((System.ComponentModel.ISupportInitialize)(this._fileStoreWarningIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._helpIcon)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._deleteTimeValue)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // _maxDiskSpace
@@ -273,31 +273,11 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.tableLayoutPanel2.Controls.Add(this.label6, 0, 1);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             // 
-            // groupBox1
-            // 
-            resources.ApplyResources(this.groupBox1, "groupBox1");
-            this.groupBox1.Controls.Add(this.tableLayoutPanel2);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.TabStop = false;
-            // 
             // _deleteStudiesCheck
             // 
             resources.ApplyResources(this._deleteStudiesCheck, "_deleteStudiesCheck");
             this._deleteStudiesCheck.Name = "_deleteStudiesCheck";
             this._deleteStudiesCheck.UseVisualStyleBackColor = true;
-            // 
-            // _deleteTimeUnits
-            // 
-            resources.ApplyResources(this._deleteTimeUnits, "_deleteTimeUnits");
-            this._deleteTimeUnits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._deleteTimeUnits.FormattingEnabled = true;
-            this._deleteTimeUnits.Name = "_deleteTimeUnits";
-            // 
-            // label3
-            // 
-            resources.ApplyResources(this.label3, "label3");
-            this.tableLayoutPanel2.SetColumnSpan(this.label3, 2);
-            this.label3.Name = "label3";
             // 
             // _deleteTimeValue
             // 
@@ -319,6 +299,26 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             0,
             0});
             // 
+            // _deleteTimeUnits
+            // 
+            resources.ApplyResources(this._deleteTimeUnits, "_deleteTimeUnits");
+            this._deleteTimeUnits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._deleteTimeUnits.FormattingEnabled = true;
+            this._deleteTimeUnits.Name = "_deleteTimeUnits";
+            // 
+            // label3
+            // 
+            resources.ApplyResources(this.label3, "label3");
+            this.tableLayoutPanel2.SetColumnSpan(this.label3, 2);
+            this.label3.Name = "label3";
+            // 
+            // groupBox1
+            // 
+            resources.ApplyResources(this.groupBox1, "groupBox1");
+            this.groupBox1.Controls.Add(this.tableLayoutPanel2);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.TabStop = false;
+            // 
             // StorageConfigurationComponentControl
             // 
             resources.ApplyResources(this, "$this");
@@ -335,8 +335,8 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             ((System.ComponentModel.ISupportInitialize)(this._helpIcon)).EndInit();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this._deleteTimeValue)).EndInit();
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
