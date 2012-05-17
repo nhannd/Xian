@@ -24,6 +24,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 	[IconSet("show", "Icons.ShowSeriesDetailsToolSmall.png", "Icons.ShowSeriesDetailsToolMedium.png", "Icons.ShowSeriesDetailsToolLarge.png")]
 
 	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
+	[VisibleStateObserver("show", "Visible", "VisibleChanged")]
 
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class ShowSeriesDetailsTool : StudyBrowserTool

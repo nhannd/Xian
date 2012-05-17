@@ -71,5 +71,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				},
 				cancelable);
 		}
+
+		public bool Visible
+		{
+			get { return _visible; }
+			protected set
+			{
+				if (_visible != value)
+				{
+					_visible = value;
+					EventsHelper.Fire(_visibleChangedEvent, this, EventArgs.Empty);
+				}
+			}
+		}
+
+		public event EventHandler VisibleChanged
+		{
+			add { _visibleChangedEvent += value; }
+			remove { _visibleChangedEvent -= value; }
+		}
 	}
 }

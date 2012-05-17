@@ -30,9 +30,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private bool _checked;
 		private event EventHandler _checkedChanged;
 
-		private bool _visible;
-		private event EventHandler _visibleChanged;
-
 		public FilterDuplicateStudiesTool(StudyBrowserComponent parent)
 		{
 			_parent = parent;
@@ -52,9 +49,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			if (!_parent.SelectedServers.IsLocalServer && _parent.SelectedServers.Count > 1)
 			{
-				if (_parent.CurrentSearchResult != null)
-					this.Enabled = _parent.CurrentSearchResult.HasDuplicates;
-			
+				this.Enabled = _parent.CurrentSearchResult != null && _parent.CurrentSearchResult.HasDuplicates;
 				this.Visible = true;
 			}
 			else
@@ -64,25 +59,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 
 			this.Checked = _parent.FilterDuplicateStudies;
-		}
-
-		public bool Visible
-		{
-			get { return _visible; }
-			set
-			{
-				if (_visible != value)
-				{
-					_visible = value;
-					EventsHelper.Fire(_visibleChanged, this, EventArgs.Empty);
-				}
-			}
-		}
-
-		public event EventHandler VisibleChanged
-		{
-			add { this._visibleChanged += value; }
-			remove { this._visibleChanged -= value; }
 		}
 
 		public bool Checked
