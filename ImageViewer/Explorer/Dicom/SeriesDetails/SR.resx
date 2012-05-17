@@ -139,7 +139,7 @@
     <value>Deleting the remaining series will cause the entire study to be deleted. Are you sure you want to delete the entire study?</value>
   </data>
   <data name="MessageConfirmDeleteSeries" xml:space="preserve">
-    <value>Are you sure you want to delete the selected series?</value>
+    <value>Deleting series may result in partial study data, which could lead to patient misdiagnosis. Are you sure you want to delete the selected series?</value>
   </data>
   <data name="MessageConfirmSendToMultipleServers" xml:space="preserve">
     <value>You have selected multiple servers to send to.  Are you sure you want to continue?</value>
