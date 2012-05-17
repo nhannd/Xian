@@ -58,12 +58,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
                 _mutex.WaitOne();
             }
 
-			// initialize a connection and transaction
-			_databaseFilename = databaseFilename;
-            _connection = CreateConnection();
-            _transaction = _connection.BeginTransaction(IsolationLevel.ReadCommitted);
-            _context = new DicomStoreDataContext(_connection);
-			//_context.Log = Console.Out;
+            try
+            {
+                // initialize a connection and transaction
+                _databaseFilename = databaseFilename;
+                _connection = CreateConnection();
+                _transaction = _connection.BeginTransaction(IsolationLevel.ReadCommitted);
+                _context = new DicomStoreDataContext(_connection);
+                //_context.Log = Console.Out;
+            }
+            catch
+            {
+                _mutex.ReleaseMutex();
+                _mutex = null;
+
+                throw;
+            }
 		}
 
 	    #region Implementation of IDisposable
