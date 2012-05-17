@@ -45,10 +45,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ReapplyRules
 
             Proxy.UpdateProgress();
 
-            processor.StudyProcessedEvent += delegate
+            processor.StudyProcessedEvent += delegate(object sender, ReapplyRulesUtility.StudyEventArgs e)
                                                  {
                                                      Progress.StudiesProcessed++;
-                                                     Proxy.UpdateProgress();
+													 Proxy.Item.StudyInstanceUid = e.StudyInstanceUid;
+													 Proxy.UpdateProgress();
                                                  };
             processor.Process();
 
