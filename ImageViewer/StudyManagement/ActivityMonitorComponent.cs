@@ -223,7 +223,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			public string ProgressStatus
 			{
-				get { return _data.Progress != null ? _data.Progress.Status : null; }
+				get
+				{
+                    if (_data.Progress == null) return null;
+
+                    if (!string.IsNullOrEmpty(ProgressStatusDescription))
+                        return string.Format("{0} [{1}]", _data.Progress.Status, ProgressStatusDescription);
+                    return _data.Progress.Status;
+				}
 			}
 
 			public string ProgressStatusDescription
@@ -725,20 +732,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			base.Start();
 
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPatient, w => w.PatientInfo));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStudy, w => w.StudyInfo));
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnActivityDescription, w => w.ActivityDescription) { WidthFactor = .8f });
+            _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPatient, w => w.PatientInfo) { WidthFactor = .7f });
+            _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStudy, w => w.StudyInfo) { WidthFactor = .9f });
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnActivityDescription, w => w.ActivityDescription) { WidthFactor = .7f });
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatus, w => w.Status.GetDescription())
 									   {
-										   WidthFactor = .4f,
+										   WidthFactor = .3f,
 										   TooltipTextProvider = w => string.IsNullOrEmpty(w.ProgressStatusDescription)
 																		? string.Empty
 																		: w.ProgressStatusDescription
 									   });
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatusDescription, w => w.ProgressStatus));
-			_workItems.Columns.Add(new DateTimeTableColumn<WorkItem>(SR.ColumnScheduledTime, w => w.ScheduledTime) { WidthFactor = .6f });
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPriority, w => w.Priority.GetDescription()) { WidthFactor = .3f });
-			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>(SR.ColumnProgress, w => w.ProgressIcon) { WidthFactor = .5f, Comparison = (x, y) => x.ProgressValue.CompareTo(y.ProgressValue) });
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatusDescription, w => w.ProgressStatus){WidthFactor = 1.5f});
+			_workItems.Columns.Add(new DateTimeTableColumn<WorkItem>(SR.ColumnScheduledTime, w => w.ScheduledTime) { WidthFactor = .5f });
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPriority, w => w.Priority.GetDescription()) { WidthFactor = .25f });
+			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>(SR.ColumnProgress, w => w.ProgressIcon) { WidthFactor = .4f, Comparison = (x, y) => x.ProgressValue.CompareTo(y.ProgressValue) });
 
 			this.ActivityMonitor = WorkItemActivityMonitor.Create(true);
 			_connectionState = _connectionState.Update();
@@ -999,7 +1006,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				case WorkItemStatusEnum.Pending:
 				case WorkItemStatusEnum.Idle:
-					return ProgressBarState.Paused;
+                case WorkItemStatusEnum.Canceling:
+                    return ProgressBarState.Paused;
 
 				case WorkItemStatusEnum.Failed:
 					return ProgressBarState.Error;

@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 var studyList = broker.GetStudies();
                 foreach (var study in studyList)
                 {
-                    study.Deleted = true;
+                    study.Reindex = true;
                     StudyOidList.Add(study.Oid);
                 }
                 context.Commit();
@@ -217,7 +217,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// </summary>
         public void Cancel()
         {
-            _cancelRequested = true;
+            if (_cancelRequested) return;
+            
+            _cancelRequested = true;             
         }
 
         #endregion
@@ -229,18 +231,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var studyBroker = context.GetStudyBroker();
-                var workItemBroker = context.GetWorkItemBroker();
 
-                var studyList = studyBroker.GetStudies();
+                var studyList = studyBroker.GetReindexStudies();
                 foreach (var study in studyList)
-                {
-                    var workItemList = workItemBroker.GetWorkItems(DeleteStudyRequest.WorkItemTypeString, null, study.StudyInstanceUid);
-                    if (workItemList.Count == 0)
-                        workItemList = workItemBroker.GetWorkItems(DeleteSeriesRequest.WorkItemTypeString, null,
-                                                                   study.StudyInstanceUid);
-
-                    if (workItemList.Count == 0)
-                        study.Deleted = false;
+                {                    
+                    study.Reindex = false;
                 }
                 context.Commit();
             }
@@ -321,11 +316,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
             while (_threadPool.Active && _threadPool.QueueCount > 0 && _threadPool.ActiveCount > 0)
             {
-                Thread.Sleep(1000);
+                if (_cancelRequested)
+                    break;
+                Thread.Sleep(500);
                 if (_cancelRequested)
                     break;
             }
-
+            
             _threadPool.Stop(false);
         }
 

@@ -113,8 +113,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
         /// </remarks>
         public override void Cancel()
         {
-            _scu.Cancel();
             base.Cancel();
+
+            _scu.Cancel();            
         }
 
         /// <summary>

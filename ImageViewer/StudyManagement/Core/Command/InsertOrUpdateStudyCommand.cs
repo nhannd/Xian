@@ -54,7 +54,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
             }
 
             Context.ContextStudy.StoreTime = Platform.Time;
-            Context.ContextStudy.Deleted = false;            
+            Context.ContextStudy.Deleted = false;
+            Context.ContextStudy.Reindex = false;
             Context.ContextStudy.NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
             Context.ContextStudy.NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;
             Context.ContextStudy.Update(_messageBase);

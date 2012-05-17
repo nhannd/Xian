@@ -46,6 +46,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         Failed = 7,
         [EnumMember]
         DeleteInProgress = 8,
+        [EnumMember]
+        Canceling = 9,
     }
     
     /// <summary>

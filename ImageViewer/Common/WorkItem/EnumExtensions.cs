@@ -36,6 +36,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 					return SR.WorkItemStatusEnumFailed;
                 case WorkItemStatusEnum.DeleteInProgress:
                     return SR.WorkItemStatusEnumDeleteInProgress;
+                case WorkItemStatusEnum.Canceling:
+                    return SR.WorkItemStatusEnumCanceling;
             }
 			throw new NotImplementedException();
 		}

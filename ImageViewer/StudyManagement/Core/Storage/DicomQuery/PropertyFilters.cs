@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
             var query = base.Query(initialQuery);
 
             //We don't want to return anything that is scheduled to be deleted.
-            query = query.Where(s => !s.Deleted);
+            query = query.Where(s => !s.Deleted && !s.Reindex);
 
             return query;
         }

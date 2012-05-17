@@ -67,6 +67,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
                     select s).ToList();
         }
 
+        public List<Study> GetReindexStudies()
+        {
+            return (from s in Context.Studies
+                    where s.Reindex
+                    select s).ToList();
+        }
+
 		/// <summary>
 		/// Get studies that are eligible for deletion as of the specified time.
 		/// </summary>
@@ -76,7 +83,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 		public List<Study> GetStudiesForDeletion(DateTime now, int batchSize)
 		{
 			return (from s in Context.Studies
-					where !s.Deleted && s.DeleteTime != null && s.DeleteTime < now
+					where !s.Deleted && !s.Reindex && s.DeleteTime != null && s.DeleteTime < now
 					orderby s.DeleteTime ascending 
 					select s)
 					.Take(batchSize)

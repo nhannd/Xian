@@ -42,10 +42,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
         /// </remarks>
         public override void Cancel()
         {
-            if (_reindexUtility != null)
-                _reindexUtility.Cancel();
-            
             base.Cancel();
+
+            if (_reindexUtility != null)
+                _reindexUtility.Cancel();            
         }
 
         /// <summary>
@@ -76,6 +76,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             }
 
             Progress.IsCancelable = true;
+            Progress.Complete = false;
+            Progress.StudiesToProcess = 0;
+            Progress.StudyFoldersToProcess = 0;
+            Progress.StudiesDeleted = 0;
+            Progress.StudyFoldersProcessed = 0;
+            Progress.StudiesProcessed = 0;
+
             Proxy.UpdateProgress();
 
             _reindexUtility = new ReindexUtility();

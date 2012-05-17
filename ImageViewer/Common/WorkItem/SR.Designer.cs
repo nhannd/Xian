@@ -502,6 +502,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Canceling.
+        /// </summary>
+        internal static string WorkItemStatusEnumCanceling {
+            get {
+                return ResourceManager.GetString("WorkItemStatusEnumCanceling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Complete.
         /// </summary>
         internal static string WorkItemStatusEnumComplete {

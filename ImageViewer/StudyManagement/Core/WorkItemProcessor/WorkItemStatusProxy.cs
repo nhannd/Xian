@@ -221,6 +221,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         }
 
         /// <summary>
+        /// Mark <see cref="WorkItem"/> as being in the process of canceling
+        /// </summary>
+        public void Canceling()
+        {
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+            {
+                var workItemBroker = context.GetWorkItemBroker();
+
+                Item = workItemBroker.GetWorkItem(Item.Oid);
+                Item.Progress = Progress;
+                Item.Status = WorkItemStatusEnum.Canceling;
+                context.Commit();
+            }
+
+            Publish(false);
+            Platform.Log(LogLevel, "Canceling {0} WorkItem for OID {1}", Item.Type, Item.Oid);
+        }
+
+        /// <summary>
         /// Cancel a <see cref="WorkItem"/>
         /// </summary>
         public void Cancel()
