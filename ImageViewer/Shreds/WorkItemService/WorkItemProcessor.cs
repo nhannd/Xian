@@ -148,7 +148,20 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 if (StopRequested)
                     return;
 
+                // First, use upto 1/2 of the normal threads to delete 
+                // work items that should be purged, we had testing issues where the deletion items were
+                // never removed, and decided to be a bit aggressive with ensuring they get removed.
+                if ( _threadPool.NormalThreadsAvailable > 1)
+                {
+                    var deleteList = GetWorkItemsToDelete(_threadPool.NormalThreadsAvailable / 2);
+                    if (deleteList != null && deleteList.Count > 0)
+                    {
+                        QueueWorkItems(deleteList);
+                    }
+                }
+
                 List<WorkItem> list = null;
+
                 if (_threadPool.StatThreadsAvailable > 0)
                 {
                     list = GetWorkItems(_threadPool.StatThreadsAvailable, WorkItemPriorityEnum.Stat);
@@ -162,11 +175,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 if ((list == null || list.Count == 0) && _threadPool.NormalThreadsAvailable > 0)
                 {
                     list = GetWorkItems(_threadPool.NormalThreadsAvailable, WorkItemPriorityEnum.Normal);
-                }
-
-                if ((list == null || list.Count == 0) && _threadPool.NormalThreadsAvailable > 0)
-                {
-                    list = GetWorkItemsToDelete(_threadPool.NormalThreadsAvailable);
                 }
                 
                 if ( list == null)
@@ -184,44 +192,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     continue;
                 }
 
-                try
-                {
-                    foreach (var item in list)
-                    {
-                        if (!_extensions.ContainsKey(item.Request.WorkItemType))
-                        {
-                            Platform.Log(LogLevel.Error,
-                                         "No extensions loaded for WorkItem item type: {0}.  Failing item.",
-                                         item.Type);
-
-                            //Just fail the WorkQueue item, not much else we can do
-                            var proxy = new WorkItemStatusProxy(item);
-                            proxy.Fail("No plugin to handle WorkItem type: " + item.Type, WorkItemFailureType.Fatal);
-                            continue;
-                        }
-
-                        try
-                        {
-                            IWorkItemProcessorFactory factory = _extensions[item.Request.WorkItemType];
-                            IWorkItemProcessor processor = factory.GetItemProcessor();
-
-                            // Enqueue the actual processing of the item to the thread pool.  
-                            _threadPool.Enqueue(processor, item, ExecuteProcessor);
-                        }
-                        catch (Exception e)
-                        {
-                            Platform.Log(LogLevel.Error, e, "Unexpected exception creating WorkItem processor.");
-                            var proxy = new WorkItemStatusProxy(item);
-                            proxy.Fail("No plugin to handle WorkItem type: " + item.Type, WorkItemFailureType.Fatal);                   
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    // Wait for only 3 seconds
-                    Platform.Log(LogLevel.Error, e, "Exception occured when processing WorkItem item.");
-                    _threadStop.WaitOne(3000, false);
-                }
+                // Queue up the workItems
+                QueueWorkItems(list);
             }
 		}
 
@@ -236,6 +208,49 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         #endregion
 
 		#region Private Methods
+
+        private void QueueWorkItems(IEnumerable<WorkItem> list )
+        {
+            try
+            {
+                foreach (var item in list)
+                {
+                    if (!_extensions.ContainsKey(item.Request.WorkItemType))
+                    {
+                        Platform.Log(LogLevel.Error,
+                                     "No extensions loaded for WorkItem item type: {0}.  Failing item.",
+                                     item.Type);
+
+                        //Just fail the WorkQueue item, not much else we can do
+                        var proxy = new WorkItemStatusProxy(item);
+                        proxy.Fail("No plugin to handle WorkItem type: " + item.Type, WorkItemFailureType.Fatal);
+                        continue;
+                    }
+
+                    try
+                    {
+                        IWorkItemProcessorFactory factory = _extensions[item.Request.WorkItemType];
+                        IWorkItemProcessor processor = factory.GetItemProcessor();
+
+                        // Enqueue the actual processing of the item to the thread pool.  
+                        _threadPool.Enqueue(processor, item, ExecuteProcessor);
+                    }
+                    catch (Exception e)
+                    {
+                        Platform.Log(LogLevel.Error, e, "Unexpected exception creating WorkItem processor.");
+                        var proxy = new WorkItemStatusProxy(item);
+                        proxy.Fail("No plugin to handle WorkItem type: " + item.Type, WorkItemFailureType.Fatal);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                // Wait for only 3 seconds
+                Platform.Log(LogLevel.Error, e, "Exception occured when processing WorkItem item.");
+                _threadStop.WaitOne(3000, false);
+            }
+        }
+
 		/// <summary>
 		/// The actual delegate 
 		/// </summary>

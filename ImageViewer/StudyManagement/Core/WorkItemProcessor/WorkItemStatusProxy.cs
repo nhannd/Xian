@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         #region Public Properties
 
         // Hard-coded log level for proxy
-        public LogLevel LogLevel = LogLevel.Info;
+        public LogLevel LogLevel = LogLevel.Debug;
 
         public WorkItem Item { get; private set; }
         public WorkItemProgress Progress { get; set; }
@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
 
             Publish(false);
-            Platform.Log(LogLevel, "Failing {0} WorkItem for OID {1}", Item.Type, Item.Oid);
+            Platform.Log(LogLevel, "Failing {0} WorkItem for OID {1}: {2}", Item.Type, Item.Oid, Item.Request.ActivityDescription);
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
 
             Publish(false);
-            Platform.Log(LogLevel, "Completing {0} WorkItem for OID {1}", Item.Type, Item.Oid);
+            Platform.Log(LogLevel.Info, "Completing {0} WorkItem for OID {1}: {2}", Item.Type, Item.Oid, Item.Request.ActivityDescription);
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
 
             Publish(false);
-            Platform.Log(LogLevel, "Canceling {0} WorkItem for OID {1}", Item.Type, Item.Oid);
+            Platform.Log(LogLevel, "Canceling {0} WorkItem for OID {1}: {2}", Item.Type, Item.Oid, Item.Request.ActivityDescription);
         }
 
         /// <summary>
@@ -262,7 +262,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
 
             Publish(false);
-            Platform.Log(LogLevel, "Canceling {0} WorkItem for OID {1}", Item.Type, Item.Oid);
+            Platform.Log(LogLevel, "Canceling {0} WorkItem for OID {1}: {2}", Item.Type, Item.Oid, Item.Request.ActivityDescription);
         }
 
         /// <summary>
@@ -282,7 +282,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
 
             Publish(false);
-            Platform.Log(LogLevel, "Deleting {0} WorkItem for OID {1}", Item.Type, Item.Oid);
+            Platform.Log(LogLevel, "Deleting {0} WorkItem for OID {1}: {2}", Item.Type, Item.Oid, Item.Request.ActivityDescription);
         }
 
         /// <summary>
