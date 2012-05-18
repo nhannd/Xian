@@ -35,6 +35,13 @@
             this._numericUpDownPercentWeekend = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this._textBoxPort = new System.Windows.Forms.TextBox();
+            this._textBoxHost = new System.Windows.Forms.TextBox();
+            this._textBoxRemoteAETitle = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this._checkBoxImageServerDatabase = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this._comboBoxServerPartition = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -51,7 +58,6 @@
             this._buttonGenerate = new System.Windows.Forms.Button();
             this._progressBar = new System.Windows.Forms.ProgressBar();
             this._buttonCancel = new System.Windows.Forms.Button();
-            this._checkBoxImageServerDatabase = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this._numericUpDownPercentWeekend)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -76,7 +82,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 58);
+            this.label2.Location = new System.Drawing.Point(6, 60);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(83, 13);
             this.label2.TabIndex = 2;
@@ -84,7 +90,7 @@
             // 
             // _textBoxStudiesPerDay
             // 
-            this._textBoxStudiesPerDay.Location = new System.Drawing.Point(6, 74);
+            this._textBoxStudiesPerDay.Location = new System.Drawing.Point(6, 76);
             this._textBoxStudiesPerDay.Name = "_textBoxStudiesPerDay";
             this._textBoxStudiesPerDay.Size = new System.Drawing.Size(200, 20);
             this._textBoxStudiesPerDay.TabIndex = 3;
@@ -113,6 +119,12 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this._textBoxPort);
+            this.groupBox1.Controls.Add(this._textBoxHost);
+            this.groupBox1.Controls.Add(this._textBoxRemoteAETitle);
+            this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this._checkBoxImageServerDatabase);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this._comboBoxServerPartition);
@@ -126,10 +138,72 @@
             this.groupBox1.Controls.Add(this._textBoxStudiesPerDay);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(503, 261);
+            this.groupBox1.Size = new System.Drawing.Size(503, 251);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "General";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(268, 198);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(26, 13);
+            this.label8.TabIndex = 16;
+            this.label8.Text = "Port";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(268, 152);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(29, 13);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "Host";
+            // 
+            // _textBoxPort
+            // 
+            this._textBoxPort.Location = new System.Drawing.Point(268, 218);
+            this._textBoxPort.Name = "_textBoxPort";
+            this._textBoxPort.Size = new System.Drawing.Size(140, 20);
+            this._textBoxPort.TabIndex = 14;
+            this._textBoxPort.Text = "11112";
+            // 
+            // _textBoxHost
+            // 
+            this._textBoxHost.Location = new System.Drawing.Point(268, 168);
+            this._textBoxHost.Name = "_textBoxHost";
+            this._textBoxHost.Size = new System.Drawing.Size(140, 20);
+            this._textBoxHost.TabIndex = 13;
+            this._textBoxHost.Text = "localhost";
+            // 
+            // _textBoxRemoteAETitle
+            // 
+            this._textBoxRemoteAETitle.Location = new System.Drawing.Point(268, 122);
+            this._textBoxRemoteAETitle.Name = "_textBoxRemoteAETitle";
+            this._textBoxRemoteAETitle.Size = new System.Drawing.Size(140, 20);
+            this._textBoxRemoteAETitle.TabIndex = 12;
+            this._textBoxRemoteAETitle.Text = "STEVE_SHOW";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(265, 105);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(84, 13);
+            this.label6.TabIndex = 11;
+            this.label6.Text = "Remote AE Title";
+            // 
+            // _checkBoxImageServerDatabase
+            // 
+            this._checkBoxImageServerDatabase.AutoSize = true;
+            this._checkBoxImageServerDatabase.Location = new System.Drawing.Point(9, 113);
+            this._checkBoxImageServerDatabase.Name = "_checkBoxImageServerDatabase";
+            this._checkBoxImageServerDatabase.Size = new System.Drawing.Size(150, 17);
+            this._checkBoxImageServerDatabase.TabIndex = 10;
+            this._checkBoxImageServerDatabase.Text = "Insert Directly in Database";
+            this._checkBoxImageServerDatabase.UseVisualStyleBackColor = true;
+            this._checkBoxImageServerDatabase.CheckedChanged += new System.EventHandler(this._checkBoxImageServerDatabase_CheckedChanged);
             // 
             // label5
             // 
@@ -151,7 +225,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(266, 57);
+            this.label4.Location = new System.Drawing.Point(262, 59);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(69, 13);
             this.label4.TabIndex = 7;
@@ -159,7 +233,7 @@
             // 
             // _textBoxTotalStudies
             // 
-            this._textBoxTotalStudies.Location = new System.Drawing.Point(265, 73);
+            this._textBoxTotalStudies.Location = new System.Drawing.Point(265, 75);
             this._textBoxTotalStudies.Name = "_textBoxTotalStudies";
             this._textBoxTotalStudies.Size = new System.Drawing.Size(143, 20);
             this._textBoxTotalStudies.TabIndex = 6;
@@ -305,17 +379,6 @@
             this._buttonCancel.UseVisualStyleBackColor = true;
             this._buttonCancel.Click += new System.EventHandler(this._buttonCancel_Click);
             // 
-            // _checkBoxImageServerDatabase
-            // 
-            this._checkBoxImageServerDatabase.AutoSize = true;
-            this._checkBoxImageServerDatabase.Location = new System.Drawing.Point(9, 113);
-            this._checkBoxImageServerDatabase.Name = "_checkBoxImageServerDatabase";
-            this._checkBoxImageServerDatabase.Size = new System.Drawing.Size(150, 17);
-            this._checkBoxImageServerDatabase.TabIndex = 10;
-            this._checkBoxImageServerDatabase.Text = "Insert Directly in Database";
-            this._checkBoxImageServerDatabase.UseVisualStyleBackColor = true;
-            this._checkBoxImageServerDatabase.CheckedChanged += new System.EventHandler(this._checkBoxImageServerDatabase_CheckedChanged);
-            // 
             // GenerateDatabase
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -363,5 +426,11 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox _comboBoxServerPartition;
         private System.Windows.Forms.CheckBox _checkBoxImageServerDatabase;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox _textBoxPort;
+        private System.Windows.Forms.TextBox _textBoxHost;
+        private System.Windows.Forms.TextBox _textBoxRemoteAETitle;
     }
 }
