@@ -255,10 +255,11 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			private RetrievePixelDataResult TryClientRetrievePixelData(out Exception lastRetrieveException)
 			{
 				// retry parameters
-				const int retryTimeout = 1500;
+			    const int maxRetryCount = 10;
+			    const int retryTimeout = 1500;
 				int retryDelay = 50;
 				int retryCounter = 0;
-				
+                	
 				StreamingClient client = new StreamingClient(this.BaseUrl);
 				RetrievePixelDataResult result = null;
 				lastRetrieveException = null;
@@ -291,7 +292,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 						lastRetrieveException = ex;
 
 						timeoutClock.Stop();
-						if (timeoutClock.Seconds*1000 >= retryTimeout)
+                        if (timeoutClock.Seconds * 1000 >= retryTimeout || retryCounter>=maxRetryCount)
 						{
 							// log an alert that we are aborting (exception trace at debug level only)
 							int elapsed = (int)(1000*timeoutClock.Seconds);
@@ -362,16 +363,24 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                         {
                             AbortAttemptIfNecessary();
 
-                            ResetAttemptData();
+                            
+                            try
+                            {
+                                ResetAttemptData();
+                                _retrievesAttempted++;
+                                var start = DateTime.Now;
+                                _retrieveResult = retriever.Retrieve();
+                                var end = DateTime.Now;
+                                _lastRetrievePerformanceInfo =
+                                    new StreamingPerformanceInfo(start, end, _retrieveResult.MetaData.ContentLength);
 
-                            _retrievesAttempted++;
-                            var start = DateTime.Now;
-                            _retrieveResult = retriever.Retrieve();
-                            var end = DateTime.Now;
-                            _lastRetrievePerformanceInfo =
-                                new StreamingPerformanceInfo(start, end, _retrieveResult.MetaData.ContentLength);
-
-                            _alreadyRetrieved = true;
+                                _alreadyRetrieved = true;
+                            }
+                            catch (Exception ex)
+                            {
+                                _lastError = ex;
+                                throw;
+                            }
                         }
 					}
 				}
