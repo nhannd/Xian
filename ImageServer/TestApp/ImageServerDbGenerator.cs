@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Command;
@@ -34,7 +35,10 @@ namespace ClearCanvas.ImageServer.TestApp
         private ServerPartition _partition;
         private List<SopGenerator> _generator = new List<SopGenerator>();
         private Random _rand = new Random();
-          
+        private string _aeTitle;
+        private string _host;
+        private int _port; 
+
         public ImageServerDbGenerator(ServerPartition partition, DateTime startDate, int totalStudies, int studiesPerDay, int percentWeekend)
         {
             _startDate = startDate;
@@ -42,6 +46,19 @@ namespace ClearCanvas.ImageServer.TestApp
             _studiesPerDay = studiesPerDay;
             _percentWeekend = percentWeekend;
             _partition = partition;
+            _backroundTask = new BackgroundTask(Run, true);
+        }
+
+        public ImageServerDbGenerator(string aeTitle, string host, int port, DateTime startDate, int totalStudies, int studiesPerDay, int percentWeekend)
+        {
+            _startDate = startDate;
+            _totalStudies = totalStudies;
+            _studiesPerDay = studiesPerDay;
+            _percentWeekend = percentWeekend;
+            _partition = null;
+            _aeTitle = aeTitle;
+            _host = host;
+            _port = port;
             _backroundTask = new BackgroundTask(Run, true);
         }
 
@@ -109,12 +126,31 @@ namespace ClearCanvas.ImageServer.TestApp
             try
             {
                 DicomFile file = generator.NewStudy(currentDay);
-                InsertInstance(file);
-                int series = _rand.Next(1, generator.MaxSeries);
-                for (int i = 1; i < series; i++)
+
+                if (_partition == null)
                 {
-                    file = generator.NewSeries();
+                    var scu = new StorageScu("TESTTOOL", _aeTitle, _host, _port);
+
+                    scu.AddStorageInstance(new StorageInstance(file));
+                    int series = _rand.Next(1, generator.MaxSeries);
+                    for (int i = 1; i < series; i++)
+                    {
+                        file = generator.NewSeries();
+                        scu.AddStorageInstance(new StorageInstance(file));
+                    }
+                    scu.Send();
+                }
+                else
+                {
+
+
                     InsertInstance(file);
+                    int series = _rand.Next(1, generator.MaxSeries);
+                    for (int i = 1; i < series; i++)
+                    {
+                        file = generator.NewSeries();
+                        InsertInstance(file);
+                    }
                 }
             }
             catch (Exception e)

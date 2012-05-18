@@ -94,9 +94,17 @@ namespace ClearCanvas.ImageServer.TestApp
             if (selectedPartition == null) 
                 return;
             
-            _generator = new ImageServerDbGenerator(selectedPartition, _dateTimePickerStart.Value, totalStudies,
-                                                                          studiesPerDay,
-                                                                          (int)_numericUpDownPercentWeekend.Value);
+            if (_checkBoxImageServerDatabase.Checked)
+                _generator = new ImageServerDbGenerator(selectedPartition, _dateTimePickerStart.Value, totalStudies,
+                                                                              studiesPerDay,
+                                                                              (int)_numericUpDownPercentWeekend.Value);
+            else
+            {
+                _generator = new ImageServerDbGenerator("STEVE_SHOW","localhost",11112, _dateTimePickerStart.Value, totalStudies,
+                                                              studiesPerDay,
+                                                              (int)_numericUpDownPercentWeekend.Value);
+
+            }
             _progressBar.Maximum = 0;
             _progressBar.Maximum = 100;
             _generator.RegisterProgressUpated(ProgressUpdated);
@@ -159,6 +167,18 @@ namespace ClearCanvas.ImageServer.TestApp
             {
                 _generator.Cancel();
                 _generator = null;
+            }
+        }
+
+        private void _checkBoxImageServerDatabase_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_checkBoxImageServerDatabase.Checked)
+            {
+                _comboBoxServerPartition.Enabled = true;
+            }
+            else
+            {
+                _comboBoxServerPartition.Enabled = false;
             }
         }
     }
