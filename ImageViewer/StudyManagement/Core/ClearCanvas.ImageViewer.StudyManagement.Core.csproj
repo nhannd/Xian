@@ -213,7 +213,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Storage\DicomQuery\Tests\test_store_insert_studies.sqlce" />
     <None Include="Storage\DicomStoreDataContext.dbml.layout">
       <DependentUpon>DicomStoreDataContext.dbml</DependentUpon>

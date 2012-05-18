@@ -16,7 +16,6 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
-using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 

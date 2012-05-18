@@ -171,15 +171,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancel.
-        /// </summary>
-        public static string MenuCancelWorkItem {
-            get {
-                return ResourceManager.GetString("MenuCancelWorkItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         public static string MenuDeleteWorkItem {
@@ -221,6 +212,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         public static string MenuStatWorkItem {
             get {
                 return ResourceManager.GetString("MenuStatWorkItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop.
+        /// </summary>
+        public static string MenuStopWorkItem {
+            get {
+                return ResourceManager.GetString("MenuStopWorkItem", resourceCulture);
             }
         }
         
@@ -369,15 +369,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancel selected work item(s).
-        /// </summary>
-        public static string TooltipCancelWorkItem {
-            get {
-                return ResourceManager.GetString("TooltipCancelWorkItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Delete selected work item(s).
         /// </summary>
         public static string TooltipDeleteWorkItem {
@@ -401,6 +392,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         public static string TooltipStatWorkItem {
             get {
                 return ResourceManager.GetString("TooltipStatWorkItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop selected work item(s).
+        /// </summary>
+        public static string TooltipStopWorkItem {
+            get {
+                return ResourceManager.GetString("TooltipStopWorkItem", resourceCulture);
             }
         }
     }

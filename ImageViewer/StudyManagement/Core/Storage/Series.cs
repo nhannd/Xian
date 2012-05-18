@@ -197,7 +197,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             {
                 var broker = context.GetWorkItemBroker();
                 var items = broker.GetWorkItems(DeleteSeriesRequest.WorkItemTypeString, null, StudyInstanceUid);
-                if (items == null || items.Count == 0)
+                if (items == null)
                     return null;
 
                 var validItems = items.Where(item => item.Status != WorkItemStatusEnum.Failed && item.Status != WorkItemStatusEnum.Canceled);

@@ -160,7 +160,7 @@
     <value>Stat</value>
   </data>
   <data name="WorkItemStatusEnumCanceled" xml:space="preserve">
-    <value>Canceled</value>
+    <value>Stopped</value>
   </data>
   <data name="WorkItemStatusEnumComplete" xml:space="preserve">
     <value>Complete</value>
@@ -286,6 +286,6 @@
     <value>Re-apply multiple rules</value>
   </data>
   <data name="WorkItemStatusEnumCanceling" xml:space="preserve">
-    <value>Canceling</value>
+    <value>Stopping</value>
   </data>
 </root>

@@ -73,11 +73,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 						}
 					}
 					catch (Exception e)
-					{
-						Platform.Log(LogLevel.Error, e);
+					{						
 						var message = SR.ExceptionErrorProcessingRefresh;
 						var exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
-						throw new WorkItemServiceException(exceptionMessage);
+                        Platform.Log(LogLevel.Error, e,exceptionMessage);
+                        // Don't rethrow here, we're in a thread pool anyways.
 					}
 				});
         }

@@ -288,39 +288,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         protected IList<WorkItem> FindRelatedWorkItems(IEnumerable<string> types,
                                                        IEnumerable<WorkItemStatusEnum> status)
         {
-            IList<WorkItem> list;
-
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetWorkItemBroker();
 
-                list = broker.GetWorkItems(null, null, Proxy.Item.StudyInstanceUid);
+                var list = broker.GetWorkItems(null, null, Proxy.Item.StudyInstanceUid);
+
+                if (list == null)
+                    return null;
+
+                // remove the current item 
+                // Remove items if the type is in not the list
+                var newList = CollectionUtils.Reject(list, item => item.Oid.Equals(Proxy.Item.Oid)
+                                                                   ||
+                                                                   (types != null &&
+                                                                    !CollectionUtils.Contains(types,
+                                                                                              t => t.Equals(item.Type)))
+                                                                   ||
+                                                                   (status != null &&
+                                                                    !CollectionUtils.Contains(status,
+                                                                                              s => s.Equals(item.Status))));
+                return newList;
             }
-
-            if (list == null)
-                return null;
-
-            // remove the current item 
-            CollectionUtils.Remove(list, item => item.Oid.Equals(Proxy.Item.Oid));
-
-            // Remove items if the type is in not the list
-            if (types != null)
-            {
-                list = CollectionUtils.Select(list,
-                                              item =>
-                                              CollectionUtils.Contains(types, t => t.Equals(item.Type)));
-            }
-
-            // Remove items if the type is in the list
-            if (status != null)
-            {
-                list = CollectionUtils.Select(list,
-                                              item =>
-                                              CollectionUtils.Contains(status,
-                                                                       s => s.Equals(item.Status)));
-            }
-
-            return list;
         }
 
         /// <summary>
@@ -330,25 +319,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         /// <returns></returns>
         protected bool ReindexScheduled()
         {
-            IList<WorkItem> list;
-
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetWorkItemBroker();
 
-                list = broker.GetWorkItems(ReindexRequest.WorkItemTypeString, null, null);
+                var list = broker.GetWorkItems(ReindexRequest.WorkItemTypeString, null, null);
+
+                if (list == null)
+                    return false;
+
+                var newList = CollectionUtils.Select(list,
+                                                     item => item.Status != WorkItemStatusEnum.Complete
+                                                             && item.Status != WorkItemStatusEnum.Deleted
+                                                             && item.Status != WorkItemStatusEnum.Canceled
+                                                             && item.Status != WorkItemStatusEnum.Failed);
+
+                return newList.Count > 0;
             }
-
-            if (list == null || list.Count == 0)
-                return false;
-
-            list = CollectionUtils.Select(list,
-                                          item => item.Status != WorkItemStatusEnum.Complete
-                                                  && item.Status != WorkItemStatusEnum.Deleted
-                                                  && item.Status != WorkItemStatusEnum.Canceled
-                                                  && item.Status != WorkItemStatusEnum.Failed);
-
-            return list.Count > 0;
         }
 
         /// <summary>
@@ -358,22 +345,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         /// <returns></returns>
         protected bool InProgressWorkItems()
         {
-            IList<WorkItem> list;
-
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetWorkItemBroker();
 
-                list = broker.GetWorkItems(null,WorkItemStatusEnum.InProgress, null);
+                var list = broker.GetWorkItems(null, WorkItemStatusEnum.InProgress, null);
+
+                if (list == null)
+                    return false;
+
+                // remove the current item 
+                var newList = CollectionUtils.Reject(list, item => item.Oid.Equals(Proxy.Item.Oid));
+
+                return newList.Count > 0;
             }
-
-            if (list == null || list.Count == 0)
-                return false;
-
-            // remove the current item 
-            CollectionUtils.Remove(list, item => item.Oid.Equals(Proxy.Item.Oid));
-
-            return list.Count > 0;
         }
 
         protected static DicomServerConfiguration GetServerConfiguration()

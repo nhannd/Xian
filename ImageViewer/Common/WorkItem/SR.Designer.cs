@@ -493,7 +493,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Canceled.
+        ///   Looks up a localized string similar to Stopped.
         /// </summary>
         internal static string WorkItemStatusEnumCanceled {
             get {
@@ -502,7 +502,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Canceling.
+        ///   Looks up a localized string similar to Stopping.
         /// </summary>
         internal static string WorkItemStatusEnumCanceling {
             get {

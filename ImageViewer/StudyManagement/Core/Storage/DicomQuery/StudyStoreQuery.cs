@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
         {
             int count = criteria == null
                             ? _context.Studies.Count()
-                            : GetStudies(criteria).Count;
+                            : InternalGetStudyCount(criteria);
 
             return count;
         }
@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
             return GetSopInstances(new ImageEntry { Image = criteria });
         }
 
-        private IList<Study> GetStudies(StudyEntry criteria)
+        private IEnumerable<Study> GetStudies(StudyEntry criteria)
         {
             try
             {
@@ -113,7 +113,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
 
                 var filters = new StudyPropertyFilters(dicomCriteria);
                 var results = filters.Query(_context.Studies);
-                return results.ToList();
+                return results;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("An error occurred while performing the study query.", e);
+            }
+        }
+
+        private int InternalGetStudyCount(StudyEntry criteria)
+        {
+            try
+            {
+                //TODO (Marmot): make extended data queryable, too.
+                DicomAttributeCollection dicomCriteria;
+                if (criteria == null || criteria.Study == null)
+                    dicomCriteria = new DicomAttributeCollection();
+                else
+                    dicomCriteria = criteria.Study.ToDicomAttributeCollection();
+
+                var filters = new StudyPropertyFilters(dicomCriteria);
+                var results = filters.Query(_context.Studies);
+                return results.Count();
             }
             catch (Exception e)
             {

@@ -155,9 +155,6 @@ make room, or increase the maximum usage.</value>
   <data name="MenuActivityMonitor" xml:space="preserve">
     <value>Activity Monitor</value>
   </data>
-  <data name="MenuCancelWorkItem" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
   <data name="MenuDeleteWorkItem" xml:space="preserve">
     <value>Delete</value>
   </data>
@@ -172,6 +169,9 @@ make room, or increase the maximum usage.</value>
   </data>
   <data name="MenuStatWorkItem" xml:space="preserve">
     <value>Make Stat</value>
+  </data>
+  <data name="MenuStopWorkItem" xml:space="preserve">
+    <value>Stop</value>
   </data>
   <data name="MessageConfirmCancelWorkItems" xml:space="preserve">
     <value>Canceling the selected work item(s) may result in partial study data, which could potentially lead to patient misdiagnosis.  Are you sure you want to cancel?</value>
@@ -221,9 +221,6 @@ make room, or increase the maximum usage.</value>
   <data name="TooltipActivityMonitor" xml:space="preserve">
     <value>Activity Monitor</value>
   </data>
-  <data name="TooltipCancelWorkItem" xml:space="preserve">
-    <value>Cancel selected work item(s)</value>
-  </data>
   <data name="TooltipDeleteWorkItem" xml:space="preserve">
     <value>Delete selected work item(s)</value>
   </data>
@@ -232,5 +229,8 @@ make room, or increase the maximum usage.</value>
   </data>
   <data name="TooltipStatWorkItem" xml:space="preserve">
     <value>Raise priority of selected work item(s) to 'Stat'</value>
+  </data>
+  <data name="TooltipStopWorkItem" xml:space="preserve">
+    <value>Stop selected work item(s)</value>
   </data>
 </root>

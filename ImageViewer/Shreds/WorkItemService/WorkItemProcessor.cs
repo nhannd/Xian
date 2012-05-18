@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Shreds;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
@@ -394,10 +395,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 {
                     var workItemBroker = context.GetWorkItemBroker();
 
-                    var workItems = workItemBroker.GetWorkItems(null, WorkItemStatusEnum.Deleted, null);
-
-                    if (workItems.Count > count)
-                        workItems = workItems.GetRange(0, count);
+                    var workItems = workItemBroker.GetWorkItemsDeleted(count);
 
                     foreach (var item in workItems)
                     {

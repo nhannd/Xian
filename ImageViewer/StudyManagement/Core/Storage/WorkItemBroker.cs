@@ -46,9 +46,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         public List<WorkItem> GetWorkItemsToDelete(int n)
         {
             return (from w in this.Context.WorkItems
-                    where (w.Status == WorkItemStatusEnum.Complete
-                           || w.Status == WorkItemStatusEnum.Canceled)
+                    where (w.Status == WorkItemStatusEnum.Complete)
                           && w.DeleteTime < DateTime.Now
+                    select w).Take(n).ToList();
+        }
+
+        /// <summary>
+        /// Gets WorkItems marked as deleted.
+        /// </summary>
+        /// <returns></returns>
+        public List<WorkItem> GetWorkItemsDeleted(int n)
+        {
+            return (from w in this.Context.WorkItems
+                    where (w.Status == WorkItemStatusEnum.Deleted)                          
                     select w).Take(n).ToList();
         }
 
@@ -74,7 +84,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         /// <param name="status"></param>
         /// <param name="studyInstanceUid"></param>
         /// <returns></returns>
-        public List<WorkItem> GetWorkItems(string type, WorkItemStatusEnum? status, string studyInstanceUid)
+        public IEnumerable<WorkItem> GetWorkItems(string type, WorkItemStatusEnum? status, string studyInstanceUid)
         {
             IQueryable<WorkItem> query = from w in Context.WorkItems select w;
             
@@ -94,7 +104,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 
             query = query.OrderBy(w => w.ScheduledTime);
 
-            return query.ToList();
+            return query.AsEnumerable();
         }
 
         /// <summary>

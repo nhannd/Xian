@@ -508,7 +508,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region WorkItemActionModel
 
-		class WorkItemActionModel : SimpleActionModel
+		    class WorkItemActionModel : SimpleActionModel
 		{
 			private readonly ActivityMonitorComponent _owner;
 			private readonly IItemCollection<WorkItem> _workItems;
@@ -519,7 +519,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				_workItems = workItems;
 				_owner = owner;
-				this.CancelAction = AddAction("cancel", SR.MenuCancelWorkItem, "CancelToolSmall.png", SR.TooltipCancelWorkItem, CancelSelectedWorkItems);
+				this.CancelAction = AddAction("cancel", SR.MenuStopWorkItem, "CancelToolSmall.png", SR.TooltipStopWorkItem, CancelSelectedWorkItems);
 				this.RestartAction = AddAction("restart", SR.MenuRestartWorkItem, "RestartToolSmall.png", SR.TooltipRestartWorkItem, RestartSelectedWorkItems);
 				this.DeleteAction = AddAction("delete", SR.MenuDeleteWorkItem, "DeleteToolSmall.png", SR.TooltipDeleteWorkItem, DeleteSelectedWorkItems);
 				this.StatAction = AddAction("stat", SR.MenuStatWorkItem, "StatToolSmall.png", SR.TooltipStatWorkItem, StatSelectedWorkItems);
