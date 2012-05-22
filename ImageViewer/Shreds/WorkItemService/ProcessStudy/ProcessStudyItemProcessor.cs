@@ -143,6 +143,17 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
         /// <returns></returns>
         public override bool CanStart(out string reason)
         {
+            // Pending, InProgress, Idle ProcessStudy entries existing.
+            var relatedList = FindRelatedWorkItems(new List<string> { ProcessStudyRequest.WorkItemTypeString }, new List<WorkItemStatusEnum> { WorkItemStatusEnum.InProgress, WorkItemStatusEnum.Idle, WorkItemStatusEnum.Pending });
+            foreach (var item in relatedList)
+            {
+                if (item.InsertTime < Proxy.Item.InsertTime)
+                {
+                    reason = "There is an earlier inserted WorkItem for the study being processed.";
+                    return false;
+                }
+            }
+
             // Always Can start, even if there is a reindex.
             reason = string.Empty;
             return true;

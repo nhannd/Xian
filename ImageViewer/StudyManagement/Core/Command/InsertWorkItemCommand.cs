@@ -131,12 +131,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
                 WorkItemUid.WorkItemOid = WorkItem.Oid;
                 
                 WorkItem = workItemBroker.GetWorkItem(WorkItem.Oid);
-                WorkItem.ExpirationTime = now.AddSeconds(ExpirationDelaySeconds);
+                if (WorkItem.Status == WorkItemStatusEnum.Idle
+                 || WorkItem.Status == WorkItemStatusEnum.Pending
+                 || WorkItem.Status == WorkItemStatusEnum.InProgress)
+                {
+                    WorkItem.ExpirationTime = now.AddSeconds(ExpirationDelaySeconds);
 
-                var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
-                workItemUidBroker.AddWorkItemUid(WorkItemUid);
+                    if (WorkItem.Status == WorkItemStatusEnum.Idle)
+                        WorkItem.Status = WorkItemStatusEnum.Pending;                    
+                    var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
+                    workItemUidBroker.AddWorkItemUid(WorkItemUid);    
+                }
+                else
+                {
+                    WorkItem = null;
+                }
             }
-            else
+
+            if (WorkItem == null)
             {
                 var list = workItemBroker.GetPendingWorkItemForStudy(_request.WorkItemType, _studyInstanceUid);
                 if (list != null)
