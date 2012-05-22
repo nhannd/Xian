@@ -688,40 +688,40 @@
   <data name="&gt;&gt;_fileStoreWarningMessage.ZOrder" xml:space="preserve">
     <value>17</value>
   </data>
-  <data name="_stopLocalService.AutoSize" type="System.Boolean, mscorlib">
+  <data name="_localServiceControlLink.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="_stopLocalService.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="_localServiceControlLink.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="_stopLocalService.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="_localServiceControlLink.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="_stopLocalService.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="_localServiceControlLink.Location" type="System.Drawing.Point, System.Drawing">
     <value>267, 30</value>
   </data>
-  <data name="_stopLocalService.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="_localServiceControlLink.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 1, 0, 0</value>
   </data>
-  <data name="_stopLocalService.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="_localServiceControlLink.Size" type="System.Drawing.Size, System.Drawing">
     <value>186, 27</value>
   </data>
-  <data name="_stopLocalService.TabIndex" type="System.Int32, mscorlib">
+  <data name="_localServiceControlLink.TabIndex" type="System.Int32, mscorlib">
     <value>19</value>
   </data>
-  <data name="_stopLocalService.Text" xml:space="preserve">
+  <data name="_localServiceControlLink.Text" xml:space="preserve">
     <value>Stop Local Service</value>
   </data>
-  <data name="&gt;&gt;_stopLocalService.Name" xml:space="preserve">
-    <value>_stopLocalService</value>
+  <data name="&gt;&gt;_localServiceControlLink.Name" xml:space="preserve">
+    <value>_localServiceControlLink</value>
   </data>
-  <data name="&gt;&gt;_stopLocalService.Type" xml:space="preserve">
+  <data name="&gt;&gt;_localServiceControlLink.Type" xml:space="preserve">
     <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;_stopLocalService.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_localServiceControlLink.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
   </data>
-  <data name="&gt;&gt;_stopLocalService.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;_localServiceControlLink.ZOrder" xml:space="preserve">
     <value>18</value>
   </data>
   <data name="_helpIcon.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -807,7 +807,7 @@
     <value>1</value>
   </data>
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="_changeFileStore" Row="0" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="_fileStoreDirectory" Row="0" RowSpan="1" Column="1" ColumnSpan="3" /&gt;&lt;Control Name="_usedDiskSpaceDisplay" Row="3" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="_upDownMaxDiskSpace" Row="4" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="_maxDiskSpaceDisplay" Row="4" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="_diskSpaceWarningIcon" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_totalDiskSpaceDisplay" Row="2" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="label4" Row="4" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label5" Row="3" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label1" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_maxDiskSpace" Row="4" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="_usedDiskSpace" Row="3" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="label8" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_usedSpaceMeter" Row="3" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="_diskSpaceWarningMessage" Row="5" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_fileStoreWarningIcon" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_fileStoreWarningMessage" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_stopLocalService" Row="1" RowSpan="1" Column="2" ColumnSpan="4" /&gt;&lt;Control Name="_helpIcon" Row="5" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,66,Percent,100,Absolute,32,Absolute,70,Absolute,20,Absolute,70,Absolute,5" /&gt;&lt;Rows Styles="Absolute,30,Absolute,27,Absolute,20,Absolute,29,Absolute,35,Absolute,27,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="_changeFileStore" Row="0" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="_fileStoreDirectory" Row="0" RowSpan="1" Column="1" ColumnSpan="3" /&gt;&lt;Control Name="_usedDiskSpaceDisplay" Row="3" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="_upDownMaxDiskSpace" Row="4" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="_maxDiskSpaceDisplay" Row="4" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="_diskSpaceWarningIcon" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_totalDiskSpaceDisplay" Row="2" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="label4" Row="4" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label5" Row="3" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label1" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_maxDiskSpace" Row="4" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="_usedDiskSpace" Row="3" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="label8" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_usedSpaceMeter" Row="3" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="_diskSpaceWarningMessage" Row="5" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_fileStoreWarningIcon" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_fileStoreWarningMessage" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_localServiceControlLink" Row="1" RowSpan="1" Column="2" ColumnSpan="4" /&gt;&lt;Control Name="_helpIcon" Row="5" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,66,Percent,100,Absolute,32,Absolute,70,Absolute,20,Absolute,70,Absolute,5" /&gt;&lt;Rows Styles="Absolute,30,Absolute,27,Absolute,20,Absolute,29,Absolute,35,Absolute,27,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="_maxDiskSpace.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>

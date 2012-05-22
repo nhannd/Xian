@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DescriptionExceptionHandlerSettings" xml:space="preserve">
     <value>Configures global exception handling behaviour.</value>
@@ -256,7 +256,7 @@
     <value>Close Workspace</value>
   </data>
   <data name="MenuConfigureSettings" xml:space="preserve">
-    <value>Configure Settings</value>
+    <value>Settings Editor</value>
   </data>
   <data name="MenuContents" xml:space="preserve">
     <value>Contents</value>
@@ -292,7 +292,7 @@
     <value>Insert Separator Before</value>
   </data>
   <data name="MenuOptions" xml:space="preserve">
-    <value>Options</value>
+    <value>User Options</value>
   </data>
   <data name="MenuRemove" xml:space="preserve">
     <value>Remove</value>

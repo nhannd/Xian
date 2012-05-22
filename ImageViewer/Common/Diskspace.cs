@@ -63,7 +63,8 @@ namespace ClearCanvas.ImageViewer.Common
 	    }
 
 	    public void Refresh()
-        {
+	    {
+	        _isAvailable = null;
             _totalSpace = null;
             _freeSpace = null;
         }

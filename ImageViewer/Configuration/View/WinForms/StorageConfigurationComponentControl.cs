@@ -36,7 +36,9 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
             _fileStoreDirectory.DataBindings.Add("Text", _component, "FileStoreDirectory", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _stopLocalService.DataBindings.Add("Visible", _component, "DoesLocalServiceHaveToStop", true, DataSourceUpdateMode.OnPropertyChanged);
+            _localServiceControlLink.DataBindings.Add("Text", _component, "LocalServiceControlLinkText", true, DataSourceUpdateMode.OnPropertyChanged);
+            _localServiceControlLink.DataBindings.Add("Visible", _component, "IsLocalServiceControlLinkVisible", true, DataSourceUpdateMode.OnPropertyChanged);
+            _localServiceControlLink.LinkClicked += (s,e) => _component.LocalServiceControlLinkClicked();
 
             _fileStoreWarningIcon.DataBindings.Add("Visible", _component, "HasFileStoreChanged", true, DataSourceUpdateMode.OnPropertyChanged);
             _fileStoreWarningMessage.DataBindings.Add("Visible", _component, "HasFileStoreChanged", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -76,7 +78,12 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			_deleteTimeUnits.DataBindings.Add("Enabled", _component, "DeleteStudies");
 			_deleteTimeUnits.Format += (sender, e) => { e.Value = _component.FormatTimeUnit(e.ListItem); };
 
-			_component.PropertyChanged += OnComponentPropertyChanged;
+            _changeFileStore.Click += (s, e) => _component.ChangeFileStore();
+            _helpIcon.Click += (s,e) => _component.Help();
+			
+            
+            _component.PropertyChanged += OnComponentPropertyChanged;
+
             //Set initial values.
             OnComponentPropertyChanged(this, new PropertyChangedEventArgs("FileStoreDirectory"));
             OnComponentPropertyChanged(this, new PropertyChangedEventArgs("FileStoreChangedDescription"));
@@ -129,20 +136,5 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			int value = (int)e.Value;
 			e.Value = value / 1000.0;
 		}
-
-        private void _changeFileStore_Click(object sender, EventArgs e)
-        {
-            _component.ChangeFileStore();
-        }
-
-        private void _stopLocalServices_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            _component.StopLocalService();
-        }
-
-        private void _helpIcon_Click(object sender, EventArgs e)
-        {
-            _component.Help();
-        }
     }
 }

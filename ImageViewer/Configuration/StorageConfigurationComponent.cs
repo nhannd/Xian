@@ -36,8 +36,6 @@ namespace ClearCanvas.ImageViewer.Configuration
     [AssociateView(typeof(StorageConfigurationComponentViewExtensionPoint))]
     public class StorageConfigurationComponent : ConfigurationApplicationComponent
     {
-        private const string _notApplicable = "N/A";
-
         private DelayedEventPublisher _delaySetFileStoreDirectory;
         private StorageConfiguration _configuration;
         private string _fileStoreDriveName;
@@ -94,7 +92,6 @@ namespace ClearCanvas.ImageViewer.Configuration
 					var client = new ReapplyRulesBridge();
 					client.ReapplyAll(new RulesEngineOptions { ApplyDeleteActions = true });
 				}
-
 		    }
 		    catch (Exception e)
 		    {
@@ -111,6 +108,37 @@ namespace ClearCanvas.ImageViewer.Configuration
             }
         }
 
+        public override bool Modified
+        {
+            get
+            {
+                return base.Modified;
+            }
+            protected set
+            {
+                base.Modified = value;
+                NotifyPropertyChanged("DoesLocalServiceHaveToStop");
+                NotifyPropertyChanged("DoesLocalServiceHaveToStart");
+                NotifyPropertyChanged("IsLocalServiceControlLinkVisible");
+                NotifyPropertyChanged("LocalServiceControlLinkText");
+            }
+        }
+
+        private bool IsLocalServiceRunning
+        {
+            get { return _activityMonitor.IsConnected; }
+        }
+
+        private bool DoesLocalServiceHaveToStop
+        {
+            get { return IsLocalServiceRunning && HasFileStoreChanged && Modified; }
+        }
+
+        private bool DoesLocalServiceHaveToStart
+        {
+            get { return !IsLocalServiceRunning && HasFileStoreChanged && !Modified; }
+        }
+        
         private bool IsDiskspaceAvailable
         {
             get { return _configuration.FileStoreDriveExists && _configuration.FileStoreDiskSpace.IsAvailable; }
@@ -159,22 +187,32 @@ namespace ClearCanvas.ImageViewer.Configuration
             }
         }
 
-        public bool IsLocalServiceRunning
+        public string LocalServiceControlLinkText
         {
-            get { return _activityMonitor.IsConnected; }
+            get
+            {
+                if (DoesLocalServiceHaveToStop)
+                    return SR.LinkLabelStopLocalService;
+
+                if (DoesLocalServiceHaveToStart)
+                    return SR.LinkLabelStartLocalService;
+                
+                return String.Empty;
+            }
         }
 
-        public bool DoesLocalServiceHaveToStop
+        public bool IsLocalServiceControlLinkVisible
         {
-            get { return IsLocalServiceRunning && HasFileStoreChanged; }
+            get { return DoesLocalServiceHaveToStop || DoesLocalServiceHaveToStart; }
         }
+
 
         public string TotalSpaceBytesDisplay
         {
             get
             {
                 if (!IsDiskspaceAvailable)
-                    return _notApplicable;
+                    return SR.NotApplicable;
 
                 return Diskspace.FormatBytes(_configuration.FileStoreDiskSpace.TotalSpace, "F3");
             }
@@ -201,7 +239,7 @@ namespace ClearCanvas.ImageViewer.Configuration
             get
             {
                 if (!IsDiskspaceAvailable)
-                    return _notApplicable;
+                    return SR.NotApplicable;
 
                 return Diskspace.FormatBytes(_configuration.FileStoreDiskSpace.UsedSpace, "F3");
             }
@@ -238,7 +276,7 @@ namespace ClearCanvas.ImageViewer.Configuration
             get
             {
                 if (!IsDiskspaceAvailable)
-                    return _notApplicable;
+                    return SR.NotApplicable;
 
                 return Diskspace.FormatBytes(_configuration.MaximumUsedSpaceBytes, "F3");
             }
@@ -302,16 +340,31 @@ namespace ClearCanvas.ImageViewer.Configuration
             }
         }
 
-        public void StopLocalService()
+        public void LocalServiceControlLinkClicked()
         {
-            try
+            if (DoesLocalServiceHaveToStop)
             {
-                BlockingOperation.Run(LocalServiceProcess.Stop);
+                try
+                {
+                    BlockingOperation.Run(LocalServiceProcess.Stop);
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Debug, e);
+                    Host.DesktopWindow.ShowMessageBox(SR.MessageUnableToStopLocalService, MessageBoxActions.Ok);
+                }
             }
-            catch (Exception e)
+            else if (DoesLocalServiceHaveToStart)
             {
-                Platform.Log(LogLevel.Debug, e);
-                Host.DesktopWindow.ShowMessageBox(SR.MessageUnableToStopLocalService, MessageBoxActions.Ok);
+                try
+                {
+                    BlockingOperation.Run(LocalServiceProcess.Start);
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Debug, e);
+                    Host.DesktopWindow.ShowMessageBox(SR.MessageUnableToStartLocalService, MessageBoxActions.Ok);
+                }
             }
         }
 
@@ -387,10 +440,10 @@ namespace ClearCanvas.ImageViewer.Configuration
             if (!_configuration.FileStoreDriveExists)
                 return new ValidationResult(false, String.Format(SR.ValidationDriveDoesNotExist, _configuration.FileStoreRootPath));
 
-            if (!IsLocalServiceRunning)
-                return new ValidationResult(true, String.Empty);
+            if (DoesLocalServiceHaveToStop)
+                return new ValidationResult(false, SR.ValidationMessageCannotChangeFileStore);
 
-            return new ValidationResult(false, SR.ValidationMessageCannotChangeFileStore);
+            return new ValidationResult(true, String.Empty);
         }
 
         private void UpdateFileStoreDriveName()
@@ -429,7 +482,11 @@ namespace ClearCanvas.ImageViewer.Configuration
         private void ActivityMonitorOnIsConnectedChanged(object sender, EventArgs eventArgs)
         {
             NotifyPropertyChanged("IsLocalServiceRunning");
+
             NotifyPropertyChanged("DoesLocalServiceHaveToStop");
+            NotifyPropertyChanged("DoesLocalServiceHaveToStart");
+            NotifyPropertyChanged("IsLocalServiceControlLinkVisible");
+            NotifyPropertyChanged("LocalServiceControlLinkText");
         }
 
         private void RealSetFileStoreDirectory(object sender, EventArgs e)
@@ -445,8 +502,12 @@ namespace ClearCanvas.ImageViewer.Configuration
             NotifyPropertyChanged("HasFileStoreChanged");
             NotifyPropertyChanged("FileStoreChangedMessage");
             NotifyPropertyChanged("FileStoreChangedDescription");
-            NotifyPropertyChanged("DoesLocalServiceHaveToStop");
 
+            NotifyPropertyChanged("DoesLocalServiceHaveToStop");
+            NotifyPropertyChanged("DoesLocalServiceHaveToStart");
+            NotifyPropertyChanged("IsLocalServiceControlLinkVisible");
+            NotifyPropertyChanged("LocalServiceControlLinkText");
+            
             if (!HasValidationErrors)
                 ShowValidation(false);
         }

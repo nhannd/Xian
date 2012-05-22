@@ -182,6 +182,15 @@ Streaming Image Port: {1}</value>
   <data name="LabelToolbar" xml:space="preserve">
     <value>Toolbar</value>
   </data>
+  <data name="LinkLabelStartLocalService" xml:space="preserve">
+    <value>Start Local Service</value>
+  </data>
+  <data name="LinkLabelStopLocalService" xml:space="preserve">
+    <value>Stop Local Service</value>
+  </data>
+  <data name="LocalConfiguration" xml:space="preserve">
+    <value>Local</value>
+  </data>
   <data name="Location" xml:space="preserve">
     <value>Location: {0}</value>
   </data>
@@ -201,7 +210,7 @@ Streaming Image Port: {1}</value>
     <value>Edit</value>
   </data>
   <data name="MenuSharedConfiguration" xml:space="preserve">
-    <value>Configure ...</value>
+    <value>System Configuration</value>
   </data>
   <data name="MenuVerify" xml:space="preserve">
     <value>Verify</value>
@@ -272,6 +281,9 @@ Streaming Image Port: {1}</value>
   <data name="MessageStorageHelp" xml:space="preserve">
     <value>Click for an explanation of study storage options.</value>
   </data>
+  <data name="MessageUnableToStartLocalService" xml:space="preserve">
+    <value>Failed to start the local service. See the logs for more details.</value>
+  </data>
   <data name="MessageUnableToStopLocalService" xml:space="preserve">
     <value>Failed to stop the local service. See the logs for more details.</value>
   </data>
@@ -284,6 +296,9 @@ Streaming Image Port: {1}</value>
   <data name="MyStudiesTitle" xml:space="preserve">
     <value>My Studies</value>
   </data>
+  <data name="NotApplicable" xml:space="preserve">
+    <value>N/A</value>
+  </data>
   <data name="PathContextMenuConfiguration" xml:space="preserve">
     <value>Context Menu (Image)</value>
   </data>
@@ -294,7 +309,7 @@ Streaming Image Port: {1}</value>
     <value>Publishing</value>
   </data>
   <data name="ServerConfiguration" xml:space="preserve">
-    <value>Local Server</value>
+    <value>DICOM Server</value>
   </data>
   <data name="StorageConfiguration" xml:space="preserve">
     <value>Study Storage</value>
@@ -321,7 +336,7 @@ Streaming Image Port: {1}</value>
     <value>Select File Store Folder</value>
   </data>
   <data name="TitleSharedConfiguration" xml:space="preserve">
-    <value>Configuration</value>
+    <value>System Configuration</value>
   </data>
   <data name="ToolbarAddServer" xml:space="preserve">
     <value>Add server</value>

@@ -222,6 +222,33 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Start Local Service.
+        /// </summary>
+        internal static string LinkLabelStartLocalService {
+            get {
+                return ResourceManager.GetString("LinkLabelStartLocalService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop Local Service.
+        /// </summary>
+        internal static string LinkLabelStopLocalService {
+            get {
+                return ResourceManager.GetString("LinkLabelStopLocalService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Local.
+        /// </summary>
+        internal static string LocalConfiguration {
+            get {
+                return ResourceManager.GetString("LocalConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Location: {0}.
         /// </summary>
         internal static string Location {
@@ -276,7 +303,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Configure ....
+        ///   Looks up a localized string similar to System Configuration.
         /// </summary>
         internal static string MenuSharedConfiguration {
             get {
@@ -492,6 +519,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to start the local service. See the logs for more details..
+        /// </summary>
+        internal static string MessageUnableToStartLocalService {
+            get {
+                return ResourceManager.GetString("MessageUnableToStartLocalService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to stop the local service. See the logs for more details..
         /// </summary>
         internal static string MessageUnableToStopLocalService {
@@ -528,6 +564,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to N/A.
+        /// </summary>
+        internal static string NotApplicable {
+            get {
+                return ResourceManager.GetString("NotApplicable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Context Menu (Image).
         /// </summary>
         internal static string PathContextMenuConfiguration {
@@ -555,7 +600,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Local Server.
+        ///   Looks up a localized string similar to DICOM Server.
         /// </summary>
         internal static string ServerConfiguration {
             get {
@@ -636,7 +681,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Configuration.
+        ///   Looks up a localized string similar to System Configuration.
         /// </summary>
         internal static string TitleSharedConfiguration {
             get {
