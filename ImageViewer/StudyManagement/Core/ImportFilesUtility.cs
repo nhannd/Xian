@@ -360,7 +360,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     {                        
                         command = workItem != null
                             ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName)
-                            : new InsertWorkItemCommand(_context.CreateRequest(file), new ProcessStudyProgress(),  studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName);             
+                            : new InsertWorkItemCommand(_context.CreateRequest(file), new ProcessStudyProgress { TotalFilesToProcess = 1 }, studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName);             
                     }
                     else
                     {

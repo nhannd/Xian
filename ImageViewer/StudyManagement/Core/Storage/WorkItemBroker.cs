@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         /// <param name="type"></param>
         /// <param name="studyInstanceUid"></param>
         /// <returns></returns>
-        public WorkItem GetPendingWorkItemForStudy(string type, string studyInstanceUid)
+        public IList<WorkItem> GetPendingWorkItemForStudy(string type, string studyInstanceUid)
         {
             var list = (from w in this.Context.WorkItems
                         where w.StudyInstanceUid == studyInstanceUid
@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             
             if (!list.Any()) return null;
 
-            return list.First();
+            return list;
         }
 
         /// <summary>
