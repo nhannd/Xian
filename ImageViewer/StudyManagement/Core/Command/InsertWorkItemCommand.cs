@@ -138,7 +138,32 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
             }
             else
             {
-                WorkItem = workItemBroker.GetPendingWorkItemForStudy(_request.WorkItemType, _studyInstanceUid);
+                var list = workItemBroker.GetPendingWorkItemForStudy(_request.WorkItemType, _studyInstanceUid);
+                if (list != null)
+                {
+                    var thisRequest = _request as DicomReceiveRequest;
+                    if (thisRequest != null)
+                    {
+                        foreach (var item in list)
+                        {
+                            var request = item.Request as DicomReceiveRequest;
+                            if (request != null)
+                            {
+                                if (request.FromAETitle.Equals(thisRequest.FromAETitle))
+                                {
+                                    WorkItem = item;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (list.Count > 0)
+                            WorkItem = list[0];
+                    }
+                }
+
                 if (WorkItem == null)
                 {
                     WorkItem = new WorkItem
