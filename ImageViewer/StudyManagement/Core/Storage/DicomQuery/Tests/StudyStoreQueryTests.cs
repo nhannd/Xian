@@ -20,6 +20,8 @@ using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Tests
 {
+    //TODO (Marmot):Test with Deleted and Reindex column set.
+
     [TestFixture]
     public class StudyStoreQueryTests
     {

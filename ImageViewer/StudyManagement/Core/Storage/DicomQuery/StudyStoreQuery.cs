@@ -24,10 +24,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
 
         public int GetStudyCount(StudyEntry criteria)
         {
-            int count = criteria == null
-                            ? _context.Studies.Count()
-                            : InternalGetStudyCount(criteria);
-
+            int count = GetStudies(criteria).Count();
             return count;
         }
 
@@ -104,7 +101,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
         {
             try
             {
-                //TODO (Marmot): make extended data queryable, too.
+                //TODO (Marmot): make extended data queryable, too?
                 DicomAttributeCollection dicomCriteria;
                 if (criteria == null || criteria.Study == null)
                     dicomCriteria = new DicomAttributeCollection();
@@ -114,27 +111,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
                 var filters = new StudyPropertyFilters(dicomCriteria);
                 var results = filters.Query(_context.Studies);
                 return results;
-            }
-            catch (Exception e)
-            {
-                throw new Exception("An error occurred while performing the study query.", e);
-            }
-        }
-
-        private int InternalGetStudyCount(StudyEntry criteria)
-        {
-            try
-            {
-                //TODO (Marmot): make extended data queryable, too.
-                DicomAttributeCollection dicomCriteria;
-                if (criteria == null || criteria.Study == null)
-                    dicomCriteria = new DicomAttributeCollection();
-                else
-                    dicomCriteria = criteria.Study.ToDicomAttributeCollection();
-
-                var filters = new StudyPropertyFilters(dicomCriteria);
-                var results = filters.Query(_context.Studies);
-                return results.Count();
             }
             catch (Exception e)
             {
@@ -251,7 +227,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
             if (String.IsNullOrEmpty(studyInstanceUid))
                 throw new ArgumentException("The study uid must be specified for a series level query.");
 
-            IStudy study = (from s in _context.Studies where s.StudyInstanceUid == studyInstanceUid select s).FirstOrDefault();
+            IStudy study = GetStudies(new StudyRootStudyIdentifier {StudyInstanceUid = studyInstanceUid}).FirstOrDefault();
             if (study == null)
                 Platform.Log(LogLevel.Debug, "No study exists with the given study uid ({0}).", studyInstanceUid);
 
@@ -263,7 +239,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
             if (String.IsNullOrEmpty(studyInstanceUid) || String.IsNullOrEmpty(seriesInstanceUid))
                 throw new ArgumentException("The study and series uids must be specified for an image level query.");
 
-            IStudy study = (from s in _context.Studies where s.StudyInstanceUid == studyInstanceUid select s).FirstOrDefault();
+            IStudy study = GetStudies(new StudyRootStudyIdentifier { StudyInstanceUid = studyInstanceUid }).FirstOrDefault();
             if (study == null)
             {
                 Platform.Log(LogLevel.Debug, "No study exists with the given study uid ({0}).", studyInstanceUid);
