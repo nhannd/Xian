@@ -258,7 +258,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             }
 
             instance = new InstanceXml(data, theFile.SopClass, theFile.TransferSyntax);
-        	instance.SourceFileName = theFile.Filename;
+    	    instance.SourceAETitle = theFile.SourceApplicationEntityTitle;
+            instance.SourceFileName = theFile.Filename;
         	instance.FileSize = fileSize;
             series[sopInstanceUid] = instance;
 

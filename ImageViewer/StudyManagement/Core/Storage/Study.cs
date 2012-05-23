@@ -132,9 +132,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 
         #region Public Methods
 
-        public void Update(DicomMessageBase dicomMessage)
+        public void Update(StudyXml studyXml)
         {
-            var dataSet = dicomMessage.DataSet;
+            Platform.CheckForNullReference(studyXml, "studyXml");
+
+            var dataSet = studyXml.First().First().Collection;
+
             DicomAttribute attribute = dataSet[DicomTags.StudyInstanceUid];
             string datasetStudyUid = attribute.ToString();
             if (!String.IsNullOrEmpty(StudyInstanceUid) && StudyInstanceUid != datasetStudyUid)
@@ -148,6 +151,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             StudyInstanceUid = attribute.ToString();
 
             Platform.CheckForEmptyString(StudyInstanceUid, "StudyInstanceUid");
+
+            _studyXml = studyXml;
 
             attribute = dataSet[DicomTags.PatientId];
             PatientId = attribute.ToString();
@@ -247,29 +252,41 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             attribute = dataSet[DicomTags.SpecificCharacterSet];
             SpecificCharacterSet = attribute.ToString();
 
-            string[] modalitiesInStudy = DicomStringHelper.GetStringArray(ModalitiesInStudy ?? "");
-            ModalitiesInStudy = DicomStringHelper.GetDicomStringArray(
-                AppendIfNotIn(modalitiesInStudy, dataSet[DicomTags.Modality].GetString(0, "")));
+            var modalities = _studyXml
+                                .Select(s => s.First()[DicomTags.Modality].GetString(0, null))
+                                .Where(value => !String.IsNullOrEmpty(value)).Distinct();
+            ModalitiesInStudy = DicomStringHelper.GetDicomStringArray(modalities);
 
-            string[] sopClassesInStudy = DicomStringHelper.GetStringArray(SopClassesInStudy ?? "");
-            SopClassesInStudy = DicomStringHelper.GetDicomStringArray(
-                AppendIfNotIn(sopClassesInStudy, dataSet[DicomTags.SopClassUid].GetString(0, "")));
+            var stationNames = _studyXml
+                                .Select(s => s.First()[DicomTags.StationName].GetString(0, null))
+                                .Where(value => !String.IsNullOrEmpty(value)).Distinct();
+            StationNamesInStudy = DicomStringHelper.GetDicomStringArray(stationNames);
 
-            string[] stationNamesInStudy = DicomStringHelper.GetStringArray(StationNamesInStudy ?? "");
-            StationNamesInStudy = DicomStringHelper.GetDicomStringArray(
-                AppendIfNotIn(stationNamesInStudy, dataSet[DicomTags.StationName].GetString(0, "")));
+            var institutionNames = _studyXml
+                                    .Select(s => s.First()[DicomTags.InstitutionName].GetString(0, null))
+                                    .Where(value => !String.IsNullOrEmpty(value)).Distinct();
+            InstitutionNamesInStudy = DicomStringHelper.GetDicomStringArray(institutionNames);
 
-            string[] institutionNamesInStudy = DicomStringHelper.GetStringArray(InstitutionNamesInStudy ?? "");
-            InstitutionNamesInStudy = DicomStringHelper.GetDicomStringArray(
-                AppendIfNotIn(institutionNamesInStudy, dataSet[DicomTags.InstitutionName].GetString(0, "")));
+            var sopClasses = (from series in _studyXml
+                              from instance in series
+                              where instance.SopClass != null
+                              select instance.SopClass.DicomUid).Distinct();
+            SopClassesInStudy = DicomStringHelper.GetDicomStringArray(sopClasses);
 
             #region Meta Info
 
-            string[] sourceAETitlesInStudy = DicomStringHelper.GetStringArray(SourceAETitlesInStudy ?? "");
-            SourceAETitlesInStudy = DicomStringHelper.GetDicomStringArray(
-                AppendIfNotIn(sourceAETitlesInStudy, dicomMessage.MetaInfo[DicomTags.SourceApplicationEntityTitle].GetString(0, "")));
+            var sourceAEs = (from series in _studyXml
+                            from instance in series
+                            where !String.IsNullOrEmpty(instance.SourceAETitle)
+                             select instance.SourceAETitle).Distinct();
+            SourceAETitlesInStudy = DicomStringHelper.GetDicomStringArray(sourceAEs);
 
             #endregion
+
+            //these have to be here, rather than in Initialize b/c they are 
+            // computed from the series, which are parsed from the xml.
+            NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;
+            NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
         }
 
 		public void SetDeleteTime(int value, TimeUnit units, TimeOrigin origin, bool growOnly)
@@ -333,37 +350,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 
                 return _series;
             }
-        }
-
-        #endregion
-
-        #region Private/Internal Methods
-
-        internal void Initialize(StudyXml studyXml)
-        {
-            Platform.CheckForNullReference(studyXml, "studyXml");
-            _studyXml = studyXml;
-
-            var file = new DicomFile(null, new DicomAttributeCollection(), _studyXml.First().First().Collection);
-            Update(file);
-            //these have to be here, rather than in Initialize b/c they are 
-            // computed from the series, which are parsed from the xml.
-            NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;
-            NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
-        }
-
-        private static IEnumerable<string> AppendIfNotIn(IEnumerable<string> values, string candidate)
-        {
-            foreach (string value in values)
-            {
-                if (value == candidate)
-                    candidate = null;
-
-                yield return value;
-            }
-
-            if (candidate != null)
-                yield return candidate;
         }
 
         #endregion

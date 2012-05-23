@@ -14,11 +14,8 @@ using System.IO;
 using System.Threading;
 using System.Xml;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
@@ -42,18 +39,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
                         };
 
             StudyFolder = Path.Combine(GetFileStoreDirectory(), studyInstanceUid);
-        }
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="message">A message to find the Study location for.</param>
-        public StudyLocation(DicomMessageBase message)
-        {
-            Study = new Study();
-            Study.Update(message);
-
-            StudyFolder = Path.Combine(GetFileStoreDirectory(), Study.StudyInstanceUid);
         }
 
         #endregion

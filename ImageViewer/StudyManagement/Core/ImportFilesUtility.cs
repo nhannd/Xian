@@ -324,7 +324,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             {
                 try
                 {
-                    var studyLocation = new StudyLocation(message);
+                    var studyLocation = new StudyLocation(message.DataSet[DicomTags.StudyInstanceUid].ToString());
 
                 	String destinationFile = studyLocation.GetSopInstancePath(seriesInstanceUid, sopInstanceUid);
                     
