@@ -226,7 +226,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
             if (instanceNode.Attributes["SourceAETitle"] != null)
             {
-                _sourceAETitle = instanceNode.Attributes["SourceAETitle"].Value;
+                _sourceAETitle = XmlUnescapeString(instanceNode.Attributes["SourceAETitle"].Value);
             }
 
 			if (instanceNode.Attributes["SopClassUID"] != null)
@@ -532,7 +532,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                 if (_sourceAETitle != null)
                 {
                     XmlAttribute sourceAEAttribute = theDocument.CreateAttribute("SourceAETitle");
-                    sourceAEAttribute.Value = _sourceAETitle;
+                    sourceAEAttribute.Value = XmlEscapeString(_sourceAETitle);
                     instance.Attributes.Append(sourceAEAttribute);
                 }
                 
