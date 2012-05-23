@@ -205,6 +205,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 try
                 {
                     _dataGridView.FirstDisplayedScrollingRowIndex = value;
+                    _dataGridView.PerformLayout();
                 }
                 catch (InvalidOperationException)
                 {

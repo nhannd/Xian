@@ -231,13 +231,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		private event EventHandler SelectedStudyChanged
+		public event EventHandler SelectedStudyChanged
 		{
 			add { _selectedStudyChangedEvent += value; }
 			remove { _selectedStudyChangedEvent -= value; }
 		}
 
-		private event EventHandler SelectedServerChanged
+		public event EventHandler SelectedServerChanged
 		{
 			add { _selectedServerChangedEvent += value; }
 			remove { _selectedServerChangedEvent -= value; }
@@ -650,6 +650,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private void OnSearchCompleted(StudyItemList aggregateStudyItemList, List<KeyValuePair<string, Exception>> failedServerInfo)
 		{
 			CurrentSearchResult.Refresh(aggregateStudyItemList, _filterDuplicateStudies);
+			SetSelection(new Selection(CollectionUtils.FirstElement(CurrentSearchResult.StudyTable.Items)));
 
 			// Re-throw the last exception with a list of failed server name, if any
 			if (failedServerInfo.Count > 0)

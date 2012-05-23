@@ -22,6 +22,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 	{
 		private StudyBrowserComponent _studyBrowserComponent;
 		private BindingSource _bindingSource;
+		private bool _selectionUpdating = false;
 
 		public StudyBrowserControl(StudyBrowserComponent component)
 		{
@@ -30,6 +31,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 			_studyBrowserComponent = component;
 			_studyBrowserComponent.StudyTableChanged += OnStudyBrowserComponentOnStudyTableChanged;
+			_studyBrowserComponent.SelectedStudyChanged += OnStudyBrowserComponentSelectedStudyChanged;
 
 			_studyTableView.Table = _studyBrowserComponent.StudyTable;
 			_studyTableView.ToolbarModel = _studyBrowserComponent.ToolbarModel;
@@ -50,11 +52,34 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_studyTableView.Table = _studyBrowserComponent.StudyTable;
 		}
 
-		void OnStudyTableViewSelectionChanged(object sender, EventArgs e)
+		private void OnStudyBrowserComponentSelectedStudyChanged(object sender, EventArgs e)
 		{
-			//The table view remembers the selection order, with the most recent being first.
-			//We actually want that same order, but in reverse.
-			_studyBrowserComponent.SetSelection(ReverseSelection(_studyTableView.Selection));
+			if (_selectionUpdating) return;
+			_selectionUpdating = true;
+			try
+			{
+				_studyTableView.Selection = new Selection(_studyBrowserComponent.SelectedStudies);
+			}
+			finally
+			{
+				_selectionUpdating = false;
+			}
+		}
+
+		private void OnStudyTableViewSelectionChanged(object sender, EventArgs e)
+		{
+			if (_selectionUpdating) return;
+			_selectionUpdating = true;
+			try
+			{
+				//The table view remembers the selection order, with the most recent being first.
+				//We actually want that same order, but in reverse.
+				_studyBrowserComponent.SetSelection(ReverseSelection(_studyTableView.Selection));
+			}
+			finally
+			{
+				_selectionUpdating = false;
+			}
 		}
 
 		void OnStudyTableViewDoubleClick(object sender, EventArgs e)
