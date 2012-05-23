@@ -131,14 +131,51 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
                 WorkItemUid.WorkItemOid = WorkItem.Oid;
                 
                 WorkItem = workItemBroker.GetWorkItem(WorkItem.Oid);
-                WorkItem.ExpirationTime = now.AddSeconds(ExpirationDelaySeconds);
+                if (WorkItem.Status == WorkItemStatusEnum.Idle
+                 || WorkItem.Status == WorkItemStatusEnum.Pending
+                 || WorkItem.Status == WorkItemStatusEnum.InProgress)
+                {
+                    WorkItem.ExpirationTime = now.AddSeconds(ExpirationDelaySeconds);
 
-                var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
-                workItemUidBroker.AddWorkItemUid(WorkItemUid);
+                    if (WorkItem.Status == WorkItemStatusEnum.Idle)
+                        WorkItem.Status = WorkItemStatusEnum.Pending;                    
+                    var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
+                    workItemUidBroker.AddWorkItemUid(WorkItemUid);    
+                }
+                else
+                {
+                    WorkItem = null;
+                }
             }
-            else
+
+            if (WorkItem == null)
             {
-                WorkItem = workItemBroker.GetPendingWorkItemForStudy(_request.WorkItemType, _studyInstanceUid);
+                var list = workItemBroker.GetPendingWorkItemForStudy(_request.WorkItemType, _studyInstanceUid);
+                if (list != null)
+                {
+                    var thisRequest = _request as DicomReceiveRequest;
+                    if (thisRequest != null)
+                    {
+                        foreach (var item in list)
+                        {
+                            var request = item.Request as DicomReceiveRequest;
+                            if (request != null)
+                            {
+                                if (request.FromAETitle.Equals(thisRequest.FromAETitle))
+                                {
+                                    WorkItem = item;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (list.Count > 0)
+                            WorkItem = list[0];
+                    }
+                }
+
                 if (WorkItem == null)
                 {
                     WorkItem = new WorkItem
