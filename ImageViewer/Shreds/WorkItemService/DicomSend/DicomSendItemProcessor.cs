@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
 
             }
 
-            if (AutoRoute != null)
+            if (AutoRoute != null && Proxy.Item.Priority != WorkItemPriorityEnum.Stat)
             {
                 DateTime now = Platform.Time;
                 DateTime scheduledTime = AutoRoute.GetScheduledTime(now, 0);
