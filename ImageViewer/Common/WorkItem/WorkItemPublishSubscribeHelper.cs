@@ -42,6 +42,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 			try
 			{
 				SubscriptionManager<IWorkItemActivityCallback>.Subscribe(callback, WorkItemsChanged);
+                SubscriptionManager<IWorkItemActivityCallback>.Subscribe(callback, StudiesCleared);
 			}
 			catch (Exception e)
 			{
@@ -55,6 +56,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 			try
 			{
 				SubscriptionManager<IWorkItemActivityCallback>.Unsubscribe(callback, WorkItemsChanged);
+                SubscriptionManager<IWorkItemActivityCallback>.Unsubscribe(callback, StudiesCleared);
 			}
 			catch (Exception e)
 			{

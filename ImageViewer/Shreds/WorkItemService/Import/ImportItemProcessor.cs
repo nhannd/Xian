@@ -39,7 +39,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
         public override void Process()
         {
-            ValidateRequest(Request);
+            if (!ValidateRequest(Request))
+            {
+                Proxy.Fail(SR.ExceptionNoValidFilesHaveBeenSpecifiedToImport, WorkItemFailureType.Fatal);
+                return;
+            }
 
             Progress.NumberOfFilesImported = 0;
             Progress.NumberOfImportFailures = 0;
@@ -95,13 +99,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
         #region Private Methods
 
-        private void ValidateRequest(ImportFilesRequest filesRequest)
+        private bool ValidateRequest(ImportFilesRequest filesRequest)
         {
             if (filesRequest == null)
-                throw new ArgumentNullException(SR.ExceptionNoFilesHaveBeenSpecifiedToImport);
+                return false;
 
             if (filesRequest.FilePaths == null)
-                throw new ArgumentNullException(SR.ExceptionNoFilesHaveBeenSpecifiedToImport);
+                return false;
 
             int paths = 0;
 
@@ -112,7 +116,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             }
 
             if (paths == 0)
-                throw new ArgumentNullException(SR.ExceptionNoValidFilesHaveBeenSpecifiedToImport);
+                return false;
+
+            return true;
         }
 
         private void ImportFile(string file, ImportStudyContext context)
