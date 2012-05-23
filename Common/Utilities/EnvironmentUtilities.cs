@@ -41,8 +41,6 @@ namespace ClearCanvas.Common.Utilities
 						_machineIdentifier = Convert.ToBase64String(sha256.ComputeHash(Encoding.UTF8.GetBytes(input)));
 					}
 				}
-
-                // TODO (CR May 22, 2012): save it so it can be used again when another user logs in?
 				return _machineIdentifier;
 			}
 		}
@@ -86,7 +84,6 @@ namespace ClearCanvas.Common.Utilities
 			}
 			catch (Exception ex)
 			{
-                // TODO (CR May 22, 2012): can happen if the user does not have the right permission. Retrieve the last known ID?
 				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve processor ID.");
 			}
 			return string.Empty;
@@ -113,8 +110,7 @@ namespace ClearCanvas.Common.Utilities
 			}
 			catch (Exception ex)
 			{
-                // TODO (CR May 22, 2012): can happen if the user does not have the right permission. Retrieve the last known ID?
-                Platform.Log(LogLevel.Debug, ex, "Failed to retrieve BIOS serial number.");
+				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve BIOS serial number.");
 			}
 			return string.Empty;
 		}
@@ -140,8 +136,7 @@ namespace ClearCanvas.Common.Utilities
 			}
 			catch (Exception ex)
 			{
-                // TODO (CR May 22, 2012): can happen if the user does not have the right permission. Retrieve the last known ID?
-                Platform.Log(LogLevel.Debug, ex, "Failed to retrieve baseboard serial number.");
+				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve baseboard serial number.");
 			}
 			return string.Empty;
 		}
@@ -172,8 +167,7 @@ namespace ClearCanvas.Common.Utilities
 			}
 			catch (Exception ex)
 			{
-                // TODO (CR May 22, 2012): can happen if the user does not have the right permission. Retrieve the last known ID?
-                Platform.Log(LogLevel.Debug, ex, "Failed to retrieve disk drive signature.");
+				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve disk drive signature.");
 			}
 			return string.Empty;
 		}
@@ -199,8 +193,7 @@ namespace ClearCanvas.Common.Utilities
 			}
 			catch (Exception ex)
 			{
-                // TODO (CR May 22, 2012): can happen if the user does not have the right permission. Retrieve the last known ID?
-                Platform.Log(LogLevel.Debug, ex, "Failed to retrieve system UUID.");
+				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve system UUID.");
 			}
 			return string.Empty;
 		}
