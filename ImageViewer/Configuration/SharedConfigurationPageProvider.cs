@@ -23,10 +23,10 @@ namespace ClearCanvas.ImageViewer.Configuration
 	public class SharedConfigurationPageProvider : IConfigurationPageProvider, IActivityMonitorQuickLinkHandler
 	{
         public const string LocalConfigurationPath = "LocalConfiguration";
-        public const string ServerConfigurationPath = "ServerConfiguration";
-		public const string StorageConfigurationPath = "StorageConfiguration";
-		public const string PublishingConfigurationPath = "PublishingConfiguration";
-		public const string PriorsServerConfigurationPath = "PriorsServersConfiguration";
+        public const string ServerConfigurationPath = LocalConfigurationPath + @"/" + "ServerConfiguration";
+        public const string StorageConfigurationPath = LocalConfigurationPath + @"/" + "StorageConfiguration";
+        public const string PriorsServerConfigurationPath = LocalConfigurationPath + @"/" + "PriorsServersConfiguration";
+        public const string PublishingConfigurationPath = "PublishingConfiguration";
 
 		#region IConfigurationPageProvider Members
 
@@ -35,13 +35,13 @@ namespace ClearCanvas.ImageViewer.Configuration
 			var listPages = new List<IConfigurationPage>();
 
 			if (PermissionsHelper.IsInRole(Services.AuthorityTokens.Administration.DicomServer) && Common.DicomServer.DicomServer.IsSupported)
-				listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>(LocalConfigurationPath + @"/" + ServerConfigurationPath));
+				listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>(ServerConfigurationPath));
 
             if (PermissionsHelper.IsInRole(Services.AuthorityTokens.Administration.Storage) && Common.StudyManagement.StudyStore.IsSupported)
-                listPages.Add(new ConfigurationPage<StorageConfigurationComponent>(LocalConfigurationPath + @"/" + StorageConfigurationPath));
+                listPages.Add(new ConfigurationPage<StorageConfigurationComponent>(StorageConfigurationPath));
 
             if (PermissionsHelper.IsInRoles(AuthorityTokens.Configuration.PriorsServers) && ServerDirectory.IsSupported)
-                listPages.Add(new ConfigurationPage<PriorsServersConfigurationComponent>(LocalConfigurationPath + @"/" + PriorsServerConfigurationPath));
+                listPages.Add(new ConfigurationPage<PriorsServersConfigurationComponent>(PriorsServerConfigurationPath));
 
             if (PermissionsHelper.IsInRole(AuthorityTokens.Configuration.Publishing))
                 listPages.Add(new ConfigurationPage(PublishingConfigurationPath, new PublishingConfigurationComponent()));
