@@ -124,6 +124,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             _setChangedStudies.Clear();
             _hiddenItems.Clear();
             StudyTable.Items.Clear();
+            SetResultsTitle();
         }
 
         private void ProcessChangedStudies()
