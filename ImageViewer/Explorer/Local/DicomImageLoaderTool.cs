@@ -87,7 +87,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 		{
 			string[] files = BuildFileList();
 			if (files.Length == 0)
+			{
+				Context.DesktopWindow.ShowMessageBox(SR.MessageNoFilesSelected, MessageBoxActions.Ok);
 				return;
+			}
 
 			try
 			{
