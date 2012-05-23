@@ -146,6 +146,8 @@ namespace ClearCanvas.ImageViewer.Configuration
 			    }
 			}
 
+		    //TODO (Marmot): Should the publish order be local, then remote?
+
 			// publish local files now
 			if (localFiles.Count > 0 && !PublishFilesToLocal(localFiles))
 				hasErrors = true;
