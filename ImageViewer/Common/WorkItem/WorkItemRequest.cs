@@ -70,7 +70,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public abstract string ActivityTypeString { get; }
 
-        public bool CancellationCanResultInPartialStudy { get; protected set; }
+		[DataMember]
+		public bool CancellationCanResultInPartialStudy { get; protected set; }
     }
 
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]

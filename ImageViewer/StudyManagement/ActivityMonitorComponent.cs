@@ -508,7 +508,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region WorkItemActionModel
 
-		    class WorkItemActionModel : SimpleActionModel
+		class WorkItemActionModel : SimpleActionModel
 		{
 			private readonly ActivityMonitorComponent _owner;
 			private readonly IItemCollection<WorkItem> _workItems;
