@@ -215,6 +215,18 @@ make room, or increase the maximum usage.</value>
   <data name="NoFilterItem" xml:space="preserve">
     <value>(all)</value>
   </data>
+  <data name="StatusFilterValueActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="StatusFilterValueComplete" xml:space="preserve">
+    <value>Complete</value>
+  </data>
+  <data name="StatusFilterValueFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="StatusFilterValueStopped" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
   <data name="TitleActivityMonitor" xml:space="preserve">
     <value>Activity Monitor</value>
   </data>

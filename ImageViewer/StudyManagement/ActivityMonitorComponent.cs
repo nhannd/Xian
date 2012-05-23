@@ -695,7 +695,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			Active,
 			Complete,
-			Canceled,
+			Stopped,
 			Failed
 		}
 
@@ -877,13 +877,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			switch ((StatusFilterValue)value)
 			{
 				case StatusFilterValue.Active:
-					return "Active";
+					return SR.StatusFilterValueActive;
 				case StatusFilterValue.Complete:
-					return "Complete";
-				case StatusFilterValue.Canceled:
-					return "Canceled";
+					return SR.StatusFilterValueComplete;
+				case StatusFilterValue.Stopped:
+					return SR.StatusFilterValueStopped;
 				case StatusFilterValue.Failed:
-					return "Failed";
+					return SR.StatusFilterValueFailed;
 				default:
 					throw new ArgumentOutOfRangeException("value");
 			}
@@ -1129,7 +1129,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					return new[] { WorkItemStatusEnum.Pending, WorkItemStatusEnum.InProgress, WorkItemStatusEnum.Idle };
 				case StatusFilterValue.Complete:
 					return new[] { WorkItemStatusEnum.Complete };
-				case StatusFilterValue.Canceled:
+				case StatusFilterValue.Stopped:
 					return new[] { WorkItemStatusEnum.Canceled };
 				case StatusFilterValue.Failed:
 					return new[] { WorkItemStatusEnum.Failed };
