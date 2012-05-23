@@ -187,14 +187,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                         var insertStudyXmlCommand = new InsertStudyXmlCommand(file.File, studyXml, StudyLocation, false);
                         processor.AddCommand(insertStudyXmlCommand);
 
-                        batchDatabaseCommand.AddSubCommand( new InsertOrUpdateStudyCommand(StudyLocation, file.File, studyXml));
-
                         if (file.ItemUid != null)
                             batchDatabaseCommand.AddSubCommand(new CompleteWorkItemUidCommand(file.ItemUid));
                     }
 
                     // Now save the batched updates to the StudyXml file.
                     processor.AddCommand(new SaveStudyXmlCommand(studyXml, StudyLocation));
+
+                    // Update the Study table, based on the studyXml
+                    batchDatabaseCommand.AddSubCommand(new InsertOrUpdateStudyCommand(StudyLocation, studyXml));
 
                     // Now, add all the batched database updates
                     processor.AddCommand(batchDatabaseCommand);

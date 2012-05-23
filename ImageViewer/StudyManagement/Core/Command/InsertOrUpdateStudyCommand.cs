@@ -9,9 +9,7 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
@@ -23,17 +21,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
     /// </summary>
     public class InsertOrUpdateStudyCommand : DataAccessCommand
     {
-        private readonly DicomMessageBase _messageBase;
         private readonly string _studyInstanceUid;
         private readonly StudyXml _studyXml;
         private readonly StudyLocation _location;
         
         public ViewerCommandProcessorContext Context { get { return ProcessorContext as ViewerCommandProcessorContext; } } 
 
-        public InsertOrUpdateStudyCommand(StudyLocation location, DicomMessageBase message, StudyXml xml) : base("Insert or Update Study Command")
+        public InsertOrUpdateStudyCommand(StudyLocation location, StudyXml xml) : base("Insert or Update Study Command")
         {
-            _messageBase = message;
-            _studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, String.Empty);
+            _studyInstanceUid = xml.StudyInstanceUid;
             _studyXml = xml;
             _location = location;
         }

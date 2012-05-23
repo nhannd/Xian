@@ -92,10 +92,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                     processor.AddCommand(new SaveStudyXmlCommand(StudyXml, _location));
 
-                    processor.AddCommand(new InsertOrUpdateStudyCommand(_location,
-                                                                        new DicomFile(string.Empty,
-                                                                                      new DicomAttributeCollection(),
-                                                                                      instance), StudyXml));
+                    processor.AddCommand(new InsertOrUpdateStudyCommand(_location, StudyXml));
 
                     // Do the actual processing
                     if (!processor.Execute())
