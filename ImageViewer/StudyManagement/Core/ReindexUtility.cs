@@ -313,7 +313,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     break;
             }
 
-            while (_threadPool.Active && _threadPool.QueueCount > 0 && _threadPool.ActiveCount > 0)
+            while (_threadPool.Active && (_threadPool.QueueCount > 0 || _threadPool.ActiveCount > 0))
             {
                 if (_cancelRequested)
                     break;
