@@ -20,6 +20,8 @@ using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.DicomServer.Tests;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement.Tests;
 using ClearCanvas.ImageViewer.Tests;
@@ -33,9 +35,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.Tests
 		[TestFixtureSetUp]
 		public void Init()
 		{
+            DicomServerTestServiceProvider.Reset();
+
 			Platform.SetExtensionFactory(new UnitTestExtensionFactory()
 			                             	{
-			                             		{typeof (StudyLoaderExtensionPoint), typeof (UnitTestStudyLoader)},
+                                                {typeof(ServiceProviderExtensionPoint), typeof(DicomServerTestServiceProvider)},
+                                                {typeof(ServiceNodeServiceProviderExtensionPoint), typeof(TestServiceNodeServiceProvider)},
+                                                {typeof (StudyLoaderExtensionPoint), typeof (UnitTestStudyLoader)},
 			                             		{typeof (ExpressionFactoryExtensionPoint), typeof (JScriptExpressionFactory)},
 			                             		{typeof (ScreenInfoProviderExtensionPoint), typeof (MockScreenInfoProvider)}
 			                             	});

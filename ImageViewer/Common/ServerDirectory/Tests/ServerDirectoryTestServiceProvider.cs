@@ -20,6 +20,11 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory.Tests
 {
     public class ServerDirectoryTestServiceProvider : IServiceProvider
     {
+        public static void Reset()
+        {
+            TestServerDirectory.Reset();
+        }
+
         #region IServiceProvider Members
 
         public object GetService(Type serviceType)
@@ -35,9 +40,14 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory.Tests
 
     public class TestServerDirectory : IServerDirectory
     {
-        public static readonly List<ServerDirectoryEntry> Entries;
+        public static List<ServerDirectoryEntry> Entries;
 
         static TestServerDirectory()
+        {
+            Reset();
+        }
+
+        public static void Reset()
         {
             Entries = new List<ServerDirectoryEntry>
                            {

@@ -27,6 +27,10 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         [TestFixtureSetUp]
         public void Initialize()
         {
+            DicomServerTestServiceProvider.Reset();
+            StudyStoreTestServiceProvider.Reset();
+            ServerDirectoryTestServiceProvider.Reset();
+
             var factory = new UnitTestExtensionFactory
                               {
                                   { typeof (ServiceProviderExtensionPoint), typeof (DicomServerTestServiceProvider) },

@@ -147,20 +147,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void TestRealActivityMonitorConnectionWithProxy_FailCreate()
-        {
-            _expectingAsyncEvents = true;
-            //Make sure it's initially open.
-            TestServiceProvider.ServiceInstance.Open();
-
-            var monitor = WorkItemActivityMonitor.Create();
-            TestActivityMonitorConnection(monitor);
-            monitor.Dispose();
-            //TODO: assert proxy count?
-        }
-
-        [Test]
         public void TestRealActivityMonitorSubscriptions()
         {
             _expectingAsyncEvents = true;

@@ -18,6 +18,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 {
@@ -34,6 +35,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		/// <returns>An enumerable of matching <see cref="ISopDataSource"/> results. May be null.</returns>
         IEnumerable<ISopDataSource> GetSopDataSources(IApplicationEntity server, string studyInstanceUid);
 	}
+
+    public class TestServiceNodeServiceProvider : ServiceNodeServiceProvider
+    {
+        public override bool IsSupported(Type type)
+        {
+            return (type == typeof (IStudyLoader));
+        }
+
+        public override object GetService(Type type)
+        {
+            if (type == typeof(IStudyLoader))
+                return new UnitTestStudyLoader();
+            return null;
+        }
+    }
 
 	/// <summary>
 	/// An implementation of <see cref="IStudyLoader"/> suitable for unit testing contexts.
@@ -73,7 +89,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 	/// </example>
 	public sealed class UnitTestStudyLoader : StudyLoader
 	{
-		/// <summary>
+	    /// <summary>
 		/// Gets the ID string of the <see cref="UnitTestStudyLoader"/>.
 		/// </summary>
 		public static readonly string StudyLoaderId = typeof (UnitTestStudyLoader).Name;
@@ -92,7 +108,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		/// <returns>A context object that should be disposed in order to unregister the data sources.</returns>
 		public static UnitTestStudyProviderContext RegisterStudies(IEnumerable<ISopDataSource> sopDataSources)
 		{
-			return RegisterStudies(null, sopDataSources);
+			return RegisterStudies(ServerDirectory.GetLocalServer(), sopDataSources);
 		}
 
 		/// <summary>

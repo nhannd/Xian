@@ -5,6 +5,7 @@ using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.ServiceModel;
+using ClearCanvas.ImageViewer.Configuration.ServerTree.LegacyXml;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
@@ -66,8 +67,8 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         public void TestSerializeStoredTree()
         {
             //var rootGroup = CreateStoredServerGroup1();
-            //var serialized = StoredServerGroupSerializationHelper.Serialize(rootGroup);
-            //var deserialized = StoredServerGroupSerializationHelper.Deserialize(serialized);
+            //var serialized = SerializationHelper.Serialize(rootGroup);
+            //var deserialized = SerializationHelper.Deserialize(serialized);
             //Assert.AreEqual(2, deserialized.ChildGroups.Count);
             //Assert.AreEqual(2, deserialized.DirectoryServerReferences.Count);
             //Assert.AreEqual(2, deserialized.ChildGroups[1].DirectoryServerReferences.Count);
@@ -98,6 +99,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         [Test]
         public void TestIgnoreDuplicateNamesOnLoadFromLegacyXml()
         {
+            //TODO (Marmot):TODO
         }
 
         #endregion
