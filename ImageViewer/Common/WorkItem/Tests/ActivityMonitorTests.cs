@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 			callback.WorkItemsChanged(items);
             Assert.AreEqual(1, WorkItemChangedCallbackCount);
 
-            service.Unsubscribe(new WorkItemUnsubscribeRequest {Type = null});
+            service.Unsubscribe(new WorkItemUnsubscribeRequest());
 			callback.WorkItemsChanged(items);
             Assert.AreEqual(1, WorkItemChangedCallbackCount);
         }
