@@ -146,13 +146,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 else
                 {
                     Progress.NumberOfImportFailures++;
-                    Progress.StatusDetails = result.ErrorMessage;
+                    Progress.StatusDetails = string.Format("{0}: {1}",file, result.ErrorMessage);
                 }
             }
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Warn, "Unable to import DICOM File ({0}): {1}", file, e.Message);
                 Progress.NumberOfImportFailures++;
+                Progress.StatusDetails = string.Format("{0}: {1}", file, e.Message);
             }
         }
 

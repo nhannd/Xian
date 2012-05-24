@@ -439,7 +439,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
        
         private static void Validate(DicomMessageBase message)
         {
-            //TODO (Marmot)
+            String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
+
+            if (string.IsNullOrEmpty(studyInstanceUid))
+                throw new DicomDataException("Study Instance UID does not have a value.");
+
+            String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
+            if (string.IsNullOrEmpty(sopInstanceUid))
+                throw new DicomDataException("SOP Instance UID does not have a value.");
+
         }
 
         static private DicomFile ConvertToDicomFile(DicomMessageBase message, string filename, string sourceAE)
