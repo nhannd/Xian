@@ -243,6 +243,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get { return _data.Progress != null ? _data.Progress.PercentComplete : 0; }
 			}
 
+            public bool IsCancelable
+            {
+                get { return _data.Progress == null || _data.Progress.IsCancelable; }
+            }
+
 			public IconSet ProgressIcon
 			{
 				get { return GetProgressIcon(_data.Progress, _data.Status); }
@@ -565,9 +570,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			private bool IsCancelable(WorkItem w)
 			{
-				return w.Status == WorkItemStatusEnum.InProgress
+				return (w.Status == WorkItemStatusEnum.InProgress
 						 || w.Status == WorkItemStatusEnum.Idle
-						 || w.Status == WorkItemStatusEnum.Pending;
+						 || w.Status == WorkItemStatusEnum.Pending) && w.IsCancelable;
 			}
 			private bool IsRestartable(WorkItem w)
 			{
