@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 			callback.WorkItemsChanged(items);
             Assert.AreEqual(1, WorkItemChangedCallbackCount);
 
-            service.Unsubscribe(new WorkItemUnsubscribeRequest {Type = null});
+            service.Unsubscribe(new WorkItemUnsubscribeRequest());
 			callback.WorkItemsChanged(items);
             Assert.AreEqual(1, WorkItemChangedCallbackCount);
         }
@@ -144,20 +144,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             TestActivityMonitorConnection(monitor);
             monitor.Dispose();
             Assert.AreEqual(0, WorkItemActivityMonitor._proxyCount);
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void TestRealActivityMonitorConnectionWithProxy_FailCreate()
-        {
-            _expectingAsyncEvents = true;
-            //Make sure it's initially open.
-            TestServiceProvider.ServiceInstance.Open();
-
-            var monitor = WorkItemActivityMonitor.Create();
-            TestActivityMonitorConnection(monitor);
-            monitor.Dispose();
-            //TODO: assert proxy count?
         }
 
         [Test]

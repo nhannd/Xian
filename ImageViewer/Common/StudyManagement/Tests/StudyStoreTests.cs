@@ -25,9 +25,11 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
         [TestFixtureSetUp]
         public void Initialize1()
         {
+            StudyStoreTestServiceProvider.Reset();
+
             Platform.SetExtensionFactory(new UnitTestExtensionFactory
                                              {
-                                                 { typeof(ServiceProviderExtensionPoint), typeof(StudyManagement.Tests.StudyStoreTestServiceProvider) }
+                                                 { typeof(ServiceProviderExtensionPoint), typeof(StudyStoreTestServiceProvider) }
                                              });
 
             //Force IsSupported to be re-evaluated.
@@ -36,6 +38,8 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
 
         public void Initialize2()
         {
+            StudyStoreTestServiceProvider.Reset();
+
             Platform.SetExtensionFactory(new NullExtensionFactory());
             //Force IsSupported to be re-evaluated.
             StudyStore.InitializeIsSupported();

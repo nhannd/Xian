@@ -27,6 +27,10 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory.Tests
     {
         public void Initialize1()
         {
+            ServerDirectoryTestServiceProvider.Reset();
+            DicomServer.Tests.DicomServerTestServiceProvider.Reset();
+            StudyManagement.Tests.StudyStoreTestServiceProvider.Reset();
+
             Platform.SetExtensionFactory(new UnitTestExtensionFactory
                                              {
                                                  {
@@ -49,6 +53,9 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory.Tests
 
         public void Initialize2()
         {
+            ServerDirectoryTestServiceProvider.Reset();
+            DicomServer.Tests.DicomServerTestServiceProvider.Reset();
+
             Platform.SetExtensionFactory(new UnitTestExtensionFactory
                                              {
                                                  {

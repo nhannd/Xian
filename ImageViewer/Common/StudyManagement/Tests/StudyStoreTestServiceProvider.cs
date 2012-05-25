@@ -19,6 +19,12 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
 {
     public class StudyStoreTestServiceProvider : IServiceProvider
     {
+        public static void Reset()
+        {
+            TestStudyStoreQuery.Reset();
+            TestStorageConfiguration.Reset();
+        }
+
         #region IServiceProvider Members
 
         public object GetService(Type serviceType)
@@ -39,11 +45,16 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
 
         static TestStorageConfiguration()
         {
+            Reset();
+        }
+
+        public static void Reset()
+        {
             Configuration = new StorageConfiguration
-                                {
-                                    FileStoreDirectory = @"c:\filestore",
-                                    MinimumFreeSpaceBytes = 5*1024L*1024L*1024L
-                                };
+            {
+                FileStoreDirectory = @"c:\filestore",
+                MinimumFreeSpaceBytes = 5 * 1024L * 1024L * 1024L
+            };
         }
 
         #region IStorageConfiguration Members
@@ -64,11 +75,17 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
 
         #endregion
     }
+
     public class TestStudyStoreQuery : IStudyStoreQuery
     {
-        public static readonly List<StudyEntry> StudyEntries;
+        public static List<StudyEntry> StudyEntries;
 
         static TestStudyStoreQuery()
+        {
+            Reset();
+        }
+
+        public static void Reset()
         {
             StudyEntries = new List<StudyEntry>
                                {
@@ -99,6 +116,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
                                        },
                                };
         }
+
 
         #region IStudyStoreQuery Members
 

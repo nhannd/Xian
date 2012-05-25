@@ -17,6 +17,12 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer.Tests
 {
     public class DicomServerTestServiceProvider : IServiceProvider
     {
+        public static void Reset()
+        {
+            TestDicomServerConfiguration.Reset();
+            TestDicomServer.Reset();
+        }
+
         #region IServiceProvider Members
 
         public object GetService(Type serviceType)
@@ -35,8 +41,17 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer.Tests
 
     public class TestDicomServerConfiguration : IDicomServerConfiguration
     {
-        public static DicomServerConfiguration Configuration = new DicomServerConfiguration
-                                                                     {AETitle = "Local", HostName = "localhost", Port = 104};
+        public static DicomServerConfiguration Configuration;
+
+        static TestDicomServerConfiguration()
+        {
+            Reset();
+        }
+
+        public static void Reset()
+        {
+            Configuration = new DicomServerConfiguration { AETitle = "Local", HostName = "localhost", Port = 104 };
+        }
 
         #region IDicomServerConfiguration Members
 
@@ -60,6 +75,16 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer.Tests
     public class TestDicomServer : IDicomServer
     {
         public static ServiceStateEnum ServiceState;
+
+        static TestDicomServer()
+        {
+            Reset();
+        }
+
+        public static void Reset()
+        {
+            ServiceState = ServiceStateEnum.Stopped;
+        }
 
         #region IDicomServer Members
 

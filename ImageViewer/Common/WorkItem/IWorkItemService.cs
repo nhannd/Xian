@@ -98,8 +98,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemSubscribeRequest : DataContractBase
     {
-        //[DataMember]
-        //public CultureInfo Culture { get; set; }
     }
 
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
@@ -110,8 +108,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemUnsubscribeRequest : DataContractBase
     {
-        [DataMember]
-        public string Type { get; set; }
     }
 
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
@@ -132,6 +128,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemPublishRequest : DataContractBase
     {
+        //TODO (Marmot): We can only publish changes to single items, but the callback accepts an array?
         [DataMember]
         public WorkItemData Item { get; set; }
     }
@@ -157,8 +154,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [OperationContract(IsOneWay = true)]
         void Refresh(WorkItemRefreshRequest request);
 
+        //TODO (Marmot): this should be renamed "PublishWorkedItemChanged".
         [OperationContract]
         WorkItemPublishResponse Publish(WorkItemPublishRequest request);
+
+        //TODO (Marmot): add PublishStudiesCleared?
     }
 
     /// <summary>
