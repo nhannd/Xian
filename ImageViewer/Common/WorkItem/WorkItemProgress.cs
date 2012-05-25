@@ -352,7 +352,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         public DeleteProgress()
         {
-            IsCancelable = false;
+            IsCancelable = true;
         }
 
         [DataMember(IsRequired = true)]

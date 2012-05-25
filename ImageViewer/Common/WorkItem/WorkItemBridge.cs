@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 WorkItem = response.Item;
         }
 
-        protected void InsertRequest(WorkItemRequest request)
+        protected void InsertRequest(WorkItemRequest request, WorkItemProgress progress)
         {
             WorkItemInsertResponse response = null;
             
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             
             Request = request;
 
-            Platform.GetService<IWorkItemService>(s => response = s.Insert(new WorkItemInsertRequest { Request = request }));
+            Platform.GetService<IWorkItemService>(s => response = s.Insert(new WorkItemInsertRequest { Request = request, Progress = progress}));
 
             if (response.Item == null)
                 WorkItem.Status = WorkItemStatusEnum.Deleted;
@@ -190,7 +190,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
             try
             {
-                InsertRequest(request);
+                InsertRequest(request, null);
             }
             catch (Exception ex)
             {
@@ -276,7 +276,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
             try
             {
-                InsertRequest(request);
+                InsertRequest(request, null);
             }
             catch (Exception ex)
             {
@@ -300,7 +300,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                       Patient = new WorkItemPatient(study)
                                   };
 
-                InsertRequest(request);
+                InsertRequest(request, new DeleteProgress());
             }
             catch (Exception ex)
             {
@@ -329,7 +329,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                     SeriesInstanceUids = seriesInstanceUids
                 };
 
-                InsertRequest(request);
+                InsertRequest(request, new DeleteProgress());
             }
             catch (Exception ex)
             {
@@ -363,7 +363,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
                 };
 
-                InsertRequest(request);
+                InsertRequest(request, null);
             }
             catch (Exception ex)
             {
@@ -400,7 +400,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                   };
 
                 request.SeriesInstanceUids.AddRange(seriesInstanceUids);
-                InsertRequest(request);
+                InsertRequest(request, null);
             }
             catch (Exception ex)
             {
@@ -436,7 +436,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                       Patient = new WorkItemPatient(study)
                                   };
                 request.SopInstanceUids.AddRange(sopInstanceUids);
-                InsertRequest(request);
+                InsertRequest(request, null);
             }
             catch (Exception ex)
             {
@@ -472,7 +472,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                       Patient = new WorkItemPatient(study),
                                       FilePaths = files
                                   };
-                InsertRequest(request);
+                InsertRequest(request, null);
             }
             catch (Exception ex)
             {
@@ -521,7 +521,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                     }
                 }
 
-                InsertRequest(request);
+                InsertRequest(request, new DicomRetrieveProgress());
             }
             catch (Exception ex)
             {
@@ -556,7 +556,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 };
 
                 request.SeriesInstanceUids.AddRange(seriesInstanceUids);
-                InsertRequest(request);
+                InsertRequest(request, new DicomRetrieveProgress());
             }
             catch (Exception ex)
             {
@@ -597,7 +597,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
 			try
 			{
-				InsertRequest(request);
+				InsertRequest(request, new ReapplyRulesProgress());
 			}
 			catch (Exception ex)
 			{

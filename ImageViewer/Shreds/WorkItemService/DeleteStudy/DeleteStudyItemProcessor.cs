@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
@@ -33,27 +34,37 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteStudy
                 Proxy.Postpone();
                 return;
             }
-            
-            // Reset progress, in case of retry
-            Progress.IsCancelable = false;
-            Progress.ImagesDeleted = 0;
-            Progress.ImagesToDelete = 0;
 
-            var delete = new DeleteStudyUtility();
+            try
+            {
+                // Reset progress, in case of retry
+                Progress.IsCancelable = false;
+                Progress.ImagesDeleted = 0;
+                Progress.ImagesToDelete = 0;
 
-            delete.Initialize(Location);
+                var delete = new DeleteStudyUtility();
 
-            Progress.ImagesToDelete = delete.NumberOfStudyRelatedInstances;
-            Proxy.UpdateProgress();
+                delete.Initialize(Location);
 
-            delete.Process();
-            Progress.ImagesDeleted = delete.NumberOfStudyRelatedInstances;
+                Progress.ImagesToDelete = delete.NumberOfStudyRelatedInstances;
+                Proxy.UpdateProgress();
 
-            Proxy.Complete();
+                delete.Process();
+                Progress.ImagesDeleted = delete.NumberOfStudyRelatedInstances;
+
+                Proxy.Complete();
+            }
+            catch (Exception)
+            {
+                Progress.IsCancelable = true;
+                throw;
+            }
         }
 
         public override bool CanStart(out string reason)
         {
+            Progress.IsCancelable = true;
+          
             var relatedList = FindRelatedWorkItems(null, new List<WorkItemStatusEnum> { WorkItemStatusEnum.InProgress });
 
             reason = string.Empty;

@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
@@ -37,35 +38,47 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteSeries
                 return;
             }
 
-            var deleteSeries = new DeleteSeriesUtility();
-            deleteSeries.Initialize(Location, Request.SeriesInstanceUids);
-
-            if (deleteSeries.DeletingAllSeries())
+            try
             {
-                var deleteStudy = new DeleteStudyUtility();
-                deleteStudy.Initialize(Location);
-                Progress.ImagesToDelete = deleteStudy.NumberOfStudyRelatedInstances;
-                Progress.ImagesDeleted = 0;
-                Proxy.UpdateProgress();
+                var deleteSeries = new DeleteSeriesUtility();
+                deleteSeries.Initialize(Location, Request.SeriesInstanceUids);
 
-                deleteStudy.Process();
+                if (deleteSeries.DeletingAllSeries())
+                {
+                    var deleteStudy = new DeleteStudyUtility();
+                    deleteStudy.Initialize(Location);
+                    Progress.IsCancelable = false;
+                    Progress.ImagesToDelete = deleteStudy.NumberOfStudyRelatedInstances;
+                    Progress.ImagesDeleted = 0;
+                    Proxy.UpdateProgress();
+
+                    deleteStudy.Process();
+                }
+                else
+                {
+                    Progress.IsCancelable = false;
+                    Progress.ImagesToDelete = deleteSeries.NumberOfSeriesRelatedInstances;
+                    Progress.ImagesDeleted = 0;
+                    Proxy.UpdateProgress();
+
+                    deleteSeries.Process();
+                }
+
+                Progress.ImagesDeleted = Progress.ImagesToDelete;
+
+                Proxy.Complete();
             }
-            else
+            catch (Exception)
             {
-                Progress.ImagesToDelete = deleteSeries.NumberOfSeriesRelatedInstances;
-                Progress.ImagesDeleted = 0;
-                Proxy.UpdateProgress();
-
-                deleteSeries.Process();
+                Progress.IsCancelable = true;
+                throw;
             }
-
-            Progress.ImagesDeleted = Progress.ImagesToDelete;            
-
-            Proxy.Complete();
         }
 
         public override bool CanStart(out string reason)
         {
+            Progress.IsCancelable = true;
+
             var relatedList = FindRelatedWorkItems(null, new List<WorkItemStatusEnum> { WorkItemStatusEnum.InProgress });
 
             reason = string.Empty;

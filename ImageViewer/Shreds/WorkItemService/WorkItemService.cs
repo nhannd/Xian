@@ -90,6 +90,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 var item = new WorkItem
                                {
                                    Request = request.Request,
+                                   Progress = request.Progress,
                                    Type = request.Request.WorkItemType,
                                    Priority = request.Request.Priority,
                                    InsertTime = now,
@@ -112,7 +113,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                         study.Deleted = true;
                     }
                 }
-
 
                 broker.AddWorkItem(item);
                 

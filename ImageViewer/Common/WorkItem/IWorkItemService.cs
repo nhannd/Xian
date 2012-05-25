@@ -27,6 +27,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         [DataMember]
         public WorkItemRequest Request { get; set; }
+
+        [DataMember]
+        public WorkItemProgress Progress { get; set; }
     }
 
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
