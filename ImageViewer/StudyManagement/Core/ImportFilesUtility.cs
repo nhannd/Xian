@@ -100,6 +100,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             return request;
         }
 
+        /// <summary>
+        /// Create a <see cref="ProcessStudyProgress"/> object for the type of import.
+        /// </summary>
+        /// <returns></returns>
+        public override ProcessStudyProgress CreateProgress()
+        {
+            return new ProcessStudyProgress { IsCancelable = false, TotalFilesToProcess = 1 };
+        }
+
         #endregion
 
         #region Private Methods
@@ -145,7 +154,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
         #endregion
 
-        #region Constructor
+        #region Public Methods
 
         /// <summary>
         /// Create a <see cref="ProcessStudyRequest"/> object for a specific SOP Instnace.
@@ -161,6 +170,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                   Study = new WorkItemStudy(message.DataSet)
                               };
             return request;
+        }
+
+        /// <summary>
+        /// Create a <see cref="ProcessStudyProgress"/> object for the type of import.
+        /// </summary>
+        /// <returns></returns>
+        public override ProcessStudyProgress CreateProgress()
+        {
+            return new ProcessStudyProgress { IsCancelable = true, TotalFilesToProcess = 1 };
         }
 
         #endregion
@@ -220,6 +238,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// <param name="message"></param>
         /// <returns></returns>
         public abstract ProcessStudyRequest CreateRequest(DicomMessageBase message);
+
+        /// <summary>
+        /// Abstract method for creating a <see cref="ProcessStudyProgress"/> object for the request.
+        /// </summary>
+        /// <returns></returns>
+        public abstract ProcessStudyProgress CreateProgress();
 
         #endregion
     }
@@ -360,14 +384,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     {                        
                         command = workItem != null
                             ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName)
-                            : new InsertWorkItemCommand(_context.CreateRequest(file), new ProcessStudyProgress { TotalFilesToProcess = 1 }, studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName);             
+                            : new InsertWorkItemCommand(_context.CreateRequest(file), _context.CreateProgress(), studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName);             
                     }
                     else
                     {
                         command = workItem != null
                             ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid)
-                            : new InsertWorkItemCommand(_context.CreateRequest(file), new ProcessStudyProgress {TotalFilesToProcess = 1}, studyInstanceUid, seriesInstanceUid, sopInstanceUid);                        
+                            : new InsertWorkItemCommand(_context.CreateRequest(file), _context.CreateProgress(), studyInstanceUid, seriesInstanceUid, sopInstanceUid);                        
                     }
+
                     command.ExpirationDelaySeconds = _context.ExpirationDelaySeconds;
                     commandProcessor.AddCommand(command);
 
