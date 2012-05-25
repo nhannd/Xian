@@ -290,7 +290,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				delegate(StudyItem item) { return FormatDicomDA(item.PatientsBirthDate); },
 				null,
 				0.4F,
-				delegate(StudyItem one, StudyItem two) { return one.PatientsBirthDate.CompareTo(two.PatientsBirthDate); });
+				(x, y) => CompareDicomDA(x.PatientsBirthDate, y.PatientsBirthDate));
 
 			columns.Add(column);
 
@@ -305,10 +305,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			column = new TableColumn<StudyItem, string>(
 				ColumnStudyDate,
 				SR.ColumnHeadingStudyDate,
-				delegate(StudyItem item) { return FormatDicomDA(item.StudyDate); },
+				delegate(StudyItem item) { return FormatDicomDT(item.StudyDate, item.StudyTime); },
 				null,
-				0.4F,
-				delegate(StudyItem one, StudyItem two) { return one.StudyDate.CompareTo(two.StudyDate); });
+				0.5F,
+				(x, y) => CompareDicomDT(x.StudyDate, x.StudyTime, y.StudyDate, y.StudyTime));
 
 			columns.Add(column);
 
@@ -467,6 +467,37 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				return dicomDate;
 
 			return date.ToString(Format.DateFormat);
+		}
+
+		protected static string FormatDicomTM(string dicomTime)
+		{
+			DateTime time;
+			if (!TimeParser.Parse(dicomTime, out time))
+				return dicomTime;
+
+			return time.ToString(Format.TimeFormat);
+		}
+
+		protected static string FormatDicomDT(string dicomDate, string dicomTime)
+		{
+			var time = FormatDicomTM(dicomTime);
+			return FormatDicomDA(dicomDate) + (!string.IsNullOrEmpty(dicomTime) ? ' ' + time : string.Empty);
+		}
+
+		protected static int CompareDicomDA(string dicomDate1, string dicomDate2)
+		{
+			return string.Compare(dicomDate1, dicomDate2, StringComparison.InvariantCultureIgnoreCase);
+		}
+
+		protected static int CompareDicomTM(string dicomTime1, string dicomTime2)
+		{
+			return string.Compare(dicomTime1, dicomTime2, StringComparison.InvariantCultureIgnoreCase);
+		}
+
+		protected static int CompareDicomDT(string dicomDate1, string dicomTime1, string dicomDate2, string dicomTime2)
+		{
+			var result = CompareDicomDA(dicomDate1, dicomDate2);
+			return result != 0 ? result : CompareDicomTM(dicomTime1, dicomTime2);
 		}
 
 		private static IconSet GetAttachmentsIcon(StudyItem item)
