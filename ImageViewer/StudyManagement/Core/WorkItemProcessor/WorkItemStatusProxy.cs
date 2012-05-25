@@ -174,6 +174,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 Item = broker.GetWorkItem(Item.Oid);
 
                 DateTime now = Platform.Time;
+                
+                // Since we're completing, no need for additional status, its done.
+                Progress.StatusDetails = string.Empty;
 
                 Item.Progress = Progress;
                 Item.ScheduledTime = now;
