@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         public ReindexProgress()
         {
-            IsCancelable = false;
+            IsCancelable = true;
         }
 
         [DataMember(IsRequired = true)]
