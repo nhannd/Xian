@@ -49,7 +49,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public static string DateTimeFormat
         {
-            get { return FormatSettings.Default.DateTimeFormat; }
+            get { return !string.IsNullOrEmpty(FormatSettings.Default.DateTimeFormat) ? FormatSettings.Default.DateTimeFormat : DateFormat + ' ' + TimeFormat; }
 			set
 			{ 
 				FormatSettings.Default.DateTimeFormat = value;
