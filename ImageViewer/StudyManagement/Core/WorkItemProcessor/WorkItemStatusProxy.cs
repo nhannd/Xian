@@ -191,7 +191,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
 
             Publish(false);
-            Platform.Log(LogLevel.Info, "Completing {0} WorkItem for OID {1}: {2}", Item.Type, Item.Oid, Item.Request.ActivityDescription);
+            var studyRequest = Item.Request as WorkItemStudyRequest;
+            if (studyRequest != null)
+                Platform.Log(LogLevel.Info, "Completing {0} WorkItem for OID {1}: {2}, {3}:{4}", Item.Type, Item.Oid,
+                             Item.Request.ActivityDescription,
+                             studyRequest.Patient.PatientsName, studyRequest.Patient.PatientId);
+            else
+                Platform.Log(LogLevel.Info, "Completing {0} WorkItem for OID {1}: {2}", Item.Type, Item.Oid,
+                             Item.Request.ActivityDescription);
         }
 
         /// <summary>

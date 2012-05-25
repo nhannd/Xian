@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     context.Commit();
                 }
 
-                Platform.Log(LogLevel.Info, "Deleted study: {0}");
+                Platform.Log(LogLevel.Info, "Deleted study for: {0}:{1}", _location.Study.PatientsName, _location.Study.PatientId);
                 return true;
             }
 
