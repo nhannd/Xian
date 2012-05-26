@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
     internal class ImportItemProcessor : BaseItemProcessor<ImportFilesRequest,ImportFilesProgress>
     {
         #region Public Methods
-        
+
         public override bool Initialize(WorkItemStatusProxy proxy)
         {
             bool initResult = base.Initialize(proxy);
@@ -86,13 +86,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 Proxy.Fail(WorkItemFailureType.Fatal);
             else
                 Proxy.Complete();
-        }
-
-        public override bool CanStart(out string reason)
-        {
-            reason = string.Empty;
-
-            return !ReindexScheduled();
         }
 
         #endregion

@@ -56,11 +56,5 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ReapplyRules
             Progress.Complete = true;
             Proxy.Complete();
         }
-
-        public override bool CanStart(out string reason)
-        {            
-            reason = string.Empty;
-            return !ReindexScheduled();
-        }
     }
 }

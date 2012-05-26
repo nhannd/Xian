@@ -302,35 +302,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             }
         }
 
-        public override bool CanStart(out string reason)
-        {
-            var relatedList = FindRelatedWorkItems(null, new List<WorkItemStatusEnum> { WorkItemStatusEnum.InProgress });
-            if (relatedList.Count > 0)
-            {
-                foreach (var item in relatedList)
-                {
-                    // Allow multiple send requests for the same study, but not other types of work items.
-                    if (!item.Type.Equals(DicomSendRequest.WorkItemTypeString))
-                    {
-                        reason = "There are related WorkItems for the study being processed.";
-                        return false;
-                    }
-                }
-            }
-            
-            // Pending, InProgress, Idle ProcessStudy entries existing.
-            relatedList = FindRelatedWorkItems(new List<string>{ ProcessStudyRequest.WorkItemTypeString }, new List<WorkItemStatusEnum> { WorkItemStatusEnum.InProgress, WorkItemStatusEnum.Idle, WorkItemStatusEnum.Pending });
-
-            if (relatedList.Count > 0)
-            {
-                reason = "There are related WorkItems for the study being processed.";
-                return false;
-            }
-
-            reason = string.Empty;
-            return true;
-        }
-
         #endregion
     }
 }

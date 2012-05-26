@@ -22,7 +22,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.Tests
 	{
 		[WorkItemRequestDataContract("b07a3d7a-2909-4ed1-82ce-8a1ab4f30446")]
 		class TestRequestA : WorkItemRequest
-		{		    
+		{
+            public override WorkItemConcurrency ConcurrencyType
+            {
+                get { return WorkItemConcurrency.NonStudy; }
+            }
+
 		    public override string ActivityDescription
 		    {
                 get { return string.Empty; }
@@ -37,6 +42,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.Tests
 		[WorkItemRequestDataContract("f6c90b95-d631-4b78-b9a1-a786dc23512a")]
 		class TestRequestB : WorkItemRequest
 		{
+		    public override WorkItemConcurrency ConcurrencyType
+		    {
+		        get { return WorkItemConcurrency.NonStudy;}
+		    }
+
 		    public override string ActivityDescription
 		    {
                 get { return string.Empty; }
