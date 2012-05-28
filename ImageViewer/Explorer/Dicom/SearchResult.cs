@@ -480,8 +480,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		protected static string FormatDicomDT(string dicomDate, string dicomTime)
 		{
-			var time = FormatDicomTM(dicomTime);
-			return FormatDicomDA(dicomDate) + (!string.IsNullOrEmpty(dicomTime) ? ' ' + time : string.Empty);
+			if (string.IsNullOrEmpty(dicomTime)) return FormatDicomDA(dicomDate); // if time is not specified, just format the date
+
+			DateTime dateTime;
+			if (!DateTimeParser.ParseDateAndTime(string.Empty, dicomDate, dicomTime, out dateTime))
+				return dicomDate + ' ' + dicomTime;
+
+			return dateTime.ToString(Format.DateTimeFormat);
 		}
 
 		protected static int CompareDicomDA(string dicomDate1, string dicomDate2)
