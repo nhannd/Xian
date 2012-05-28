@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
             collection[DicomTags.ModalitiesInStudy].SetStringValue(queryParams["ModalitiesInStudy"]);
 			collection[DicomTags.StudyInstanceUid].SetStringValue(queryParams["StudyInstanceUid"]);
 			collection[DicomTags.NumberOfStudyRelatedInstances].SetStringValue("");
-			collection[DicomTags.InstanceAvailability].SetStringValue("");
+			collection[DicomTags.InstanceAvailability].SetEmptyValue(); // must not be included in request
 
 			collection[DicomTags.PatientSpeciesDescription].SetStringValue(GetString(queryParams, "PatientSpeciesDescription"));
 			var codeValue = GetString(queryParams, "PatientSpeciesCodeSequenceCodeValue");

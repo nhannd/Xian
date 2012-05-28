@@ -86,6 +86,8 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 				try
 				{
 					criteria = queryCriteria.ToDicomAttributeCollection();
+					criteria[DicomTags.InstanceAvailability] = null;
+					criteria[DicomTags.RetrieveAeTitle] = null;
 				}
 				catch (DicomException e)
 				{

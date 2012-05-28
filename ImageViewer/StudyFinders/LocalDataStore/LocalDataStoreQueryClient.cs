@@ -95,7 +95,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 			
             try
 			{
-                queryCriteria = identifier.ToDicomAttributeCollection();
+				queryCriteria = identifier.ToDicomAttributeCollection();
+				queryCriteria[DicomTags.InstanceAvailability] = null;
+				queryCriteria[DicomTags.RetrieveAeTitle] = null;
 			}
 			catch (DicomException e)
 			{
