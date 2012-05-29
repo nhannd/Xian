@@ -576,8 +576,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			private bool IsRestartable(WorkItem w)
 			{
-				return w.Status == WorkItemStatusEnum.Canceled
-						 || w.Status == WorkItemStatusEnum.Failed;
+                // Cannot restart Delete Study Requests
+				return (w.Status == WorkItemStatusEnum.Canceled
+						 || w.Status == WorkItemStatusEnum.Failed) 
+                         && !w.Data.Request.WorkItemType.Equals(DeleteStudyRequest.WorkItemTypeString);
 			}
 			private bool IsStatable(WorkItem w)
 			{

@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     /// <summary>
     /// Interface for WorkItems that support scheduling within a time window.
     /// </summary>
-    public interface IWorkItemTimeWindow
+    public interface IWorkItemRequestTimeWindow
     {
         int? TimeWindowStart { get; set; }
 
@@ -302,7 +302,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemRequestDataContract("1c63c863-aa4e-4672-bee5-8aa3db16edd5")]
     [WorkItemKnownType]
     [WorkItemRequest]
-    public class DicomAutoRouteRequest : DicomSendRequest, IWorkItemTimeWindow
+    public class DicomAutoRouteRequest : DicomSendRequest, IWorkItemRequestTimeWindow
     {
         public DicomAutoRouteRequest()
         {
@@ -485,7 +485,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public DicomRetrieveStudyRequest()
         {
             WorkItemType = WorkItemTypeString;
-            Priority = WorkItemPriorityEnum.Normal;
+            Priority = WorkItemPriorityEnum.High;
             CancellationCanResultInPartialStudy = true;
         }
 
@@ -518,7 +518,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public DicomRetrieveSeriesRequest()
         {
             WorkItemType = WorkItemTypeString;
-            Priority = WorkItemPriorityEnum.Normal;
+            Priority = WorkItemPriorityEnum.High;
             CancellationCanResultInPartialStudy = true;
         }
 

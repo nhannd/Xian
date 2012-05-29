@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public WorkItemStatusEnum? Status { get; set; }
 
         [DataMember]
-        public DateTime? ScheduledTime { get; set; }
+        public DateTime? ProcessTime { get; set; }
 
         [DataMember]
         public DateTime? ExpirationTime { get; set; }

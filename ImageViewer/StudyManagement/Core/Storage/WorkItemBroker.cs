@@ -34,9 +34,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             return (from w in this.Context.WorkItems
                     where (w.Status == WorkItemStatusEnum.Pending
                            || w.Status == WorkItemStatusEnum.Idle)
-                          && w.ScheduledTime < DateTime.Now
+                          && w.ProcessTime < DateTime.Now
                           && w.Priority == priority
-                    orderby w.ScheduledTime ascending
+                    orderby w.ProcessTime ascending
                     select w).Take(n).ToList();
         }
 
@@ -73,8 +73,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             return (from w in this.Context.WorkItems
                     where (w.Status == WorkItemStatusEnum.Pending
                            || w.Status == WorkItemStatusEnum.Idle)
-                          && w.ScheduledTime < DateTime.Now
-                    orderby w.ScheduledTime ascending
+                          && w.ProcessTime < DateTime.Now
+                    orderby w.ProcessTime ascending
                     select w).Take(n).ToList();
         }
 
@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             if (!string.IsNullOrEmpty(studyInstanceUid))
                 query = query.Where(w => w.StudyInstanceUid == studyInstanceUid);
 
-            query = query.OrderBy(w => w.ScheduledTime);
+            query = query.OrderBy(w => w.ProcessTime);
 
             return query.AsEnumerable();
         }
@@ -137,7 +137,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 
             if (!string.IsNullOrEmpty(studyInstanceUid))
                 query = query.Where(w => w.StudyInstanceUid == studyInstanceUid);
-  
+
             query = query.OrderBy(w => w.ScheduledTime);
 
             return query.AsEnumerable();

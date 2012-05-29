@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             Platform.GetService<IWorkItemService>(s => response = s.Update(new WorkItemUpdateRequest
                                                                                {                                                                                   
                                                                                    Status = WorkItemStatusEnum.Pending, 
-                                                                                   ScheduledTime = Platform.Time, 
+                                                                                   ProcessTime = Platform.Time, 
                                                                                    Identifier = WorkItem.Identifier
                                                                                }));
             if (response.Item == null)
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 Priority = priority,
                 Identifier = WorkItem.Identifier,
-                ScheduledTime = priority == WorkItemPriorityEnum.Stat ? Platform.Time : default(DateTime?)
+                ProcessTime = priority == WorkItemPriorityEnum.Stat ? Platform.Time : default(DateTime?)
             }));
 
             if (response.Item == null)

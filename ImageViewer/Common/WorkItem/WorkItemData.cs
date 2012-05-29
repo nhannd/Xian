@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public string StudyInstanceUid { get; set; }
 
         [DataMember(IsRequired = true)]
-        public DateTime InsertTime { get; set; }
+        public DateTime ProcessTime { get; set; }
 
         [DataMember(IsRequired = true)]
         public DateTime ScheduledTime { get; set; }

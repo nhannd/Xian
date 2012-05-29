@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
@@ -21,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteStudy
     /// Class for processing requests to delete studies.
     /// </summary>
     internal class DeleteStudyItemProcessor : BaseItemProcessor<DeleteStudyRequest, DeleteProgress>
-    {
+    {        
         public override void Process()
         {
             if (CancelPending)

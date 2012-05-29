@@ -132,10 +132,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 
         public virtual bool CanStart(out string reason)
         {
-            var relatedList = FindRelatedWorkItems();
-
+         
             if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.NonStudy)
             {
+                var relatedList = FindRelatedWorkItems();
                 if (relatedList != null)
                 {
                     foreach (var relatedWorkItem in relatedList)
@@ -151,6 +151,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
             else if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyUpdating)
             {
+                var inProgressList = FindRelatedInProgressWorkItems();
+                if (inProgressList != null)
+                {
+                    foreach (var relatedWorkItem in inProgressList)
+                    {
+                        reason = string.Format("Unable to start WorkItem due to {0} in progress related entry",
+                                               relatedWorkItem.Request.ActivityDescription);
+                        return false;
+                    }
+                }
+
+                var relatedList = FindRelatedWorkItems();
                 if (relatedList != null)
                 {
                     foreach (var relatedWorkItem in relatedList)
@@ -168,6 +180,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
             else if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyTransfer)
             {
+                var relatedList = FindRelatedWorkItems();
                 if (relatedList != null)
                 {
                     foreach (var relatedWorkItem in relatedList)
@@ -338,15 +351,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             {
                 var broker = context.GetWorkItemBroker();
 
-                List<WorkItemPriorityEnum> prioritiesToBlock = new List<WorkItemPriorityEnum>();
+                var prioritiesToBlock = new List<WorkItemPriorityEnum>();
 
-                if (Request.Priority == WorkItemPriorityEnum.High)
-                {
-                    prioritiesToBlock.Add(WorkItemPriorityEnum.Normal);
-                }
+                
                 if (Request.Priority == WorkItemPriorityEnum.Stat)
                 {
                     prioritiesToBlock.Add(WorkItemPriorityEnum.High);
+                    prioritiesToBlock.Add(WorkItemPriorityEnum.Normal);
+                }
+                if (Request.Priority == WorkItemPriorityEnum.High)
+                {
                     prioritiesToBlock.Add(WorkItemPriorityEnum.Normal);
                 }
                 var list = broker.GetPriorWorkItems(Proxy.Item.ScheduledTime,prioritiesToBlock, Proxy.Item.StudyInstanceUid);
@@ -356,6 +370,32 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 
                 var newList = new List<WorkItem>();
                 newList.AddRange(list);
+                return newList;
+            }
+        }
+
+        /// <summary>
+        /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
+        /// and related to the given <see cref="WorkItem"/> 
+        /// </summary>
+        /// <returns></returns>
+        protected IList<WorkItem> FindRelatedInProgressWorkItems()
+        {
+            using (var context = new DataAccessContext())
+            {
+                var broker = context.GetWorkItemBroker();
+
+                var list = broker.GetWorkItems(null,WorkItemStatusEnum.InProgress, Proxy.Item.StudyInstanceUid);
+
+                if (list == null)
+                    return null;
+
+                var newList = new List<WorkItem>();
+                foreach (var item in list)
+                {
+                    if (item.Oid != Proxy.Item.Oid)
+                        newList.Add(item);
+                }
                 return newList;
             }
         }

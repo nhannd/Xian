@@ -147,8 +147,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                 DateTime scheduledTime = AutoRoute.GetScheduledTime(now, 0);
                 if (now != scheduledTime)
                 {
-                    Platform.Log(LogLevel.Info, "Rescheduling AutoRoute WorkItem {0} back into the scheduled time window: {1}", Proxy.Item.Oid, scheduledTime);
-                    Proxy.Postpone(scheduledTime);
+                    Proxy.Postpone();
+                    Platform.Log(LogLevel.Info, "Rescheduling AutoRoute WorkItem {0} back into the scheduled time window: {1}", Proxy.Item.Oid, Proxy.Item.ProcessTime);
                     return;
                 }
             }

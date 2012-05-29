@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                            ScheduledTime = item.ScheduledTime,
                            FailureCount = item.FailureCount,
                            Identifier = item.Oid,
-                           InsertTime = item.InsertTime,
+                           ProcessTime = item.ProcessTime,
                            StudyInstanceUid = item.StudyInstanceUid,
                            Request = item.Request,
                            Progress = item.Progress

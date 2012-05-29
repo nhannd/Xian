@@ -263,6 +263,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                 processor.ProcessBatch(fileList, studyXml);
 
                 Progress.NumberOfFilesProcessed += fileList.Count;
+                Progress.StatusDetails = string.Empty;
                 Proxy.UpdateProgress(true);
                 Study = processor.StudyLocation.Study;
                 return true;
