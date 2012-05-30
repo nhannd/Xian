@@ -211,23 +211,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Tests
         }
 
         [Test]
-        public void SelectEmptyStudyDescription_WithCriteria()
-        {
-            using (var context = CreateContext())
-            {
-                var query = context.GetStudyStoreQuery();
-                var criteria = new StudyRootStudyIdentifier
-                {
-                    StudyDescription = "pelvis"
-                };
-
-                var results = query.StudyQuery(criteria);
-                //We expect all studies with a study description, plus those that don't have one at all.
-                Assert.AreEqual(8, results.Count);
-            }
-        }
-
-        [Test]
         public void SelectStudyDate_Equals()
         {
             using (var context = CreateContext())
@@ -599,7 +582,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Tests
 
                 foreach (var result in results)
                 {
-                    Assert.IsFalse(result[DicomTags.PatientId].IsEmpty);
                     Assert.IsFalse(result[DicomTags.PatientId].IsEmpty);
 
                     //The 2 requested attributes + Study UID, InstanceAvailability, RetrieveAE, SpecificCharacterSet.

@@ -96,8 +96,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
             var propertyValues = _propertyFilter.GetPropertyValues(result);
             if (propertyValues.Length == 0)
             {
-                //DICOM says if we maintain an object with an empty value, it's a match for any criteria.
-                return true;
+                //DICOM says if we maintain an object with an empty value, it's a match for any criteria,
+                //but we don't do it because it's weird.
+                return false;
             }
 
             if (!_propertyFilter.IsWildcardCriterion(criterion))
@@ -110,7 +111,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
         {
             var resultsList = new List<TDatabaseObject>(results);
             IEnumerable<TDatabaseObject> unionedResults = null;
-            foreach (var criterionValue in criterionValues)
+            foreach (var criterionValue in criterionValues.Where(value => !String.IsNullOrEmpty(value)))
             {
                 var criterion = criterionValue;
                 var criterionResults = resultsList.Where(result => IsMatch(result, criterion));

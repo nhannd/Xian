@@ -8,7 +8,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Proper
     internal class InstanceAvailability<TDatabaseObject> : DicomPropertyFilter<TDatabaseObject>
         where TDatabaseObject : class
     {
-        public InstanceAvailability(IDicomAttributeProvider criteria)
+        public InstanceAvailability(DicomAttributeCollection criteria)
             : base(DicomTags.InstanceAvailability, criteria)
         {
             AddToQueryEnabled = false;
@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Proper
 
     internal class StudyInstanceAvailability : InstanceAvailability<Study>
     {
-        public StudyInstanceAvailability(IDicomAttributeProvider criteria)
+        public StudyInstanceAvailability(DicomAttributeCollection criteria)
             : base(criteria)
         {
         }
@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Proper
 
     internal class SeriesInstanceAvailability : InstanceAvailability<Series>
     {
-        public SeriesInstanceAvailability(IDicomAttributeProvider criteria)
+        public SeriesInstanceAvailability(DicomAttributeCollection criteria)
             : base(criteria)
         {
         }
@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Proper
 
     internal class SopInstanceAvailability : InstanceAvailability<SopInstance>
     {
-        public SopInstanceAvailability(IDicomAttributeProvider criteria)
+        public SopInstanceAvailability(DicomAttributeCollection criteria)
             : base(criteria)
         {
         }
@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Proper
     internal class RetrieveAETitle<TDatabaseObject> : DicomPropertyFilter<TDatabaseObject>
         where TDatabaseObject : class
     {
-        public RetrieveAETitle(IDicomAttributeProvider criteria)
+        public RetrieveAETitle(DicomAttributeCollection criteria)
             : base(DicomTags.RetrieveAeTitle, criteria)
         {
             AddToQueryEnabled = false;
@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Proper
 
     internal class StudyRetrieveAETitle: RetrieveAETitle<Study>
     {
-        public StudyRetrieveAETitle(IDicomAttributeProvider criteria)
+        public StudyRetrieveAETitle(DicomAttributeCollection criteria)
             : base(criteria)
         {
         }
@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Proper
 
     internal class SeriesRetrieveAETitle : RetrieveAETitle<Series>
     {
-        public SeriesRetrieveAETitle(IDicomAttributeProvider criteria)
+        public SeriesRetrieveAETitle(DicomAttributeCollection criteria)
             : base(criteria)
         {
         }
@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Proper
 
     internal class SopInstanceRetrieveAETitle : RetrieveAETitle<SopInstance>
     {
-        public SopInstanceRetrieveAETitle(IDicomAttributeProvider criteria)
+        public SopInstanceRetrieveAETitle(DicomAttributeCollection criteria)
             : base(criteria)
         {
         }
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Proper
     internal abstract class SpecificCharacterSet<TDatabaseObject> : DicomPropertyFilter<TDatabaseObject>
         where TDatabaseObject : class
     {
-        protected SpecificCharacterSet(IDicomAttributeProvider criteria)
+        protected SpecificCharacterSet(DicomAttributeCollection criteria)
             : base(DicomTags.SpecificCharacterSet, criteria)
         {
             AddToQueryEnabled = false;
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Proper
 
     internal class StudySpecificCharacterSet : SpecificCharacterSet<Study>
     {
-        public StudySpecificCharacterSet(IDicomAttributeProvider criteria)
+        public StudySpecificCharacterSet(DicomAttributeCollection criteria)
             : base(criteria)
         {
         }
@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Proper
 
     internal class SeriesSpecificCharacterSet : SpecificCharacterSet<Series>
     {
-        public SeriesSpecificCharacterSet(IDicomAttributeProvider criteria)
+        public SeriesSpecificCharacterSet(DicomAttributeCollection criteria)
             : base(criteria)
         {
         }
@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Proper
 
     internal class SopInstanceSpecificCharacterSet : SpecificCharacterSet<SopInstance>
     {
-        public SopInstanceSpecificCharacterSet(IDicomAttributeProvider criteria)
+        public SopInstanceSpecificCharacterSet(DicomAttributeCollection criteria)
             : base(criteria)
         {
         }

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Data.Linq;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using ClearCanvas.Dicom;
 using System;
 using ClearCanvas.Dicom.Utilities;
@@ -23,16 +25,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
             get { return _filters ?? (_filters = CreateFilters(_criteria)); }
         }
 
-        protected virtual List<IPropertyFilter<TDatabaseObject>> CreateFilters(
-            DicomAttributeCollection criteria)
+        protected virtual List<IPropertyFilter<TDatabaseObject>> CreateFilters(DicomAttributeCollection criteria)
         {
             var types = typeof (PropertyFilters<TDatabaseObject>).Assembly.GetTypes()
-                .Where(t => typeof (IPropertyFilter<TDatabaseObject>).IsAssignableFrom(t));
+                .Where(t => typeof (IPropertyFilter<TDatabaseObject>).IsAssignableFrom(t)).ToList();
 
-            return (from type in types
-                    let constructor = type.GetConstructor(new[] {typeof (DicomAttributeCollection)})
-                    where constructor != null
-                    select (IPropertyFilter<TDatabaseObject>)Activator.CreateInstance(type, new object[] {criteria})).ToList();
+            var typesWithRightConstructor = (from type in types
+                                            let constructor = type.GetConstructor(new[] {typeof (DicomAttributeCollection)})
+                                            where constructor != null
+                                            select type).ToList();
+#if DEBUG
+            var typesMissingConstructor = types.Where(type => !typesWithRightConstructor.Contains(type)).ToList();
+            Debug.Assert(typesMissingConstructor.Count == 0);
+#endif
+            return typesWithRightConstructor.Select(type => Activator.CreateInstance(type, new object[] {criteria}))
+                    .Cast<IPropertyFilter<TDatabaseObject>>().ToList();
         }
 
         protected virtual IQueryable<TDatabaseObject> Query(IQueryable<TDatabaseObject> initialQuery)

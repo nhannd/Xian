@@ -102,7 +102,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Tests
             Assert.IsFalse(filter.ShouldAddToQuery);
             Assert.IsFalse(filter.ShouldAddToResult);
             Assert.IsTrue(iFilter.IsWildcardCriterionAllowed);
-            //Assert.IsFalse(iFilter.IsWildcardCriterion(filter.CriterionValue));
 
             Assert.IsFalse(filter.CalledAddEqualsToQuery);
             Assert.IsFalse(filter.CalledAddLikeToQuery);

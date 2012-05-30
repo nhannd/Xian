@@ -109,7 +109,6 @@
     <Compile Include="Storage\DicomQuery\PropertyFilters\Series.cs" />
     <Compile Include="Storage\DicomQuery\PropertyFilters\SopInstance.cs" />
     <Compile Include="Storage\DicomQuery\PropertyFilters\Study.cs" />
-    <Compile Include="Storage\DicomQuery\PropertyFilters\StudyData.cs" />
     <Compile Include="Storage\DicomQuery\QueryUtilities.cs" />
     <Compile Include="Storage\DicomQuery\StringDicomPropertyFilter.cs" />
     <Compile Include="Storage\DicomQuery\StudyStoreQuery.cs" />

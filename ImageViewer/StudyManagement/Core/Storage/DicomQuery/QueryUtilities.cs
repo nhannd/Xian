@@ -18,10 +18,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
 
         internal static bool IsWildcardCriterion(DicomVr vr, string criterion)
         {
-            if (!IsWildcardCriterionAllowed(vr))
+            if (String.IsNullOrEmpty(criterion))
                 return false;
 
-            if (String.IsNullOrEmpty(criterion))
+            if (!IsWildcardCriterionAllowed(vr))
                 return false;
 
             return criterion.Contains("*") || criterion.Contains("?");
@@ -33,18 +33,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
             test = test.Replace("?", "."); //single character
             test = String.Format("^{0}", test); //match at beginning
 
-            //DICOM says if we manage an object having no value, it's considered a match.
-            return String.IsNullOrEmpty(value)
-                //DICOM says matching is case sensitive, but that's just silly.
-                   || Regex.IsMatch(value, test, RegexOptions.IgnoreCase);
+            //DICOM says if we manage an object having no value, it's considered a match,
+            //but it doesn't actually make sense, so we don't do it.
+            //DICOM also says matching is case sensitive, but that's just silly.
+            return Regex.IsMatch(value, test, RegexOptions.IgnoreCase);
         }
 
         internal static bool AreEqual(string value, string criterion)
         {
-            //DICOM says if we manage an object having no value, it's considered a match.
-            return String.IsNullOrEmpty(value)
-                //DICOM says matching is case sensitive, but that's just silly.
-                || 0 == string.Compare(value, criterion, StringComparison.InvariantCultureIgnoreCase);
+            //DICOM says if we manage an object having no value, it's considered a match,
+            //but it doesn't actually make sense, so we don't do it.
+            //DICOM also says matching is case sensitive, but that's just silly.
+            return 0 == string.Compare(value, criterion, StringComparison.InvariantCultureIgnoreCase);
         }
 
         internal static bool IsMultiValued(string value)

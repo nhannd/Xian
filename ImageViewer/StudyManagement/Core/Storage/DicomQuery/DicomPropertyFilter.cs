@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
     internal abstract class DicomPropertyFilter<TDatabaseObject> : PropertyFilter<TDatabaseObject>
         where TDatabaseObject : class
     {
-        protected DicomPropertyFilter(DicomTagPath path, IDicomAttributeProvider criteria)
+        protected DicomPropertyFilter(DicomTagPath path, DicomAttributeCollection criteria)
         {
             Path = path;
             Criterion = Path.GetAttribute(criteria);
