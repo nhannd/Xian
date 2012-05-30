@@ -26,8 +26,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 	/// </remarks>
 	public class DataAccessContext : IDisposable
 	{
+	    //TODO (Marmot): This will cause side-by-side installations to interact. Use the full path to the database file.
 		public const string WorkItemMutex = "WorkItem";
-
 
 		private const string DefaultDatabaseFileName = "dicom_store.sdf";
 
