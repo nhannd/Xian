@@ -110,7 +110,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                         // Mark studies to delete as "deleted" in the database.
                         var studyBroker = context.GetStudyBroker();
                         var study = studyBroker.GetStudy(studyRequest.Study.StudyInstanceUid);
-                        study.Deleted = true;
+                        if (study != null)
+                            study.Deleted = true;
                     }
                 }
 

@@ -148,7 +148,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override WorkItemConcurrency ConcurrencyType
         {
-            get { return WorkItemConcurrency.StudyTransfer; }
+            get { return WorkItemConcurrency.StudyRead; }
         }
 
         [DataMember]
@@ -172,7 +172,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         public override WorkItemConcurrency ConcurrencyType
         {
-            get { return WorkItemConcurrency.StudyTransfer; }
+            get { return WorkItemConcurrency.StudyRead; }
         }
 
         public DicomSendStudyRequest()
@@ -395,9 +395,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [EnumMember]
         NonStudy,
         [EnumMember]
-        StudyUpdating,
+        StudyInsert,
         [EnumMember]
-        StudyTransfer
+        StudyDelete,
+        [EnumMember]
+        StudyRead
     }
 
     /// <summary>
@@ -466,7 +468,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override WorkItemConcurrency ConcurrencyType
         {
-            get { return WorkItemConcurrency.StudyTransfer; }
+            get { return WorkItemConcurrency.StudyRead; }
         }
 
         [DataMember]
@@ -491,7 +493,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override WorkItemConcurrency ConcurrencyType
         {
-            get { return WorkItemConcurrency.StudyTransfer; }
+            get { return WorkItemConcurrency.StudyRead; }
         }
 
         public override string ActivityDescription
@@ -567,7 +569,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         public override WorkItemConcurrency ConcurrencyType
         {
-            get { return WorkItemConcurrency.StudyUpdating; }
+            get { return WorkItemConcurrency.StudyInsert; }
         }
 
         [DataMember(IsRequired = true)]
@@ -595,7 +597,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         public override WorkItemConcurrency ConcurrencyType
         {
-            get { return WorkItemConcurrency.StudyUpdating; }
+            get { return WorkItemConcurrency.StudyInsert; }
         }
 
         public override string ActivityDescription
@@ -661,7 +663,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override WorkItemConcurrency ConcurrencyType
         {
-            get { return WorkItemConcurrency.StudyUpdating; }
+            get { return WorkItemConcurrency.StudyDelete; }
         }
 
         public override string ActivityDescription
@@ -694,7 +696,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override WorkItemConcurrency ConcurrencyType
         {
-            get { return WorkItemConcurrency.StudyUpdating; }
+            get { return WorkItemConcurrency.StudyDelete; }
         }
 
         [DataMember(IsRequired = false)]

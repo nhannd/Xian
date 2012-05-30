@@ -22,6 +22,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 
         string Name { get;}
 
+        WorkItemStatusProxy Proxy { get; set; }
+
         #endregion
 
         #region Methods

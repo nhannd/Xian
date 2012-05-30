@@ -38,7 +38,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;UNIT_TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -53,6 +53,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.6.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
@@ -105,6 +106,7 @@
     <Compile Include="WorkItemService\ProcessStudy\ProcessStudyItemProcessor.cs" />
     <Compile Include="WorkItemService\DicomRetrieve\DicomRetrieveItemProcessor.cs" />
     <Compile Include="WorkItemService\DicomRetrieve\DicomRetrieveFactory.cs" />
+    <Compile Include="WorkItemService\Tests\WorkItemSchedulingTest.cs" />
     <Compile Include="WorkItemService\WorkItemActivityMonitorServiceType.cs" />
     <Compile Include="WorkItemService\WorkItemProcessor.cs" />
     <Compile Include="WorkItemService\WorkItemProcessorExtension.cs" />

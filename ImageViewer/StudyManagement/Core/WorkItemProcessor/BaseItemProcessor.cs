@@ -133,23 +133,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         public virtual bool CanStart(out string reason)
         {
          
-            if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.NonStudy)
+            if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
             {
                 var relatedList = FindRelatedWorkItems();
                 if (relatedList != null)
                 {
                     foreach (var relatedWorkItem in relatedList)
                     {
-                        if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.NonStudy)
+                        if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete)
                         {
                             reason = string.Format("Unable to start WorkItem due to {0} related entry",
-                                                   relatedWorkItem.Request.ActivityDescription);
+                                                         relatedWorkItem.Request.ActivityDescription);
                             return false;
                         }
                     }
                 }
+                reason = string.Empty;
+                return !ReindexScheduled();
             }
-            else if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyUpdating)
+
+            if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete)
             {
                 var inProgressList = FindRelatedInProgressWorkItems();
                 if (inProgressList != null)
@@ -170,7 +173,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                         if (relatedWorkItem.Request.ConcurrencyType != WorkItemConcurrency.NonStudy)
                         {
                             reason = string.Format("Unable to start WorkItem due to {0} related entry",
-                                                         relatedWorkItem.Request.ActivityDescription);
+                                                   relatedWorkItem.Request.ActivityDescription);
                             return false;
                         }
                     }
@@ -178,14 +181,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 reason = string.Empty;
                 return !ReindexScheduled();
             }
-            else if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyTransfer)
+
+            if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyRead)
             {
                 var relatedList = FindRelatedWorkItems();
                 if (relatedList != null)
                 {
                     foreach (var relatedWorkItem in relatedList)
                     {
-                        if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyUpdating)
+                        if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete
+                            || relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
                         {
                             reason = string.Format("Unable to start WorkItem due to {0} related entry",
                                                    relatedWorkItem.Request.ActivityDescription);
@@ -193,7 +198,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                         }
                     }
                 }
+
+                reason = string.Empty;
+                return !ReindexScheduled();
             }
+
+            // WorkItemConcurrency.NonStudy entries can just run
             reason = string.Empty;
             return true;
         }
