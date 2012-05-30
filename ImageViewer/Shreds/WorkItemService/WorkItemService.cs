@@ -93,8 +93,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                                    Progress = request.Progress,
                                    Type = request.Request.WorkItemType,
                                    Priority = request.Request.Priority,
-                                   InsertTime = now,
                                    ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Default.InsertDelaySeconds),
+                                   ProcessTime = now.AddSeconds(WorkItemServiceSettings.Default.InsertDelaySeconds),
                                    DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes),
                                    ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Default.ExpireDelaySeconds),
                                    Status = WorkItemStatusEnum.Pending
@@ -148,7 +148,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     if (workItem.Status != WorkItemStatusEnum.InProgress)
                     {
                         workItem.Status = WorkItemStatusEnum.Deleted;
-                        deleted = true;
+                        deleted = true;            
                     }
                 }
                 if (!deleted)
@@ -161,10 +161,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     {
                         workItem.Status = request.Status.Value;
                         if (request.Status.Value == WorkItemStatusEnum.Canceled)
-                            workItem.DeleteTime = Platform.Time.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);              
+                            workItem.DeleteTime = Platform.Time.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);            
                     }
-                    if (request.ScheduledTime.HasValue)
-                        workItem.ScheduledTime = request.ScheduledTime.Value;
+                    if (request.ProcessTime.HasValue)
+                        workItem.ProcessTime = request.ProcessTime.Value;
 
                     if (request.Cancel.HasValue && request.Cancel.Value)
                     {
@@ -172,7 +172,20 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                         {
                             if (workItem.Status.Equals(WorkItemStatusEnum.Idle)
                                 || workItem.Status.Equals(WorkItemStatusEnum.Pending))
+                            {
                                 workItem.Status = WorkItemStatusEnum.Canceled;
+
+                                // Force the study to be visible again if its a DeleteStudyRequest we're canceling
+                                if (workItem.Type.Equals(DeleteStudyRequest.WorkItemTypeString))
+                                {
+                                    var studyBroker = context.GetStudyBroker();
+                                    var study = studyBroker.GetStudy(workItem.StudyInstanceUid);
+                                    if (study != null)
+                                    {
+                                        study.Deleted = false;
+                                    }
+                                }
+                            }
                             else if (workItem.Status.Equals(WorkItemStatusEnum.InProgress))
                             {
                                 // Abort the WorkItem

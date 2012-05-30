@@ -94,8 +94,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         /// Simple routine for failing a <see cref="WorkItem"/> and rescheduling it at a specified time.
         /// </summary>
         /// <param name="failureType"></param>
-        /// <param name="scheduledTime">The time to reschedule the WorkItem if it isn't a fatal error. </param>
-        public void Fail(WorkItemFailureType failureType, DateTime scheduledTime)
+        /// <param name="failureTime">The time to reschedule the WorkItem if it isn't a fatal error. </param>
+        public void Fail(WorkItemFailureType failureType, DateTime failureTime)
         {
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
@@ -116,9 +116,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 }
                 else
                 {
-                    Item.ScheduledTime = scheduledTime;
-                    if (Item.ExpirationTime < Item.ScheduledTime)
-                        Item.ExpirationTime = Item.ScheduledTime;
+                    Item.ProcessTime = failureTime;
+                    if (Item.ExpirationTime < Item.ProcessTime)
+                        Item.ExpirationTime = Item.ProcessTime;
                     Item.Status = WorkItemStatusEnum.Pending;
                 }
 
@@ -132,34 +132,39 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         /// <summary>
         /// Postpone a <see cref="WorkItem"/>
         /// </summary>
-        /// <param name="scheduledTime">The time to postpone the entry to.</param>
-        public void Postpone(DateTime scheduledTime)
+        public void Postpone()
         {
+            DateTime now = Platform.Time;
+
+            var workItem = Item as IWorkItemRequestTimeWindow;
+
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var workItemBroker = context.GetWorkItemBroker();
 
                 Item = workItemBroker.GetWorkItem(Item.Oid);
                 Item.Progress = Progress;
-                Item.ScheduledTime = scheduledTime;
-                if (Item.ScheduledTime > Item.ExpirationTime)
-                    Item.ExpirationTime = Item.ScheduledTime;
+                if (workItem != null)
+                {
+                    DateTime scheduledTime = workItem.GetScheduledTime(now, 0);
+                    Item.ProcessTime = scheduledTime;
+                    Item.ScheduledTime = scheduledTime;
+                }
+                else
+                {
+                    Item.ProcessTime = now.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds);
+                }
+
+                if (Item.ProcessTime > Item.ExpirationTime)
+                    Item.ExpirationTime = Item.ProcessTime;
                 Item.Status = WorkItemStatusEnum.Pending;
                 context.Commit();
+
+
+                Publish(false);
+                Platform.Log(LogLevel, "Postponing {0} WorkItem for OID {1} until {2}, expires {3}", Item.Type, Item.Oid,
+                             Item.ProcessTime.ToLongTimeString(), Item.ExpirationTime.ToLongTimeString());
             }
-
-            Publish(false);
-            Platform.Log(LogLevel, "Postponing {0} WorkItem for OID {1} until {2}, expires {3}", Item.Type, Item.Oid, Item.ScheduledTime.ToLongTimeString(), Item.ExpirationTime.ToLongTimeString());
-        }
-
-        /// <summary>
-        /// Postpone a <see cref="WorkItem"/>
-        /// </summary>
-        public void Postpone()
-        {
-            DateTime now = Platform.Time;
-            DateTime newScheduledTime = now.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds);
-            Postpone(newScheduledTime);
         }
 
         /// <summary>
@@ -179,7 +184,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 Progress.StatusDetails = string.Empty;
 
                 Item.Progress = Progress;
-                Item.ScheduledTime = now;
+                Item.ProcessTime = now;
                 Item.ExpirationTime = now;
                 Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);
                 Item.Status = WorkItemStatusEnum.Complete;
@@ -218,16 +223,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 DateTime now = Platform.Time;
 
                 Item.Progress = Progress;
-                Item.ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds);
-                if (Item.ScheduledTime > Item.ExpirationTime)
-                    Item.ScheduledTime = Item.ExpirationTime;
+                Item.ProcessTime = now.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds);
+                if (Item.ProcessTime > Item.ExpirationTime)
+                    Item.ProcessTime = Item.ExpirationTime;
                 Item.Status = WorkItemStatusEnum.Idle;
 
                 context.Commit();
             }
 
             Publish(false);
-            Platform.Log(LogLevel, "Idling {0} WorkItem for OID {1} until {2}, expires {3}", Item.Type, Item.Oid, Item.ScheduledTime.ToLongTimeString(), Item.ExpirationTime.ToLongTimeString());
+            Platform.Log(LogLevel, "Idling {0} WorkItem for OID {1} until {2}, expires {3}", Item.Type, Item.Oid, Item.ProcessTime.ToLongTimeString(), Item.ExpirationTime.ToLongTimeString());
         }
 
         /// <summary>
@@ -262,7 +267,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 
                 DateTime now = Platform.Time;
 
-                Item.ScheduledTime = now;
+                Item.ProcessTime = now;
                 Item.ExpirationTime = now;
                 Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);
                 Item.Status = WorkItemStatusEnum.Canceled;

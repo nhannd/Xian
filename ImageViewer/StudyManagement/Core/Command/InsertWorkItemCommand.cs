@@ -180,9 +180,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
                 {
                     WorkItem = new WorkItem
                                    {
-                                       InsertTime = now,
-                                       Request = _request,
                                        ScheduledTime = now.AddSeconds(WorkItemServiceSettings.Default.InsertDelaySeconds),
+                                       Request = _request,
+                                       ProcessTime = now.AddSeconds(WorkItemServiceSettings.Default.InsertDelaySeconds),
                                        Priority = _request.Priority,
                                        Type = _request.WorkItemType,
                                        DeleteTime = now.AddHours(2),

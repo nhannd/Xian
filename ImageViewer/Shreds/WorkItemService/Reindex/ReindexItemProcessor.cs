@@ -25,6 +25,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 
         #endregion
 
+        #region Public Properties
+
+        #endregion
+
         #region Public Methods
 
         public override bool Initialize(WorkItemStatusProxy proxy)

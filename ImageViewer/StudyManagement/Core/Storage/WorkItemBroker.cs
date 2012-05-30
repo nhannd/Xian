@@ -23,19 +23,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 		{
 		}
 
-        /// <summary>
-        /// Gets the specified number of pending work items.
-        /// </summary>
-        /// <param name="n"></param>
-        /// <returns></returns>
-        public List<WorkItem> GetPendingWorkItemsByPriority(int n, WorkItemPriorityEnum priority)
+	    /// <summary>
+	    /// Gets the specified number of pending work items.
+	    /// </summary>
+	    /// <param name="n"></param>
+	    /// <param name="priority"> </param>
+	    /// <returns></returns>
+	    public List<WorkItem> GetPendingWorkItemsByPriority(int n, WorkItemPriorityEnum priority)
         {
             return (from w in this.Context.WorkItems
                     where (w.Status == WorkItemStatusEnum.Pending
                            || w.Status == WorkItemStatusEnum.Idle)
-                          && w.ScheduledTime < DateTime.Now
+                          && w.ProcessTime < DateTime.Now
                           && w.Priority == priority
-                    orderby w.ScheduledTime ascending
+                    orderby w.ProcessTime ascending
                     select w).Take(n).ToList();
         }
 
@@ -72,8 +73,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             return (from w in this.Context.WorkItems
                     where (w.Status == WorkItemStatusEnum.Pending
                            || w.Status == WorkItemStatusEnum.Idle)
-                          && w.ScheduledTime < DateTime.Now
-                    orderby w.ScheduledTime ascending
+                          && w.ProcessTime < DateTime.Now
+                    orderby w.ProcessTime ascending
                     select w).Take(n).ToList();
         }
 
@@ -102,12 +103,48 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             if (!string.IsNullOrEmpty(studyInstanceUid))
                 query = query.Where(w => w.StudyInstanceUid == studyInstanceUid);
 
-            query = query.OrderBy(w => w.ScheduledTime);
+            query = query.OrderBy(w => w.ProcessTime);
 
             return query.AsEnumerable();
         }
 
         /// <summary>
+        /// General the WorkItems with the specified parameters.
+        /// </summary>
+        /// <param name="scheduledTime"></param>
+        /// <param name="prioritiesToBlock"></param>
+        /// <param name="studyInstanceUid"></param>
+        /// <returns></returns>
+        public IEnumerable<WorkItem> GetPriorWorkItems(DateTime scheduledTime,
+            IEnumerable<WorkItemPriorityEnum> prioritiesToBlock, string studyInstanceUid)
+        {
+            IQueryable<WorkItem> query = from w in Context.WorkItems select w;
+
+            query = query.Where(w => w.ScheduledTime < scheduledTime);
+
+            query = query.Where(w => w.Status != WorkItemStatusEnum.Deleted);
+            query = query.Where(w => w.Status != WorkItemStatusEnum.DeleteInProgress);
+            query = query.Where(w => w.Status != WorkItemStatusEnum.Canceled);
+            query = query.Where(w => w.Status != WorkItemStatusEnum.Canceling);
+            query = query.Where(w => w.Status != WorkItemStatusEnum.Complete);
+            query = query.Where(w => w.Status != WorkItemStatusEnum.Failed);
+
+            foreach (var priority in prioritiesToBlock)
+            {
+                WorkItemPriorityEnum priority1 = priority;
+                query = query.Where(w => w.Priority != priority1);
+            }
+
+            if (!string.IsNullOrEmpty(studyInstanceUid))
+                query = query.Where(w => w.StudyInstanceUid == studyInstanceUid);
+
+            query = query.OrderBy(w => w.ScheduledTime);
+
+            return query.AsEnumerable();
+        }
+
+
+	    /// <summary>
         /// Get a specific WorkItem
         /// </summary>
         /// <param name="oid"></param>

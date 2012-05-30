@@ -48,6 +48,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
     }
 
+    /// <summary>
+    /// Interface for WorkItems that support scheduling within a time window.
+    /// </summary>
+    public interface IWorkItemRequestTimeWindow
+    {
+        int? TimeWindowStart { get; set; }
+
+        int? TimeWindowEnd { get; set; }
+
+        DateTime GetScheduledTime(DateTime currentTime, int postponeSeconds);
+    }
 
     /// <summary>
     /// Base Request object for the creation of <see cref="WorkItem"/>s.
@@ -57,6 +68,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemKnownType]
     public abstract class WorkItemRequest : DataContractBase
     {
+        public abstract WorkItemConcurrency ConcurrencyType { get; }
+
         [DataMember]
         public WorkItemPriorityEnum Priority { get; set; }
 
@@ -132,7 +145,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public abstract class DicomSendRequest : WorkItemStudyRequest
     {
         public static string WorkItemTypeString = "DicomSend";
-        
+
+        public override WorkItemConcurrency ConcurrencyType
+        {
+            get { return WorkItemConcurrency.StudyTransfer; }
+        }
+
         [DataMember]
         public string Destination { get; set; }
 
@@ -152,6 +170,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemRequest]
     public class DicomSendStudyRequest : DicomSendRequest
     {
+        public override WorkItemConcurrency ConcurrencyType
+        {
+            get { return WorkItemConcurrency.StudyTransfer; }
+        }
+
         public DicomSendStudyRequest()
         {
             WorkItemType = WorkItemTypeString;
@@ -279,7 +302,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemRequestDataContract("1c63c863-aa4e-4672-bee5-8aa3db16edd5")]
     [WorkItemKnownType]
     [WorkItemRequest]
-    public class DicomAutoRouteRequest : DicomSendRequest
+    public class DicomAutoRouteRequest : DicomSendRequest, IWorkItemRequestTimeWindow
     {
         public DicomAutoRouteRequest()
         {
@@ -366,6 +389,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         Save
     }
 
+    [DataContract(Name = "WorkItemConcurrency", Namespace = ImageViewerWorkItemNamespace.Value)]
+    public enum WorkItemConcurrency
+    {
+        [EnumMember]
+        NonStudy,
+        [EnumMember]
+        StudyUpdating,
+        [EnumMember]
+        StudyTransfer
+    }
+
     /// <summary>
     /// <see cref="WorkItemRequest"/> for importing files/studies.
     /// </summary>
@@ -382,6 +416,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.High;
             CancellationCanResultInPartialStudy = true;
+        }
+
+        public override WorkItemConcurrency ConcurrencyType
+        {
+            get { return WorkItemConcurrency.NonStudy; }
         }
 
         [DataMember(IsRequired = true)]
@@ -424,7 +463,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public abstract class DicomRetrieveRequest : WorkItemStudyRequest
     {
         public static string WorkItemTypeString = "DicomRetrieve";
-   
+
+        public override WorkItemConcurrency ConcurrencyType
+        {
+            get { return WorkItemConcurrency.StudyTransfer; }
+        }
+
         [DataMember]
         public string Source { get; set; }
     }
@@ -441,8 +485,13 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public DicomRetrieveStudyRequest()
         {
             WorkItemType = WorkItemTypeString;
-            Priority = WorkItemPriorityEnum.Normal;
+            Priority = WorkItemPriorityEnum.High;
             CancellationCanResultInPartialStudy = true;
+        }
+
+        public override WorkItemConcurrency ConcurrencyType
+        {
+            get { return WorkItemConcurrency.StudyTransfer; }
         }
 
         public override string ActivityDescription
@@ -469,7 +518,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public DicomRetrieveSeriesRequest()
         {
             WorkItemType = WorkItemTypeString;
-            Priority = WorkItemPriorityEnum.Normal;
+            Priority = WorkItemPriorityEnum.High;
             CancellationCanResultInPartialStudy = true;
         }
 
@@ -516,6 +565,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemRequest]
     public class DicomReceiveRequest : ProcessStudyRequest
     {
+        public override WorkItemConcurrency ConcurrencyType
+        {
+            get { return WorkItemConcurrency.StudyUpdating; }
+        }
+
         [DataMember(IsRequired = true)]
         public string FromAETitle { get; set; }
 
@@ -539,6 +593,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [WorkItemRequest]
     public class ImportStudyRequest : ProcessStudyRequest
     {
+        public override WorkItemConcurrency ConcurrencyType
+        {
+            get { return WorkItemConcurrency.StudyUpdating; }
+        }
+
         public override string ActivityDescription
         {
             get { return string.Format(SR.ImportStudyRequest_AcitivityDescription); }
@@ -567,6 +626,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             Priority = WorkItemPriorityEnum.High;
         }
 
+        public override WorkItemConcurrency ConcurrencyType
+        {
+            get { return WorkItemConcurrency.NonStudy; }
+        }
+
         public override string ActivityDescription
         {
             get { return SR.ReindexRequest_ActivityDescription; }
@@ -588,11 +652,16 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public class DeleteStudyRequest : WorkItemStudyRequest
     {
         public static string WorkItemTypeString = "DeleteStudy";
-        
+
         public DeleteStudyRequest()
         {
             WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.High;
+        }
+
+        public override WorkItemConcurrency ConcurrencyType
+        {
+            get { return WorkItemConcurrency.StudyUpdating; }
         }
 
         public override string ActivityDescription
@@ -616,11 +685,16 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public class DeleteSeriesRequest : WorkItemStudyRequest
     {
         public static string WorkItemTypeString = "DeleteSeries";
-        
+
         public DeleteSeriesRequest()
         {
             WorkItemType = WorkItemTypeString;
             Priority = WorkItemPriorityEnum.High;
+        }
+
+        public override WorkItemConcurrency ConcurrencyType
+        {
+            get { return WorkItemConcurrency.StudyUpdating; }
         }
 
         [DataMember(IsRequired = false)]
@@ -653,6 +727,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 			WorkItemType = WorkItemTypeString;
 			Priority = WorkItemPriorityEnum.Normal;
 		}
+
+        public override WorkItemConcurrency ConcurrencyType
+        {
+            get { return WorkItemConcurrency.NonStudy; }
+        }
 
 		/// <summary>
 		/// The rule to re-apply.  May be null, in which case all rules are re-applied.

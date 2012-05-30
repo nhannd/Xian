@@ -12,7 +12,7 @@
 using System;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
-{   
+{  
     /// <summary>
     /// Interface for processors of WorkItem items
     /// </summary>

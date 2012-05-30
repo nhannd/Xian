@@ -132,6 +132,68 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 
         public virtual bool CanStart(out string reason)
         {
+         
+            if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.NonStudy)
+            {
+                var relatedList = FindRelatedWorkItems();
+                if (relatedList != null)
+                {
+                    foreach (var relatedWorkItem in relatedList)
+                    {
+                        if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.NonStudy)
+                        {
+                            reason = string.Format("Unable to start WorkItem due to {0} related entry",
+                                                   relatedWorkItem.Request.ActivityDescription);
+                            return false;
+                        }
+                    }
+                }
+            }
+            else if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyUpdating)
+            {
+                var inProgressList = FindRelatedInProgressWorkItems();
+                if (inProgressList != null)
+                {
+                    foreach (var relatedWorkItem in inProgressList)
+                    {
+                        reason = string.Format("Unable to start WorkItem due to {0} in progress related entry",
+                                               relatedWorkItem.Request.ActivityDescription);
+                        return false;
+                    }
+                }
+
+                var relatedList = FindRelatedWorkItems();
+                if (relatedList != null)
+                {
+                    foreach (var relatedWorkItem in relatedList)
+                    {
+                        if (relatedWorkItem.Request.ConcurrencyType != WorkItemConcurrency.NonStudy)
+                        {
+                            reason = string.Format("Unable to start WorkItem due to {0} related entry",
+                                                         relatedWorkItem.Request.ActivityDescription);
+                            return false;
+                        }
+                    }
+                }
+                reason = string.Empty;
+                return !ReindexScheduled();
+            }
+            else if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyTransfer)
+            {
+                var relatedList = FindRelatedWorkItems();
+                if (relatedList != null)
+                {
+                    foreach (var relatedWorkItem in relatedList)
+                    {
+                        if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyUpdating)
+                        {
+                            reason = string.Format("Unable to start WorkItem due to {0} related entry",
+                                                   relatedWorkItem.Request.ActivityDescription);
+                            return false;
+                        }
+                    }
+                }
+            }
             reason = string.Empty;
             return true;
         }
@@ -282,32 +344,58 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
         /// and related to the given <see cref="WorkItem"/> 
         /// </summary>
-        /// <param name="types"></param>
-        /// <param name="status"></param>
         /// <returns></returns>
-        protected IList<WorkItem> FindRelatedWorkItems(IEnumerable<string> types,
-                                                       IEnumerable<WorkItemStatusEnum> status)
+        protected IList<WorkItem> FindRelatedWorkItems( )
         {
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetWorkItemBroker();
 
-                var list = broker.GetWorkItems(null, null, Proxy.Item.StudyInstanceUid);
+                var prioritiesToBlock = new List<WorkItemPriorityEnum>();
+
+                
+                if (Request.Priority == WorkItemPriorityEnum.Stat)
+                {
+                    prioritiesToBlock.Add(WorkItemPriorityEnum.High);
+                    prioritiesToBlock.Add(WorkItemPriorityEnum.Normal);
+                }
+                if (Request.Priority == WorkItemPriorityEnum.High)
+                {
+                    prioritiesToBlock.Add(WorkItemPriorityEnum.Normal);
+                }
+                var list = broker.GetPriorWorkItems(Proxy.Item.ScheduledTime,prioritiesToBlock, Proxy.Item.StudyInstanceUid);
 
                 if (list == null)
                     return null;
 
-                // remove the current item 
-                // Remove items if the type is in not the list
-                var newList = CollectionUtils.Reject(list, item => item.Oid.Equals(Proxy.Item.Oid)
-                                                                   ||
-                                                                   (types != null &&
-                                                                    !CollectionUtils.Contains(types,
-                                                                                              t => t.Equals(item.Type)))
-                                                                   ||
-                                                                   (status != null &&
-                                                                    !CollectionUtils.Contains(status,
-                                                                                              s => s.Equals(item.Status))));
+                var newList = new List<WorkItem>();
+                newList.AddRange(list);
+                return newList;
+            }
+        }
+
+        /// <summary>
+        /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
+        /// and related to the given <see cref="WorkItem"/> 
+        /// </summary>
+        /// <returns></returns>
+        protected IList<WorkItem> FindRelatedInProgressWorkItems()
+        {
+            using (var context = new DataAccessContext())
+            {
+                var broker = context.GetWorkItemBroker();
+
+                var list = broker.GetWorkItems(null,WorkItemStatusEnum.InProgress, Proxy.Item.StudyInstanceUid);
+
+                if (list == null)
+                    return null;
+
+                var newList = new List<WorkItem>();
+                foreach (var item in list)
+                {
+                    if (item.Oid != Proxy.Item.Oid)
+                        newList.Add(item);
+                }
                 return newList;
             }
         }

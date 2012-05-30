@@ -28,7 +28,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
     /// </summary>
     internal class StudyProcessProcessor : BaseItemProcessor<ProcessStudyRequest,ProcessStudyProgress>
     {
+        #region Public Properties
+
         public Study Study { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Cleanup any failed items in the queue and delete the queue entry.
@@ -134,29 +138,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
             {
                 Proxy.Postpone();
             }
-        }
-
-        /// <summary>
-        /// Can the <see cref="WorkItem"/> start processing?
-        /// </summary>
-        /// <param name="reason"></param>
-        /// <returns></returns>
-        public override bool CanStart(out string reason)
-        {
-            // Pending, InProgress, Idle ProcessStudy entries existing.
-            var relatedList = FindRelatedWorkItems(new List<string> { ProcessStudyRequest.WorkItemTypeString }, new List<WorkItemStatusEnum> { WorkItemStatusEnum.InProgress, WorkItemStatusEnum.Idle, WorkItemStatusEnum.Pending });
-            foreach (var item in relatedList)
-            {
-                if (item.InsertTime < Proxy.Item.InsertTime)
-                {
-                    reason = "There is an earlier inserted WorkItem for the study being processed.";
-                    return false;
-                }
-            }
-
-            // Always Can start, even if there is a reindex.
-            reason = string.Empty;
-            return true;
         }
 
         /// <summary>
@@ -282,6 +263,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                 processor.ProcessBatch(fileList, studyXml);
 
                 Progress.NumberOfFilesProcessed += fileList.Count;
+                Progress.StatusDetails = string.Empty;
                 Proxy.UpdateProgress(true);
                 Study = processor.StudyLocation.Study;
                 return true;
