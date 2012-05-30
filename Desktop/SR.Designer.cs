@@ -1033,7 +1033,7 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Options.
+        ///   Looks up a localized string similar to User Options.
         /// </summary>
         public static string TitleMenuOptions {
             get {
@@ -1087,11 +1087,11 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Settings Management.
+        ///   Looks up a localized string similar to Settings Editor.
         /// </summary>
-        public static string TitleSettingsManagement {
+        public static string TitleSettingsEditor {
             get {
-                return ResourceManager.GetString("TitleSettingsManagement", resourceCulture);
+                return ResourceManager.GetString("TitleSettingsEditor", resourceCulture);
             }
         }
         
