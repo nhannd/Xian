@@ -567,7 +567,16 @@ namespace ClearCanvas.Dicom.Network.Scu
 			}
 
 			try
-			{			    
+			{
+			    var presContext = association.GetPresentationContext(pcid);
+		        if (msg.TransferSyntax.Encapsulated
+                    && presContext.AcceptedTransferSyntax.Encapsulated 
+                    &&  !msg.TransferSyntax.Equals(presContext.AcceptedTransferSyntax))
+		        {
+		            // Compressed in different syntaxes, decompress here first, ChangeTransferSyntax does not convert syntaxes properly in this case.
+                    msg.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
+		        }
+
                 fileToSend.SentMessageId = client.NextMessageID();
 
 				if (_moveOriginatorAe == null)
