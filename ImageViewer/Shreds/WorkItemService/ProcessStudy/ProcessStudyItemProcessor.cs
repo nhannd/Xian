@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
 
             if (StopPending)
             {
-                Proxy.Postpone();
+                Proxy.Idle();
                 return;
             }
 
@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                 if (failed)
                     Proxy.Fail(WorkItemFailureType.NonFatal);
                 else if (!complete)
-                    Proxy.Postpone();
+                    Proxy.Idle();
                 else if (now > Proxy.Item.ExpirationTime)
                 {
                     if (Study == null)
@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
             }
             else
             {
-                Proxy.Postpone();
+                Proxy.Idle();
             }
         }
 

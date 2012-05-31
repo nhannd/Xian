@@ -565,6 +565,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			private bool IsDeletable(WorkItem w)
 			{
 				return w.Status == WorkItemStatusEnum.Complete
+                       || (w.Status == WorkItemStatusEnum.Pending && w.IsCancelable)
 					   || w.Status == WorkItemStatusEnum.Failed
 					   || w.Status == WorkItemStatusEnum.Canceled;
 			}

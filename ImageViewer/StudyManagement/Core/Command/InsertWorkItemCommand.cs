@@ -137,8 +137,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
                 {
                     WorkItem.ExpirationTime = now.AddSeconds(ExpirationDelaySeconds);
 
-                    if (WorkItem.Status == WorkItemStatusEnum.Idle)
-                        WorkItem.Status = WorkItemStatusEnum.Pending;                    
                     var workItemUidBroker = DataAccessContext.GetWorkItemUidBroker();
                     workItemUidBroker.AddWorkItemUid(WorkItemUid);    
                 }
