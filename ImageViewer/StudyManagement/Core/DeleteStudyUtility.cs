@@ -66,31 +66,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                         studyBroker.Delete(study);
                     }
 
-                    var workItemBroker = context.GetWorkItemBroker();
-                    var workItemUidBroker = context.GetWorkItemUidBroker();
-                    var workItemList = workItemBroker.GetWorkItems(null, null, _location.Study.StudyInstanceUid);
-                    foreach (var workItem in workItemList)
-                    {
-                        if (!workItem.Type.Equals(DeleteStudyRequest.WorkItemTypeString) 
-                            && !workItem.Type.Equals(DeleteSeriesRequest.WorkItemTypeString)
-                            && workItem.Status != WorkItemStatusEnum.InProgress
-                            && workItem.Status != WorkItemStatusEnum.Complete
-                            && workItem.Status != WorkItemStatusEnum.Deleted
-                            && workItem.Status != WorkItemStatusEnum.DeleteInProgress)
-                        {
-                            // Delete the related rows
-                            foreach (var entity in workItem.WorkItemUids)
-                            {
-                                workItemUidBroker.Delete(entity);
-                            }
-
-                            workItem.Status = WorkItemStatusEnum.Deleted;
-                            workItemBroker.Delete(workItem);
-
-                            WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemDataHelper.FromWorkItem(workItem));
-                        }
-                    }
-
                     context.Commit();
                 }
 
