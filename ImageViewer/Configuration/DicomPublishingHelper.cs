@@ -81,6 +81,28 @@ namespace ClearCanvas.ImageViewer.Configuration
 			var filesByStudyUid = Files.GroupBy(f => f.DataSet[DicomTags.StudyInstanceUid].ToString());
 			var hasErrors = false;
 
+            // generate a list of files to be published
+            var localFiles = new List<DicomFile>();
+            foreach (var studyFiles in filesByStudyUid)
+            {
+                try
+                {
+                    // files are only published to the local store if it possesses the parent study
+                    if (StudyExistsOnLocal(studyFiles.Key))
+                        localFiles.AddRange(studyFiles);
+                }
+                catch (Exception e)
+                {
+                    //Consider failure to query an error because we don't know whether or not the study exists.
+                    Platform.Log(LogLevel.Error, e, "Unable to determine if study '{0}' exists locally.", studyFiles.Key);
+                    hasErrors = true;
+                }
+            }
+
+            // publish local files now
+            if (localFiles.Count > 0 && !PublishFilesToLocal(localFiles))
+                hasErrors = true;
+
 			// check that user has permissions to publish to remote servers
 			if (PermissionsHelper.IsInRole(AuthorityTokens.Publishing))
 			{
@@ -127,30 +149,6 @@ namespace ClearCanvas.ImageViewer.Configuration
 			{
 				Platform.Log(LogLevel.Debug, "Skipping remote publishing step; user does not have Publishing permissions.");
 			}
-
-			// generate a list of files to be published
-			var localFiles = new List<DicomFile>();
-			foreach (var studyFiles in filesByStudyUid)
-			{
-			    try
-			    {
-                    // files are only published to the local store if it possesses the parent study
-                    if (StudyExistsOnLocal(studyFiles.Key))
-                        localFiles.AddRange(studyFiles);
-			    }
-			    catch (Exception e)
-			    {
-                    //Consider failure to query an error because we don't know whether or not the study exists.
-                    Platform.Log(LogLevel.Error, e, "Unable to determine if study '{0}' exists locally.", studyFiles.Key);
-			        hasErrors = true;
-			    }
-			}
-
-		    //TODO (Marmot): Should the publish order be local, then remote?
-
-			// publish local files now
-			if (localFiles.Count > 0 && !PublishFilesToLocal(localFiles))
-				hasErrors = true;
 
 			_hasErrors = hasErrors;
 			return !hasErrors;

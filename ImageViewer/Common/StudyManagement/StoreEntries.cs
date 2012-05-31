@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     public class SeriesEntryData : DataContractBase, ISeriesEntryData
     {
         [DataMember(IsRequired = true)]
-        public DateTime? DeleteTime { get; set; }
+        public DateTime? ScheduledDeleteTime { get; set; }
 
         [DataMember(IsRequired = false)]
         public string[] SourceAETitlesInSeries { get; set; }
@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     public interface ISeriesEntryData
     {
         [DataMember(IsRequired = true)]
-        DateTime? DeleteTime { get; set; }
+        DateTime? ScheduledDeleteTime { get; set; }
 
         [DataMember(IsRequired = false)]
         string[] SourceAETitlesInSeries { get; set; }

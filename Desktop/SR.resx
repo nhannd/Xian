@@ -379,7 +379,7 @@
     <value>Group</value>
   </data>
   <data name="TitleMenuOptions" xml:space="preserve">
-    <value>Options</value>
+    <value>User Options</value>
   </data>
   <data name="TitleNext" xml:space="preserve">
     <value>Next Page</value>
@@ -396,8 +396,8 @@
   <data name="TitleScope" xml:space="preserve">
     <value>Scope</value>
   </data>
-  <data name="TitleSettingsManagement" xml:space="preserve">
-    <value>Settings Management</value>
+  <data name="TitleSettingsEditor" xml:space="preserve">
+    <value>Settings Editor</value>
   </data>
   <data name="TitleToolbar" xml:space="preserve">
     <value>Toolbar</value>

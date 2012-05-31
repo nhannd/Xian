@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
             if (!Enabled || this.Context.SelectedSeries == null)
                 return;
 
-            if (SelectedSeries.Any(series => series.DeleteTime.HasValue))
+            if (SelectedSeries.Any(series => series.ScheduledDeleteTime.HasValue))
             {
                 Context.DesktopWindow.ShowMessageBox(SR.MessageCannotSendSeriesScheduledForDeletion, MessageBoxActions.Ok);
                 return;

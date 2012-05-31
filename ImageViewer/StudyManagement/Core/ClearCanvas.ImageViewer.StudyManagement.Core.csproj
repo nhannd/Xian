@@ -128,7 +128,6 @@
     <Compile Include="ReprocessStudyFolder.cs" />
     <Compile Include="ImportFilesUtility.cs" />
     <Compile Include="ProcessStudyUtility.cs" />
-    <Compile Include="ServiceProviders\Cache.cs" />
     <Compile Include="ServiceProviders\DicomServerConfiguration.cs" />
     <Compile Include="ServiceProviders\ServerDirectory.cs" />
     <Compile Include="ServiceProviders\ServiceProxyHelper.cs" />

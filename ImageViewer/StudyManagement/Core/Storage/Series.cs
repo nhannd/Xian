@@ -184,7 +184,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
                 },
                 Data = new SeriesEntryData
                 {
-                    DeleteTime = GetScheduledDeleteTime(),
+                    ScheduledDeleteTime = GetScheduledDeleteTime(),
                     SourceAETitlesInSeries = SourceAETitlesInSeries
                 }
             };
@@ -200,7 +200,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
                 if (items == null)
                     return null;
 
-                var validItems = items.Where(item => item.Status != WorkItemStatusEnum.Failed && item.Status != WorkItemStatusEnum.Canceled);
+                //Only consider those items that have not yet run, or are still happening. Something that failed,
+                //is being deleted, was canceled, aren't valid. We could have actually received the same series
+                //again after already deleting it, for example.
+                var validItems = items.Where(item => item.Status == WorkItemStatusEnum.Pending || item.Status == WorkItemStatusEnum.InProgress);
                 var deleteItems = validItems
                                     .Where(item => item.Request is DeleteSeriesRequest)
                                     .Where(item => ((DeleteSeriesRequest) item.Request).SeriesInstanceUids.Contains(SeriesInstanceUid)).ToList();

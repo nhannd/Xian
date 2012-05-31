@@ -56,8 +56,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
 
     internal class DicomServerConfiguration : IDicomServerConfiguration
     {
-        private static readonly string _configurationKey = typeof(DicomServerConfigurationContract).FullName;
-
         //Note: the installer is supposed to set these defaults. These are the bottom of the barrel, last-ditch defaults.
         #region Defaults
 
@@ -83,16 +81,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
         public GetDicomServerConfigurationResult GetConfiguration(GetDicomServerConfigurationRequest request)
         {
             Platform.CheckForNullReference(request, "request");
-
-            var cachedValue = Cache<DicomServerConfigurationContract>.CachedValue;
-            if (cachedValue != null)
-                return new GetDicomServerConfigurationResult { Configuration = cachedValue.Clone() };
-
             DicomServerConfigurationContract configuration;
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetConfigurationBroker();
-                configuration = broker.GetDataContractValue<DicomServerConfigurationContract>(_configurationKey)
+                configuration = broker.GetDataContractValue<DicomServerConfigurationContract>()
                                 ?? new DicomServerConfigurationContract { Port = DefaultPort };
             }
 
@@ -101,7 +94,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
             if (String.IsNullOrEmpty(configuration.HostName))
                 configuration.HostName = DefaultHostname;
 
-            Cache<DicomServerConfigurationContract>.CachedValue = configuration;
             return new GetDicomServerConfigurationResult { Configuration = configuration.Clone() };
         }
 
@@ -119,11 +111,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
 
             using (var context = new DataAccessContext())
             {
-                context.GetConfigurationBroker().SetDataContractValue(_configurationKey, request.Configuration);
+                context.GetConfigurationBroker().SetDataContractValue(request.Configuration);
                 context.Commit();
-                
-                //Make a copy because the one in the request is a reference object that the caller could change afterwards.
-                Cache<DicomServerConfigurationContract>.CachedValue = request.Configuration.Clone();
             }
 
             //TODO (Marmot): While it doesn't do any harm to do this here, the listener should also poll periodically for configuration changes, just in case.
@@ -136,7 +125,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
             }
             catch(Exception e)
             {
-                Platform.Log(LogLevel.Warn, e, "Failed to restart the DICOM Server.");
+                Platform.Log(LogLevel.Warn, e, "Failed to restart the DICOM Server listener.");
                 throw;
             }
             
