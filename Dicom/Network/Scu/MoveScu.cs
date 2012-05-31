@@ -366,6 +366,9 @@ namespace ClearCanvas.Dicom.Network.Scu
         		                      _warningSubOperations;
         	}
 
+            if (!string.IsNullOrEmpty(message.ErrorComment))
+                FailureDescription = message.ErrorComment;
+
         	if (message.Status.Status == DicomState.Pending)
         	{
         		OnImageMoveCompleted();

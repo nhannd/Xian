@@ -727,9 +727,12 @@ namespace ClearCanvas.Dicom.Network.Scu
 		public override void OnReceiveResponseMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
 		{
             if (_storageInstanceList.Count > 0)
-			    _storageInstanceList[_fileListIndex].SendStatus = message.Status;
+            {
+                _storageInstanceList[_fileListIndex].SendStatus = message.Status;
+                _storageInstanceList[_fileListIndex].ExtendedFailureDescription = message.ErrorComment;
+            }
 
-			if (message.Status.Status != DicomState.Success)
+		    if (message.Status.Status != DicomState.Success)
 			{
 				if (message.Status.Status == DicomState.Warning)
 				{

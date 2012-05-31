@@ -253,6 +253,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
 
         private void OnImageSent(object sender, StorageInstance storageInstance)
         {
+            var scu = sender as ImageViewerStorageScu;
             Progress.ImagesToSend = _scu.TotalSubOperations;
 
             if (storageInstance.SendStatus.Status == DicomState.Success)
@@ -266,6 +267,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                 Progress.StatusDetails = storageInstance.ExtendedFailureDescription;
                 if (String.IsNullOrEmpty(Progress.StatusDetails))
                     Progress.StatusDetails = storageInstance.SendStatus.ToString();
+
+                if (_scu != null) _scu.FailureDescription = Progress.StatusDetails;
             }
             else if (storageInstance.SendStatus.Status == DicomState.Warning)
             {
@@ -273,6 +276,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                 Progress.StatusDetails = storageInstance.ExtendedFailureDescription;
                 if (String.IsNullOrEmpty(Progress.StatusDetails))
                     Progress.StatusDetails = storageInstance.SendStatus.ToString();
+
+                if (_scu != null) _scu.FailureDescription = Progress.StatusDetails;
             }
 
             Proxy.UpdateProgress();

@@ -1016,6 +1016,32 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
+        /// Method to send a DICOM C-STORE-RSP message.
+        /// </summary>
+        /// <param name="presentationID"></param>
+        /// <param name="messageID"></param>
+        /// <param name="affectedInstance"></param>
+        /// <param name="status"></param>
+        /// <param name="errorComment">An extended textual error comment on failure. The comment will be truncated to 64 characters.</param>
+        public void SendCStoreResponse(byte presentationID, ushort messageID, string affectedInstance, DicomStatus status, string errorComment)
+        {
+            var msg = new DicomMessage
+            {
+                MessageIdBeingRespondedTo = messageID,
+                CommandField = DicomCommandField.CStoreResponse,
+                AffectedSopClassUid = _assoc.GetAbstractSyntax(presentationID).UID,
+                AffectedSopInstanceUid = affectedInstance,
+                DataSetType = 0x0101,
+                Status = status,
+            };
+
+            if (!string.IsNullOrEmpty(errorComment))
+                msg.ErrorComment = errorComment.Substring(0, (int)DicomVr.LOvr.MaximumLength);
+
+            SendDimse(presentationID, msg.CommandSet, null);
+        }
+
+        /// <summary>
         /// Method to send a DICOM C-FIND-RQ message.
         /// </summary>
         /// <param name="presentationID"></param>
@@ -1129,6 +1155,28 @@ namespace ClearCanvas.Dicom.Network
             message.MessageIdBeingRespondedTo = messageID;
             message.AffectedSopClassUid = affectedClass.UID;
             message.DataSetType = message.DataSet.IsEmpty() ? (ushort) 0x0101 : (ushort) 0x0202;
+
+            SendDimse(presentationID, message.CommandSet, message.DataSet);
+        }
+
+        /// <summary>
+        /// Method to send a DICOM C-MOVE-RSP message.
+        /// </summary>
+        /// <param name="presentationID"></param>
+        /// <param name="messageID"></param>
+        /// <param name="message"></param>
+        /// <param name="status"></param>
+        /// <param name="errorComment">An extended textual error comment. The comment will be truncated to 64 characters. </param>
+        public void SendCMoveResponse(byte presentationID, ushort messageID, DicomMessage message, DicomStatus status, string errorComment)
+        {
+            DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
+            message.CommandField = DicomCommandField.CMoveResponse;
+            message.Status = status;
+            message.MessageIdBeingRespondedTo = messageID;
+            message.AffectedSopClassUid = affectedClass.UID;
+            message.DataSetType = message.DataSet.IsEmpty() ? (ushort)0x0101 : (ushort)0x0202;
+            if (!string.IsNullOrEmpty(errorComment))
+                message.ErrorComment = errorComment.Substring(0, (int)DicomVr.LOvr.MaximumLength);
 
             SendDimse(presentationID, message.CommandSet, message.DataSet);
         }
