@@ -17,10 +17,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
         private ISeriesIdentifier Series { get { return _entry.Series; } }
         private ISeriesEntryData Data { get { return _entry.Data; } }
 
-        public DateTime? DeleteTime
+        public DateTime? ScheduledDeleteTime
         {
-            get { return Data.DeleteTime; }
-            set { Data.DeleteTime = value; }
+            get { return Data.ScheduledDeleteTime; }
+            set { Data.ScheduledDeleteTime = value; }
         }
 
         public string[] SourceAETitlesInSeries

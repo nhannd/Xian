@@ -292,7 +292,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
                 return;
 
             column = new TableColumn<SeriesTableItem, bool>(
-                SR.TitleDeleteScheduled, identifier => identifier.DeleteTime.HasValue, 0.3F);
+                SR.TitleDeleteScheduled, identifier => identifier.ScheduledDeleteTime.HasValue, 0.3F);
 
             _seriesTable.Columns.Add(column);
         }

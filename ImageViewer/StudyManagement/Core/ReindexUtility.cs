@@ -282,6 +282,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                     workItemUidBroker.Delete(uid);
                                 }
 
+                                //TODO (Marmot): Delete with no publish
                                 workItemBroker.Delete(item);
                             }
 

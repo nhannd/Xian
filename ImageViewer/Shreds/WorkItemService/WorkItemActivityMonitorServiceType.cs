@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             try
             {
-				WorkItemPublishSubscribeHelper.SubscribeWorkItemsChanged(_callback);
+				WorkItemPublishSubscribeHelper.Subscribe(_callback);
                 return new WorkItemSubscribeResponse();
             }
             catch (Exception e)
@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             try
             {
-				WorkItemPublishSubscribeHelper.UnsubscribeWorkItemsChanged(_callback);
+				WorkItemPublishSubscribeHelper.Unsubscribe(_callback);
 				return new WorkItemUnsubscribeResponse();
             }
             catch (Exception e)
@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             try
             {
-				WorkItemPublishSubscribeHelper.UnsubscribeWorkItemsChanged(_callback);
+				WorkItemPublishSubscribeHelper.Unsubscribe(_callback);
 			}
             catch (Exception e)
             {
