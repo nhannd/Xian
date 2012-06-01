@@ -74,6 +74,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// </summary>
         public StudyLocation StudyLocation { get; private set; }
 
+        public bool IsReprocess { get; set; }
+
         #endregion
 
         #region Constructors
@@ -195,7 +197,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     processor.AddCommand(new SaveStudyXmlCommand(studyXml, StudyLocation));
 
                     // Update the Study table, based on the studyXml
-                    batchDatabaseCommand.AddSubCommand(new InsertOrUpdateStudyCommand(StudyLocation, studyXml));
+                    var updateReason = IsReprocess ? InsertOrUpdateStudyCommand.UpdateReason.Reprocessing
+                                             : InsertOrUpdateStudyCommand.UpdateReason.LiveImport;
+
+                    batchDatabaseCommand.AddSubCommand(new InsertOrUpdateStudyCommand(StudyLocation, studyXml, updateReason));
 
                     // Now, add all the batched database updates
                     processor.AddCommand(batchDatabaseCommand);

@@ -101,22 +101,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         	foreach (var item in args.ChangedItems)
         	{
-				//todo
-                //if (item.Type.Equals(DicomSendRequest.WorkItemTypeString) || item.Type.Equals(ReapplyRulesRequest.WorkItemTypeString))
-                //    return;
-
                 if (item.Type.Equals(ReindexRequest.WorkItemTypeString))
-                {
                     Reindexing = item.Status == WorkItemStatusEnum.InProgress;
-                    break;
-                }
+
+                //If an item doesn't modify the study in any way, ignore it.
+                if (item.Request != null && (item.Request.ConcurrencyType == WorkItemConcurrency.StudyRead || item.Request.ConcurrencyType == WorkItemConcurrency.NonStudy))
+                    continue;
 
         	    if (!String.IsNullOrEmpty(item.StudyInstanceUid))
 					_setChangedStudies[item.StudyInstanceUid] = item.StudyInstanceUid;
 
 				_processStudiesEventPublisher.Publish(this, EventArgs.Empty);
 			}
-
         }
 
         private void OnStudiesCleared(object sender, EventArgs e)

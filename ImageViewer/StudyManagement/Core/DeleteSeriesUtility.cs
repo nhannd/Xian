@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                     processor.AddCommand(new SaveStudyXmlCommand(StudyXml, _location));
 
-                    processor.AddCommand(new InsertOrUpdateStudyCommand(_location, StudyXml));
+                    processor.AddCommand(new InsertOrUpdateStudyCommand(_location, StudyXml, InsertOrUpdateStudyCommand.UpdateReason.SopsDeleted));
 
                     // Do the actual processing
                     if (!processor.Execute())
