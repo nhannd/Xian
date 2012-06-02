@@ -13,6 +13,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Shreds;
 using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
@@ -21,6 +22,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
     public class DicomServerExtension : WcfShred
     {
 		private readonly string _dicomServerEndpointName = "DicomServer";
+        private DataAccessContext _context;
 
 		private bool _dicomServerWcfInitialized;
 
@@ -33,11 +35,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         {
 			try
 			{
+                // Total hack, this ensures the database is in memory at all times, and improves performance.
+                _context = new DataAccessContext();
+
 				StartNetPipeHost<DicomServerServiceType, IDicomServer>(_dicomServerEndpointName, SR.DicomServer);
 				_dicomServerWcfInitialized = true;
 				string message = String.Format(SR.FormatWCFServiceStartedSuccessfully, SR.DicomServer);
 				Platform.Log(LogLevel.Info, message);
-				Console.WriteLine(message);
+				Console.WriteLine(message);			    
 			}
 			catch (Exception e)
 			{
@@ -87,6 +92,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				DicomServerManager.Instance.Stop();
 				Platform.Log(LogLevel.Info, String.Format(SR.FormatServiceStoppedSuccessfully, SR.DicomServer));
+                _context.Dispose();
+			    _context = null;
 			}
 			catch(Exception e)
 			{

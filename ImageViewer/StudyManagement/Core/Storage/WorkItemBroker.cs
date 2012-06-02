@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 	    /// <returns></returns>
 	    public List<WorkItem> GetPendingWorkItemsByPriority(int n, WorkItemPriorityEnum priority)
         {
-            return (from w in this.Context.WorkItems
+            return (from w in Context.WorkItems
                     where (w.Status == WorkItemStatusEnum.Pending
                            || w.Status == WorkItemStatusEnum.Idle)
                           && w.ProcessTime < DateTime.Now
@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         /// <returns></returns>
         public List<WorkItem> GetWorkItemsToDelete(int n)
         {
-            return (from w in this.Context.WorkItems
+            return (from w in Context.WorkItems
                     where (w.Status == WorkItemStatusEnum.Complete)
                           && w.DeleteTime < DateTime.Now
                     select w).Take(n).ToList();
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         /// <returns></returns>
         public List<WorkItem> GetWorkItemsDeleted(int n)
         {
-            return (from w in this.Context.WorkItems
+            return (from w in Context.WorkItems
                     where (w.Status == WorkItemStatusEnum.Deleted)                          
                     select w).Take(n).ToList();
         }
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         /// <returns></returns>
         public List<WorkItem> GetPendingWorkItems(int n)
         {
-            return (from w in this.Context.WorkItems
+            return (from w in Context.WorkItems
                     where (w.Status == WorkItemStatusEnum.Pending
                            || w.Status == WorkItemStatusEnum.Idle)
                           && w.ProcessTime < DateTime.Now
@@ -151,9 +151,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         /// <returns></returns>
 		public WorkItem GetWorkItem(long oid)
 		{
-            var list = (from w in this.Context.WorkItems
+            var list = (from w in Context.WorkItems
                         where w.Oid == oid
-                        select w).ToList();
+                        select w);
 
             if (!list.Any()) return null;
 
@@ -166,19 +166,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         /// <param name="type"></param>
         /// <param name="studyInstanceUid"></param>
         /// <returns></returns>
-        public IList<WorkItem> GetPendingWorkItemForStudy(string type, string studyInstanceUid)
+        public IEnumerable<WorkItem> GetPendingWorkItemForStudy(string type, string studyInstanceUid)
         {
-            var list = (from w in this.Context.WorkItems
+            var list = (from w in Context.WorkItems
                         where w.StudyInstanceUid == studyInstanceUid
                               && w.Type == type
                               && w.Status != WorkItemStatusEnum.Complete
                               && w.Status != WorkItemStatusEnum.Deleted
                               && w.Status != WorkItemStatusEnum.Canceled
-                        select w).ToList();
+                        select w);
             
             if (!list.Any()) return null;
 
-            return list;
+            return list.AsEnumerable();
         }
 
         /// <summary>
@@ -196,7 +196,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         /// <param name="entity"></param>
         public void Delete(WorkItem entity)
         {
-            this.Context.WorkItems.DeleteOnSubmit(entity);
+            Context.WorkItems.DeleteOnSubmit(entity);
         }
 	}
 }

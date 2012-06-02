@@ -169,8 +169,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
                     }
                     else
                     {
-                        if (list.Count > 0)
-                            WorkItem = list[0];
+                        var enumerator = list.GetEnumerator();
+                        if (enumerator.MoveNext())
+                            WorkItem = enumerator.Current;
                     }
                 }
 
