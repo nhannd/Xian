@@ -27,8 +27,45 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 	[AssociateView(typeof(ThumbnailComponentViewExtensionPoint))]
 	public class ThumbnailComponent : ApplicationComponent
-	{
-		private static readonly Dictionary<IImageViewer, ImageSetTree> 
+    {
+        #region For Item Binding
+        
+        private class ThumbnailTreeItemBinding : ImageSetTreeItemBinding
+        {
+            private readonly string _primaryStudyInstanceUid;
+            private readonly ThumbnailComponent _owner;
+
+            public ThumbnailTreeItemBinding(ThumbnailComponent owner, string primaryStudyInstanceUid)
+            {
+                _owner = owner;
+                _primaryStudyInstanceUid = primaryStudyInstanceUid;
+            }
+
+            public override IconSet GetIconSet(object item)
+            {
+                var imageSetItem = item as ImageSetTreeItem;
+                if (imageSetItem!=null)
+                {
+                    if (imageSetItem.ImageSet.Uid == _primaryStudyInstanceUid)
+                    {
+                        return new IconSet("PrimaryImageSet.png");
+                    }
+                }
+
+
+                return base.GetIconSet(item);
+            }
+
+
+            public override IResourceResolver GetResourceResolver(object item)
+            {
+                return _owner._resourceResolver;
+            }
+        }
+        
+        #endregion
+
+        private static readonly Dictionary<IImageViewer, ImageSetTree> 
 			_viewerTrees = new Dictionary<IImageViewer, ImageSetTree>();
 
 		private readonly IDesktopWindow _desktopWindow;
@@ -37,9 +74,12 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 		private readonly ImageSetTree _dummyTree;
 		private ImageSetTree _currentTree;
         private ThumbnailGallery _thumbnailGallery;
-	
+        private readonly IResourceResolver _resourceResolver;
+
 		public ThumbnailComponent(IDesktopWindow desktopWindow)
 		{
+            _resourceResolver = new ApplicationThemeResourceResolver(this.GetType().Assembly);
+			
 			_desktopWindow = desktopWindow;
 			_dummyTree = new ImageSetTree(new ObservableList<IImageSet>(), null);
 			_currentTree = _dummyTree;
@@ -78,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				{
 					var imageSets = _activeViewer.LogicalWorkspace.ImageSets;
 					string primaryStudyInstanceUid = GetPrimaryStudyInstanceUid(_activeViewer.StudyTree);
-					var tree = new ImageSetTree(imageSets, primaryStudyInstanceUid);
+                    var tree = new ImageSetTree(imageSets, primaryStudyInstanceUid, new ThumbnailTreeItemBinding(this, primaryStudyInstanceUid));
 					_viewerTrees.Add(_activeViewer, tree);
 				}
 
