@@ -61,7 +61,7 @@ namespace ClearCanvas.Desktop {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Date and time format string (use hh:mm tt for non-military)")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("dd-MMM-yyyy HH:mm")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string DateTimeFormat {
             get {
                 return ((string)(this["DateTimeFormat"]));

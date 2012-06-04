@@ -171,10 +171,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             ColumnStudyDate = new TableColumn<StudyTableItem, string>(
                 ColumnNameStudyDate,
                 SR.ColumnHeadingStudyDate,
-                item => FormatDicomDA(item.StudyDate),
+                item => FormatDicomDT(item.StudyDate, item.StudyTime),
                 null,
-                0.3F,
-                (one, two) => one.StudyDate.CompareTo(two.StudyDate));
+                0.5F,
+                (one, two) => CompareDicomDT(one.StudyDate, one.StudyTime, two.StudyDate, two.StudyTime));
 
             Columns.Add(ColumnStudyDate);
 
@@ -293,6 +293,33 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 												 0.3f);
 			Columns.Add(ColumnStationName);
             ColumnStationName.Visible = false;
+        }
+
+        protected static string FormatDicomDT(string dicomDate, string dicomTime)
+        {
+            if (string.IsNullOrEmpty(dicomTime)) return FormatDicomDA(dicomDate); // if time is not specified, just format the date
+
+            DateTime dateTime;
+            if (!DateTimeParser.ParseDateAndTime(string.Empty, dicomDate, dicomTime, out dateTime))
+                return dicomDate + ' ' + dicomTime;
+
+            return dateTime.ToString(Format.DateTimeFormat);
+        }
+
+        protected static int CompareDicomDT(string dicomDate1, string dicomTime1, string dicomDate2, string dicomTime2)
+        {
+            var result = CompareDicomDA(dicomDate1, dicomDate2);
+            return result != 0 ? result : CompareDicomTM(dicomTime1, dicomTime2);
+        }
+
+        protected static int CompareDicomDA(string dicomDate1, string dicomDate2)
+        {
+            return string.Compare(dicomDate1, dicomDate2, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        protected static int CompareDicomTM(string dicomTime1, string dicomTime2)
+        {
+            return string.Compare(dicomTime1, dicomTime2, StringComparison.InvariantCultureIgnoreCase);
         }
 
     	private void AddExtensionColumns()
