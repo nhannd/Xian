@@ -124,10 +124,10 @@
     <value>Close</value>
   </data>
   <data name="LabelNotForClinicalUse" xml:space="preserve">
-    <value>Not For Clinical Use</value>
+    <value>Not for Clinical Use</value>
   </data>
   <data name="LabelNotForHumanDiagnosticUse" xml:space="preserve">
-    <value>Not For Human Diagnostic Use</value>
+    <value>Not for Human Diagnosis</value>
   </data>
   <data name="LicenseNotFound" xml:space="preserve">
     <value>Could not find license file.</value>
