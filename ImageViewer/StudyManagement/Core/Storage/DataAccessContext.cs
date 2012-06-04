@@ -26,6 +26,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 	/// </remarks>
 	public class DataAccessContext : IDisposable
 	{
+        private static IDbConnection _staticConnection;
+	    private static readonly object _syncLock = new object();
+
 	    //TODO (Marmot): This will cause side-by-side installations to interact. Use the full path to the database file.
 		public const string WorkItemMutex = "WorkItem";
 
@@ -52,7 +55,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 
 		internal DataAccessContext(string mutexName, string databaseFilename)
 		{
-            if (!string.IsNullOrEmpty(mutexName))
+		    if (!string.IsNullOrEmpty(mutexName))
             {
                 _mutex = new Mutex(false, string.Format("{0}:{1}", typeof (DataAccessContext).FullName, mutexName));
                 _mutex.WaitOne();
@@ -73,6 +76,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
                 _mutex = null;
 
                 throw;
+            }
+
+            lock (_syncLock)
+            {
+                if (_staticConnection == null)
+                {
+                    // This is done for performance reasons.  It forces a connection to remain open while the 
+                    // the app domain is running, so that the database is kept in memory.
+                    try
+                    {
+                        _staticConnection = CreateConnection();
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
             }
 		}
 
