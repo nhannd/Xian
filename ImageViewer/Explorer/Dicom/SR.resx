@@ -249,7 +249,7 @@ Are you sure you want to continue?</value>
     <value>The selected study is currently in use.  Please close all relevant workspaces before deleting.</value>
   </data>
   <data name="MessageSendDicomServerServiceNotRunning" xml:space="preserve">
-    <value>The Local Server must running in order to send studies.</value>
+    <value>The Local Server must be running in order to send studies.</value>
   </data>
   <data name="MessageFormatSendStudyScheduled" xml:space="preserve">
     <value>The send to {0} for {1} [{2}, A#:{3}] has been scheduled.</value>

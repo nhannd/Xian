@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                                                                        if (fileList.Count > 19)
                                                                        {
-                                                                           var p = new ProcessStudyUtility(Location);
+                                                                           var p = new ProcessStudyUtility(Location){IsReprocess = true};
 
                                                                            p.ProcessBatch(fileList, studyXml);
 
@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                                            }, true);
                 if (fileList.Count > 0)
                 {
-                    var p = new ProcessStudyUtility(Location);
+                    var p = new ProcessStudyUtility(Location) {IsReprocess = true};
 
                     p.ProcessBatch(fileList, studyXml);
 
@@ -204,7 +204,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 // If a cancel was requested, don't save the file, and it will remain "as is"
                 if (lastFile !=null && !_cancelRequested)
                 {
-                    var p = new ProcessStudyUtility(Location);
+                    var p = new ProcessStudyUtility(Location) { IsReprocess = true };
 
                     p.ProcessFile(lastFile, studyXml, null);
                 }

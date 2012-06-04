@@ -45,8 +45,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
 
     internal class StorageConfiguration : IStorageConfiguration
     {
-        private static readonly string _configurationKey = typeof (StorageConfigurationContract).FullName;
-
         //Note: the installer is supposed to set these defaults. These are the bottom of the barrel, last-ditch defaults.
 
         #region Defaults
@@ -62,20 +60,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
 
         public GetStorageConfigurationResult GetConfiguration(GetStorageConfigurationRequest request)
         {
-            var cachedValue = Cache<StorageConfigurationContract>.CachedValue;
-            if (cachedValue != null)
-                return new GetStorageConfigurationResult {Configuration = cachedValue.Clone() };
-
             StorageConfigurationContract configuration;
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetConfigurationBroker();
-                configuration = broker.GetDataContractValue<StorageConfigurationContract>(_configurationKey)
+                configuration = broker.GetDataContractValue<StorageConfigurationContract>()
                                 ?? new StorageConfigurationContract();
             }
 
             Complete(configuration);
-            Cache<StorageConfigurationContract>.CachedValue = configuration;
             return new GetStorageConfigurationResult {Configuration = configuration.Clone()};
         }
 
@@ -94,14 +87,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
 
             using (var context = new DataAccessContext())
             {
-                var currentConfiguration = context.GetConfigurationBroker().GetDataContractValue<StorageConfigurationContract>(_configurationKey) ?? new StorageConfigurationContract();
-                Complete(currentConfiguration);
-
-                context.GetConfigurationBroker().SetDataContractValue(_configurationKey, newConfiguration);
+                context.GetConfigurationBroker().SetDataContractValue(newConfiguration);
                 context.Commit();
-
-                //Make a copy because the one in the request is a reference object that the caller could change afterwards.
-                Cache<StorageConfigurationContract>.CachedValue = newConfiguration;
             }
 
             return new UpdateStorageConfigurationResult();

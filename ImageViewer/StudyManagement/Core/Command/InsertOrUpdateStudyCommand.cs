@@ -21,16 +21,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
     /// </summary>
     public class InsertOrUpdateStudyCommand : DataAccessCommand
     {
+        public enum UpdateReason
+        {
+            LiveImport,
+            Reprocessing,
+            SopsDeleted
+        }
+
         private readonly string _studyInstanceUid;
         private readonly StudyXml _studyXml;
+        private readonly UpdateReason _reason;
         private readonly StudyLocation _location;
+
         
         public ViewerCommandProcessorContext Context { get { return ProcessorContext as ViewerCommandProcessorContext; } } 
 
-        public InsertOrUpdateStudyCommand(StudyLocation location, StudyXml xml) : base("Insert or Update Study Command")
+        public InsertOrUpdateStudyCommand(StudyLocation location, StudyXml xml, UpdateReason reason) : base("Insert or Update Study Command")
         {
             _studyInstanceUid = xml.StudyInstanceUid;
             _studyXml = xml;
+            _reason = reason;
             _location = location;
         }
 
@@ -49,9 +59,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
                 }
             }
 
-            Context.ContextStudy.StoreTime = Platform.Time;
-            Context.ContextStudy.Deleted = false;
-            Context.ContextStudy.Reindex = false;
+            //Only update the store time if the study is actively being received/imported.
+            if (_reason == UpdateReason.LiveImport || Context.ContextStudy.StoreTime == null)
+                Context.ContextStudy.StoreTime = Platform.Time;
+
+            if (_reason != UpdateReason.SopsDeleted)
+            {
+                //Only update these if the study is being updated in an "additive" way (import/receive/re-index).
+                //A series deletion, for example, should not update these.
+                Context.ContextStudy.Deleted = false;
+                Context.ContextStudy.Reindex = false;
+            }
+
             Context.ContextStudy.Update(_studyXml);
         }
     }

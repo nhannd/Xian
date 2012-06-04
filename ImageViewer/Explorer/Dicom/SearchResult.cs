@@ -25,12 +25,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private readonly List<StudyTableItem> _hiddenItems;
 
 		private bool _filterDuplicates;
-		private bool _everSearched;
-	    private string _resultsTitle;
+        private DateTime? _lastSearchEnded;
+        private string _resultsTitle;
 
 	    public SearchResult()
 		{
-			_everSearched = false;
 			HasDuplicates = false;
 
 			_serverGroupName = "";
@@ -77,7 +76,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public StudyTable StudyTable
+	    public StudyTable StudyTable
 		{
 			get { return _studyTable; }
 		}
@@ -135,12 +134,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             SetResultsTitle();
 		}
 
-        public void Refresh(List<StudyTableItem> tableItems, bool filterDuplicates)
-		{
-			_everSearched = true;
-			_filterDuplicates = filterDuplicates;
+        public void SearchStarted()
+        {
+            SearchInProgress = true;
+        }
 
-            _setChangedStudies.Clear();
+        public void SearchCanceled()
+        {
+            SearchInProgress = false;
+        }
+
+        public void SearchEnded(List<StudyTableItem> tableItems, bool filterDuplicates)
+        {
+            _lastSearchEnded = DateTime.Now;
+	        SearchInProgress = false;
+			_filterDuplicates = filterDuplicates;
 
 			_hiddenItems.Clear();
             var filteredItems = new List<StudyTableItem>(tableItems);
@@ -165,7 +173,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private void SetResultsTitle()
         {
-            if (!_everSearched)
+            var everSearched = _lastSearchEnded.HasValue;
+            if (!everSearched)
             {
                 ResultsTitle = Reindexing
                                    ? String.Format(SR.FormatNeverSearchedReindexing, _serverGroupName)

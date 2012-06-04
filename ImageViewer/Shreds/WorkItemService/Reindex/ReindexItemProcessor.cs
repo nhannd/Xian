@@ -113,26 +113,36 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             Proxy.UpdateProgress();
 
             _reindexUtility.StudyFolderProcessedEvent += delegate(object sender, ReindexUtility.StudyEventArgs e)
-                                             {
-                                                 Progress.StudyFoldersProcessed++;
-                                                 Proxy.Item.StudyInstanceUid = e.StudyInstanceUid;
-                                                 Proxy.UpdateProgress();
-                                             };
+                                                             {
+                                                                 Progress.StudyFoldersProcessed++;
+                                                                 Proxy.Item.StudyInstanceUid = e.StudyInstanceUid;
+                                                                 Proxy.UpdateProgress();
+                                                             };
 
-            _reindexUtility.StudyDeletedEvent += delegate
-                                               {
-                                                   Progress.StudiesDeleted++;
-                                                   Progress.StudiesProcessed++;
-                                                   Proxy.Item.StudyInstanceUid = string.Empty;
-                                                   Proxy.UpdateProgress();
-                                               };
+            _reindexUtility.StudyDeletedEvent += delegate(object sender, ReindexUtility.StudyEventArgs e)
+                                                     {
+                                                         Progress.StudiesDeleted++;
+                                                         Progress.StudiesProcessed++;
+                                                         Proxy.Item.StudyInstanceUid = e.StudyInstanceUid;
+                                                         Proxy.UpdateProgress();
+                                                     };
 
-            _reindexUtility.StudyProcessedEvent += delegate
-                                                 {
-                                                     Progress.StudiesProcessed++;
-                                                     Proxy.Item.StudyInstanceUid = string.Empty;
-                                                     Proxy.UpdateProgress();
-                                                 };
+            _reindexUtility.StudyProcessedEvent += delegate(object sender, ReindexUtility.StudyEventArgs e)
+                                                       {
+                                                           Progress.StudiesProcessed++;
+                                                           Proxy.Item.StudyInstanceUid = e.StudyInstanceUid;
+                                                           Proxy.UpdateProgress();
+                                                       };
+
+            _reindexUtility.StudiesRestoredEvent += delegate(object sender, ReindexUtility.StudiesEventArgs e)
+                                                      {
+                                                          foreach (var studyInstanceUid in e.StudyInstanceUids)
+                                                          {
+                                                              Proxy.Item.StudyInstanceUid = studyInstanceUid;
+                                                              Proxy.UpdateProgress();
+                                                          }
+                                                      };
+            
             _reindexUtility.Process();
 
             if (StopPending)

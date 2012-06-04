@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			Assert.AreEqual(0, items.Count);
 
 	    	var data = new WorkItemData {Identifier = 1};
-			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NoFilter);
+			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NoFilter, () => {});
 			manager.Update(new[] {new ActivityMonitorComponent.WorkItem(data)});
 
 			Assert.AreEqual(1, items.Count);
@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			Assert.AreEqual(0, items.Count);
 
 			var data = new WorkItemData { Identifier = 1, Status = WorkItemStatusEnum.Deleted};
-			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NoFilter);
+			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NoFilter, () => {});
 			manager.Update(new[] {new ActivityMonitorComponent.WorkItem(data)});
 
 			Assert.AreEqual(0, items.Count);
@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			Assert.AreEqual(0, items.Count);
 
 			var data = new WorkItemData { Identifier = 1, Priority = WorkItemPriorityEnum.Stat };
-			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NormalPriorityFilter);
+			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NormalPriorityFilter, () => { });
 			manager.Update(new[] {new ActivityMonitorComponent.WorkItem(data)});
 
 			// item not added because of filter
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			Assert.AreEqual(WorkItemPriorityEnum.Normal, items[0].Priority);
 
 			var data = new WorkItemData { Identifier = 1, Priority = WorkItemPriorityEnum.Stat };
-			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NoFilter);
+			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NoFilter, () => {});
 			manager.Update(new[] {new ActivityMonitorComponent.WorkItem(data)});
 
 			Assert.AreEqual(1, items.Count);
@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			Assert.AreEqual(WorkItemStatusEnum.Complete, items[0].Status);
 
 			var data = new WorkItemData { Identifier = 1, Status = WorkItemStatusEnum.Deleted};
-			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NoFilter);
+			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NoFilter, () => {});
 			manager.Update(new[] {new ActivityMonitorComponent.WorkItem(data)});
 
 			// item removed from collection, because of deleted status
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			Assert.AreEqual(WorkItemPriorityEnum.Normal, items[0].Priority);
 
 			var data = new WorkItemData { Identifier = 1, Priority = WorkItemPriorityEnum.Stat };
-			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NormalPriorityFilter);
+			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NormalPriorityFilter, () => { });
 			manager.Update(new[] {new ActivityMonitorComponent.WorkItem(data)});
 
 			// item removed from collection, because filtered by priority
@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 
 			Assert.AreEqual(1, items.Count);
 
-			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NoFilter);
+			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NoFilter, () => {});
 
 			// add a failed item
 			var failedItem = new WorkItemData { Identifier = 2, Status = WorkItemStatusEnum.Failed };
@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 
 			Assert.AreEqual(1, items.Count);
 
-			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NoFilter);
+			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NoFilter, () => {});
 
 			// add a failed item
 			var failedItem = new WorkItemData { Identifier = 2, Status = WorkItemStatusEnum.Failed };
@@ -218,7 +218,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 
 			Assert.AreEqual(1, items.Count);
 
-			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NormalPriorityFilter);
+			var manager = new ActivityMonitorComponent.WorkItemUpdateManager(items, NormalPriorityFilter, () => { });
 
 			// add a failed item that does not meet the filter criteria
 			var failedItem = new WorkItemData { Identifier = 2, Status = WorkItemStatusEnum.Failed, Priority = WorkItemPriorityEnum.Stat};

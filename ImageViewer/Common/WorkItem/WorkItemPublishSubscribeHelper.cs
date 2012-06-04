@@ -20,7 +20,35 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 		private const string WorkItemsChanged = "WorkItemsChanged";
 		private const string StudiesCleared = "StudiesCleared";
 
-		public static void PublishWorkItemChanged(WorkItemData workItem)
+        public static void Subscribe(IWorkItemActivityCallback callback)
+        {
+            try
+            {
+                SubscriptionManager<IWorkItemActivityCallback>.Subscribe(callback, WorkItemsChanged);
+                SubscriptionManager<IWorkItemActivityCallback>.Subscribe(callback, StudiesCleared);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e);
+                throw;
+            }
+        }
+
+        public static void Unsubscribe(IWorkItemActivityCallback callback)
+        {
+            try
+            {
+                SubscriptionManager<IWorkItemActivityCallback>.Unsubscribe(callback, WorkItemsChanged);
+                SubscriptionManager<IWorkItemActivityCallback>.Unsubscribe(callback, StudiesCleared);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e);
+                throw;
+            }
+        }
+        
+        public static void PublishWorkItemChanged(WorkItemData workItem)
 		{
 			PublishWorkItemsChanged(new List<WorkItemData> { workItem });
 		}
@@ -34,34 +62,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Warn, e, "Unexpected error attempting to publish WorkItemsChanged notification.");
-			}
-		}
-
-		public static void SubscribeWorkItemsChanged(IWorkItemActivityCallback callback)
-		{
-			try
-			{
-				SubscriptionManager<IWorkItemActivityCallback>.Subscribe(callback, WorkItemsChanged);
-                SubscriptionManager<IWorkItemActivityCallback>.Subscribe(callback, StudiesCleared);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
-				throw;
-			}
-		}
-
-		public static void UnsubscribeWorkItemsChanged(IWorkItemActivityCallback callback)
-		{
-			try
-			{
-				SubscriptionManager<IWorkItemActivityCallback>.Unsubscribe(callback, WorkItemsChanged);
-                SubscriptionManager<IWorkItemActivityCallback>.Unsubscribe(callback, StudiesCleared);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
-				throw;
 			}
 		}
 

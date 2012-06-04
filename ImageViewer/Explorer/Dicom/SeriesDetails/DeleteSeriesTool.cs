@@ -71,8 +71,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
         private bool ConfirmDeletion()
         {
             string message;
-            var notYetDeleted = AllSeries.Where(series => !series.DeleteTime.HasValue);
-            if (SelectedSeries.Any(selected => selected.DeleteTime.HasValue))
+            var notYetDeleted = AllSeries.Where(series => !series.ScheduledDeleteTime.HasValue);
+            if (SelectedSeries.Any(selected => selected.ScheduledDeleteTime.HasValue))
             {
                 message = SR.MessageSelectSeriesNotAlreadyScheduledForDeletion;
                 Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);

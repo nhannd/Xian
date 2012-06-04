@@ -51,6 +51,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         private event EventHandler<StudyEventArgs> _studyDeletedEvent;
         private event EventHandler<StudyEventArgs> _studyFolderProcessedEvent;
         private event EventHandler<StudyEventArgs> _studyProcessedEvent;
+        private event EventHandler<StudiesEventArgs> _studiesRestoredEvent;
+
         private readonly object _syncLock = new object();
         private bool _cancelRequested;
         private readonly ItemProcessingThreadPool<ReprocessStudyFolder> _threadPool = new ItemProcessingThreadPool<ReprocessStudyFolder>(WorkItemServiceSettings.Default.NormalThreadCount);
@@ -61,6 +63,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         public class StudyEventArgs : EventArgs
         {
             public string StudyInstanceUid;
+        }
+
+        public class StudiesEventArgs : EventArgs
+        {
+            public IList<string> StudyInstanceUids;
         }    
 
         public event EventHandler<StudyEventArgs> StudyDeletedEvent
@@ -113,6 +120,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 lock (_syncLock)
                 {
                     _studyProcessedEvent -= value;
+                }
+            }
+        }
+
+        public event EventHandler<StudiesEventArgs> StudiesRestoredEvent
+        {
+            add
+            {
+                lock (_syncLock)
+                {
+                    _studiesRestoredEvent += value;
+                }
+            }
+            remove
+            {
+                lock (_syncLock)
+                {
+                    _studiesRestoredEvent -= value;
                 }
             }
         }
@@ -227,6 +252,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
         private void ResetDeletedStudies()
         {
+            var resetStudyUids = new List<string>();
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var studyBroker = context.GetStudyBroker();
@@ -234,10 +260,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 var studyList = studyBroker.GetReindexStudies();
                 foreach (var study in studyList)
                 {                    
-                    study.Reindex = false;
+                    if (study.Reindex)
+                    {
+                        resetStudyUids.Add(study.StudyInstanceUid);
+                        study.Reindex = false;
+                    }
                 }
                 context.Commit();
             }
+
+            if (resetStudyUids.Count > 0)
+                EventsHelper.Fire(_studiesRestoredEvent, this, new StudiesEventArgs { StudyInstanceUids = resetStudyUids });
         }
 
         private void CleanupFilestoreDirectory()
@@ -262,30 +295,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
                     {
                         var broker = context.GetStudyBroker();
-                        var workItemBroker = context.GetWorkItemBroker();
-                        var workItemUidBroker = context.GetWorkItemUidBroker();
-
                         var study = broker.GetStudy(oid);
 
                         var location = new StudyLocation(study.StudyInstanceUid);
                         if (!Directory.Exists(location.StudyFolder))
                         {
                             broker.Delete(study);
-                            var workItemList = workItemBroker.GetWorkItems(null, null, study.StudyInstanceUid);
-                            foreach (var item in workItemList)
-                            {
-                                Platform.Log(LogLevel.Info, "Deleting WorkItem for Study {0}, OID: {1}",
-                                             study.StudyInstanceUid, item.Oid);
-
-                                foreach (var uid in item.WorkItemUids)
-                                {
-                                    workItemUidBroker.Delete(uid);
-                                }
-
-                                workItemBroker.Delete(item);
-                            }
-
                             context.Commit();
+
                             EventsHelper.Fire(_studyDeletedEvent, this, new StudyEventArgs { StudyInstanceUid = study.StudyInstanceUid });
                             Platform.Log(LogLevel.Info, "Deleted Study that wasn't on disk, but in the database: {0}",
                                          study.StudyInstanceUid);
@@ -349,10 +366,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                                                                   _threadPool.StartStopStateChangedEvent -= del.ProxyDelegate;
                                                               });
-
-
-
-
             }
             catch (Exception x)
             {
