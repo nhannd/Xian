@@ -139,7 +139,7 @@
     <value>Deleting the remaining series will cause the entire study to be deleted. Are you sure you want to delete the entire study?</value>
   </data>
   <data name="MessageConfirmDeleteSeries" xml:space="preserve">
-    <value>Deleting series may result in partial study data, which could lead to patient misdiagnosis. Are you sure you want to delete the selected series?</value>
+    <value>Are you sure you want to delete the selected series?</value>
   </data>
   <data name="MessageConfirmSendToMultipleServers" xml:space="preserve">
     <value>You have selected multiple servers to send to.  Are you sure you want to continue?</value>
@@ -164,6 +164,9 @@
   </data>
   <data name="MessageFormatSendSeriesScheduled" xml:space="preserve">
     <value>The send of {0} series to {1} for {2} [{3},A#:{4}] has been scheduled.</value>
+  </data>
+  <data name="MessagePartialStudyWarning" xml:space="preserve">
+    <value>Deleting series may result in partial study data, which could lead to patient misdiagnosis.</value>
   </data>
   <data name="MessageRetrieveDicomServerServiceNotRunning" xml:space="preserve">
     <value>Failed to retrieve the selected series because the DICOM Server service is not running.

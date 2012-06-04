@@ -88,6 +88,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
                 message = Context.SelectedSeries.Count == 1
                                      ? SR.MessageConfirmDeleteSeries
                                      : String.Format(SR.MessageFormatConfirmDeleteSeries, Context.SelectedSeries.Count);
+
+                message = String.Format("{0} {1}", SR.MessagePartialStudyWarning, message);
             }
 
             return DialogBoxAction.Yes == Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);

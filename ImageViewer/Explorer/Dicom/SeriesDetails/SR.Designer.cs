@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleting series may result in partial study data, which could lead to patient misdiagnosis. Are you sure you want to delete the selected series?.
+        ///   Looks up a localized string similar to Are you sure you want to delete the selected series?.
         /// </summary>
         internal static string MessageConfirmDeleteSeries {
             get {
@@ -201,6 +201,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails {
         internal static string MessageFormatSendSeriesScheduled {
             get {
                 return ResourceManager.GetString("MessageFormatSendSeriesScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleting series may result in partial study data, which could lead to patient misdiagnosis..
+        /// </summary>
+        internal static string MessagePartialStudyWarning {
+            get {
+                return ResourceManager.GetString("MessagePartialStudyWarning", resourceCulture);
             }
         }
         
