@@ -17,6 +17,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -29,6 +30,7 @@ using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using Action = ClearCanvas.Desktop.Actions.Action;
+using Timer = ClearCanvas.Common.Utilities.Timer;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -286,12 +288,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			private readonly ItemCollection<WorkItem> _items;
 			private readonly Dictionary<long, WorkItem> _failures;
 			private readonly Predicate<WorkItem> _filter;
+		    private readonly System.Action _failedItemCountChanged;
 
-			public WorkItemUpdateManager(ItemCollection<WorkItem> itemCollection, Predicate<WorkItem> filter)
+		    public WorkItemUpdateManager(ItemCollection<WorkItem> itemCollection, Predicate<WorkItem> filter, System.Action failedItemCountChanged)
 			{
 				_items = itemCollection;
 				_filter = filter;
-				_failures = new Dictionary<long, WorkItem>();
+			    _failedItemCountChanged = failedItemCountChanged;
+			    _failures = new Dictionary<long, WorkItem>();
 			}
 
 			public int FailedItemCount
@@ -302,7 +306,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			public void Clear()
 			{
 				_items.Clear();
-				_failures.Clear();
+			    if (_failures.Count == 0)
+                    return;
+
+			    _failures.Clear();
+			    _failedItemCountChanged();
 			}
 
 			public void Update(IEnumerable<WorkItem> items)
@@ -310,7 +318,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				var adds = new List<WorkItem>();
 				foreach (var item in items)
 				{
-					var index = _items.FindIndex(w => w.Id == item.Id);
+				    WorkItem theItem = item;
+                    var index = _items.FindIndex(w => w.Id == theItem.Id);
 					if (index > -1)
 					{
 						// the item is currently in the list
@@ -326,16 +335,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 						// the item is not currently in the list
 						// if not deleted and it meets the filter criteria, add it
 						if (item.Status != WorkItemStatusEnum.Deleted && item.Status != WorkItemStatusEnum.DeleteInProgress && Include(item))
-						{
 							adds.Add(item);
-						}
 					}
 
-					// track failures
-					if (item.Status == WorkItemStatusEnum.Failed || _failures.ContainsKey(item.Id))
-					{
+                    int failureCount = _failures.Count;
+
+                    if (item.Status != WorkItemStatusEnum.Failed) //remove anything that's not failed, which includes restarted items.
+                        _failures.Remove(item.Id);
+					else
 						_failures[item.Id] = item;
-					}
+
+                    if (_failures.Count != failureCount)
+                        _failedItemCountChanged();
 				}
 
 				// more efficient to add everything new at once (so GUI only re-draws once)
@@ -408,8 +419,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		class LocalServerWatcher : IDisposable
 		{
-			private Diskspace _diskspace;
-			private readonly Timer _refreshTimer;
+		    private class AsyncState
+		    {
+		        public SynchronizationContext SynchronizationContext;
+		        public StorageConfiguration CurrentStorageConfiguration;
+                public DicomServerConfiguration CurrentDicomServerConfiguration;
+            }
+
+			private Timer _refreshTimer;
 
 			private DicomServerConfiguration _dicomServerConfiguration;
 			private StorageConfiguration _storageConfiguration;
@@ -418,10 +435,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			private readonly System.Action _studyStorageConfigurationChanged;
 			private readonly System.Action _diskSpaceUsageChanged;
 
-			public LocalServerWatcher(System.Action dicomServerConfigurationChanged, System.Action studyStorageConfigurationChanged, System.Action diskSpaceUsageChanged)
+		    public LocalServerWatcher(System.Action dicomServerConfigurationChanged, System.Action studyStorageConfigurationChanged, System.Action diskSpaceUsageChanged)
 			{
-				_refreshTimer = new Timer(OnTimerElapsed, null, TimeSpan.FromSeconds(20));
-
 				_dicomServerConfigurationChanged = dicomServerConfigurationChanged;
 				_studyStorageConfigurationChanged = studyStorageConfigurationChanged;
 				_diskSpaceUsageChanged = diskSpaceUsageChanged;
@@ -429,26 +444,34 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			public void Start()
 			{
-				_refreshTimer.Start();
-			}
+                if (_refreshTimer != null)
+                    return;
+
+                _refreshTimer = new Timer(OnTimerElapsed, null, TimeSpan.FromSeconds(20));
+                _refreshTimer.Start();
+            }
 
 			public void Dispose()
 			{
+                if (_refreshTimer == null)
+                    return;
+
 				_refreshTimer.Dispose();
+			    _refreshTimer = null;
 			}
 
-			private DicomServerConfiguration DicomServerConfiguration
-			{
+		    private DicomServerConfiguration DicomServerConfiguration
+		    {
 				get { return _dicomServerConfiguration ?? (_dicomServerConfiguration = DicomServer.GetConfiguration()); }
 				set
-				{
+		        {
 					if (Equals(value, _dicomServerConfiguration))
 						return;
 
 					_dicomServerConfiguration = value;
 					_dicomServerConfigurationChanged();
-				}
-			}
+		        }
+		    }
 
 			private StorageConfiguration StorageConfiguration
 			{
@@ -463,51 +486,141 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				}
 			}
 
-			public string AETitle
-			{
-				get { return DicomServerConfiguration.AETitle; }
-			}
+            #region Dicom Server
+            public string AETitle
+		    {
+                get { return DicomServerConfiguration.AETitle; }
+		    }
 
-			public string HostName
-			{
-				get { return DicomServerConfiguration.HostName; }
-			}
+		    public string HostName
+		    {
+		        get { return DicomServerConfiguration.HostName; }
+		    }
 
-			public int Port
-			{
-				get { return DicomServerConfiguration.Port; }
-			}
+		    public int Port
+		    {
+                get { return DicomServerConfiguration.Port; }
+		    }
 
-			public string FileStoreDirectory
+            #endregion
+
+            #region Study Storage Configuration
+
+            public string FileStoreDirectory
 			{
 				get { return StorageConfiguration.FileStoreDirectory; }
 			}
 
-			public Diskspace Diskspace
+		    //TODO (Marmot): at some point, we may want to show this on the meter.
+            //public double MinimumFreeSpacePercent
+            //{
+            //    get { return StorageConfiguration.MinimumFreeSpacePercent; }
+            //}
+
+		    public bool IsMaximumDiskspaceUsageExceeded
+            {
+                get { return StorageConfiguration.IsMaximumUsedSpaceExceeded; }
+            }
+
+            #endregion
+
+            #region Disk Space
+
+            public long DiskSpaceTotal
+            {
+                get { return StorageConfiguration.FileStoreDiskSpace.TotalSpace; }
+            }
+
+            public long DiskSpaceUsed
+		    {
+                get { return StorageConfiguration.FileStoreDiskSpace.UsedSpace; }
+		    }
+
+            public double DiskSpaceUsedPercent
+            {
+                get { return StorageConfiguration.FileStoreDiskSpace.UsedSpacePercent; }
+            }
+
+            #endregion
+
+            private void OnTimerElapsed(object state)
 			{
-				get
-				{
-					if (_diskspace == null)
-						_diskspace = new Diskspace(StorageConfiguration.FileStoreDriveName);
+			    var asyncState = new AsyncState
+			                    {
+			                        SynchronizationContext = SynchronizationContext.Current,
+			                        CurrentDicomServerConfiguration = _dicomServerConfiguration,
+			                        CurrentStorageConfiguration = _storageConfiguration
+			                    };
 
-					return _diskspace;
-				}
-			}
+                ThreadPool.QueueUserWorkItem(UpdateConfigurationsAsync, asyncState);
+		    }
 
-			public bool IsMaximumDiskspaceUsageExceeded
-			{
-				get { return StorageConfiguration.IsMaximumUsedSpaceExceeded; }
-			}
+		    private void UpdateConfigurationsAsync(object state)
+		    {
+		        var asyncState = (AsyncState) state;
+                //This stuff can actually add up over time because it's hitting the database so frequently.
+                //Better to do it asynchronously.
+                var storageConfiguration = StudyStore.GetConfiguration();
+                var dicomServerConfiguration = DicomServer.GetConfiguration();
 
-			private void OnTimerElapsed(object state)
-			{
-				StorageConfiguration = StudyStore.GetConfiguration();
-				DicomServerConfiguration = DicomServer.GetConfiguration();
+                if (!Equals(asyncState.CurrentDicomServerConfiguration, dicomServerConfiguration))
+                    asyncState.SynchronizationContext.Post(ignore => DicomServerConfigurationChanged(dicomServerConfiguration), null);
 
-				_diskspace = null;	// invalidate disk usage
-				_diskSpaceUsageChanged();
-			}
-		}
+                var storageConfigurationChanged = HasStorageConfigurationChanged(asyncState.CurrentStorageConfiguration, storageConfiguration);
+                //Access all the disk usage properties here, since they can take some time.
+                bool diskUsageChanged = HasDiskUsageChanged(asyncState.CurrentStorageConfiguration, storageConfiguration);
+
+                if (storageConfigurationChanged)
+                    asyncState.SynchronizationContext.Post(ignore => StorageConfigurationChanged(storageConfiguration), null);
+                else if (diskUsageChanged)
+                    asyncState.SynchronizationContext.Post(ignore => DiskUsageChanged(storageConfiguration), null);
+		    }
+
+            private bool HasStorageConfigurationChanged(StorageConfiguration old, StorageConfiguration @new)
+            {
+                return old == null
+                       || old.FileStoreDirectory != @new.FileStoreDirectory
+                       || Math.Abs(old.MinimumFreeSpacePercent - @new.MinimumFreeSpacePercent) > 0.0001;
+            }
+
+            private bool HasDiskUsageChanged(StorageConfiguration old, StorageConfiguration @new)
+            {
+                //We don't want to cause updates when the disk usage has changed non-significantly.
+                return old == null
+                       || Math.Abs(old.FileStoreDiskSpace.UsedSpacePercent - @new.FileStoreDiskSpace.UsedSpacePercent) > 0.0001
+                       || old.FileStoreDiskSpace.TotalSpace != @new.FileStoreDiskSpace.TotalSpace;
+            }
+
+		    private void DicomServerConfigurationChanged(DicomServerConfiguration dicomServerConfiguration)
+		    {
+                if (_refreshTimer == null)
+                    return;
+
+		        _dicomServerConfiguration = dicomServerConfiguration;
+		        _dicomServerConfigurationChanged();
+		    }
+
+            private void StorageConfigurationChanged(StorageConfiguration storageConfiguration)
+            {
+                if (_refreshTimer == null)
+                    return;
+
+                _storageConfiguration = storageConfiguration;
+                _studyStorageConfigurationChanged();
+                _diskSpaceUsageChanged(); //The file store directory may have changed, so just update this, too.
+            }
+
+            private void DiskUsageChanged(StorageConfiguration storageConfiguration)
+            {
+                if (_refreshTimer == null)
+                    return;
+
+                //We still reassign this value, even if it's only the disk usage that's changed because
+                //the DiskSpace class caches its values, so we need to swap it out for a new one.
+                _storageConfiguration = storageConfiguration;
+                _diskSpaceUsageChanged();
+            }
+        }
 
 		#endregion
 
@@ -730,12 +843,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_textFilterTimer = new Timer(OnTextFilterTimerElapsed, null, 1000);
 			_localServerWatcher = new LocalServerWatcher(OnDicomServerConfigurationChanged, OnStorageConfigurationChanged, OnDiskspaceChanged);
 			_studyCountWatcher = new StudyCountWatcher(OnStudyCountChanged);
-			_workItemManager = new WorkItemUpdateManager(_workItems.Items, Include);
+		    _workItemManager = new WorkItemUpdateManager(_workItems.Items, Include, OnFailureCountChanged);
 			_workItemActionModel = new WorkItemActionModel(_workItems.Items, this);
 			_linkHandlers = (new ActivityMonitorQuickLinkHandlerExtensionPoint()).CreateExtensions().Cast<IActivityMonitorQuickLinkHandler>().ToArray();
 		}
 
-		public override void Start()
+	    public override void Start()
 		{
 			base.Start();
 
@@ -807,17 +920,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				var ds = _localServerWatcher.Diskspace;
 				return string.Format(SR.DiskspaceTemplate,
-										Diskspace.FormatBytes(ds.UsedSpace),
-										Diskspace.FormatBytes(ds.TotalSpace),
-										ds.UsedSpacePercent.ToString("F1"));
+										Diskspace.FormatBytes(_localServerWatcher.DiskSpaceUsed),
+										Diskspace.FormatBytes(_localServerWatcher.DiskSpaceTotal),
+										_localServerWatcher.DiskSpaceUsedPercent.ToString("F1"));
 			}
 		}
 
 		public int DiskspaceUsedPercent
 		{
-			get { return (int)Math.Round(_localServerWatcher.Diskspace.UsedSpacePercent); }
+            get { return (int)Math.Round(_localServerWatcher.DiskSpaceUsedPercent); }
 		}
 
 		public bool IsMaximumDiskspaceUsageExceeded
@@ -1031,17 +1143,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private void WorkItemsChanged(object sender, WorkItemsChangedEventArgs e)
 		{
 			var workItems = e.ChangedItems;
-			if (workItems.Any(item => !item.Type.Equals(ReapplyRulesRequest.WorkItemTypeString) && !item.Type.Equals(DicomSendRequest.WorkItemTypeString)))
+			if (workItems.Any(item => item.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert 
+                                    || item.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete
+                                    || item.Type.Equals(ReindexRequest.WorkItemTypeString)))
 			{
 				_studyCountWatcher.Invalidate();
 			}
 
-			var items = workItems.Select(item => new WorkItem(item));
+			var items = workItems.Select(item => new WorkItem(item)).ToList();
 			_workItemManager.Update(items);
 			_workItemActionModel.OnWorkItemsChanged(items);
-
-			// tell view to update this value
-			NotifyPropertyChanged("Failures");
 		}
 
 		private void RefreshInternal()
@@ -1084,6 +1195,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			NotifyPropertyChanged("TotalStudies");
 		}
 
+        private void OnFailureCountChanged()
+        {
+            NotifyPropertyChanged("Failures");
+        }
+
 		private void OnDicomServerConfigurationChanged()
 		{
 			NotifyPropertyChanged("AeTitle");
@@ -1094,20 +1210,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private void OnStorageConfigurationChanged()
 		{
 			NotifyPropertyChanged("FileStore");
+            NotifyPropertyChanged("IsMaximumDiskspaceUsageExceeded");
 
 			// if FileStore path changed, diskspace may have changed too
-			NotifyPropertyChanged("DiskspaceUsedPercent");
-			NotifyPropertyChanged("DiskspaceUsed");
-			NotifyPropertyChanged("IsMaximumDiskspaceUsageExceeded");
-			NotifyPropertyChanged("DiskSpaceWarningLabel");
-			NotifyPropertyChanged("DiskSpaceWarningMessage");
+		    OnDiskspaceChanged();
 		}
 
 		private void OnDiskspaceChanged()
 		{
-			NotifyPropertyChanged("DiskspaceUsed");
+            NotifyPropertyChanged("DiskspaceUsed");
 			NotifyPropertyChanged("DiskspaceUsedPercent");
-			NotifyPropertyChanged("IsMaximumDiskspaceUsageExceeded");
 			NotifyPropertyChanged("DiskSpaceWarningLabel");
 			NotifyPropertyChanged("DiskSpaceWarningMessage");
 		}

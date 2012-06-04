@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
@@ -12,15 +12,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
     public partial class SearchResult : IDisposable
     {
+        private volatile SynchronizationContext _synchronizationContext;
         private IWorkItemActivityMonitor _activityMonitor;
+        private DateTime? _lastWorkItemsChangedTime;
+
+        private readonly object _syncLock = new object();
 		private readonly Dictionary<string, string> _setChangedStudies;
-        private DelayedEventPublisher _processStudiesEventPublisher;
+        private System.Threading.Timer _processChangedStudiesTimer;
+
         private bool _reindexing;
 
         public void Dispose()
         {
             StopMonitoringStudies();
         }
+
+        public bool SearchInProgress { get; private set; }
 
         private bool Reindexing
         {
@@ -33,6 +40,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 _reindexing = value;
                 SetResultsTitle();
             }
+        }
+
+        private void UpdateReindexing(bool value)
+        {
+            if (_activityMonitor == null || !_activityMonitor.IsConnected)
+                value = false;
+            
+            Reindexing = value;
         }
 
         private void UpdateReindexing()
@@ -60,105 +75,77 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private void StartMonitoringStudies()
         {
-            _activityMonitor = WorkItemActivityMonitor.Create();
-            _activityMonitor.IsConnectedChanged += OnIsConnectedChanged;
-            _activityMonitor.WorkItemsChanged += OnWorkItemsChanged;
-            _activityMonitor.StudiesCleared += OnStudiesCleared;
+            if (_activityMonitor != null)
+                return;
+
+            _synchronizationContext = SynchronizationContext.Current;
+            //Don't use the sync context when monitoring work item activity, since we'll be processing
+            //the changed studies asynchronously anyway.
+            _activityMonitor = WorkItemActivityMonitor.Create(false);
+            _activityMonitor.IsConnectedChanged += OnIsConnectedChangedAsync;
+            _activityMonitor.WorkItemsChanged += OnWorkItemsChangedAsync;
+            _activityMonitor.StudiesCleared += OnStudiesClearedAsync;
 
             UpdateReindexing();
-            _processStudiesEventPublisher = new DelayedEventPublisher((s,e) => ProcessChangedStudies());
+
+            _processChangedStudiesTimer = new System.Threading.Timer(ProcessChangedStudiesAsync, null, 100, 100);
         }
 
         private void StopMonitoringStudies()
         {
-            if (_processStudiesEventPublisher != null)
-            {
-                _processStudiesEventPublisher.Dispose();
-                _processStudiesEventPublisher = null;
-            }
-
+            _synchronizationContext = null;
             if (_activityMonitor != null)
             {
-                _activityMonitor.IsConnectedChanged -= OnIsConnectedChanged;
-                _activityMonitor.WorkItemsChanged -= OnWorkItemsChanged;
-                _activityMonitor.StudiesCleared -= OnStudiesCleared;
+                _activityMonitor.IsConnectedChanged -= OnIsConnectedChangedAsync;
+                _activityMonitor.WorkItemsChanged -= OnWorkItemsChangedAsync;
+                _activityMonitor.StudiesCleared -= OnStudiesClearedAsync;
                 _activityMonitor.Dispose();
                 _activityMonitor = null;
             }
 
+            if (_processChangedStudiesTimer != null)
+            {
+                _processChangedStudiesTimer.Dispose();
+                _processChangedStudiesTimer = null;
+            }
+            
             UpdateReindexing();
         }
 
-        private void OnIsConnectedChanged(object sender, EventArgs e)
+        private void OnStudiesCleared()
         {
-            UpdateReindexing();
-        }
+            lock (_syncLock)
+            {
+                _setChangedStudies.Clear();
+            }
 
-        private void OnWorkItemsChanged(object sender, WorkItemsChangedEventArgs args)
-        {
-            if (args.ChangedItems == null)
-                return;
-
-        	foreach (var item in args.ChangedItems)
-        	{
-                if (item.Type.Equals(ReindexRequest.WorkItemTypeString))
-                    Reindexing = item.Status == WorkItemStatusEnum.InProgress;
-
-                //If an item doesn't modify the study in any way, ignore it.
-                if (item.Request != null && (item.Request.ConcurrencyType == WorkItemConcurrency.StudyRead || item.Request.ConcurrencyType == WorkItemConcurrency.NonStudy))
-                    continue;
-
-        	    if (!String.IsNullOrEmpty(item.StudyInstanceUid))
-					_setChangedStudies[item.StudyInstanceUid] = item.StudyInstanceUid;
-
-				_processStudiesEventPublisher.Publish(this, EventArgs.Empty);
-			}
-        }
-
-        private void OnStudiesCleared(object sender, EventArgs e)
-        {
-            _setChangedStudies.Clear();
             _hiddenItems.Clear();
             StudyTable.Items.Clear();
             SetResultsTitle();
         }
 
-        private void ProcessChangedStudies()
+        /// <summary>
+        /// Marshaled back to the UI thread from a worker thread.
+        /// </summary>
+        private void UpdatedChangedStudies(DateTime queryStartTime, IEnumerable<string> deletedStudyUids, IEnumerable<StudyEntry> updatedStudies)
         {
-            if (_setChangedStudies.Count == 0)
+            //If the sync context is null, it's because we're not monitoring studies anymore (e.g. study browser closed).
+            if (_synchronizationContext == null)
                 return;
 
-            var changed = _setChangedStudies.Keys.ToList();
-            _setChangedStudies.Clear();
+            bool hasUserSearched = SearchInProgress || _lastSearchEnded.HasValue;
+            bool updateQueryStartedBeforeUserSearchEnded = _lastSearchEnded.HasValue && queryStartTime < _lastSearchEnded.Value;
 
-            string studyUids = DicomStringHelper.GetDicomStringArray(changed);
-            if (String.IsNullOrEmpty(studyUids))
+            //If the user has ever searched, and the query for study updates started before the user's search completed,
+            //then we just ignore these updates. Otherwise, the user might get out-of-date updates, and may even see
+            //studies appearing in the table while the search is still in progress.
+            if (hasUserSearched && updateQueryStartedBeforeUserSearchEnded)
                 return;
 
-            try
-            {
-                var criteria = new StudyRootStudyIdentifier { StudyInstanceUid = studyUids };
-                var request = new GetStudyEntriesRequest { Criteria = new StudyEntry { Study = criteria } };
-                
-                IList<StudyEntry> entries = null;
-                
-                //We're doing it this way here because it's local only.
-                Platform.GetService<IStudyStoreQuery>(s => entries = s.GetStudyEntries(request).StudyEntries);
+            foreach (var updatedStudy in updatedStudies)
+                UpdateTableItem(updatedStudy);
 
-                foreach (var entry in entries)
-                {
-                    //What's left over in this list has been deleted.
-                    changed.Remove(entry.Study.StudyInstanceUid);
-                    UpdateTableItem(entry);
-                }
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e);
-            }
-
-            //Anything left over in changed no longer exists.
-            foreach (string deletedUid in changed)
+            foreach (string deletedUid in deletedStudyUids)
                 DeleteStudy(deletedUid);
 
             SetResultsTitle();
@@ -200,5 +187,136 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             return StudyTable.Items.FindIndex(test => test.StudyInstanceUid == studyInstanceUid);
         }
+
+        #region Async Operations
+
+        private void OnIsConnectedChangedAsync(object sender, EventArgs e)
+        {
+            var syncContext = _synchronizationContext;
+            if (syncContext != null)
+                syncContext.Post(ignore => UpdateReindexing(), null);
+        }
+
+        /// <summary>
+        /// Studies cleared (from activity monitor) event handler.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnStudiesClearedAsync(object sender, EventArgs e)
+        {
+            var syncContext = _synchronizationContext;
+            if (syncContext != null)
+                syncContext.Post(ignore => OnStudiesCleared(), null);
+        }
+
+        /// <summary>
+        /// Work Items Changed event handler.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void OnWorkItemsChangedAsync(object sender, WorkItemsChangedEventArgs args)
+        {
+            if (args.ChangedItems == null)
+                return;
+
+            var syncContext = _synchronizationContext;
+            if (syncContext == null)
+                return;
+
+            lock (_syncLock)
+            {
+                foreach (var item in args.ChangedItems)
+                {
+                    var theItem = item;
+                    if (item.Type.Equals(ReindexRequest.WorkItemTypeString))
+                        syncContext.Post(ignore => UpdateReindexing(theItem.Status == WorkItemStatusEnum.InProgress), false);
+                    
+                    if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyRead)
+                        continue; //If it's a "read" operation, don't update anything.
+
+                    //Otherwise, if it's not a read operation, but it has a Study UID, then it's probably updating studies.
+                    //(e.g. re-index, re-apply rules, import, process study).
+                    if (!String.IsNullOrEmpty(item.StudyInstanceUid))
+                        _setChangedStudies[item.StudyInstanceUid] = item.StudyInstanceUid;
+                }
+
+                _lastWorkItemsChangedTime = DateTime.Now;
+            }
+        }
+
+        /// <summary>
+        /// Process studies thread.
+        /// </summary>
+        /// <param name="state"></param>
+        private void ProcessChangedStudiesAsync(object state)
+        {
+            //If the sync context is null, it's because we're not monitoring studies anymore (e.g. study browser closed).
+            var syncContext = _synchronizationContext;
+            if (syncContext == null)
+                return;
+
+            DateTime? queryStartTime;
+            List<string> deletedStudyUids;
+            List<StudyEntry> updatedStudies;
+                
+            ProcessChangedStudiesAsync(out queryStartTime, out deletedStudyUids, out updatedStudies);
+            if (deletedStudyUids.Count > 0 || updatedStudies.Count > 0)
+                syncContext.Post(ignore => UpdatedChangedStudies(queryStartTime.Value, deletedStudyUids, updatedStudies), null);
+        }
+
+        /// <summary>
+        /// Figure out which studies have been deleted and/or updated.
+        /// </summary>
+        private void ProcessChangedStudiesAsync(out DateTime? queryStartTime, out List<string> deletedStudyUids, out List<StudyEntry> updatedStudies)
+        {
+            deletedStudyUids = new List<string>();
+            updatedStudies = new List<StudyEntry>();
+            queryStartTime = null;
+            DateTime now = DateTime.Now;
+
+            lock (_syncLock)
+            {
+                if (_setChangedStudies.Count == 0 || _lastWorkItemsChangedTime == null)
+                    return;
+
+                //If work items are still coming in, delay the query.
+                if (now - _lastWorkItemsChangedTime.Value < TimeSpan.FromMilliseconds(350))
+                    return;
+
+                //Add everything to the deleted list.
+                deletedStudyUids.AddRange(_setChangedStudies.Keys);
+                _setChangedStudies.Clear();
+            }
+
+            string studyUids = DicomStringHelper.GetDicomStringArray(deletedStudyUids);
+            if (String.IsNullOrEmpty(studyUids))
+                return;
+
+            try
+            {
+                queryStartTime = now;
+             
+                var criteria = new StudyRootStudyIdentifier { StudyInstanceUid = studyUids };
+                var request = new GetStudyEntriesRequest { Criteria = new StudyEntry { Study = criteria } };
+                
+                IList<StudyEntry> entries = null;
+                
+                //We're doing it this way here because it's local only.
+                Platform.GetService<IStudyStoreQuery>(s => entries = s.GetStudyEntries(request).StudyEntries);
+
+                foreach (var entry in entries)
+                {
+                    //If we got a result back, then it's not deleted.
+                    deletedStudyUids.Remove(entry.Study.StudyInstanceUid);
+                    updatedStudies.Add(entry);
+                }
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e);
+            }
+        }
+
+        #endregion
     }
 }

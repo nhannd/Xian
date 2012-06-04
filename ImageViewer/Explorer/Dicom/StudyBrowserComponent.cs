@@ -160,7 +160,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private SearchResultColumnOptionCollection _searchResultColumnOptions;
 
 		private bool _isEnabled = true;
-		private bool _searchInProgress;
 
 	    #endregion
 
@@ -350,7 +349,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			// disable the study browser while the search is executing
 			this.IsEnabled = false;
-			_searchInProgress = true;
+		    CurrentSearchResult.SearchStarted();
 
 			EventsHelper.Fire(this.SearchStarted, this, EventArgs.Empty);
 
@@ -365,11 +364,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 	    public virtual void CancelSearch()
 		{
-			if(!_searchInProgress)
+			if(!CurrentSearchResult.SearchInProgress)
 				return;
 
 			Async.CancelPending(this);
-			_searchInProgress = false;
+			CurrentSearchResult.SearchCanceled();
 
 			// re-enable the study browser
 			this.IsEnabled = true;
@@ -480,9 +479,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void OnSearchCompleted(List<StudyTableItem> aggregateItems, List<KeyValuePair<string, Exception>> failedServerInfo)
 		{
-			CurrentSearchResult.Refresh(aggregateItems, _filterDuplicateStudies);
+			CurrentSearchResult.SearchEnded(aggregateItems, _filterDuplicateStudies);
 
-			if (failedServerInfo.Count > 0)
+            // re-enable the study browser
+            this.IsEnabled = true;
+            EventsHelper.Fire(this.SearchEnded, this, EventArgs.Empty);
+            
+            if (failedServerInfo.Count > 0)
 			{
 				var aggregateExceptionMessage = new StringBuilder();
 				var count = 0;
@@ -502,15 +505,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				//method is called on startup before the component is started.
 				Application.ActiveDesktopWindow.ShowMessageBox(aggregateExceptionMessage.ToString(), MessageBoxActions.Ok);
 			}
-
-			_searchInProgress = false;
-
-			// re-enable the study browser
-			this.IsEnabled = true;
-
-			EventsHelper.Fire(this.SearchEnded, this, EventArgs.Empty);
 		}
-
 
         private void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{

@@ -193,10 +193,10 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     }
 
     [DataContract(Namespace = StudyManagementNamespace.Value)]
-    public class StorageConfiguration : IEquatable<StorageConfiguration>
+    public class StorageConfiguration
     {
 		[DataContract(Namespace = StudyManagementNamespace.Value)]
-		public class DeletionRule : IEquatable<DeletionRule>
+		public class DeletionRule
 		{
 			[DataMember(IsRequired = true)]
 			public bool Enabled { get; set; }
@@ -216,32 +216,6 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 					TimeValue = this.TimeValue
 				};
 			}
-
-			public bool Equals(DeletionRule other)
-			{
-				if (ReferenceEquals(null, other)) return false;
-				if (ReferenceEquals(this, other)) return true;
-				return other.Enabled.Equals(Enabled) && other.TimeValue == TimeValue && Equals(other.TimeUnit, TimeUnit);
-			}
-
-			public override bool Equals(object obj)
-			{
-				if (ReferenceEquals(null, obj)) return false;
-				if (ReferenceEquals(this, obj)) return true;
-				if (obj.GetType() != typeof (DeletionRule)) return false;
-				return Equals((DeletionRule) obj);
-			}
-
-			public override int GetHashCode()
-			{
-				unchecked
-				{
-					int result = Enabled.GetHashCode();
-					result = (result*397) ^ TimeValue;
-					result = (result*397) ^ TimeUnit.GetHashCode();
-					return result;
-				}
-			}
 		}
 
         public const double AutoMinimumFreeSpace = -1;
@@ -256,6 +230,8 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     		this.DefaultDeletionRule = new DeletionRule();
     	}
 
+        #region Data Members
+
         [DataMember(IsRequired = true)]
         public string FileStoreDirectory
         {
@@ -266,6 +242,30 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
                 FileStoreDiskSpace = null;
             }
         }
+
+        [DataMember(IsRequired = true)]
+        public double MinimumFreeSpacePercent
+        {
+            get { return _minimumFreeSpacePercent; }
+            set
+            {
+                if (value < 0)
+                {
+                    _minimumFreeSpacePercent = AutoMinimumFreeSpace;
+                    return;
+                }
+
+                if (value > 100)
+                    throw new ArgumentException("Value must be between 0 and 100.", "MinimumFreeSpacePercent");
+
+                _minimumFreeSpacePercent = value;
+            }
+        }
+
+        [DataMember(IsRequired = true)]
+        public DeletionRule DefaultDeletionRule { get; set; }
+
+        #endregion
 
         public string FileStoreRootPath
         {
@@ -338,25 +338,6 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
         public bool AutoCalculateMinimumFreeSpacePercent { get { return MinimumFreeSpacePercent < 0; } }
 
-        [DataMember(IsRequired = true)]
-        public double MinimumFreeSpacePercent
-        {
-            get { return _minimumFreeSpacePercent; }
-            set
-            {
-                if (value < 0)
-                {
-                    _minimumFreeSpacePercent = AutoMinimumFreeSpace;
-                    return;
-                }
-                
-                if (value > 100)
-                    throw new ArgumentException("Value must be between 0 and 100.", "MinimumFreeSpacePercent");
-
-                _minimumFreeSpacePercent = value;
-            }
-        }
-
         public long MinimumFreeSpaceBytes
         {
             get
@@ -407,47 +388,15 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
             }
         }
 
-		[DataMember(IsRequired = true)]
-		public DeletionRule DefaultDeletionRule { get; set; }
-
 		public StorageConfiguration Clone()
 		{
 			return new StorageConfiguration
 			{
 				FileStoreDirectory = this.FileStoreDirectory,
 				MinimumFreeSpacePercent = this.MinimumFreeSpacePercent,
-				DefaultDeletionRule = this.DefaultDeletionRule
+				DefaultDeletionRule = this.DefaultDeletionRule.Clone()
 			};
 		}
-
-		public override int GetHashCode()
-        {
-            int hash = 0x2453671;
-
-            if (FileStoreDirectory != null)
-                hash ^= FileStoreDirectory.GetHashCode();
-            
-            hash ^= MinimumFreeSpaceBytes.GetHashCode();
-
-            return hash;
-        }
-
-        public override bool Equals(object obj)
-        {
-            var storageConfiguration = obj as StorageConfiguration;
-            return storageConfiguration != null && Equals(storageConfiguration);
-        }
-
-        //TODO (Marmot): get rid of this.
-        #region IEquatable<StorageConfiguration> Members
-
-        public bool Equals(StorageConfiguration other)
-        {
-            return FileStoreDirectory == other.FileStoreDirectory &&
-                   MinimumFreeSpacePercent.Equals(other.MinimumFreeSpacePercent);
-        }
-
-        #endregion
 
         private bool InitializeDiskSpace()
         {
