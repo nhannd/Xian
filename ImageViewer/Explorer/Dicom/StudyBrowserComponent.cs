@@ -233,13 +233,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
 		}
 
-		private event EventHandler SelectedStudyChanged
+		public event EventHandler SelectedStudyChanged
 		{
 			add { _selectedStudyChangedEvent += value; }
 			remove { _selectedStudyChangedEvent -= value; }
 		}
 
-		private event EventHandler SelectedServerChanged
+        public event EventHandler SelectedServerChanged
 		{
 			add { _selectedServerChangedEvent += value; }
 			remove { _selectedServerChangedEvent -= value; }
@@ -480,6 +480,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private void OnSearchCompleted(List<StudyTableItem> aggregateItems, List<KeyValuePair<string, Exception>> failedServerInfo)
 		{
 			CurrentSearchResult.SearchEnded(aggregateItems, _filterDuplicateStudies);
+            
+            //#10023: always select the first entry when refreshed
+            SetSelection(new Selection(CollectionUtils.FirstElement(CurrentSearchResult.StudyTable.Items)));
 
             // re-enable the study browser
             this.IsEnabled = true;
