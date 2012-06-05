@@ -23,6 +23,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	[ButtonAction("Open", "dicomstudybrowser-toolbar/ToolbarFilterStudy", "Open")]
 	[MenuAction("Open", "dicomstudybrowser-contextmenu/MenuFilterStudy", "Open")]
 	[EnabledStateObserver("Open", "Enabled", "EnabledChanged")]
+	[VisibleStateObserver("Open", "Visible", "VisibleChanged")]
 	[Tooltip("Open", "TooltipFilterStudy")]
 	[IconSet("Open", "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
 	[ViewerActionPermission("Open", AuthorityTokens.StudyFilters)]
