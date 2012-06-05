@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 {
@@ -77,6 +78,12 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			_deleteTimeUnits.DataBindings.Add("SelectedItem", _component, "DeleteTimeUnit", true, DataSourceUpdateMode.OnPropertyChanged);
 			_deleteTimeUnits.DataBindings.Add("Enabled", _component, "DeleteStudies");
 			_deleteTimeUnits.Format += (sender, e) => { e.Value = _component.FormatTimeUnit(e.ListItem); };
+
+			// bug #10076: combobox databinding doesn't apply change until it loses focus, so we do it manually
+        	_deleteTimeUnits.SelectedIndexChanged += (sender, args) =>
+        	                                         	{
+        	                                         		_component.DeleteTimeUnit = (TimeUnit) _deleteTimeUnits.SelectedItem;
+        	                                         	};
 
             _changeFileStore.Click += (s, e) => _component.ChangeFileStore();
             _helpIcon.Click += (s,e) => _component.Help();
