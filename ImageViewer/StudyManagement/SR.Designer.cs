@@ -261,6 +261,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Local Server must be running in order to complete this operation..
+        /// </summary>
+        public static string MessageLocalServerNotRunning {
+            get {
+                return ResourceManager.GetString("MessageLocalServerNotRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximum disk usage exceeded.
         /// </summary>
         public static string MessageMaximumDiskUsageExceeded {
