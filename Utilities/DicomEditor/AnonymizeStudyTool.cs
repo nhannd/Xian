@@ -160,6 +160,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 	    private void UpdateEnabled()
 		{
+            Visible = Context.SelectedServers.AllSupport<IWorkItemService>(); // TODO (Marmot): =IsLocal?
 		    Enabled = Context.SelectedStudies.Count == 1
 		              && Context.SelectedServers.AllSupport<IWorkItemService>()
 		              && WorkItemActivityMonitor.IsRunning;

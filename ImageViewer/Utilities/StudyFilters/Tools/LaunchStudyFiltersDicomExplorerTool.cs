@@ -98,10 +98,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 
 		private void UpdateEnabled()
 		{
-		    base.Enabled = Context.SelectedStudies.Count > 0
+            base.Enabled = Context.SelectedStudies.Count > 0
                 //TODO (Marmot):Not sure why it was restricted to local, but I'm leaving it.
                 && base.Context.SelectedServers.IsLocalServer
                 && base.Context.SelectedServers.AllSupport<IStudyLoader>();
+
+            //TODO (Marmot): Not sure why Enabled is restricted to local. Check here too for consistency.
+            Visible = Context.SelectedServers.IsLocalServer && Context.SelectedServers.AllSupport<IStudyLoader>();
+		    
 		}
 	}
 }

@@ -48,19 +48,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 		private void UpdateEnabled()
 		{
+            Visible = Context.SelectedServers.AnySupport<IStudyRootQuery>();
+
 			if (Context.SelectedServers == null)
 			{
 			    Enabled = false;
 			}
-			else if (Context.SelectedStudy == null || Context.SelectedStudies.Count > 1)
-			{
-			    Enabled = false;
-			}
+            else if (Context.SelectedStudy == null || Context.SelectedStudies.Count > 1)
+            {
+                Enabled = false;
+            }
             else
-			{
-			    Enabled = Context.SelectedStudy.Server != null &&
-			              Context.SelectedStudy.Server.IsSupported<IStudyRootQuery>();
-			}
+            {
+                Enabled = Context.SelectedStudy.Server != null &&
+                          Context.SelectedStudy.Server.IsSupported<IStudyRootQuery>();
+            }
         }
 
 		public void Show()

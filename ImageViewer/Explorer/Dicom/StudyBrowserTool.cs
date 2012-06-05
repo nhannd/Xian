@@ -23,6 +23,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private bool _enabled;
 		private event EventHandler _enabledChangedEvent;
 
+        private bool _visible = true;
+        private event EventHandler _visibleChangedEvent; 
+
 		public override void Initialize()
 		{
 			base.Initialize();

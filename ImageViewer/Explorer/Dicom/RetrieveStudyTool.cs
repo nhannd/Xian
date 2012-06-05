@@ -25,7 +25,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuRetrieveStudy", "RetrieveStudy")]
     [ActionFormerly("activate", "ClearCanvas.ImageViewer.Services.Tools.RetrieveStudyTool:activate")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-	[Tooltip("activate", "TooltipRetrieveStudy")]
+    [VisibleStateObserver("activate", "Visible", "VisibleChanged")]
+    [Tooltip("activate", "TooltipRetrieveStudy")]
 	[IconSet("activate", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png")]
     [ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Retrieve)]
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
@@ -115,6 +116,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
+            Visible = !Context.SelectedServers.IsLocalServer;
+
 			Enabled = Context.SelectedStudies.Count > 0
                         && !Context.SelectedServers.IsLocalServer
                         && WorkItemActivityMonitor.IsRunning;
