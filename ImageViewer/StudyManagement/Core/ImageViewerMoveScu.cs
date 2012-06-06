@@ -85,8 +85,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
             if (message.Status.Status == DicomState.Warning)
             {
+                DicomStatus status = DicomStatuses.LookupQueryRetrieve(message.Status.Code);
                 _errorDescriptionDetails = String.Format("Remote server returned a warning status ({0}: {1}).",
-                     RemoteAE, message.Status.Description);
+                     RemoteAE, status.Description);
             }
         }
 

@@ -408,23 +408,23 @@ namespace ClearCanvas.Dicom.Network.Scu
         	}
         	else
         	{
-				DicomState status = message.Status.Status;
+				DicomStatus status = DicomStatuses.LookupQueryRetrieve(message.Status.Code);
 				if (message.Status.Status != DicomState.Success)
 				{
-					if (status == DicomState.Cancel)
+					if (status.Status == DicomState.Cancel)
 					{
-						if (LogInformation) Platform.Log(LogLevel.Info, "Cancel status received in Move Scu: {0}", message.Status);
+                        if (LogInformation) Platform.Log(LogLevel.Info, "Cancel status received in Move Scu: {0}", status);
 						Status = ScuOperationStatus.Canceled;
 					}
-					else if (status == DicomState.Failure)
+                    else if (status.Status == DicomState.Failure)
 					{
-                        Platform.Log(LogLevel.Error, "Failure status received in Move Scu: {0}", message.Status);
+                        Platform.Log(LogLevel.Error, "Failure status received in Move Scu: {0}", status);
 						Status = ScuOperationStatus.Failed;
-						FailureDescription = message.Status.ToString();
+						FailureDescription = status.ToString();
 					}
-					else if (status == DicomState.Warning)
+                    else if (status.Status == DicomState.Warning)
 					{
-						Platform.Log(LogLevel.Warn, "Warning status received in Move Scu: {0}", message.Status);
+                        Platform.Log(LogLevel.Warn, "Warning status received in Move Scu: {0}", status);
 					}
 					else if (Status == ScuOperationStatus.Canceled)
 					{
