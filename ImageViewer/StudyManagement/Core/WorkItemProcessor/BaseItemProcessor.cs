@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                     {
                         if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete)
                         {
-                            reason = string.Format("Unable to start WorkItem due to {0} related entry",
+                            reason = string.Format("Waiting for: {0}",
                                                          relatedWorkItem.Request.ActivityDescription);
                             return false;
                         }
@@ -159,7 +159,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 {
                     foreach (var relatedWorkItem in inProgressList)
                     {
-                        reason = string.Format("Unable to start WorkItem due to {0} in progress related entry",
+                        reason = string.Format("Waiting for: {0}",
                                                relatedWorkItem.Request.ActivityDescription);
                         return false;
                     }
@@ -172,7 +172,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                     {
                         if (relatedWorkItem.Request.ConcurrencyType != WorkItemConcurrency.NonStudy)
                         {
-                            reason = string.Format("Unable to start WorkItem due to {0} related entry",
+                            reason = string.Format("Waiting for: {0}",
                                                    relatedWorkItem.Request.ActivityDescription);
                             return false;
                         }
@@ -192,7 +192,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                         if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete
                             || relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
                         {
-                            reason = string.Format("Unable to start WorkItem due to {0} related entry",
+                            reason = string.Format("Waiting for: {0}",
                                                    relatedWorkItem.Request.ActivityDescription);
                             return false;
                         }
@@ -432,6 +432,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                                                              && item.Status != WorkItemStatusEnum.Canceled
                                                              && item.Status != WorkItemStatusEnum.Failed);
 
+                if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
+                {
+                    newList = CollectionUtils.Select(newList,
+                                                     item => item.ScheduledTime < Proxy.Item.ScheduledTime);
+                }
+
                 return newList.Count > 0;
             }
         }
@@ -441,8 +447,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         /// and related to the given <see cref="WorkItem"/> 
         /// </summary>
         /// <returns></returns>
-        protected bool InProgressWorkItems()
+        protected bool InProgressWorkItems(out string reason)
         {
+            reason = string.Empty;
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetWorkItemBroker();
@@ -454,6 +461,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 
                 // remove the current item 
                 var newList = CollectionUtils.Reject(list, item => item.Oid.Equals(Proxy.Item.Oid));
+
+                foreach (var item in newList)
+                {
+                    reason = string.Format("Waiting for: {0}", item.Request.ActivityDescription);
+                    break;
+                }
 
                 return newList.Count > 0;
             }
