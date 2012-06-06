@@ -193,7 +193,7 @@ namespace ClearCanvas.Dicom.Network
         public static DicomStatus ClassInstanceConflict = new DicomStatus("0119", DicomState.Failure, "Class-instance conflict");
 
         /// <summary>Failure: Duplicate SOP instance</summary>
-        public static DicomStatus DuplicateSOPInstance = new DicomStatus("0111", DicomState.Failure, "Duplicate SOP instance");
+        public static DicomStatus DuplicateSOPInstance = new DicomStatus("0111", DicomState.Failure, SR.DuplicateSOPInstance);
 
         /// <summary>Failure: Duplicate invocation</summary>
         public static DicomStatus DuplicateInvocation = new DicomStatus("0210", DicomState.Failure, "Duplicate invocation");
@@ -208,7 +208,7 @@ namespace ClearCanvas.Dicom.Network
         public static DicomStatus InvalidObjectInstance = new DicomStatus("0117", DicomState.Failure, "Invalid object instance");
 
         /// <summary>Failure: Missing attribute</summary>
-        public static DicomStatus MissingAttribute = new DicomStatus("0120", DicomState.Failure, "Missing attribute");
+        public static DicomStatus MissingAttribute = new DicomStatus("0120", DicomState.Failure, SR.MissingAttribute);
 
         /// <summary>Failure: Missing attribute value</summary>
         public static DicomStatus MissingAttributeValue = new DicomStatus("0121", DicomState.Failure, "Missing attribute value");
@@ -229,7 +229,7 @@ namespace ClearCanvas.Dicom.Network
         public static DicomStatus NoSuchSOPClass = new DicomStatus("0118", DicomState.Failure, "No Such SOP class");
 
         /// <summary>Failure: Processing failure</summary>
-        public static DicomStatus ProcessingFailure = new DicomStatus("0110", DicomState.Failure, "Processing failure");
+        public static DicomStatus ProcessingFailure = new DicomStatus("0110", DicomState.Failure, SR.ProcessingFailure);
 
         /// <summary>Failure: Resource limitation</summary>
         public static DicomStatus ResourceLimitation = new DicomStatus("0213", DicomState.Failure, "Resource limitation");
@@ -241,13 +241,13 @@ namespace ClearCanvas.Dicom.Network
         public static DicomStatus NoSuchActionType = new DicomStatus("0123", DicomState.Failure, "No such action type");
 
         /// <summary>Storage Failure: Out of Resources</summary>
-        public static DicomStatus StorageStorageOutOfResources = new DicomStatus("A7xx", DicomState.Failure, "Out of Resources");
+        public static DicomStatus StorageStorageOutOfResources = new DicomStatus("A7xx", DicomState.Failure, SR.OutOfResources);
 
         /// <summary>Storage Failure: Data Set does not match SOP Class (Error)</summary>
         public static DicomStatus StorageDataSetDoesNotMatchSOPClassError = new DicomStatus("A9xx", DicomState.Failure, "Data Set does not match SOP Class (Error)");
 
         /// <summary>Storage Failure: Cannot understand</summary>
-        public static DicomStatus StorageCannotUnderstand = new DicomStatus("Cxxx", DicomState.Failure, "Cannot understand");
+        public static DicomStatus StorageCannotUnderstand = new DicomStatus("Cxxx", DicomState.Failure, SR.CannotUnderstand);
 
         /// <summary>Storage Warning: Coercion of Data Elements</summary>
         public static DicomStatus StorageCoercionOfDataElements = new DicomStatus("B000", DicomState.Warning, "Coercion of Data Elements");
@@ -259,7 +259,7 @@ namespace ClearCanvas.Dicom.Network
         public static DicomStatus StorageElementsDiscarded = new DicomStatus("B006", DicomState.Warning, "Elements Discarded");
 
         /// <summary>QueryRetrieve Failure: Out of Resources</summary>
-        public static DicomStatus QueryRetrieveOutOfResources = new DicomStatus("A700", DicomState.Failure, "Out of Resources");
+        public static DicomStatus QueryRetrieveOutOfResources = new DicomStatus("A700", DicomState.Failure, SR.OutOfResources);
 
         /// <summary>QueryRetrieve Failure: Unable to calculate number of matches</summary>
         public static DicomStatus QueryRetrieveUnableToCalculateNumberOfMatches = new DicomStatus("A701", DicomState.Failure, "Unable to calculate number of matches");
@@ -268,13 +268,13 @@ namespace ClearCanvas.Dicom.Network
         public static DicomStatus QueryRetrieveUnableToPerformSuboperations = new DicomStatus("A702", DicomState.Failure, "Unable to perform suboperations");
 
         /// <summary>QueryRetrieve Failure: Move Destination unknown</summary>
-        public static DicomStatus QueryRetrieveMoveDestinationUnknown = new DicomStatus("A801", DicomState.Failure, "Move Destination unknown");
+        public static DicomStatus QueryRetrieveMoveDestinationUnknown = new DicomStatus("A801", DicomState.Failure, SR.QueryRetrieveMoveDestinationUnknown);
 
         /// <summary>QueryRetrieve Failure: Identifier does not match SOP Class</summary>
         public static DicomStatus QueryRetrieveIdentifierDoesNotMatchSOPClass = new DicomStatus("A900", DicomState.Failure, "Identifier does not match SOP Class");
 
         /// <summary>QueryRetrieve Failure: Unable to process</summary>
-        public static DicomStatus QueryRetrieveUnableToProcess = new DicomStatus("Cxxx", DicomState.Failure, "Unable to process");
+        public static DicomStatus QueryRetrieveUnableToProcess = new DicomStatus("Cxxx", DicomState.Failure, SR.UnableToProcess);
 
         /// <summary>QueryRetrieve Pending: Optional Keys Not Supported</summary>
         public static DicomStatus QueryRetrieveOptionalKeysNotSupported = new DicomStatus("FF01", DicomState.Pending, "Optional Keys Not Supported");

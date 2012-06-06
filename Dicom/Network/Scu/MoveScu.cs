@@ -418,10 +418,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 					}
 					else if (status == DicomState.Failure)
 					{
-						string msg = String.Format("Failure status received in Move Scu: {0}", message.Status);
-						Platform.Log(LogLevel.Error, msg);
+                        Platform.Log(LogLevel.Error, "Failure status received in Move Scu: {0}", message.Status);
 						Status = ScuOperationStatus.Failed;
-						FailureDescription = msg;
+						FailureDescription = message.Status.ToString();
 					}
 					else if (status == DicomState.Warning)
 					{

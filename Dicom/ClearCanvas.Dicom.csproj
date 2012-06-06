@@ -121,6 +121,11 @@
     <Compile Include="DicomAttributeSingleValueText.cs" />
     <Compile Include="DicomAttributeSQ.cs" />
     <Compile Include="Iod\ComponentGroup.cs" />
+    <Compile Include="Network\SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\Command\AggregateCommand.cs" />
     <Compile Include="Utilities\Command\RemoveSeriesFromStudyXml.cs" />
     <Compile Include="Utilities\Command\Tests\CommandTests.cs" />
@@ -172,6 +177,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Network\SR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
