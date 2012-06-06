@@ -218,7 +218,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <summary>
 		/// Cancels the operation.
 		/// </summary>
-		public void Cancel()
+		public virtual void Cancel()
 		{
 			if (LogInformation)
 			    Platform.Log(LogLevel.Info, "Canceling Scu connected from {0} to {1}:{2}:{3}...", ClientAETitle, RemoteAE,

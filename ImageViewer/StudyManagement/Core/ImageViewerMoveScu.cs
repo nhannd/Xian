@@ -106,11 +106,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             {
                 Move();
 
-                Join(new TimeSpan(0, 0, 0, 0, 1000));
-
                 if (Status == ScuOperationStatus.Canceled)
+                    Join();
+                else
+                    Join(new TimeSpan(0, 0, 0, 0, 2000));
+
+                if (Status == ScuOperationStatus.Canceled || (_cancelRequested && Status == ScuOperationStatus.TimeoutExpired))
                 {
                     _errorDescriptionDetails = string.Format("The Move operation was cancelled ({0}).", RemoteAE);
+                    Status = ScuOperationStatus.Canceled;
                 }
                 else if (Status == ScuOperationStatus.ConnectFailed)
                 {

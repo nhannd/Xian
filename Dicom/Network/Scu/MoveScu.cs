@@ -40,6 +40,11 @@ namespace ClearCanvas.Dicom.Network.Scu
         #endregion
 
         #region Private Variables
+
+        protected bool _cancelRequested = false;
+        private bool _cancelSent = false;
+        private ushort _moveMessageId = 0;
+
         private int _warningSubOperations = 0;
         private int _failureSubOperations = 0;
         private int _successSubOperations = 0;
@@ -145,6 +150,14 @@ namespace ClearCanvas.Dicom.Network.Scu
         #endregion
 
         #region Public Methods
+
+        public override void Cancel()
+        {
+            if (LogInformation)
+                Platform.Log(LogLevel.Info, "Canceling Scu connected from {0} to {1}:{2}:{3}...", ClientAETitle, RemoteAE,
+                             RemoteHost, RemotePort);
+            _cancelRequested = true;
+        }
 
         /// <summary>
         /// Move the SOP Instances
@@ -280,7 +293,7 @@ namespace ClearCanvas.Dicom.Network.Scu
         {
             byte pcid = association.FindAbstractSyntaxOrThrowException(MoveSopClass);
 
-            DicomMessage dicomMessage = new DicomMessage();
+            var dicomMessage = new DicomMessage();
             foreach (DicomAttribute dicomAttribute in _dicomAttributeCollection)
             {
                 // Need to do it this way in case the attribute is blank
@@ -288,8 +301,19 @@ namespace ClearCanvas.Dicom.Network.Scu
                 if (dicomAttribute.Values != null)
                     dicomAttribute2.Values = dicomAttribute.Values;
             }
+            _moveMessageId = client.NextMessageID();
+            client.SendCMoveRequest(pcid, _moveMessageId, _destinationAe, dicomMessage);
+        }
 
-            client.SendCMoveRequest(pcid, client.NextMessageID(), _destinationAe, dicomMessage);
+        /// <summary>
+        /// Sends the move request (called after the association is accepted).
+        /// </summary>
+        /// <param name="client">The client.</param>
+        /// <param name="association">The association.</param>
+        private void SendMoveCancelRequest(DicomClient client, ClientAssociationParameters association)
+        {
+            byte pcid = association.FindAbstractSyntaxOrThrowException(MoveSopClass);
+            client.SendCMoveCancelRequest(pcid, _moveMessageId);
         }
 
         /// <summary>
@@ -372,6 +396,15 @@ namespace ClearCanvas.Dicom.Network.Scu
         	if (message.Status.Status == DicomState.Pending)
         	{
         		OnImageMoveCompleted();
+                if (_cancelRequested && !_cancelSent)
+                {
+                    // Force a 10 second timeout.  This is mostly to cope with an ImageServer bug that
+                    // doesn't handle the C-CANCEL request properly.
+                    association.ReadTimeout = 10 * 1000;
+
+                    _cancelSent = true;
+                    SendMoveCancelRequest(client, association);
+                }
         	}
         	else
         	{

@@ -442,6 +442,19 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 context.Commit();
             }
+
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+            {
+                var workItemBroker = context.GetWorkItemBroker();
+                var list = workItemBroker.GetWorkItems(null, WorkItemStatusEnum.Canceling, null);
+
+                foreach (var item in list)
+                {
+                    item.Status = WorkItemStatusEnum.Canceled;
+                }
+
+                context.Commit();
+            }
         }
 
     	#endregion
