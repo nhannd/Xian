@@ -129,10 +129,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             query = query.Where(w => w.Status != WorkItemStatusEnum.Complete);
             query = query.Where(w => w.Status != WorkItemStatusEnum.Failed);
 
-            foreach (var priority in prioritiesToBlock)
+            if (prioritiesToBlock != null)
             {
-                WorkItemPriorityEnum priority1 = priority;
-                query = query.Where(w => w.Priority != priority1);
+                foreach (var priority in prioritiesToBlock)
+                {
+                    WorkItemPriorityEnum priority1 = priority;
+                    query = query.Where(w => w.Priority != priority1);
+                }
             }
 
             if (!string.IsNullOrEmpty(studyInstanceUid))

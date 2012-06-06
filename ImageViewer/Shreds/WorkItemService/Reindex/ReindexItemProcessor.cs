@@ -13,6 +13,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
+using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
@@ -163,12 +164,46 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
         }
 
         public override bool CanStart(out string reason)
-        {            
-            reason = string.Empty;
+        {                        
+            if (ScheduledAheadInsertItems(out reason))
+            {
+                return false;
+            }
 
-            return !InProgressWorkItems();
+            return !InProgressWorkItems(out reason);
         }
 
         #endregion
+
+
+        #region Private Methods
+
+        protected bool ScheduledAheadInsertItems(out string reason)
+        {
+            reason = string.Empty;
+
+            using (var context = new DataAccessContext())
+            {
+                var broker = context.GetWorkItemBroker();             
+                var list = broker.GetPriorWorkItems(Proxy.Item.ScheduledTime, null, null);
+
+                if (list == null)
+                    return false;
+                foreach (var item in list)
+                {
+                    if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
+                    {
+                        reason = string.Format("Waiting for: {0}",
+                                                       item.Request.ActivityDescription);                         
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        #endregion
+
     }
 }

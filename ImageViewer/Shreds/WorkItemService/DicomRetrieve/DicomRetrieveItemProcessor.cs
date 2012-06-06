@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
             Progress.FailureSubOperations = 0;
             Progress.WarningSubOperations = 0;
             Progress.SuccessSubOperations = 0;
-            Progress.IsCancelable = true;
+            Progress.IsCancelable = false;
             Proxy.UpdateProgress();
 
             _scu.ImageMoveCompleted += OnMoveImage;
@@ -110,6 +110,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
             {
                 if (StopPending)
                 {
+                    Progress.IsCancelable = true;
                     Proxy.Postpone();
                 }
                 else
@@ -119,6 +120,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
             }
             else if (_scu.FailureSubOperations > 0)
             {
+                Progress.IsCancelable = true;
                 Proxy.Fail(!string.IsNullOrEmpty(_scu.ErrorDescriptionDetails) ? _scu.ErrorDescriptionDetails : _scu.FailureDescription, WorkItemFailureType.NonFatal);
             }
             else

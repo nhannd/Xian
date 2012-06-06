@@ -97,76 +97,116 @@ namespace ClearCanvas.Dicom.Network
     /// </summary>
     public static class DicomStatuses
     {
-        public static List<DicomStatus> Entries = new List<DicomStatus>();
+        public static List<DicomStatus> GenericEntries = new List<DicomStatus>();
+        public static List<DicomStatus> StorageEntries = new List<DicomStatus>();
+        public static List<DicomStatus> QueryRetrieveEntries = new List<DicomStatus>();
+        public static List<DicomStatus> PrintEntries = new List<DicomStatus>();
+        public static List<DicomStatus> MediaEntries = new List<DicomStatus>();
 
         static DicomStatuses()
         {
             #region Load Dicom Status List
-            Entries.Add(Success);
-            Entries.Add(Cancel);
-            Entries.Add(Pending);
-            Entries.Add(AttributeListError);
-            Entries.Add(AttributeValueOutOfRange);
-            Entries.Add(SOPClassNotSupported);
-            Entries.Add(ClassInstanceConflict);
-            Entries.Add(DuplicateSOPInstance);
-            Entries.Add(DuplicateInvocation);
-            Entries.Add(InvalidArgumentValue);
-            Entries.Add(InvalidAttributeValue);
-            Entries.Add(InvalidObjectInstance);
-            Entries.Add(MissingAttribute);
-            Entries.Add(MissingAttributeValue);
-            Entries.Add(MistypedArgument);
-            Entries.Add(NoSuchArgument);
-            Entries.Add(NoSuchEventType);
-            Entries.Add(NoSuchObjectInstance);
-            Entries.Add(NoSuchSOPClass);
-            Entries.Add(ProcessingFailure);
-            Entries.Add(ResourceLimitation);
-            Entries.Add(UnrecognizedOperation);
-            Entries.Add(NoSuchActionType);
-            Entries.Add(StorageStorageOutOfResources);
-            Entries.Add(StorageDataSetDoesNotMatchSOPClassError);
-            Entries.Add(StorageCannotUnderstand);
-            Entries.Add(StorageCoercionOfDataElements);
-            Entries.Add(StorageDataSetDoesNotMatchSOPClassWarning);
-            Entries.Add(StorageElementsDiscarded);
-            Entries.Add(QueryRetrieveOutOfResources);
-            Entries.Add(QueryRetrieveUnableToCalculateNumberOfMatches);
-            Entries.Add(QueryRetrieveUnableToPerformSuboperations);
-            Entries.Add(QueryRetrieveMoveDestinationUnknown);
-            Entries.Add(QueryRetrieveIdentifierDoesNotMatchSOPClass);
-            Entries.Add(QueryRetrieveUnableToProcess);
-            Entries.Add(QueryRetrieveOptionalKeysNotSupported);
-            Entries.Add(QueryRetrieveSubOpsOneOrMoreFailures);
-            Entries.Add(PrintManagementMemoryAllocationNotSupported);
-            Entries.Add(PrintManagementFilmSessionPrintingNotSupported);
-            Entries.Add(PrintManagementFilmSessionEmptyPage);
-            Entries.Add(PrintManagementFilmBoxEmptyPage);
-            Entries.Add(PrintManagementImageDemagnified);
-            Entries.Add(PrintManagementMinMaxDensityOutOfRange);
-            Entries.Add(PrintManagementImageCropped);
-            Entries.Add(PrintManagementImageDecimated);
-            Entries.Add(PrintManagementFilmSessionEmpty);
-            Entries.Add(PrintManagementPrintQueueFull);
-            Entries.Add(PrintManagementImageLargerThanImageBox);
-            Entries.Add(PrintManagementInsufficientMemoryInPrinter);
-            Entries.Add(PrintManagementCombinedImageLargerThanImageBox);
-            Entries.Add(PrintManagementExistingFilmBoxNotPrinted);
-            Entries.Add(MediaCreationManagementDuplicateInitiateMediaCreation);
-            Entries.Add(MediaCreationManagementMediaCreationRequestAlreadyCompleted);
-            Entries.Add(MediaCreationManagementMediaCreationRequestAlreadyInProgress);
-            Entries.Add(MediaCreationManagementCancellationDeniedForUnspecifiedReason);
+            GenericEntries.Add(Success);
+            GenericEntries.Add(Cancel);
+            GenericEntries.Add(Pending);
+            GenericEntries.Add(AttributeListError);
+            GenericEntries.Add(AttributeValueOutOfRange);
+            GenericEntries.Add(SOPClassNotSupported);
+            GenericEntries.Add(ClassInstanceConflict);
+            GenericEntries.Add(DuplicateSOPInstance);
+            GenericEntries.Add(DuplicateInvocation);
+            GenericEntries.Add(InvalidArgumentValue);
+            GenericEntries.Add(InvalidAttributeValue);
+            GenericEntries.Add(InvalidObjectInstance);
+            GenericEntries.Add(MissingAttribute);
+            GenericEntries.Add(MissingAttributeValue);
+            GenericEntries.Add(MistypedArgument);
+            GenericEntries.Add(NoSuchArgument);
+            GenericEntries.Add(NoSuchEventType);
+            GenericEntries.Add(NoSuchObjectInstance);
+            GenericEntries.Add(NoSuchSOPClass);
+            GenericEntries.Add(ProcessingFailure);
+            GenericEntries.Add(ResourceLimitation);
+            GenericEntries.Add(UnrecognizedOperation);
+            GenericEntries.Add(NoSuchActionType);
+            StorageEntries.Add(StorageStorageOutOfResources);
+            StorageEntries.Add(StorageDataSetDoesNotMatchSOPClassError);
+            StorageEntries.Add(StorageCannotUnderstand);
+            StorageEntries.Add(StorageCoercionOfDataElements);
+            StorageEntries.Add(StorageDataSetDoesNotMatchSOPClassWarning);
+            StorageEntries.Add(StorageElementsDiscarded);
+            QueryRetrieveEntries.Add(QueryRetrieveOutOfResources);
+            QueryRetrieveEntries.Add(QueryRetrieveUnableToCalculateNumberOfMatches);
+            QueryRetrieveEntries.Add(QueryRetrieveUnableToPerformSuboperations);
+            QueryRetrieveEntries.Add(QueryRetrieveMoveDestinationUnknown);
+            QueryRetrieveEntries.Add(QueryRetrieveIdentifierDoesNotMatchSOPClass);
+            QueryRetrieveEntries.Add(QueryRetrieveUnableToProcess);
+            QueryRetrieveEntries.Add(QueryRetrieveOptionalKeysNotSupported);
+            QueryRetrieveEntries.Add(QueryRetrieveSubOpsOneOrMoreFailures);
+            PrintEntries.Add(PrintManagementMemoryAllocationNotSupported);
+            PrintEntries.Add(PrintManagementFilmSessionPrintingNotSupported);
+            PrintEntries.Add(PrintManagementFilmSessionEmptyPage);
+            PrintEntries.Add(PrintManagementFilmBoxEmptyPage);
+            PrintEntries.Add(PrintManagementImageDemagnified);
+            PrintEntries.Add(PrintManagementMinMaxDensityOutOfRange);
+            PrintEntries.Add(PrintManagementImageCropped);
+            PrintEntries.Add(PrintManagementImageDecimated);
+            PrintEntries.Add(PrintManagementFilmSessionEmpty);
+            PrintEntries.Add(PrintManagementPrintQueueFull);
+            PrintEntries.Add(PrintManagementImageLargerThanImageBox);
+            PrintEntries.Add(PrintManagementInsufficientMemoryInPrinter);
+            PrintEntries.Add(PrintManagementCombinedImageLargerThanImageBox);
+            PrintEntries.Add(PrintManagementExistingFilmBoxNotPrinted);
+            MediaEntries.Add(MediaCreationManagementDuplicateInitiateMediaCreation);
+            MediaEntries.Add(MediaCreationManagementMediaCreationRequestAlreadyCompleted);
+            MediaEntries.Add(MediaCreationManagementMediaCreationRequestAlreadyInProgress);
+            MediaEntries.Add(MediaCreationManagementCancellationDeniedForUnspecifiedReason);
             #endregion
         }
 
         public static DicomStatus Lookup(ushort code)
         {
-            foreach (DicomStatus status in Entries)
+            foreach (DicomStatus status in GenericEntries)
             {
                 if (status.Code == (code & status.Mask))
                     return status;
             }
+            foreach (DicomStatus status in StorageEntries)
+            {
+                if (status.Code == (code & status.Mask))
+                    return status;
+            }
+            foreach (DicomStatus status in QueryRetrieveEntries)
+            {
+                if (status.Code == (code & status.Mask))
+                    return status;
+            }
+            foreach (DicomStatus status in PrintEntries)
+            {
+                if (status.Code == (code & status.Mask))
+                    return status;
+            }
+            foreach (DicomStatus status in MediaEntries)
+            {
+                if (status.Code == (code & status.Mask))
+                    return status;
+            }
+
+            return ProcessingFailure;
+        }
+
+        public static DicomStatus LookupQueryRetrieve(ushort code)
+        {
+            foreach (DicomStatus status in QueryRetrieveEntries)
+            {
+                if (status.Code == (code & status.Mask))
+                    return status;
+            } 
+            foreach (DicomStatus status in GenericEntries)
+            {
+                if (status.Code == (code & status.Mask))
+                    return status;
+            }            
             return ProcessingFailure;
         }
 
@@ -193,7 +233,7 @@ namespace ClearCanvas.Dicom.Network
         public static DicomStatus ClassInstanceConflict = new DicomStatus("0119", DicomState.Failure, "Class-instance conflict");
 
         /// <summary>Failure: Duplicate SOP instance</summary>
-        public static DicomStatus DuplicateSOPInstance = new DicomStatus("0111", DicomState.Failure, "Duplicate SOP instance");
+        public static DicomStatus DuplicateSOPInstance = new DicomStatus("0111", DicomState.Failure, SR.DuplicateSOPInstance);
 
         /// <summary>Failure: Duplicate invocation</summary>
         public static DicomStatus DuplicateInvocation = new DicomStatus("0210", DicomState.Failure, "Duplicate invocation");
@@ -208,7 +248,7 @@ namespace ClearCanvas.Dicom.Network
         public static DicomStatus InvalidObjectInstance = new DicomStatus("0117", DicomState.Failure, "Invalid object instance");
 
         /// <summary>Failure: Missing attribute</summary>
-        public static DicomStatus MissingAttribute = new DicomStatus("0120", DicomState.Failure, "Missing attribute");
+        public static DicomStatus MissingAttribute = new DicomStatus("0120", DicomState.Failure, SR.MissingAttribute);
 
         /// <summary>Failure: Missing attribute value</summary>
         public static DicomStatus MissingAttributeValue = new DicomStatus("0121", DicomState.Failure, "Missing attribute value");
@@ -229,7 +269,7 @@ namespace ClearCanvas.Dicom.Network
         public static DicomStatus NoSuchSOPClass = new DicomStatus("0118", DicomState.Failure, "No Such SOP class");
 
         /// <summary>Failure: Processing failure</summary>
-        public static DicomStatus ProcessingFailure = new DicomStatus("0110", DicomState.Failure, "Processing failure");
+        public static DicomStatus ProcessingFailure = new DicomStatus("0110", DicomState.Failure, SR.ProcessingFailure);
 
         /// <summary>Failure: Resource limitation</summary>
         public static DicomStatus ResourceLimitation = new DicomStatus("0213", DicomState.Failure, "Resource limitation");
@@ -241,13 +281,13 @@ namespace ClearCanvas.Dicom.Network
         public static DicomStatus NoSuchActionType = new DicomStatus("0123", DicomState.Failure, "No such action type");
 
         /// <summary>Storage Failure: Out of Resources</summary>
-        public static DicomStatus StorageStorageOutOfResources = new DicomStatus("A7xx", DicomState.Failure, "Out of Resources");
+        public static DicomStatus StorageStorageOutOfResources = new DicomStatus("A7xx", DicomState.Failure, SR.OutOfResources);
 
         /// <summary>Storage Failure: Data Set does not match SOP Class (Error)</summary>
         public static DicomStatus StorageDataSetDoesNotMatchSOPClassError = new DicomStatus("A9xx", DicomState.Failure, "Data Set does not match SOP Class (Error)");
 
         /// <summary>Storage Failure: Cannot understand</summary>
-        public static DicomStatus StorageCannotUnderstand = new DicomStatus("Cxxx", DicomState.Failure, "Cannot understand");
+        public static DicomStatus StorageCannotUnderstand = new DicomStatus("Cxxx", DicomState.Failure, SR.CannotUnderstand);
 
         /// <summary>Storage Warning: Coercion of Data Elements</summary>
         public static DicomStatus StorageCoercionOfDataElements = new DicomStatus("B000", DicomState.Warning, "Coercion of Data Elements");
@@ -259,7 +299,7 @@ namespace ClearCanvas.Dicom.Network
         public static DicomStatus StorageElementsDiscarded = new DicomStatus("B006", DicomState.Warning, "Elements Discarded");
 
         /// <summary>QueryRetrieve Failure: Out of Resources</summary>
-        public static DicomStatus QueryRetrieveOutOfResources = new DicomStatus("A700", DicomState.Failure, "Out of Resources");
+        public static DicomStatus QueryRetrieveOutOfResources = new DicomStatus("A700", DicomState.Failure, SR.OutOfResources);
 
         /// <summary>QueryRetrieve Failure: Unable to calculate number of matches</summary>
         public static DicomStatus QueryRetrieveUnableToCalculateNumberOfMatches = new DicomStatus("A701", DicomState.Failure, "Unable to calculate number of matches");
@@ -268,13 +308,13 @@ namespace ClearCanvas.Dicom.Network
         public static DicomStatus QueryRetrieveUnableToPerformSuboperations = new DicomStatus("A702", DicomState.Failure, "Unable to perform suboperations");
 
         /// <summary>QueryRetrieve Failure: Move Destination unknown</summary>
-        public static DicomStatus QueryRetrieveMoveDestinationUnknown = new DicomStatus("A801", DicomState.Failure, "Move Destination unknown");
+        public static DicomStatus QueryRetrieveMoveDestinationUnknown = new DicomStatus("A801", DicomState.Failure, SR.QueryRetrieveMoveDestinationUnknown);
 
         /// <summary>QueryRetrieve Failure: Identifier does not match SOP Class</summary>
         public static DicomStatus QueryRetrieveIdentifierDoesNotMatchSOPClass = new DicomStatus("A900", DicomState.Failure, "Identifier does not match SOP Class");
 
         /// <summary>QueryRetrieve Failure: Unable to process</summary>
-        public static DicomStatus QueryRetrieveUnableToProcess = new DicomStatus("Cxxx", DicomState.Failure, "Unable to process");
+        public static DicomStatus QueryRetrieveUnableToProcess = new DicomStatus("Cxxx", DicomState.Failure, SR.UnableToProcess);
 
         /// <summary>QueryRetrieve Pending: Optional Keys Not Supported</summary>
         public static DicomStatus QueryRetrieveOptionalKeysNotSupported = new DicomStatus("FF01", DicomState.Pending, "Optional Keys Not Supported");
