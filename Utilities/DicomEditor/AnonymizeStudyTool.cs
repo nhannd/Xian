@@ -30,6 +30,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 	[ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarAnonymizeStudy", "AnonymizeStudy")]
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuAnonymizeStudy", "AnonymizeStudy")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[VisibleStateObserver("activate", "Visible", "VisibleChanged")]
 	[Tooltip("activate", "TooltipAnonymizeStudy")]
 	[IconSet("activate", "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png")]
 
@@ -159,6 +160,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 	    private void UpdateEnabled()
 		{
+            Visible = Context.SelectedServers.AllSupport<IWorkItemService>(); // TODO (Marmot): =IsLocal?
 		    Enabled = Context.SelectedStudies.Count == 1
 		              && Context.SelectedServers.AllSupport<IWorkItemService>()
 		              && WorkItemActivityMonitor.IsRunning;

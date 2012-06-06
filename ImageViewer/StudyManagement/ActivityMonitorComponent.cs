@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
@@ -717,6 +718,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 						client.Reset();
 					}, false);
 				}
+				catch (EndpointNotFoundException)
+				{
+					HandleEndpointNotFound();
+				}
 				catch (Exception e)
 				{
 					ExceptionHandler.Report(e, _owner.Host.DesktopWindow);
@@ -742,6 +747,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 						client.Cancel();
 					}, false);
 				}
+				catch (EndpointNotFoundException)
+				{
+					HandleEndpointNotFound();
+				}
 				catch (Exception e)
 				{
 					ExceptionHandler.Report(e, _owner.Host.DesktopWindow);
@@ -759,6 +768,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 						client.Delete();
 					}, false);
 				}
+				catch (EndpointNotFoundException)
+				{
+					HandleEndpointNotFound();
+				}
 				catch (Exception e)
 				{
 					ExceptionHandler.Report(e, _owner.Host.DesktopWindow);
@@ -775,6 +788,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 						client.WorkItem = workItem.Data;
 						client.Reprioritize(WorkItemPriorityEnum.Stat);
 					}, false);
+				}
+				catch (EndpointNotFoundException)
+				{
+					HandleEndpointNotFound();
 				}
 				catch (Exception e)
 				{
@@ -802,6 +819,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 						return string.Format(SR.MessageProcessedItemsProgress, i + 1, itemsToProcess.Count);
 					},
 					cancelable);
+			}
+
+			private void HandleEndpointNotFound()
+			{
+				_owner.Host.ShowMessageBox(SR.MessageLocalServerNotRunning, MessageBoxActions.Ok);
 			}
 
 			private Action DeleteAction { get; set; }

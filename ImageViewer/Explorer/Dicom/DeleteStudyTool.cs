@@ -25,7 +25,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuDeleteStudy", "DeleteStudy")]
     [ActionFormerly("activate", "ClearCanvas.ImageViewer.Services.Tools.DeleteStudyTool:activate")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-	[Tooltip("activate", "TooltipDeleteStudy")]
+    [VisibleStateObserver("activate", "Visible", "VisibleChanged")]
+    [Tooltip("activate", "TooltipDeleteStudy")]
 	[IconSet("activate", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 
     [ViewerActionPermission("activate", Common.AuthorityTokens.Study.Delete)]
@@ -76,6 +77,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
+            Visible = Context.SelectedServers.AllSupport<IWorkItemService>();
+
             Enabled = Context.SelectedStudies.Count > 0
                         && Context.SelectedServers.AllSupport<IWorkItemService>()
                         && WorkItemActivityMonitor.IsRunning;

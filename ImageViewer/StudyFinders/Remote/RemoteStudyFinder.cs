@@ -80,8 +80,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			requestCollection[DicomTags.PatientsBirthDate].SetStringValue("");
 			requestCollection[DicomTags.ModalitiesInStudy].SetStringValue(queryParams["ModalitiesInStudy"]);
 			requestCollection[DicomTags.NumberOfStudyRelatedInstances].SetStringValue("");
-			requestCollection[DicomTags.InstanceAvailability].SetStringValue("");
-
+			
 			requestCollection[DicomTags.PatientSpeciesDescription].SetStringValue(GetString(queryParams, "PatientSpeciesDescription"));
 			var codeValue = GetString(queryParams, "PatientSpeciesCodeSequenceCodeValue");
 			var codeMeaning = GetString(queryParams, "PatientSpeciesCodeSequenceCodeMeaning");

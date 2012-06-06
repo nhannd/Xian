@@ -380,9 +380,13 @@ namespace ClearCanvas.ImageViewer.Configuration
 			{
 				if (value != _configuration.DefaultDeletionRule.Enabled)
 				{
-					_configuration.DefaultDeletionRule.Enabled = value;
+					var ddr = _configuration.DefaultDeletionRule;
+					ddr.Enabled = value;
 					this.Modified = true;
 					NotifyPropertyChanged("DeleteStudies");
+					// bug #10050: when first enabled, time value should be defaulted to 1 instead of 0
+					if (ddr.Enabled && ddr.TimeValue < 1)
+						this.DeleteTimeValue = 1;
 				}
 			}
     	}

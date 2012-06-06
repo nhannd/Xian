@@ -35,7 +35,18 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 		private void _btnOk_Click(object sender, EventArgs e)
 		{
-			_component.Accept();
+		    var currentCur = Cursor.Current;
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                Cursor.Show();
+                _component.Accept();
+            }
+            finally
+            {
+                Cursor.Current = currentCur;
+            }
+
 		}
 
 		private void _btnCancel_Click(object sender, EventArgs e)

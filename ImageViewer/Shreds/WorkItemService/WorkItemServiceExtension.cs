@@ -23,7 +23,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
     {
         private const string _workItemServiceEndpointName = "WorkItemService";
         private const string _workItemActivityMonitorServiceEndpointName = "WorkItemActivityMonitor";
-        private DataAccessContext _context;
         private bool _workItemServiceWCFInitialized;
         private bool _workItemActivityMonitorServiceWCFInitialized;
 
@@ -40,9 +39,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             try
             {
-                // Total hack, this ensures the database is in memory all the time, and improves performance of interaction with sql ce
-                _context = new DataAccessContext();
-
                 WorkItemService.Instance.Start();
                 string message = String.Format(SR.FormatServiceStartedSuccessfully, SR.WorkItemService);
                 Platform.Log(LogLevel.Info, message);
@@ -121,8 +117,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {
                 WorkItemService.Instance.Stop();
                 Platform.Log(LogLevel.Info, String.Format(SR.FormatServiceStoppedSuccessfully, SR.WorkItemService));
-                _context.Dispose();
-                _context = null;
             }
             catch (Exception e)
             {

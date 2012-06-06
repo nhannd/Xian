@@ -23,6 +23,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private bool _enabled;
 		private event EventHandler _enabledChangedEvent;
 
+        private bool _visible = true;
+        private event EventHandler _visibleChangedEvent; 
+
 		public override void Initialize()
 		{
 			base.Initialize();
@@ -70,6 +73,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return string.Format(SR.MessageProcessedItemsProgress, i + 1, itemsToProcess.Count);
 				},
 				cancelable);
+		}
+
+		public bool Visible
+		{
+			get { return _visible; }
+			protected set
+			{
+				if (_visible != value)
+				{
+					_visible = value;
+					EventsHelper.Fire(_visibleChangedEvent, this, EventArgs.Empty);
+				}
+			}
+		}
+
+		public event EventHandler VisibleChanged
+		{
+			add { _visibleChangedEvent += value; }
+			remove { _visibleChangedEvent -= value; }
 		}
 	}
 }

@@ -24,6 +24,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarOpenStudy", "OpenStudy")]
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuOpenStudy", "OpenStudy")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[VisibleStateObserver("activate", "Visible", "VisibleChanged")]
 	[Tooltip("activate", "TooltipOpenStudy")]
 	[IconSet("activate", "Icons.OpenToolSmall.png", "Icons.OpenToolSmall.png", "Icons.OpenToolSmall.png")]
 
@@ -109,6 +110,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
+            // TODO (Marmot): if user selects a study on a non-streaming server and then selects the parent, 
+            // the button will become visible and enabled (only to show an error message if user tries to open the study), 
+            // should the button be visible but disabled?
+            Visible = GetAtLeastOneServerSupportsLoading(); 
 		    Enabled = Context.SelectedStudies.Count > 0 && GetAtLeastOneServerSupportsLoading();
 		    SetDoubleClickHandler();
 		}

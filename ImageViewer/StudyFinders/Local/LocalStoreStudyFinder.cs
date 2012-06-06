@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Local
             const string utf8 = "ISO_IR 192";
             var collection = new DicomAttributeCollection {SpecificCharacterSet = utf8};
             collection[DicomTags.SpecificCharacterSet].SetStringValue(utf8);
-            
+
             collection[DicomTags.QueryRetrieveLevel].SetStringValue("STUDY");
             collection[DicomTags.PatientId].SetStringValue(queryParams["PatientId"]);
             collection[DicomTags.AccessionNumber].SetStringValue(queryParams["AccessionNumber"]);
@@ -78,8 +78,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Local
             collection[DicomTags.ModalitiesInStudy].SetStringValue(queryParams["ModalitiesInStudy"]);
 			collection[DicomTags.StudyInstanceUid].SetStringValue(queryParams["StudyInstanceUid"]);
 			collection[DicomTags.NumberOfStudyRelatedInstances].SetStringValue("");
-			collection[DicomTags.InstanceAvailability].SetStringValue("");
-
+			
 			collection[DicomTags.PatientSpeciesDescription].SetStringValue(GetString(queryParams, "PatientSpeciesDescription"));
 			var codeValue = GetString(queryParams, "PatientSpeciesCodeSequenceCodeValue");
 			var codeMeaning = GetString(queryParams, "PatientSpeciesCodeSequenceCodeMeaning");

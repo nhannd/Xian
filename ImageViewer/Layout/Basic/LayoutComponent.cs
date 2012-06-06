@@ -286,7 +286,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			Platform.CheckArgumentRange(columns, 1, LayoutSettings.MaximumTileColumns, "columns");
 
 			IImageBox imageBox = imageViewer.PhysicalWorkspace.SelectedImageBox;
-			if (imageBox.ParentPhysicalWorkspace.Locked)
+			
+			if (imageBox == null || imageBox.ParentPhysicalWorkspace.Locked)
 				return;
 
 			var memorableCommand = new MemorableUndoableCommand(imageBox) {BeginState = imageBox.CreateMemento()};

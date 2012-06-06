@@ -145,6 +145,9 @@ Please ensure the '{0}' is running or contact your system administrator for assi
   <data name="MessageFormatImportingFilesPlural" xml:space="preserve">
     <value>Importing files from {0} locations.</value>
   </data>
+  <data name="MessageNoFilesSelected" xml:space="preserve">
+    <value>The specified path does not contain any files.</value>
+  </data>
   <data name="MessagePermissionToOpenFilesDenied" xml:space="preserve">
     <value>You do not have permission to open images in the viewer.</value>
   </data>

@@ -28,6 +28,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuSendStudy", "SendStudy")]
     [ActionFormerly("activate", "ClearCanvas.ImageViewer.Services.Tools.SendStudyTool:activate")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+    [VisibleStateObserver("activate", "Visible", "VisibleChanged")]
     [Tooltip("activate", "TooltipSendStudy")]
 	[IconSet("activate", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png")]
 
@@ -104,6 +105,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
+            Visible = Context.SelectedServers.AllSupport<IWorkItemService>(); // TODO (Marmot): =IsLocal?
 			Enabled = Context.SelectedStudies.Count > 0
 			          && Context.SelectedServers.AllSupport<IWorkItemService>()
                       && WorkItemActivityMonitor.IsRunning;
