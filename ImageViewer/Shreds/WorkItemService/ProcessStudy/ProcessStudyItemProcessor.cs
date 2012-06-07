@@ -59,6 +59,16 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                 }
             }
 
+            try
+            {
+                DirectoryUtility.DeleteIfEmpty(Location.StudyFolder);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception attempting to delete folder: {0}",
+                             Location.StudyFolder);
+            }            
+
             // Now cleanup the actual WorkItemUid references
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
