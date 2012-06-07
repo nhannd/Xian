@@ -48,16 +48,16 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
         
-        public static void PublishWorkItemChanged(WorkItemData workItem)
+        public static void PublishWorkItemChanged(WorkItemsChangedEventType eventType, WorkItemData workItem)
 		{
-			PublishWorkItemsChanged(new List<WorkItemData> { workItem });
+			PublishWorkItemsChanged(eventType, new List<WorkItemData> { workItem });
 		}
 
-		public static void PublishWorkItemsChanged(List<WorkItemData> workItems)
+		public static void PublishWorkItemsChanged(WorkItemsChangedEventType eventType, List<WorkItemData> workItems)
 		{
 			try
 			{
-				PublishManager<IWorkItemActivityCallback>.Publish(WorkItemsChanged, workItems);
+				PublishManager<IWorkItemActivityCallback>.Publish(WorkItemsChanged, eventType, workItems);
 			}
 			catch (Exception e)
 			{

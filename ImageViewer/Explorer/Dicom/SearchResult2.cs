@@ -216,7 +216,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         /// <param name="args"></param>
         private void OnWorkItemsChangedAsync(object sender, WorkItemsChangedEventArgs args)
         {
-            if (args.ChangedItems == null)
+			// ignore refresh events
+            if (args.EventType == WorkItemsChangedEventType.Refresh || args.ChangedItems == null)
                 return;
 
             var syncContext = _synchronizationContext;

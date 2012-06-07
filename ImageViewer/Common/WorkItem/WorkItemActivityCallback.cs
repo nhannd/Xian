@@ -21,14 +21,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         void StudiesCleared();
 
         [OperationContract(IsOneWay = true)]
-        void WorkItemsChanged(List<WorkItemData> workItems);
+        void WorkItemsChanged(WorkItemsChangedEventType eventType, List<WorkItemData> workItems);
     }
 
     public abstract class WorkItemActivityCallback : IWorkItemActivityCallback
     {
         private class NilCallback : WorkItemActivityCallback
         {
-            public override void WorkItemsChanged(List<WorkItemData> workItems)
+			public override void WorkItemsChanged(WorkItemsChangedEventType eventType, List<WorkItemData> workItems)
             {
             }
 
@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         #region IWorkItemActivityCallback Members
 
-        public abstract void WorkItemsChanged(List<WorkItemData> workItems);
+		public abstract void WorkItemsChanged(WorkItemsChangedEventType eventType, List<WorkItemData> workItems);
 
         public abstract void StudiesCleared();
 

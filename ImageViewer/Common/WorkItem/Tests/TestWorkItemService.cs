@@ -44,10 +44,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
         #endregion
 
-        void IWorkItemActivityCallback.WorkItemsChanged(List<WorkItemData> workItems)
+		void IWorkItemActivityCallback.WorkItemsChanged(WorkItemsChangedEventType eventType, List<WorkItemData> workItems)
         {
             if (_isSubscribed)
-                Callback.WorkItemsChanged(workItems);
+                Callback.WorkItemsChanged(eventType, workItems);
         }
 
         void IWorkItemActivityCallback.StudiesCleared()

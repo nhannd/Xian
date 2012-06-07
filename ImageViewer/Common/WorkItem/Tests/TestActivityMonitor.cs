@@ -40,9 +40,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
     	#endregion
 
-        void IWorkItemActivityCallback.WorkItemsChanged(List<WorkItemData> workItems)
+		void IWorkItemActivityCallback.WorkItemsChanged(WorkItemsChangedEventType eventType, List<WorkItemData> workItems)
         {
-            EventsHelper.Fire(WorkItemsChanged, this, new WorkItemsChangedEventArgs(workItems));
+            EventsHelper.Fire(WorkItemsChanged, this, new WorkItemsChangedEventArgs(eventType, workItems));
         }
 
         void IWorkItemActivityCallback.StudiesCleared()

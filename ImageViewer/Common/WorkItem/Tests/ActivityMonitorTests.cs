@@ -107,17 +107,18 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
             var item = new WorkItemData { Type = DicomRetrieveRequest.WorkItemTypeString };
         	var items = new List<WorkItemData> {item};
+        	var eventType = WorkItemsChangedEventType.Update;
 
-			callback.WorkItemsChanged(items);
+			callback.WorkItemsChanged(eventType, items);
             Assert.AreEqual(0, WorkItemChangedCallbackCount);
 
             service.Subscribe(new WorkItemSubscribeRequest());
 
-			callback.WorkItemsChanged(items);
+			callback.WorkItemsChanged(eventType, items);
             Assert.AreEqual(1, WorkItemChangedCallbackCount);
 
             service.Unsubscribe(new WorkItemUnsubscribeRequest());
-			callback.WorkItemsChanged(items);
+			callback.WorkItemsChanged(eventType, items);
             Assert.AreEqual(1, WorkItemChangedCallbackCount);
         }
 
@@ -201,28 +202,29 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
             var item = new WorkItemData { Type = DicomRetrieveRequest.WorkItemTypeString };
 			var items = new List<WorkItemData> { item };
+        	var eventType = WorkItemsChangedEventType.Update;
 			SubscribeAndPause(monitor, WorkItemChanged1);
 
-			WaitForEvents(() => callback.WorkItemsChanged(items), 1);
+			WaitForEvents(() => callback.WorkItemsChanged(eventType, items), 1);
             Assert.AreEqual(1, WorkItemChanged1Count);
             Assert.AreEqual(0, WorkItemChanged2Count);
             Assert.AreEqual(0, WorkItemChanged3Count);
 
             SubscribeAndPause(monitor, WorkItemChanged2);
-			WaitForEvents(() => callback.WorkItemsChanged(items), 2);
+			WaitForEvents(() => callback.WorkItemsChanged(eventType, items), 2);
             Assert.AreEqual(2, WorkItemChanged1Count);
             Assert.AreEqual(1, WorkItemChanged2Count);
             Assert.AreEqual(0, WorkItemChanged3Count);
 
             item.Type = DicomSendRequest.WorkItemTypeString;
-			callback.WorkItemsChanged(items);
+			callback.WorkItemsChanged(eventType, items);
             Thread.Sleep(100);
             Assert.AreEqual(3, WorkItemChanged1Count);
             Assert.AreEqual(2, WorkItemChanged2Count);
             Assert.AreEqual(0, WorkItemChanged3Count);
 
             UnsubscribeAndPause(monitor, WorkItemChanged1);
-			callback.WorkItemsChanged(items);
+			callback.WorkItemsChanged(eventType, items);
             Thread.Sleep(100);
             Assert.AreEqual(3, WorkItemChanged1Count);
             Assert.AreEqual(3, WorkItemChanged2Count);
@@ -231,7 +233,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
             SubscribeAndPause(monitor, WorkItemChanged1);
             UnsubscribeAndPause(monitor, WorkItemChanged2);
             SubscribeAndPause(monitor, WorkItemChanged3);
-			WaitForEvents(() => callback.WorkItemsChanged(items), 2);
+			WaitForEvents(() => callback.WorkItemsChanged(eventType, items), 2);
             Assert.AreEqual(4, WorkItemChanged1Count);
             Assert.AreEqual(3, WorkItemChanged2Count);
             Assert.AreEqual(1, WorkItemChanged3Count);
@@ -291,7 +293,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 
         #region IWorkItemActivityCallback Members
 
-        void IWorkItemActivityCallback.WorkItemsChanged(List<WorkItemData> workItems)
+        void IWorkItemActivityCallback.WorkItemsChanged(WorkItemsChangedEventType eventType, List<WorkItemData> workItems)
         {
             lock (_syncLock)
             {
