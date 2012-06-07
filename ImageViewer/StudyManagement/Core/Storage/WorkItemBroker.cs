@@ -173,10 +173,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         {
             var list = (from w in Context.WorkItems
                         where w.StudyInstanceUid == studyInstanceUid
-                              && w.Type == type
-                              && w.Status != WorkItemStatusEnum.Complete
-                              && w.Status != WorkItemStatusEnum.Deleted
-                              && w.Status != WorkItemStatusEnum.Canceled
+                              && w.Type == type &&
+                              (w.Status == WorkItemStatusEnum.Pending
+                              || w.Status == WorkItemStatusEnum.InProgress
+                              || w.Status == WorkItemStatusEnum.Idle)                              
                         select w);
             
             if (!list.Any()) return null;
