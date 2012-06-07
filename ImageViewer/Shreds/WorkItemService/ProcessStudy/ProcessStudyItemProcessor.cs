@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
             LoadUids();
             foreach (WorkItemUid sop in WorkQueueUidList)
             {
-                if (sop.Failed)
+                if (sop.Failed || !sop.Complete)
                 {
                     try
                     {
