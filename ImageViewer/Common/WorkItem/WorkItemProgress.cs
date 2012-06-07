@@ -163,19 +163,22 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public int StudiesDeleted { get; set; }
 
         [DataMember(IsRequired = true)]
+        public int StudiesFailed { get; set; }
+
+        [DataMember(IsRequired = true)]
         public bool Complete { get; set; }
 
         public override string Status
         {
             get
             {
-                if (StudiesDeleted == 0 && StudiesToProcess == 0 && StudyFoldersProcessed == 0 && StudyFoldersToProcess == 0 && StudiesProcessed == 0)
+                if (StudiesDeleted == 0 && StudiesToProcess == 0 && StudyFoldersProcessed == 0 && StudyFoldersToProcess == 0 && StudiesProcessed == 0 && StudiesFailed == 0)
                 {
                     return Complete ? SR.ReindexProgress_StatusNoStudies : string.Empty;
                 }
 
                 return string.Format(SR.ReindexProgress_Status, StudiesProcessed, StudiesToProcess,
-                    StudyFoldersProcessed, StudyFoldersToProcess, StudiesDeleted);
+                    StudyFoldersProcessed, StudyFoldersToProcess, StudiesDeleted, StudiesFailed);
             }
         }
 

@@ -109,6 +109,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             Progress.StudiesDeleted = 0;
             Progress.StudyFoldersProcessed = 0;
             Progress.StudiesProcessed = 0;
+            Progress.StudiesFailed = 0;
             Progress.Complete = false;
 
             Proxy.UpdateProgress();
@@ -143,6 +144,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
                                                               Proxy.UpdateProgress();
                                                           }
                                                       };
+
+            _reindexUtility.StudyReindexFailedEvent += delegate(object sender, ReindexUtility.StudyEventArgs e)
+                                                           {
+                                                               Progress.StudiesFailed++;
+                                                               Proxy.Item.StudyInstanceUid = e.StudyInstanceUid;
+                                                               if (!string.IsNullOrEmpty(e.Message))
+                                                                   Progress.StatusDetails = e.Message;
+                                                               Proxy.UpdateProgress();
+                                                           };
             
             _reindexUtility.Process();
 
@@ -159,7 +169,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             else
             {
                 Progress.Complete = true;
-                Proxy.Complete();
+                if (Progress.StudiesFailed > 0)
+                    Proxy.Fail(Progress.StatusDetails,WorkItemFailureType.Fatal);                
+                else
+                    Proxy.Complete();
             }           
         }
 

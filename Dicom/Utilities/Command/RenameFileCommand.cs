@@ -91,12 +91,13 @@ namespace ClearCanvas.Dicom.Utilities.Command
                 {
                     try
                     {
-                        Platform.Log(LogLevel.Info, "Restoring {0}", _sourceFile);
+                        Platform.Log(LogLevel.Debug, "Restoring source {0}", _sourceFile);
                         FileUtils.Copy(_srcBackupFile, _sourceFile, true);
+                        FileUtils.Delete(_srcBackupFile);
                     }
                     catch(Exception e)
                     {
-                        Platform.Log(LogLevel.Error, "Error occured when rolling back source file in RenameFileCommand: {0}", e.Message);
+                        Platform.Log(LogLevel.Warn, "Error occured when rolling back source file in RenameFileCommand: {0}", e.Message);
                     }
                 }
             }
@@ -106,15 +107,15 @@ namespace ClearCanvas.Dicom.Utilities.Command
             {
                 try
                 {
-                    Platform.Log(LogLevel.Error, "Restoring {0}", _destinationFile);
+                    Platform.Log(LogLevel.Debug, "Restoring destination {0}", _destinationFile);
                     FileUtils.Copy(_destBackupFile, _destinationFile, true);
+                    FileUtils.Delete(_destBackupFile);
                 }
                 catch (Exception e)
                 {
                     Platform.Log(LogLevel.Warn, "Error occured when rolling back destination file in RenameFileCommand: {0}", e.Message);
                 } 
             }
-			
 		}
 
         #region IDisposable Members

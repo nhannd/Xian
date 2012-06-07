@@ -52,6 +52,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         private event EventHandler<StudyEventArgs> _studyFolderProcessedEvent;
         private event EventHandler<StudyEventArgs> _studyProcessedEvent;
         private event EventHandler<StudiesEventArgs> _studiesRestoredEvent;
+        private event EventHandler<StudyEventArgs> _studyFailedEvent;
 
         private readonly object _syncLock = new object();
         private bool _cancelRequested;
@@ -63,6 +64,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         public class StudyEventArgs : EventArgs
         {
             public string StudyInstanceUid;
+            public string Message;
         }
 
         public class StudiesEventArgs : EventArgs
@@ -102,6 +104,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 lock (_syncLock)
                 {
                     _studyFolderProcessedEvent -= value;
+                }
+            }
+        }
+
+        public event EventHandler<StudyEventArgs> StudyReindexFailedEvent
+        {
+            add
+            {
+                lock (_syncLock)
+                {
+                    _studyFailedEvent += value;
+                }
+            }
+            remove
+            {
+                lock (_syncLock)
+                {
+                    _studyFailedEvent -= value;
                 }
             }
         }
@@ -357,12 +377,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                                                   _threadPool.StartStopStateChangedEvent += del.ProxyDelegate;
 
                                                                   r.Process();
+
                                                                   lock (_syncLock)
-                                                                      EventsHelper.Fire(_studyFolderProcessedEvent, this,
-                                                                                        new StudyEventArgs
-                                                                                            {
-                                                                                                StudyInstanceUid = r.Location.Study.StudyInstanceUid
-                                                                                            });
+                                                                      EventsHelper.Fire(
+                                                                          r.Failed ? _studyFailedEvent
+                                                                                   : _studyFolderProcessedEvent, 
+                                                                                   this,
+                                                                          new StudyEventArgs
+                                                                              {
+                                                                                  StudyInstanceUid = r.Location.Study.StudyInstanceUid,
+                                                                                  Message = r.FailureMessage
+                                                                              });
 
                                                                   _threadPool.StartStopStateChangedEvent -= del.ProxyDelegate;
                                                               });

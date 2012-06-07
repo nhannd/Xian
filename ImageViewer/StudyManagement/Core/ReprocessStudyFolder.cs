@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
@@ -38,7 +39,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
         public StudyLocation Location { get; private set; }
         public bool StudyStoredInDatabase { get; private set; }
-
+        public bool Failed { get; private set; }
+        public string FailureMessage { get; private set; }
         #endregion
 
         #region Constructors
@@ -109,6 +111,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                                                            catch (Exception x)
                                                                            {
                                                                                Platform.Log(LogLevel.Warn, x, "Unexpected exception deleting file: {0}", file);
+                                                                               Failed = true;
+                                                                               FailureMessage = x.Message;
                                                                            }
                                                                        }
                                                                    }
@@ -128,8 +132,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                                                }
                                                                catch (Exception x)
                                                                {
-                                                                   Platform.Log(LogLevel.Error, x, "Exception when reindexing files");
+                                                                   Platform.Log(LogLevel.Error, "Exception when reindexing {0} files, last file: {1}: {2}", fileList.Count, file, x.Message);
                                                                    fileList.Clear(); // Clear out the failed entries
+                                                                   Failed = true;
+                                                                   FailureMessage = x.Message;
                                                                }
                                                            }, true);
                 if (fileList.Count > 0)
@@ -138,8 +144,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                     p.ProcessBatch(fileList, studyXml);
 
-                    // Now apply Deletion rules
-                    var ep = new RulesEngineExtensionPoint();
+                    // Now apply Deletion rules              
 
                     var ruleContext = new RulesEngineOptions
                                           {
@@ -152,12 +157,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             catch (Exception x)
             {
                 Platform.Log(LogLevel.Error, x, "Unexpected exception reindexing folder: {0}", Location.StudyFolder);
+                Failed = true;
+                FailureMessage = x.Message;
             }
 
             if (_cancelRequested)
                 Platform.Log(LogLevel.Info, "Cancel requested while reprocessing folder: {0}", Location.StudyFolder);
             else
-                Platform.Log(LogLevel.Info, "Reprocessed study folder: {0}", Location.Study.StudyInstanceUid);
+                Platform.Log(LogLevel.Info, "Completed reprocessing study folder: {0}", Location.Study.StudyInstanceUid);
         }    
 
         private void RebuildStudyXml()
@@ -175,27 +182,42 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                                                    lastFile = new DicomFile(file);
                                                                    lastFile.Load(DicomReadOptions.Default |
                                                                                   DicomReadOptions.StorePixelDataReferences);
-
-                                                                   if (!studyXml.AddFile(lastFile))
+                                                                   if (Path.GetFileNameWithoutExtension(file) == lastFile.MediaStorageSopInstanceUid)
                                                                    {
-                                                                       Platform.Log(LogLevel.Warn,
-                                                                                    "Importing file that was in the wrong study folder: {0}",
-                                                                                    file);
-                                                                       var context =
-                                                                           new ImportStudyContext(
-                                                                               lastFile.SourceApplicationEntityTitle, StudyStore.GetConfiguration());
-                                                                       var importer = new ImportFilesUtility(context);
-                                                                       var result = importer.Import(lastFile,BadFileBehaviourEnum.Delete, FileImportBehaviourEnum.Move);
-                                                                       if (result.DicomStatus != DicomStatuses.Success)
+                                                                       if (!studyXml.AddFile(lastFile))
                                                                        {
-                                                                           Platform.Log(LogLevel.Warn,"Unable to import file: {0}", result.ErrorMessage);
+                                                                           Platform.Log(LogLevel.Warn,
+                                                                                        "Importing file that was in the wrong study folder: {0}",
+                                                                                        file);
+                                                                           var context =
+                                                                               new ImportStudyContext(
+                                                                                   lastFile.SourceApplicationEntityTitle,
+                                                                                   StudyStore.GetConfiguration());
+                                                                           var importer = new ImportFilesUtility(context);
+                                                                           var result = importer.Import(lastFile,
+                                                                                                        BadFileBehaviourEnum.Delete,
+                                                                                                        FileImportBehaviourEnum.Move);
+                                                                           if (result.DicomStatus != DicomStatuses.Success)
+                                                                           {
+                                                                               Platform.Log(LogLevel.Warn,
+                                                                                            "Unable to import file: {0}",
+                                                                                            result.ErrorMessage);
+                                                                               Failed = true;
+                                                                               FailureMessage = result.ErrorMessage;
+                                                                           }
                                                                        }
+                                                                   }
+                                                                   else
+                                                                   {
+                                                                       Platform.Log(LogLevel.Info, "Ignoring duplicate file: {0}", file);
                                                                    }
                                                                }
                                                                catch (Exception x)
                                                                {
                                                                    Platform.Log(LogLevel.Error, x,
                                                                                 "Failed to load file for reprocessing: {0}", file);
+                                                                   Failed = true;
+                                                                   FailureMessage = x.Message;
                                                                }
 
                                                            }, false);
@@ -212,6 +234,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             catch (Exception x)
             {
                 Platform.Log(LogLevel.Error, x, "Unexpected exception reindexing folder: {0}", Location.StudyFolder);
+                Failed = true;
+                FailureMessage = x.Message;
             }
 
             if (_cancelRequested)
