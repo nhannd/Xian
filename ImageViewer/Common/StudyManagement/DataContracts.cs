@@ -196,26 +196,52 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     public class StorageConfiguration
     {
 		[DataContract(Namespace = StudyManagementNamespace.Value)]
-		public class DeletionRule
-		{
-			[DataMember(IsRequired = true)]
-			public bool Enabled { get; set; }
+        public class DeletionRule : IEquatable<DeletionRule>
+        {
+            [DataMember(IsRequired = true)]
+            public bool Enabled { get; set; }
 
-			[DataMember(IsRequired = true)]
-			public int TimeValue { get; set; }
+            [DataMember(IsRequired = true)]
+            public int TimeValue { get; set; }
 
-			[DataMember(IsRequired = true)]
-			public TimeUnit TimeUnit { get; set; }
+            [DataMember(IsRequired = true)]
+            public TimeUnit TimeUnit { get; set; }
 
-			public DeletionRule Clone()
-			{
-				return new DeletionRule
-				{
-					Enabled = this.Enabled,
-					TimeUnit = this.TimeUnit,
-					TimeValue = this.TimeValue
-				};
-			}
+            public DeletionRule Clone()
+            {
+                return new DeletionRule
+                {
+                    Enabled = this.Enabled,
+                    TimeUnit = this.TimeUnit,
+                    TimeValue = this.TimeValue
+                };
+            }
+
+            public bool Equals(DeletionRule other)
+            {
+                if (ReferenceEquals(null, other)) return false;
+                if (ReferenceEquals(this, other)) return true;
+                return other.Enabled.Equals(Enabled) && other.TimeValue == TimeValue && Equals(other.TimeUnit, TimeUnit);
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != typeof(DeletionRule)) return false;
+                return Equals((DeletionRule)obj);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    int result = Enabled.GetHashCode();
+                    result = (result * 397) ^ TimeValue;
+                    result = (result * 397) ^ TimeUnit.GetHashCode();
+                    return result;
+                }
+            }
 		}
 
         public const double AutoMinimumFreeSpace = -1;
@@ -224,11 +250,6 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         private bool _fileStoreDiskspaceInitialized;
         private Diskspace _fileStoreDiskspace;
         private double _minimumFreeSpacePercent = AutoMinimumFreeSpace;
-
-    	public StorageConfiguration()
-    	{
-    		this.DefaultDeletionRule = new DeletionRule();
-    	}
 
         #region Data Members
 
@@ -394,7 +415,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 			{
 				FileStoreDirectory = this.FileStoreDirectory,
 				MinimumFreeSpacePercent = this.MinimumFreeSpacePercent,
-				DefaultDeletionRule = this.DefaultDeletionRule.Clone()
+                DefaultDeletionRule = this.DefaultDeletionRule == null ? null : this.DefaultDeletionRule.Clone()
 			};
 		}
 
