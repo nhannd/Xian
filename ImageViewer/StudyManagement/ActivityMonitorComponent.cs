@@ -1098,7 +1098,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			var path = this.FileStore;
 			if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+			{
 				Process.Start(path);
+			}
+			else
+			{
+				this.Host.ShowMessageBox(SR.MessageFilestoreDirectoryDoesNotExist, MessageBoxActions.Ok);
+			}
 		}
 
 		public void OpenLocalServerConfigurationPage()

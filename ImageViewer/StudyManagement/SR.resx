@@ -185,6 +185,9 @@ make room, or increase the maximum usage.</value>
   <data name="MessageFailedToStartReindex" xml:space="preserve">
     <value>Failed to start re-index.</value>
   </data>
+  <data name="MessageFilestoreDirectoryDoesNotExist" xml:space="preserve">
+    <value>The currently configured file store directory does not exist.</value>
+  </data>
   <data name="MessageLocalServerNotRunning" xml:space="preserve">
     <value>The Local Server must be running in order to complete this operation.</value>
   </data>
