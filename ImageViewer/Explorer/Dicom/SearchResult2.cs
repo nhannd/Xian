@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
@@ -14,11 +15,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     {
         private volatile SynchronizationContext _synchronizationContext;
         private IWorkItemActivityMonitor _activityMonitor;
-        private DateTime? _lastWorkItemsChangedTime;
+
+        private System.Threading.Timer _processChangedStudiesTimer;
 
         private readonly object _syncLock = new object();
-		private readonly Dictionary<string, string> _setChangedStudies;
-        private System.Threading.Timer _processChangedStudiesTimer;
+        private readonly Dictionary<string, string> _setChangedStudies;
+
+        private DateTime? _lastUpdateQueryEndTime;
+        private bool _queryingForUpdates;
+        private bool _hastenUpdateQuery;
+
+        private DateTime? _lastStudyChangeTime;
 
         private bool _reindexing;
 
@@ -39,6 +46,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
                 _reindexing = value;
                 SetResultsTitle();
+
+                lock (_syncLock)
+                    _hastenUpdateQuery = true; //make a hastier update query when re-indexing status changes.
             }
         }
 
@@ -63,6 +73,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             
             try
             {
+                Platform.Log(LogLevel.Debug, "Querying for a re-index work item that is in progress.");
+
                 Platform.GetService<IWorkItemService>(s => reindexItems = s.Query(request).Items);
                 Reindexing = reindexItems != null && reindexItems.Any(item => item.Status == WorkItemStatusEnum.InProgress);
             }
@@ -114,6 +126,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private void OnStudiesCleared()
         {
+            Platform.Log(LogLevel.Debug, "Processing 'studies cleared' message from Work Item service.");
+
             lock (_syncLock)
             {
                 _setChangedStudies.Clear();
@@ -140,7 +154,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             //then we just ignore these updates. Otherwise, the user might get out-of-date updates, and may even see
             //studies appearing in the table while the search is still in progress.
             if (hasUserSearched && updateQueryStartedBeforeUserSearchEnded)
+            {
+                Platform.Log(LogLevel.Debug, "Disregarding updated studies; update query started before user search ended.");
                 return;
+            }
 
             foreach (var updatedStudy in updatedStudies)
                 UpdateTableItem(updatedStudy);
@@ -226,27 +243,47 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             lock (_syncLock)
             {
+                var previousChangedStudiesCount = _setChangedStudies.Count;
                 foreach (var item in args.ChangedItems)
                 {
                     var theItem = item;
-                    if (item.Type.Equals(ReindexRequest.WorkItemTypeString))
+                    if (theItem.Type.Equals(ReindexRequest.WorkItemTypeString))
                         syncContext.Post(ignore => UpdateReindexing(theItem.Status == WorkItemStatusEnum.InProgress), false);
                     
+                    if (item.Status == WorkItemStatusEnum.DeleteInProgress || item.Status == WorkItemStatusEnum.Deleted)
+                        continue; //Skip work items that are just being deleted.
+
                     if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyRead)
                         continue; //If it's a "read" operation, don't update anything.
 
-                    //Otherwise, if it's not a read operation, but it has a Study UID, then it's probably updating studies.
+                    if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete)
+                        _hastenUpdateQuery = true; //We want deleted studies to disappear quickly, so make a hasty update query.
+
+                    //If it's not a read operation, but it has a Study UID, then it's probably updating studies.
                     //(e.g. re-index, re-apply rules, import, process study).
                     if (!String.IsNullOrEmpty(item.StudyInstanceUid))
+                    {
+                        if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+                            Platform.Log(LogLevel.Debug, "Study '{0}' has changed (Work Item: {1}, {2})", item.StudyInstanceUid, item.Identifier, item.Type);
+
                         _setChangedStudies[item.StudyInstanceUid] = item.StudyInstanceUid;
+                    }
                 }
 
-                _lastWorkItemsChangedTime = DateTime.Now;
+                if (_setChangedStudies.Count > previousChangedStudiesCount)
+                {
+                    Platform.Log(LogLevel.Debug, "{0} studies changed since the last update.", _setChangedStudies.Count);
+
+                    //Only update this if we've received a message for a study not already in the set.
+                    //We're only interested in the unique set of studies that has changed (or is changing)
+                    //since the last time we updated the studies in the study list.
+                    _lastStudyChangeTime = DateTime.Now;
+                }
             }
         }
 
         /// <summary>
-        /// Process studies thread.
+        /// Process studies timer method.
         /// </summary>
         /// <param name="state"></param>
         private void ProcessChangedStudiesAsync(object state)
@@ -275,27 +312,55 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             queryStartTime = null;
             DateTime now = DateTime.Now;
 
+            var fiveSeconds = TimeSpan.FromSeconds(5);
+            var rapidChangeInterval = TimeSpan.FromMilliseconds(300);
+
             lock (_syncLock)
             {
-                if (_setChangedStudies.Count == 0 || _lastWorkItemsChangedTime == null)
+                if (_queryingForUpdates)
+                    return; //Already querying.
+
+                //Nothing to query for? Return.
+                if (_setChangedStudies.Count == 0 || !_lastStudyChangeTime.HasValue)
                     return;
 
-                //If work items are still coming in, delay the query.
-                if (now - _lastWorkItemsChangedTime.Value < TimeSpan.FromMilliseconds(350))
+                bool studiesChanging = now - _lastStudyChangeTime.Value < rapidChangeInterval;
+                if (studiesChanging)
+                {
+                    //Many DIFFERENT studies are changing in very rapid succession. Delay until it settles down, which usually isn't long.
+                    Platform.Log(LogLevel.Debug, "Studies are still actively changing - delaying update.");
                     return;
+                }
+                
+                if (!_hastenUpdateQuery)
+                {
+                    bool updatedRecently = _lastUpdateQueryEndTime.HasValue && now - _lastUpdateQueryEndTime < fiveSeconds;
+                    if (updatedRecently)
+                    {
+                        //We just finished an update query less than 5 seconds ago.
+                        Platform.Log(LogLevel.Debug, "Studies were updated within the last 5 seconds - delaying update.");
+                        return;
+                    }
+                }
+
+                //Reset this before the immediate query.
+                _hastenUpdateQuery = false;
 
                 //Add everything to the deleted list.
                 deletedStudyUids.AddRange(_setChangedStudies.Keys);
                 _setChangedStudies.Clear();
+
+                //We are officially querying for updates.
+                _queryingForUpdates = true;
             }
 
+            queryStartTime = now;
             string studyUids = DicomStringHelper.GetDicomStringArray(deletedStudyUids);
-            if (String.IsNullOrEmpty(studyUids))
-                return;
 
             try
             {
-                queryStartTime = now;
+                var clock = new CodeClock();
+                clock.Start();
              
                 var criteria = new StudyRootStudyIdentifier { StudyInstanceUid = studyUids };
                 var request = new GetStudyEntriesRequest { Criteria = new StudyEntry { Study = criteria } };
@@ -311,10 +376,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     deletedStudyUids.Remove(entry.Study.StudyInstanceUid);
                     updatedStudies.Add(entry);
                 }
+
+                clock.Stop();
+                Platform.Log(LogLevel.Debug, "Study update query took {0}.", clock);
             }
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Error, e);
+            }
+            finally
+            {
+                lock (_syncLock)
+                {
+                    //Finished querying for updates.
+                    _queryingForUpdates = false;
+                    _lastUpdateQueryEndTime = now;
+                }
             }
         }
 

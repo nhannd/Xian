@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
@@ -29,7 +30,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private int _rowIndexFromMouseDown;
 		private event EventHandler<ItemDragEventArgs> _itemDrag;
 
-		public event EventHandler<ItemDragEventArgs> ItemDrag
+        public DataGridViewWithDragSupport()
+        {
+            base.DoubleBuffered = true;
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+	    public new bool DoubleBuffered
+	    {
+            get { return base.DoubleBuffered; }
+            set { base.DoubleBuffered = value; }
+	    }
+
+	    public event EventHandler<ItemDragEventArgs> ItemDrag
 		{
 			add { _itemDrag += value; }
 			remove { _itemDrag -= value; }

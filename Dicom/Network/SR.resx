@@ -123,6 +123,9 @@
   <data name="DuplicateSOPInstance" xml:space="preserve">
     <value>A duplicate SOP Instance could not be processed.</value>
   </data>
+  <data name="ErrorSendSopClassNotSupported" xml:space="preserve">
+    <value>Some image(s) of this study is not supported by remote device. See log for more details.</value>
+  </data>
   <data name="MessagePrinterError" xml:space="preserve">
     <value>Unexpected failure reported by the printer.</value>
   </data>

@@ -13,8 +13,12 @@ using System;
 
 namespace ClearCanvas.Dicom.Codec
 {
-	public class DicomCodecUnsupportedSopException : DicomCodecException
+    [Serializable]
+    public class DicomCodecUnsupportedSopException : DicomCodecException
 	{
+        public DicomCodecUnsupportedSopException()
+        {
+        }
 		public DicomCodecUnsupportedSopException(string desc, Exception e) : base(desc, e)
         {
         }

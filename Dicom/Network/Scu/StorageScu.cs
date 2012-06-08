@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Codec;
+using System.Text;
 
 namespace ClearCanvas.Dicom.Network.Scu
 {
@@ -465,20 +466,33 @@ namespace ClearCanvas.Dicom.Network.Scu
             // built into NetworkBase as opposed to here.
 		    ThreadPool.QueueUserWorkItem(delegate
 		                                     {
-		                                         bool ok = SendCStore(client, association);
-		                                         while (ok == false)
-		                                         {
-		                                             _fileListIndex++;
-		                                             if (_fileListIndex >= _storageInstanceList.Count)
-		                                             {
-		                                                 Platform.Log(LogLevel.Info,
-		                                                              "Completed sending C-STORE-RQ messages, releasing association.");
-		                                                 client.SendReleaseRequest();
-		                                                 StopRunningOperation();
-		                                                 return;
-		                                             }
-		                                             ok = SendCStore(client, association);
-		                                         }
+                                                 try
+                                                 {
+                                                     bool ok = SendCStore(client, association);
+                                                     while (ok == false)
+                                                     {
+                                                         Platform.Log(LogLevel.Info, "Attempted to send {0} of {1} instances to {2}.", _fileListIndex + 1, _storageInstanceList.Count, client.AssociationParams.CalledAE);
+                                                         _fileListIndex++;
+                                                         if (_fileListIndex >= _storageInstanceList.Count)
+                                                         {
+                                                             Platform.Log(LogLevel.Info,
+                                                                          "Completed sending C-STORE-RQ messages, releasing association.");
+                                                             client.SendReleaseRequest();
+                                                             StopRunningOperation();
+                                                             return;
+                                                         }
+                                                          
+                                                         // TODO (Marmot): Check stop?
+
+                                                         ok = SendCStore(client, association);                                                             
+                                                     }                                                     
+                                                 }
+                                                 catch
+                                                 {
+                                                     // TODO (Marmot): this is catch-all to prevent the shredhost from crashing.
+                                                     // Errors should have been handled in other places.
+                                                     Platform.Log(LogLevel.Error, "Error when sending C-STORE-RQ messages, aborted on-going send operations");
+                                                 }
 		                                     }, null);
 		}
 
@@ -537,12 +551,14 @@ namespace ClearCanvas.Dicom.Network.Scu
 
                     if (DicomCodecRegistry.GetCodec(fileToSend.TransferSyntax) != null)
                     {
+                        // We can compress/decompress the file. Check if remote device accepts it
                         if (pcid == 0)
                             pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
                                                                                     TransferSyntax.ExplicitVrLittleEndian);
                         if (pcid == 0)
                             pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
                                                                                     TransferSyntax.ImplicitVrLittleEndian);
+
                     }
                 }
                 else
@@ -559,7 +575,10 @@ namespace ClearCanvas.Dicom.Network.Scu
 		    if (pcid == 0)
 			{
 				fileToSend.SendStatus = DicomStatuses.SOPClassNotSupported;
-				fileToSend.ExtendedFailureDescription = "No valid presentation contexts for file.";
+                fileToSend.ExtendedFailureDescription = string.Format(SR.ErrorSendSopClassNotSupported, msg.SopClass);
+
+                LogError(fileToSend, msg, DicomStatuses.SOPClassNotSupported);
+
 				OnImageStoreCompleted(fileToSend);
 				_failureSubOperations++;
 				_remainingSubOperations--;
@@ -594,7 +613,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 				Platform.Log(LogLevel.Error, e, "Unexpected exception when compressing or decompressing file before send {0}", fileToSend.Filename);
 
 				fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
-				fileToSend.ExtendedFailureDescription = "Error decompressing or compressing file before send.";
+				fileToSend.ExtendedFailureDescription = string.Format("Error decompressing or compressing file before send: {0}", e.Message);
 				OnImageStoreCompleted(fileToSend);
 				_failureSubOperations++;
 				_remainingSubOperations--;
@@ -606,7 +625,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 				Platform.Log(LogLevel.Error, e, "Unexpected exception while sending file {0}", fileToSend.Filename);
 
 				fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
-				fileToSend.ExtendedFailureDescription = "Unexpected exception while sending file.";
+				fileToSend.ExtendedFailureDescription = string.Format("Unexpected exception while sending file: {0}", e.Message);
 				OnImageStoreCompleted(fileToSend);
 				_failureSubOperations++;
 				_remainingSubOperations--;
@@ -615,6 +634,32 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 			return true;
 		}
+
+        private void LogError(StorageInstance instance, DicomMessage msg, DicomStatus dicomStatus)
+        {
+            var log = new StringBuilder();
+
+            if (dicomStatus == DicomStatuses.SOPClassNotSupported)
+            {
+                log.AppendLine(string.Format("Unable to transfer SOP {0} in study {1}. Remote device does not accept {2} in {3} transfer syntax", 
+                                instance.SopInstanceUid, instance.StudyInstanceUid, msg.SopClass, msg.TransferSyntax));
+
+                if (instance.TransferSyntax.Encapsulated)
+                {
+                    var codecExists = DicomCodecRegistry.GetCodec(instance.TransferSyntax) != null;
+
+                    if (codecExists)
+                        log.AppendLine(string.Format("Note: codec is available for {0} but remote device does not support it?", instance.TransferSyntax));
+                    else
+                        log.AppendLine(string.Format("Note: codec is NOT available for {0}", instance.TransferSyntax));
+                }
+                
+            }
+            
+                
+            Platform.Log(LogLevel.Error, log.ToString());    
+        }
+
 
 		#endregion
 
