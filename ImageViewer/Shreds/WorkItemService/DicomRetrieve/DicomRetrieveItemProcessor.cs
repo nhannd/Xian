@@ -12,6 +12,7 @@
 using System;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
@@ -86,6 +87,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
             else
             {
                 Proxy.Fail("Invalid request type.", WorkItemFailureType.Fatal);
+                return;
+            }
+
+            var storageConfiguration = StudyStore.GetConfiguration();
+            if (storageConfiguration.IsMaximumUsedSpaceExceeded)
+            {
+                Proxy.Fail(string.Format("Unable to retrieve, file store is {0} percent full, maximum usage {1} percent.",
+                                              storageConfiguration.FileStoreDiskSpace.UsedSpacePercent.ToString("00.000"),
+                                              storageConfiguration.MaximumUsedSpacePercent.ToString("00.000")), WorkItemFailureType.NonFatal);
                 return;
             }
 

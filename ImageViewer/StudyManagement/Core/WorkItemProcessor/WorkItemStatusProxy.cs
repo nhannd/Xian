@@ -136,24 +136,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         {
             DateTime now = Platform.Time;
 
-            var workItem = Item as IWorkItemRequestTimeWindow;
+            var workItem = Item.Request as IWorkItemRequestTimeWindow;
 
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var workItemBroker = context.GetWorkItemBroker();
 
                 Item = workItemBroker.GetWorkItem(Item.Oid);
-                Item.Progress = Progress;
-                if (workItem != null)
+                if (workItem != null && Item.Priority != WorkItemPriorityEnum.Stat)
                 {
                     DateTime scheduledTime = workItem.GetScheduledTime(now, 0);
                     Item.ProcessTime = scheduledTime;
-                    Item.ScheduledTime = scheduledTime;
+                    Item.ScheduledTime = scheduledTime;      
                 }
                 else
                 {
                     Item.ProcessTime = now.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds);
                 }
+                Item.Progress = Progress;
 
                 if (Item.ProcessTime > Item.ExpirationTime)
                     Item.ExpirationTime = Item.ProcessTime;
