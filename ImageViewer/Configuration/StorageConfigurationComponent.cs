@@ -39,9 +39,9 @@ namespace ClearCanvas.ImageViewer.Configuration
         private DelayedEventPublisher _delaySetFileStoreDirectory;
         private StorageConfiguration _configuration;
         private string _fileStoreDriveName;
+        private string _fileStoreDirectory;
         private string _currentFileStoreDirectory;
-        private string _originalFileStoreDirectory;
-    	private StorageConfiguration.DeletionRule _originalDeletionRule;
+    	private StorageConfiguration.DeletionRule _currentDeletionRule;
 
         private IWorkItemActivityMonitor _activityMonitor;
 
@@ -52,12 +52,12 @@ namespace ClearCanvas.ImageViewer.Configuration
             _activityMonitor.IsConnectedChanged += ActivityMonitorOnIsConnectedChanged;
 
             _configuration = StudyStore.GetConfiguration();
-            _currentFileStoreDirectory = _originalFileStoreDirectory = _configuration.FileStoreDirectory;
+            _fileStoreDirectory = _currentFileStoreDirectory = _configuration.FileStoreDirectory;
             
             UpdateFileStoreDriveName();
             MaximumUsedSpaceChanged();
 
-			_originalDeletionRule = _configuration.DefaultDeletionRule.Clone();
+			_currentDeletionRule = _configuration.DefaultDeletionRule.Clone();
 			
 			base.Start();
 		}
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Configuration
                 StudyStore.UpdateConfiguration(_configuration);
 
 				// if the default deletion rule was modified, kick-off a re-apply rules work item
-				if(!Equals(_configuration.DefaultDeletionRule, _originalDeletionRule))
+				if(!Equals(_configuration.DefaultDeletionRule, _currentDeletionRule))
 				{
 					var client = new ReapplyRulesBridge();
 					client.ReapplyAll(new RulesEngineOptions { ApplyDeleteActions = true });
@@ -148,21 +148,21 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         public string FileStoreDirectory
         {
-            get { return _currentFileStoreDirectory; }
+            get { return _fileStoreDirectory; }
             set
             {
-                if (Equals(value, _currentFileStoreDirectory))
+                if (Equals(value, _fileStoreDirectory))
                     return;
 
                 Modified = true;
-                _currentFileStoreDirectory = value;
+                _fileStoreDirectory = value;
                 _delaySetFileStoreDirectory.Publish(this, EventArgs.Empty);
             }
         }
         
         public bool HasFileStoreChanged
         {
-            get { return _configuration.FileStoreDirectory != _originalFileStoreDirectory; }
+            get { return _configuration.FileStoreDirectory != _currentFileStoreDirectory; }
         }
 
         public string FileStoreChangedMessage
@@ -495,10 +495,10 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         private void RealSetFileStoreDirectory(object sender, EventArgs e)
         {
-            if (Equals(_currentFileStoreDirectory, _configuration.FileStoreDirectory))
+            if (Equals(_fileStoreDirectory, _configuration.FileStoreDirectory))
                 return;
 
-            _configuration.FileStoreDirectory = _currentFileStoreDirectory;
+            _configuration.FileStoreDirectory = _fileStoreDirectory;
 
             UpdateFileStoreDriveName();
 
