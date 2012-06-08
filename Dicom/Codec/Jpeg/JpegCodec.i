@@ -459,74 +459,87 @@ namespace IJGVERS {
 void JPEGCODEC::Decode(DicomCompressedPixelData^ oldPixelData, DicomUncompressedPixelData^ newPixelData, DicomJpegParameters^ params, int frame) {
   //              IList<DicomFragment> rleData = oldPixelData.GetFrameFragments(i);
           
-	array<unsigned char>^ jpegData = oldPixelData->GetFrameFragmentData(frame);
-	pin_ptr<unsigned char> jpegPin = &jpegData[0];
-	unsigned char* jpegPtr = jpegPin;
-	size_t jpegSize = jpegData->Length;
-	
+	bool cleanupRequired = false;
 	jpeg_decompress_struct dinfo;
-	memset(&dinfo, 0, sizeof(dinfo));
+	
+	try
+	{
+		array<unsigned char>^ jpegData = oldPixelData->GetFrameFragmentData(frame);
+		pin_ptr<unsigned char> jpegPin = &jpegData[0];
+		unsigned char* jpegPtr = jpegPin;
+		size_t jpegSize = jpegData->Length;
+	
+		memset(&dinfo, 0, sizeof(dinfo));
 
-	IJGVERS::SourceManagerStruct src;
-	memset(&src, 0, sizeof(IJGVERS::SourceManagerStruct));
-	src.pub.init_source       = IJGVERS::initSource;
-	src.pub.fill_input_buffer = IJGVERS::fillInputBuffer;
-	src.pub.skip_input_data   = IJGVERS::skipInputData;
-	src.pub.resync_to_restart = jpeg_resync_to_restart;
-	src.pub.term_source       = IJGVERS::termSource;
-	src.pub.bytes_in_buffer   = 0;
-	src.pub.next_input_byte   = NULL;
-	src.skip_bytes            = 0;
-	src.next_buffer           = jpegPin;
-	src.next_buffer_size      = (unsigned int*)jpegSize;
+		IJGVERS::SourceManagerStruct src;
+		memset(&src, 0, sizeof(IJGVERS::SourceManagerStruct));
+		src.pub.init_source       = IJGVERS::initSource;
+		src.pub.fill_input_buffer = IJGVERS::fillInputBuffer;
+		src.pub.skip_input_data   = IJGVERS::skipInputData;
+		src.pub.resync_to_restart = jpeg_resync_to_restart;
+		src.pub.term_source       = IJGVERS::termSource;
+		src.pub.bytes_in_buffer   = 0;
+		src.pub.next_input_byte   = NULL;
+		src.skip_bytes            = 0;
+		src.next_buffer           = jpegPin;
+		src.next_buffer_size      = (unsigned int*)jpegSize;
 
-    IJGVERS::ErrorStruct jerr;
-	memset(&jerr, 0, sizeof(IJGVERS::ErrorStruct));
-	dinfo.err = jpeg_std_error(&jerr.pub);
-	jerr.pub.error_exit = IJGVERS::ErrorExit;
-	jerr.pub.output_message = IJGVERS::OutputMessage;
+		IJGVERS::ErrorStruct jerr;
+		memset(&jerr, 0, sizeof(IJGVERS::ErrorStruct));
+		dinfo.err = jpeg_std_error(&jerr.pub);
+		jerr.pub.error_exit = IJGVERS::ErrorExit;
+		jerr.pub.output_message = IJGVERS::OutputMessage;
 
-	jpeg_create_decompress(&dinfo);
-	dinfo.src = (jpeg_source_mgr*)&src.pub;
+		jpeg_create_decompress(&dinfo);
+		cleanupRequired = true;
 
-	if (jpeg_read_header(&dinfo, TRUE) == JPEG_SUSPENDED)
-		throw gcnew DicomCodecException(gcnew String("Unable to decompress JPEG. Reason: Suspended"));
+		dinfo.src = (jpeg_source_mgr*)&src.pub;
 
-    if (params->ConvertYBRtoRGB) {
-        if (dinfo.out_color_space == JCS_YCbCr || dinfo.out_color_space == JCS_RGB)
-        {
-            if (oldPixelData->IsSigned)
-			    throw gcnew DicomCodecException(gcnew String("JPEG codec unable to perform colorspace conversion on signed pixel data"));
-	        dinfo.out_color_space = JCS_RGB;
+		if (jpeg_read_header(&dinfo, TRUE) == JPEG_SUSPENDED)
+			throw gcnew DicomCodecException(gcnew String("Unable to decompress JPEG. Reason: Suspended"));
+
+		if (params->ConvertYBRtoRGB) {
+			if (dinfo.out_color_space == JCS_YCbCr || dinfo.out_color_space == JCS_RGB)
+			{
+				if (oldPixelData->IsSigned)
+					throw gcnew DicomCodecException(gcnew String("JPEG codec unable to perform colorspace conversion on signed pixel data"));
+				dinfo.out_color_space = JCS_RGB;
+			}
 		}
-	}
-    else 
-    {
-  		    dinfo.jpeg_color_space = JCS_UNKNOWN;
-	        dinfo.out_color_space = JCS_UNKNOWN;
-    }
+		else 
+		{
+  				dinfo.jpeg_color_space = JCS_UNKNOWN;
+				dinfo.out_color_space = JCS_UNKNOWN;
+		}
      
-	jpeg_calc_output_dimensions(&dinfo);
+		jpeg_calc_output_dimensions(&dinfo);
 
-	int bufsize = dinfo.output_width * dinfo.output_components;
-	size_t rowsize = bufsize * sizeof(JSAMPLE);
-	int outsize = (int)(rowsize * dinfo.output_height);
+		int bufsize = dinfo.output_width * dinfo.output_components;
+		size_t rowsize = bufsize * sizeof(JSAMPLE);
+		int outsize = (int)(rowsize * dinfo.output_height);
 
-	jpeg_start_decompress(&dinfo);
+		jpeg_start_decompress(&dinfo);
 
-	MemoryStream^ stream = gcnew MemoryStream(outsize);
-	array<unsigned char>^ rowbuf = gcnew array<unsigned char>(rowsize);
-	pin_ptr<unsigned char> rowpin = &rowbuf[0];
-	unsigned char* rowptr = rowpin;
+		MemoryStream^ stream = gcnew MemoryStream(outsize);
+		array<unsigned char>^ rowbuf = gcnew array<unsigned char>(rowsize);
+		pin_ptr<unsigned char> rowpin = &rowbuf[0];
+		unsigned char* rowptr = rowpin;
 
-	while (dinfo.output_scanline < dinfo.output_height) {
-		jpeg_read_scanlines(&dinfo, (JSAMPARRAY)&rowptr, 1);
-		stream->Write(rowbuf, 0, rowbuf->Length);
+		while (dinfo.output_scanline < dinfo.output_height) {
+			jpeg_read_scanlines(&dinfo, (JSAMPARRAY)&rowptr, 1);
+			stream->Write(rowbuf, 0, rowbuf->Length);
+		}
+
+		//oldPixelData->Unload();
+		newPixelData->AppendFrame(stream->GetBuffer());
 	}
-
-	//oldPixelData->Unload();
-	newPixelData->AppendFrame(stream->GetBuffer());
-
-	jpeg_destroy_decompress(&dinfo);
+	catch(DicomException^ e){
+		Console::WriteLine(e->Message);
+		throw;
+	}
+	finally {
+		if (cleanupRequired)
+			jpeg_destroy_decompress(&dinfo);
+    }	
 	
 }
