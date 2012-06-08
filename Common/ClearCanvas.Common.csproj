@@ -411,6 +411,7 @@
     <Compile Include="UsageTracking\IUsageTracking.cs" />
     <Compile Include="UsageTracking\RegisterRequest.cs" />
     <Compile Include="UsageTracking\RegisterResponse.cs" />
+    <Compile Include="UsageTracking\UsageApplicationDataProvider.cs" />
     <Compile Include="UsageTracking\UsageTrackingSettings.cs" />
     <Compile Include="UsageTracking\UsageTrackingSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -420,6 +421,7 @@
     <Compile Include="UsageTracking\UsageMessage.cs" />
     <Compile Include="UsageTracking\UsageTrackingServiceClient.cs" />
     <Compile Include="UsageTracking\UsageUtilities.cs" />
+    <Compile Include="Utilities\ExclusiveLock.cs" />
     <Compile Include="Utilities\FileSize.cs" />
     <Compile Include="Utilities\FtpFileTransfer.cs" />
     <Compile Include="Utilities\IObservableList.cs" />

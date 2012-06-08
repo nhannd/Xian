@@ -368,19 +368,16 @@ namespace ClearCanvas.Common
 			}
 		}
 
-        private static string GetApplicationDataDirectory()
-        {
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-            path = Path.Combine(path, "ClearCanvas_Inc"); //TODO this seems to be derived from the AssemblyCompanyAttribute
-            if (string.IsNullOrEmpty(ProductInformation.FamilyName))
-                path = Path.Combine(path, ProductInformation.GetName(true, false));
-            else
-            {
-                path = Path.Combine(path, string.Format("{0} {1}", ProductInformation.Component, ProductInformation.FamilyName));
-            }
-
-            return path;
-        }
+		private static string GetApplicationDataDirectory()
+		{
+			var path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+			path = Path.Combine(path, "ClearCanvas_Inc"); //TODO this seems to be derived from the AssemblyCompanyAttribute
+			if (string.IsNullOrEmpty(ProductInformation.FamilyName))
+				path = Path.Combine(path, ProductInformation.GetName(true, false));
+			else
+				path = Path.Combine(path, string.Format("{0} {1}", ProductInformation.Component, ProductInformation.FamilyName));
+			return path;
+		}
 
         /// <summary>
         /// Gets the current time from an extension of <see cref="TimeProviderExtensionPoint"/>, if one exists.
