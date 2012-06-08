@@ -575,18 +575,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 		    if (pcid == 0)
 			{
 				fileToSend.SendStatus = DicomStatuses.SOPClassNotSupported;
-                fileToSend.ExtendedFailureDescription = string.Format("Some image(s) of this study is not supported by remote device. See log for more details", msg.SopClass);
+                fileToSend.ExtendedFailureDescription = string.Format(SR.ErrorSendSopClassNotSupported, msg.SopClass);
 
-                var log = new StringBuilder();
-                log.AppendLine(string.Format("Unable to transfer SOP {0}. Remote device does not support {1} in any of following transfer syntax(es):", fileToSend.SopInstanceUid, msg.SopClass));
-                log.AppendLine(msg.TransferSyntax.Name);
-                if (DicomCodecRegistry.GetCodec(fileToSend.TransferSyntax) != null)
-                {
-                    log.AppendLine(TransferSyntax.ExplicitVrLittleEndian.Name);
-                    log.AppendLine(TransferSyntax.ImplicitVrLittleEndian.Name);
-                }
-                
-                Platform.Log(LogLevel.Error, log.ToString());
+                LogError(fileToSend, msg, DicomStatuses.SOPClassNotSupported);
 
 				OnImageStoreCompleted(fileToSend);
 				_failureSubOperations++;
@@ -643,6 +634,32 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 			return true;
 		}
+
+        private void LogError(StorageInstance instance, DicomMessage msg, DicomStatus dicomStatus)
+        {
+            var log = new StringBuilder();
+
+            if (dicomStatus == DicomStatuses.SOPClassNotSupported)
+            {
+                log.AppendLine(string.Format("Unable to transfer SOP {0} in study {1}. Remote device does not accept {2} in {3} transfer syntax", 
+                                instance.SopInstanceUid, instance.StudyInstanceUid, msg.SopClass, msg.TransferSyntax));
+
+                if (instance.TransferSyntax.Encapsulated)
+                {
+                    var codecExists = DicomCodecRegistry.GetCodec(instance.TransferSyntax) != null;
+
+                    if (codecExists)
+                        log.AppendLine(string.Format("Note: codec is available for {0} but remote device does not support it?", instance.TransferSyntax));
+                    else
+                        log.AppendLine(string.Format("Note: codec is NOT available for {0}", instance.TransferSyntax));
+                }
+                
+            }
+            
+                
+            Platform.Log(LogLevel.Error, log.ToString());    
+        }
+
 
 		#endregion
 
