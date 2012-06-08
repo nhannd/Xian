@@ -206,7 +206,11 @@ namespace IJGVERS {
 	}
 }
 
-void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressedPixelData^ newPixelData, DicomJpegParameters^ params, int frame) {
+void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressedPixelData^ newPixelData, DicomJpegParameters^ params, int frame) 
+{
+	struct jpeg_compress_struct cinfo;
+	bool cleanupRequired = false;
+try{
 	if ((oldPixelData->PhotometricInterpretation == "YBR_ICT")      ||
 		(oldPixelData->PhotometricInterpretation == "YBR_RCT"))
 		throw gcnew DicomCodecUnsupportedSopException(String::Format("Photometric Interpretation '{0}' not supported by JPEG encoder!",
@@ -224,9 +228,8 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 	pin_ptr<unsigned char> DataPin = &DataBuffer[0];
 	DataPtr = DataPin;
 	
-	struct jpeg_compress_struct cinfo;
 		
-	try {
+	
 		if (oldPixelData->IsPlanar && oldPixelData->SamplesPerPixel > 1) {
 			newPixelData->PlanarConfiguration = 0;
 			DicomUncompressedPixelData::TogglePlanarConfiguration(frameData, frameData->Length / oldPixelData->BytesAllocated, 
@@ -274,6 +277,7 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 		jerr.pub.output_message = IJGVERS::OutputMessage;
 	
 		jpeg_create_compress(&cinfo);
+		cleanupRequired = true;
 
 		cinfo.client_data = nullptr;
 		
@@ -367,9 +371,15 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 			MemoryBuffer->WriteByte(0);
 			
 		newPixelData->AddFrameFragment(MemoryBuffer->ToArray());
-	} finally {
+	}
+	catch(DicomException^ e){
+		Console::WriteLine(e->Message);
+		throw;
+	}
+	finally {
 		MemoryBuffer = nullptr;
-	    jpeg_destroy_compress(&cinfo);
+		if (cleanupRequired)
+			jpeg_destroy_compress(&cinfo);
     }	
 }
 
