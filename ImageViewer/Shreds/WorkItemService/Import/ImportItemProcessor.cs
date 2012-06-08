@@ -39,9 +39,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
         public override void Process()
         {
-            if (!ValidateRequest(Request))
+            var failureReason = string.Empty;
+
+            if (!ValidateRequest(Request, out failureReason))
             {
-                Proxy.Fail(SR.ExceptionNoValidFilesHaveBeenSpecifiedToImport, WorkItemFailureType.Fatal);
+                Proxy.Fail(failureReason, WorkItemFailureType.Fatal);
                 return;
             }
 
@@ -92,13 +94,21 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
         #region Private Methods
 
-        private bool ValidateRequest(ImportFilesRequest filesRequest)
+        private bool ValidateRequest(ImportFilesRequest filesRequest, out string reason)
         {
+            reason = string.Empty;
+
             if (filesRequest == null)
+            {
+                reason = SR.ExceptionNoFilesHaveBeenSpecifiedToImport;
                 return false;
+            }
 
             if (filesRequest.FilePaths == null)
+            {
+                reason = SR.ExceptionNoFilesHaveBeenSpecifiedToImport;                
                 return false;
+            }
 
             int paths = 0;
 
@@ -109,7 +119,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             }
 
             if (paths == 0)
+            {
+                reason = SR.ExceptionInvalidFilesHaveBeenSpecifiedToImport;
                 return false;
+            }
 
             return true;
         }
