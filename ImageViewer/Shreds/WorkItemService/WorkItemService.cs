@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 response.Item = WorkItemDataHelper.FromWorkItem(item);
             }
 
-			WorkItemPublishSubscribeHelper.PublishWorkItemChanged(response.Item);
+			WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemsChangedEventType.Update, response.Item);
             if (WorkItemProcessor.Instance != null)
                 WorkItemProcessor.Instance.SignalThread();
 
@@ -199,9 +199,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 context.Commit();
 
                 response.Item = WorkItemDataHelper.FromWorkItem(workItem);
-            } 
+            }
 
-			WorkItemPublishSubscribeHelper.PublishWorkItemChanged(response.Item);
+			WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemsChangedEventType.Update, response.Item);
 
             return response;
         }

@@ -13,6 +13,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
+using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
@@ -108,6 +109,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             Progress.StudiesDeleted = 0;
             Progress.StudyFoldersProcessed = 0;
             Progress.StudiesProcessed = 0;
+            Progress.StudiesFailed = 0;
             Progress.Complete = false;
 
             Proxy.UpdateProgress();
@@ -142,6 +144,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
                                                               Proxy.UpdateProgress();
                                                           }
                                                       };
+
+            _reindexUtility.StudyReindexFailedEvent += delegate(object sender, ReindexUtility.StudyEventArgs e)
+                                                           {
+                                                               Progress.StudiesFailed++;
+                                                               Proxy.Item.StudyInstanceUid = e.StudyInstanceUid;
+                                                               if (!string.IsNullOrEmpty(e.Message))
+                                                                   Progress.StatusDetails = e.Message;
+                                                               Proxy.UpdateProgress();
+                                                           };
             
             _reindexUtility.Process();
 
@@ -158,17 +169,54 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             else
             {
                 Progress.Complete = true;
-                Proxy.Complete();
+                if (Progress.StudiesFailed > 0)
+                    Proxy.Fail(Progress.StatusDetails,WorkItemFailureType.Fatal);                
+                else
+                    Proxy.Complete();
             }           
         }
 
         public override bool CanStart(out string reason)
-        {            
-            reason = string.Empty;
+        {                        
+            if (ScheduledAheadInsertItems(out reason))
+            {
+                return false;
+            }
 
-            return !InProgressWorkItems();
+            return !InProgressWorkItems(out reason);
         }
 
         #endregion
+
+
+        #region Private Methods
+
+        protected bool ScheduledAheadInsertItems(out string reason)
+        {
+            reason = string.Empty;
+
+            using (var context = new DataAccessContext())
+            {
+                var broker = context.GetWorkItemBroker();             
+                var list = broker.GetPriorWorkItems(Proxy.Item.ScheduledTime, null, null);
+
+                if (list == null)
+                    return false;
+                foreach (var item in list)
+                {
+                    if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
+                    {
+                        reason = string.Format("Waiting for: {0}",
+                                                       item.Request.ActivityDescription);                         
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        #endregion
+
     }
 }

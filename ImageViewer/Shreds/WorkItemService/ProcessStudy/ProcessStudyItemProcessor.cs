@@ -40,24 +40,56 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
         public override void Delete()
         {
             LoadUids();
+            var studyXml = Location.LoadStudyXml();
+
             foreach (WorkItemUid sop in WorkQueueUidList)
             {
-                if (sop.Failed)
+                if (sop.Failed || !sop.Complete)
                 {
-                    try
+                    if (!string.IsNullOrEmpty(sop.File))
                     {
-                        string file = string.IsNullOrEmpty(sop.File)
-                                          ? Location.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid)
-                                          : Path.Combine(Location.StudyFolder, sop.File);
-                        FileUtils.Delete(file);
+                        try
+                        {
+                            FileUtils.Delete(Path.Combine(Location.StudyFolder, sop.File));
+                        }
+                        catch (Exception e)
+                        {
+                            Platform.Log(LogLevel.Error, e,
+                                         "Unexpected exception attempting to cleanup file for Work Item {0}",
+                                         Proxy.Item.Oid);
+                        }
                     }
-                    catch (Exception e)
+                    else
                     {
-                        Platform.Log(LogLevel.Error, e, "Unexpected exception attempting to cleanup file for Work Item {0}",
-                                     Proxy.Item.Oid);
+                        try
+                        {
+                            // Only delete the file if its not in the study Xml file.  This should handle collisions with 
+                            // multiple WorkItems that may have been canceled when others succeeded.
+                            if (!studyXml.Contains(sop.SeriesInstanceUid, sop.SopInstanceUid))
+                            {
+                                string file = Location.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid);
+                                FileUtils.Delete(file);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Platform.Log(LogLevel.Error, e,
+                                         "Unexpected exception attempting to cleanup file for Work Item {0}",
+                                         Proxy.Item.Oid);
+                        }
                     }
                 }
             }
+
+            try
+            {
+                DirectoryUtility.DeleteIfEmpty(Location.StudyFolder);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception attempting to delete folder: {0}",
+                             Location.StudyFolder);
+            }            
 
             // Now cleanup the actual WorkItemUid references
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))

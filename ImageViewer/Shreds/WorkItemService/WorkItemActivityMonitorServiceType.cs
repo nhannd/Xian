@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 							// send in batches of 200
 							foreach (var batch in BatchItems(dbList, 200))
 							{
-								WorkItemPublishSubscribeHelper.PublishWorkItemsChanged(batch.Select(WorkItemDataHelper.FromWorkItem).ToList());
+								WorkItemPublishSubscribeHelper.PublishWorkItemsChanged(WorkItemsChangedEventType.Refresh, batch.Select(WorkItemDataHelper.FromWorkItem).ToList());
 							}
 						}
 					}
@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             try
             {
-                WorkItemPublishSubscribeHelper.PublishWorkItemChanged(request.Item);
+				WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemsChangedEventType.Update, request.Item);
                 return new WorkItemPublishResponse();
             }
             catch (Exception e)

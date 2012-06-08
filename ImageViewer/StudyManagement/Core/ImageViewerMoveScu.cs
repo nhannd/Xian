@@ -85,8 +85,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
             if (message.Status.Status == DicomState.Warning)
             {
+                DicomStatus status = DicomStatuses.LookupQueryRetrieve(message.Status.Code);
                 _errorDescriptionDetails = String.Format("Remote server returned a warning status ({0}: {1}).",
-                     RemoteAE, message.Status.Description);
+                     RemoteAE, status.Description);
             }
         }
 
@@ -106,11 +107,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             {
                 Move();
 
-                Join(new TimeSpan(0, 0, 0, 0, 1000));
-
                 if (Status == ScuOperationStatus.Canceled)
+                    Join();
+                else
+                    Join(new TimeSpan(0, 0, 0, 0, 2000));
+
+                if (Status == ScuOperationStatus.Canceled || (_cancelRequested && Status == ScuOperationStatus.TimeoutExpired))
                 {
-                    _errorDescriptionDetails = string.Format("The Move operation was cancelled ({0}).", RemoteAE);
+                    _errorDescriptionDetails = string.Format("The Retrieve was cancelled ({0}).", RemoteAE);
+                    Status = ScuOperationStatus.Canceled;
                 }
                 else if (Status == ScuOperationStatus.ConnectFailed)
                 {
@@ -124,7 +129,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 }
                 else if (Status == ScuOperationStatus.Failed)
                 {
-                    _errorDescriptionDetails = String.Format("The Move operation failed ({0}: {1}).",
+                    _errorDescriptionDetails = String.Format("The Retrieve failed ({0}: {1}).",
                         RemoteAE, FailureDescription ?? "no failure description provided");
                 }
                 else if (Status == ScuOperationStatus.TimeoutExpired)

@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
 
         public ViewerCommandProcessorContext()
         {
-            BackupDirectory = Path.Combine(Path.GetTempPath(),ProductInformation.Component);
+            BackupDirectory = Path.Combine(Path.GetTempPath(),ProductInformation.Component + " " + ProductInformation.FamilyName);
             Directory.CreateDirectory(BackupDirectory);
         }
 

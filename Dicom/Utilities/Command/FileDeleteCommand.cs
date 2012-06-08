@@ -54,9 +54,8 @@ namespace ClearCanvas.Dicom.Utilities.Command
 	    private void Backup()
 	    {
             if (File.Exists(_originalFile))
-            {                
-                _backupFile = _originalFile + ".bak";
-                File.Copy(_originalFile, _backupFile, true);
+            {
+                _backupFile = FileUtils.Backup(_originalFile, ProcessorContext.BackupDirectory);
                 _backedUp = true;
             }            
 	    }
@@ -65,8 +64,16 @@ namespace ClearCanvas.Dicom.Utilities.Command
 		{
 			if (_backedUp)
 			{
-			    Platform.Log(LogLevel.Info, "Restoring {0} ...", _originalFile);
-                File.Copy(_backupFile, _originalFile, true);
+			    try
+			    {
+                    Platform.Log(LogLevel.Debug, "Restoring {0} ...", _originalFile);
+                    File.Copy(_backupFile, _originalFile, true);
+                    FileUtils.Delete(_backupFile);
+			    }
+			    catch (Exception e)
+			    {
+                    Platform.Log(LogLevel.Warn, e, "Unexpected error attempting to backup deleted file: {0}", _backupFile);
+			    }
 			}
 		}
 

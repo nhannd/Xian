@@ -67,7 +67,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
         {
             if (File.Exists(_destinationFile))
             {
-                _destBackupFile = FileUtils.Backup(_sourceFile, ProcessorContext.BackupDirectory);
+                _destBackupFile = FileUtils.Backup(_destinationFile, ProcessorContext.BackupDirectory);
             }
         }
 
@@ -78,8 +78,9 @@ namespace ClearCanvas.Dicom.Utilities.Command
             {
                 try
                 {
-                    Platform.Log(LogLevel.Error, "Restoring {0}", _destinationFile);
+                    Platform.Log(LogLevel.Debug, "Restoring failed file: {0}", _destinationFile);
                     FileUtils.Copy(_destBackupFile, _destinationFile, true);
+                    FileUtils.Delete(_destBackupFile);
                 }
                 catch (Exception e)
                 {

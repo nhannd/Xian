@@ -341,7 +341,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             else
                 Item.Progress = Progress;
 
-			WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemDataHelper.FromWorkItem(Item));
+			WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemsChangedEventType.Update, WorkItemDataHelper.FromWorkItem(Item));
         }
 
         #endregion

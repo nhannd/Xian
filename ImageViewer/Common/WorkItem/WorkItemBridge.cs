@@ -215,7 +215,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 Timeout = 30;
             }
 
-            [CommandLineParameter("t", "Timeout", "Specifies the amount of time, in seconds, to wait for the re-index to be started before quitting.")]
+            [CommandLineParameter("Timeout", "t", "Specifies the amount of time, in seconds, to wait for the re-index to be started before quitting.")]
             public int Timeout { get; set; }
         }
 
@@ -224,6 +224,18 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public void RunApplication(string[] args)
         {
             var cmdLine = new CmdLine();
+            try
+            {
+                cmdLine.Parse(args);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Info, e);
+                Console.WriteLine(e.Message);
+                cmdLine.PrintUsage(Console.Out);
+                Environment.Exit(-1);
+            }
+
             int timeoutMillisecondsRemaining = cmdLine.Timeout*1000;
             int tryCount = 0;
             while (timeoutMillisecondsRemaining > 0)
@@ -248,14 +260,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 catch (EndpointNotFoundException)
                 {
                     Platform.Log(LogLevel.Warn, "Failed to start re-index because the Work Item service isn't running.");
-                    Thread.Sleep(2000);
-                    var elapsedMilliseconds = Environment.TickCount - startTicks;
-                    timeoutMillisecondsRemaining -= elapsedMilliseconds;
                 }
                 catch (Exception e)
                 {
                     Platform.Log(LogLevel.Error, e, "Failed to start re-index.");
                     Console.WriteLine("Failed to start re-index.");
+                }
+                finally
+                {
+                    Thread.Sleep(2000);
+                    var elapsedMilliseconds = Environment.TickCount - startTicks;
+                    timeoutMillisecondsRemaining -= elapsedMilliseconds;
                 }
             }
 

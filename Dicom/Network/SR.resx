@@ -117,138 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ColumnActivityDescription" xml:space="preserve">
-    <value>Activity</value>
+  <data name="CannotUnderstand" xml:space="preserve">
+    <value>The message was not understood.</value>
   </data>
-  <data name="ColumnPatient" xml:space="preserve">
-    <value>Patient</value>
+  <data name="DuplicateSOPInstance" xml:space="preserve">
+    <value>A duplicate SOP Instance could not be processed.</value>
   </data>
-  <data name="ColumnPriority" xml:space="preserve">
-    <value>Priority</value>
+  <data name="MessagePrinterError" xml:space="preserve">
+    <value>Unexpected failure reported by the printer.</value>
   </data>
-  <data name="ColumnProgress" xml:space="preserve">
-    <value>Progress</value>
+  <data name="MissingAttribute" xml:space="preserve">
+    <value>A failure occurred due to a missing DICOM attribute.</value>
   </data>
-  <data name="ColumnScheduledTime" xml:space="preserve">
-    <value>Scheduled Time</value>
+  <data name="OutOfResources" xml:space="preserve">
+    <value>The remote server is out of resources.</value>
   </data>
-  <data name="ColumnStatus" xml:space="preserve">
-    <value>Status</value>
+  <data name="ProcessingFailure" xml:space="preserve">
+    <value>A failure occurred while processing.</value>
   </data>
-  <data name="ColumnStatusDescription" xml:space="preserve">
-    <value>Status Details</value>
+  <data name="QueryRetrieveMoveDestinationUnknown" xml:space="preserve">
+    <value>Retrieve failed due to the remote application not being able to reach your computer, possibly due to misconfiguration.</value>
   </data>
-  <data name="ColumnStudy" xml:space="preserve">
-    <value>Study</value>
-  </data>
-  <data name="DescriptionMaximumDiskUsageExceeded" xml:space="preserve">
-    <value>Disk usage is above the maximum. The Workstation will not be able to import
-DICOM files or receive them over the network. You should delete old studies to
-make room, or increase the maximum usage.</value>
-  </data>
-  <data name="DiskspaceTemplate" xml:space="preserve">
-    <value>{0} of {1} ({2}%)</value>
-  </data>
-  <data name="LinkOpenActivityMonitor" xml:space="preserve">
-    <value>Open Activity Monitor</value>
-  </data>
-  <data name="MenuActivityMonitor" xml:space="preserve">
-    <value>Activity Monitor</value>
-  </data>
-  <data name="MenuDeleteWorkItem" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="MenuLocalServer" xml:space="preserve">
-    <value>Local Server</value>
-  </data>
-  <data name="MenuReindex" xml:space="preserve">
-    <value>Re-index File Store</value>
-  </data>
-  <data name="MenuRestartWorkItem" xml:space="preserve">
-    <value>Restart</value>
-  </data>
-  <data name="MenuStatWorkItem" xml:space="preserve">
-    <value>Make Stat</value>
-  </data>
-  <data name="MenuStopWorkItem" xml:space="preserve">
-    <value>Stop</value>
-  </data>
-  <data name="MessageConfirmCancelWorkItems" xml:space="preserve">
-    <value>Canceling the selected work item(s) may result in partial study data, which could potentially lead to patient misdiagnosis.  Are you sure you want to cancel?</value>
-  </data>
-  <data name="MessageFailedToOpenImages" xml:space="preserve">
-    <value>Failed to open the selected images.</value>
-  </data>
-  <data name="MessageFailedToOpenStudy" xml:space="preserve">
-    <value>Failed to open the selected studies.</value>
-  </data>
-  <data name="MessageFailedToStartReindex" xml:space="preserve">
-    <value>Failed to start re-index.</value>
-  </data>
-  <data name="MessageFilestoreDirectoryDoesNotExist" xml:space="preserve">
-    <value>The currently configured file store directory does not exist.</value>
-  </data>
-  <data name="MessageLocalServerNotRunning" xml:space="preserve">
-    <value>The Local Server must be running in order to complete this operation.</value>
-  </data>
-  <data name="MessageMaximumDiskUsageExceeded" xml:space="preserve">
-    <value>Maximum disk usage exceeded</value>
-  </data>
-  <data name="MessageNonStudyWorkItemFailed" xml:space="preserve">
-    <value>{0} failed.</value>
-  </data>
-  <data name="MessageOneFailedWorkItem" xml:space="preserve">
-    <value>There is 1 failed work item.</value>
-  </data>
-  <data name="MessageProcessedItemsProgress" xml:space="preserve">
-    <value>Processed {0} of {1} items...</value>
-  </data>
-  <data name="MessageReindexInProgress" xml:space="preserve">
-    <value>A re-index operation is already in progress.</value>
-  </data>
-  <data name="MessageReindexScheduled" xml:space="preserve">
-    <value>The re-index has been scheduled.</value>
-  </data>
-  <data name="MessageReindexServiceNotRunning" xml:space="preserve">
-    <value>The service must be running to start a re-index.</value>
-  </data>
-  <data name="MessageTotalFailedWorkItems" xml:space="preserve">
-    <value>There are {0} failed work items.</value>
-  </data>
-  <data name="MessageWorkItemFailed" xml:space="preserve">
-    <value>{0} for {1} [{2}, A#:{3}] failed.</value>
-  </data>
-  <data name="NoFilterItem" xml:space="preserve">
-    <value>(all)</value>
-  </data>
-  <data name="StatusFilterValueActive" xml:space="preserve">
-    <value>Active</value>
-  </data>
-  <data name="StatusFilterValueComplete" xml:space="preserve">
-    <value>Complete</value>
-  </data>
-  <data name="StatusFilterValueFailed" xml:space="preserve">
-    <value>Failed</value>
-  </data>
-  <data name="StatusFilterValueStopped" xml:space="preserve">
-    <value>Stopped</value>
-  </data>
-  <data name="TitleActivityMonitor" xml:space="preserve">
-    <value>Activity Monitor</value>
-  </data>
-  <data name="TooltipActivityMonitor" xml:space="preserve">
-    <value>Activity Monitor</value>
-  </data>
-  <data name="TooltipDeleteWorkItem" xml:space="preserve">
-    <value>Delete selected work item(s)</value>
-  </data>
-  <data name="TooltipRestartWorkItem" xml:space="preserve">
-    <value>Restart selected work item(s)</value>
-  </data>
-  <data name="TooltipStatWorkItem" xml:space="preserve">
-    <value>Raise priority of selected work item(s) to 'Stat'</value>
-  </data>
-  <data name="TooltipStopWorkItem" xml:space="preserve">
-    <value>Stop selected work item(s)</value>
+  <data name="UnableToProcess" xml:space="preserve">
+    <value>The remote server was unable to process the request.</value>
   </data>
 </root>

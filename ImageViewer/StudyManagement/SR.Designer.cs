@@ -261,6 +261,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The currently configured file store directory does not exist..
+        /// </summary>
+        public static string MessageFilestoreDirectoryDoesNotExist {
+            get {
+                return ResourceManager.GetString("MessageFilestoreDirectoryDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Local Server must be running in order to complete this operation..
         /// </summary>
         public static string MessageLocalServerNotRunning {

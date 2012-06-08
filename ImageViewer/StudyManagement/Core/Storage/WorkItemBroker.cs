@@ -129,10 +129,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             query = query.Where(w => w.Status != WorkItemStatusEnum.Complete);
             query = query.Where(w => w.Status != WorkItemStatusEnum.Failed);
 
-            foreach (var priority in prioritiesToBlock)
+            if (prioritiesToBlock != null)
             {
-                WorkItemPriorityEnum priority1 = priority;
-                query = query.Where(w => w.Priority != priority1);
+                foreach (var priority in prioritiesToBlock)
+                {
+                    WorkItemPriorityEnum priority1 = priority;
+                    query = query.Where(w => w.Priority != priority1);
+                }
             }
 
             if (!string.IsNullOrEmpty(studyInstanceUid))
@@ -170,10 +173,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         {
             var list = (from w in Context.WorkItems
                         where w.StudyInstanceUid == studyInstanceUid
-                              && w.Type == type
-                              && w.Status != WorkItemStatusEnum.Complete
-                              && w.Status != WorkItemStatusEnum.Deleted
-                              && w.Status != WorkItemStatusEnum.Canceled
+                              && w.Type == type &&
+                              (w.Status == WorkItemStatusEnum.Pending
+                              || w.Status == WorkItemStatusEnum.InProgress
+                              || w.Status == WorkItemStatusEnum.Idle)                              
                         select w);
             
             if (!list.Any()) return null;

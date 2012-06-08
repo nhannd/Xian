@@ -151,27 +151,29 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
                 var list = workItemBroker.GetPendingWorkItemForStudy(_request.WorkItemType, _studyInstanceUid);
                 if (list != null)
                 {
-                    var thisRequest = _request as DicomReceiveRequest;
-                    if (thisRequest != null)
+                    foreach (var item in list)
                     {
-                        foreach (var item in list)
+                        if (item.Request.GetType() == _request.GetType())
                         {
-                            var request = item.Request as DicomReceiveRequest;
-                            if (request != null)
+                            var thisRequest = _request as DicomReceiveRequest;
+                            if (thisRequest != null)
                             {
-                                if (request.FromAETitle.Equals(thisRequest.FromAETitle))
+                                var request = item.Request as DicomReceiveRequest;
+                                if (request != null)
                                 {
-                                    WorkItem = item;
-                                    break;
+                                    if (request.FromAETitle.Equals(thisRequest.FromAETitle))
+                                    {
+                                        WorkItem = item;
+                                        break;
+                                    }
                                 }
                             }
+                            else
+                            {
+                                WorkItem = item;
+                                break;
+                            }
                         }
-                    }
-                    else
-                    {
-                        var enumerator = list.GetEnumerator();
-                        if (enumerator.MoveNext())
-                            WorkItem = enumerator.Current;
                     }
                 }
 

@@ -29,9 +29,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 _realActivityMonitor = real;
             }
 
-            public override void WorkItemsChanged(List<WorkItemData> workItems)
+            public override void WorkItemsChanged(WorkItemsChangedEventType eventType, List<WorkItemData> workItems)
             {
-                _realActivityMonitor.OnWorkItemsChanged(workItems);
+                _realActivityMonitor.OnWorkItemsChanged(eventType, workItems);
             }
 
             public override void StudiesCleared()
@@ -290,7 +290,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        private void OnWorkItemsChanged(List<WorkItemData> workItems)
+		private void OnWorkItemsChanged(WorkItemsChangedEventType eventType, List<WorkItemData> workItems)
         {
             IList<Delegate> delegates;
             lock (_syncLock)
@@ -304,7 +304,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             if (delegates.Count <= 0)
                 return;
 
-			var args = new WorkItemsChangedEventArgs(workItems);
+			var args = new WorkItemsChangedEventArgs(eventType, workItems);
             CallDelegates(delegates, args);
         }
 
