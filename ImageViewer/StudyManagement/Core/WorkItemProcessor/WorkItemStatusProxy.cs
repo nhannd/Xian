@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 var workItemBroker = context.GetWorkItemBroker();
 
                 Item = workItemBroker.GetWorkItem(Item.Oid);
-                if (workItem != null)
+                if (workItem != null && Item.Priority != WorkItemPriorityEnum.Stat)
                 {
                     DateTime scheduledTime = workItem.GetScheduledTime(now, 0);
                     Item.ProcessTime = scheduledTime;
