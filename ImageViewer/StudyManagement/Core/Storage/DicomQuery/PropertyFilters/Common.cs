@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Proper
 
         protected override void AddValueToResult(Study item, DicomAttribute resultAttribute)
         {
-            resultAttribute.SetString(0, item.SpecificCharacterSet);
+            resultAttribute.SetStringValue(item.SpecificCharacterSet);
         }
     }
 
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Proper
 
         protected override void AddValueToResult(Series item, DicomAttribute resultAttribute)
         {
-            resultAttribute.SetString(0, item.SpecificCharacterSet);
+            resultAttribute.SetStringValue(item.SpecificCharacterSet);
         }
     }
 
@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Proper
 
         protected override void AddValueToResult(SopInstance item, DicomAttribute resultAttribute)
         {
-            resultAttribute.SetString(0, item.SpecificCharacterSet);
+            resultAttribute.SetStringValue(item.SpecificCharacterSet);
         }
     }
 

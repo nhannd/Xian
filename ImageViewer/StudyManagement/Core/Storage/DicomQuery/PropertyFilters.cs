@@ -67,6 +67,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery
                 foreach (var filter in Filters)
                     filter.SetAttributeValue(result, dicomResult);
 
+                var specificCharacterSet = dicomResult[DicomTags.SpecificCharacterSet];
+                if (!specificCharacterSet.IsNull && !specificCharacterSet.IsEmpty)
+                    dicomResult.SpecificCharacterSet = specificCharacterSet.ToString();
+
                 dicomResults.Add(dicomResult);
             }
 
