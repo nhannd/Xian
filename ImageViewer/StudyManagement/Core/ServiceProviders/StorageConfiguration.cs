@@ -103,6 +103,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
 
             if (configuration.AutoCalculateMinimumFreeSpacePercent)
                 configuration.MinimumFreeSpaceBytes = ComputeMinimumFreeSpaceBytes(configuration.FileStoreDirectory);
+
+            if (configuration.DefaultDeletionRule == null)
+                configuration.DefaultDeletionRule = new StorageConfigurationContract.DeletionRule
+                                                        {
+                                                            Enabled = false,
+                                                            TimeUnit = TimeUnit.Weeks,
+                                                            TimeValue = 1
+                                                        };
         }
 
         private long ComputeMinimumFreeSpaceBytes(string fileStoreDirectory)
