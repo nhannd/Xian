@@ -76,7 +76,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             }
             else
             {
-                ImportFiles(Request.FilePaths, Request.FileExtensions, Request.Recursive);
+                using (UserIdentityCache.Get(Proxy.Item.Oid).Impersonate())
+                    ImportFiles(Request.FilePaths, Request.FileExtensions, Request.Recursive);
 
                 GC.Collect();
             }
@@ -140,8 +141,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                                                    ? DicomReadOptions.Default
                                                    : DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences;
                 
-                using (UserIdentityCache.Get(Proxy.Item.Oid).Impersonate())
-                    dicomFile.Load(readOptions);
+                dicomFile.Load(readOptions);
 
                 var importer = new ImportFilesUtility(context);
 
