@@ -24,7 +24,7 @@ namespace ClearCanvas.Desktop.Help
 	{
 		public void ShowProductSupport()
 		{
-			Execute(@"http://www.clearcanvas.ca/support/workstation/", SR.URLNotFound);
+			Execute(@"http://www.clearcanvas.ca/support/", SR.URLNotFound);
 		}
 
 		private void Execute(string filename, string errorMessage)
