@@ -1036,7 +1036,9 @@ namespace ClearCanvas.Dicom.Network
             };
 
             if (!string.IsNullOrEmpty(errorComment))
-                msg.ErrorComment = errorComment.Substring(0, (int)DicomVr.LOvr.MaximumLength);
+            {
+                msg.ErrorComment = errorComment.Substring(0, (int)Math.Min(DicomVr.LOvr.MaximumLength, errorComment.Length));
+            }
 
             SendDimse(presentationID, msg.CommandSet, null);
         }
@@ -1176,7 +1178,7 @@ namespace ClearCanvas.Dicom.Network
             message.AffectedSopClassUid = affectedClass.UID;
             message.DataSetType = message.DataSet.IsEmpty() ? (ushort)0x0101 : (ushort)0x0202;
             if (!string.IsNullOrEmpty(errorComment))
-                message.ErrorComment = errorComment.Substring(0, (int)DicomVr.LOvr.MaximumLength);
+                message.ErrorComment = errorComment.Substring(0, (int)Math.Min(DicomVr.LOvr.MaximumLength, errorComment.Length));
 
             SendDimse(presentationID, message.CommandSet, message.DataSet);
         }

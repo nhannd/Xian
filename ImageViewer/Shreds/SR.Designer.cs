@@ -187,6 +187,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Additional storage is required..
+        /// </summary>
+        internal static string ExceptionNotEnoughStorage {
+            get {
+                return ResourceManager.GetString("ExceptionNotEnoughStorage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to process request. The service has been disabled..
         /// </summary>
         internal static string ExceptionServiceHasBeenDisabled {

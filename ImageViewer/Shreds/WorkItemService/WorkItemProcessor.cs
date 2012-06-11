@@ -17,6 +17,7 @@ using ClearCanvas.Common.Shreds;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
@@ -260,9 +261,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 		{
 		    var proxy = new WorkItemStatusProxy(queueItem);
 
-			try
-			{
-			    Platform.Log(proxy.LogLevel, "Starting processing of {0} WorkItem for OID {1}", queueItem.Type, queueItem.Oid);
+            try
+            {
+                Platform.Log(proxy.LogLevel, "Starting processing of {0} WorkItem for OID {1}", queueItem.Type, queueItem.Oid);
 
                 if (proxy.Item.Status == WorkItemStatusEnum.Deleted || proxy.Item.Status == WorkItemStatusEnum.DeleteInProgress)
                 {
@@ -278,11 +279,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     return;
                 }
 
-			    string failureDescription;
+                string failureDescription;
                 if (!processor.Initialize(proxy))
                 {
-                	proxy.Postpone();
-                	return;
+                    proxy.Postpone();
+                    return;
                 }
 
                 if (processor.CanStart(out failureDescription))
@@ -294,17 +295,23 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     proxy.Progress.StatusDetails = failureDescription;
                     proxy.Postpone();
                 }
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e,
-				             "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (Oid: {1})",
-				             queueItem.Type,
-				             queueItem.Oid);
-				String error = e.InnerException != null ? e.InnerException.Message : e.Message;
+            }
+            catch (NotEnoughStorageException e)
+            {
+                // No space. Can fail right way. 
+                Platform.Log(LogLevel.Error, "Not enough storage space when processing WorkQueue item of type {0}.  Failing Queue item. (Oid: {1})", queueItem.Type, queueItem.Oid);                
+                proxy.Fail(SR.ExceptionNotEnoughStorage, WorkItemFailureType.Fatal);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e,
+                             "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (Oid: {1})",
+                             queueItem.Type,
+                             queueItem.Oid);
+                String error = e.InnerException != null ? e.InnerException.Message : e.Message;
 
-				proxy.Fail(error, WorkItemFailureType.NonFatal);
-			}
+                proxy.Fail(error, WorkItemFailureType.NonFatal);
+            }
 			finally
 			{
                 // Signal the parent thread, so it can query again

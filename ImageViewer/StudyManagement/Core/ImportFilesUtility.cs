@@ -322,14 +322,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 				return result;
 			}
 
-            if (_context.StorageConfiguration.IsMaximumUsedSpaceExceeded)
+            if (StorageSpaceMonitor.GetAvailableStorageSpace() <= 0)
             {
-                result.SetError(DicomStatuses.StorageStorageOutOfResources,
-                                string.Format("Unable to import, file store used percent: {0}, maximum used percent: {1}",
-                                              _context.StorageConfiguration.FileStoreDiskSpace.UsedSpacePercent.ToString("00.000"),
-                                              _context.StorageConfiguration.MaximumUsedSpacePercent.ToString("00.000")));
+                result.SetError(DicomStatuses.StorageStorageOutOfResources, string.Format("Not enough storage" /*keep it short. Max Length for LO is 16 */));
                 return result;
             }
+
 
                WorkItem workItem;
                if (_context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem))

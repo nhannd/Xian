@@ -213,4 +213,7 @@
   <data name="FilestoreManagementShred" xml:space="preserve">
     <value>Filestore Management Processor</value>
   </data>
+  <data name="ExceptionNotEnoughStorage" xml:space="preserve">
+    <value>Additional storage is required.</value>
+  </data>
 </root>
