@@ -83,15 +83,17 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._fileStoreWarningIcon = new System.Windows.Forms.PictureBox();
             this._fileStoreWarningMessage = new System.Windows.Forms.Label();
-            this._localServiceControlLink = new System.Windows.Forms.LinkLabel();
             this._helpIcon = new System.Windows.Forms.PictureBox();
+            this._localServiceControlLink = new System.Windows.Forms.LinkLabel();
             this.label6 = new System.Windows.Forms.Label();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this._deleteStudiesCheck = new System.Windows.Forms.CheckBox();
             this._deleteTimeValue = new System.Windows.Forms.NumericUpDown();
             this._deleteTimeUnits = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this._infoMessage = new System.Windows.Forms.Label();
+            this._studyDeletion = new System.Windows.Forms.GroupBox();
+            this._studyDeletionValidationPlaceholder = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this._maxDiskSpace)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._upDownMaxDiskSpace)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).BeginInit();
@@ -100,111 +102,207 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             ((System.ComponentModel.ISupportInitialize)(this._helpIcon)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._deleteTimeValue)).BeginInit();
-            this.groupBox1.SuspendLayout();
+            this._studyDeletion.SuspendLayout();
             this.SuspendLayout();
             // 
             // _maxDiskSpace
             // 
-            resources.ApplyResources(this._maxDiskSpace, "_maxDiskSpace");
+            this._maxDiskSpace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.SetColumnSpan(this._maxDiskSpace, 2);
+            this._maxDiskSpace.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this._maxDiskSpace.LargeChange = 10000;
+            this._maxDiskSpace.Location = new System.Drawing.Point(67, 107);
+            this._maxDiskSpace.Margin = new System.Windows.Forms.Padding(1, 6, 1, 0);
             this._maxDiskSpace.Maximum = 100000;
             this._maxDiskSpace.Name = "_maxDiskSpace";
+            this._maxDiskSpace.Size = new System.Drawing.Size(228, 30);
             this._maxDiskSpace.SmallChange = 10;
+            this._maxDiskSpace.TabIndex = 3;
             this._maxDiskSpace.TickFrequency = 10000;
             this._maxDiskSpace.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             // 
             // _usedDiskSpace
             // 
-            resources.ApplyResources(this._usedDiskSpace, "_usedDiskSpace");
+            this._usedDiskSpace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this._usedDiskSpace.Location = new System.Drawing.Point(299, 77);
             this._usedDiskSpace.Name = "_usedDiskSpace";
             this._usedDiskSpace.ReadOnly = true;
+            this._usedDiskSpace.Size = new System.Drawing.Size(64, 20);
+            this._usedDiskSpace.TabIndex = 9;
             // 
             // label4
             // 
-            resources.ApplyResources(this.label4, "label4");
+            this.label4.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label4.AutoSize = true;
+            this.label4.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label4.Location = new System.Drawing.Point(369, 112);
+            this.label4.Margin = new System.Windows.Forms.Padding(3);
             this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(14, 13);
+            this.label4.TabIndex = 5;
+            this.label4.Text = "%";
             // 
             // label5
             // 
-            resources.ApplyResources(this.label5, "label5");
+            this.label5.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label5.AutoSize = true;
+            this.label5.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label5.Location = new System.Drawing.Point(369, 80);
+            this.label5.Margin = new System.Windows.Forms.Padding(3);
             this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(14, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "%";
             // 
             // label8
             // 
-            resources.ApplyResources(this.label8, "label8");
+            this.label8.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label8.AutoSize = true;
+            this.label8.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label8.Location = new System.Drawing.Point(13, 8);
+            this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(51, 13);
+            this.label8.TabIndex = 0;
+            this.label8.Text = "File Store";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // _fileStoreDirectory
             // 
-            resources.ApplyResources(this._fileStoreDirectory, "_fileStoreDirectory");
+            this._fileStoreDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.SetColumnSpan(this._fileStoreDirectory, 3);
+            this._fileStoreDirectory.Location = new System.Drawing.Point(69, 5);
             this._fileStoreDirectory.Name = "_fileStoreDirectory";
+            this._fileStoreDirectory.Size = new System.Drawing.Size(294, 20);
+            this._fileStoreDirectory.TabIndex = 13;
             // 
             // _maxDiskSpaceDisplay
             // 
-            resources.ApplyResources(this._maxDiskSpaceDisplay, "_maxDiskSpaceDisplay");
+            this._maxDiskSpaceDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this._maxDiskSpaceDisplay.Location = new System.Drawing.Point(389, 109);
             this._maxDiskSpaceDisplay.Name = "_maxDiskSpaceDisplay";
             this._maxDiskSpaceDisplay.ReadOnly = true;
+            this._maxDiskSpaceDisplay.Size = new System.Drawing.Size(64, 20);
+            this._maxDiskSpaceDisplay.TabIndex = 6;
             // 
             // _usedDiskSpaceDisplay
             // 
-            resources.ApplyResources(this._usedDiskSpaceDisplay, "_usedDiskSpaceDisplay");
+            this._usedDiskSpaceDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this._usedDiskSpaceDisplay.Location = new System.Drawing.Point(389, 77);
             this._usedDiskSpaceDisplay.Name = "_usedDiskSpaceDisplay";
             this._usedDiskSpaceDisplay.ReadOnly = true;
+            this._usedDiskSpaceDisplay.Size = new System.Drawing.Size(64, 20);
+            this._usedDiskSpaceDisplay.TabIndex = 11;
             // 
             // _upDownMaxDiskSpace
             // 
-            resources.ApplyResources(this._upDownMaxDiskSpace, "_upDownMaxDiskSpace");
+            this._upDownMaxDiskSpace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this._upDownMaxDiskSpace.DecimalPlaces = 3;
+            this._upDownMaxDiskSpace.Location = new System.Drawing.Point(299, 109);
             this._upDownMaxDiskSpace.Name = "_upDownMaxDiskSpace";
+            this._upDownMaxDiskSpace.Size = new System.Drawing.Size(64, 20);
+            this._upDownMaxDiskSpace.TabIndex = 4;
             // 
             // _changeFileStore
             // 
-            resources.ApplyResources(this._changeFileStore, "_changeFileStore");
+            this._changeFileStore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this._changeFileStore.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this._changeFileStore.Location = new System.Drawing.Point(389, 3);
             this._changeFileStore.Name = "_changeFileStore";
+            this._changeFileStore.Size = new System.Drawing.Size(64, 23);
+            this._changeFileStore.TabIndex = 12;
+            this._changeFileStore.Text = "Browse";
             this._changeFileStore.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
-            resources.ApplyResources(this.label1, "label1");
+            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label1.Location = new System.Drawing.Point(3, 73);
             this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(60, 28);
+            this.label1.TabIndex = 13;
+            this.label1.Text = "Disk Usage";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label2
             // 
-            resources.ApplyResources(this.label2, "label2");
+            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label2.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label2.Location = new System.Drawing.Point(3, 101);
             this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(60, 36);
+            this.label2.TabIndex = 14;
+            this.label2.Text = "Max. Disk Usage";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // _usedSpaceMeter
             // 
-            resources.ApplyResources(this._usedSpaceMeter, "_usedSpaceMeter");
+            this._usedSpaceMeter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.SetColumnSpan(this._usedSpaceMeter, 2);
+            this._usedSpaceMeter.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this._usedSpaceMeter.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this._usedSpaceMeter.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this._usedSpaceMeter.Location = new System.Drawing.Point(75, 77);
+            this._usedSpaceMeter.Margin = new System.Windows.Forms.Padding(9, 3, 9, 3);
             this._usedSpaceMeter.Name = "_usedSpaceMeter";
+            this._usedSpaceMeter.Size = new System.Drawing.Size(212, 20);
+            this._usedSpaceMeter.TabIndex = 17;
             this._usedSpaceMeter.Value = 50;
             // 
             // _diskSpaceWarningMessage
             // 
             this._diskSpaceWarningMessage.AutoEllipsis = true;
-            resources.ApplyResources(this._diskSpaceWarningMessage, "_diskSpaceWarningMessage");
+            this._diskSpaceWarningMessage.AutoSize = true;
+            this._diskSpaceWarningMessage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._diskSpaceWarningMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this._diskSpaceWarningMessage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this._diskSpaceWarningMessage.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this._diskSpaceWarningMessage.Location = new System.Drawing.Point(69, 142);
+            this._diskSpaceWarningMessage.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this._diskSpaceWarningMessage.Name = "_diskSpaceWarningMessage";
+            this._diskSpaceWarningMessage.Size = new System.Drawing.Size(192, 24);
+            this._diskSpaceWarningMessage.TabIndex = 15;
+            this._diskSpaceWarningMessage.Text = "don\'t translate me";
             // 
             // _diskSpaceWarningIcon
             // 
-            resources.ApplyResources(this._diskSpaceWarningIcon, "_diskSpaceWarningIcon");
+            this._diskSpaceWarningIcon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._diskSpaceWarningIcon.Image = ((System.Drawing.Image)(resources.GetObject("_diskSpaceWarningIcon.Image")));
+            this._diskSpaceWarningIcon.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this._diskSpaceWarningIcon.Location = new System.Drawing.Point(47, 140);
             this._diskSpaceWarningIcon.Name = "_diskSpaceWarningIcon";
+            this._diskSpaceWarningIcon.Size = new System.Drawing.Size(16, 16);
+            this._diskSpaceWarningIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this._diskSpaceWarningIcon.TabIndex = 16;
             this._diskSpaceWarningIcon.TabStop = false;
             // 
             // _totalDiskSpaceDisplay
             // 
-            resources.ApplyResources(this._totalDiskSpaceDisplay, "_totalDiskSpaceDisplay");
+            this._totalDiskSpaceDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this._totalDiskSpaceDisplay.AutoSize = true;
             this.tableLayoutPanel1.SetColumnSpan(this._totalDiskSpaceDisplay, 2);
+            this._totalDiskSpaceDisplay.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this._totalDiskSpaceDisplay.Location = new System.Drawing.Point(198, 60);
+            this._totalDiskSpaceDisplay.Margin = new System.Windows.Forms.Padding(0, 0, 9, 0);
             this._totalDiskSpaceDisplay.Name = "_totalDiskSpaceDisplay";
+            this._totalDiskSpaceDisplay.Size = new System.Drawing.Size(89, 13);
+            this._totalDiskSpaceDisplay.TabIndex = 18;
+            this._totalDiskSpaceDisplay.Text = "Total Disk Space";
+            this._totalDiskSpaceDisplay.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tableLayoutPanel1
             // 
-            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.ColumnCount = 7;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 66F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 32F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 5F));
             this.tableLayoutPanel1.Controls.Add(this._changeFileStore, 5, 0);
             this.tableLayoutPanel1.Controls.Add(this._fileStoreDirectory, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this._usedDiskSpaceDisplay, 5, 3);
@@ -223,62 +321,130 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this._diskSpaceWarningMessage, 1, 5);
             this.tableLayoutPanel1.Controls.Add(this._fileStoreWarningIcon, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this._fileStoreWarningMessage, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this._localServiceControlLink, 2, 1);
             this.tableLayoutPanel1.Controls.Add(this._helpIcon, 5, 5);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 12);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 7;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 16F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(461, 173);
+            this.tableLayoutPanel1.TabIndex = 19;
             // 
             // _fileStoreWarningIcon
             // 
-            resources.ApplyResources(this._fileStoreWarningIcon, "_fileStoreWarningIcon");
+            this._fileStoreWarningIcon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._fileStoreWarningIcon.Image = ((System.Drawing.Image)(resources.GetObject("_fileStoreWarningIcon.Image")));
+            this._fileStoreWarningIcon.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this._fileStoreWarningIcon.Location = new System.Drawing.Point(47, 30);
+            this._fileStoreWarningIcon.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this._fileStoreWarningIcon.Name = "_fileStoreWarningIcon";
+            this._fileStoreWarningIcon.Size = new System.Drawing.Size(16, 16);
+            this._fileStoreWarningIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this._fileStoreWarningIcon.TabIndex = 20;
             this._fileStoreWarningIcon.TabStop = false;
             // 
             // _fileStoreWarningMessage
             // 
             this._fileStoreWarningMessage.AutoEllipsis = true;
-            resources.ApplyResources(this._fileStoreWarningMessage, "_fileStoreWarningMessage");
+            this._fileStoreWarningMessage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._fileStoreWarningMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this._fileStoreWarningMessage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this._fileStoreWarningMessage.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this._fileStoreWarningMessage.Location = new System.Drawing.Point(69, 32);
+            this._fileStoreWarningMessage.Margin = new System.Windows.Forms.Padding(3, 2, 3, 0);
             this._fileStoreWarningMessage.Name = "_fileStoreWarningMessage";
-            // 
-            // _localServiceControlLink
-            // 
-            resources.ApplyResources(this._localServiceControlLink, "_localServiceControlLink");
-            this.tableLayoutPanel1.SetColumnSpan(this._localServiceControlLink, 4);
-            this._localServiceControlLink.LinkBehavior = System.Windows.Forms.LinkBehavior.AlwaysUnderline;
-            this._localServiceControlLink.Name = "_localServiceControlLink";
-            this._localServiceControlLink.TabStop = true;
+            this._fileStoreWarningMessage.Size = new System.Drawing.Size(192, 25);
+            this._fileStoreWarningMessage.TabIndex = 21;
+            this._fileStoreWarningMessage.Text = "don\'t translate me";
             // 
             // _helpIcon
             // 
-            resources.ApplyResources(this._helpIcon, "_helpIcon");
+            this._helpIcon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this._helpIcon.Image = ((System.Drawing.Image)(resources.GetObject("_helpIcon.Image")));
+            this._helpIcon.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this._helpIcon.Location = new System.Drawing.Point(429, 137);
+            this._helpIcon.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this._helpIcon.Name = "_helpIcon";
+            this._helpIcon.Size = new System.Drawing.Size(24, 24);
+            this._helpIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this._helpIcon.TabIndex = 22;
             this._helpIcon.TabStop = false;
+            // 
+            // _localServiceControlLink
+            // 
+            this._localServiceControlLink.AutoSize = true;
+            this._localServiceControlLink.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this._localServiceControlLink.LinkBehavior = System.Windows.Forms.LinkBehavior.AlwaysUnderline;
+            this._localServiceControlLink.Location = new System.Drawing.Point(367, 273);
+            this._localServiceControlLink.Name = "_localServiceControlLink";
+            this._localServiceControlLink.Padding = new System.Windows.Forms.Padding(0, 1, 0, 0);
+            this._localServiceControlLink.Size = new System.Drawing.Size(97, 14);
+            this._localServiceControlLink.TabIndex = 19;
+            this._localServiceControlLink.TabStop = true;
+            this._localServiceControlLink.Text = "Stop Local Service";
             // 
             // label6
             // 
-            resources.ApplyResources(this.label6, "label6");
+            this.label6.AutoSize = true;
             this.tableLayoutPanel2.SetColumnSpan(this.label6, 4);
+            this.label6.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label6.Location = new System.Drawing.Point(3, 27);
             this.label6.Name = "label6";
+            this.label6.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
+            this.label6.Size = new System.Drawing.Size(264, 18);
+            this.label6.TabIndex = 24;
+            this.label6.Text = "Note: changes made will be applied to existing studies.";
             // 
             // tableLayoutPanel2
             // 
-            resources.ApplyResources(this.tableLayoutPanel2, "tableLayoutPanel2");
+            this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel2.ColumnCount = 7;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 26F));
             this.tableLayoutPanel2.Controls.Add(this._deleteStudiesCheck, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this._deleteTimeValue, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this._deleteTimeUnits, 2, 0);
             this.tableLayoutPanel2.Controls.Add(this.label3, 3, 0);
             this.tableLayoutPanel2.Controls.Add(this.label6, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this._studyDeletionValidationPlaceholder, 5, 0);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(6, 19);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 3;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(449, 49);
+            this.tableLayoutPanel2.TabIndex = 25;
             // 
             // _deleteStudiesCheck
             // 
-            resources.ApplyResources(this._deleteStudiesCheck, "_deleteStudiesCheck");
+            this._deleteStudiesCheck.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this._deleteStudiesCheck.AutoSize = true;
+            this._deleteStudiesCheck.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this._deleteStudiesCheck.Location = new System.Drawing.Point(3, 5);
+            this._deleteStudiesCheck.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
             this._deleteStudiesCheck.Name = "_deleteStudiesCheck";
+            this._deleteStudiesCheck.Size = new System.Drawing.Size(93, 17);
+            this._deleteStudiesCheck.TabIndex = 24;
+            this._deleteStudiesCheck.Text = "Delete studies";
             this._deleteStudiesCheck.UseVisualStyleBackColor = true;
             // 
             // _deleteTimeValue
             // 
-            resources.ApplyResources(this._deleteTimeValue, "_deleteTimeValue");
+            this._deleteTimeValue.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this._deleteTimeValue.Location = new System.Drawing.Point(99, 4);
+            this._deleteTimeValue.Margin = new System.Windows.Forms.Padding(3, 4, 3, 3);
             this._deleteTimeValue.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -290,6 +456,9 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             0,
             0});
             this._deleteTimeValue.Name = "_deleteTimeValue";
+            this._deleteTimeValue.Size = new System.Drawing.Size(57, 20);
+            this._deleteTimeValue.TabIndex = 25;
+            this._deleteTimeValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this._deleteTimeValue.Value = new decimal(new int[] {
             1,
             0,
@@ -298,31 +467,75 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             // 
             // _deleteTimeUnits
             // 
-            resources.ApplyResources(this._deleteTimeUnits, "_deleteTimeUnits");
+            this._deleteTimeUnits.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this._deleteTimeUnits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._deleteTimeUnits.FormattingEnabled = true;
+            this._deleteTimeUnits.Location = new System.Drawing.Point(162, 3);
             this._deleteTimeUnits.Name = "_deleteTimeUnits";
+            this._deleteTimeUnits.Size = new System.Drawing.Size(77, 21);
+            this._deleteTimeUnits.TabIndex = 26;
             // 
             // label3
             // 
-            resources.ApplyResources(this.label3, "label3");
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label3.AutoSize = true;
             this.tableLayoutPanel2.SetColumnSpan(this.label3, 2);
+            this.label3.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label3.Location = new System.Drawing.Point(245, 7);
             this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(96, 13);
+            this.label3.TabIndex = 27;
+            this.label3.Text = "after receipt/import";
             // 
-            // groupBox1
+            // _infoMessage
             // 
-            resources.ApplyResources(this.groupBox1, "groupBox1");
-            this.groupBox1.Controls.Add(this.tableLayoutPanel2);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.TabStop = false;
+            this._infoMessage.AutoEllipsis = true;
+            this._infoMessage.AutoSize = true;
+            this._infoMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this._infoMessage.ForeColor = System.Drawing.Color.CornflowerBlue;
+            this._infoMessage.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this._infoMessage.Location = new System.Drawing.Point(9, 274);
+            this._infoMessage.Margin = new System.Windows.Forms.Padding(3, 2, 3, 0);
+            this._infoMessage.Name = "_infoMessage";
+            this._infoMessage.Size = new System.Drawing.Size(90, 13);
+            this._infoMessage.TabIndex = 22;
+            this._infoMessage.Text = "don\'t translate me";
+            // 
+            // _studyDeletion
+            // 
+            this._studyDeletion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this._studyDeletion.Controls.Add(this.tableLayoutPanel2);
+            this._studyDeletion.Location = new System.Drawing.Point(3, 191);
+            this._studyDeletion.Name = "_studyDeletion";
+            this._studyDeletion.Size = new System.Drawing.Size(461, 78);
+            this._studyDeletion.TabIndex = 0;
+            this._studyDeletion.TabStop = false;
+            this._studyDeletion.Text = "Automatic Study Deletion";
+            // 
+            // _studyDeletionValidationPlaceholder
+            // 
+            this._studyDeletionValidationPlaceholder.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._studyDeletionValidationPlaceholder.Location = new System.Drawing.Point(347, 0);
+            this._studyDeletionValidationPlaceholder.Name = "_studyDeletionValidationPlaceholder";
+            this.tableLayoutPanel2.SetRowSpan(this._studyDeletionValidationPlaceholder, 2);
+            this._studyDeletionValidationPlaceholder.Size = new System.Drawing.Size(73, 45);
+            this._studyDeletionValidationPlaceholder.TabIndex = 28;
+            this._studyDeletionValidationPlaceholder.Text = " don\'t translate";
+            this._studyDeletionValidationPlaceholder.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // StorageConfigurationComponentControl
             // 
-            resources.ApplyResources(this, "$this");
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.groupBox1);
+            this.AutoSize = true;
+            this.Controls.Add(this._infoMessage);
+            this.Controls.Add(this._studyDeletion);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.Controls.Add(this._localServiceControlLink);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "StorageConfigurationComponentControl";
+            this.Size = new System.Drawing.Size(467, 298);
             ((System.ComponentModel.ISupportInitialize)(this._maxDiskSpace)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._upDownMaxDiskSpace)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).EndInit();
@@ -333,8 +546,9 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._deleteTimeValue)).EndInit();
-            this.groupBox1.ResumeLayout(false);
+            this._studyDeletion.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -368,6 +582,8 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         private System.Windows.Forms.NumericUpDown _deleteTimeValue;
         private System.Windows.Forms.ComboBox _deleteTimeUnits;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label _infoMessage;
+        private System.Windows.Forms.GroupBox _studyDeletion;
+        private System.Windows.Forms.Label _studyDeletionValidationPlaceholder;
     }
 }

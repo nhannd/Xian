@@ -35,7 +35,14 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
             _component = component;
 
+            //This guy's not actually visible. It's just a placeholder for the validation icon.
+            _studyDeletionValidationPlaceholder.Text = String.Empty;
+
             _fileStoreDirectory.DataBindings.Add("Text", _component, "FileStoreDirectory", true, DataSourceUpdateMode.OnPropertyChanged);
+            _fileStoreDirectory.DataBindings.Add("Enabled", _component, "CanChangeFileStore", true, DataSourceUpdateMode.OnPropertyChanged);
+            _changeFileStore.DataBindings.Add("Enabled", _component, "CanChangeFileStore", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _infoMessage.DataBindings.Add("Text", _component, "InfoMessage", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _localServiceControlLink.DataBindings.Add("Text", _component, "LocalServiceControlLinkText", true, DataSourceUpdateMode.OnPropertyChanged);
             _localServiceControlLink.DataBindings.Add("Visible", _component, "IsLocalServiceControlLinkVisible", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -69,6 +76,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             _diskSpaceWarningMessage.DataBindings.Add("Visible", _component, "IsMaximumUsedSpaceExceeded", true, DataSourceUpdateMode.OnPropertyChanged);
             _diskSpaceWarningMessage.DataBindings.Add("Text", _component, "MaximumUsedSpaceExceededMessage", true, DataSourceUpdateMode.OnPropertyChanged);
 
+            _studyDeletion.DataBindings.Add("Enabled", _component, "CanChangeDeletionRule", true, DataSourceUpdateMode.OnPropertyChanged);
 			_deleteStudiesCheck.DataBindings.Add("Checked", _component, "DeleteStudies", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_deleteTimeValue.DataBindings.Add("Value", _component, "DeleteTimeValue", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -87,8 +95,8 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
             _changeFileStore.Click += (s, e) => _component.ChangeFileStore();
             _helpIcon.Click += (s,e) => _component.Help();
-			
-            
+
+            _component.ValidationVisibleChanged += (sender, args) => UpdateDeletionValidationMessage();
             _component.PropertyChanged += OnComponentPropertyChanged;
 
             //Set initial values.
@@ -98,8 +106,16 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             OnComponentPropertyChanged(this, new PropertyChangedEventArgs("HelpMessage"));
         }
 
+        private void UpdateDeletionValidationMessage()
+        {
+            ErrorProvider.SetError(_studyDeletionValidationPlaceholder, _component.DeletionRuleValidationMessage);
+        }
+
         private void OnComponentPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
         {
+            if (propertyChangedEventArgs.PropertyName == "DeletionRuleValidationMessage")
+                UpdateDeletionValidationMessage();
+
             if (propertyChangedEventArgs.PropertyName == "FileStoreDirectory")
                 _tooltip.SetToolTip(_fileStoreDirectory, _component.FileStoreDirectory);
 
