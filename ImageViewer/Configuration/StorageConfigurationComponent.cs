@@ -39,11 +39,14 @@ namespace ClearCanvas.ImageViewer.Configuration
         private DelayedEventPublisher _delaySetFileStoreDirectory;
         private StorageConfiguration _configuration;
         private string _fileStoreDriveName;
+        private string _fileStoreDirectory;
         private string _currentFileStoreDirectory;
-        private string _originalFileStoreDirectory;
-    	private StorageConfiguration.DeletionRule _originalDeletionRule;
+        private bool _hasFileStoreEverChanged;
+        private StorageConfiguration.DeletionRule _currentDeletionRule;
 
         private IWorkItemActivityMonitor _activityMonitor;
+
+        #region Overrides
 
         public override void Start()
 		{
@@ -52,12 +55,12 @@ namespace ClearCanvas.ImageViewer.Configuration
             _activityMonitor.IsConnectedChanged += ActivityMonitorOnIsConnectedChanged;
 
             _configuration = StudyStore.GetConfiguration();
-            _currentFileStoreDirectory = _originalFileStoreDirectory = _configuration.FileStoreDirectory;
+            _fileStoreDirectory = _currentFileStoreDirectory = _configuration.FileStoreDirectory;
             
             UpdateFileStoreDriveName();
             MaximumUsedSpaceChanged();
 
-			_originalDeletionRule = _configuration.DefaultDeletionRule.Clone();
+			_currentDeletionRule = _configuration.DefaultDeletionRule.Clone();
 			
 			base.Start();
 		}
@@ -84,14 +87,27 @@ namespace ClearCanvas.ImageViewer.Configuration
         {
 		    try
 		    {
+                if (HasFileStoreChanged)
+                    _hasFileStoreEverChanged = true;
+
                 StudyStore.UpdateConfiguration(_configuration);
 
 				// if the default deletion rule was modified, kick-off a re-apply rules work item
-				if(!Equals(_configuration.DefaultDeletionRule, _originalDeletionRule))
+				if(HasDeletionRuleChanged)
 				{
-					var client = new ReapplyRulesBridge();
-					client.ReapplyAll(new RulesEngineOptions { ApplyDeleteActions = true });
+					var bridge = new ReapplyRulesBridge();
+					bridge.ReapplyAll(new RulesEngineOptions { ApplyDeleteActions = true });
 				}
+
+                _fileStoreDirectory = _currentFileStoreDirectory = _configuration.FileStoreDirectory;
+                _currentDeletionRule = _configuration.DefaultDeletionRule.Clone();
+
+                //Just update all kinds of properties.
+		        NotifyFileStoreChanged();
+                NotifyDeletionRuleChanged(null);
+                NotifyServiceControlLinkPropertiesChanged();
+
+                ShowValidation(false);
 		    }
 		    catch (Exception e)
 		    {
@@ -104,6 +120,9 @@ namespace ClearCanvas.ImageViewer.Configuration
             get
             {
                 _delaySetFileStoreDirectory.PublishNow();
+                if (HasDeletionRuleChanged && !IsLocalServiceRunning)
+                    return true;
+
                 return base.HasValidationErrors;
             }
         }
@@ -117,52 +136,43 @@ namespace ClearCanvas.ImageViewer.Configuration
             protected set
             {
                 base.Modified = value;
-                NotifyPropertyChanged("DoesLocalServiceHaveToStop");
-                NotifyPropertyChanged("DoesLocalServiceHaveToStart");
-                NotifyPropertyChanged("IsLocalServiceControlLinkVisible");
-                NotifyPropertyChanged("LocalServiceControlLinkText");
+                NotifyServiceControlLinkPropertiesChanged();
             }
         }
 
-        private bool IsLocalServiceRunning
-        {
-            get { return _activityMonitor.IsConnected; }
-        }
-
-        private bool DoesLocalServiceHaveToStop
-        {
-            get { return IsLocalServiceRunning && HasFileStoreChanged && Modified; }
-        }
-
-        private bool DoesLocalServiceHaveToStart
-        {
-            get { return !IsLocalServiceRunning && HasFileStoreChanged && !Modified; }
-        }
-        
-        private bool IsDiskspaceAvailable
-        {
-            get { return _configuration.FileStoreDriveExists && _configuration.FileStoreDiskSpace.IsAvailable; }
-        }
+        #endregion
 
         #region Presentation Model
 
+        #region File Store
+
+        public bool CanChangeFileStore
+        {
+            get
+            {
+                //Changing the deletion rule requires the service to be running,
+                //whereas changing the file store requires it to be stopped.
+                return !HasDeletionRuleChanged;
+            }
+        }
+
         public string FileStoreDirectory
         {
-            get { return _currentFileStoreDirectory; }
+            get { return _fileStoreDirectory; }
             set
             {
-                if (Equals(value, _currentFileStoreDirectory))
+                if (Equals(value, _fileStoreDirectory))
                     return;
 
                 Modified = true;
-                _currentFileStoreDirectory = value;
+                _fileStoreDirectory = value;
                 _delaySetFileStoreDirectory.Publish(this, EventArgs.Empty);
             }
         }
         
         public bool HasFileStoreChanged
         {
-            get { return _configuration.FileStoreDirectory != _originalFileStoreDirectory; }
+            get { return _configuration.FileStoreDirectory != _currentFileStoreDirectory; }
         }
 
         public string FileStoreChangedMessage
@@ -187,25 +197,25 @@ namespace ClearCanvas.ImageViewer.Configuration
             }
         }
 
-        public string LocalServiceControlLinkText
+        public void ChangeFileStore()
         {
-            get
-            {
-                if (DoesLocalServiceHaveToStop)
-                    return SR.LinkLabelStopLocalService;
+            var args = new SelectFolderDialogCreationArgs(FileStoreDirectory) { Prompt = SR.TitleSelectFileStore, AllowCreateNewFolder = true };
+            var result = base.Host.DesktopWindow.ShowSelectFolderDialogBox(args);
+            if (result.Action != DialogBoxAction.Ok)
+                return;
 
-                if (DoesLocalServiceHaveToStart)
-                    return SR.LinkLabelStartLocalService;
-                
-                return String.Empty;
+            try
+            {
+                FileStoreDirectory = result.FileName;
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, Host.DesktopWindow);
             }
         }
 
-        public bool IsLocalServiceControlLinkVisible
-        {
-            get { return DoesLocalServiceHaveToStop || DoesLocalServiceHaveToStart; }
-        }
-
+        #endregion
+        #region Disk Space
 
         public string TotalSpaceBytesDisplay
         {
@@ -219,7 +229,7 @@ namespace ClearCanvas.ImageViewer.Configuration
         }
 
         public double UsedSpacePercent
-		{
+        {
             get
             {
                 if (!IsDiskspaceAvailable)
@@ -227,15 +237,15 @@ namespace ClearCanvas.ImageViewer.Configuration
 
                 return _configuration.FileStoreDiskSpace.UsedSpacePercent;
             }
-		}
+        }
 
-		public string UsedSpacePercentDisplay
-		{
+        public string UsedSpacePercentDisplay
+        {
             get { return UsedSpacePercent.ToString("F3"); }
-		}
+        }
 
-		public string UsedSpaceBytesDisplay
-		{
+        public string UsedSpaceBytesDisplay
+        {
             get
             {
                 if (!IsDiskspaceAvailable)
@@ -243,30 +253,30 @@ namespace ClearCanvas.ImageViewer.Configuration
 
                 return Diskspace.FormatBytes(_configuration.FileStoreDiskSpace.UsedSpace, "F3");
             }
-		}
+        }
 
-		public double MaximumUsedSpacePercent
-		{
-			get
-			{
+        public double MaximumUsedSpacePercent
+        {
+            get
+            {
                 if (!IsDiskspaceAvailable)
                     return 0;
 
                 return _configuration.MaximumUsedSpacePercent;
-			}
-			set
-			{
+            }
+            set
+            {
                 if (!IsDiskspaceAvailable)
                     return;
 
                 if (Equals(value, _configuration.MaximumUsedSpacePercent))
                     return;
 
-			    value = Math.Min(value, 100);
-			    value = Math.Max(value, 10);
+                value = Math.Min(value, 100);
+                value = Math.Max(value, 10);
 
-			    _configuration.MaximumUsedSpacePercent = value;
-				this.Modified = true;
+                _configuration.MaximumUsedSpacePercent = value;
+                this.Modified = true;
                 MaximumUsedSpaceChanged();
             }
         }
@@ -315,29 +325,27 @@ namespace ClearCanvas.ImageViewer.Configuration
             }
         }
 
-        public string HelpMessage
+        #endregion
+
+        #region Service Control
+
+        public string LocalServiceControlLinkText
         {
             get
             {
-                return SR.MessageStorageHelp;
+                if (DoesLocalServiceHaveToStop)
+                    return SR.LinkLabelStopLocalService;
+
+                if (DoesLocalServiceHaveToStart)
+                    return SR.LinkLabelStartLocalService;
+                
+                return String.Empty;
             }
         }
 
-        public void ChangeFileStore()
+        public bool IsLocalServiceControlLinkVisible
         {
-            var args = new SelectFolderDialogCreationArgs(FileStoreDirectory) { Prompt = SR.TitleSelectFileStore, AllowCreateNewFolder = true };
-            var result = base.Host.DesktopWindow.ShowSelectFolderDialogBox(args);
-            if (result.Action != DialogBoxAction.Ok)
-                return;
-
-            try
-            {
-                FileStoreDirectory = result.FileName;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, Host.DesktopWindow);
-            }
+            get { return DoesLocalServiceHaveToStop || DoesLocalServiceHaveToStart; }
         }
 
         public void LocalServiceControlLinkClicked()
@@ -368,69 +376,180 @@ namespace ClearCanvas.ImageViewer.Configuration
             }
         }
 
+        #endregion
+
+        #region Study Deletion
+
+        public bool CanChangeDeletionRule
+        {
+            get
+            {
+                //Changing the deletion rule requires the service to be running,
+                //whereas changing the file store requires it to be stopped.
+                return !HasFileStoreChanged;
+            }
+        }
+
+        public bool HasDeletionRuleChanged
+        {
+            get { return !Equals(_configuration.DefaultDeletionRule, _currentDeletionRule); }
+        }
+
+        //Yeah, it's a custom validation message, since there's no corresponding "property" (it's multiple, actually).
+        public string DeletionRuleValidationMessage
+        {
+            get
+            {
+                if (base.ValidationVisible && HasDeletionRuleChanged && !IsLocalServiceRunning)
+                    return SR.ValidationCannotChangeDeletionRule;
+
+                return String.Empty;
+            }
+        }
+
+        public bool DeleteStudies
+        {
+            get { return _configuration.DefaultDeletionRule.Enabled; }
+            set
+            {
+                _delaySetFileStoreDirectory.PublishNow();
+                if (!CanChangeDeletionRule)
+                {
+                    NotifyDeletionRuleChanged("DeleteStudies");
+                    return;
+                }
+
+                if (value != _configuration.DefaultDeletionRule.Enabled)
+                {
+                    var ddr = _configuration.DefaultDeletionRule;
+                    ddr.Enabled = value;
+                    this.Modified = true;
+                    NotifyDeletionRuleChanged("DeleteStudies");
+                    // bug #10050: when first enabled, time value should be defaulted to 1 instead of 0
+                    if (ddr.Enabled && ddr.TimeValue < 1)
+                        this.DeleteTimeValue = 1;
+                }
+            }
+        }
+
+        public int DeleteTimeValue
+        {
+            get { return _configuration.DefaultDeletionRule.TimeValue; }
+            set
+            {
+                _delaySetFileStoreDirectory.PublishNow();
+                if (!CanChangeDeletionRule)
+                {
+                    NotifyDeletionRuleChanged("DeleteTimeValue");
+                    return;
+                }
+
+                if (value != _configuration.DefaultDeletionRule.TimeValue)
+                {
+                    _configuration.DefaultDeletionRule.TimeValue = value;
+                    this.Modified = true;
+                    NotifyDeletionRuleChanged("DeleteTimeValue");
+                }
+            }
+        }
+
+        public IList DeleteTimeUnits
+        {
+            get { return Enum.GetValues(typeof(TimeUnit)); }
+        }
+
+        public string FormatTimeUnit(object obj)
+        {
+            var unit = (TimeUnit)obj;
+            return unit.GetDescription();
+        }
+
+        public TimeUnit DeleteTimeUnit
+        {
+            get { return _configuration.DefaultDeletionRule.TimeUnit; }
+            set
+            {
+                if (!CanChangeDeletionRule)
+                {
+                    NotifyDeletionRuleChanged("DeleteTimeUnit");
+                    return;
+                }
+
+                if (value != _configuration.DefaultDeletionRule.TimeUnit)
+                {
+                    _configuration.DefaultDeletionRule.TimeUnit = value;
+                    this.Modified = true;
+                    NotifyDeletionRuleChanged("DeleteTimeUnit");
+                }
+            }
+        }
+
+        #endregion
+
+        #region Help
+
+        public string InfoMessage
+        {
+            get
+            {
+                if (HasFileStoreChanged || HasDeletionRuleChanged)
+                    return SR.MessageCannotChangeFileStoreAndStudyDeletionSimultaneously;
+                
+                return String.Empty;
+            }
+        }
+
+        public string HelpMessage
+        {
+            get
+            {
+                return SR.MessageStorageHelp;
+            }
+        }
+
         public void Help()
         {
             Host.DesktopWindow.ShowMessageBox(SR.DescriptionStorageOptions, MessageBoxActions.Ok);
         }
 
-    	public bool DeleteStudies
-    	{
-			get { return _configuration.DefaultDeletionRule.Enabled; }
-			set
-			{
-				if (value != _configuration.DefaultDeletionRule.Enabled)
-				{
-					var ddr = _configuration.DefaultDeletionRule;
-					ddr.Enabled = value;
-					this.Modified = true;
-					NotifyPropertyChanged("DeleteStudies");
-					// bug #10050: when first enabled, time value should be defaulted to 1 instead of 0
-					if (ddr.Enabled && ddr.TimeValue < 1)
-						this.DeleteTimeValue = 1;
-				}
-			}
-    	}
+        #endregion
+        #endregion
 
-    	public int DeleteTimeValue
-    	{
-    		get { return _configuration.DefaultDeletionRule.TimeValue; }
-    		set
-			{
-				if (value != _configuration.DefaultDeletionRule.TimeValue)
-				{
-					_configuration.DefaultDeletionRule.TimeValue = value;
-					this.Modified = true;
-					NotifyPropertyChanged("DeleteTimeValue");
-				}
-			}
-		}
+        #region Private Properties
 
-    	public IList DeleteTimeUnits
-		{
-			get { return Enum.GetValues(typeof(TimeUnit)); }
-		}
+        private bool IsLocalServiceRunning
+        {
+            get { return _activityMonitor.IsConnected; }
+        }
 
-		public string FormatTimeUnit(object obj)
-		{
-			var unit = (TimeUnit)obj;
-			return unit.GetDescription();
-		}
+        private bool DoesLocalServiceHaveToStop
+        {
+            get { return IsLocalServiceRunning && HasFileStoreChanged; }
+        }
 
-		public TimeUnit DeleteTimeUnit
-    	{
-			get { return _configuration.DefaultDeletionRule.TimeUnit; }
-    		set
-			{
-				if (value != _configuration.DefaultDeletionRule.TimeUnit)
-				{
-					_configuration.DefaultDeletionRule.TimeUnit = value;
-					this.Modified = true;
-					NotifyPropertyChanged("DeleteTimeUnit");
-				}
-			}
-		}
+        private bool DoesLocalServiceHaveToStart
+        {
+            get
+            {
+                if (IsLocalServiceRunning)
+                    return false;
+
+                //If there is a change to the file store that needs to be saved, then we don't want the "Start Service" link to show.
+                if (HasFileStoreChanged)
+                    return false;
+
+                //If the change to the file store has been saved, or the deletion rule needs to be saved, then we do want the "Start Service" link to show.
+                return _hasFileStoreEverChanged || HasDeletionRuleChanged;
+            }
+        }
+
+        private bool IsDiskspaceAvailable
+        {
+            get { return _configuration.FileStoreDriveExists && _configuration.FileStoreDiskSpace.IsAvailable; }
+        }
 
         #endregion
+        #region Private Methods
 
         [ValidationMethodFor("FileStoreDirectory")]
         private ValidationResult ValidateFileStorePath()
@@ -487,33 +606,54 @@ namespace ClearCanvas.ImageViewer.Configuration
         {
             NotifyPropertyChanged("IsLocalServiceRunning");
 
-            NotifyPropertyChanged("DoesLocalServiceHaveToStop");
-            NotifyPropertyChanged("DoesLocalServiceHaveToStart");
-            NotifyPropertyChanged("IsLocalServiceControlLinkVisible");
-            NotifyPropertyChanged("LocalServiceControlLinkText");
+            NotifyServiceControlLinkPropertiesChanged();
+
+            if (!HasValidationErrors)
+                ShowValidation(false);
         }
 
         private void RealSetFileStoreDirectory(object sender, EventArgs e)
         {
-            if (Equals(_currentFileStoreDirectory, _configuration.FileStoreDirectory))
+            if (Equals(_fileStoreDirectory, _configuration.FileStoreDirectory))
                 return;
 
-            _configuration.FileStoreDirectory = _currentFileStoreDirectory;
+            _configuration.FileStoreDirectory = _fileStoreDirectory;
 
             UpdateFileStoreDriveName();
 
+            NotifyFileStoreChanged();
+        }
+
+        private void NotifyFileStoreChanged()
+        {
             NotifyPropertyChanged("FileStoreDirectory");
             NotifyPropertyChanged("HasFileStoreChanged");
+            NotifyPropertyChanged("InfoMessage");
             NotifyPropertyChanged("FileStoreChangedMessage");
             NotifyPropertyChanged("FileStoreChangedDescription");
 
-            NotifyPropertyChanged("DoesLocalServiceHaveToStop");
-            NotifyPropertyChanged("DoesLocalServiceHaveToStart");
+            NotifyPropertyChanged("CanChangeDeletionRule");
+            NotifyServiceControlLinkPropertiesChanged();
+        }
+
+        private void NotifyDeletionRuleChanged(string propertyName)
+        {
+            if (!String.IsNullOrEmpty(propertyName))
+                NotifyPropertyChanged(propertyName);
+
+            NotifyPropertyChanged("HasDeletionRuleChanged");
+            NotifyPropertyChanged("DeletionRuleValidationMessage");
+            NotifyPropertyChanged("InfoMessage");
+            NotifyPropertyChanged("CanChangeFileStore");
+            NotifyServiceControlLinkPropertiesChanged();
+        }
+
+        private void NotifyServiceControlLinkPropertiesChanged()
+        {
             NotifyPropertyChanged("IsLocalServiceControlLinkVisible");
             NotifyPropertyChanged("LocalServiceControlLinkText");
-            
-            if (!HasValidationErrors)
-                ShowValidation(false);
         }
+
+        #endregion
     }
 }

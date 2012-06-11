@@ -218,6 +218,9 @@ Streaming Image Port: {1}</value>
   <data name="MessageActionModelUpdateFailure" xml:space="preserve">
     <value>Failed to update action models</value>
   </data>
+  <data name="MessageCannotChangeFileStoreAndStudyDeletionSimultaneously" xml:space="preserve">
+    <value>File Store and Study Deletion must be changed separately</value>
+  </data>
   <data name="MessageCEchoVerificationPrefix" xml:space="preserve">
     <value>C-ECHO Verification:</value>
   </data>
@@ -373,6 +376,10 @@ Streaming Image Port: {1}</value>
   </data>
   <data name="ValidationAETitleLengthIncorrect" xml:space="preserve">
     <value>The AE Title must be between 1 and 16 characters.</value>
+  </data>
+  <data name="ValidationCannotChangeDeletionRule" xml:space="preserve">
+    <value>The local service must be started before the automatic study deletion behaviour can be changed.
+You can click the "Start Local Service" link now, or cancel your changes.</value>
   </data>
   <data name="ValidationDriveDoesNotExist" xml:space="preserve">
     <value>The specified drive ({0}) does not exist.</value>
