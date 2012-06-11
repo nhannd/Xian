@@ -106,6 +106,15 @@ namespace ClearCanvas.Desktop.Help {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Get Support.
+        /// </summary>
+        internal static string MenuGetSupport {
+            get {
+                return ResourceManager.GetString("MenuGetSupport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show License Agreement.
         /// </summary>
         internal static string MenuLicense {

@@ -132,6 +132,9 @@
   <data name="LicenseNotFound" xml:space="preserve">
     <value>Could not find license file.</value>
   </data>
+  <data name="MenuGetSupport" xml:space="preserve">
+    <value>Get Support</value>
+  </data>
   <data name="MenuLicense" xml:space="preserve">
     <value>Show License Agreement</value>
   </data>
