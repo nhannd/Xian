@@ -290,6 +290,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// <exception cref="DicomDataException">Thrown when the DICOM object contains invalid data</exception>
         public DicomProcessingResult Import(DicomMessageBase message, BadFileBehaviourEnum badFileBehavior, FileImportBehaviourEnum fileImportBehaviour)
         {
+            // TODO (CR Jun 2012): This is a pretty long method.
+            
             Platform.CheckForNullReference(message, "message");
             String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
             String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
@@ -297,9 +299,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             String accessionNumber = message.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
             String patientsName = message.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
 
-            // TODO (Marmot) - Not sure if we want to do anythign about this.
-            // Scrub the name for invalid characters.
-            //string newName = XmlUtils.XmlCharacterScrub(patientsName);
             string newName = patientsName;
             if (!newName.Equals(patientsName))
                 message.DataSet[DicomTags.PatientsName].SetStringValue(newName);
@@ -362,6 +361,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                     if (File.Exists(destinationFile))
                     {
+                        // TODO (CR Jun 2012): Shouldn't the commands themselves make this decision at the time
+                        // the file is being saved? Otherwise, what happens if the same SOP were being saved 2x simultaneously.
+                        // I know the odds are low, but just pointing it out.
                         duplicateFile = true;
                         destinationFile = Path.Combine(Path.GetDirectoryName(destinationFile), dupName);
                     }
@@ -446,7 +448,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 		return result;
                 	}
                 }
-               
                 catch (Exception e)
                 {
                     Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.", commandProcessor.Description);
