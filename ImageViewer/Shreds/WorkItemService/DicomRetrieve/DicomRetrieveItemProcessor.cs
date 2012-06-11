@@ -156,5 +156,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
                 _scu.Cancel();
             }
         }
+
+        #endregion
     }
 }

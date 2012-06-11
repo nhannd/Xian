@@ -238,5 +238,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                     break;
             }
         }
+
+        #endregion
     }
 }
