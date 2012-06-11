@@ -47,6 +47,11 @@ namespace ClearCanvas.Common.UsageTracking
 
 		public abstract string GetData(UsageType type);
 
+		protected virtual bool HasData(UsageType type)
+		{
+			return true;
+		}
+
 		protected virtual ExtensionDataObject GetExtensionData()
 		{
 			return null;
@@ -56,13 +61,13 @@ namespace ClearCanvas.Common.UsageTracking
 		{
 			try
 			{
-				return new UsageApplicationData {Key = Key, Value = GetData(type), ExtensionData = GetExtensionData()};
+				if (HasData(type)) return new UsageApplicationData {Key = Key, Value = GetData(type), ExtensionData = GetExtensionData()};
 			}
 			catch (Exception ex)
 			{
 				Platform.Log(LogLevel.Debug, ex, "Error getting application data for usage tracking.");
-				return null;
 			}
+			return null;
 		}
 	}
 }
