@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
         #region Private Members
 
         private ImageViewerMoveScu _scu;
-
+        private bool _cancelDueToDiskSpace = false;
         #endregion
 
         #region Public Properties
@@ -72,6 +72,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
 
         public override void Process()
         {
+            EnsureMinLocalStorageSpace(0);
+
             DicomServerConfiguration configuration = GetServerConfiguration();
             var remoteAE = ServerDirectory.GetRemoteServerByName(Request.Source);
             if (remoteAE == null)
@@ -89,16 +91,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
                 Proxy.Fail("Invalid request type.", WorkItemFailureType.Fatal);
                 return;
             }
-
-            var storageConfiguration = StudyStore.GetConfiguration();
-            if (storageConfiguration.IsMaximumUsedSpaceExceeded)
-            {
-                Proxy.Fail(string.Format("Unable to retrieve, file store is {0} percent full, maximum usage {1} percent.",
-                                              storageConfiguration.FileStoreDiskSpace.UsedSpacePercent.ToString("00.000"),
-                                              storageConfiguration.MaximumUsedSpacePercent.ToString("00.000")), WorkItemFailureType.NonFatal);
-                return;
-            }
-
+            
             Progress.ImagesToRetrieve = _scu.TotalSubOperations;
             Progress.FailureSubOperations = 0;
             Progress.WarningSubOperations = 0;
@@ -118,7 +111,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
 
             if (_scu.Canceled)
             {
-                if (StopPending)
+                if (_cancelDueToDiskSpace)
+                {
+                    Progress.IsCancelable = true;
+                    throw new NotEnoughStorageException(); // item will be failed
+                }
+                else if (StopPending)
                 {
                     Progress.IsCancelable = true;
                     Proxy.Postpone();
@@ -151,8 +149,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
             Progress.WarningSubOperations = _scu.WarningSubOperations;
             Progress.StatusDetails = !string.IsNullOrEmpty(_scu.ErrorDescriptionDetails) ? _scu.ErrorDescriptionDetails : _scu.FailureDescription;
             Proxy.UpdateProgress();
-        }
 
-        #endregion
+            if (!base.LocalStorageHasMinSpace(0))
+            {
+                _cancelDueToDiskSpace = true;
+                _scu.Cancel();
+            }
+        }
     }
 }

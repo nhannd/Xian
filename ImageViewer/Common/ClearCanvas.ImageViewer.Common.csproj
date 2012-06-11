@@ -107,6 +107,12 @@
     <Compile Include="ServerDirectory\Tests\ServerDirectoryTests.cs" />
     <Compile Include="DicomServer\Tests\DicomServerTestServiceProvider.cs" />
     <Compile Include="ServerDirectory\Tests\ServerDirectoryTestServiceProvider.cs" />
+    <Compile Include="StorageMonitor.cs" />
+    <Compile Include="StorageMonitorSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>StorageMonitorSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="StudyManagement\DataContracts.cs" />
     <Compile Include="StudyManagement\IPublishFiles.cs" />
     <Compile Include="StudyManagement\IStorageConfiguration.cs" />
@@ -184,6 +190,10 @@
     <None Include="MemoryManagementSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>MemoryManagementSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="StorageMonitorSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>StorageMonitorSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

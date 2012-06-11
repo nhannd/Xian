@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
     /// <summary>
     /// Processor for import of files.
     /// </summary>
-    internal class ImportItemProcessor : BaseItemProcessor<ImportFilesRequest,ImportFilesProgress>
+    internal class ImportItemProcessor : BaseItemProcessor<ImportFilesRequest, ImportFilesProgress>
     {
         #region Public Methods
 
@@ -129,6 +129,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
         private void ImportFile(string file, ImportStudyContext context)
         {
+            EnsureMinLocalStorageSpace(0);
+
             // Note, we're not doing impersonation of the user's identity, so we may have failures here
             // which would be new in Marmot.
             try
@@ -162,6 +164,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 Progress.StatusDetails = string.Format("{0}: {1}", file, e.Message);
             }
         }
+
 
         private void ImportFiles(IList<string> filePaths,
             IEnumerable<string> fileExtensions,
@@ -233,7 +236,5 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                     break;
             }
         }
-
-        #endregion
     }
 }

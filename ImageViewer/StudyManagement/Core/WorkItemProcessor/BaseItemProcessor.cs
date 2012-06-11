@@ -18,6 +18,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 {
@@ -225,6 +227,32 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         #endregion
 
         #region Protected Methods
+
+        /// <summary>
+        /// Ensure minimum amount of space available in the local data store
+        /// </summary>
+        /// <param name="minSpaceInMB"></param>
+        /// <exception cref="NotEnoughStorageException"/>
+        protected void EnsureMinLocalStorageSpace(long minSpaceInMB)
+        {
+            if (!LocalStorageHasMinSpace(minSpaceInMB))
+            {
+                Platform.Log(LogLevel.Warn, "Not enough storage space. Max Used={0} MB, Total Used={1} MB", StorageSpaceMonitor.MaxUsed, StorageSpaceMonitor.TotalUsed);
+                throw new NotEnoughStorageException();
+            }
+        }
+
+        /// <summary>
+        /// Checks if the amount of space available in the local data store is more than
+        /// the specified amount.
+        /// </summary>
+        /// <param name="minSpaceInMB"></param>
+        /// <returns></returns>
+        protected bool LocalStorageHasMinSpace(long minSpaceInMB)
+        {
+            long avaiSpace = StorageSpaceMonitor.GetAvailableStorageSpace();
+            return avaiSpace > minSpaceInMB;
+        }
 
         /// <summary>
         /// Load the specific SOP Instance Uids in the database for the WorkQueue item.
@@ -496,5 +524,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         }
 
         #endregion
+    }
+
+    public class NotEnoughStorageException : Exception
+    {
+        public NotEnoughStorageException():base("Additional storage space is required")
+        {
+        }
     }
 }
