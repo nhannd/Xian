@@ -163,9 +163,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             {
                 foreach (var file in files)
                 {
+                    // TODO (CR Jun 2012): The publisher also audits, and it's going to do it once per file. There will be an excessive number of audit logs generated.
                     var importResult = utility.Import(file, BadFileBehaviourEnum.Ignore, FileImportBehaviourEnum.Save);
                     if (importResult.DicomStatus != DicomStatuses.Success)
                     {
+                        //TODO (Marmot):This should throw; otherwise, the exception is essentially silenced.
                         Platform.Log(LogLevel.Warn, "Unable to import published file: {0}", importResult.ErrorMessage);
                     }
                 }
