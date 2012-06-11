@@ -330,6 +330,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File Store and Study Deletion must be changed separately.
+        /// </summary>
+        internal static string MessageCannotChangeFileStoreAndStudyDeletionSimultaneously {
+            get {
+                return ResourceManager.GetString("MessageCannotChangeFileStoreAndStudyDeletionSimultaneously", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to C-ECHO Verification:.
         /// </summary>
         internal static string MessageCEchoVerificationPrefix {
@@ -794,6 +803,16 @@ namespace ClearCanvas.ImageViewer.Configuration {
         internal static string ValidationAETitleLengthIncorrect {
             get {
                 return ResourceManager.GetString("ValidationAETitleLengthIncorrect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The local service must be started before the automatic study deletion behaviour can be changed.
+        ///You can click the &quot;Start Local Service&quot; link now, or cancel your changes..
+        /// </summary>
+        internal static string ValidationCannotChangeDeletionRule {
+            get {
+                return ResourceManager.GetString("ValidationCannotChangeDeletionRule", resourceCulture);
             }
         }
         
