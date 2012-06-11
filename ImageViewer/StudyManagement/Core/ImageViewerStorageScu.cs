@@ -219,7 +219,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 && message.TransferSyntax.LosslessCompressed
                 && ((_sendRequest.CompressionType == CompressionType.Rle
                 || _sendRequest.CompressionType == CompressionType.JpegLossless
-                || _sendRequest.CompressionType == CompressionType.JpegLossless)))
+                || _sendRequest.CompressionType == CompressionType.J2KLossless)))
             {
                 pcid = association.FindAbstractSyntaxWithTransferSyntax(message.SopClass, message.TransferSyntax);
                 if (pcid != 0) return pcid;
