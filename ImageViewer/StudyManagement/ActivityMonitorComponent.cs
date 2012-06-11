@@ -18,7 +18,6 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -27,7 +26,6 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using Action = ClearCanvas.Desktop.Actions.Action;
@@ -416,215 +414,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
-		#region LocalServerWatcher class
-
-		class LocalServerWatcher : IDisposable
-		{
-		    private class AsyncState
-		    {
-		        public SynchronizationContext SynchronizationContext;
-		        public StorageConfiguration CurrentStorageConfiguration;
-                public DicomServerConfiguration CurrentDicomServerConfiguration;
-            }
-
-			private Timer _refreshTimer;
-
-			private DicomServerConfiguration _dicomServerConfiguration;
-			private StorageConfiguration _storageConfiguration;
-
-			private readonly System.Action _dicomServerConfigurationChanged;
-			private readonly System.Action _studyStorageConfigurationChanged;
-			private readonly System.Action _diskSpaceUsageChanged;
-
-		    public LocalServerWatcher(System.Action dicomServerConfigurationChanged, System.Action studyStorageConfigurationChanged, System.Action diskSpaceUsageChanged)
-			{
-				_dicomServerConfigurationChanged = dicomServerConfigurationChanged;
-				_studyStorageConfigurationChanged = studyStorageConfigurationChanged;
-				_diskSpaceUsageChanged = diskSpaceUsageChanged;
-			}
-
-			public void Start()
-			{
-                if (_refreshTimer != null)
-                    return;
-
-                _refreshTimer = new Timer(OnTimerElapsed, null, TimeSpan.FromSeconds(20));
-                _refreshTimer.Start();
-            }
-
-			public void Dispose()
-			{
-                if (_refreshTimer == null)
-                    return;
-
-				_refreshTimer.Dispose();
-			    _refreshTimer = null;
-			}
-
-		    private DicomServerConfiguration DicomServerConfiguration
-		    {
-				get { return _dicomServerConfiguration ?? (_dicomServerConfiguration = DicomServer.GetConfiguration()); }
-				set
-		        {
-					if (Equals(value, _dicomServerConfiguration))
-						return;
-
-					_dicomServerConfiguration = value;
-					_dicomServerConfigurationChanged();
-		        }
-		    }
-
-			private StorageConfiguration StorageConfiguration
-			{
-				get { return _storageConfiguration ?? (_storageConfiguration = StudyStore.GetConfiguration()); }
-				set
-				{
-					if (Equals(value, _storageConfiguration))
-						return;
-
-					_storageConfiguration = value;
-					_studyStorageConfigurationChanged();
-				}
-			}
-
-            #region Dicom Server
-            public string AETitle
-		    {
-                get { return DicomServerConfiguration.AETitle; }
-		    }
-
-		    public string HostName
-		    {
-		        get { return DicomServerConfiguration.HostName; }
-		    }
-
-		    public int Port
-		    {
-                get { return DicomServerConfiguration.Port; }
-		    }
-
-            #endregion
-
-            #region Study Storage Configuration
-
-            public string FileStoreDirectory
-			{
-				get { return StorageConfiguration.FileStoreDirectory; }
-			}
-
-		    //TODO (Marmot): at some point, we may want to show this on the meter.
-            //public double MinimumFreeSpacePercent
-            //{
-            //    get { return StorageConfiguration.MinimumFreeSpacePercent; }
-            //}
-
-		    public bool IsMaximumDiskspaceUsageExceeded
-            {
-                get { return StorageConfiguration.IsMaximumUsedSpaceExceeded; }
-            }
-
-            #endregion
-
-            #region Disk Space
-
-            public long DiskSpaceTotal
-            {
-                get { return StorageConfiguration.FileStoreDiskSpace.TotalSpace; }
-            }
-
-            public long DiskSpaceUsed
-		    {
-                get { return StorageConfiguration.FileStoreDiskSpace.UsedSpace; }
-		    }
-
-            public double DiskSpaceUsedPercent
-            {
-                get { return StorageConfiguration.FileStoreDiskSpace.UsedSpacePercent; }
-            }
-
-            #endregion
-
-            private void OnTimerElapsed(object state)
-			{
-			    var asyncState = new AsyncState
-			                    {
-			                        SynchronizationContext = SynchronizationContext.Current,
-			                        CurrentDicomServerConfiguration = _dicomServerConfiguration,
-			                        CurrentStorageConfiguration = _storageConfiguration
-			                    };
-
-                ThreadPool.QueueUserWorkItem(UpdateConfigurationsAsync, asyncState);
-		    }
-
-		    private void UpdateConfigurationsAsync(object state)
-		    {
-		        var asyncState = (AsyncState) state;
-                //This stuff can actually add up over time because it's hitting the database so frequently.
-                //Better to do it asynchronously.
-                var storageConfiguration = StudyStore.GetConfiguration();
-                var dicomServerConfiguration = DicomServer.GetConfiguration();
-
-                if (!Equals(asyncState.CurrentDicomServerConfiguration, dicomServerConfiguration))
-                    asyncState.SynchronizationContext.Post(ignore => DicomServerConfigurationChanged(dicomServerConfiguration), null);
-
-                var storageConfigurationChanged = HasStorageConfigurationChanged(asyncState.CurrentStorageConfiguration, storageConfiguration);
-                //Access all the disk usage properties here, since they can take some time.
-                bool diskUsageChanged = HasDiskUsageChanged(asyncState.CurrentStorageConfiguration, storageConfiguration);
-
-                if (storageConfigurationChanged)
-                    asyncState.SynchronizationContext.Post(ignore => StorageConfigurationChanged(storageConfiguration), null);
-                else if (diskUsageChanged)
-                    asyncState.SynchronizationContext.Post(ignore => DiskUsageChanged(storageConfiguration), null);
-		    }
-
-            private bool HasStorageConfigurationChanged(StorageConfiguration old, StorageConfiguration @new)
-            {
-                return old == null
-                       || old.FileStoreDirectory != @new.FileStoreDirectory
-                       || Math.Abs(old.MinimumFreeSpacePercent - @new.MinimumFreeSpacePercent) > 0.0001;
-            }
-
-            private bool HasDiskUsageChanged(StorageConfiguration old, StorageConfiguration @new)
-            {
-                //We don't want to cause updates when the disk usage has changed non-significantly.
-                return old == null
-                       || Math.Abs(old.FileStoreDiskSpace.UsedSpacePercent - @new.FileStoreDiskSpace.UsedSpacePercent) > 0.0001
-                       || old.FileStoreDiskSpace.TotalSpace != @new.FileStoreDiskSpace.TotalSpace;
-            }
-
-		    private void DicomServerConfigurationChanged(DicomServerConfiguration dicomServerConfiguration)
-		    {
-                if (_refreshTimer == null)
-                    return;
-
-		        _dicomServerConfiguration = dicomServerConfiguration;
-		        _dicomServerConfigurationChanged();
-		    }
-
-            private void StorageConfigurationChanged(StorageConfiguration storageConfiguration)
-            {
-                if (_refreshTimer == null)
-                    return;
-
-                _storageConfiguration = storageConfiguration;
-                _studyStorageConfigurationChanged();
-                _diskSpaceUsageChanged(); //The file store directory may have changed, so just update this, too.
-            }
-
-            private void DiskUsageChanged(StorageConfiguration storageConfiguration)
-            {
-                if (_refreshTimer == null)
-                    return;
-
-                //We still reassign this value, even if it's only the disk usage that's changed because
-                //the DiskSpace class caches its values, so we need to swap it out for a new one.
-                _storageConfiguration = storageConfiguration;
-                _diskSpaceUsageChanged();
-            }
-        }
-
-		#endregion
-
 		#region WorkItemActionModel
 
 		class WorkItemActionModel : SimpleActionModel
@@ -858,17 +647,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly LocalServerWatcher _localServerWatcher;
 		private readonly StudyCountWatcher _studyCountWatcher;
 
-		private readonly IActivityMonitorQuickLinkHandler[] _linkHandlers;
-
 		public ActivityMonitorComponent()
 		{
 			_connectionState = new DisconnectedState(this);
+			_localServerWatcher = LocalServerWatcher.Instance;
+
 			_textFilterTimer = new Timer(OnTextFilterTimerElapsed, null, 1000);
-			_localServerWatcher = new LocalServerWatcher(OnDicomServerConfigurationChanged, OnStorageConfigurationChanged, OnDiskspaceChanged);
 			_studyCountWatcher = new StudyCountWatcher(OnStudyCountChanged);
 		    _workItemManager = new WorkItemUpdateManager(_workItems.Items, Include, OnFailureCountChanged);
 			_workItemActionModel = new WorkItemActionModel(_workItems.Items, this);
-			_linkHandlers = (new ActivityMonitorQuickLinkHandlerExtensionPoint()).CreateExtensions().Cast<IActivityMonitorQuickLinkHandler>().ToArray();
 		}
 
 	    public override void Start()
@@ -895,7 +682,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			this.ActivityMonitor.IsConnectedChanged += ActivityMonitorIsConnectedChanged;
 
-			_localServerWatcher.Start();
+			_localServerWatcher.DicomServerConfigurationChanged += OnDicomServerConfigurationChanged;
+			_localServerWatcher.StudyStorageConfigurationChanged += OnStorageConfigurationChanged;
+			_localServerWatcher.DiskSpaceUsageChanged += OnDiskspaceChanged;
 		}
 
 		public override void Stop()
@@ -905,8 +694,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			ActivityMonitor.Dispose();
 			ActivityMonitor = null;
 
+			_localServerWatcher.DicomServerConfigurationChanged -= OnDicomServerConfigurationChanged;
+			_localServerWatcher.StudyStorageConfigurationChanged -= OnStorageConfigurationChanged;
+			_localServerWatcher.DiskSpaceUsageChanged -= OnDiskspaceChanged;
+
 			_textFilterTimer.Dispose();
-			_localServerWatcher.Dispose();
 			_studyCountWatcher.Dispose();
 
 			base.Stop();
@@ -1114,7 +906,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public bool StudyManagementRulesLinkVisible
 		{
-			get { return _linkHandlers.Any(h => h.CanHandle(ActivityMonitorQuickLink.StudyManagementRules)); }
+			get { return ActivityMonitorQuickLink.StudyManagementRules.CanInvoke(); }
 		}
 
 		public void OpenStudyManagementRules()
@@ -1229,23 +1021,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             NotifyPropertyChanged("Failures");
         }
 
-		private void OnDicomServerConfigurationChanged()
+		private void OnDicomServerConfigurationChanged(object sender, EventArgs eventArgs)
 		{
 			NotifyPropertyChanged("AeTitle");
 			NotifyPropertyChanged("HostName");
 			NotifyPropertyChanged("Port");
 		}
 
-		private void OnStorageConfigurationChanged()
+		private void OnStorageConfigurationChanged(object sender, EventArgs eventArgs)
 		{
 			NotifyPropertyChanged("FileStore");
             NotifyPropertyChanged("IsMaximumDiskspaceUsageExceeded");
 
 			// if FileStore path changed, diskspace may have changed too
-		    OnDiskspaceChanged();
+		    OnDiskspaceChanged(sender, eventArgs);
 		}
 
-		private void OnDiskspaceChanged()
+		private void OnDiskspaceChanged(object sender, EventArgs eventArgs)
 		{
             NotifyPropertyChanged("DiskspaceUsed");
 			NotifyPropertyChanged("DiskspaceUsedPercent");
@@ -1257,11 +1049,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			try
 			{
-				var handler = _linkHandlers.FirstOrDefault(h => h.CanHandle(link));
-				if (handler != null)
-				{
-					handler.Handle(link, this.Host.DesktopWindow);
-				}
+				link.Invoke(this.Host.DesktopWindow);
 			}
 			catch (Exception e)
 			{

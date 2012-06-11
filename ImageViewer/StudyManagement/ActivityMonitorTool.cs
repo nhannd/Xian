@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
@@ -24,51 +25,77 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class ActivityMonitorTool : Tool<IDesktopToolContext>
 	{
-		private static bool _failureWatcherInstalled;
+		private static bool _watchersInstalled;
 
 		private ActivityMonitorFailureWatcher _failureWatcher;
+		private LocalServerWatcher _localServerWatcher;
 
 		public override void Initialize()
 		{
 			base.Initialize();
 
-			// install failure monitor only once, in the first desktop window (the main window)
-			if (!_failureWatcherInstalled)
+			// install watchers only once, in the first desktop window (the main window)
+			if (!_watchersInstalled)
 			{
-				_failureWatcherInstalled = true;
+				_watchersInstalled = true;
 				_failureWatcher = new ActivityMonitorFailureWatcher(this.Context.DesktopWindow, Show);
 				_failureWatcher.Initialize();
+
+				_localServerWatcher = LocalServerWatcher.Instance;
+				_localServerWatcher.DiskSpaceUsageChanged += LocalServerWatcherOnDiskSpaceUsageChanged;
+				CheckDiskspaceUsageExceeded();
 			}
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			if(disposing)
+			if (disposing)
 			{
 				if (_failureWatcher != null)
 				{
 					_failureWatcher.Dispose();
 					_failureWatcher = null;
 				}
+				if (_localServerWatcher != null)
+				{
+					_localServerWatcher.DiskSpaceUsageChanged -= LocalServerWatcherOnDiskSpaceUsageChanged;
+					_localServerWatcher = null;
+				}
 			}
 			base.Dispose(disposing);
 		}
 
-        public override IActionSet Actions
-        {
-            get
-            {
-                if (!WorkItemActivityMonitor.IsSupported)
-                    return new ActionSet();
+		public override IActionSet Actions
+		{
+			get
+			{
+				if (!WorkItemActivityMonitor.IsSupported)
+					return new ActionSet();
 
-                return base.Actions;
-            }
-        }
+				return base.Actions;
+			}
+		}
 
 		public void Show()
 		{
-            ActivityMonitorManager.Show(Context.DesktopWindow);
+			ActivityMonitorManager.Show(Context.DesktopWindow);
 		}
 
+		private void LocalServerWatcherOnDiskSpaceUsageChanged(object sender, EventArgs eventArgs)
+		{
+			CheckDiskspaceUsageExceeded();
+		}
+
+		private void CheckDiskspaceUsageExceeded()
+		{
+			if (_localServerWatcher.IsMaximumDiskspaceUsageExceeded)
+			{
+				this.Context.DesktopWindow.ShowAlert(AlertLevel.Warning,
+					SR.WarningMaximumDiskUsageExceeded,
+					SR.LinkOpenStorageConfiguration,
+					delegate { ActivityMonitorQuickLink.LocalServerStorageConfiguration.Invoke(this.Context.DesktopWindow); },
+					true);
+			}
+		}
 	}
 }

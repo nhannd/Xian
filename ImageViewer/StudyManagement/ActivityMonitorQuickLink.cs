@@ -9,6 +9,7 @@
 
 #endregion
 
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
@@ -17,7 +18,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	public enum ActivityMonitorQuickLink
 	{
 		LocalServerConfiguration,
+		LocalServerStorageConfiguration,
 		StudyManagementRules
+	}
+
+	public static class ActivityMonitorQuickLinkExtensions
+	{
+		public static bool CanInvoke(this ActivityMonitorQuickLink link)
+		{
+			var handlers = (new ActivityMonitorQuickLinkHandlerExtensionPoint()).CreateExtensions().Cast<IActivityMonitorQuickLinkHandler>();
+			return handlers.Any(h => h.CanHandle(link));
+		}
+
+		public static void Invoke(this ActivityMonitorQuickLink link, IDesktopWindow desktopWindow)
+		{
+			var handlers = (new ActivityMonitorQuickLinkHandlerExtensionPoint()).CreateExtensions().Cast<IActivityMonitorQuickLinkHandler>();
+			var handler = handlers.FirstOrDefault(h => h.CanHandle(link));
+			if (handler != null)
+			{
+				handler.Handle(link, desktopWindow);
+			}
+		}
 	}
 
 

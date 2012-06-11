@@ -152,6 +152,9 @@ make room, or increase the maximum usage.</value>
   <data name="LinkOpenActivityMonitor" xml:space="preserve">
     <value>Open Activity Monitor</value>
   </data>
+  <data name="LinkOpenStorageConfiguration" xml:space="preserve">
+    <value>Open Storage Configuration</value>
+  </data>
   <data name="MenuActivityMonitor" xml:space="preserve">
     <value>Activity Monitor</value>
   </data>
@@ -250,5 +253,8 @@ make room, or increase the maximum usage.</value>
   </data>
   <data name="TooltipStopWorkItem" xml:space="preserve">
     <value>Stop selected work item(s)</value>
+  </data>
+  <data name="WarningMaximumDiskUsageExceeded" xml:space="preserve">
+    <value>Maximum disk usage has been exceeded.  Other devices will not be able to send studies to the workstation.</value>
   </data>
 </root>

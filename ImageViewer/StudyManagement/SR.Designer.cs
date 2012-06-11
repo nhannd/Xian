@@ -162,6 +162,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open Storage Configuration.
+        /// </summary>
+        public static string LinkOpenStorageConfiguration {
+            get {
+                return ResourceManager.GetString("LinkOpenStorageConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Activity Monitor.
         /// </summary>
         public static string MenuActivityMonitor {
@@ -455,6 +464,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         public static string TooltipStopWorkItem {
             get {
                 return ResourceManager.GetString("TooltipStopWorkItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximum disk usage has been exceeded.  Other devices will not be able to send studies to the workstation..
+        /// </summary>
+        public static string WarningMaximumDiskUsageExceeded {
+            get {
+                return ResourceManager.GetString("WarningMaximumDiskUsageExceeded", resourceCulture);
             }
         }
     }
