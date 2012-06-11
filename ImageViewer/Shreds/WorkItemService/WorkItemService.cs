@@ -122,6 +122,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 response.Item = WorkItemDataHelper.FromWorkItem(item);
             }
 
+            // Cache the UserIdentityContext for later use by the shred
+            if (request.Request.WorkItemType.Equals(ImportFilesRequest.WorkItemTypeString))
+                UserIdentityCache.Put(response.Item.Identifier,UserIdentityContext.CreateFromCurrentThreadPrincipal());
+
 			WorkItemPublishSubscribeHelper.PublishWorkItemChanged(WorkItemsChangedEventType.Update, response.Item);
             if (WorkItemProcessor.Instance != null)
                 WorkItemProcessor.Instance.SignalThread();
@@ -162,7 +166,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     {
                         workItem.Status = request.Status.Value;
                         if (request.Status.Value == WorkItemStatusEnum.Canceled)
-                            workItem.DeleteTime = Platform.Time.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);            
+                            workItem.DeleteTime = Platform.Time.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);
+                        // Cache the UserIdentityContext for later use by the shred
+                        if (workItem.Request.WorkItemType.Equals(ImportFilesRequest.WorkItemTypeString) && request.Status.Value == WorkItemStatusEnum.Pending)
+                            UserIdentityCache.Put(workItem.Oid, UserIdentityContext.CreateFromCurrentThreadPrincipal());
+
                     }
                     if (request.ProcessTime.HasValue)
                         workItem.ProcessTime = request.ProcessTime.Value;
