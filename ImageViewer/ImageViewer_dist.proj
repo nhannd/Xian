@@ -355,6 +355,7 @@
   <Target Name="Copy ShredHost App Config">
     <CombineAppConfigs SourceFiles="@(ShredHostAppConfigCreatorSourceFiles)" OutputFile="$(DistributionShredHostConfig)" />
     <FileReplaceText FilePath="$(DistributionShredHostConfig)" TextToReplace="!filestore!" ReplacementText="$(FileStoreDirectory)"/>
+    <Copy SourceFiles="@(CriticalConfigFiles)" DestinationFiles="$(DistributionShredHostCriticalConfig)" />
   </Target>
 
   <Target Name="Copy Database Files">
