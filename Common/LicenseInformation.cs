@@ -101,10 +101,8 @@ namespace ClearCanvas.Common
 
 				lock (_syncRoot)
 				{
-					if (_machineIdentifier == null)
-					{
-						_licenseProvider.GetLicenseInfo(out _licenseKey, out _machineIdentifier, out _sessionCount);
-					}
+					// don't cache this result - we want to know if license key changes
+					_licenseProvider.GetLicenseInfo(out _licenseKey, out _machineIdentifier, out _sessionCount);
 					return _licenseKey;
 				}
 			}
