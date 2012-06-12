@@ -39,6 +39,11 @@ namespace ClearCanvas.Dicom.Codec.Rle
             get { return _name; }
         }
 
+        public bool Enabled
+        {
+            get { return true; }
+        }
+
         public TransferSyntax CodecTransferSyntax
         {
             get { return _transferSyntax; }

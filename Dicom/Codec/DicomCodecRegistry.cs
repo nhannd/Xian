@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 
@@ -63,22 +64,15 @@ namespace ClearCanvas.Dicom.Codec
 		/// </summary>
 		public static TransferSyntax[] GetCodecTransferSyntaxes()
 		{
-			TransferSyntax[] syntaxes = new TransferSyntax[Dictionary.Count];
-			Dictionary.Keys.CopyTo(syntaxes, 0);
-			return syntaxes;
+			return Dictionary.Where(kvp => kvp.Value.Enabled).Select(kvp => kvp.Key).ToArray();
 		}
 
     	/// <summary>
     	/// Gets an array of <see cref="IDicomCodec"/>s (one from each available <see cref="IDicomCodecFactory"/>).
     	/// </summary>
 		public static IDicomCodec[] GetCodecs()
-		{
-			IDicomCodec[] codecs = new IDicomCodec[Codecs.Count];
-			int i = 0;
-			foreach (IDicomCodecFactory factory in Codecs)
-				codecs[i++] = factory.GetDicomCodec();
-
-			return codecs;
+    	{
+    		return Codecs.Where(c => c.Enabled).Select(c => c.GetDicomCodec()).ToArray();
 		}
 
 		/// <summary>
@@ -90,8 +84,8 @@ namespace ClearCanvas.Dicom.Codec
 		/// </remarks>
 		/// <returns>An array of codec factories.</returns>
 		public static IDicomCodecFactory[] GetCodecFactories()
-		{			
-			return Codecs.ToArray();
+		{
+			return Codecs.Where(c => c.Enabled).ToArray();
 		}
 		
 		/// <summary>
@@ -105,14 +99,14 @@ namespace ClearCanvas.Dicom.Codec
             if (!Dictionary.TryGetValue(syntax, out factory))
                 return null;
 
-            return factory.GetDicomCodec();
+            return factory.Enabled ? factory.GetDicomCodec() : null;
         }
 
         /// <summary>
         /// Set an <see cref="IDicomCodecFactory"/> for a transfer syntax, overriding the current value.
         /// </summary>
         /// <param name="syntax">The transfer syntax of the codec.</param>
-        /// <param name="factory">The factor for the codec.</param>
+        /// <param name="factory">The factory for the codec.</param>
         public static void SetCodec(TransferSyntax syntax, IDicomCodecFactory factory)
         {
             Dictionary[syntax] = factory;
@@ -130,7 +124,7 @@ namespace ClearCanvas.Dicom.Codec
 			if (!Dictionary.TryGetValue(syntax, out factory))
 				return null;
 
-            return factory.GetCodecParameters(collection);
+            return factory.Enabled ? factory.GetCodecParameters(collection) : null;
         }
         #endregion
     }
