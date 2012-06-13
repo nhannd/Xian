@@ -307,6 +307,10 @@ namespace ClearCanvas.Desktop.View.WinForms
     	[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     	public bool SuppressSelectionChangedEvent { get; set; }
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool SuppressForceSelectionDisplay { get; set; }
+
+
     	[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     	public ActionModelNode ToolbarModel
     	{
@@ -450,6 +454,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void ForceSelectionDisplay()
         {
+			if (SuppressForceSelectionDisplay)
+				return;
+
             // check if ALL the selected entries are not visible to the user
             if (CollectionUtils.TrueForAll(_dataGridView.SelectedRows, (DataGridViewRow row) => !row.Displayed)
 				&& _table.Items.Count != 0)
@@ -1094,15 +1101,18 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _sortDescendingButton.Image = value ? SR.CheckSmall : null; }
         }
 
+private int _positionBeforeSort;
         private void _table_BeforeSortedEvent(object sender, EventArgs e)
         {
         	_selectionBeforeSort = this.Selection;
+        	_positionBeforeSort = this.FirstDisplayedScrollingRowIndex;
         }
 
 		private void _table_SortedEvent(object sender, EventArgs e)
         {
 			if (_selectionBeforeSort.Items.Length > 0)
 				this.Selection = _selectionBeforeSort;
+			this.FirstDisplayedScrollingRowIndex = _positionBeforeSort;
 
 			ResetSortButtonState();
 		}

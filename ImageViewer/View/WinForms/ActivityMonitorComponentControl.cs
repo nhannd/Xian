@@ -83,15 +83,18 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			_workItemsTableView.Table = _component.WorkItemTable;
 			_workItemsTableView.MenuModel = _component.WorkItemActions;
-		    _component.SetWorkItemSelection(_workItemsTableView.Selection);
-		    _workItemsTableView.SelectionChanged += (s, e) => _component.SetWorkItemSelection(_workItemsTableView.Selection);
+			_workItemsTableView.DataBindings.Add("Selection", _component, "WorkItemSelection", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			// suppress keeping the selection in view, otherwise it can be totally unusable when there's lot's of activity
+			_workItemsTableView.SuppressForceSelectionDisplay = true;
+
 			UpdateTooltips();
 
 			// only show study rules link if this feature is actually available
 			_studyRulesLink.DataBindings.Add("Visible", _component, "StudyManagementRulesLinkVisible");
 		}
 
-        private void FormatMeterFillState(object sender, ConvertEventArgs e)
+		private void FormatMeterFillState(object sender, ConvertEventArgs e)
         {
             bool isMaximumUsedSpaceExceeded = (bool)e.Value;
             e.Value = isMaximumUsedSpaceExceeded ? MeterFillState.Error : MeterFillState.Normal;
