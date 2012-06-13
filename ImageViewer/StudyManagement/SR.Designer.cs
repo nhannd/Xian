@@ -97,6 +97,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Requested Time.
+        /// </summary>
+        public static string ColumnRequestedTime {
+            get {
+                return ResourceManager.GetString("ColumnRequestedTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Scheduled Time.
         /// </summary>
         public static string ColumnScheduledTime {

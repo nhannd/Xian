@@ -257,6 +257,7 @@
     <Compile Include="Tables\ITableCellEditor.cs" />
     <Compile Include="Tables\ITableCellEditorView.cs" />
     <Compile Include="Tables\TableFilterParams.cs" />
+    <Compile Include="Tests\ItemCollectionTests.cs" />
     <Compile Include="Tests\FormatTests.cs" />
     <Compile Include="Tests\ModifierFlagsConverterTest.cs" />
     <Compile Include="Tests\PathSegmentTests.cs" />

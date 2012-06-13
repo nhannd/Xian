@@ -28,8 +28,24 @@ namespace ClearCanvas.Desktop
     ///<typeparam name="TItem">The type of item that the table holds.</typeparam>
     public class ItemCollection<TItem> : IItemCollection<TItem>
     {
+		private class ComparisonComparer<T> : IComparer<T>
+		{
+			readonly Comparison<T> _comparison;
+
+			internal ComparisonComparer(Comparison<T> comparison)
+			{
+				_comparison = comparison;
+			}
+
+			public int Compare(T x, T y)
+			{
+				return _comparison(x, y);
+			}
+		}
+
+
         private readonly List<TItem> _list;
-        private event EventHandler<ItemChangedEventArgs> _itemsChanged;
+		private event EventHandler<ItemChangedEventArgs> _itemsChanged;
 
         /// <summary>
         /// Constructor.
@@ -48,12 +64,23 @@ namespace ClearCanvas.Desktop
         }
 
 		/// <summary>
-		/// Gets the internal list of items.
+		/// Finds the appropriate insertion point for the specified item, given that the collection is sorted according
+		/// to the specified comparison.
 		/// </summary>
-        protected List<TItem> List
-        {
-            get { return _list; }
-        }
+		/// <param name="item">The item for which to determine the insertion point.</param>
+		/// <param name="comparison">The comparison by which the collection is sorted.</param>
+		/// <returns>A positive integer indicating the appropriate insertion point.</returns>
+		/// <remarks>
+		/// Assuming the item collection is already sorted by the specified comparison, this method
+		/// will locate the correct insertion point for the specified item using a binary search.
+		/// This index value can then be passed to the <see cref="Insert(int, TItem)"/> method.
+		/// </remarks>
+		public int FindInsertionPoint(TItem item, Comparison<TItem> comparison)
+		{
+			var comparer = new ComparisonComparer<TItem>(comparison);
+			var i = _list.BinarySearch(item, comparer);
+			return i >= 0 ? i : ~i;
+		}
 
         #region IItemCollection Members
 
@@ -416,6 +443,14 @@ namespace ClearCanvas.Desktop
         }
 
         #endregion
+
+		/// <summary>
+		/// Gets the internal list of items.
+		/// </summary>
+		protected List<TItem> List
+		{
+			get { return _list; }
+		}
 
 		/// <summary>
 		/// Raises the <see cref="ItemsChanged"/> event.

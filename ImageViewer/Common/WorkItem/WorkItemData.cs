@@ -83,6 +83,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember(IsRequired = true)]
         public DateTime ProcessTime { get; set; }
 
+		[DataMember(IsRequired = true)]
+		public DateTime RequestedTime { get; set; }
+
         [DataMember(IsRequired = true)]
         public DateTime ScheduledTime { get; set; }
 
