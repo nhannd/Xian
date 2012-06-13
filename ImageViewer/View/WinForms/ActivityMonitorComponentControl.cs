@@ -85,12 +85,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_workItemsTableView.MenuModel = _component.WorkItemActions;
 			_workItemsTableView.DataBindings.Add("Selection", _component, "WorkItemSelection", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			// we need to do this, otherwise the table view selection can jump around contrary to users intentions
-			_component.WorkItemsUpdating += (o, args) => { _workItemsTableView.SuppressSelectionChangedEvent = true; };
-			_component.WorkItemsUpdated += (o, args) => { _workItemsTableView.SuppressSelectionChangedEvent = false; };
+			// suppress keeping the selection in view, otherwise it can be totally unusable when there's lot's of activity
+			_workItemsTableView.SuppressForceSelectionDisplay = true;
 
-			//_component.SetWorkItemSelection(_workItemsTableView.Selection);
-			//_workItemsTableView.SelectionChanged += (s, e) => _component.SetWorkItemSelection(_workItemsTableView.Selection);
 			UpdateTooltips();
 
 			// only show study rules link if this feature is actually available

@@ -317,8 +317,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				_failedItemCountChanged();
 			}
 
-			public void Update(IEnumerable<WorkItem> items, Comparison<WorkItem> sortComparison)
+			public bool Update(IEnumerable<WorkItem> items, Comparison<WorkItem> sortComparison)
 			{
+				var needSort = false;
+				var adds = new List<WorkItem>();
 				foreach (var item in items)
 				{
 					var index = _items.FindIndex(w => w.Id == item.Id);
@@ -330,14 +332,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 						if (item.Status == WorkItemStatusEnum.Deleted || item.Status == WorkItemStatusEnum.DeleteInProgress || !Include(item))
 							_items.RemoveAt(index);
 						else
-							UpdateItem(item, index, sortComparison);
+							needSort = needSort || UpdateItem(item, index, sortComparison);
 					}
 					else
 					{
 						// the item is not currently in the list
 						// if not deleted and it meets the filter criteria, add it
 						if (item.Status != WorkItemStatusEnum.Deleted && item.Status != WorkItemStatusEnum.DeleteInProgress && Include(item))
-							AddItem(item, sortComparison);
+						{
+							adds.Add(item);
+						}
 					}
 
 					var failureCount = _failures.Count;
@@ -350,36 +354,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					if (_failures.Count != failureCount)
 						_failedItemCountChanged();
 				}
+				if(adds.Count > 0)
+				{
+					_items.AddRange(adds);
+					needSort = true;
+				}
+				return needSort;
 			}
 
-			private void AddItem(WorkItem item, Comparison<WorkItem> sortComparison)
+			private bool UpdateItem(WorkItem item, int index, Comparison<WorkItem> sortComparison)
 			{
-				var i = _items.FindInsertionPoint(item, sortComparison);
-				_items.Insert(i, item);
-				Console.WriteLine("inserted item: {0}", item.Id);
-			}
-
-			private void UpdateItem(WorkItem item, int index, Comparison<WorkItem> sortComparison)
-			{
+				// update the item in-place, and then return a value indicating whether a re-sort is required
 				var oldItem = _items[index];
-
-				// compare new and old items to see if the value of the current sort property has changed
-				if (sortComparison(oldItem, item) == 0)
-				{
-					// if not, we can update the item in place
-					_items[index] = item;
-				}
-				else
-				{
-					// because of sorting, the item position may be different, so we have
-					// to remove the item and insert it again
-					_items.RemoveAt(index);
-					Console.WriteLine("removed item {0}", item.Id);
-					var i = _items.FindInsertionPoint(item, sortComparison);
-					_items.Insert(i, item);
-					Console.WriteLine("inserted item: {0}", item.Id);
-				}
-
+				_items[index] = item;
+				return sortComparison(oldItem, item) != 0;
 			}
 
 			private bool Include(WorkItem item)
@@ -839,9 +827,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _workItems; }
 		}
 
-		public event EventHandler WorkItemsUpdating;
-		public event EventHandler WorkItemsUpdated;
-
 		public ISelection WorkItemSelection
 		{
 			get
@@ -855,7 +840,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			set
 			{
 				var ids = value.Items.Cast<WorkItem>().Select(w => w.Id).ToArray();
-				SetWorkItemSelection(ids, true);
+				SetWorkItemSelection(ids);
 			}
 		}
 
@@ -1032,28 +1017,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 
 			var items = workItems.Select(item => new WorkItem(item)).ToList();
-
-			// remember the current selection, and reset it after updating the work item manager
-			//var selection = _workItemActionModel.SelectedWorkItemIDs;
-			//Console.WriteLine("remembered selection: {0}", string.Join(", ", selection.Select(item => item.ToString())));
-			//EventsHelper.Fire(WorkItemsUpdating, this, EventArgs.Empty);
-			//Console.WriteLine("updating");
-			_workItemManager.Update(items, _workItems.SortParams.GetComparer().Compare);
-			//Console.WriteLine("updated");
-			//Console.WriteLine("restoring selection: {0}", string.Join(", ", selection.Select(item => item.ToString())));
-			//EventsHelper.Fire(WorkItemsUpdated, this, EventArgs.Empty);
-			//SetWorkItemSelection(selection, false);		
+			var needSort = _workItemManager.Update(items, _workItems.SortParams.GetComparer().Compare);
+			if(needSort)
+			{
+				_workItems.Sort();
+			}
 
 			_workItemActionModel.OnWorkItemsChanged(items);
 		}
 
-		private void SetWorkItemSelection(IList<long> ids, bool fromGui)
+		private void SetWorkItemSelection(IList<long> ids)
 		{
 			if (_workItemActionModel.SelectedWorkItemIDs.SequenceEqual(ids))
 				return;
 
 			_workItemActionModel.SelectedWorkItemIDs = ids;
-			Console.WriteLine("setting selection {0}: {1}", fromGui ? "from GUI" : "internally", string.Join(", ", ids.Select(item => item.ToString())));
 			NotifyPropertyChanged("WorkItemSelection");
 		}
 
