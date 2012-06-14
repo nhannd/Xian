@@ -155,6 +155,7 @@
     <Compile Include="Tests\DiskspaceTests.cs" />
     <Compile Include="StudyManagement\TimeOrigin.cs" />
     <Compile Include="StudyManagement\TimeUnit.cs" />
+    <Compile Include="WorkItem\RetryDelayTimeUnit.cs" />
     <Compile Include="WorkItem\DicomSendSettings.cs" />
     <Compile Include="WorkItem\DicomSendSettings.Designer.cs">
       <AutoGen>True</AutoGen>

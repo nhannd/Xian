@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorityTokens.cs" />
+    <Compile Include="DicomSendConfigurationComponent.cs" />
     <Compile Include="SharedConfigurationDialog.cs" />
     <Compile Include="SharedConfigurationPageProvider.cs" />
     <Compile Include="CustomizeViewerActionModelsComponent.cs" />

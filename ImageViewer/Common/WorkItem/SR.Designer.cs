@@ -457,6 +457,24 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to minute(s).
+        /// </summary>
+        internal static string RetryDelayTimeUnitMinutes {
+            get {
+                return ResourceManager.GetString("RetryDelayTimeUnitMinutes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to second(s).
+        /// </summary>
+        internal static string RetryDelayTimeUnitSeconds {
+            get {
+                return ResourceManager.GetString("RetryDelayTimeUnitSeconds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} of {1} images processed, {2} failed.
         /// </summary>
         internal static string StudyProcessProgress_Status {

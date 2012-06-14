@@ -394,4 +394,7 @@ You can click the "Stop Local Service" link now, or cancel your changes.</value>
   <data name="ValidationPortOutOfRange" xml:space="preserve">
     <value>The Port must be between 1 and 65535.</value>
   </data>
+  <data name="DicomSendConfiguration" xml:space="preserve">
+    <value>DICOM Send</value>
+  </data>
 </root>

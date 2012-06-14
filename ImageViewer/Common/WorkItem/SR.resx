@@ -288,4 +288,10 @@
   <data name="WorkItemStatusEnumCanceling" xml:space="preserve">
     <value>Stopping</value>
   </data>
+  <data name="RetryDelayTimeUnitMinutes" xml:space="preserve">
+    <value>minute(s)</value>
+  </data>
+  <data name="RetryDelayTimeUnitSeconds" xml:space="preserve">
+    <value>second(s)</value>
+  </data>
 </root>

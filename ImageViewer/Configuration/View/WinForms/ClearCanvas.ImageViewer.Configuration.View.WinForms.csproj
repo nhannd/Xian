@@ -67,6 +67,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DicomSendConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DicomSendConfigurationComponentControl.Designer.cs">
+      <DependentUpon>DicomSendConfigurationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DicomSendConfigurationComponentView.cs" />
     <Compile Include="CustomizeViewerActionModelsComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -163,6 +170,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DicomSendConfigurationComponentControl.resx">
+      <DependentUpon>DicomSendConfigurationComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="CustomizeViewerActionModelsComponentControl.resx">
       <DependentUpon>CustomizeViewerActionModelsComponentControl.cs</DependentUpon>
     </EmbeddedResource>

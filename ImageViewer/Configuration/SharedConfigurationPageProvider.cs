@@ -24,7 +24,8 @@ namespace ClearCanvas.ImageViewer.Configuration
 	{
         public const string LocalConfigurationPath = "LocalConfiguration";
         public const string ServerConfigurationPath = LocalConfigurationPath + @"/" + "ServerConfiguration";
-        public const string StorageConfigurationPath = LocalConfigurationPath + @"/" + "StorageConfiguration";
+		public const string DicomSendConfigurationPath = LocalConfigurationPath + @"/" + "DicomSendConfiguration";
+		public const string StorageConfigurationPath = LocalConfigurationPath + @"/" + "StorageConfiguration";
         public const string PriorsServerConfigurationPath = LocalConfigurationPath + @"/" + "PriorsServersConfiguration";
         public const string PublishingConfigurationPath = "PublishingConfiguration";
 
@@ -36,6 +37,9 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 			if (PermissionsHelper.IsInRole(Services.AuthorityTokens.Administration.DicomServer) && Common.DicomServer.DicomServer.IsSupported)
 				listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>(ServerConfigurationPath));
+
+			if (PermissionsHelper.IsInRole(Services.AuthorityTokens.Administration.DicomServer) && Common.DicomServer.DicomServer.IsSupported)
+				listPages.Add(new ConfigurationPage<DicomSendConfigurationComponent>(DicomSendConfigurationPath));
 
             if (PermissionsHelper.IsInRole(Services.AuthorityTokens.Administration.Storage) && Common.StudyManagement.StudyStore.IsSupported)
                 listPages.Add(new ConfigurationPage<StorageConfigurationComponent>(StorageConfigurationPath));

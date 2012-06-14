@@ -34,10 +34,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Minutes")]
-        public string RetryDelayUnits {
+        [global::System.Configuration.DefaultSettingValueAttribute("Seconds")]
+        public global::ClearCanvas.ImageViewer.Common.WorkItem.RetryDelayTimeUnit RetryDelayUnits {
             get {
-                return ((string)(this["RetryDelayUnits"]));
+                return ((global::ClearCanvas.ImageViewer.Common.WorkItem.RetryDelayTimeUnit)(this["RetryDelayUnits"]));
             }
         }
         

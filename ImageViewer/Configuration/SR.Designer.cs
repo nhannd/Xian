@@ -92,6 +92,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DICOM Send.
+        /// </summary>
+        internal static string DicomSendConfiguration {
+            get {
+                return ResourceManager.GetString("DicomSendConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Example Group.
         /// </summary>
         internal static string ExampleGroup {
