@@ -503,6 +503,47 @@ namespace ClearCanvas.Dicom.Network.Scu
 		                                     }, null);
 		}
 
+        private byte SelectPresentationContext(ClientAssociationParameters association, StorageInstance fileToSend, DicomFile dicomFile, out DicomMessage msg)
+        {
+            byte pcid = 0;
+            if (PresentationContextSelectionDelegate != null)
+            {
+                // Note, this may do a conversion of the file according to codecs, need to catch a codec exception if it occurs
+                pcid = PresentationContextSelectionDelegate(association, dicomFile, out msg);
+            }
+            else
+            {
+                msg = new DicomMessage(dicomFile);
+
+                if (fileToSend.TransferSyntax.Encapsulated)
+                {
+                    pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
+                                                                            msg.TransferSyntax);
+
+                    if (DicomCodecRegistry.GetCodec(fileToSend.TransferSyntax) != null)
+                    {
+                        // We can compress/decompress the file. Check if remote device accepts it
+                        if (pcid == 0)
+                            pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
+                                                                                    TransferSyntax.ExplicitVrLittleEndian);
+                        if (pcid == 0)
+                            pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
+                                                                                    TransferSyntax.ImplicitVrLittleEndian);
+                    }
+                }
+                else
+                {
+                    if (pcid == 0)
+                        pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
+                                                                                TransferSyntax.ExplicitVrLittleEndian);
+                    if (pcid == 0)
+                        pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
+                                                                                TransferSyntax.ImplicitVrLittleEndian);
+                }
+            }
+            return pcid;
+        }
+
 		/// <summary>
 		/// Generic routine to send the next C-STORE-RQ message in the <see cref="StorageInstanceList"/>.
 		/// </summary>
@@ -540,46 +581,11 @@ namespace ClearCanvas.Dicom.Network.Scu
 				return false;
 			}
 
-		    byte pcid = 0;
-            try
+		    try
             {
                 DicomMessage msg;
-                if (PresentationContextSelectionDelegate != null)
-                {
-                    // Note, this may do a conversion of the file according to codecs, need to catch a codec exception if it occurs
-                    pcid = PresentationContextSelectionDelegate(association, dicomFile, out msg);
-                }
-                else
-                {
-                    msg = new DicomMessage(dicomFile);
 
-                    if (fileToSend.TransferSyntax.Encapsulated)
-                    {
-                        pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
-                                                                                msg.TransferSyntax);
-
-                        if (DicomCodecRegistry.GetCodec(fileToSend.TransferSyntax) != null)
-                        {
-                            // We can compress/decompress the file. Check if remote device accepts it
-                            if (pcid == 0)
-                                pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
-                                                                                        TransferSyntax.ExplicitVrLittleEndian);
-                            if (pcid == 0)
-                                pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
-                                                                                        TransferSyntax.ImplicitVrLittleEndian);
-
-                        }
-                    }
-                    else
-                    {
-                        if (pcid == 0)
-                            pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
-                                                                                    TransferSyntax.ExplicitVrLittleEndian);
-                        if (pcid == 0)
-                            pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
-                                                                                    TransferSyntax.ImplicitVrLittleEndian);
-                    }
-                }
+                byte pcid = SelectPresentationContext(association, fileToSend, dicomFile, out msg);
 
                 if (pcid == 0)
                 {
@@ -615,6 +621,18 @@ namespace ClearCanvas.Dicom.Network.Scu
             catch (DicomNetworkException)
             {
                 throw; //This is a DicomException-derived class that we want to throw.
+            }
+            catch (DicomCodecUnsupportedSopException e)
+            {
+                // TOdo (Marmot) - try sending as uncompressed here
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when compressing or decompressing file before send {0}", fileToSend.Filename);
+
+                fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
+                fileToSend.ExtendedFailureDescription = string.Format("Error decompressing or compressing file before send: {0}", e.Message);
+                OnImageStoreCompleted(fileToSend);
+                _failureSubOperations++;
+                _remainingSubOperations--;
+                return false;
             }
             catch (DicomCodecException e)
             {
