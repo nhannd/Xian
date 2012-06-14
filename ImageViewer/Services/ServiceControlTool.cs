@@ -20,17 +20,17 @@ using TimeoutException = System.TimeoutException;
 
 namespace ClearCanvas.ImageViewer.Services
 {
-    [MenuAction("start", "global-menus/MenuTools/MenuLocalServer/MenuService/MenuStart", "StartService")]
+    [MenuAction("start", "global-menus/MenuTools/MenuService/MenuStart", "StartService")]
 	[EnabledStateObserver("start", "StartEnabled", "EnabledChanged")]
 	[IconSet("start", "Icons.StartServiceToolSmall.png", "Icons.StartServiceToolMedium.png", "Icons.StartServiceToolLarge.png")]
 	[ViewerActionPermission("start", AuthorityTokens.Administration.Services)]
 
-    [MenuAction("stop", "global-menus/MenuTools/MenuLocalServer/MenuService/MenuStop", "StopService")]
+    [MenuAction("stop", "global-menus/MenuTools/MenuService/MenuStop", "StopService")]
 	[EnabledStateObserver("stop", "StopEnabled", "EnabledChanged")]
 	[IconSet("stop", "Icons.StopServiceToolSmall.png", "Icons.StopServiceToolMedium.png", "Icons.StopServiceToolLarge.png")]
 	[ViewerActionPermission("stop", AuthorityTokens.Administration.Services)]
 
-    [MenuAction("restart", "global-menus/MenuTools/MenuLocalServer/MenuService/MenuRestart", "RestartService")]
+    [MenuAction("restart", "global-menus/MenuTools/MenuService/MenuRestart", "RestartService")]
 	[EnabledStateObserver("restart", "StopEnabled", "EnabledChanged")]
 	[IconSet("restart", "Icons.RestartServiceToolSmall.png", "Icons.RestartServiceToolMedium.png", "Icons.RestartServiceToolLarge.png")]
 	[ViewerActionPermission("restart", AuthorityTokens.Administration.Services)]

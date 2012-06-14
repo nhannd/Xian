@@ -7,7 +7,7 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-    [MenuAction("reindex", "global-menus/MenuTools/MenuLocalServer/MenuReindex", "Reindex")]
+    [MenuAction("reindex", "global-menus/MenuTools/MenuReindex", "Reindex")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ReindexTool : Tool<IDesktopToolContext>
     {

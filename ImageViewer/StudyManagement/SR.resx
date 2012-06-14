@@ -164,9 +164,6 @@ make room, or increase the maximum usage.</value>
   <data name="MenuDeleteWorkItem" xml:space="preserve">
     <value>Delete</value>
   </data>
-  <data name="MenuLocalServer" xml:space="preserve">
-    <value>Local Server</value>
-  </data>
   <data name="MenuReindex" xml:space="preserve">
     <value>Re-index File Store</value>
   </data>
