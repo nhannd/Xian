@@ -222,15 +222,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get { return _data.ScheduledTime; }
 			}
 
+			public DateTime RequestedTime
+			{
+				get { return _data.RequestedTime; }
+			}
+
 			public string ProgressStatus
 			{
 				get
 				{
-                    if (_data.Progress == null) return null;
+					if (_data.Progress == null) return null;
 
-                    if (!string.IsNullOrEmpty(ProgressStatusDescription))
-                        return string.Format("{0} [{1}]", _data.Progress.Status, ProgressStatusDescription);
-                    return _data.Progress.Status;
+					if (!string.IsNullOrEmpty(ProgressStatusDescription))
+						return string.Format("{0} [{1}]", _data.Progress.Status, ProgressStatusDescription);
+					return _data.Progress.Status;
 				}
 			}
 
@@ -244,10 +249,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get { return _data.Progress != null ? _data.Progress.PercentComplete : 0; }
 			}
 
-            public bool IsCancelable
-            {
-                get { return _data.Progress == null || _data.Progress.IsCancelable; }
-            }
+			public bool IsCancelable
+			{
+				get { return _data.Progress == null || _data.Progress.IsCancelable; }
+			}
 
 			public IconSet ProgressIcon
 			{
@@ -287,14 +292,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			private readonly ItemCollection<WorkItem> _items;
 			private readonly Dictionary<long, WorkItem> _failures;
 			private readonly Predicate<WorkItem> _filter;
-		    private readonly System.Action _failedItemCountChanged;
+			private readonly System.Action _failedItemCountChanged;
 
-		    public WorkItemUpdateManager(ItemCollection<WorkItem> itemCollection, Predicate<WorkItem> filter, System.Action failedItemCountChanged)
+			public WorkItemUpdateManager(ItemCollection<WorkItem> itemCollection, Predicate<WorkItem> filter, System.Action failedItemCountChanged)
 			{
 				_items = itemCollection;
 				_filter = filter;
-			    _failedItemCountChanged = failedItemCountChanged;
-			    _failures = new Dictionary<long, WorkItem>();
+				_failedItemCountChanged = failedItemCountChanged;
+				_failures = new Dictionary<long, WorkItem>();
 			}
 
 			public int FailedItemCount
@@ -305,20 +310,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			public void Clear()
 			{
 				_items.Clear();
-			    if (_failures.Count == 0)
-                    return;
+				if (_failures.Count == 0)
+					return;
 
-			    _failures.Clear();
-			    _failedItemCountChanged();
+				_failures.Clear();
+				_failedItemCountChanged();
 			}
 
-			public void Update(IEnumerable<WorkItem> items)
+			public bool Update(IEnumerable<WorkItem> items, Comparison<WorkItem> sortComparison)
 			{
+				var needSort = false;
 				var adds = new List<WorkItem>();
 				foreach (var item in items)
 				{
-				    WorkItem theItem = item;
-                    var index = _items.FindIndex(w => w.Id == theItem.Id);
+					var index = _items.FindIndex(w => w.Id == item.Id);
 					if (index > -1)
 					{
 						// the item is currently in the list
@@ -327,29 +332,42 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 						if (item.Status == WorkItemStatusEnum.Deleted || item.Status == WorkItemStatusEnum.DeleteInProgress || !Include(item))
 							_items.RemoveAt(index);
 						else
-							_items[index] = item;
+							needSort = needSort || UpdateItem(item, index, sortComparison);
 					}
 					else
 					{
 						// the item is not currently in the list
 						// if not deleted and it meets the filter criteria, add it
 						if (item.Status != WorkItemStatusEnum.Deleted && item.Status != WorkItemStatusEnum.DeleteInProgress && Include(item))
+						{
 							adds.Add(item);
+						}
 					}
 
-                    int failureCount = _failures.Count;
+					var failureCount = _failures.Count;
 
-                    if (item.Status != WorkItemStatusEnum.Failed) //remove anything that's not failed, which includes restarted items.
-                        _failures.Remove(item.Id);
+					if (item.Status != WorkItemStatusEnum.Failed) //remove anything that's not failed, which includes restarted items.
+						_failures.Remove(item.Id);
 					else
 						_failures[item.Id] = item;
 
-                    if (_failures.Count != failureCount)
-                        _failedItemCountChanged();
+					if (_failures.Count != failureCount)
+						_failedItemCountChanged();
 				}
+				if(adds.Count > 0)
+				{
+					_items.AddRange(adds);
+					needSort = true;
+				}
+				return needSort;
+			}
 
-				// more efficient to add everything new at once (so GUI only re-draws once)
-				_items.AddRange(adds);
+			private bool UpdateItem(WorkItem item, int index, Comparison<WorkItem> sortComparison)
+			{
+				// update the item in-place, and then return a value indicating whether a re-sort is required
+				var oldItem = _items[index];
+				_items[index] = item;
+				return sortComparison(oldItem, item) != 0;
 			}
 
 			private bool Include(WorkItem item)
@@ -468,7 +486,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			private bool IsDeletable(WorkItem w)
 			{
 				return w.Status == WorkItemStatusEnum.Complete
-                       || (w.Status == WorkItemStatusEnum.Pending && w.IsCancelable)
+					   || (w.Status == WorkItemStatusEnum.Pending && w.IsCancelable)
 					   || w.Status == WorkItemStatusEnum.Failed
 					   || w.Status == WorkItemStatusEnum.Canceled;
 			}
@@ -480,10 +498,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			private bool IsRestartable(WorkItem w)
 			{
-                // Cannot restart Delete Study Requests
+				// Cannot restart Delete Study Requests
 				return (w.Status == WorkItemStatusEnum.Canceled
-						 || w.Status == WorkItemStatusEnum.Failed) 
-                         && !w.Data.Request.WorkItemType.Equals(DeleteStudyRequest.WorkItemTypeString);
+						 || w.Status == WorkItemStatusEnum.Failed)
+						 && !w.Data.Request.WorkItemType.Equals(DeleteStudyRequest.WorkItemTypeString);
 			}
 			private bool IsStatable(WorkItem w)
 			{
@@ -654,28 +672,43 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			_textFilterTimer = new Timer(OnTextFilterTimerElapsed, null, 1000);
 			_studyCountWatcher = new StudyCountWatcher(OnStudyCountChanged);
-		    _workItemManager = new WorkItemUpdateManager(_workItems.Items, Include, OnFailureCountChanged);
+			_workItemManager = new WorkItemUpdateManager(_workItems.Items, Include, OnFailureCountChanged);
 			_workItemActionModel = new WorkItemActionModel(_workItems.Items, this);
 		}
 
-	    public override void Start()
+		public override void Start()
 		{
 			base.Start();
 
-            _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPatient, w => w.PatientInfo) { WidthFactor = .7f });
-            _workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStudy, w => w.StudyInfo) { WidthFactor = .9f });
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPatient, w => w.PatientInfo) { WidthFactor = .7f });
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStudy, w => w.StudyInfo) { WidthFactor = .9f });
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnActivityDescription, w => w.ActivityDescription) { WidthFactor = .7f });
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatus, w => w.Status.GetDescription())
 									   {
 										   WidthFactor = .3f,
 										   TooltipTextProvider = w => string.IsNullOrEmpty(w.ProgressStatusDescription)
 																		? string.Empty
-																		: w.ProgressStatusDescription
+																		: w.ProgressStatusDescription,
+										   Comparison = (x, y) => x.Status.GetDescription().CompareTo(y.Status.GetDescription())
 									   });
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatusDescription, w => w.ProgressStatus){WidthFactor = 1.5f});
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatusDescription, w => w.ProgressStatus) { WidthFactor = 1.5f });
+			var requestedTimeColumn = new DateTimeTableColumn<WorkItem>(SR.ColumnRequestedTime, w => w.RequestedTime) { WidthFactor = .5f };
+			_workItems.Columns.Add(requestedTimeColumn);
 			_workItems.Columns.Add(new DateTimeTableColumn<WorkItem>(SR.ColumnScheduledTime, w => w.ScheduledTime) { WidthFactor = .5f });
-			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPriority, w => w.Priority.GetDescription()) { WidthFactor = .25f });
-			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>(SR.ColumnProgress, w => w.ProgressIcon) { WidthFactor = .4f, Comparison = (x, y) => x.ProgressValue.CompareTo(y.ProgressValue) });
+			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPriority, w => w.Priority.GetDescription())
+			                       	{
+			                       		WidthFactor = .25f,
+										Comparison = (x, y) => x.Priority.GetDescription().CompareTo(y.Priority.GetDescription())
+			                       	});
+			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>(SR.ColumnProgress, w => w.ProgressIcon)
+									{
+										WidthFactor = .4f,
+										Comparison = (x, y) => x.ProgressValue.CompareTo(y.ProgressValue)
+									});
+
+
+			// establish initial sort order
+			_workItems.Sort(new TableSortParams(requestedTimeColumn, false));
 
 			this.ActivityMonitor = WorkItemActivityMonitor.Create(true);
 			_connectionState = _connectionState.Update();
@@ -744,7 +777,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public int DiskspaceUsedPercent
 		{
-            get { return (int)Math.Round(_localServerWatcher.DiskSpaceUsedPercent); }
+			get { return (int)Math.Round(_localServerWatcher.DiskSpaceUsedPercent); }
 		}
 
 		public bool IsMaximumDiskspaceUsageExceeded
@@ -794,9 +827,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _workItems; }
 		}
 
-		public void SetWorkItemSelection(ISelection selection)
+		public ISelection WorkItemSelection
 		{
-			_workItemActionModel.SelectedWorkItemIDs = selection.Items.Cast<WorkItem>().Select(w => w.Id).ToList();
+			get
+			{
+				var q = from id in _workItemActionModel.SelectedWorkItemIDs
+				        let item = _workItems.Items.FirstOrDefault(item => item.Id == id)
+				        where item != null
+				        select item;
+				return new Selection(q);
+			}
+			set
+			{
+				var ids = value.Items.Cast<WorkItem>().Select(w => w.Id).ToArray();
+				SetWorkItemSelection(ids);
+			}
 		}
 
 		public IList StatusFilterChoices
@@ -946,8 +991,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				case WorkItemStatusEnum.Pending:
 				case WorkItemStatusEnum.Idle:
-                case WorkItemStatusEnum.Canceling:
-                    return ProgressBarState.Paused;
+				case WorkItemStatusEnum.Canceling:
+					return ProgressBarState.Paused;
 
 				case WorkItemStatusEnum.Failed:
 					return ProgressBarState.Error;
@@ -964,16 +1009,30 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private void WorkItemsChanged(object sender, WorkItemsChangedEventArgs e)
 		{
 			var workItems = e.ChangedItems;
-			if (workItems.Any(item => item.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert 
-                                    || item.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete
-                                    || item.Type.Equals(ReindexRequest.WorkItemTypeString)))
+			if (workItems.Any(item => item.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert
+									|| item.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete
+									|| item.Type.Equals(ReindexRequest.WorkItemTypeString)))
 			{
 				_studyCountWatcher.Invalidate();
 			}
 
 			var items = workItems.Select(item => new WorkItem(item)).ToList();
-			_workItemManager.Update(items);
+			var needSort = _workItemManager.Update(items, _workItems.SortParams.GetComparer().Compare);
+			if(needSort)
+			{
+				_workItems.Sort();
+			}
+
 			_workItemActionModel.OnWorkItemsChanged(items);
+		}
+
+		private void SetWorkItemSelection(IList<long> ids)
+		{
+			if (_workItemActionModel.SelectedWorkItemIDs.SequenceEqual(ids))
+				return;
+
+			_workItemActionModel.SelectedWorkItemIDs = ids;
+			NotifyPropertyChanged("WorkItemSelection");
 		}
 
 		private void RefreshInternal()
@@ -1016,10 +1075,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			NotifyPropertyChanged("TotalStudies");
 		}
 
-        private void OnFailureCountChanged()
-        {
-            NotifyPropertyChanged("Failures");
-        }
+		private void OnFailureCountChanged()
+		{
+			NotifyPropertyChanged("Failures");
+		}
 
 		private void OnDicomServerConfigurationChanged(object sender, EventArgs eventArgs)
 		{
@@ -1031,15 +1090,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private void OnStorageConfigurationChanged(object sender, EventArgs eventArgs)
 		{
 			NotifyPropertyChanged("FileStore");
-            NotifyPropertyChanged("IsMaximumDiskspaceUsageExceeded");
+			NotifyPropertyChanged("IsMaximumDiskspaceUsageExceeded");
 
 			// if FileStore path changed, diskspace may have changed too
-		    OnDiskspaceChanged(sender, eventArgs);
+			OnDiskspaceChanged(sender, eventArgs);
 		}
 
 		private void OnDiskspaceChanged(object sender, EventArgs eventArgs)
 		{
-            NotifyPropertyChanged("DiskspaceUsed");
+			NotifyPropertyChanged("DiskspaceUsed");
 			NotifyPropertyChanged("DiskspaceUsedPercent");
 			NotifyPropertyChanged("DiskSpaceWarningLabel");
 			NotifyPropertyChanged("DiskSpaceWarningMessage");
