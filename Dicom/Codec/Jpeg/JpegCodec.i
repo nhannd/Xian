@@ -210,23 +210,23 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 {
 	struct jpeg_compress_struct cinfo;
 	bool cleanupRequired = false;
-try{
-	if ((oldPixelData->PhotometricInterpretation == "YBR_ICT")      ||
-		(oldPixelData->PhotometricInterpretation == "YBR_RCT"))
-		throw gcnew DicomCodecUnsupportedSopException(String::Format("Photometric Interpretation '{0}' not supported by JPEG encoder!",
-														oldPixelData->PhotometricInterpretation));
-	if ((oldPixelData->PhotometricInterpretation == "PALETTE COLOR") 
-	    && Mode != JpegMode::Lossless)
-		throw gcnew DicomCodecUnsupportedSopException(String::Format("Photometric Interpretation '{0}' not supported by lossy JPEG encoder!",
-														oldPixelData->PhotometricInterpretation));
-	array<unsigned char>^ frameData = oldPixelData->GetFrame(frame);
-	pin_ptr<unsigned char> framePin = &frameData[0];
-	unsigned char* framePtr = framePin;
-	unsigned int frameSize = frameData->Length;
+	try{
+		if ((oldPixelData->PhotometricInterpretation == "YBR_ICT")      ||
+			(oldPixelData->PhotometricInterpretation == "YBR_RCT"))
+			throw gcnew DicomCodecUnsupportedSopException(String::Format("Photometric Interpretation '{0}' not supported by JPEG encoder!",
+															oldPixelData->PhotometricInterpretation));
+		if ((oldPixelData->PhotometricInterpretation == "PALETTE COLOR") 
+			&& Mode != JpegMode::Lossless)
+			throw gcnew DicomCodecUnsupportedSopException(String::Format("Photometric Interpretation '{0}' not supported by lossy JPEG encoder!",
+															oldPixelData->PhotometricInterpretation));
+		array<unsigned char>^ frameData = oldPixelData->GetFrame(frame);
+		pin_ptr<unsigned char> framePin = &frameData[0];
+		unsigned char* framePtr = framePin;
+		unsigned int frameSize = frameData->Length;
 
-	DataBuffer = gcnew array<unsigned char>(IJGE_BLOCKSIZE);
-	pin_ptr<unsigned char> DataPin = &DataBuffer[0];
-	DataPtr = DataPin;
+		DataBuffer = gcnew array<unsigned char>(IJGE_BLOCKSIZE);
+		pin_ptr<unsigned char> DataPin = &DataBuffer[0];
+		DataPtr = DataPin;
 	
 		
 	
