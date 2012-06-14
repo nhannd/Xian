@@ -175,7 +175,7 @@
     <value>1, 3, 3, 3</value>
   </data>
   <data name="_maxNumberOfRetries.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 20</value>
+    <value>62, 20</value>
   </data>
   <data name="_maxNumberOfRetries.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
@@ -205,13 +205,13 @@
     <value>17, 24</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>111, 13</value>
+    <value>132, 13</value>
   </data>
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
-    <value>Max. number of retries</value>
+    <value>Maximum number of retries</value>
   </data>
   <data name="&gt;&gt;label1.Name" xml:space="preserve">
     <value>label1</value>
