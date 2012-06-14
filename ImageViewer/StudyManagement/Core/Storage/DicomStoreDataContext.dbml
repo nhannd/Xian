@@ -50,10 +50,11 @@
     <Type Name="WorkItem">
       <Column Name="Oid" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Version" Type="System.Data.Linq.Binary" DbType="rowversion" CanBeNull="true" IsVersion="true" />
-      <Column Name="ProcessTime" Storage="_InsertTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ProcessTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="ScheduledTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="ExpirationTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="DeleteTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="RequestedTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="Status" Type="global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemStatusEnum" DbType="SmallInt NOT NULL" CanBeNull="false" />
       <Column Name="Type" Type="System.String" DbType="NVarChar(32)" CanBeNull="false" />
       <Column Name="Priority" Type="global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemPriorityEnum" DbType="SmallInt NOT NULL" CanBeNull="false" />

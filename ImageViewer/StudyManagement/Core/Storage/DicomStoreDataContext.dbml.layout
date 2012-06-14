@@ -8,10 +8,10 @@
         <elementListCompartment Id="751d3257-e641-40e0-b09d-cbcee67511d1" absoluteBounds="3.765, 5.21, 1.9700000000000002, 8.5183512369791661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="b34d54b1-bb2d-4f5e-b860-7b46da51bb4b" absoluteBounds="0.75, 1, 2, 3.3093082682291666">
+    <classShape Id="b34d54b1-bb2d-4f5e-b860-7b46da51bb4b" absoluteBounds="0.75, 1, 2, 3.5016097005208326">
       <DataClassMoniker Name="/DicomStoreDataContext/WorkItem" />
       <nestedChildShapes>
-        <elementListCompartment Id="631f7ed9-cda9-4328-b3ff-2adac0fb2f87" absoluteBounds="0.765, 1.46, 1.9700000000000002, 2.7493082682291665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="631f7ed9-cda9-4328-b3ff-2adac0fb2f87" absoluteBounds="0.765, 1.46, 1.9700000000000002, 2.941609700520833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="3083b071-e7f9-4708-ba23-45d7e6937c48" absoluteBounds="3.5, 1.375, 2, 2.5401025390625005">

@@ -1112,7 +1112,8 @@ private int _positionBeforeSort;
         {
 			if (_selectionBeforeSort.Items.Length > 0)
 				this.Selection = _selectionBeforeSort;
-			this.FirstDisplayedScrollingRowIndex = _positionBeforeSort;
+            if (_positionBeforeSort != -1)
+			    this.FirstDisplayedScrollingRowIndex = _positionBeforeSort;
 
 			ResetSortButtonState();
 		}

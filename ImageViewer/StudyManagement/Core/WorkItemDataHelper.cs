@@ -26,6 +26,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                            DeleteTime = item.DeleteTime,
                            ExpirationTime = item.ExpirationTime,
                            ScheduledTime = item.ScheduledTime,
+                           RequestedTime = item.RequestedTime,
                            FailureCount = item.FailureCount,
                            Identifier = item.Oid,
                            ProcessTime = item.ProcessTime,

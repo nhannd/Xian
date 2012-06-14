@@ -90,6 +90,7 @@ namespace ClearCanvas.ImageViewer.Shreds.FilestoreManagement
                             ProcessTime = now.AddSeconds(WorkItemServiceSettings.Default.InsertDelaySeconds),
 			           		DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes),
 			           		ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Default.ExpireDelaySeconds),
+                            RequestedTime = now,
 			           		Status = WorkItemStatusEnum.Pending,
 			           		StudyInstanceUid = study.StudyInstanceUid
 			           	};

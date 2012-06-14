@@ -101,6 +101,7 @@
     <Compile Include="Configuration\ConfigurationDocumentBroker.cs" />
     <Compile Include="Configuration\DataAccessContext.cs" />
     <Compile Include="Configuration\SystemConfigurationSettingsStore.cs" />
+    <Compile Include="Configuration\VersionUtils.cs" />
     <Compile Include="DeleteSeriesUtility.cs" />
     <Compile Include="DeleteStudyUtility.cs" />
     <Compile Include="DicomFilePublisher.cs" />
@@ -220,7 +221,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Configuration\configuration.sqlce" />
     <None Include="Configuration\ConfigurationDataContext.dbml.layout">
       <DependentUpon>ConfigurationDataContext.dbml</DependentUpon>
     </None>

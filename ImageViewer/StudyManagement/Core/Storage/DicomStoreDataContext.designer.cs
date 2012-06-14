@@ -1192,13 +1192,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 		
 		private System.Data.Linq.Binary _Version;
 		
-		private System.DateTime _InsertTime;
+		private System.DateTime _ProcessTime;
 		
 		private System.DateTime _ScheduledTime;
 		
 		private System.DateTime _ExpirationTime;
 		
 		private System.DateTime _DeleteTime;
+		
+		private System.DateTime _InsertTime;
 		
 		private global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemStatusEnum _Status;
 		
@@ -1232,6 +1234,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
     partial void OnExpirationTimeChanged();
     partial void OnDeleteTimeChanging(System.DateTime value);
     partial void OnDeleteTimeChanged();
+    partial void OnRequestedTimeChanging(System.DateTime value);
+    partial void OnRequestedTimeChanged();
     partial void OnStatusChanging(global::ClearCanvas.ImageViewer.Common.WorkItem.WorkItemStatusEnum value);
     partial void OnStatusChanged();
     partial void OnTypeChanging(string value);
@@ -1294,20 +1298,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InsertTime", DbType="DateTime NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProcessTime", DbType="DateTime NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public System.DateTime ProcessTime
 		{
 			get
 			{
-				return this._InsertTime;
+				return this._ProcessTime;
 			}
 			set
 			{
-				if ((this._InsertTime != value))
+				if ((this._ProcessTime != value))
 				{
 					this.OnProcessTimeChanging(value);
 					this.SendPropertyChanging();
-					this._InsertTime = value;
+					this._ProcessTime = value;
 					this.SendPropertyChanged("ProcessTime");
 					this.OnProcessTimeChanged();
 				}
@@ -1370,6 +1374,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 					this._DeleteTime = value;
 					this.SendPropertyChanged("DeleteTime");
 					this.OnDeleteTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InsertTime", DbType="DateTime NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		public System.DateTime RequestedTime
+		{
+			get
+			{
+				return this._InsertTime;
+			}
+			set
+			{
+				if ((this._InsertTime != value))
+				{
+					this.OnRequestedTimeChanging(value);
+					this.SendPropertyChanging();
+					this._InsertTime = value;
+					this.SendPropertyChanged("RequestedTime");
+					this.OnRequestedTimeChanged();
 				}
 			}
 		}

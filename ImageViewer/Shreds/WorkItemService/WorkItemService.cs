@@ -97,6 +97,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                                    ProcessTime = now.AddSeconds(WorkItemServiceSettings.Default.InsertDelaySeconds),
                                    DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes),
                                    ExpirationTime = now.AddSeconds(WorkItemServiceSettings.Default.ExpireDelaySeconds),
+                                   RequestedTime = now,
                                    Status = WorkItemStatusEnum.Pending
                                };
 

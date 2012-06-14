@@ -188,6 +188,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
                                        Type = _request.WorkItemType,
                                        DeleteTime = now.AddHours(2),
                                        ExpirationTime = now.AddSeconds(ExpirationDelaySeconds),
+                                       RequestedTime = now,
                                        StudyInstanceUid = _studyInstanceUid,
                                        Status = WorkItemStatusEnum.Pending,
                                        Progress = _progress
