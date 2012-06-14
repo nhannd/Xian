@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -191,12 +190,16 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             } 
             else if (_scu.Failed || _scu.FailureSubOperations > 0)
             {
-                if (AutoRoute != null)
-                {
-                    Proxy.Fail(_scu.FailureDescription, WorkItemFailureType.NonFatal, AutoRoute.GetScheduledTime(Platform.Time, WorkItemServiceSettings.Default.PostponeSeconds));
-                }
-                else
-                    Proxy.Fail(_scu.FailureDescription,WorkItemFailureType.NonFatal);
+                TimeSpan delay;
+                var settings = new DicomSendSettings();
+                delay = settings.RetryDelayUnits.Equals("Seconds") 
+                    ? TimeSpan.FromSeconds(settings.RetryDelay) 
+                    : TimeSpan.FromMinutes(settings.RetryDelay);
+
+                Proxy.Fail(_scu.FailureDescription, WorkItemFailureType.NonFatal,
+                           AutoRoute != null
+                               ? AutoRoute.GetScheduledTime(Platform.Time, delay.Seconds)
+                               : Platform.Time.Add(delay),settings.RetryCount);
             }
             else
             {

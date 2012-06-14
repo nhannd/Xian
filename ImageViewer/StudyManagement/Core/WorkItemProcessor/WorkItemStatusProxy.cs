@@ -78,7 +78,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         public void Fail(string reason, WorkItemFailureType failureType, DateTime scheduledTime)
         {
             Progress.StatusDetails = reason;
-            Fail(failureType, scheduledTime);
+            Fail(failureType, scheduledTime, WorkItemServiceSettings.Default.RetryCount);
+        }
+
+        /// <summary>
+        /// Simple routine for failing a <see cref="WorkItem"/> and save a reason.
+        /// </summary>
+        /// <param name="reason">A non-localized reason for the failure.</param>
+        /// <param name="failureType">The type of failure.</param>
+        /// <param name="scheduledTime">The time to reschedule the WorkItem if it isn't a fatal error. </param>
+        /// <param name="retryCount"> </param>
+        public void Fail(string reason, WorkItemFailureType failureType, DateTime scheduledTime, int retryCount)
+        {
+            Progress.StatusDetails = reason;
+            Fail(failureType, scheduledTime, retryCount);
         }
 
         /// <summary>
@@ -87,7 +100,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         /// <param name="failureType"></param>
         public void Fail(WorkItemFailureType failureType)
         {
-            Fail(failureType, Platform.Time.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds));
+            Fail(failureType, Platform.Time.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds),WorkItemServiceSettings.Default.RetryCount);
         }
 
         /// <summary>
@@ -95,7 +108,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         /// </summary>
         /// <param name="failureType"></param>
         /// <param name="failureTime">The time to reschedule the WorkItem if it isn't a fatal error. </param>
-        public void Fail(WorkItemFailureType failureType, DateTime failureTime)
+        /// <param name="failureCount"> </param>
+        public void Fail(WorkItemFailureType failureType, DateTime failureTime, int failureCount)
         {
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
@@ -107,7 +121,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 Item.Progress = Progress;
                 Item.FailureCount = Item.FailureCount + 1;
                 Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);
-                if (Item.FailureCount >= WorkItemServiceSettings.Default.RetryCount
+                if (Item.FailureCount >= failureCount
                     || failureType == WorkItemFailureType.Fatal )
                 {
                     Item.Status = WorkItemStatusEnum.Failed;
@@ -129,10 +143,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             Platform.Log(LogLevel, "Failing {0} WorkItem for OID {1}: {2}", Item.Type, Item.Oid, Item.Request.ActivityDescription);
         }
 
-        /// <summary>
+                /// <summary>
         /// Postpone a <see cref="WorkItem"/>
         /// </summary>
         public void Postpone()
+        {
+            Postpone(TimeSpan.FromSeconds(WorkItemServiceSettings.Default.PostponeSeconds));
+        }
+
+        /// <summary>
+        /// Postpone a <see cref="WorkItem"/>
+        /// </summary>
+        public void Postpone(TimeSpan delay)
         {
             DateTime now = Platform.Time;
 
@@ -145,13 +167,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 Item = workItemBroker.GetWorkItem(Item.Oid);
                 if (workItem != null && Item.Priority != WorkItemPriorityEnum.Stat)
                 {
-                    DateTime scheduledTime = workItem.GetScheduledTime(now, 0);
+                    DateTime scheduledTime = workItem.GetScheduledTime(now, delay.Seconds);
                     Item.ProcessTime = scheduledTime;
                     Item.ScheduledTime = scheduledTime;      
                 }
                 else
                 {
-                    Item.ProcessTime = now.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds);
+                    Item.ProcessTime = now.Add(delay);
                 }
                 Item.Progress = Progress;
 

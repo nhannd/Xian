@@ -89,6 +89,18 @@
     <Compile Include="Command\SaveStudyXmlCommand.cs" />
     <Compile Include="Command\ViewerCommandProcessor.cs" />
     <Compile Include="Command\ViewerCommandProcessorContext.cs" />
+    <Compile Include="Configuration\Broker.cs" />
+    <Compile Include="Configuration\ConfigurationDataContext.cs">
+      <DependentUpon>ConfigurationDataContext.dbml</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\ConfigurationDataContext.designer.cs">
+      <DependentUpon>ConfigurationDataContext.dbml</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="Configuration\ConfigurationDocumentBroker.cs" />
+    <Compile Include="Configuration\DataAccessContext.cs" />
+    <Compile Include="Configuration\SystemConfigurationSettingsStore.cs" />
     <Compile Include="DeleteSeriesUtility.cs" />
     <Compile Include="DeleteStudyUtility.cs" />
     <Compile Include="DicomFilePublisher.cs" />
@@ -96,6 +108,7 @@
     <Compile Include="ImageViewerStorageScu.cs" />
     <Compile Include="ReapplyRulesUtility.cs" />
     <Compile Include="RulesEngine.cs" />
+    <Compile Include="ServiceProviders\SystemConfigurationSettingsStore.cs" />
     <Compile Include="Storage\DicomQuery\DateDicomPropertyFilter.cs" />
     <Compile Include="Storage\DicomQuery\DicomPropertyFilter.cs" />
     <Compile Include="Storage\DicomQuery\MultiValuedPropertyRule.cs" />
@@ -207,6 +220,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Configuration\configuration.sqlce" />
+    <None Include="Configuration\ConfigurationDataContext.dbml.layout">
+      <DependentUpon>ConfigurationDataContext.dbml</DependentUpon>
+    </None>
     <EmbeddedResource Include="SR.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
@@ -214,6 +231,12 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Configuration\ConfigurationDataContext.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>ConfigurationDataContext.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Configuration\dbml_gen.bat" />
     <None Include="Storage\DicomQuery\Tests\test_store_insert_studies.sqlce" />
     <None Include="Storage\DicomStoreDataContext.dbml.layout">
       <DependentUpon>DicomStoreDataContext.dbml</DependentUpon>
@@ -240,6 +263,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\configuration.sdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

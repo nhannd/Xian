@@ -87,6 +87,8 @@
     <Compile Include="BufferCache.cs" />
     <Compile Include="Cache.cs" />
     <Compile Include="CompressionType.cs" />
+    <Compile Include="Configuration\ISystemConfigurationSettingsStore.cs" />
+    <Compile Include="Configuration\SystemConfigurationSettingsProvider.cs" />
     <Compile Include="DataContracts.cs" />
     <Compile Include="DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Diagnostics.cs" />
@@ -153,6 +155,12 @@
     <Compile Include="Tests\DiskspaceTests.cs" />
     <Compile Include="StudyManagement\TimeOrigin.cs" />
     <Compile Include="StudyManagement\TimeUnit.cs" />
+    <Compile Include="WorkItem\DicomSendSettings.cs" />
+    <Compile Include="WorkItem\DicomSendSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>DicomSendSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="WorkItem\EnumExtensions.cs" />
     <Compile Include="WorkItem\Tests\AutoRouteScheduledTimeTests.cs" />
     <Compile Include="WorkItem\Tests\TestActivityMonitor.cs" />
@@ -194,6 +202,10 @@
     <None Include="StorageMonitorSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>StorageMonitorSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="WorkItem\DicomSendSettings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DicomSendSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
