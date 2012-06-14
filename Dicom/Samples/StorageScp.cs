@@ -85,6 +85,54 @@ namespace ClearCanvas.Dicom.Samples
             assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
             assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
+            pcid = assoc.AddPresentationContext(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClass);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.KeyObjectSelectionDocumentStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.ComprehensiveSrStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.BlendingSoftcopyPresentationStateStorageSopClass);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.ColonCadSrStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.DeformableSpatialRegistrationStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.EnhancedSrStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.BasicTextSrStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.EncapsulatedPdfStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.XRayRadiationDoseSrStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.ChestCadSrStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.EncapsulatedCdaStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
+
             pcid = assoc.AddPresentationContext(SopClass.MrImageStorage);
             SetImageTransferSyntaxes(pcid, assoc);
 
@@ -130,14 +178,6 @@ namespace ClearCanvas.Dicom.Samples
             pcid = assoc.AddPresentationContext(SopClass.ComputedRadiographyImageStorage);
             SetImageTransferSyntaxes(pcid, assoc);
 
-            pcid = assoc.AddPresentationContext(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClass);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
-
-            pcid = assoc.AddPresentationContext(SopClass.KeyObjectSelectionDocumentStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
-
             pcid = assoc.AddPresentationContext(SopClass.OphthalmicPhotography16BitImageStorage);
             SetImageTransferSyntaxes(pcid, assoc);
 
@@ -174,26 +214,30 @@ namespace ClearCanvas.Dicom.Samples
             pcid = assoc.AddPresentationContext(SopClass.XRayRadiofluoroscopicImageStorage);
             SetImageTransferSyntaxes(pcid, assoc);
 
-            pcid = assoc.AddPresentationContext(SopClass.XRayRadiationDoseSrStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
-
-            pcid = assoc.AddPresentationContext(SopClass.ChestCadSrStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
-
             pcid = assoc.AddPresentationContext(SopClass.XRay3dAngiographicImageStorage);
             SetImageTransferSyntaxes(pcid, assoc);
 
             pcid = assoc.AddPresentationContext(SopClass.XRay3dCraniofacialImageStorage);
             SetImageTransferSyntaxes(pcid, assoc);
 
-            pcid = assoc.AddPresentationContext(SopClass.EncapsulatedCdaStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
-
             pcid = assoc.AddPresentationContext(SopClass.OphthalmicTomographyImageStorage);
             SetImageTransferSyntaxes(pcid, assoc);
+
+            pcid = assoc.AddPresentationContext(SopClass.EnhancedCtImageStorage);
+            SetImageTransferSyntaxes(pcid, assoc);
+
+            pcid = assoc.AddPresentationContext(SopClass.EnhancedMrColorImageStorage);
+            SetImageTransferSyntaxes(pcid, assoc);
+
+            pcid = assoc.AddPresentationContext(SopClass.EnhancedMrImageStorage);
+            SetImageTransferSyntaxes(pcid, assoc);
+
+            pcid = assoc.AddPresentationContext(SopClass.EnhancedPetImageStorage);
+            SetImageTransferSyntaxes(pcid, assoc);
+
+            pcid = assoc.AddPresentationContext(SopClass.BreastTomosynthesisImageStorage);
+            SetImageTransferSyntaxes(pcid, assoc);
+
         }
         #endregion
 

@@ -489,9 +489,16 @@ namespace ClearCanvas.Dicom.Network.Scu
                                                  }
                                                  catch
                                                  {
-                                                     // TODO (Marmot): this is catch-all to prevent the shredhost from crashing.
-                                                     // Errors should have been handled in other places.
                                                      Platform.Log(LogLevel.Error, "Error when sending C-STORE-RQ messages, aborted on-going send operations");
+                                                     try
+                                                     {
+                                                         client.SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.NotSpecified);
+                                                         StopRunningOperation();    
+                                                     }
+                                                     catch
+                                                     {
+                                                         Platform.Log(LogLevel.Error, "Error attempting to abort association");
+                                                     }                                                     
                                                  }
 		                                     }, null);
 		}
@@ -533,114 +540,115 @@ namespace ClearCanvas.Dicom.Network.Scu
 				return false;
 			}
 
-		    DicomMessage msg;
-            byte pcid = 0;
-
-            if (PresentationContextSelectionDelegate != null)
+		    byte pcid = 0;
+            try
             {
-                pcid = PresentationContextSelectionDelegate(association, dicomFile, out msg);
-            }
-            else
-            {
-                msg = new DicomMessage(dicomFile);
-
-                if (fileToSend.TransferSyntax.Encapsulated)
+                DicomMessage msg;
+                if (PresentationContextSelectionDelegate != null)
                 {
-                    pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
-                                                                            msg.TransferSyntax);
+                    // Note, this may do a conversion of the file according to codecs, need to catch a codec exception if it occurs
+                    pcid = PresentationContextSelectionDelegate(association, dicomFile, out msg);
+                }
+                else
+                {
+                    msg = new DicomMessage(dicomFile);
 
-                    if (DicomCodecRegistry.GetCodec(fileToSend.TransferSyntax) != null)
+                    if (fileToSend.TransferSyntax.Encapsulated)
                     {
-                        // We can compress/decompress the file. Check if remote device accepts it
+                        pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
+                                                                                msg.TransferSyntax);
+
+                        if (DicomCodecRegistry.GetCodec(fileToSend.TransferSyntax) != null)
+                        {
+                            // We can compress/decompress the file. Check if remote device accepts it
+                            if (pcid == 0)
+                                pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
+                                                                                        TransferSyntax.ExplicitVrLittleEndian);
+                            if (pcid == 0)
+                                pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
+                                                                                        TransferSyntax.ImplicitVrLittleEndian);
+
+                        }
+                    }
+                    else
+                    {
                         if (pcid == 0)
                             pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
                                                                                     TransferSyntax.ExplicitVrLittleEndian);
                         if (pcid == 0)
                             pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
                                                                                     TransferSyntax.ImplicitVrLittleEndian);
-
                     }
                 }
-                else
+
+                if (pcid == 0)
                 {
-                    if (pcid == 0)
-                        pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
-                                                                                TransferSyntax.ExplicitVrLittleEndian);
-                    if (pcid == 0)
-                        pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
-                                                                                TransferSyntax.ImplicitVrLittleEndian);
+                    fileToSend.SendStatus = DicomStatuses.SOPClassNotSupported;
+                    fileToSend.ExtendedFailureDescription = string.Format(SR.ErrorSendSopClassNotSupported, msg.SopClass);
+
+                    LogError(fileToSend, msg, DicomStatuses.SOPClassNotSupported);
+
+                    OnImageStoreCompleted(fileToSend);
+                    _failureSubOperations++;
+                    _remainingSubOperations--;
+                    return false;
                 }
-            }
 
-		    if (pcid == 0)
-			{
-				fileToSend.SendStatus = DicomStatuses.SOPClassNotSupported;
-                fileToSend.ExtendedFailureDescription = string.Format(SR.ErrorSendSopClassNotSupported, msg.SopClass);
 
-                LogError(fileToSend, msg, DicomStatuses.SOPClassNotSupported);
-
-				OnImageStoreCompleted(fileToSend);
-				_failureSubOperations++;
-				_remainingSubOperations--;
-				return false;
-			}
-
-			try
-			{
-			    var presContext = association.GetPresentationContext(pcid);
-		        if (msg.TransferSyntax.Encapsulated
-                    && presContext.AcceptedTransferSyntax.Encapsulated 
-                    &&  !msg.TransferSyntax.Equals(presContext.AcceptedTransferSyntax))
-		        {
-		            // Compressed in different syntaxes, decompress here first, ChangeTransferSyntax does not convert syntaxes properly in this case.
+                var presContext = association.GetPresentationContext(pcid);
+                if (msg.TransferSyntax.Encapsulated
+                    && presContext.AcceptedTransferSyntax.Encapsulated
+                    && !msg.TransferSyntax.Equals(presContext.AcceptedTransferSyntax))
+                {
+                    // Compressed in different syntaxes, decompress here first, ChangeTransferSyntax does not convert syntaxes properly in this case.
                     msg.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
-		        }
+                }
 
                 fileToSend.SentMessageId = client.NextMessageID();
 
-				if (_moveOriginatorAe == null)
+                if (_moveOriginatorAe == null)
                     client.SendCStoreRequest(pcid, fileToSend.SentMessageId, DicomPriority.Medium, msg);
-				else
+                else
                     client.SendCStoreRequest(pcid, fileToSend.SentMessageId, DicomPriority.Medium, _moveOriginatorAe,
-					                         _moveOriginatorMessageId, msg);
-			}
-			catch(DicomNetworkException)
-			{
-				throw; //This is a DicomException-derived class that we want to throw.
-			}
-			catch(DicomCodecException e)
-			{
-				Platform.Log(LogLevel.Error, e, "Unexpected exception when compressing or decompressing file before send {0}", fileToSend.Filename);
+                                             _moveOriginatorMessageId, msg);
+            }
+            catch (DicomNetworkException)
+            {
+                throw; //This is a DicomException-derived class that we want to throw.
+            }
+            catch (DicomCodecException e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when compressing or decompressing file before send {0}", fileToSend.Filename);
 
-				fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
-				fileToSend.ExtendedFailureDescription = string.Format("Error decompressing or compressing file before send: {0}", e.Message);
-				OnImageStoreCompleted(fileToSend);
-				_failureSubOperations++;
-				_remainingSubOperations--;
-				return false;
+                fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
+                fileToSend.ExtendedFailureDescription = string.Format("Error decompressing or compressing file before send: {0}", e.Message);
+                OnImageStoreCompleted(fileToSend);
+                _failureSubOperations++;
+                _remainingSubOperations--;
+                return false;
 
-			}
-			catch(DicomException e)
-			{
-				Platform.Log(LogLevel.Error, e, "Unexpected exception while sending file {0}", fileToSend.Filename);
+            }
+            catch (DicomException e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception while sending file {0}", fileToSend.Filename);
 
-				fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
-				fileToSend.ExtendedFailureDescription = string.Format("Unexpected exception while sending file: {0}", e.Message);
-				OnImageStoreCompleted(fileToSend);
-				_failureSubOperations++;
-				_remainingSubOperations--;
-				return false;
-			}
+                fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
+                fileToSend.ExtendedFailureDescription = string.Format("Unexpected exception while sending file: {0}", e.Message);
+                OnImageStoreCompleted(fileToSend);
+                _failureSubOperations++;
+                _remainingSubOperations--;
+                return false;
+            }
 
 			return true;
 		}
 
         private void LogError(StorageInstance instance, DicomMessage msg, DicomStatus dicomStatus)
         {
-            var log = new StringBuilder();
-
             if (dicomStatus == DicomStatuses.SOPClassNotSupported)
             {
+                var log = new StringBuilder();
+
                 log.AppendLine(string.Format("Unable to transfer SOP {0} in study {1}. Remote device does not accept {2} in {3} transfer syntax", 
                                 instance.SopInstanceUid, instance.StudyInstanceUid, msg.SopClass, msg.TransferSyntax));
 
@@ -648,16 +656,13 @@ namespace ClearCanvas.Dicom.Network.Scu
                 {
                     var codecExists = DicomCodecRegistry.GetCodec(instance.TransferSyntax) != null;
 
-                    if (codecExists)
-                        log.AppendLine(string.Format("Note: codec is available for {0} but remote device does not support it?", instance.TransferSyntax));
-                    else
-                        log.AppendLine(string.Format("Note: codec is NOT available for {0}", instance.TransferSyntax));
+                    log.AppendLine(codecExists
+                                       ? string.Format("Note: codec is available for {0} but remote device does not support it?", instance.TransferSyntax)
+                                       : string.Format("Note: codec is NOT available for {0}", instance.TransferSyntax));
                 }
-                
+
+                Platform.Log(LogLevel.Error, log.ToString());        
             }
-            
-                
-            Platform.Log(LogLevel.Error, log.ToString());    
         }
 
 
