@@ -250,7 +250,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} Images Retrieved, {1} Images Failed, {2} Images Pending.
+        ///   Looks up a localized string similar to {0} Images Retrieved, {1} Failed, {2} Pending.
         /// </summary>
         internal static string DicomRetrieveProgress_Status {
             get {
@@ -259,7 +259,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} Images Sent, {1} Images Failed, {2} Images Pending.
+        ///   Looks up a localized string similar to {0} Images Sent, {1} Failed, {2} Pending.
         /// </summary>
         internal static string DicomSend_Status {
             get {
@@ -268,7 +268,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} Images Sent, {1} Images Failed, {2} Images Pending.
+        ///   Looks up a localized string similar to {0} Images Sent, {1} Failed, {2} Pending.
         /// </summary>
         internal static string DicomSendProgress_Status {
             get {
@@ -471,6 +471,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         internal static string RetryDelayTimeUnitSeconds {
             get {
                 return ResourceManager.GetString("RetryDelayTimeUnitSeconds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retry #{0} scheduled at {1}.
+        /// </summary>
+        internal static string RetryStatus {
+            get {
+                return ResourceManager.GetString("RetryStatus", resourceCulture);
             }
         }
         

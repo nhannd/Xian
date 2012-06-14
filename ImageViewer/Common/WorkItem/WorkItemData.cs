@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Dicom.Iod;
@@ -104,6 +105,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember(IsRequired = false)]
         public WorkItemProgress Progress { get; set; }
 
+        public string RetryStatus
+        {
+            get
+            {
+                if (FailureCount == 0 || Status != WorkItemStatusEnum.Pending)
+                    return string.Empty;
+
+                return string.Format(SR.RetryStatus, FailureCount,
+                                     ProcessTime.ToString("H:mm"));
+            }
+        }
         public IPatientData Patient
         {
             get

@@ -168,6 +168,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                         workItem.Status = request.Status.Value;
                         if (request.Status.Value == WorkItemStatusEnum.Canceled)
                             workItem.DeleteTime = Platform.Time.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);
+                        else if (request.Status.Value == WorkItemStatusEnum.Pending)
+                            workItem.ScheduledTime = Platform.Time;
+
                         // Cache the UserIdentityContext for later use by the shred
                         if (workItem.Request.WorkItemType.Equals(ImportFilesRequest.WorkItemTypeString) && request.Status.Value == WorkItemStatusEnum.Pending)
                             UserIdentityCache.Put(workItem.Oid, UserIdentityContext.CreateFromCurrentThreadPrincipal());

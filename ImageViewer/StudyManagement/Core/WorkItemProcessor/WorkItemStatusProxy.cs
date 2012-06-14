@@ -126,7 +126,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 {
                     Item.Status = WorkItemStatusEnum.Failed;
                     Item.ExpirationTime = now;
-                    Item.ScheduledTime = now;
                 }
                 else
                 {

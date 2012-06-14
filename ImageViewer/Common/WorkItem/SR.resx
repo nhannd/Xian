@@ -223,7 +223,7 @@
     <value>DICOM Send Images to {0}</value>
   </data>
   <data name="DicomSend_Status" xml:space="preserve">
-    <value>{0} Images Sent, {1} Images Failed, {2} Images Pending</value>
+    <value>{0} Images Sent, {1} Failed, {2} Pending</value>
   </data>
   <data name="Progress_Complete" xml:space="preserve">
     <value>Completed.</value>
@@ -250,7 +250,7 @@
     <value>Delete Study</value>
   </data>
   <data name="DicomSendProgress_Status" xml:space="preserve">
-    <value>{0} Images Sent, {1} Images Failed, {2} Images Pending</value>
+    <value>{0} Images Sent, {1} Failed, {2} Pending</value>
   </data>
   <data name="ReapplyRulesProgress_Status" xml:space="preserve">
     <value>{0} of {1} studies processed</value>
@@ -265,7 +265,7 @@
     <value>Processing files for import from {0} locations</value>
   </data>
   <data name="DicomRetrieveProgress_Status" xml:space="preserve">
-    <value>{0} Images Retrieved, {1} Images Failed, {2} Images Pending</value>
+    <value>{0} Images Retrieved, {1} Failed, {2} Pending</value>
   </data>
   <data name="DicomRetreiveSeriesRequest_ActivityDescription" xml:space="preserve">
     <value>Retrieve of Series from {0}</value>
@@ -293,5 +293,8 @@
   </data>
   <data name="RetryDelayTimeUnitSeconds" xml:space="preserve">
     <value>second(s)</value>
+  </data>
+  <data name="RetryStatus" xml:space="preserve">
+    <value>Retry #{0} scheduled at {1}</value>
   </data>
 </root>

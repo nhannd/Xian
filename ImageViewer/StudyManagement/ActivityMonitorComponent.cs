@@ -233,9 +233,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					if (_data.Progress == null) return null;
 
-					if (!string.IsNullOrEmpty(ProgressStatusDescription))
-						return string.Format("{0} [{1}]", _data.Progress.Status, ProgressStatusDescription);
-					return _data.Progress.Status;
+				    string status = !string.IsNullOrEmpty(ProgressStatusDescription) 
+				                        ? string.Format("{0} [{1}]", _data.Progress.Status, ProgressStatusDescription) 
+				                        : _data.Progress.Status;
+
+                    if (!string.IsNullOrEmpty(_data.RetryStatus))
+                        status = string.Format("{0}, {1}", _data.RetryStatus, status);
+				    return status;
 				}
 			}
 
