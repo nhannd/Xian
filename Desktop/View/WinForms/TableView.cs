@@ -55,7 +55,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         private readonly int _rowHeight = 0;
 		private Font _subRowFont;
 
-    	private ISelection _selectionBeforeSort;
+    	private ISelection _rememberedSelection;
+		private int _rememberedScrollPosition;
 
     	private string _sortButtonTooltipBase;
     	private string _columnHeaderTooltipBase;
@@ -393,15 +394,15 @@ namespace ClearCanvas.Desktop.View.WinForms
     			_dataGridView.DataSource = new TableAdapter(_table);
     			_dataGridView.ColumnHeaderMouseClick += _dataGridView_ColumnHeaderMouseClick;
 
-    			_table.BeforeSorted += _table_BeforeSortedEvent;
-    			_table.Sorted += _table_SortedEvent;
-    		}
+				_table.Items.TransactionStarted += _table_Items_TransactionStarted;
+				_table.Items.TransactionCompleted += _table_Items_TransactionCompleted;
+			}
 
     		InitializeSortButton();
     		IntializeFilter();
     	}
 
-        /// <summary>
+    	/// <summary>
         /// Gets/sets the current selection
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -746,9 +747,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 				_dataGridView.ColumnHeaderMouseClick -= _dataGridView_ColumnHeaderMouseClick;
 				_table.Columns.ItemsChanged -= OnColumnsChanged;
-				_table.BeforeSorted -= _table_BeforeSortedEvent;
-				_table.Sorted -= _table_SortedEvent;
-            }
+				_table.Items.TransactionStarted -= _table_Items_TransactionStarted;
+				_table.Items.TransactionCompleted -= _table_Items_TransactionCompleted;
+			}
         }
 
     	private void OnColumnsChanged(object sender, ItemChangedEventArgs e)
@@ -1101,19 +1102,20 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _sortDescendingButton.Image = value ? SR.CheckSmall : null; }
         }
 
-private int _positionBeforeSort;
-        private void _table_BeforeSortedEvent(object sender, EventArgs e)
-        {
-        	_selectionBeforeSort = this.Selection;
-        	_positionBeforeSort = this.FirstDisplayedScrollingRowIndex;
-        }
+		private void _table_Items_TransactionStarted(object sender, EventArgs e)
+		{
+			// remember the selection and scroll position
+			_rememberedSelection = this.Selection;
+			_rememberedScrollPosition = this.FirstDisplayedScrollingRowIndex;
+		}
 
-		private void _table_SortedEvent(object sender, EventArgs e)
-        {
-			if (_selectionBeforeSort.Items.Length > 0)
-				this.Selection = _selectionBeforeSort;
-            if (_positionBeforeSort != -1)
-			    this.FirstDisplayedScrollingRowIndex = _positionBeforeSort;
+		private void _table_Items_TransactionCompleted(object sender, EventArgs e)
+		{
+			// attempt to reset the selection and scroll position
+			if (_rememberedSelection.Items.Length > 0)
+				this.Selection = _rememberedSelection;
+			if (_rememberedScrollPosition > 0 && _rememberedScrollPosition < _table.Items.Count)
+				this.FirstDisplayedScrollingRowIndex = _rememberedScrollPosition;
 
 			ResetSortButtonState();
 		}

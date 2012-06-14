@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region WorkItem class
 
-		internal class WorkItem
+		internal class WorkItem : IEquatable<WorkItem>
 		{
 			private readonly WorkItemData _data;
 
@@ -110,6 +110,35 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			public long Id
 			{
 				get { return _data.Identifier; }
+			}
+
+			/// <summary>
+			/// In order to make this behave well in the table view, need to defined equality by Id property.
+			/// </summary>
+			/// <param name="that"></param>
+			/// <returns></returns>
+			public bool Equals(WorkItem that)
+			{
+				return that != null && this.Id == that.Id;
+			}
+
+			/// <summary>
+			/// In order to make this behave well in the table view, need to defined equality by Id property.
+			/// </summary>
+			/// <param name="obj"></param>
+			/// <returns></returns>
+			public override bool Equals(object obj)
+			{
+				return Equals(obj as WorkItem);
+			}
+
+			/// <summary>
+			/// In order to make this behave well in the table view, need to defined equality by Id property.
+			/// </summary>
+			/// <returns></returns>
+			public override int GetHashCode()
+			{
+				return this.Id.GetHashCode();
 			}
 
 			public string PatientId
@@ -202,9 +231,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get { return _data.Priority; }
 			}
 
+			public static Comparison<WorkItem> PriorityComparison
+			{
+				get
+				{
+					var list = (IList<WorkItemPriorityEnum>)_priorityOrdering;
+					return (x, y) => list.IndexOf(x.Priority).CompareTo(list.IndexOf(y.Priority));
+				}
+			}
+
 			public WorkItemStatusEnum Status
 			{
 				get { return _data.Status; }
+			}
+
+			public static Comparison<WorkItem> StatusComparison
+			{
+				get
+				{
+					var list = (IList<WorkItemStatusEnum>)_statusOrdering;
+					return (x, y) => list.IndexOf(x.Status).CompareTo(list.IndexOf(y.Status));
+				}
 			}
 
 			public string ActivityType
@@ -247,6 +294,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			public decimal ProgressValue
 			{
 				get { return _data.Progress != null ? _data.Progress.PercentComplete : 0; }
+			}
+
+			public static Comparison<WorkItem> ProgressComparison
+			{
+				get { return (x, y) => x.ProgressValue.CompareTo(y.ProgressValue); }
 			}
 
 			public bool IsCancelable
@@ -317,10 +369,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				_failedItemCountChanged();
 			}
 
-			public bool Update(IEnumerable<WorkItem> items, Comparison<WorkItem> sortComparison)
+			public bool Update(IList<WorkItem> items, Comparison<WorkItem> sortComparison)
 			{
-				var needSort = false;
-				var adds = new List<WorkItem>();
+				// if we're dealing with a batch (e.g. via Refresh), we need to do things differently
+				// than for a few items
+				var isBatch = items.Count > 10;
+				var batchAddList = new List<WorkItem>();
+
 				foreach (var item in items)
 				{
 					var index = _items.FindIndex(w => w.Id == item.Id);
@@ -332,7 +387,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 						if (item.Status == WorkItemStatusEnum.Deleted || item.Status == WorkItemStatusEnum.DeleteInProgress || !Include(item))
 							_items.RemoveAt(index);
 						else
-							needSort = needSort || UpdateItem(item, index, sortComparison);
+							UpdateItem(item, index, sortComparison, isBatch);
 					}
 					else
 					{
@@ -340,7 +395,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 						// if not deleted and it meets the filter criteria, add it
 						if (item.Status != WorkItemStatusEnum.Deleted && item.Status != WorkItemStatusEnum.DeleteInProgress && Include(item))
 						{
-							adds.Add(item);
+							if(isBatch)
+								batchAddList.Add(item);
+							else
+								AddItem(item, sortComparison);
 						}
 					}
 
@@ -354,20 +412,38 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					if (_failures.Count != failureCount)
 						_failedItemCountChanged();
 				}
-				if(adds.Count > 0)
+				if(isBatch && batchAddList.Count > 0)
 				{
-					_items.AddRange(adds);
-					needSort = true;
+					_items.AddRange(batchAddList);
 				}
-				return needSort;
+
+				// return a value indicating whether a sort is required
+				return isBatch;
 			}
 
-			private bool UpdateItem(WorkItem item, int index, Comparison<WorkItem> sortComparison)
+			private void AddItem(WorkItem item, Comparison<WorkItem> sortComparison)
 			{
-				// update the item in-place, and then return a value indicating whether a re-sort is required
+				var i = _items.FindInsertionPoint(item, sortComparison);
+				_items.Insert(i, item);
+			}
+
+			private void UpdateItem(WorkItem item, int index, Comparison<WorkItem> sortComparison, bool isBatch)
+			{
 				var oldItem = _items[index];
-				_items[index] = item;
-				return sortComparison(oldItem, item) != 0;
+
+				// if update does not affect sort order, then we can update the item in-place
+				// Also, if it's part of a batch, then just update it because it will be sorted later
+				if (isBatch || sortComparison(oldItem, item) == 0)
+				{
+					_items[index] = item;
+				}
+				else
+				{
+					// otherwise we need to remove and re-insert it
+					_items.RemoveAt(index);
+					var i = _items.FindInsertionPoint(item, sortComparison);
+					_items.Insert(i, item);
+				}
 			}
 
 			private bool Include(WorkItem item)
@@ -649,6 +725,32 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			Failed
 		}
 
+		/// <summary>
+		/// Defines the sort order for Status column, based on "completedness", which may differ
+		/// from the order in which the enum constants are defined.
+		/// </summary>
+		private static readonly WorkItemStatusEnum[] _statusOrdering = new[] {
+			WorkItemStatusEnum.Pending,
+			WorkItemStatusEnum.InProgress,
+			WorkItemStatusEnum.Idle,
+			WorkItemStatusEnum.Complete,
+			WorkItemStatusEnum.Canceling,
+			WorkItemStatusEnum.Canceled,
+			WorkItemStatusEnum.Failed,
+			WorkItemStatusEnum.DeleteInProgress,
+			WorkItemStatusEnum.Deleted,
+		};
+
+		/// <summary>
+		/// Defines the sort order for Priority column, which may differ
+		/// from the order in which the enum constants are defined.
+		/// </summary>
+		private static readonly WorkItemPriorityEnum[] _priorityOrdering = new[] {
+			WorkItemPriorityEnum.Normal,
+			WorkItemPriorityEnum.High,
+			WorkItemPriorityEnum.Stat,
+		};
+
 		private static readonly object NoFilter = new object();
 
 		private readonly WorkItemActionModel _workItemActionModel;
@@ -689,21 +791,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 										   TooltipTextProvider = w => string.IsNullOrEmpty(w.ProgressStatusDescription)
 																		? string.Empty
 																		: w.ProgressStatusDescription,
-										   Comparison = (x, y) => x.Status.GetDescription().CompareTo(y.Status.GetDescription())
+										   Comparison = WorkItem.StatusComparison
 									   });
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnStatusDescription, w => w.ProgressStatus) { WidthFactor = 1.5f });
 			var requestedTimeColumn = new DateTimeTableColumn<WorkItem>(SR.ColumnRequestedTime, w => w.RequestedTime) { WidthFactor = .5f };
 			_workItems.Columns.Add(requestedTimeColumn);
 			_workItems.Columns.Add(new DateTimeTableColumn<WorkItem>(SR.ColumnScheduledTime, w => w.ScheduledTime) { WidthFactor = .5f });
 			_workItems.Columns.Add(new TableColumn<WorkItem, string>(SR.ColumnPriority, w => w.Priority.GetDescription())
-			                       	{
-			                       		WidthFactor = .25f,
-										Comparison = (x, y) => x.Priority.GetDescription().CompareTo(y.Priority.GetDescription())
-			                       	});
+									{
+										WidthFactor = .25f,
+										Comparison = WorkItem.PriorityComparison
+									});
 			_workItems.Columns.Add(new TableColumn<WorkItem, IconSet>(SR.ColumnProgress, w => w.ProgressIcon)
 									{
 										WidthFactor = .4f,
-										Comparison = (x, y) => x.ProgressValue.CompareTo(y.ProgressValue)
+										Comparison = WorkItem.ProgressComparison
 									});
 
 
@@ -832,9 +934,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				var q = from id in _workItemActionModel.SelectedWorkItemIDs
-				        let item = _workItems.Items.FirstOrDefault(item => item.Id == id)
-				        where item != null
-				        select item;
+						let item = _workItems.Items.FirstOrDefault(item => item.Id == id)
+						where item != null
+						select item;
 				return new Selection(q);
 			}
 			set
@@ -1017,10 +1119,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 
 			var items = workItems.Select(item => new WorkItem(item)).ToList();
-			var needSort = _workItemManager.Update(items, _workItems.SortParams.GetComparer().Compare);
-			if(needSort)
+			
+			// by wrapping this in a transaction, we help the view to retain the current selection
+			// and scroll position where possible
+			using (_workItems.Items.BeginTransaction())
 			{
-				_workItems.Sort();
+				var needSort = _workItemManager.Update(items, _workItems.SortParams.GetComparer().Compare);
+				if (needSort)
+				{
+					_workItems.Sort();
+				}
 			}
 
 			_workItemActionModel.OnWorkItemsChanged(items);
@@ -1131,6 +1239,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				default:
 					throw new ArgumentOutOfRangeException("filterValue");
 			}
+		}
+
+		private static Comparison<TItem> GetComparison<TItem, TProperty>(TProperty[] order, Func<TItem, TProperty> sortProperty)
+		{
+			var list = (IList<TProperty>)order;
+			return (x, y) => list.IndexOf(sortProperty(x)).CompareTo(list.IndexOf(sortProperty(y)));
 		}
 	}
 }
