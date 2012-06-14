@@ -235,6 +235,18 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
+		internal void UpdateApplicationLicensingStatus()
+		{
+			lock (_syncLock)
+			{
+				if (!_active)
+					return;
+
+				// when licensing has changed, just restart
+				OnConfigurationChanged();
+			}
+		}
+
 		#endregion
 	}
 }

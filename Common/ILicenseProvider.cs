@@ -33,6 +33,11 @@ namespace ClearCanvas.Common
 		/// </summary>
 		/// <param name="licenseKey"></param>
 		void SetLicenseInfo(string licenseKey);
+
+		/// <summary>
+		/// Fired when the license information has changed.
+		/// </summary>
+		event EventHandler LicenseInfoChanged;
 	}
 
 	/// <summary>
@@ -70,8 +75,14 @@ namespace ClearCanvas.Common
 
 			public void SetLicenseInfo(string licenseKey)
 			{
+				var oldLicenseKey = ApplicationSettingsExtensions.GetSharedPropertyValue(new LicenseSettings(), "LicenseKey").ToString();
 				ApplicationSettingsExtensions.SetSharedPropertyValue(new LicenseSettings(), "LicenseKey", licenseKey);
+
+				if (oldLicenseKey != licenseKey)
+					EventsHelper.Fire(LicenseInfoChanged, this, new EventArgs());
 			}
+
+			public event EventHandler LicenseInfoChanged;
 		}
 	}
 }

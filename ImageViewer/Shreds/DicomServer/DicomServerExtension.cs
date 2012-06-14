@@ -31,6 +31,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         {
 			_dicomServerWcfInitialized = false;
         	_dicomSendServiceWCFInitialized = false;
+
+			LicenseInformation.LicenseChanged += OnLicenseInformationChanged;
 		}
 
         public override void Start()
@@ -134,5 +136,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         {
 			return SR.DicomServerDescription;
         }
+
+    	private void OnLicenseInformationChanged(object sender, EventArgs e)
+    	{
+    		Platform.Log(LogLevel.Info, @"Restarting {0} due to application licensing status change.", SR.DicomServer);
+    		DicomServerManager.Instance.UpdateApplicationLicensingStatus();
+    	}
    }
 }

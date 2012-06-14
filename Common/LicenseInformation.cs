@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common
 {
@@ -19,6 +20,7 @@ namespace ClearCanvas.Common
 	public static class LicenseInformation
 	{
 		private static readonly object _syncRoot = new object();
+		private static event EventHandler _licenseChanged;
 
 		private static ILicenseProvider _licenseProvider;
 		private static ILicenseDetailsProvider _licenseDetailsProvider;
@@ -35,6 +37,7 @@ namespace ClearCanvas.Common
 			{
 				if (_licenseProvider != null) return;
 				_licenseProvider = LicenseProviderExtensionPoint.CreateInstance();
+				_licenseProvider.LicenseInfoChanged += (s, e) => EventsHelper.Fire(_licenseChanged, null, e);
 			}
 		}
 
@@ -49,6 +52,14 @@ namespace ClearCanvas.Common
 			}
 		}
 
+		/// <summary>
+		/// Notifies when the license information has changed.
+		/// </summary>
+		public static event EventHandler LicenseChanged
+		{
+			add { _licenseChanged += value; }
+			remove { _licenseChanged -= value; }
+		}
 
 		/// <summary>
 		/// Gets the number of the concurrent active sessions.
@@ -218,6 +229,5 @@ namespace ClearCanvas.Common
 		{
 			_machineIdentifier = null; // will force reload when requested
 		}
-
 	}
 }

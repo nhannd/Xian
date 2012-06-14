@@ -59,7 +59,6 @@ namespace ClearCanvas.Common
 		bool IsFeatureAuthorized(string featureToken);
 	}
 
-
 	/// <summary>
 	/// Specifies the allowed diagnostic use of the product license.
 	/// </summary>
@@ -139,5 +138,4 @@ namespace ClearCanvas.Common
 			}
 		}
 	}
-
 }
