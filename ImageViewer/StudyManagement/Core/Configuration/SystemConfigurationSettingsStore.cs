@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration
                                    {
                                        CreationTime = Platform.Time,
                                        DocumentName = group.Name,
-                                       DocumentVersionString = VersionUtils.ToPaddedVersionString(group.Version),
+                                       DocumentVersionString = VersionUtils.ToPaddedVersionString(group.Version,false,false),
                                        User = user,
                                        DocumentText = string.Empty
                                    };

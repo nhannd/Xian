@@ -35,13 +35,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration
 
             query = !string.IsNullOrEmpty(documentKey.InstanceKey) 
                 ? query.Where(d => d.InstanceKey == documentKey.InstanceKey) 
-                : query.Where(d => documentKey.InstanceKey == null);
+                : query.Where(d => d.InstanceKey == null);
 
             query = !string.IsNullOrEmpty(documentKey.User) 
                 ? query.Where(d => d.User == documentKey.User) 
                 : query.Where(d => d.User == null);
 
-            query = query.Where(d => d.DocumentVersionString == VersionUtils.ToPaddedVersionString(documentKey.Version));
+            query = query.Where(d => d.DocumentVersionString == VersionUtils.ToPaddedVersionString(documentKey.Version, false, false));
+
+            query = query.Where(d => d.DocumentName == documentKey.DocumentName);
 
             return query.FirstOrDefault();
         }
