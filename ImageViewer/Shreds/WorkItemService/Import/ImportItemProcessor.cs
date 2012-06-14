@@ -39,14 +39,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
         public override void Process()
         {
-            var failureReason = string.Empty;
-
-            if (!ValidateRequest(Request, out failureReason))
-            {
-                Proxy.Fail(failureReason, WorkItemFailureType.Fatal);
-                return;
-            }
-
             Progress.NumberOfFilesImported = 0;
             Progress.NumberOfImportFailures = 0;
             Progress.PathsImported = 0;
@@ -77,7 +69,16 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             else
             {
                 using (UserIdentityCache.Get(Proxy.Item.Oid).Impersonate())
+                {
+                    string failureReason;
+                    if (!ValidateRequest(Request, out failureReason))
+                    {
+                        Proxy.Fail(failureReason, WorkItemFailureType.Fatal);
+                        return;
+                    }
+
                     ImportFiles(Request.FilePaths, Request.FileExtensions, Request.Recursive);
+                }
 
                 GC.Collect();
             }
