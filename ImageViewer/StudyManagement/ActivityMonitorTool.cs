@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				this.Context.DesktopWindow.ShowAlert(AlertLevel.Warning,
 					SR.WarningMaximumDiskUsageExceeded,
 					SR.LinkOpenStorageConfiguration,
-					delegate { ActivityMonitorQuickLink.LocalServerStorageConfiguration.Invoke(this.Context.DesktopWindow); },
+					delegate { ActivityMonitorQuickLink.LocalStorageConfiguration.Invoke(this.Context.DesktopWindow); },
 					true);
 			}
 		}

@@ -454,13 +454,13 @@
     <value>484, 93</value>
   </data>
   <data name="_localServerConfigLink.Size" type="System.Drawing.Size, System.Drawing">
-    <value>132, 13</value>
+    <value>106, 13</value>
   </data>
   <data name="_localServerConfigLink.TabIndex" type="System.Int32, mscorlib">
     <value>23</value>
   </data>
   <data name="_localServerConfigLink.Text" xml:space="preserve">
-    <value>Local Server Configuration</value>
+    <value>System Configuration</value>
   </data>
   <data name="&gt;&gt;_localServerConfigLink.Name" xml:space="preserve">
     <value>_localServerConfigLink</value>

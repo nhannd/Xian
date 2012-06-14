@@ -944,9 +944,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public void OpenLocalServerConfigurationPage()
+		public void OpenSystemConfigurationPage()
 		{
-			HandleLink(ActivityMonitorQuickLink.LocalServerConfiguration);
+			HandleLink(ActivityMonitorQuickLink.SystemConfiguration);
 		}
 
 		public bool StudyManagementRulesLinkVisible

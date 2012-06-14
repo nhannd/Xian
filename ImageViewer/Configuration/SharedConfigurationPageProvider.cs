@@ -53,17 +53,17 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		bool IActivityMonitorQuickLinkHandler.CanHandle(ActivityMonitorQuickLink link)
 		{
-			return link == ActivityMonitorQuickLink.LocalServerConfiguration || 
-				link == ActivityMonitorQuickLink.LocalServerStorageConfiguration;
+			return link == ActivityMonitorQuickLink.SystemConfiguration || 
+				link == ActivityMonitorQuickLink.LocalStorageConfiguration;
 		}
 
 		void IActivityMonitorQuickLinkHandler.Handle(ActivityMonitorQuickLink link, IDesktopWindow window)
 		{
-			if (link == ActivityMonitorQuickLink.LocalServerConfiguration)
+			if (link == ActivityMonitorQuickLink.SystemConfiguration)
 			{
-				SharedConfigurationDialog.Show(window, ServerConfigurationPath);
+				SharedConfigurationDialog.Show(window);
 			}
-			if (link == ActivityMonitorQuickLink.LocalServerStorageConfiguration)
+			if (link == ActivityMonitorQuickLink.LocalStorageConfiguration)
 			{
 				SharedConfigurationDialog.Show(window, StorageConfigurationPath);
 			}

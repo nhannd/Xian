@@ -165,7 +165,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void _localServerConfigLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			_component.OpenLocalServerConfigurationPage();
+			_component.OpenSystemConfigurationPage();
 		}
 
 		private void _studyRulesLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

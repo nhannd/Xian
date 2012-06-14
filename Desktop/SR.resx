@@ -292,7 +292,7 @@
     <value>Insert Separator Before</value>
   </data>
   <data name="MenuOptions" xml:space="preserve">
-    <value>User Options</value>
+    <value>Preferences</value>
   </data>
   <data name="MenuRemove" xml:space="preserve">
     <value>Remove</value>

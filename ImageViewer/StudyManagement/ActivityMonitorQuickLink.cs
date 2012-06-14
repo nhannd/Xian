@@ -17,8 +17,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public enum ActivityMonitorQuickLink
 	{
-		LocalServerConfiguration,
-		LocalServerStorageConfiguration,
+		SystemConfiguration,
+		LocalStorageConfiguration,
 		StudyManagementRules
 	}
 
