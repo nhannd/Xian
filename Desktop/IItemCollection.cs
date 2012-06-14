@@ -87,22 +87,30 @@ namespace ClearCanvas.Desktop
         }
     }
 
-	// TODO: get rid of these interfaces.
-	
+
 	/// <summary>
     /// Defines the interface to the collection of items.
     /// </summary>
     /// <remarks>
-    /// Do not implement this interface.  It is likely to be removed
-    /// in subsequent versions of the framework and is 
-    /// not considered part of the public API.
+    /// Do not implement this interface.  It is 
+    /// not considered part of the public API and is subject to change.
     /// </remarks>
     public interface IItemCollection : IList
     {
-        /// <summary>
+		/// <summary>
+		/// Occurs when a transaction has started.
+		/// </summary>
+		event EventHandler TransactionStarted;
+		
+		/// <summary>
         /// Occurs when an item in the collection has changed.
         /// </summary>
         event EventHandler<ItemChangedEventArgs> ItemsChanged;
+
+		/// <summary>
+		/// Occurs when a transaction has completed.
+		/// </summary>
+		event EventHandler TransactionCompleted;
     }
 
     /// <summary>

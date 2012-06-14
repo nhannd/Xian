@@ -28,7 +28,27 @@ namespace ClearCanvas.Desktop
     ///<typeparam name="TItem">The type of item that the table holds.</typeparam>
     public class ItemCollection<TItem> : IItemCollection<TItem>
     {
-		private class ComparisonComparer<T> : IComparer<T>
+		public class TransactionScope : IDisposable
+		{
+			private readonly ItemCollection<TItem> _collection;
+			private bool _disposed;
+
+			internal TransactionScope(ItemCollection<TItem> collection)
+			{
+				_collection = collection;
+			}
+
+			public void Dispose()
+			{
+				if(_disposed)
+					throw new InvalidOperationException("Already disposed.");
+
+				_disposed = true;
+				_collection.EndTransactionScope(this);
+			}
+		}
+
+    	private class ComparisonComparer<T> : IComparer<T>
 		{
 			readonly Comparison<T> _comparison;
 
@@ -46,6 +66,7 @@ namespace ClearCanvas.Desktop
 
         private readonly List<TItem> _list;
 		private event EventHandler<ItemChangedEventArgs> _itemsChanged;
+    	private TransactionScope _rootTransaction;
 
         /// <summary>
         /// Constructor.
@@ -62,6 +83,30 @@ namespace ClearCanvas.Desktop
         {
             _list = itemCollection.List;
         }
+
+		/// <summary>
+		/// Begins a transaction, returning a scope object that must be disposed to denote
+		/// the end of the transaction.
+		/// </summary>
+		/// <remarks>
+		/// This is not a transaction in the true sense, because it cannot be rolled back.
+		/// The purpose of the transaction is to allow objects that are listening for
+		/// <see cref="ItemsChanged"/> events to know that a number of changes are being made
+		/// in close succession that ought to be considered part of a single logical change. 
+		/// </remarks>
+		/// <returns></returns>
+		public TransactionScope BeginTransaction()
+		{
+			var transaction = new TransactionScope(this);
+			if(_rootTransaction == null)
+			{
+				// we only fire the TransactionStarted event if we're the root transaction
+				// (nested transactions are irrelevant)
+				_rootTransaction = transaction;
+				EventsHelper.Fire(TransactionStarted, this, EventArgs.Empty);
+			}
+			return transaction;
+		}
 
 		/// <summary>
 		/// Finds the appropriate insertion point for the specified item, given that the collection is sorted according
@@ -92,8 +137,13 @@ namespace ClearCanvas.Desktop
     	/// </remarks>
     	public void NotifyItemUpdated(int index)
         {
-            NotifyItemsChanged(ItemChangeType.ItemChanged, index, this[index]);
+			ChangeCollection(() => new ItemChangedEventArgs(ItemChangeType.ItemChanged, index, this[index]));
         }
+
+    	/// <summary>
+    	/// Occurs when the collection is about to change.
+    	/// </summary>
+    	public event EventHandler TransactionStarted;
 
     	/// <summary>
     	/// Occurs when an item in the collection has changed.
@@ -104,7 +154,12 @@ namespace ClearCanvas.Desktop
             remove { _itemsChanged -= value; }
         }
 
-        #endregion
+    	/// <summary>
+    	/// Occurs after the collection has changed.
+    	/// </summary>
+    	public event EventHandler TransactionCompleted;
+
+    	#endregion
 
         #region IItemCollection<TItem> Members
 
@@ -142,8 +197,11 @@ namespace ClearCanvas.Desktop
 				return;
 			}
 
-            _list.AddRange(enumerable);
-            NotifyItemsChanged(ItemChangeType.Reset, -1, default(TItem));
+			ChangeCollection(() =>
+			{
+				_list.AddRange(enumerable);
+				return new ItemChangedEventArgs(ItemChangeType.Reset, -1, default(TItem));
+			});
         }
 
     	/// <summary>
@@ -151,11 +209,14 @@ namespace ClearCanvas.Desktop
     	/// </summary>
     	public virtual void Sort(IComparer<TItem> comparer)
         {
-            // We don't call _list.Sort(...) because .NET internally uses an unstable sort
-			MergeSort(comparer, _list, 0, _list.Count);
+			ChangeCollection(() =>
+			{
+				// We don't call _list.Sort(...) because .NET internally uses an unstable sort
+				MergeSort(comparer, _list, 0, _list.Count);
 
-            // notify that the list has been sorted
-            NotifyItemsChanged(ItemChangeType.Reset, -1, default(TItem));
+				// notify that the list has been sorted
+				return new ItemChangedEventArgs(ItemChangeType.Reset, -1, default(TItem));
+			});
         }
 
     	/// <summary>
@@ -227,8 +288,11 @@ namespace ClearCanvas.Desktop
 		/// </summary>
         public virtual void Clear()
         {
-            _list.Clear();
-            NotifyItemsChanged(ItemChangeType.Reset, -1, default(TItem));
+			ChangeCollection(() =>
+			{
+				_list.Clear();
+				return new ItemChangedEventArgs(ItemChangeType.Reset, -1, default(TItem));
+			});
         }
 
 		/// <summary>
@@ -270,9 +334,12 @@ namespace ClearCanvas.Desktop
 		/// </summary>
         public virtual void RemoveAt(int index)
         {
-            TItem item = _list[index];
-            _list.RemoveAt(index);
-            NotifyItemsChanged(ItemChangeType.ItemRemoved, index, item);
+			ChangeCollection(() =>
+        	{
+				var item = _list[index];
+				_list.RemoveAt(index);
+				return new ItemChangedEventArgs(ItemChangeType.ItemRemoved, index, item);
+        	});
         }
 
 		/// <summary>
@@ -317,8 +384,11 @@ namespace ClearCanvas.Desktop
 		/// </summary>
         public virtual void Insert(int index, TItem item)
         {
-            _list.Insert(index, item);
-            NotifyItemsChanged(ItemChangeType.ItemInserted, index, item);
+			ChangeCollection(() =>
+			{
+				_list.Insert(index, item);
+				return new ItemChangedEventArgs(ItemChangeType.ItemInserted, index, item);
+			});
         }
 
 		/// <summary>
@@ -329,8 +399,11 @@ namespace ClearCanvas.Desktop
             get { return _list[index]; }
             set
             {
-                _list[index] = value;
-                NotifyItemsChanged(ItemChangeType.ItemChanged, index, value);
+				ChangeCollection(() =>
+				{
+					_list[index] = value;
+					return new ItemChangedEventArgs(ItemChangeType.ItemChanged, index, value);
+				});
             }
         }
 
@@ -382,8 +455,11 @@ namespace ClearCanvas.Desktop
         /// </summary>
 		public virtual void Add(TItem item)
         {
-            _list.Add(item);
-            NotifyItemsChanged(ItemChangeType.ItemAdded, this.Count - 1, item);
+			ChangeCollection(() =>
+			{
+				_list.Add(item);
+				return new ItemChangedEventArgs(ItemChangeType.ItemAdded, this.Count - 1, item);
+			});
         }
 
         /// <summary>
@@ -409,14 +485,17 @@ namespace ClearCanvas.Desktop
         /// <returns>True if the item existed in the collection and was removed, otherwise false.</returns>
 		public virtual bool Remove(TItem item)
         {
-            int index = IndexOf(item);
-            bool removed = _list.Remove(item);
-            if (removed)
-            {
-                NotifyItemsChanged(ItemChangeType.ItemRemoved, index, item);
-            }
-            return removed;
-        }
+            var index = IndexOf(item);
+			if (index < 0)
+				return false;
+
+			ChangeCollection(() =>
+			{
+				_list.Remove(item);
+				return new ItemChangedEventArgs(ItemChangeType.ItemRemoved, index, item);
+			});
+			return true;
+		}
 
         #endregion
 
@@ -450,6 +529,32 @@ namespace ClearCanvas.Desktop
 		protected List<TItem> List
 		{
 			get { return _list; }
+		}
+
+		/// <summary>
+		/// Wraps code blocks that modify the collection, ensuring the proper
+		/// event notifications are made.
+		/// </summary>
+		/// <param name="action"></param>
+		protected void ChangeCollection(Func<ItemChangedEventArgs> action)
+		{
+			// always use a transaction!
+			using(BeginTransaction())
+			{
+				var args = action();
+				EventsHelper.Fire(_itemsChanged, this, args);
+			}
+		}
+
+		private void EndTransactionScope(TransactionScope transaction)
+		{
+			if(_rootTransaction == transaction)
+			{
+				// we only fire the TransactionCompleted event if we're the root transaction
+				// (nested transactions are irrelevant)
+				_rootTransaction = null;
+				EventsHelper.Fire(TransactionCompleted, this, EventArgs.Empty);
+			}
 		}
 
 		/// <summary>
