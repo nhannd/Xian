@@ -147,6 +147,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration
                 var documentKey = new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey);
                 var broker = context.GetConfigurationDocumentBroker();
 
+                var values = new Dictionary<string, string>();
+                var parser = new SettingsParser();
+
                 var document = broker.GetConfigurationDocument(documentKey);
                 if (document == null)
                 {
@@ -160,11 +163,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration
                                    };
                     broker.AddConfigurationDocument(document);
                 }
-
-                // parse document
-                var parser = new SettingsParser();
-                var values = new Dictionary<string, string>();
-                parser.FromXml(document.DocumentText, values);
+                else
+                {
+                    // parse document
+                    parser.FromXml(document.DocumentText, values);
+                }
 
                 // update the values that have changed
                 foreach (var kvp in dirtyValues)
