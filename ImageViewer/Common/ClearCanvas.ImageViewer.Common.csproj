@@ -89,6 +89,9 @@
     <Compile Include="CompressionType.cs" />
     <Compile Include="Configuration\ISystemConfigurationSettingsStore.cs" />
     <Compile Include="Configuration\SystemConfigurationSettingsProvider.cs" />
+    <Compile Include="Configuration\Tests\SystemConfigurationSettingsProviderTests.cs" />
+    <Compile Include="Configuration\Tests\TestSettingsClass.cs" />
+    <Compile Include="Configuration\Tests\TestSettingsStore.cs" />
     <Compile Include="DataContracts.cs" />
     <Compile Include="DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Diagnostics.cs" />

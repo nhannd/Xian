@@ -3,23 +3,40 @@ using System.Collections.Generic;
 using System.Configuration;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common.Configuration
 {
     public sealed class SystemConfigurationSettingsProvider : SettingsProvider, ISharedApplicationSettingsProvider
     {
+        #region Private Members
+
         private readonly object _syncLock = new object();
         private ISystemConfigurationSettingsStore _store;
 
+        #endregion
+
+        #region Public Properties
+
         public override string ApplicationName { get; set; }
+
+        #endregion
+
+        #region Constructors
 
         public SystemConfigurationSettingsProvider()
 		{
             // TODO (CR Jun 2012): Since they're shared, should probably use product/component/family
+            // The database will be stored per family, so it should be ok.
 
 			// according to MSDN recommendation, use the name of the executing assembly here
             ApplicationName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 		}
+
+        #endregion
+
+
+        #region Public Methods
 
         ///<summary>
         ///Initializes the provider.
@@ -32,17 +49,7 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
             lock (_syncLock)
             {
                 // obtain a source provider
-                try
-                {
-                    _store = Platform.GetService<ISystemConfigurationSettingsStore>();
-                }
-                catch (NotSupportedException)
-                {
-                    // TODO (Marmot)
-                    //Platform.Log(LogLevel.Warn, SR.LogConfigurationStoreNotFound);
-
-                    // default to LocalFileSettingsProvider as a last resort
-                }
+                _store = Platform.GetService<ISystemConfigurationSettingsStore>();             
 
                 // init source provider
                 // according to sample implementations, use the application name here
@@ -62,9 +69,6 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
 
         public override void SetPropertyValues(SettingsContext context, SettingsPropertyValueCollection collection)
         {
-            // TODO (CR Jun 2012): check if any settings are user scoped and throw, since the code doesn't actually support user values.
-            // TODO (CR Jun 2012): Actually, can probably just throw because this method is intended only for user scoped settings.
-
             lock (_syncLock)
             {
                 // locate dirty values that should be saved
@@ -72,22 +76,126 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
                 foreach (SettingsPropertyValue value in collection)
                 {
                     //If storing the shared values, we store everything, otherwise only store user values.
-                    if (value.IsDirty)
-                        valuesToStore[value.Name] = (string)value.SerializedValue;
+                     if (value.IsDirty)
+                     {
+                         valuesToStore[value.Name] = (string) value.SerializedValue;
+                     }
                 }
 
                 if (valuesToStore.Count > 0)
                 {
                     var settingsClass = (Type)context["SettingsClassType"];
                     var settingsKey = (string)context["SettingsKey"];
-
-                    _store.PutSettingsValues(new SettingsGroupDescriptor(settingsClass), null, settingsKey, valuesToStore);
+                    var group = new SettingsGroupDescriptor(settingsClass);
+                  
+                    if (group.HasUserScopedSettings)
+                        throw new ConfigurationErrorsException(SR.SystemConfigurationSettingsProviderUserSetting);
+                  
+                    _store.PutSettingsValues(group, null, settingsKey, valuesToStore);
 
                     // successfully saved user settings are no longer dirty
                     foreach (var storedValue in valuesToStore)
                         collection[storedValue.Key].IsDirty = false;
                 }
             }
+        }
+
+        public bool CanUpgradeSharedPropertyValues(SettingsContext context)
+        {
+            var settingsClass = (Type)context["SettingsClassType"];
+            var settingsKey = (string)context["SettingsKey"];
+            var group = new SettingsGroupDescriptor(settingsClass);
+
+            var storedValues = _store.GetSettingsValues(group, null, settingsKey);
+            return storedValues != null && storedValues.Count > 0;
+        }
+
+        public void UpgradeSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
+        {
+            lock (_syncLock)
+            {
+                if (CanUpgradeSharedPropertyValues(context))
+                    Upgrade(context, properties, null);
+            }
+        }
+
+        public SettingsPropertyValueCollection GetPreviousSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
+        {
+            var settingsClass = (Type)context["SettingsClassType"];
+            var settingsKey = (string)context["SettingsKey"];
+            
+            var group = new SettingsGroupDescriptor(settingsClass);
+
+            if (group.HasUserScopedSettings)
+                throw new ConfigurationErrorsException(SR.SystemConfigurationSettingsProviderUserSetting);
+     
+            var oldGroup = _store.GetPreviousSettingsGroup(group);
+            
+            var storedValues = new Dictionary<string, string>();
+
+            if (oldGroup != null)
+                foreach (var userDefault in _store.GetSettingsValues(oldGroup, null, settingsKey))
+                    storedValues[userDefault.Key] = userDefault.Value;
+
+            return GetSettingsValues(properties, storedValues);           
+        }
+
+        public SettingsPropertyValueCollection GetSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties)
+        {
+            var settingsClass = (Type)context["SettingsClassType"];
+            var settingsKey = (string)context["SettingsKey"];
+            
+            var group = new SettingsGroupDescriptor(settingsClass);
+            if (group.HasUserScopedSettings)
+                throw new ConfigurationErrorsException(SR.SystemConfigurationSettingsProviderUserSetting);
+
+            var values = GetSharedPropertyValues(group, settingsKey, properties);
+            TranslateValues(settingsClass, values);
+            return values;
+        }
+
+        public void SetSharedPropertyValues(SettingsContext context, SettingsPropertyValueCollection values)
+        {
+            lock (_syncLock)
+            {
+                var valuesToStore = new Dictionary<string, string>();
+                foreach (SettingsPropertyValue value in values)
+                {
+                    if (value.IsDirty)
+                    {
+                        if (IsUserScoped(value.Property))
+                        {
+                            throw new ConfigurationErrorsException(SR.SystemConfigurationSettingsProviderUserSetting);
+                        }
+
+                        valuesToStore[value.Name] = (string) value.SerializedValue;
+                    }
+                }
+
+                if (valuesToStore.Count > 0)
+                {
+                    var settingsClass = (Type) context["SettingsClassType"];
+                    var settingsKey = (string) context["SettingsKey"];
+                    var group = new SettingsGroupDescriptor(settingsClass);
+
+                    if (group.HasUserScopedSettings)
+                        throw new ConfigurationErrorsException(SR.SystemConfigurationSettingsProviderUserSetting);
+     
+                    _store.PutSettingsValues(group, null, settingsKey, valuesToStore);
+                }
+
+                foreach (SettingsPropertyValue value in values)
+                    value.IsDirty = false;
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private static bool IsUserScoped(SettingsProperty property)
+        {
+            return CollectionUtils.Contains(property.Attributes.Values, attribute => attribute is UserScopedSettingAttribute);
         }
 
         private static void TranslateValues(Type settingsClass, SettingsPropertyValueCollection values)
@@ -99,58 +207,39 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
             }
         }
 
-        public bool CanUpgradeSharedPropertyValues(SettingsContext context)
-        {
-            return true;            
-        }
-
-        public void UpgradeSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
-        {
-            // TODO (CR Jun 2012): Since the store saves by version, we probably do need to do something here.
-            // do nothing
-        }
-
-        public SettingsPropertyValueCollection GetPreviousSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
-        {
-            // TODO (CR Jun 2012): Since the store saves by version, probably need to actually find previous version, if one exists.
-            // return whats in the db as is
-            return GetSharedPropertyValues(context, properties);
-        }
-
-        public SettingsPropertyValueCollection GetSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties)
+        private void Upgrade(SettingsContext context, SettingsPropertyCollection properties, string user)
         {
             var settingsClass = (Type)context["SettingsClassType"];
             var settingsKey = (string)context["SettingsKey"];
-
-            // TODO (CR Jun 2012): throw if there are user scoped properties?
+            bool isUserUpgrade = !String.IsNullOrEmpty(user);
 
             var group = new SettingsGroupDescriptor(settingsClass);
-            var values = GetSharedPropertyValues(group, settingsKey, properties);
-            TranslateValues(settingsClass, values);
-            return values;
-        }
+            var priorGroup = _store.GetPreviousSettingsGroup(@group);
+            if (priorGroup == null) 
+                return;
 
-        public void SetSharedPropertyValues(SettingsContext context, SettingsPropertyValueCollection values)
-        {
-            // TODO (CR Jun 2012): lock?
-            var valuesToStore = new Dictionary<string, string>();
-            foreach (SettingsPropertyValue value in values)
+            Dictionary<string, string> previousValues = _store.GetSettingsValues(priorGroup, null, settingsKey);
+            bool oldValuesExist = previousValues != null && previousValues.Count > 0;
+            if (!oldValuesExist)
+                return; //nothing to migrate.
+
+            var upgradedValues = new SettingsPropertyValueCollection();
+
+            foreach (SettingsProperty property in properties)
             {
-                if (value.IsDirty)
-                    valuesToStore[value.Name] = (string)value.SerializedValue;
+                if (isUserUpgrade && !IsUserScoped(property))
+                    continue;
+
+                string oldValue;
+                if (!previousValues.TryGetValue(property.Name, out oldValue))
+                    continue;
+
+                //Unconditionally save every old value; let the store sort out what to do.
+                upgradedValues.Add(new SettingsPropertyValue(property) { SerializedValue = oldValue, IsDirty = true });
             }
 
-            // TODO (CR Jun 2012): throw if there are user-scoped properties?
-            if (valuesToStore.Count > 0)
-            {
-                var settingsClass = (Type)context["SettingsClassType"];
-                var settingsKey = (string)context["SettingsKey"];
-
-                _store.PutSettingsValues(new SettingsGroupDescriptor(settingsClass), null, settingsKey, valuesToStore);
-            }
-
-            foreach (SettingsPropertyValue value in values)
-                value.IsDirty = false;
+            if (upgradedValues.Count > 0)
+                SetPropertyValues(context, upgradedValues);
         }
 
         private SettingsPropertyValueCollection GetSharedPropertyValues(SettingsGroupDescriptor group, string settingsKey, SettingsPropertyCollection properties)
@@ -196,5 +285,7 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
 
             return GetSettingsValues(properties, storedValues);
         }
+
+        #endregion
     }
 }

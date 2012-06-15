@@ -153,6 +153,9 @@
   <data name="MessageReindexStatusUnknown" xml:space="preserve">
     <value>Reindex status unknown</value>
   </data>
+  <data name="SystemConfigurationSettingsProviderUserSetting" xml:space="preserve">
+    <value>The SystemConfigurationSettingsProvider does not support user scoped settings.</value>
+  </data>
   <data name="TimeOriginReceivedDate" xml:space="preserve">
     <value>after study receipt/import</value>
   </data>

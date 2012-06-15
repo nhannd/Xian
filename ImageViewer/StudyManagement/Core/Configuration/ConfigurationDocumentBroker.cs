@@ -51,6 +51,32 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration
         }
 
         /// <summary>
+        /// Get the specified ConfigurationDocument or null if not found
+        /// </summary>
+        /// <param name="documentKey"></param>
+        /// <returns></returns>
+        public ConfigurationDocument GetPriorConfigurationDocument(ConfigurationDocumentKey documentKey)
+        {
+            IQueryable<ConfigurationDocument> query = from d in Context.ConfigurationDocuments select d;
+
+            // TODO (CR Jun 2012): do in memory caching based on rowversion like in the other broker?
+
+            query = !string.IsNullOrEmpty(documentKey.InstanceKey)
+                ? query.Where(d => d.InstanceKey == documentKey.InstanceKey)
+                : query.Where(d => d.InstanceKey == null);
+
+            query = !string.IsNullOrEmpty(documentKey.User)
+                ? query.Where(d => d.User == documentKey.User)
+                : query.Where(d => d.User == null);
+
+            query = query.Where(d => d.DocumentVersionString.CompareTo(VersionUtils.ToPaddedVersionString(documentKey.Version, false, false)) < 0);
+
+            query = query.Where(d => d.DocumentName == documentKey.DocumentName);
+
+            return query.FirstOrDefault();
+        }
+
+        /// <summary>
         /// Insert a ConfigurationDocument
         /// </summary>
         /// <param name="entity"></param>

@@ -101,6 +101,8 @@
     <Compile Include="Configuration\ConfigurationDocumentBroker.cs" />
     <Compile Include="Configuration\DataAccessContext.cs" />
     <Compile Include="Configuration\SystemConfigurationSettingsStore.cs" />
+    <Compile Include="Configuration\Tests\SettingsStoreTest.cs" />
+    <Compile Include="Configuration\Tests\TestSettingsClasses.cs" />
     <Compile Include="Configuration\VersionUtils.cs" />
     <Compile Include="DeleteSeriesUtility.cs" />
     <Compile Include="DeleteStudyUtility.cs" />
@@ -269,6 +271,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

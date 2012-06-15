@@ -115,8 +115,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration
     /// </summary>
     public class SystemConfigurationSettingsStore : ISystemConfigurationSettingsStore
     {
-        /// TODO (CR Jun 2012): Probably need a "GetPrevious", since we are using SettingsGroupDescriptor, which has a version.
+
         #region ISystemConfigurationSettingsStore Members
+        /// <summary>
+        /// Gets the settings group that immediately precedes the one provided.
+        /// </summary>
+        public SettingsGroupDescriptor GetPreviousSettingsGroup(SettingsGroupDescriptor group)
+        {
+            using (var context = new DataAccessContext())
+            {
+                var documentKey = new ConfigurationDocumentKey(group.Name, group.Version, null, null);
+                var broker = context.GetConfigurationDocumentBroker();
+
+                var document = broker.GetPriorConfigurationDocument(documentKey);
+
+                if (document != null)
+                {
+                    return new SettingsGroupDescriptor(document.DocumentName,VersionUtils.FromPaddedVersionString(document.DocumentVersionString),string.Empty,group.AssemblyQualifiedTypeName,group.HasUserScopedSettings);
+                }
+
+                return null;
+            }            
+        }
 
         public Dictionary<string, string> GetSettingsValues(SettingsGroupDescriptor group, string user,
                                                             string instanceKey)
