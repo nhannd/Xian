@@ -312,6 +312,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 			                               		AccessionNumber = accessionNumber
 			                               	};
 
+            WorkItem workItem;
+            _context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem);
+            
         	try
 			{
 				Validate(message);
@@ -319,26 +322,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 			catch (DicomDataException e)
 			{
 				result.SetError(DicomStatuses.ProcessingFailure, e.Message);
-				return result;
+                if (workItem != null)
+                    SignalWorkItemFailure(workItem, "Some images failed to import/receive. See log for details.");
+                return result;
 			}
 
-            if (StorageSpaceMonitor.GetAvailableStorageSpace() <= 0)
+            if (workItem!=null)
             {
-                result.SetError(DicomStatuses.StorageStorageOutOfResources, string.Format("Not enough storage" /*keep it short. Max Length for LO is 16 */));
-                return result;
+                if (workItem.Status == WorkItemStatusEnum.Deleted || workItem.Status == WorkItemStatusEnum.Canceled)
+                {
+                    // TODO Marmot (CR June 2012): not DicomStatuses.Cancel?
+                    result.SetError(DicomStatuses.StorageStorageOutOfResources, "Receive canceled by user");
+                    return result;                       
+                }
             }
 
-
-               WorkItem workItem;
-               if (_context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem))
-               {
-                   if (workItem.Status == WorkItemStatusEnum.Deleted || workItem.Status == WorkItemStatusEnum.Canceled)
-                   {
-                       result.SetError(DicomStatuses.StorageStorageOutOfResources, "Receive canceled by user");
-                       return result;                       
-                   }
-               }
-
+            if (LocalStorageMonitor.IsMaxUsedSpaceExceeded)
+            {
+                result.SetError(DicomStatuses.StorageStorageOutOfResources, string.Format("Out Of Storage" /*keep it short. Max Length for LO is 16 */));
+                if (workItem!=null)
+                    SignalWorkItemFailure(workItem, "Some images failed to import/receive due to lack of storage space.");
+                return result;
+            }
 
             // Use the command processor for rollback capabilities.
             using (var commandProcessor = new ViewerCommandProcessor(String.Format("Processing Sop Instance {0}", sopInstanceUid)))
@@ -442,7 +447,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 		string failureMessage = String.Format("Failure processing message: {0}. Sending failure status.",
                 		                                      commandProcessor.FailureReason);
                 		result.SetError(DicomStatuses.ProcessingFailure, failureMessage);
-                		// processor already rolled back
+
+                        SignalWorkItemFailure(command.WorkItem, "Some images failed to import/receive. See log for details.");
+                		
+                        // processor already rolled back
                 		return result;
                 	}
                 }
@@ -457,9 +465,45 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             return result;
         }
 
+
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// Update the WQI to indicate there're errors which will result in incomplete study. 
+        /// </summary>
+        /// <param name="workItem"></param>
+        /// <param name="error"></param>
+        private void SignalWorkItemFailure(WorkItem workItem, string error)
+        {
+            /// Note: This method does not fail the WQI. It's the WQI processor's responsibility to decide how to handle this.
+            
+            WorkItem actualItem;
+
+            using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+            {
+                var broker = context.GetWorkItemBroker();
+
+                actualItem = broker.GetWorkItem(workItem.Oid);
+
+                var progress = actualItem.Progress as ProcessStudyProgress;
+                if (progress != null)
+                {
+                    // Note: this is kind of a hack. Tried to keep track of number of failures but it appears 
+                    // the current design always updates all properties whenever the context is committed. This causes the value to 
+                    // be overwritten with old values when mutiple threads post updates on the same WQI.
+                    progress.OtherFatalFailures = error;
+                }
+
+                actualItem.Progress = progress;
+                context.Commit();
+            }
+
+            Platform.GetService(
+                (IWorkItemActivityMonitorService service) =>
+                    service.Publish(new WorkItemPublishRequest { Item = WorkItemDataHelper.FromWorkItem(actualItem) }));
+        }
        
         private static void Validate(DicomMessageBase message)
         {

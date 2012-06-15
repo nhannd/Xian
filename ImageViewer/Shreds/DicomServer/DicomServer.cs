@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		    public StorageConfiguration StorageConfiguration
 		    {
-                get { return _server.StorageConfiguration; }
+                get { return StudyStore.GetConfiguration(); }
 		    }
 
 			#endregion
@@ -63,14 +63,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		private readonly string _aeTitle;
 		private readonly string _host;
 		private readonly int _port;
-	    private readonly StorageConfiguration _storageConfiguration;
 
-		public DicomServer(DicomServerConfiguration serverConfiguration, StorageConfiguration storageConfiguration)
+		public DicomServer(DicomServerConfiguration serverConfiguration)
 		{
 			_aeTitle = serverConfiguration.AETitle;
             _host = serverConfiguration.HostName;
 			_port = serverConfiguration.Port;
-			_storageConfiguration = storageConfiguration;
 
 			_context = new DicomServerContext(this);
 			_scp = new DicomScp<IDicomServerContext>(_context, AssociationVerifier.VerifyAssociation);
@@ -92,22 +90,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			get { return _port; }
 		}
-
-		public string InterimStorageDirectory
-		{
-			get
-			{
-                if (!Directory.Exists(_storageConfiguration.FileStoreDirectory))
-                    Directory.CreateDirectory(_storageConfiguration.FileStoreDirectory);
-
-                return _storageConfiguration.FileStoreDirectory;
-			}	
-		}
-
-	    public StorageConfiguration StorageConfiguration
-	    {
-	        get { return _storageConfiguration; }
-	    }
 
 		#endregion
 

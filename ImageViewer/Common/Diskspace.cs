@@ -11,6 +11,7 @@
 
 using System;
 using System.IO;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common
 {
@@ -42,6 +43,7 @@ namespace ClearCanvas.ImageViewer.Common
         public Diskspace(DriveInfo driveInfo)
         {
             DriveInfo = driveInfo;
+            LastRefresh = Platform.Time;
         }
 
         /// <summary>
@@ -50,7 +52,10 @@ namespace ClearCanvas.ImageViewer.Common
         internal Diskspace()
         {
             _isAvailable = true;
+            LastRefresh = Platform.Time;
         }
+
+        public DateTime LastRefresh { get; private set; }
 
 	    public DriveInfo DriveInfo
 	    {
@@ -67,6 +72,7 @@ namespace ClearCanvas.ImageViewer.Common
 	        _isAvailable = null;
             _totalSpace = null;
             _freeSpace = null;
+            LastRefresh = Platform.Time;
         }
 
         /// <summary>

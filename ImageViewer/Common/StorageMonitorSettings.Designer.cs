@@ -25,15 +25,6 @@ namespace ClearCanvas.ImageViewer.Common {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("20")]
-        public int MaxDiskChecksPerHour {
-            get {
-                return ((int)(this["MaxDiskChecksPerHour"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
         public int LowStorageWarningThresholdInMB {
             get {

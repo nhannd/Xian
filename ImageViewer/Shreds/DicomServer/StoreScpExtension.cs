@@ -20,6 +20,8 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -140,7 +142,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
             if (_importContext == null)
             {
-                _importContext = new DicomReceiveImportContext(association.CallingAE, Context.StorageConfiguration);
+                _importContext = new DicomReceiveImportContext(association.CallingAE, StudyStore.GetConfiguration());
 
                 // Publish new WorkItems as they're added to the context
                 _importContext.StudyWorkItems.ItemAdded += (sender, args) => Platform.GetService(
@@ -164,7 +166,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             }
             else
             {
-                Platform.Log(LogLevel.Warn, "Failure importing sop: {0}", result.ErrorMessage);
+                if (result.DicomStatus==DicomStatuses.ProcessingFailure)
+                    Platform.Log(LogLevel.Error, "Failure importing sop: {0}", result.ErrorMessage);
+
                 //OnReceiveError(message, result.ErrorMessage, association.CallingAE);
                 server.SendCStoreResponse(presentationID, message.MessageId, message.AffectedSopInstanceUid,
                                           result.DicomStatus, result.ErrorMessage);

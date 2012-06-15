@@ -128,7 +128,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
             }
 
             if (count == 0)
-            {
+            {               
+
+                
                 bool failed = false;
                 bool complete = true;
                 foreach (WorkItemUid sop in WorkQueueUidList)
@@ -136,9 +138,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                     if (sop.Failed)
                     {
                         failed = true;
+                        break;
                     }
                     else if (!sop.Complete)
+                    {
                         complete = false;
+                        break;
+                    }
                 }
 
                 DateTime now = Platform.Time;
@@ -149,6 +155,19 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                     Proxy.Idle();
                 else if (now > Proxy.Item.ExpirationTime)
                 {
+                    // Check if there are other errors that's not related to processing. If so, we should fail so that user knows it's an incomplete study.
+                    //
+                    // Note: this is kind of a hack. Tried to keep track of number of such failures but it appears 
+                    // the current design always updates all properties whenever the context is committed. This causes the value to 
+                    // be overwritten with old values when mutiple threads post updates on the same WQI.
+                    var progress = Proxy.Item.Progress as ProcessStudyProgress;
+                     if (string.IsNullOrEmpty(progress.OtherFatalFailures)==false)
+                     {
+                         Proxy.Fail(progress.OtherFatalFailures, WorkItemFailureType.Fatal);
+                         return;
+                     }
+
+
                     if (Study == null)
                         Study = LoadRelatedStudy();
 

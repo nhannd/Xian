@@ -20,6 +20,7 @@ using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 {
@@ -132,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
         private void ImportFile(string file, ImportStudyContext context)
         {
-            EnsureMinLocalStorageSpace(0);
+            EnsureMaxUsedSpaceNotExceeded();
 
             // Note, we're not doing impersonation of the user's identity, so we may have failures here
             // which would be new in Marmot.

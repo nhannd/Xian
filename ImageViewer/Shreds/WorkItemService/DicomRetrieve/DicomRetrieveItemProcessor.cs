@@ -16,6 +16,7 @@ using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
 {
@@ -72,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
 
         public override void Process()
         {
-            EnsureMinLocalStorageSpace(0);
+            EnsureMaxUsedSpaceNotExceeded();
 
             DicomServerConfiguration configuration = GetServerConfiguration();
             var remoteAE = ServerDirectory.GetRemoteServerByName(Request.Source);
@@ -150,7 +151,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
             Progress.StatusDetails = !string.IsNullOrEmpty(_scu.ErrorDescriptionDetails) ? _scu.ErrorDescriptionDetails : _scu.FailureDescription;
             Proxy.UpdateProgress();
 
-            if (!base.LocalStorageHasMinSpace(0))
+            if (LocalStorageMonitor.IsMaxUsedSpaceExceeded)
             {
                 _cancelDueToDiskSpace = true;
                 _scu.Cancel();

@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         private volatile bool _cancelPending;
         private volatile bool _stopPending;
         private readonly object _syncRoot = new object();
-
+        private StorageConfiguration _storageConfig;
         #endregion
 
         #region Properties
@@ -231,28 +231,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         /// <summary>
         /// Ensure minimum amount of space available in the local data store
         /// </summary>
-        /// <param name="minSpaceInMB"></param>
         /// <exception cref="NotEnoughStorageException"/>
-        protected void EnsureMinLocalStorageSpace(long minSpaceInMB)
+        protected void EnsureMaxUsedSpaceNotExceeded()
         {
-            if (!LocalStorageHasMinSpace(minSpaceInMB))
+            if (LocalStorageMonitor.IsMaxUsedSpaceExceeded)
             {
-                Platform.Log(LogLevel.Warn, "Not enough storage space. Max Used={0} MB, Total Used={1} MB", StorageSpaceMonitor.MaxUsed, StorageSpaceMonitor.TotalUsed);
+                Platform.Log(LogLevel.Error, "Not enough storage space. Max Used={0}%, Total Used={1} %",
+                                    LocalStorageMonitor.MaximumUsedSpacePercent,
+                                    LocalStorageMonitor.UsedSpacePercent);
                 throw new NotEnoughStorageException();
             }
         }
 
-        /// <summary>
-        /// Checks if the amount of space available in the local data store is more than
-        /// the specified amount.
-        /// </summary>
-        /// <param name="minSpaceInMB"></param>
-        /// <returns></returns>
-        protected bool LocalStorageHasMinSpace(long minSpaceInMB)
-        {
-            long avaiSpace = StorageSpaceMonitor.GetAvailableStorageSpace();
-            return avaiSpace > minSpaceInMB;
-        }
 
         /// <summary>
         /// Load the specific SOP Instance Uids in the database for the WorkQueue item.

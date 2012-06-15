@@ -400,6 +400,10 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
             set { MinimumFreeSpaceBytes = FileStoreDiskSpace.TotalSpace - value; }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether or not max used space has been exceeeded.
+        /// ***  Note: this is a snapshot value. For "real-time" status, use <see cref="LocalStorageMonitor"/>  ***
+        /// </summary>
         public bool IsMaximumUsedSpaceExceeded
         {
             get
@@ -436,7 +440,8 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
             try
             {
-
+                // TODO Marmot (CR June 2012): If each WQI instantiates an instance of this class 
+				// and they all start, this will result in tons of redundant checks ?
                 var driveInfo = new DriveInfo(root);
                 _fileStoreDiskspace = new Diskspace(driveInfo);
                 return true;

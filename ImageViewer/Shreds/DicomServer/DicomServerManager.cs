@@ -43,11 +43,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		private void StartServerAsync(object nothing)
 		{
 			DicomServerConfiguration serverConfiguration;
-            StorageConfiguration storageConfiguration;
             lock (_syncLock)
             {
                 serverConfiguration = Common.DicomServer.DicomServer.GetConfiguration();
-                storageConfiguration = StudyStore.GetConfiguration();
 				_restart = false;
 			}
 
@@ -57,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				Trace.WriteLine("Starting Dicom server.");
 
-				server = new DicomServer(serverConfiguration, storageConfiguration);
+				server = new DicomServer(serverConfiguration);
 				server.Start();
 			}
 			catch (Exception e)

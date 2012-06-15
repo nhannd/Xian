@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                                                        {
                                                                            try
                                                                            {
-                                                                               Platform.Log(LogLevel.Warn, "Unable to import file: {0}, deleting: {1}", result.ErrorMessage, file);
+                                                                               Platform.Log(LogLevel.Error, "Unable to import file: {0}, deleting: {1}", result.ErrorMessage, file);
                                                                                FileUtils.Delete(file);
                                                                            }
                                                                            catch (Exception x)
@@ -199,7 +199,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                                                                                         FileImportBehaviourEnum.Move);
                                                                            if (result.DicomStatus != DicomStatuses.Success)
                                                                            {
-                                                                               Platform.Log(LogLevel.Warn,
+                                                                               Platform.Log(LogLevel.Error,
                                                                                             "Unable to import file: {0}",
                                                                                             result.ErrorMessage);
                                                                                Failed = true;
