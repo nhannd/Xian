@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Common {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
         public int LowStorageWarningThresholdInMB {
             get {
                 return ((int)(this["LowStorageWarningThresholdInMB"]));

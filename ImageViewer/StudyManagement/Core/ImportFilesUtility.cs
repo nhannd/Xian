@@ -448,7 +448,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 		                                      commandProcessor.FailureReason);
                 		result.SetError(DicomStatuses.ProcessingFailure, failureMessage);
 
-                        SignalWorkItemFailure(command.WorkItem, "Some images failed to import/receive. See log for details.");
+                        if (command.WorkItem!=null)
+                            SignalWorkItemFailure(command.WorkItem, "Some images failed to import/receive. See log for details.");
                 		
                         // processor already rolled back
                 		return result;

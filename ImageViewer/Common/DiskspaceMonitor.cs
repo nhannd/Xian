@@ -36,6 +36,7 @@ namespace ClearCanvas.ImageViewer.Common
 
         /// <summary>
         /// Checks if max used space is exceeded in the local study storage location
+        /// </summary>
         static public bool IsMaxUsedSpaceExceeded
         {
             get
@@ -126,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Common
 
         static private void RefreshDiskspace()
         {
-            var needRefresh = !_scheduledRefreshTime.HasValue || FileStoreDiskSpace.LastRefresh < _scheduledRefreshTime;
+            var needRefresh = !_scheduledRefreshTime.HasValue || _scheduledRefreshTime < Platform.Time;
             
             if (needRefresh)
             {

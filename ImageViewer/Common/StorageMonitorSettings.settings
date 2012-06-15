@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="LowStorageWarningThresholdInMB" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">100</Value>
+      <Value Profile="(Default)">1000</Value>
     </Setting>
   </Settings>
 </SettingsFile>
