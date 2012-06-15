@@ -33,6 +33,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration
         {
             IQueryable<ConfigurationDocument> query = from d in Context.ConfigurationDocuments select d;
 
+            // TODO (CR Jun 2012): do in memory caching based on rowversion like in the other broker?
+
             query = !string.IsNullOrEmpty(documentKey.InstanceKey) 
                 ? query.Where(d => d.InstanceKey == documentKey.InstanceKey) 
                 : query.Where(d => d.InstanceKey == null);

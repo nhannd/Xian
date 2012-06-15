@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Common
         private static DateTime? _configValidUtil;
         private static long? _lastKnownSpace = Unknown;
         private static StorageConfiguration _storageConfig;
-        private static object _syncLock = new object();
+        private static readonly object _syncLock = new object();
 
         private static long _totalUsed = Unknown;
         private static long _maxUsed = Unknown;

@@ -16,6 +16,8 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
 {
     public interface ISystemConfigurationSettingsStore
     {
+        /// TODO (CR Jun 2012): Probably need a GetPrevious because SettingsGroupDescriptor has a version.
+        
         /// <summary>
         /// Obtains the settings values for the specified settings group, user and instance key.  If user is null,
         /// the shared settings are obtained.
