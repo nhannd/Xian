@@ -32,7 +32,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 	{
 		public void RetrieveSeries()
 		{
-		    //TODO (Marmot):Restore this.
 			if (!Enabled || SelectedSeries.Count == 0)
 				return;
 
