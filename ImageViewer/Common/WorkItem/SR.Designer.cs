@@ -475,7 +475,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Retry #{0} scheduled at {1}.
+        ///   Looks up a localized string similar to Retry #{0} will occur at {1}.
         /// </summary>
         internal static string RetryStatus {
             get {

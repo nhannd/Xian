@@ -295,6 +295,6 @@
     <value>second(s)</value>
   </data>
   <data name="RetryStatus" xml:space="preserve">
-    <value>Retry #{0} scheduled at {1}</value>
+    <value>Retry #{0} will occur at {1}</value>
   </data>
 </root>
