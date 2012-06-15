@@ -157,8 +157,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         //TODO (Marmot): this should be renamed "PublishWorkedItemChanged".
         [OperationContract]
         WorkItemPublishResponse Publish(WorkItemPublishRequest request);
-
-        //TODO (Marmot): add PublishStudiesCleared?
     }
 
     /// <summary>
