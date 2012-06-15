@@ -26,9 +26,14 @@ namespace ClearCanvas.ImageViewer.Common
     {
         #region Private Fields
 
-        static Dictionary<string, Diskspace> _cached = new Dictionary<string, Diskspace>();
-        static private object _sync = new object();
+        static private readonly Dictionary<string, Diskspace> _cached = new Dictionary<string, Diskspace>();
+        static private readonly object _sync = new object();
         static DateTime? _scheduledRefreshTime;
+        static DateTime? _lastConfigUpdate;
+        
+        static string _fileStorePath;
+        static StorageConfiguration _storageConfig;
+        static Diskspace _diskspace;
 
         #endregion
 
@@ -51,12 +56,6 @@ namespace ClearCanvas.ImageViewer.Common
             
         }
 
-
-        static DateTime? _lastConfigUpdate;
-        static  string _fileStorePath;
-        static StorageConfiguration _storageConfig;
-        static Diskspace _diskspace;
-
         public static double MaximumUsedSpacePercent
         {
             get 
@@ -72,7 +71,6 @@ namespace ClearCanvas.ImageViewer.Common
                 return FileStoreDiskSpace.UsedSpacePercent;
             }
         }
-
 
         private static StorageConfiguration StorageConfiguration
         {
@@ -96,7 +94,6 @@ namespace ClearCanvas.ImageViewer.Common
                 return _storageConfig;
             }
         }
-
 
         private static Diskspace FileStoreDiskSpace 
         {

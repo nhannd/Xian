@@ -29,6 +29,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         private static IDbConnection _staticConnection;
 	    private static readonly object _syncLock = new object();
 
+	    // TODO (CR Jun 2012): fix
 	    //TODO (Marmot): This will cause side-by-side installations to interact. Use the full path to the database file.
 		public const string WorkItemMutex = "WorkItem";
 

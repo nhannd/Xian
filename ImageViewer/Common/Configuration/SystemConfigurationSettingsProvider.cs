@@ -15,6 +15,8 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
 
         public SystemConfigurationSettingsProvider()
 		{
+            // TODO (CR Jun 2012): Since they're shared, should probably use product/component/family
+
 			// according to MSDN recommendation, use the name of the executing assembly here
             ApplicationName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 		}
@@ -60,6 +62,9 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
 
         public override void SetPropertyValues(SettingsContext context, SettingsPropertyValueCollection collection)
         {
+            // TODO (CR Jun 2012): check if any settings are user scoped and throw, since the code doesn't actually support user values.
+            // TODO (CR Jun 2012): Actually, can probably just throw because this method is intended only for user scoped settings.
+
             lock (_syncLock)
             {
                 // locate dirty values that should be saved
@@ -96,16 +101,18 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
 
         public bool CanUpgradeSharedPropertyValues(SettingsContext context)
         {
-            return false;            
+            return true;            
         }
 
         public void UpgradeSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
         {
+            // TODO (CR Jun 2012): Since the store saves by version, we probably do need to do something here.
             // do nothing
         }
 
         public SettingsPropertyValueCollection GetPreviousSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
         {
+            // TODO (CR Jun 2012): Since the store saves by version, probably need to actually find previous version, if one exists.
             // return whats in the db as is
             return GetSharedPropertyValues(context, properties);
         }
@@ -115,6 +122,8 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
             var settingsClass = (Type)context["SettingsClassType"];
             var settingsKey = (string)context["SettingsKey"];
 
+            // TODO (CR Jun 2012): throw if there are user scoped properties?
+
             var group = new SettingsGroupDescriptor(settingsClass);
             var values = GetSharedPropertyValues(group, settingsKey, properties);
             TranslateValues(settingsClass, values);
@@ -123,6 +132,7 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
 
         public void SetSharedPropertyValues(SettingsContext context, SettingsPropertyValueCollection values)
         {
+            // TODO (CR Jun 2012): lock?
             var valuesToStore = new Dictionary<string, string>();
             foreach (SettingsPropertyValue value in values)
             {
@@ -130,6 +140,7 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
                     valuesToStore[value.Name] = (string)value.SerializedValue;
             }
 
+            // TODO (CR Jun 2012): throw if there are user-scoped properties?
             if (valuesToStore.Count > 0)
             {
                 var settingsClass = (Type)context["SettingsClassType"];
@@ -141,7 +152,6 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
             foreach (SettingsPropertyValue value in values)
                 value.IsDirty = false;
         }
-
 
         private SettingsPropertyValueCollection GetSharedPropertyValues(SettingsGroupDescriptor group, string settingsKey, SettingsPropertyCollection properties)
         {

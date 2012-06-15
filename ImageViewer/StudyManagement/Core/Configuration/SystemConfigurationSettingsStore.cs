@@ -115,6 +115,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration
     /// </summary>
     public class SystemConfigurationSettingsStore : ISystemConfigurationSettingsStore
     {
+        /// TODO (CR Jun 2012): Probably need a "GetPrevious", since we are using SettingsGroupDescriptor, which has a version.
         #region ISystemConfigurationSettingsStore Members
 
         public Dictionary<string, string> GetSettingsValues(SettingsGroupDescriptor group, string user,

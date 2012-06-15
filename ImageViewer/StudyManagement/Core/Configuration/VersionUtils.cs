@@ -15,6 +15,8 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration
 {
+    /// TODO (CR Jun 2012): Could just go in Common.Utilities
+    
     // TODO (Marmot) - This is copied from CC.Enterprise.Configuration.VersionUtils, should figure out how to share.
 
     /// <summary>
