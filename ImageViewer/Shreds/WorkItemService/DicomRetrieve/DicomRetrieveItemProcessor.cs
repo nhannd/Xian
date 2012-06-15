@@ -17,6 +17,7 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
 {
@@ -114,6 +115,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
             {
                 if (_cancelDueToDiskSpace)
                 {
+                    var study = RetrieveStudy.Study ?? RetrieveSeries.Study;
+
+                    Platform.Log(LogLevel.Info, "Dicom Retrieve for {0} from {1} was cancelled because disk space has been exceeded", study, remoteAE.AETitle);
                     Progress.IsCancelable = true;
                     throw new NotEnoughStorageException(); // item will be failed
                 }
