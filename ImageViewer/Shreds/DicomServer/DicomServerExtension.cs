@@ -32,6 +32,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			_dicomServerWcfInitialized = false;
         	_dicomSendServiceWCFInitialized = false;
 
+            // TODO CR (June 2012): unsubscribe?
 			LicenseInformation.LicenseChanged += OnLicenseInformationChanged;
 		}
 
