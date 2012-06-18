@@ -1081,28 +1081,32 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			if (progress == null)
 				return null;
 
-			return new ProgressBarIconSet("progress", new Size(80, 10), progress.PercentComplete * 100, GetProgressState(status));
+			return new ProgressBarIconSet("progress", new Size(80, 10), progress.PercentComplete * 100, GetProgressState(status, progress));
 		}
 
-		private static ProgressBarState GetProgressState(WorkItemStatusEnum status)
+		private static ProgressBarState GetProgressState(WorkItemStatusEnum status, WorkItemProgress progress)
 		{
 			// determine progress state based on workItem status
 			switch (status)
 			{
-				case WorkItemStatusEnum.InProgress:
-				case WorkItemStatusEnum.Complete:
-				case WorkItemStatusEnum.Deleted:
-				case WorkItemStatusEnum.Canceled:
-					return ProgressBarState.Active;
-
+                case WorkItemStatusEnum.Deleted:
+                case WorkItemStatusEnum.InProgress:
 				case WorkItemStatusEnum.Pending:
 				case WorkItemStatusEnum.Idle:
-				case WorkItemStatusEnum.Canceling:
-					return ProgressBarState.Paused;
+                    if (progress.PercentFailed > 0)
+                        return ProgressBarState.Paused;
+			        return ProgressBarState.Active;
+
+			    case WorkItemStatusEnum.Canceled:
+                case WorkItemStatusEnum.Canceling:
+				    return ProgressBarState.Paused;
 
 				case WorkItemStatusEnum.Failed:
 					return ProgressBarState.Error;
-			}
+            
+                case WorkItemStatusEnum.Complete:
+                    return ProgressBarState.Active;
+            }
 			throw new NotImplementedException();
 		}
 

@@ -27,6 +27,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public virtual Decimal PercentComplete {get { return new decimal(0.0); }}
 
+        public virtual Decimal PercentFailed { get { return new decimal(0.0); } }
+
         [DataMember(IsRequired = true)]
         public bool IsCancelable { get; set; }
     }
@@ -86,6 +88,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 return new decimal(0.0);
             }
         }
+
+        public override Decimal PercentFailed
+        {
+            get
+            {
+                if (NumberOfImportFailures > 0)
+                    return (Decimal)NumberOfImportFailures / (NumberOfImportFailures+NumberOfFilesImported);
+
+                return new decimal(0.0);
+            }
+        }
     }
 
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
@@ -124,12 +137,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                var error = string.Format(SR.StudyProcessProgress_Status, NumberOfFilesProcessed, TotalFilesToProcess, NumberOfProcessingFailures);;
+                var error = string.Format(SR.StudyProcessProgress_Status, NumberOfFilesProcessed, TotalFilesToProcess, NumberOfProcessingFailures);
 
                 if (string.IsNullOrEmpty(OtherFatalFailures)==false)
                     return string.Format("{0}. {1}", error, OtherFatalFailures);
-                else
-                    return error;
+                return error;
             }
         }
 
@@ -139,6 +151,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 if (TotalFilesToProcess > 0)
                     return (Decimal)TotalFilesProcessed / TotalFilesToProcess;
+
+                return new decimal(0.0);
+            }
+        }
+
+        public override Decimal PercentFailed
+        {
+            get
+            {
+                if (NumberOfProcessingFailures > 0)
+                    return (Decimal) NumberOfProcessingFailures/TotalFilesToProcess;
 
                 return new decimal(0.0);
             }
@@ -199,6 +222,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
                 if (StudiesToProcess > 0 || StudyFoldersToProcess > 0)
                     return (Decimal)(StudiesProcessed + StudyFoldersProcessed) / (StudiesToProcess+StudyFoldersToProcess);
+
+                return new decimal(0.0);
+            }
+        }
+
+        public override Decimal PercentFailed
+        {
+            get
+            {
+                if ((StudiesToProcess > 0 || StudyFoldersToProcess > 0) && StudiesFailed > 0)
+                    return (Decimal)StudiesFailed / (StudiesToProcess + StudyFoldersToProcess);
 
                 return new decimal(0.0);
             }
@@ -302,6 +336,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 return new decimal(0.0);
             }
         }
+
+        public override Decimal PercentFailed
+        {
+            get
+            {
+                if (ImagesToSend > 0 && FailureSubOperations > 0)
+                    return (Decimal)FailureSubOperations / ImagesToSend;
+
+                return new decimal(0.0);
+            }
+        }
     }
 
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
@@ -350,6 +395,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 if (ImagesToRetrieve > 0)
                     return (Decimal)(WarningSubOperations + FailureSubOperations + SuccessSubOperations) / ImagesToRetrieve;
+
+                return new decimal(0.0);
+            }
+        }
+
+        public override Decimal PercentFailed
+        {
+            get
+            {
+                if (ImagesToRetrieve > 0 && FailureSubOperations > 0)
+                    return (Decimal)FailureSubOperations / ImagesToRetrieve;
 
                 return new decimal(0.0);
             }
