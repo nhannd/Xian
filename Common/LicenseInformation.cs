@@ -37,8 +37,6 @@ namespace ClearCanvas.Common
 			{
 				if (_licenseProvider != null) return;
 				_licenseProvider = LicenseProviderExtensionPoint.CreateInstance();
-                
-                //TODO Cheetah (CR June 12, 2012): reload both _licenseProvider and _licenseDetailsProvider?
 				_licenseProvider.LicenseInfoChanged += (s, e) => EventsHelper.Fire(_licenseChanged, null, e);
 			}
 		}
