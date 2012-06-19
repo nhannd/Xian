@@ -1081,29 +1081,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			if (progress == null)
 				return null;
 
-			return new ProgressBarIconSet("progress", new Size(80, 10), progress.PercentComplete * 100, GetProgressState(status));
-		}
-
-		private static ProgressBarState GetProgressState(WorkItemStatusEnum status)
-		{
-			// determine progress state based on workItem status
-			switch (status)
-			{
-				case WorkItemStatusEnum.InProgress:
-				case WorkItemStatusEnum.Complete:
-				case WorkItemStatusEnum.Deleted:
-				case WorkItemStatusEnum.Canceled:
-					return ProgressBarState.Active;
-
-				case WorkItemStatusEnum.Pending:
-				case WorkItemStatusEnum.Idle:
-				case WorkItemStatusEnum.Canceling:
-					return ProgressBarState.Paused;
-
-				case WorkItemStatusEnum.Failed:
-					return ProgressBarState.Error;
-			}
-			throw new NotImplementedException();
+			return new ProgressBarIconSet("progress", new Size(80, 10), progress.PercentComplete * 100, ActivityMonitorProgressBar.GetColor(progress, status));
 		}
 
 		private void ActivityMonitorIsConnectedChanged(object sender, EventArgs e)

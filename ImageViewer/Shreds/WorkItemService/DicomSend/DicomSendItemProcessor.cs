@@ -190,11 +190,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
             } 
             else if (_scu.Failed || _scu.FailureSubOperations > 0)
             {
-                TimeSpan delay;
                 var settings = new DicomSendSettings();
-                delay = settings.RetryDelayUnits.Equals("Seconds") 
-                    ? TimeSpan.FromSeconds(settings.RetryDelay) 
-                    : TimeSpan.FromMinutes(settings.RetryDelay);
+                TimeSpan delay = settings.RetryDelayUnits == RetryDelayTimeUnit.Seconds
+                                     ? TimeSpan.FromSeconds(settings.RetryDelay) 
+                                     : TimeSpan.FromMinutes(settings.RetryDelay);
 
                 Proxy.Fail(_scu.FailureDescription, WorkItemFailureType.NonFatal,
                            AutoRoute != null

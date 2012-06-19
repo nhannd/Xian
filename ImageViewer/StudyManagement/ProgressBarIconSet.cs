@@ -16,25 +16,25 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	enum ProgressBarState
+	enum ProgressBarColor
 	{
-		Active,
-		Paused,
-		Error
+		Green,
+		Yellow,
+		Red
 	}
 
 	class ProgressBarIconSet : IconSet
 	{
 		private readonly Size _dimensions;
 		private readonly decimal _percent;
-		private readonly ProgressBarState _state;
+		private readonly ProgressBarColor _color;
 
-		public ProgressBarIconSet(string name, Size dimensions, decimal percent, ProgressBarState state)
+		public ProgressBarIconSet(string name, Size dimensions, decimal percent, ProgressBarColor color)
 			: base(name)
 		{
 			_dimensions = dimensions;
 			_percent = percent;
-			_state = state;
+			_color = color;
 		}
 
 		public override Image CreateIcon(IconSize iconSize, IResourceResolver resourceResolver)
@@ -53,13 +53,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private Brush GetBrush()
 		{
-			switch (_state)
+			switch (_color)
 			{
-				case ProgressBarState.Active:
+				case ProgressBarColor.Green:
 					return Brushes.LimeGreen;
-				case ProgressBarState.Paused:
+				case ProgressBarColor.Yellow:
 					return Brushes.Yellow;
-				case ProgressBarState.Error:
+				case ProgressBarColor.Red:
 					return Brushes.Red;
 			}
 			throw new NotImplementedException();
