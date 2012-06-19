@@ -86,7 +86,32 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                         }
                     }
                 }
-                
+
+                var studyRequest = request.Request as WorkItemStudyRequest;
+                if (studyRequest != null)
+                {
+                    var list = broker.GetWorkItems(request.Request.WorkItemType, null, studyRequest.Study.StudyInstanceUid);
+                    foreach (var workItem in list)
+                    {
+                        if (workItem.Status == WorkItemStatusEnum.Pending
+                            || workItem.Status == WorkItemStatusEnum.InProgress)
+                        {
+                            // Mark studies to delete as "deleted" in the database.
+                            var studyBroker = context.GetStudyBroker();
+                            var study = studyBroker.GetStudy(studyRequest.Study.StudyInstanceUid);
+                            if (study != null)
+                            {
+                                study.Deleted = true;
+                                context.Commit();
+                            }
+
+                            response.Item = WorkItemDataHelper.FromWorkItem(workItem);
+                            return response;
+                        }
+                    }
+                }
+
+
                 var item = new WorkItem
                                {
                                    Request = request.Request,
@@ -101,7 +126,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                                    Status = WorkItemStatusEnum.Pending
                                };
 
-                var studyRequest = request.Request as WorkItemStudyRequest;
                 if (studyRequest != null)
                 {
                     item.StudyInstanceUid = studyRequest.Study.StudyInstanceUid;
