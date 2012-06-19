@@ -531,6 +531,8 @@ namespace ClearCanvas.Common.log4net
             private bool m_append;
             private bool m_mutexLocked = false;
             private Stream m_stream = null;
+
+            // TODO (CR Jun 2012) this should use the ExcluseLock class instead
             private Mutex m_mutex;
 
             /// <summary>

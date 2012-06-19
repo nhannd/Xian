@@ -18,7 +18,7 @@ using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Common.Configuration.Tests
 {
-
+    // TODO (Marmot) - When debugging, this service provider ends up being used by the desktop app and the GUI doesn't work properly
     [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
     internal class TestSystemConfigurationServiceProvider : IServiceProvider
     {

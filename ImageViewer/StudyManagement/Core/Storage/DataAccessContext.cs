@@ -12,6 +12,7 @@
 using System;
 using System.Data;
 using System.Threading;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
@@ -41,7 +42,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 		private readonly IDbTransaction _transaction;
 		private bool _transactionCommitted;
 		private bool _disposed;
-		private Mutex _mutex;
+		private ExclusiveLock _mutex;
 
 		public DataAccessContext()
 			:this(null)
@@ -58,8 +59,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 		{
 		    if (!string.IsNullOrEmpty(mutexName))
             {
-                _mutex = new Mutex(false, string.Format("{0}:{1}", typeof (DataAccessContext).FullName, mutexName));
-                _mutex.WaitOne();
+                _mutex = ExclusiveLock.CreateFileSystemLock(SqlCeDatabaseHelper<DicomStoreDataContext>.GetDatabaseFilePath(mutexName + DefaultDatabaseFileName));
+                _mutex.Lock();
             }
 
             try
@@ -73,7 +74,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             }
             catch
             {
-                _mutex.ReleaseMutex();
+                _mutex.Unlock();
+                _mutex.Dispose();
                 _mutex = null;
 
                 throw;
@@ -116,7 +118,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 
             if (_mutex != null)
             {
-                _mutex.ReleaseMutex();
+                _mutex.Unlock();
+                _mutex.Dispose();
                 _mutex = null;
             }
 		}
@@ -170,7 +173,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 
             if (_mutex != null)
             {
-                _mutex.ReleaseMutex();
+                _mutex.Unlock();
+                _mutex.Dispose();
                 _mutex = null;
             }
 		}
