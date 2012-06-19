@@ -142,7 +142,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 {
                     foreach (var relatedWorkItem in relatedList)
                     {
-                        if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete)
+                        if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete
+                         || relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
                         {
                             reason = string.Format("Waiting for: {0}",
                                                          relatedWorkItem.Request.ActivityDescription);
@@ -161,9 +162,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 {
                     foreach (var relatedWorkItem in inProgressList)
                     {
-                        reason = string.Format("Waiting for: {0}",
-                                               relatedWorkItem.Request.ActivityDescription);
-                        return false;
+                        // This check is done because it is possible that 2 entries for the
+                        // Same study are entered into the queue, and they both don't run because
+                        // of the other entry.  This will allow the one scheduled first to run.
+                        if (relatedWorkItem.ScheduledTime < Proxy.Item.ScheduledTime)
+                        {
+                            reason = string.Format("Waiting for: {0}",
+                                                   relatedWorkItem.Request.ActivityDescription);
+                            return false;
+                        }
                     }
                 }
 

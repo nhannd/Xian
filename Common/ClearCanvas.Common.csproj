@@ -291,6 +291,7 @@
     <Compile Include="Utilities\CommandLineParameterAttribute.cs" />
     <Compile Include="Utilities\DateTimeUtils.cs" />
     <Compile Include="Utilities\DelayedEventPublisher.cs" />
+    <Compile Include="Utilities\ExclusiveLock.cs" />
     <Compile Include="Utilities\ListEventArgs.cs" />
     <Compile Include="Utilities\CollectionUtils.cs" />
     <Compile Include="Configuration\StandardSettingsProvider.cs" />

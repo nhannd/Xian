@@ -424,9 +424,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                                     command.WorkItem = broker.GetWorkItem(command.WorkItem.Oid);
                                     progress = command.WorkItem.Progress as ProcessStudyProgress;
-                                    if (progress != null) 
+                                    if (progress != null)
+                                    {
                                         progress.TotalFilesToProcess++;
-                                    command.WorkItem.Progress = progress;
+                                        command.WorkItem.Progress = progress;
+                                    }
 
                                     context.Commit();
                                 }
@@ -487,6 +489,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 var broker = context.GetWorkItemBroker();
 
                 actualItem = broker.GetWorkItem(workItem.Oid);
+                // Note, a workItem that was to-be committed could end up here that never got in the database (likely due to a lock timeout), just ignore in that case.
+                if (actualItem == null)
+                    return;
+
+                if (actualItem.Progress == null)
+                    actualItem.Progress = _context.CreateProgress();
 
                 var progress = actualItem.Progress as ProcessStudyProgress;
                 if (progress != null)
@@ -495,10 +503,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     // the current design always updates all properties whenever the context is committed. This causes the value to 
                     // be overwritten with old values when mutiple threads post updates on the same WQI.
                     progress.OtherFatalFailures = error;
-                }
 
-                actualItem.Progress = progress;
-                context.Commit();
+                    actualItem.Progress = progress;
+                    context.Commit();
+                }                
             }
 
             Platform.GetService(

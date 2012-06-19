@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
                                                   }
                                    };
 
-            var collection = entry.ToDicomAttributeCollection();
+            var collection = entry.Study.ToDicomAttributeCollection();
 
             Assert.AreEqual("PACS1\\PACS2", collection[DicomTags.SourceApplicationEntityTitle].ToString());
             Assert.AreEqual("STN1\\STN2", collection[DicomTags.StationName].ToString());

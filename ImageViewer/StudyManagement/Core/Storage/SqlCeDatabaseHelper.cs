@@ -51,10 +51,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 			return connection;
 		}
 
-		private static string GetDatabaseFilePath(string fileName)
+		public static string GetDatabaseFilePath(string fileName)
 		{
 			return Path.Combine(Platform.ApplicationDataDirectory, fileName);
 		}
-
 	}
 }

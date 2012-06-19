@@ -16,7 +16,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Audit;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Audit;
-using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Common.Auditing
 {

@@ -1,5 +1,8 @@
 ﻿using System;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 
@@ -27,7 +30,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
         {
             using (var context = new DataAccessContext())
             {
-                var count = context.GetStudyStoreQuery().GetStudyCount(request.Criteria);
+                var count = context.GetStudyStoreQuery().GetStudyCount(request.Criteria);                
                 return new GetStudyCountResult { StudyCount = count };
             }
         }
@@ -37,7 +40,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
             using (var context = new DataAccessContext())
             {
                 var entries = context.GetStudyStoreQuery().GetStudyEntries(request.Criteria);
-                return new GetStudyEntriesResult {StudyEntries = entries};
+
+                var criteria = request.Criteria.Study ?? new StudyRootStudyIdentifier();
+                AuditHelper.LogQueryIssued(null, null, EventSource.CurrentUser, EventResult.Success,
+                    SopClass.StudyRootQueryRetrieveInformationModelFindUid, criteria.ToDicomAttributeCollection());
+                
+                return new GetStudyEntriesResult { StudyEntries = entries };
             }
         }
 
@@ -46,6 +54,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
             using (var context = new DataAccessContext())
             {
                 var entries = context.GetStudyStoreQuery().GetSeriesEntries(request.Criteria);
+
+                var criteria = request.Criteria.Series ?? new SeriesIdentifier();
+                AuditHelper.LogQueryIssued(null, null, EventSource.CurrentUser, EventResult.Success,
+                    SopClass.StudyRootQueryRetrieveInformationModelFindUid, criteria.ToDicomAttributeCollection());
+
                 return new GetSeriesEntriesResult { SeriesEntries = entries };
             }
         }
@@ -55,6 +68,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
             using (var context = new DataAccessContext())
             {
                 var entries = context.GetStudyStoreQuery().GetImageEntries(request.Criteria);
+
+                var criteria = request.Criteria.Image ?? new ImageIdentifier();
+                AuditHelper.LogQueryIssued(null, null, EventSource.CurrentUser, EventResult.Success,
+                    SopClass.StudyRootQueryRetrieveInformationModelFindUid, criteria.ToDicomAttributeCollection());
+
                 return new GetImageEntriesResult { ImageEntries = entries };
             }
         }

@@ -97,7 +97,7 @@ namespace ClearCanvas.Desktop
 		private static Locale FindBestMatchSystemLocale(IEnumerable<Locale> locales)
 		{
 			var culture = CultureInfo.CurrentUICulture;
-			while (culture != null && culture != CultureInfo.InvariantCulture)
+			while (culture != CultureInfo.InvariantCulture)
 			{
 				var cultureCode = culture.Name;
 				var locale = CollectionUtils.SelectFirst(locales, l => l.Culture == cultureCode);
@@ -316,9 +316,7 @@ namespace ClearCanvas.Desktop
 			/// </summary>
 			public override bool Equals(object @object)
 			{
-				if (@object is Locale)
-					return Equals((Locale) @object);
-				return base.Equals(@object);
+				return @object is Locale && Equals((Locale) @object);
 			}
 
 			/// <summary>
@@ -326,9 +324,7 @@ namespace ClearCanvas.Desktop
 			/// </summary>
 			public bool Equals(Locale other)
 			{
-				if (other == null)
-					return false;
-				return string.Equals(Culture, other.Culture, StringComparison.InvariantCultureIgnoreCase);
+				return !ReferenceEquals(other, null) && string.Equals(Culture, other.Culture, StringComparison.InvariantCultureIgnoreCase);
 			}
 
 			/// <summary>
@@ -336,9 +332,7 @@ namespace ClearCanvas.Desktop
 			/// </summary>
 			public static bool operator ==(Locale x, Locale y)
 			{
-				if (!ReferenceEquals(x, null))
-					return x.Equals(y);
-				return ReferenceEquals(y, null) || y.Equals(x);
+				return !ReferenceEquals(x, null) ? x.Equals(y) : ReferenceEquals(y, null);
 			}
 
 			/// <summary>
