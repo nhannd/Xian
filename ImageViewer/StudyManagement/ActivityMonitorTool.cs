@@ -29,6 +29,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private ActivityMonitorFailureWatcher _failureWatcher;
 		private LocalServerWatcher _localServerWatcher;
+		private bool _maxDiskSpaceExceeded;
 
 		public override void Initialize()
 		{
@@ -88,13 +89,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private void CheckDiskspaceUsageExceeded()
 		{
-			if (_localServerWatcher.IsMaximumDiskspaceUsageExceeded)
+			if (_localServerWatcher.IsMaximumDiskspaceUsageExceeded == _maxDiskSpaceExceeded)
+				return;
+
+			_maxDiskSpaceExceeded = _localServerWatcher.IsMaximumDiskspaceUsageExceeded;
+			if (_maxDiskSpaceExceeded)
 			{
 				this.Context.DesktopWindow.ShowAlert(AlertLevel.Warning,
-					SR.WarningMaximumDiskUsageExceeded,
-					SR.LinkOpenStorageConfiguration,
-					delegate { ActivityMonitorQuickLink.LocalStorageConfiguration.Invoke(this.Context.DesktopWindow); },
-					true);
+													 SR.WarningMaximumDiskUsageExceeded,
+													 SR.LinkOpenStorageConfiguration,
+													 delegate
+													 {
+														 ActivityMonitorQuickLink.LocalStorageConfiguration.Invoke(
+															 this.Context.DesktopWindow);
+													 },
+													 true);
 			}
 		}
 	}

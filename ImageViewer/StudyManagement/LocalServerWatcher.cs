@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			public DicomServerConfiguration CurrentDicomServerConfiguration;
 		}
 
-		private Timer _refreshTimer;
+		private readonly Timer _refreshTimer;
 
 		private DicomServerConfiguration _dicomServerConfiguration;
 		private StorageConfiguration _storageConfiguration;
@@ -48,24 +48,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_refreshTimer = new Timer(OnTimerElapsed, null, TimeSpan.FromSeconds(20));
 			_refreshTimer.Start();
 		}
-
-		//public void Start()
-		//{
-		//    if (_refreshTimer != null)
-		//        return;
-
-		//    _refreshTimer = new Timer(OnTimerElapsed, null, TimeSpan.FromSeconds(20));
-		//    _refreshTimer.Start();
-		//}
-
-		//public void Dispose()
-		//{
-		//    if (_refreshTimer == null)
-		//        return;
-
-		//    _refreshTimer.Dispose();
-		//    _refreshTimer = null;
-		//}
 
 		private DicomServerConfiguration DicomServerConfiguration
 		{
