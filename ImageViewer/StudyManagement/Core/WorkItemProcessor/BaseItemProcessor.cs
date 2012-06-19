@@ -142,7 +142,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 {
                     foreach (var relatedWorkItem in relatedList)
                     {
-                        if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete)
+                        if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete
+                         || relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
                         {
                             reason = string.Format("Waiting for: {0}",
                                                          relatedWorkItem.Request.ActivityDescription);
