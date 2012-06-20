@@ -15,6 +15,9 @@ using System.Threading;
 
 namespace ClearCanvas.Common.Utilities
 {
+    // TODO (CR Jun 2012): Feels like this should be an instance class rather than static. The fact that a
+    // ManualResetEvent is passed into a method in order to cancel the method seems odd.
+
     /// <summary>
     /// Provides convenient blocking methods for file opening.
     /// </summary>

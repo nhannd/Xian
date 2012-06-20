@@ -31,6 +31,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     [DataContract(Namespace = StudyManagementNamespace.Value)]
     public class GetStudyEntriesRequest : DataContractBase
     {
+        // TODO (CR Jun 2012): Should criteria be expanded to actual supported properties, rather than an "entry". Confusing.
         [DataMember(IsRequired = false)]
         public StudyEntry Criteria { get; set; }
     }
@@ -45,6 +46,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     [DataContract(Namespace = StudyManagementNamespace.Value)]
     public class GetSeriesEntriesRequest : DataContractBase
     {
+        // TODO (CR Jun 2012): Should criteria be expanded to actual supported properties, rather than an "entry". Confusing.
         [DataMember(IsRequired = false)]
         public SeriesEntry Criteria { get; set; }
     }
@@ -59,6 +61,7 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
     [DataContract(Namespace = StudyManagementNamespace.Value)]
     public class GetImageEntriesRequest : DataContractBase
     {
+        // TODO (CR Jun 2012): Should criteria be expanded to actual supported properties, rather than an "entry". Confusing.
         [DataMember(IsRequired = false)]
         public ImageEntry Criteria { get; set; }
     }
@@ -440,8 +443,6 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
             try
             {
-                // TODO Marmot (CR June 2012): If each WQI instantiates an instance of this class 
-				// and they all start, this will result in tons of redundant checks ?
                 var driveInfo = new DriveInfo(root);
                 _fileStoreDiskspace = new Diskspace(driveInfo);
                 return true;

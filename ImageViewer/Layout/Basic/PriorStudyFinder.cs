@@ -190,10 +190,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                                 //Eliminate false positives right away.
                                 IPatientData reconciled = reconciliationStrategy.ReconcilePatientInformation(study);
                                 if (reconciled == null)
-                                {
-                                    Platform.Log(LogLevel.Debug, "Found {0} prior studies on server '{1}'", studies.Count, priorsServer.Name);
                                     continue;
-                                }
 
                                 StudyItem studyItem = ConvertToStudyItem(study);
                                 if (studyItem == null || results.ContainsKey(studyItem.StudyInstanceUid))

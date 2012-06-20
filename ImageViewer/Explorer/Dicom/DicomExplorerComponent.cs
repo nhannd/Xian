@@ -191,7 +191,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private static void SelectPriorsServerNode(ServerTreeComponent serverTreeComponent)
 		{
-		    //TODO (Marmot):
 			if (serverTreeComponent.ShowLocalServerNode && !DicomExplorerConfigurationSettings.Default.SelectDefaultServerOnStartup)
 			{
 				serverTreeComponent.SetSelection(serverTreeComponent.ServerTree.LocalServer);

@@ -32,6 +32,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             lock (SyncLock)
             {
+                // TODO (CR Jun 2012): Just do static initialization? Then there's no need for the lock.
                 if (_knownTypes == null)
                 {
                     // build the contract map by finding all types having a T attribute
@@ -118,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public WorkItemStudy(DicomAttributeCollection c)
             : base(c)
-        {            
+        {
             string modality = c[DicomTags.Modality].ToString();
             ModalitiesInStudy = new[] { modality };
         }
@@ -151,12 +152,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return WorkItemConcurrency.StudyRead; }
         }
 
+        /// TODO (CR Jun 2012): Unclear what this is supposed to be (AE, Server Name). Should be server name.
         [DataMember]
         public string Destination { get; set; }
 
+        // TODO (CR Jun 2012): Isn't it better to just pass a TS UID?
         [DataMember]
         public CompressionType CompressionType { get; set; }
 
+        // TODO (CR Jun 2012): Expected as a percent?
         [DataMember]
         public int CompressionLevel { get; set; }
     }
@@ -392,8 +396,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Name = "WorkItemConcurrency", Namespace = ImageViewerWorkItemNamespace.Value)]
     public enum WorkItemConcurrency
     {
+        // TODO (CR Jun 2012): Should there be an AllStudiesRead/Write for Re-index and re-apply rules? Feel like there's more to it than this.
         [EnumMember]
         NonStudy,
+
+        // TODO (CR Jun 2012): Update, rather than Insert?
         [EnumMember]
         StudyInsert,
         [EnumMember]
@@ -471,6 +478,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return WorkItemConcurrency.StudyRead; }
         }
 
+        /// TODO (CR Jun 2012): Unclear what this is supposed to be (AE, Server Name). Should be server name.
         [DataMember]
         public string Source { get; set; }
     }
@@ -491,6 +499,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             CancellationCanResultInPartialStudy = true;
         }
 
+        // TODO (CR Jun 2012): redundant - already returned by base class.
         public override WorkItemConcurrency ConcurrencyType
         {
             get { return WorkItemConcurrency.StudyRead; }
@@ -572,6 +581,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return WorkItemConcurrency.StudyInsert; }
         }
 
+        /// TODO (CR Jun 2012): Should be server name because we need to support the possibility of multiple servers with same AE.
         [DataMember(IsRequired = true)]
         public string FromAETitle { get; set; }
 
@@ -630,6 +640,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override WorkItemConcurrency ConcurrencyType
         {
+            // TODO (CR Jun 2012): NonStudy seems a bit odd, since it's actually rewriting all studies.
             get { return WorkItemConcurrency.NonStudy; }
         }
 
@@ -732,6 +743,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override WorkItemConcurrency ConcurrencyType
         {
+            // TODO (CR Jun 2012): Again, a bit weird, since it may actually change the Delete Time for all the studies.
             get { return WorkItemConcurrency.NonStudy; }
         }
 

@@ -69,6 +69,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         private static DicomServerConfiguration GetServerConfiguration()
         {
+            // TODO (CR Jun 2012): This can be done in one line now via DicomServer.GetConfiguration().
             DicomServerConfiguration configuration = null;
             var request = new GetDicomServerConfigurationRequest();
             Platform.GetService<IDicomServerConfiguration>(s =>
@@ -131,7 +132,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                                 file = new DicomFile(filename, file.MetaInfo.Copy(), file.DataSet.Copy());
                                 anonymizer.Anonymize(file);
 
-                                // Do the import
+                                // TODO (CR Jun 2012): Importing each file separately?
                                 Platform.GetService((IPublishFiles w) => w.PublishLocal(new List<DicomFile> {file}));
 
                                 string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
@@ -160,7 +161,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 	    private void UpdateEnabled()
 		{
-            Visible = Context.SelectedServers.AllSupport<IWorkItemService>(); // TODO (Marmot): =IsLocal?
+            Visible = Context.SelectedServers.AllSupport<IWorkItemService>();
 		    Enabled = Context.SelectedStudies.Count == 1
 		              && Context.SelectedServers.AllSupport<IWorkItemService>()
 		              && WorkItemActivityMonitor.IsRunning;

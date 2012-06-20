@@ -21,6 +21,8 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
         /// </summary>
         SettingsGroupDescriptor GetPreviousSettingsGroup(SettingsGroupDescriptor group);
 
+        // TODO (CR Jun 2012): It's a bit weird that system configuration has support for "user" settings. That should be removed, I think.
+
         /// <summary>
         /// Obtains the settings values for the specified settings group, user and instance key.  If user is null,
         /// the shared settings are obtained.

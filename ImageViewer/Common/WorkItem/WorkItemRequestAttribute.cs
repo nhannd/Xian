@@ -20,6 +20,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public static IEnumerable<string> GetActivityTypeList()
         {
+            // TODO (CR Jun 2012): Initialize statically, and you don't need a lock.
             lock (SyncLock)
             {
                 if (_activityTypes == null)

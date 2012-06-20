@@ -76,6 +76,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
             StudyId = other.StudyId;
             StudyDate = other.StudyDate;
             StudyTime = other.StudyTime;
+            /// TODO (CR Jun 2012): Technically, should copy the buffers.
             ModalitiesInStudy = other.ModalitiesInStudy;
             SopClassesInStudy = other.SopClassesInStudy;
             StudyInstanceUid = other.StudyInstanceUid;

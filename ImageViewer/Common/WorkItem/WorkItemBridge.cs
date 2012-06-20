@@ -45,6 +45,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                                                    Cancel = true, 
                                                                                    Identifier = WorkItem.Identifier
                                                                                }));
+            
+            // TODO (CR Jun 2012): The passed-in WorkItem contract should not be updated;
+            // it should be done by the service and a new instance returned, or something should be returned by this
+            // method to let the caller decide what to do.
             if (response.Item == null)
                 WorkItem.Status = WorkItemStatusEnum.Deleted;
             else
@@ -67,6 +71,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                                                    ProcessTime = Platform.Time, 
                                                                                    Identifier = WorkItem.Identifier
                                                                                }));
+            // TODO (CR Jun 2012): The passed-in WorkItem contract should not be updated;
+            // it should be done by the service and a new instance returned, or something should be returned by this
+            // method to let the caller decide what to do.
+
             if (response.Item == null)
                 WorkItem.Status = WorkItemStatusEnum.Deleted;
             else
@@ -90,6 +98,10 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 ProcessTime = priority == WorkItemPriorityEnum.Stat ? Platform.Time : default(DateTime?)
             }));
 
+            // TODO (CR Jun 2012): The passed-in WorkItem contract should not be updated;
+            // it should be done by the service and a new instance returned, or something should be returned by this
+            // method to let the caller decide what to do.
+
             if (response.Item == null)
                 WorkItem.Status = WorkItemStatusEnum.Deleted;
             else
@@ -112,6 +124,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                                                    Delete = true, // TODO (Marmot) - This delete flag could be removed, and we could just use the status
                                                                                    Identifier = WorkItem.Identifier
                                                                                }));
+
+            // TODO (CR Jun 2012): The passed-in WorkItem contract should not be updated;
+            // it should be done by the service and a new instance returned, or something should be returned by this
+            // method to let the caller decide what to do.
+
             if (response.Item == null)
                 WorkItem.Status = WorkItemStatusEnum.Deleted;
             else
@@ -121,7 +138,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         protected void InsertRequest(WorkItemRequest request, WorkItemProgress progress)
         {
             WorkItemInsertResponse response = null;
-            
+
+            // TODO (CR Jun 2012): This used?
             if(string.IsNullOrEmpty(request.UserName))
                 request.UserName = GetUserName();
             
@@ -129,12 +147,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
             Platform.GetService<IWorkItemService>(s => response = s.Insert(new WorkItemInsertRequest { Request = request, Progress = progress}));
 
+            // TODO (CR Jun 2012): The passed-in WorkItem contract should not be updated;
+            // it should be done by the service and a new instance returned, or something should be returned by this
+            // method to let the caller decide what to do.
+
             if (response.Item == null)
                 WorkItem.Status = WorkItemStatusEnum.Deleted;
             else
                 WorkItem = response.Item;
         }
 
+        // TODO (CR Jun 2012): Name? It's not returning a request, but a WorkItemData object.
         protected WorkItemData GetMatchingRequest(WorkItemRequest request)
         {
             WorkItemData returnedItem = null;
@@ -149,6 +172,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                                                ? (request as WorkItemStudyRequest).Study.StudyInstanceUid
                                                                                : null
                                                                    });
+
+                                        // TODO (CR Jun 2012): The name of this method doesn't seem to describe what it returns.
+                                        // Is it returning the first "active" work item for a study?
                                         foreach (var relatedItem in response.Items)
                                         {
                                             if (relatedItem.Status == WorkItemStatusEnum.Idle
@@ -364,6 +390,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
     public class DicomSendBridge : WorkItemBridge
     {
+        // TODO (CR Jun 2012): Name?
         public void MoveStudy(IDicomServiceNode remoteAEInfo, IStudyRootData study, WorkItemPriorityEnum priority)
         {
             EventResult result = EventResult.Success;
@@ -400,6 +427,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
+        // TODO (CR Jun 2012): Name?
         public void MoveSeries(IDicomServiceNode remoteAEInfo, IStudyRootData study, string[] seriesInstanceUids, WorkItemPriorityEnum priority)
         {
             EventResult result = EventResult.Success;
@@ -436,6 +464,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
+        // TODO (CR Jun 2012): Name
         public void MoveSops(IDicomServiceNode remoteAEInfo, IStudyRootData study, string seriesInstanceUid, string[] sopInstanceUids, WorkItemPriorityEnum priority)
         {
             EventResult result = EventResult.Success;

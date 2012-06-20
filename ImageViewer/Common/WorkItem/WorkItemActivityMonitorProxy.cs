@@ -166,6 +166,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             _disposed = true;
 
+            // TODO (CR Jun 2012): should check disposing == true or else OnProxyDisposed won't get called.
             if (_isConnectedChanged != null)
                 _real.IsConnectedChanged -= OnIsConnectedChanged;
 

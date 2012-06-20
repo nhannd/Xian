@@ -39,6 +39,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public WorkItemData Item { get; set; }
     }
 
+    /// TODO (CR Jun 2012): This seems overloaded and it can be ambiguous what the intent
+    /// is if multiple fields are set. I wonder if we should just have a method on IWorkItemService for
+    /// each kind of thing you can change (e.g. SetPriority, Cancel...).
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemUpdateRequest : DataContractBase
     {
@@ -128,7 +131,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Namespace = ImageViewerWorkItemNamespace.Value)]
     public class WorkItemPublishRequest : DataContractBase
     {
-        //TODO (Marmot): We can only publish changes to single items, but the callback accepts an array?
+        // TODO (CR Jun 2012): We can only publish changes to single items, but the callback accepts an array?
         [DataMember]
         public WorkItemData Item { get; set; }
     }
@@ -154,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [OperationContract(IsOneWay = true)]
         void Refresh(WorkItemRefreshRequest request);
 
-        //TODO (Marmot): this should be renamed "PublishWorkedItemChanged".
+        // TODO (CR Jun 2012): this should be renamed "PublishWorkedItemChanged". Still wish we could get rid of it.
         [OperationContract]
         WorkItemPublishResponse Publish(WorkItemPublishRequest request);
     }
