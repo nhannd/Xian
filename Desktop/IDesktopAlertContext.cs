@@ -16,6 +16,8 @@ namespace ClearCanvas.Desktop
 		void ShowAlertViewer();
 		void AcknowledgeAll();
 		IconSet GetIcon(AlertLevel level);
-		int UnacknowledgedErrorWarningCount { get; }
+
+	    /// TODO (CR Jun 2012): That's a mouthful :)
+        int UnacknowledgedErrorWarningCount { get; }
 	}
 }

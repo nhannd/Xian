@@ -124,7 +124,7 @@
     <Compile Include="StudyManagement\IStudyStoreQuery.cs" />
     <Compile Include="RulesApplicationOptions.cs" />
     <Compile Include="StudyManagement\RemoteStudyRootQuery.cs" />
-    <Compile Include="StudyManagement\StoreEntries.cs" />
+    <Compile Include="StudyManagement\DataContracts2.cs" />
     <Compile Include="StudyManagement\StoreStudyRootQuery.cs" />
     <Compile Include="StudyManagement\StudyRootQueryStoreAdapter.cs" />
     <Compile Include="StudyManagement\StudyStore.cs" />

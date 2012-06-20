@@ -15,6 +15,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
+    // TODO (CR Jun 2012): I think this should go back in Shreds, or at least be put in a sub-namespace somewhere. Feels weird in here.
 	public static class WorkItemPublishSubscribeHelper
 	{
 		private const string WorkItemsChanged = "WorkItemsChanged";

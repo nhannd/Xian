@@ -26,9 +26,6 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
 
         public SystemConfigurationSettingsProvider()
 		{
-            // TODO (CR Jun 2012): Since they're shared, should probably use product/component/family
-            // The database will be stored per family, so it should be ok.
-
 			// according to MSDN recommendation, use the name of the executing assembly here
             ApplicationName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 		}
@@ -107,6 +104,7 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
             var group = new SettingsGroupDescriptor(settingsClass);
 
             var storedValues = _store.GetSettingsValues(group, null, settingsKey);
+            // TODO (CR Jun 2012): This says we can only upgrade if there are already settings values for the current version. Shouldn't it be the opposite?
             return storedValues != null && storedValues.Count > 0;
         }
 
@@ -134,8 +132,8 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
             var storedValues = new Dictionary<string, string>();
 
             if (oldGroup != null)
-                foreach (var userDefault in _store.GetSettingsValues(oldGroup, null, settingsKey))
-                    storedValues[userDefault.Key] = userDefault.Value;
+                foreach (var oldValue in _store.GetSettingsValues(oldGroup, null, settingsKey))
+                    storedValues[oldValue.Key] = oldValue.Value;
 
             return GetSettingsValues(properties, storedValues);           
         }

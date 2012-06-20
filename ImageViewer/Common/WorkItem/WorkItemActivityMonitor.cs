@@ -68,6 +68,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         private static readonly object _instanceLock = new object();
         private static RealWorkItemActivityMonitor _instance;
+
+        // TODO (CR Jun 2012): doesn't need to be volatile since it's only accessed inside the lock.
         internal static volatile int _proxyCount = 0;
 
         internal WorkItemActivityMonitor()

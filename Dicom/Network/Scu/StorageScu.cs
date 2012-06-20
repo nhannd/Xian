@@ -462,6 +462,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <param name="association">Association Parameters</param>
 		private void SendCStoreUntilSuccess(DicomClient client, ClientAssociationParameters association)
 		{
+		    /// TODO (CR Jun 2012): Probably shouldn't use thread pool threads for potentially long-running operations.
+		    /// Although unlikely, this could exhaust the .NET thread pool.
+		    
             // Added the background thread as part of ticket #9568.  Note that we probably should have some threading 
             // built into NetworkBase as opposed to here.
 		    ThreadPool.QueueUserWorkItem(delegate
@@ -481,7 +484,8 @@ namespace ClearCanvas.Dicom.Network.Scu
                                                              StopRunningOperation();
                                                              return;
                                                          }
-                                                          
+
+                                                         /// TODO (CR Jun 2012): Do we need to check for a stop signal?
                                                          // TODO (Marmot): Check stop?
 
                                                          ok = SendCStore(client, association);                                                             

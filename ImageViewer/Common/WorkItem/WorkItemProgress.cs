@@ -64,6 +64,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return NumberOfFilesImported + NumberOfImportFailures; }
         }
 
+        // TODO (CR Jun 2012): Can this cause confusion with the Complete status?
         public bool IsImportComplete()
         {
             return TotalFilesToImport == TotalImportsProcessed;
@@ -82,6 +83,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
+                // TODO (CR Jun 2012): Shouldn't this be based on files, not paths?
                 if (PathsToImport > 0)
                     return (Decimal)PathsImported / PathsToImport;
 
@@ -94,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get
             {
                 if (NumberOfImportFailures > 0)
-                    return (Decimal)NumberOfImportFailures / (NumberOfImportFailures+NumberOfFilesImported);
+                    return (Decimal)NumberOfImportFailures / (NumberOfImportFailures + NumberOfFilesImported); // TODO (CR Jun 2012): TotalImportsProcessed?
 
                 return new decimal(0.0);
             }
@@ -128,6 +130,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return NumberOfFilesProcessed + NumberOfProcessingFailures; }
         }
 
+        // TODO (CR Jun 2012): Can this cause confusion with the Complete status?
         public bool IsImportComplete()
         {
             return TotalFilesToProcess == TotalFilesProcessed;
@@ -184,6 +187,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember(IsRequired = true)]
         public int StudiesProcessed { get; set; }
 
+        // TODO (CR Jun 2012): Is this a total, or remaining? Unclear from name.
         [DataMember(IsRequired = true)]
         public int StudyFoldersToProcess { get; set; }
 
@@ -249,6 +253,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             IsCancelable = false;
         }
 
+        // TODO (CR Jun 2012): Is this a total, or remaining? Unclear from name.
         [DataMember(IsRequired = true)]
         public int StudiesToProcess { get; set; }
 
@@ -296,6 +301,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             IsCancelable = true;
         }
 
+        // TODO (CR Jun 2012): Is this a total, or remaining? Unclear from name.
         [DataMember(IsRequired = true)]
         public int ImagesToSend { get; set; }
 
@@ -326,6 +332,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
+        // TODO (CR Jun 2012): Again, can "complete" get confused with the status?
         public override Decimal PercentComplete
         {
             get
@@ -422,6 +429,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             IsCancelable = true;
         }
 
+        // TODO (CR Jun 2012): Is this a total, or remaining? Unclear from name.
         [DataMember(IsRequired = true)]
         public int ImagesToDelete { get; set; }
 

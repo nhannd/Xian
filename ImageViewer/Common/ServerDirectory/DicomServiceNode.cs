@@ -39,7 +39,8 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
         }
 
         public Dictionary<string, object> ExtensionData { get; private set; }
-        //TODO (Marmot): Don't hold on to it, just look it up via the directory?
+
+        // TODO (CR Jun 2012): Don't hold on to it, just look it up via the directory?
         public ApplicationEntity Server { get; private set; }
 
         public bool IsPriorsServer { get; private set; }

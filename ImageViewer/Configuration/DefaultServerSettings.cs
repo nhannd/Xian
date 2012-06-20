@@ -14,6 +14,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
+    /// TODO (CR Jun 2012): Remove this, or keep around for upgrade? It would be going from a user setting to a shared setting, which maybe isn't so good.
     //TODO (Marmot): Migration, custom user upgrade step?
 
 	[SettingsGroupDescription("Stores a list of default servers for the application.")]
