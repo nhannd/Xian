@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Data.Linq;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -39,13 +40,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         public bool Successful;
         public String ErrorMessage;
         public DicomStatus DicomStatus;
-        public bool RestoreRequested;        
+        public bool RestoreRequested;
+        public bool RetrySuggested;
 
         public void SetError(DicomStatus status, String message)
         {
             Successful = false;
             DicomStatus = status;
             ErrorMessage = message;
+        }
+
+        public void Initialize()
+        {
+            Successful = true;
+            ErrorMessage = string.Empty;
+            DicomStatus = DicomStatuses.Success;
         }
     }
 
@@ -297,7 +306,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
             String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
             String accessionNumber = message.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
-            String patientsName = message.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
+            String patientsName = message.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);            
 
             string newName = patientsName;
             if (!newName.Equals(patientsName))
@@ -329,7 +338,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
             if (workItem!=null)
             {
-                if (workItem.Status == WorkItemStatusEnum.Deleted || workItem.Status == WorkItemStatusEnum.Canceled)
+                if (workItem.Status == WorkItemStatusEnum.Deleted || workItem.Status == WorkItemStatusEnum.Canceled || workItem.Status == WorkItemStatusEnum.Canceling)
                 {
                     // TODO Marmot (CR June 2012): not DicomStatuses.Cancel?
                     result.SetError(DicomStatuses.StorageStorageOutOfResources, "Receive canceled by user");
@@ -345,15 +354,49 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 return result;
             }
 
+            Process(message, fileImportBehaviour, workItem, result);
+
+            if (result.DicomStatus != DicomStatuses.Success)
+            {
+                if (result.RetrySuggested)
+                {
+                    Platform.Log(LogLevel.Warn,
+                                 "Failure importing file with retry suggested, retrying Import of file: {0}",
+                                 sopInstanceUid);
+
+                    Process(message, fileImportBehaviour, workItem, result);
+                }
+                if (result.DicomStatus != DicomStatuses.Success)
+                {
+                    _context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem);
+
+                    if (workItem != null)
+                        SignalWorkItemFailure(workItem, "Some images failed to import/receive. See log for details.");
+                }
+            }
+            return result;
+        }
+
+        #endregion
+
+        #region Private Methods
+        
+        private void Process(DicomMessageBase message, FileImportBehaviourEnum fileImportBehaviour, WorkItem workItem, DicomProcessingResult result)
+        {
+            result.Initialize();
+
             // Use the command processor for rollback capabilities.
-            using (var commandProcessor = new ViewerCommandProcessor(String.Format("Processing Sop Instance {0}", sopInstanceUid)))
+            using (
+                var commandProcessor =
+                    new ViewerCommandProcessor(String.Format("Processing Sop Instance {0}", result.SopInstanceUid)))
             {
                 try
                 {
                     var studyLocation = new StudyLocation(message.DataSet[DicomTags.StudyInstanceUid].ToString());
 
-                	String destinationFile = studyLocation.GetSopInstancePath(seriesInstanceUid, sopInstanceUid);
-                    
+                    String destinationFile = studyLocation.GetSopInstancePath(result.SeriesInstanceUid,
+                                                                              result.SopInstanceUid);
+
                     DicomFile file = ConvertToDicomFile(message, destinationFile, _context.SourceAE);
 
                     // Create the Study Folder, if need be
@@ -384,36 +427,36 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                         commandProcessor.AddCommand(new SaveDicomFileCommand(destinationFile, file, true));
                     }
 
-                    InsertWorkItemCommand command;                 
+                    InsertWorkItemCommand command;
                     if (duplicateFile)
-                    {                        
+                    {
                         command = workItem != null
-                            ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName)
-                            : new InsertWorkItemCommand(_context.CreateRequest(file), _context.CreateProgress(), studyInstanceUid, seriesInstanceUid, sopInstanceUid, dupName);             
+                                      ? new InsertWorkItemCommand(workItem, result.StudyInstanceUid,
+                                                                  result.SeriesInstanceUid, result.SopInstanceUid,
+                                                                  dupName)
+                                      : new InsertWorkItemCommand(_context.CreateRequest(file),
+                                                                  _context.CreateProgress(), result.StudyInstanceUid,
+                                                                  result.SeriesInstanceUid, result.SopInstanceUid,
+                                                                  dupName);
                     }
                     else
                     {
                         command = workItem != null
-                            ? new InsertWorkItemCommand(workItem, studyInstanceUid, seriesInstanceUid, sopInstanceUid)
-                            : new InsertWorkItemCommand(_context.CreateRequest(file), _context.CreateProgress(), studyInstanceUid, seriesInstanceUid, sopInstanceUid);                        
+                                      ? new InsertWorkItemCommand(workItem, result.StudyInstanceUid,
+                                                                  result.SeriesInstanceUid, result.SopInstanceUid)
+                                      : new InsertWorkItemCommand(_context.CreateRequest(file),
+                                                                  _context.CreateProgress(), result.StudyInstanceUid,
+                                                                  result.SeriesInstanceUid, result.SopInstanceUid);
                     }
 
                     command.ExpirationDelaySeconds = _context.ExpirationDelaySeconds;
                     commandProcessor.AddCommand(command);
 
-                	if (commandProcessor.Execute())
-                	{
-                		result.DicomStatus = DicomStatuses.Success;
-                	    
-                        if (!_context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem))
-                        {
-                            _context.StudyWorkItems.Add(studyInstanceUid, command.WorkItem);
+                    if (commandProcessor.Execute())
+                    {
+                        result.DicomStatus = DicomStatuses.Success;
 
-                            Platform.GetService(
-                                (IWorkItemActivityMonitorService service) =>
-                                service.Publish(new WorkItemPublishRequest { Item = WorkItemDataHelper.FromWorkItem(command.WorkItem) }));
-                        }
-                        else
+                        if (_context.StudyWorkItems.ContainsKey(result.StudyInstanceUid))
                         {
                             var progress = command.WorkItem.Progress as ProcessStudyProgress;
                             if (progress != null)
@@ -432,46 +475,39 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                                     context.Commit();
                                 }
-                                
-                                Platform.GetService(
-                                    (IWorkItemActivityMonitorService service) =>
-                                    service.Publish(new WorkItemPublishRequest
-                                                        {Item = WorkItemDataHelper.FromWorkItem(command.WorkItem)}));
-
                             }
-                            // Save the updated WorkItem
-                            _context.StudyWorkItems[studyInstanceUid] = command.WorkItem;
-                        }
-                	}
-                	else
-                	{
-                        Platform.Log(LogLevel.Warn, "Failure Importing file: {0}", file.Filename);
-                		string failureMessage = String.Format("Failure processing message: {0}. Sending failure status.",
-                		                                      commandProcessor.FailureReason);
-                		result.SetError(DicomStatuses.ProcessingFailure, failureMessage);
 
-                        if (command.WorkItem!=null)
-                            SignalWorkItemFailure(command.WorkItem, "Some images failed to import/receive. See log for details.");
-                		
-                        // processor already rolled back
-                		return result;
-                	}
+                            Platform.GetService(
+                                 (IWorkItemActivityMonitorService service) =>
+                                 service.Publish(new WorkItemPublishRequest { Item = WorkItemDataHelper.FromWorkItem(command.WorkItem) }));
+
+                            // Save the updated WorkItem
+                            _context.StudyWorkItems[result.StudyInstanceUid] = command.WorkItem;
+                        }
+                    }
+                    else
+                    {
+                        if (commandProcessor.FailureException is ChangeConflictException)
+                            result.RetrySuggested = true; // Change conflict may work if we just retry
+
+                        Platform.Log(LogLevel.Warn, "Failure Importing file: {0}", file.Filename);
+                        string failureMessage = String.Format(
+                            "Failure processing message: {0}. Sending failure status.",
+                            commandProcessor.FailureReason);
+                        result.SetError(DicomStatuses.ProcessingFailure, failureMessage);
+           
+                        // processor already rolled back                     
+                    }
                 }
                 catch (Exception e)
                 {
-                    Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.", commandProcessor.Description);
+                    Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.",
+                                 commandProcessor.Description);
                     commandProcessor.Rollback();
                     result.SetError(result.DicomStatus ?? DicomStatuses.ProcessingFailure, e.Message);
                 }
             }
-
-            return result;
         }
-
-
-        #endregion
-
-        #region Private Methods
 
         /// <summary>
         /// Update the WQI to indicate there're errors which will result in incomplete study. 

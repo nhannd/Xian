@@ -11,7 +11,10 @@
 
 using System;
 using System.Data;
+using System.Data.Linq;
+using System.Data.Linq.Mapping;
 using System.Threading;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery;
 
@@ -164,18 +167,32 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 		/// </remarks>
 		public void Commit()
 		{
-			if(_transactionCommitted)
-				throw new InvalidOperationException("Transaction already committed.");
-			_context.SubmitChanges();
-            if (_transaction != null)
-			    _transaction.Commit();
-			_transactionCommitted = true;
-
-            if (_mutex != null)
+            try
             {
-                _mutex.Unlock();
-                _mutex.Dispose();
-                _mutex = null;
+                if (_transactionCommitted)
+                    throw new InvalidOperationException("Transaction already committed.");
+                _context.SubmitChanges();
+                if (_transaction != null)
+                    _transaction.Commit();
+                _transactionCommitted = true;
+            }
+            catch (ChangeConflictException)
+            {
+                foreach (ObjectChangeConflict occ in _context.ChangeConflicts)
+                {
+                    MetaTable metatable = _context.Mapping.GetTable(occ.Object.GetType());
+                    Platform.Log(LogLevel.Warn, "Change Conflict with update to table: {0}",  metatable.TableName);
+                }
+                throw;
+            }
+            finally
+            {
+                if (_mutex != null)
+                {
+                    _mutex.Unlock();
+                    _mutex.Dispose();
+                    _mutex = null;
+                }
             }
 		}
 

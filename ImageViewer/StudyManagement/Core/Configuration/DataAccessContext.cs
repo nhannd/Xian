@@ -11,6 +11,9 @@
 
 using System;
 using System.Data;
+using System.Data.Linq;
+using System.Data.Linq.Mapping;
+using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration
@@ -85,12 +88,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration
 		/// </remarks>
 		public void Commit()
 		{
-			if (_transactionCommitted)
-				throw new InvalidOperationException("Transaction already committed.");
-			_context.SubmitChanges();
-			if (_transaction != null)
-				_transaction.Commit();
-			_transactionCommitted = true;
+            try
+            {
+                if (_transactionCommitted)
+                    throw new InvalidOperationException("Transaction already committed.");
+                _context.SubmitChanges();
+                if (_transaction != null)
+                    _transaction.Commit();
+                _transactionCommitted = true;
+            }
+            catch (ChangeConflictException)
+            {
+                foreach (ObjectChangeConflict occ in _context.ChangeConflicts)
+                {
+                    MetaTable metatable = _context.Mapping.GetTable(occ.Object.GetType());
+                    Platform.Log(LogLevel.Warn, "Change Conflict with update to table: {0}", metatable.TableName);
+                }
+                throw;
+            }
 		}
 
 		private IDbConnection CreateConnection()
