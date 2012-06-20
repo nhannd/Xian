@@ -429,6 +429,7 @@
     <Compile Include="Utilities\HttpFileTransfer.cs" />
     <Compile Include="Utilities\EnvironmentUtilities.cs" />
     <Compile Include="Utilities\JsmlSerializer.cs" />
+    <Compile Include="Utilities\Tests\ExclusiveLockTestApplication.cs" />
     <Compile Include="Utilities\Tests\ExclusiveLockTests.cs" />
     <Compile Include="Utilities\Tests\JsmlSerializerTests.cs" />
     <Compile Include="Utilities\UnitTestExtensionFactory.cs" />
