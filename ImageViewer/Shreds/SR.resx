@@ -214,6 +214,6 @@
     <value>Filestore Management Processor</value>
   </data>
   <data name="ExceptionNotEnoughStorage" xml:space="preserve">
-    <value>Additional storage is required.</value>
+    <value>Disk usage exceeds maximum configured usage.</value>
   </data>
 </root>
