@@ -187,7 +187,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// <returns></returns>
         public override ProcessStudyProgress CreateProgress()
         {
-            return new ProcessStudyProgress { IsCancelable = true, TotalFilesToProcess = 1 };
+            return new ProcessStudyProgress { IsCancelable = false, TotalFilesToProcess = 1 };
         }
 
         #endregion
