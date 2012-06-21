@@ -258,7 +258,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                             // of SOPs processed, but successfulProcessCount is only incremented by 1 for all the SOPs processed here.
                             // Will this unnecessarily slow processing down?
                             // Maybe ProcessWorkQueueUids should return the number processed successfully?
-
+                            // (SW) - The inner loop through the WorkQueueUidList causes all the files that were available at the start of the processing of the WorkItem to be available.
+                            // I don't think this is a significant issue, but it is ugly code.  We could just increment successfulProcessCount by fileList.Count to make it consistent.
                             if (ProcessWorkQueueUids(fileList, studyXml))
                                 successfulProcessCount++;
 

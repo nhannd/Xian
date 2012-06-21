@@ -487,7 +487,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 
                                                          /// TODO (CR Jun 2012): Do we need to check for a stop signal?
                                                          // TODO (Marmot): Check stop?
-
+                                                         // TODO (CR Jun 2012): Stop is checked for in OnReceiveResponseMessage after each c-store-rsp received.
+                                                         // There's a small chance that every image we're attempting to send wasn't negotiated over the association and it
+                                                         // takes awhile to go through the list, but the chances of that are small, plus it should be quick.
                                                          ok = SendCStore(client, association);                                                             
                                                      }                                                     
                                                  }

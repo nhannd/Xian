@@ -124,6 +124,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             }
 
             // TODO (CR Jun 2012): this actually happen?
+            // (SW) - It won't actually happen with our client, but it could happen by other DICOM clients that have a list of UIDs to move.
             var aggregateProgress = new DicomSendProgress();
             foreach (var sendOperation in list)
             {

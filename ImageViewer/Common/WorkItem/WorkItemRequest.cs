@@ -153,10 +153,13 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
 
         /// TODO (CR Jun 2012 - High): Unclear what this is supposed to be (AE, Server Name). Should be server name.
+        /// (SW) - This is server name, but should be renamed.
         [DataMember]
         public string Destination { get; set; }
 
         // TODO (CR Jun 2012 - Med): Isn't it better to just pass a TS UID?
+        // (SW) No - because at the time of request, we don't know if it should be Baseline vs. Extended for JPEG lossy, we push the decision
+        // down to negotiation time.
         [DataMember]
         public CompressionType CompressionType { get; set; }
 
@@ -291,6 +294,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public override string ActivityDescription
         {
             // TODO (CR Jun 2012 - High): This will confuse the user because it says "Send Series", but the filter type in the activity monitor will be "publish files".
+            // (SW) yes, cleanup.
             get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, Destination); }
         }
 
@@ -398,6 +402,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public enum WorkItemConcurrency
     {
         // TODO (CR Jun 2012): Should there be an AllStudiesRead/Write for Re-index and re-apply rules? Feel like there's more to it than this.
+        // (SW) If we change it to a new type, we could re-do the BaseItemProcessor.CanStart() method to more generically handle these.
+        // Re-apply rules is a bit different becasue we let it run no matter what.
         [EnumMember]
         NonStudy,
 
@@ -480,6 +486,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
 
         /// TODO (CR Jun 2012 - Med): Unclear what this is supposed to be (AE, Server Name). Should be server name.
+        /// (SW) it is stored as server name
         [DataMember]
         public string Source { get; set; }
     }

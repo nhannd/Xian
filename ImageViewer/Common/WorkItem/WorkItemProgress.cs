@@ -65,6 +65,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
 
         // TODO (CR Jun 2012): Can this cause confusion with the Complete status?
+        // (SW) - this can be deleted, its not used.
         public bool IsImportComplete()
         {
             return TotalFilesToImport == TotalImportsProcessed;
@@ -84,6 +85,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get
             {
                 // TODO (CR Jun 2012 - Med): Shouldn't this be based on files, not paths?
+                // (SW) Paths was used because we don't know the total file count up front, and didn't want to enumerate the files before processing
+                // them.  This was a work around to show real progress.
                 if (PathsToImport > 0)
                     return (Decimal)PathsImported / PathsToImport;
 
@@ -128,6 +131,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
 
         // TODO (CR Jun 2012): Can this cause confusion with the Complete status?
+        // (SW) not used and can be deleted.
         public bool IsImportComplete()
         {
             return TotalFilesToProcess == TotalFilesProcessed;
@@ -182,6 +186,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public int StudiesProcessed { get; set; }
 
         // TODO (CR Jun 2012 - Med): Is this a total, or remaining? Unclear from name.
+        // (SW) Rename to "TotalStudyFolders"
         [DataMember(IsRequired = true)]
         public int StudyFoldersToProcess { get; set; }
 
@@ -248,6 +253,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         }
 
         // TODO (CR Jun 2012 - Med): Is this a total, or remaining? Unclear from name.
+        // (SW) Rename to TotalStudiesToProcess
         [DataMember(IsRequired = true)]
         public int StudiesToProcess { get; set; }
 

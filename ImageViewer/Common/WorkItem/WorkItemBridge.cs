@@ -140,6 +140,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             WorkItemInsertResponse response = null;
 
             // TODO (CR Jun 2012): This used?
+            // (SW) This was intended to be used for auditing purposes on the server side, and may be needed to get auditing working properly
             if(string.IsNullOrEmpty(request.UserName))
                 request.UserName = GetUserName();
             
