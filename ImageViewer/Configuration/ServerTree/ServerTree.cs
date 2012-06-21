@@ -191,14 +191,14 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
             for (int i = 0; i < serverGroup.Servers.Count; i++)
             {
-                if (serverGroup.Servers[i].Name == CurrentNode.Name)
-                {
-                    serverGroup.Servers[i] = newServer;
-                    ((ServerTreeDicomServer)newServer).ChangeParentPath(serverGroup.Path);
-                    CurrentNode = newServer;
-                    FireServerTreeUpdatedEvent();
-                    break;
-                }
+                if (serverGroup.Servers[i].Name != CurrentNode.Name)
+                    continue;
+                
+                serverGroup.Servers[i] = newServer;
+                ((ServerTreeDicomServer)newServer).ChangeParentPath(serverGroup.Path);
+                CurrentNode = newServer;
+                FireServerTreeUpdatedEvent();
+                break;
             }
         }
 

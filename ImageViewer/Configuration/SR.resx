@@ -397,4 +397,10 @@ You can click the "Stop Local Service" link now, or cancel your changes.</value>
   <data name="DicomSendConfiguration" xml:space="preserve">
     <value>DICOM Send</value>
   </data>
+  <data name="ConfirmAETitleConflict_MultipleServers" xml:space="preserve">
+    <value>{0} other servers exist with the same AE Title, but different host names and/or ports. Are you sure you want to apply this change?</value>
+  </data>
+  <data name="ConfirmAETitleConflict_OneServer" xml:space="preserve">
+    <value>Another server exists with the same AE Title, but a different host name and/or port. Are you sure you want to apply this change?</value>
+  </data>
 </root>
