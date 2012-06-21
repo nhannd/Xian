@@ -122,9 +122,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember(IsRequired = true)]
         public int NumberOfProcessingFailures { get; set; }
 
-        [DataMember(IsRequired = false)]
-        public string OtherFatalFailures { get; set; }
-
         public int TotalFilesProcessed
         {
             get { return NumberOfFilesProcessed + NumberOfProcessingFailures; }
@@ -140,10 +137,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                var error = string.Format(SR.StudyProcessProgress_Status, NumberOfFilesProcessed, TotalFilesToProcess, NumberOfProcessingFailures);
-
-                if (string.IsNullOrEmpty(OtherFatalFailures)==false)
-                    return string.Format("{0}. {1}", error, OtherFatalFailures);
+                var error = string.Format(SR.StudyProcessProgress_Status, NumberOfFilesProcessed, TotalFilesToProcess, NumberOfProcessingFailures);           
                 return error;
             }
         }

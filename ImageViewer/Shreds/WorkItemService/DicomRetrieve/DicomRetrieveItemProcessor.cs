@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
@@ -131,7 +132,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
                     Proxy.Cancel();
                 }
             }
-            else if (_scu.FailureSubOperations > 0)
+            else if (_scu.FailureSubOperations > 0 || _scu.Failed)
             {
                 Progress.IsCancelable = true;
                 Proxy.Fail(!string.IsNullOrEmpty(_scu.ErrorDescriptionDetails) ? _scu.ErrorDescriptionDetails : _scu.FailureDescription, WorkItemFailureType.NonFatal);

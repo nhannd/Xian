@@ -38,7 +38,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         #region Public Properties
 
         public string ErrorDescriptionDetails { get { return _errorDescriptionDetails; } }
-        
+
+        /// <summary>
+        /// Gets a value indicating whether or not the operation as a whole (as opposed to an individual sub-operation) has failed.
+        /// </summary>
+        /// <remarks>
+        /// Typically, this refers to exceptions being thrown on the connection socket.
+        /// </remarks>
+        public bool Failed { get; private set; }
+
         #endregion
 
         #region Public Constructor
@@ -105,6 +113,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
             try
             {
+                Failed = false;
+
                 Move();
 
                 if (Status == ScuOperationStatus.Canceled)
@@ -121,37 +131,45 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 {
                     _errorDescriptionDetails = String.Format("Unable to connect to remote server ({0}: {1}).",
                         RemoteAE, FailureDescription ?? "no failure description provided");
+                    Failed = true;
                 }
                 else if (Status == ScuOperationStatus.AssociationRejected)
                 {
                     _errorDescriptionDetails = String.Format("Association rejected ({0}: {1}).",
                         RemoteAE, FailureDescription ?? "no failure description provided");
+                    Failed = true;
                 }
                 else if (Status == ScuOperationStatus.Failed)
                 {
                     _errorDescriptionDetails = String.Format("The Retrieve failed ({0}: {1}).",
                         RemoteAE, FailureDescription ?? "no failure description provided");
+                    Failed = true;
                 }
                 else if (Status == ScuOperationStatus.TimeoutExpired)
                 {
                     //ignore, because this is the scu, we don't want users to think an error has occurred
                     //in retrieving.
+                    Failed = true;
                 }
                 else if (Status == ScuOperationStatus.UnexpectedMessage)
                 {
                     //ignore, because this is the scu, we don't want users to think an error has occurred
                     //in retrieving.
+                    Failed = true;
                 }
                 else if (Status == ScuOperationStatus.NetworkError)
                 {
-                    //ignore, because this is the scu, we don't want users to think an error has occurred
-                    //in retrieving.
+                    _errorDescriptionDetails = String.Format("The Retrieve failed ({0}: {1}).",
+                       RemoteAE, FailureDescription ?? "no failure description provided");
+                    Failed = true;
                 }
 
                 AuditRetrieveOperation(true);
             }
             catch (Exception e)
             {
+                Failed = true;
+
                 if (Status == ScuOperationStatus.ConnectFailed)
                 {
                     _errorDescriptionDetails = String.Format("Unable to connect to remote server ({0}: {1}).",

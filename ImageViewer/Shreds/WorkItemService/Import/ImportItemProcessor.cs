@@ -61,6 +61,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 return;
             }
 
+            bool fatalError = false;
+
             //it's ok to read this property unsynchronized because this is the only thread that is adding to the queue for the particular job.
             if (Request.FilePaths.Count == 0)
             {
@@ -78,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                         return;
                     }
 
-                    ImportFiles(Request.FilePaths, Request.FileExtensions, Request.Recursive);
+                    fatalError = ImportFiles(Request.FilePaths, Request.FileExtensions, Request.Recursive);
                 }
 
                 GC.Collect();
@@ -88,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 Proxy.Cancel();
             else if (StopPending)
                 Proxy.Postpone();
-            else if (Progress.NumberOfImportFailures > 0)
+            else if (fatalError || Progress.NumberOfImportFailures > 0)
                 Proxy.Fail(WorkItemFailureType.Fatal);
             else
                 Proxy.Complete();
@@ -133,12 +135,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
         private void ImportFile(string file, ImportStudyContext context)
         {
-            EnsureMaxUsedSpaceNotExceeded();
-
             // Note, we're not doing impersonation of the user's identity, so we may have failures here
             // which would be new in Marmot.
             try
             {
+                EnsureMaxUsedSpaceNotExceeded();
+
                 var dicomFile = new DicomFile(file);
 
                 DicomReadOptions readOptions = Request.FileImportBehaviour == FileImportBehaviourEnum.Save
@@ -158,8 +160,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 else
                 {
                     Progress.NumberOfImportFailures++;
-                    Progress.StatusDetails = string.Format("{0}: {1}",file, result.ErrorMessage);
+                    Progress.StatusDetails = result.ErrorMessage;
                 }
+            }
+            catch (NotEnoughStorageException)
+            {
+                Progress.NumberOfImportFailures++;
+                Progress.StatusDetails = SR.ExceptionNotEnoughStorage;
+                context.FatalError = true;
             }
             catch (Exception e)
             {
@@ -170,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
         }
 
 
-        private void ImportFiles(IList<string> filePaths,
+        private bool ImportFiles(IList<string> filePaths,
             IEnumerable<string> fileExtensions,
             bool recursive)
         {
@@ -203,6 +211,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                                       {
                                           cancel = false;
 
+                                          if (CancelPending || StopPending || context.FatalError)
+                                          {
+                                              cancel = true;
+                                              return;
+                                          }
+
                                           bool enqueue = false;
                                           foreach (string extension in extensions)
                                           {
@@ -217,13 +231,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
                                           if (enqueue)
                                           {
-                                              if (CancelPending || StopPending)
-                                              {
-                                                  return;
-                                              }
-
-                                              Progress.StatusDetails = String.Format(SR.FormatEnumeratingFile, file);
-
                                               ++Progress.TotalFilesToImport;
                                               
                                               Proxy.UpdateProgress();
@@ -236,9 +243,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 Progress.PathsImported++;
                 Proxy.UpdateProgress();
 
-                if (CancelPending || StopPending)
+                if (CancelPending || StopPending || context.FatalError)
                     break;
             }
+
+            return context.FatalError;
         }
 
         #endregion

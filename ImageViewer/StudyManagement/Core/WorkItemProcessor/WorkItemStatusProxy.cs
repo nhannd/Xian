@@ -21,7 +21,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
     /// </summary>
     public enum WorkItemFailureType
     {
+        /// <summary>
+        /// Fatal errors cause the WorkItem to fail immediately.
+        /// </summary>
         Fatal,
+        /// <summary>
+        /// Non-fatal errors cause a retry of the WorkItem
+        /// </summary>
         NonFatal
     }
 
