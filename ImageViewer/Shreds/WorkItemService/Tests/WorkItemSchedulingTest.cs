@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
                                            {
                                                Patient = new WorkItemPatient(msg.DataSet),
                                                Study = new WorkItemStudy(msg.DataSet),
-                                               FromAETitle = "TEST"
+                                               SourceServerName = "TEST"
                                            }
                          };
             var rsp = WorkItemService.Instance.Insert(rq);

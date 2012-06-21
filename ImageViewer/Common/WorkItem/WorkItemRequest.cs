@@ -591,11 +591,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         /// TODO (CR Jun 2012 - High): Should be server name because we need to support the possibility of multiple servers with same AE.
         [DataMember(IsRequired = true)]
-        public string FromAETitle { get; set; }
+        public string SourceServerName { get; set; }
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomReceiveRequest_ActivityDescription, FromAETitle); }
+            get { return string.Format(SR.DicomReceiveRequest_ActivityDescription, SourceServerName); }
         }
 
         public override string ActivityTypeString

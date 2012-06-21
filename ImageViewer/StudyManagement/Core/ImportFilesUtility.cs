@@ -76,8 +76,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// Constructor.
         /// </summary>
         /// <param name="sourceAE">The AE title of the remote application sending the SOP Instances.</param>
+        /// <param name="hostname">The hostname. </param>
         /// <param name="configuration">Storage configuration. </param>
-        public DicomReceiveImportContext(string sourceAE, StorageConfiguration configuration) : base(sourceAE, configuration)
+        public DicomReceiveImportContext(string sourceAE, string hostname, StorageConfiguration configuration) : base(sourceAE, configuration)
         {
             // TODO (CR Jun 2012 - Med): This object is disposable and should be cleaned up.
 
@@ -85,8 +86,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             _monitor.WorkItemsChanged += WorkItemsChanged;
 
             var serverList = ServerDirectory.GetRemoteServersByAETitle(sourceAE);
-            if (serverList.Count > 0)
+            if (serverList.Count == 1)
                 _dicomServerNode = CollectionUtils.FirstElement(serverList);
+            else if (serverList.Count > 1)
+                foreach (var node in serverList)
+                {
+                    if (node.ScpParameters != null && hostname != null && node.ScpParameters.HostName.ToLower().Equals(hostname.ToLower()))
+                    {
+                        _dicomServerNode = node;
+                        break;
+                    }
+                }
         }
 
         #endregion
@@ -102,7 +112,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         {
             var request = new DicomReceiveRequest
                               {
-                                  FromAETitle = _dicomServerNode == null ? SourceAE : _dicomServerNode.Name,
+                                  SourceServerName = _dicomServerNode == null ? SourceAE : _dicomServerNode.Name,
                                   Priority = WorkItemPriorityEnum.High,
                                   Patient = new WorkItemPatient(message.DataSet),
                                   Study = new WorkItemStudy(message.DataSet)
