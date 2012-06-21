@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                 foreach (var file in files)
                 {
-                    // TODO (CR Jun 2012): The publisher also audits, and it's going to do it once per file, so there will be an excessive number of audit logs generated.
+                    // TODO (CR Jun 2012 - Med): The publisher also audits, and it's going to do it once per file, so there will be an excessive number of audit logs generated.
                     var importResult = utility.Import(file, BadFileBehaviourEnum.Ignore, FileImportBehaviourEnum.Save);
                     if (importResult.DicomStatus != DicomStatuses.Success)
                     {

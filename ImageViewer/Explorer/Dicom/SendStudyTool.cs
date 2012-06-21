@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void UpdateEnabled()
 		{
-            Visible = Context.SelectedServers.AllSupport<IWorkItemService>(); // TODO (Marmot): =IsLocal?
+            Visible = Context.SelectedServers.AllSupport<IWorkItemService>();
 			Enabled = Context.SelectedStudies.Count > 0
 			          && Context.SelectedServers.AllSupport<IWorkItemService>()
                       && WorkItemActivityMonitor.IsRunning;

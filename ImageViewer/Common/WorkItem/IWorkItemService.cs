@@ -150,7 +150,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         [OperationContract]
         WorkItemSubscribeResponse Subscribe(WorkItemSubscribeRequest request);
-
+        
         [OperationContract]
         WorkItemUnsubscribeResponse Unsubscribe(WorkItemUnsubscribeRequest request);
 

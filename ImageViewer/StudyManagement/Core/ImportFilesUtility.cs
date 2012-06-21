@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// <param name="configuration">Storage configuration. </param>
         public DicomReceiveImportContext(string sourceAE, StorageConfiguration configuration) : base(sourceAE, configuration)
         {
-            // TODO (CR Jun 2012): This object is disposable and should be cleaned up.
+            // TODO (CR Jun 2012 - Med): This object is disposable and should be cleaned up.
 
             _monitor = WorkItemActivityMonitor.Create(false);
             _monitor.WorkItemsChanged += WorkItemsChanged;
@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
         private void WorkItemsChanged(object sender, WorkItemsChangedEventArgs e)
         {
-            // TODO (CR Jun 2012): ObservableDictionary is not thread safe, and even though this
+            // TODO (CR Jun 2012 - Med): ObservableDictionary is not thread safe, and even though this
             // is a "read" operation, all usages of StudyWorkItems should be inside a lock.
             foreach (var item in e.ChangedItems)
             {

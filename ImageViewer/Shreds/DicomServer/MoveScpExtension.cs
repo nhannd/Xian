@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			: base(GetSupportedSops())
 		{
 			_sendOperations = new List<SendOperationInfo>();
-            // TODO (CR Jun 2012): This item is disposable and should ideally be cleaned up.
+            // TODO (CR Jun 2012 - Med): This item is disposable and should ideally be cleaned up.
             _activityMonitor = WorkItemActivityMonitor.Create(false);
 		    _activityMonitor.WorkItemsChanged += UpdateProgress;
 		}

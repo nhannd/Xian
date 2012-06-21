@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
             var group = new SettingsGroupDescriptor(settingsClass);
 
             var storedValues = _store.GetSettingsValues(group, null, settingsKey);
-            // TODO (CR Jun 2012): This says we can only upgrade if there are already settings values for the current version. Shouldn't it be the opposite?
+            // TODO (CR Jun 2012 - High): This says we can only upgrade if there are already settings values for the current version. Shouldn't it be the opposite?
             return storedValues != null && storedValues.Count > 0;
         }
 

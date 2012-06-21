@@ -152,15 +152,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return WorkItemConcurrency.StudyRead; }
         }
 
-        /// TODO (CR Jun 2012): Unclear what this is supposed to be (AE, Server Name). Should be server name.
+        /// TODO (CR Jun 2012 - High): Unclear what this is supposed to be (AE, Server Name). Should be server name.
         [DataMember]
         public string Destination { get; set; }
 
-        // TODO (CR Jun 2012): Isn't it better to just pass a TS UID?
+        // TODO (CR Jun 2012 - Med): Isn't it better to just pass a TS UID?
         [DataMember]
         public CompressionType CompressionType { get; set; }
 
-        // TODO (CR Jun 2012): Expected as a percent?
+        // TODO (CR Jun 2012 - Med): Expected as a percent?
         [DataMember]
         public int CompressionLevel { get; set; }
     }
@@ -290,7 +290,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            // TODO (CR Jun 2012): This will confuse the user because it says "Send Series", but the filter type in the activity monitor will be "publish files".
+            // TODO (CR Jun 2012 - High): This will confuse the user because it says "Send Series", but the filter type in the activity monitor will be "publish files".
             get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, Destination); }
         }
 
@@ -401,7 +401,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [EnumMember]
         NonStudy,
 
-        // TODO (CR Jun 2012): Update, rather than Insert?
+        // TODO (CR Jun 2012 - Med): Update, rather than Insert?
         [EnumMember]
         StudyInsert,
         [EnumMember]
@@ -479,7 +479,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return WorkItemConcurrency.StudyRead; }
         }
 
-        /// TODO (CR Jun 2012): Unclear what this is supposed to be (AE, Server Name). Should be server name.
+        /// TODO (CR Jun 2012 - Med): Unclear what this is supposed to be (AE, Server Name). Should be server name.
         [DataMember]
         public string Source { get; set; }
     }
@@ -582,7 +582,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return WorkItemConcurrency.StudyInsert; }
         }
 
-        /// TODO (CR Jun 2012): Should be server name because we need to support the possibility of multiple servers with same AE.
+        /// TODO (CR Jun 2012 - High): Should be server name because we need to support the possibility of multiple servers with same AE.
         [DataMember(IsRequired = true)]
         public string FromAETitle { get; set; }
 

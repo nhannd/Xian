@@ -202,9 +202,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 
                 if (list == null)
                     return false;
+                
                 foreach (var item in list)
                 {
-                    // TODO (CR Jun 2012): What about "StudyDelete"?
+                    // TODO (CR Jun 2012 - Med): Does this mean it can run at the same time as a study delete?
                     if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
                     {
                         reason = string.Format("Waiting for: {0}",

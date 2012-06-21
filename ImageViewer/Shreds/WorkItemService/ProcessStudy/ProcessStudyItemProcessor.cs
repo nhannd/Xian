@@ -28,6 +28,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
     /// </summary>
     internal class StudyProcessProcessor : BaseItemProcessor<ProcessStudyRequest,ProcessStudyProgress>
     {
+        // TODO (CR Jun 2012 - Med): I think this class should be doing some auditing.
+
         #region Public Properties
 
         public Study Study { get; set; }
@@ -252,6 +254,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
 
                         if (fileList.Count >= maxBatch)
                         {
+                            // TODO (CR Jun 2012 - Med): This method indicates there is a relation between "process count" and the number
+                            // of SOPs processed, but successfulProcessCount is only incremented by 1 for all the SOPs processed here.
+                            // Will this unnecessarily slow processing down?
+                            // Maybe ProcessWorkQueueUids should return the number processed successfully?
+
                             if (ProcessWorkQueueUids(fileList, studyXml))
                                 successfulProcessCount++;
 

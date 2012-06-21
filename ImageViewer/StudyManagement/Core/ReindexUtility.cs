@@ -21,7 +21,7 @@ using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
-    // TODO (CR Jun 2012): Should re-index be auditing all the studies it finds/deletes?
+    // TODO (CR Jun 2012 - Med): Should re-index be auditing all the studies it finds/deletes?
 
     /// <summary>
     /// Class for performing a Reindex of the database.

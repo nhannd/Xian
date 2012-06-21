@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Common
 
         private DriveInfo _driveInfo;
 
-	    // TODO (CR Jun 2012): the fact that these values get cached is not totally clear, and has caused problems once already.
+	    // TODO (CR Jun 2012 - Med): the fact that these values get cached is not totally clear, and has caused problems once already.
         // Need to rethink this a bit, and maybe build in a refresh time interval.
 
         //Mostly for unit testing.

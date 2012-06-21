@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Common
         {
             get 
             {
-                // TODO (CR Jun 2012): Reading this property requires a lock, too, not just writes. Otherwise,
+                // TODO (CR Jun 2012 - Med): Reading this property requires a lock, too, not just writes. Otherwise,
                 // threads that don't first call IsMaxUsedSpaceExceeded before accessing this property may
                 // continually see old values, causing the same problem to occur that this class was written to prevent!
                 return StorageConfiguration.MaximumUsedSpacePercent;
@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Common
         {
             get
             {
-                // TODO (CR Jun 2012): Reading this property requires a lock, too, not just writes. Otherwise,
+                // TODO (CR Jun 2012 - Med): Reading this property requires a lock, too, not just writes. Otherwise,
                 // threads that don't first call IsMaxUsedSpaceExceeded before accessing this property may
                 // continually see old values, causing the same problem to occur that this class was written to prevent!
                 return FileStoreDiskSpace.UsedSpacePercent;
