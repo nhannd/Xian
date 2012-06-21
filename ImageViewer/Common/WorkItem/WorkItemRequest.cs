@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         /// TODO (CR Jun 2012 - High): Unclear what this is supposed to be (AE, Server Name). Should be server name.
         /// (SW) - This is server name, but should be renamed.
         [DataMember]
-        public string Destination { get; set; }
+        public string DestinationServerName { get; set; }
 
         // TODO (CR Jun 2012 - Med): Isn't it better to just pass a TS UID?
         // (SW) No - because at the time of request, we don't know if it should be Baseline vs. Extended for JPEG lossy, we push the decision
@@ -191,7 +191,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomSendStudyRequest_ActivityDescription, Destination); }
+            get { return string.Format(SR.DicomSendStudyRequest_ActivityDescription, DestinationServerName); }
         }
 
         public override string ActivityTypeString
@@ -221,7 +221,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, Destination); }
+            get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, DestinationServerName); }
         }
 
         public override string ActivityTypeString
@@ -255,7 +255,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomSendSopRequest_ActivityDescription, Destination); }
+            get { return string.Format(SR.DicomSendSopRequest_ActivityDescription, DestinationServerName); }
         }
 
         public override string ActivityTypeString
@@ -293,7 +293,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.PublishFilesRequest_ActivityDescription, Destination); }
+            get { return string.Format(SR.PublishFilesRequest_ActivityDescription, DestinationServerName); }
         }
 
         public override string ActivityTypeString
@@ -326,7 +326,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomAutoRouteRequest_ActivityDescription, Destination, Patient.PatientsName); }
+            get { return string.Format(SR.DicomAutoRouteRequest_ActivityDescription, DestinationServerName, Patient.PatientsName); }
         }
 
         public override string ActivityTypeString
