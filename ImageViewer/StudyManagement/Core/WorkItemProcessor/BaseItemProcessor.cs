@@ -137,7 +137,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
          
             if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
             {
-                var relatedList = FindRelatedWorkItems();
+                var relatedList = GetCompetingWorkItems();
                 if (relatedList != null)
                 {
                     foreach (var relatedWorkItem in relatedList)
@@ -152,12 +152,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                     }
                 }
                 reason = string.Empty;
-                return !ReindexScheduled();
+                return !CompetingReindexScheduled();
             }
 
             if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete)
             {
-                var inProgressList = FindRelatedInProgressWorkItems();
+                var inProgressList = GetCompetingInProgressWorkItems();
                 if (inProgressList != null)
                 {
                     foreach (var relatedWorkItem in inProgressList)
@@ -174,7 +174,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                     }
                 }
 
-                var relatedList = FindRelatedWorkItems();
+                var relatedList = GetCompetingWorkItems();
                 if (relatedList != null)
                 {
                     foreach (var relatedWorkItem in relatedList)
@@ -188,12 +188,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                     }
                 }
                 reason = string.Empty;
-                return !ReindexScheduled();
+                return !CompetingReindexScheduled();
             }
 
             if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyRead)
             {
-                var relatedList = FindRelatedWorkItems();
+                var relatedList = GetCompetingWorkItems();
                 if (relatedList != null)
                 {
                     foreach (var relatedWorkItem in relatedList)
@@ -209,7 +209,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 }
 
                 reason = string.Empty;
-                return !ReindexScheduled();
+                return !CompetingReindexScheduled();
             }
 
             // TODO (CR Jun 2012): I would agree this was true generally, if it weren't for the fact that re-index items are "NonStudy",
@@ -297,11 +297,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         // TODO (CR Jun 2012): Name - GetCompetingWorkItems? Technically, this is only getting items that can potentially run before "this" item.
 
         /// <summary>
-        /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
-        /// and related to the given <see cref="WorkItem"/> 
+        /// Returns a list of <see cref="WorkItem"/>s with specified types and status (both are optional)
+        /// that are scheduled before the <see cref="WorkItem"/> being processed.
         /// </summary>
         /// <returns></returns>
-        protected IList<WorkItem> FindRelatedWorkItems( )
+        protected IList<WorkItem> GetCompetingWorkItems( )
         {
             using (var context = new DataAccessContext())
             {
@@ -319,7 +319,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 {
                     prioritiesToBlock.Add(WorkItemPriorityEnum.Normal);
                 }
-                var list = broker.GetPriorWorkItems(Proxy.Item.ScheduledTime,prioritiesToBlock, Proxy.Item.StudyInstanceUid);
+                var list = broker.GetPriorWorkItems(Proxy.Item.ScheduledTime, prioritiesToBlock, Proxy.Item.StudyInstanceUid);
 
                 if (list == null)
                     return null;
@@ -332,11 +332,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 
         // TODO (CR Jun 2012): Name - GetCompetingInProgressWorkItems?
         /// <summary>
-        /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
-        /// and related to the given <see cref="WorkItem"/> 
+        /// Returns a list of related <see cref="WorkItem"/>s with specified types and status (both are optional)
+        /// that are In Progress and scheduled before the <see cref="WorkItem"/> being processed.
         /// </summary>
         /// <returns></returns>
-        protected IList<WorkItem> FindRelatedInProgressWorkItems()
+        protected IList<WorkItem> GetCompetingInProgressWorkItems()
         {
             using (var context = new DataAccessContext())
             {
@@ -362,11 +362,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         // whether or not one is scheduled ahead of "this" item.
 
         /// <summary>
-        /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
-        /// and related to the given <see cref="WorkItem"/> 
+        /// Checks if a Reindex is scheduled that should prevent the current <see cref="WorkItem"/> from processing.
         /// </summary>
         /// <returns></returns>
-        protected bool ReindexScheduled()
+        protected bool CompetingReindexScheduled()
         {
             using (var context = new DataAccessContext())
             {
