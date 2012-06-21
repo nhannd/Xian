@@ -399,7 +399,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 var request = new DicomSendStudyRequest
                 {
-                    Destination = remoteAEInfo.Name,
+                    DestinationServerName = remoteAEInfo.Name,
                     Priority = priority,
                     Study = new WorkItemStudy(study),
                     Patient = new WorkItemPatient(study)
@@ -436,7 +436,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 var request = new DicomSendSeriesRequest
                                   {
-                                      Destination = remoteAEInfo.Name,
+                                      DestinationServerName = remoteAEInfo.Name,
                                       SeriesInstanceUids = new List<string>(),
                                       Priority = priority,
                                       Study = new WorkItemStudy(study),
@@ -473,7 +473,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 var request = new DicomSendSopRequest
                                   {
-                                      Destination = remoteAEInfo.Name,
+                                      DestinationServerName = remoteAEInfo.Name,
                                       SeriesInstanceUid = seriesInstanceUid,
                                       SopInstanceUids = new List<string>(),
                                       Priority = priority,
@@ -510,7 +510,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 var request = new PublishFilesRequest
                                   {
-                                      Destination = remoteAEInfo.Name,
+                                      DestinationServerName = remoteAEInfo.Name,
                                       Priority = WorkItemPriorityEnum.High,
                                       DeletionBehaviour = behaviour,
                                       Study = new WorkItemStudy(study),
