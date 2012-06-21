@@ -471,6 +471,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                                                              && item.Status != WorkItemStatusEnum.Failed);
 
                 // TODO (CR Jun 2012): Need a comment about why this is here - not totally clear.
+                // Study Inserts only wait for reindexes scheduled before itself, not for those after.  All other 
+                // WorkItem types wait for any reindex scheduled, whether its scheduled before or after itself.
                 if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
                 {
                     newList = CollectionUtils.Select(newList,

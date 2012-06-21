@@ -206,9 +206,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
                 foreach (var item in list)
                 {
                     // TODO (CR Jun 2012 - Med): Does this mean it can run at the same time as a study delete?
-                    // (SW) Yes, it does, we should fix.  The Insert WorkItems were originally like this, but it was changed there, but not here, 
-                    // Should double check both StudyInsert & StudyDelete scheduling to make sure it deals with Reindexes properly so that you
-                    // don't get into a situation where they block each other from processing
+                    // StudyInserts only wait for reindexes scheduled before themselves.  They will not wait
+                    // for a reindex after.  So, the reindex must wait until any study insert before it
+                    // completes.
+                    // A delete will wait for any re-index scheduled, even ones scheduled after it.
                     if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
                     {
                         reason = string.Format("Waiting for: {0}",
