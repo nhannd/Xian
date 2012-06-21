@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Common
         static private readonly object _sync = new object();
         static DateTime? _scheduledRefreshTime;
         static DateTime? _lastConfigUpdate;
-        
+
         static string _fileStorePath;
         static StorageConfiguration _storageConfig;
         static Diskspace _diskspace;
@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Common
                 lock (_sync)
                 {
                     RefreshDiskspace();
-
+                    // TODO (CR Jun 2012): there is a IsMaxUsedSpaceExceeded property on StorageConfiguration. Why not use that?
                     return FileStoreDiskSpace.UsedSpacePercent > StorageConfiguration.MaximumUsedSpacePercent;
                 }
             }
@@ -60,6 +60,9 @@ namespace ClearCanvas.ImageViewer.Common
         {
             get 
             {
+                // TODO (CR Jun 2012): Reading this property requires a lock, too, not just writes. Otherwise,
+                // threads that don't first call IsMaxUsedSpaceExceeded before accessing this property may
+                // continually see old values, causing the same problem to occur that this class was written to prevent!
                 return StorageConfiguration.MaximumUsedSpacePercent;
             }
         }
@@ -68,6 +71,9 @@ namespace ClearCanvas.ImageViewer.Common
         {
             get
             {
+                // TODO (CR Jun 2012): Reading this property requires a lock, too, not just writes. Otherwise,
+                // threads that don't first call IsMaxUsedSpaceExceeded before accessing this property may
+                // continually see old values, causing the same problem to occur that this class was written to prevent!
                 return FileStoreDiskSpace.UsedSpacePercent;
             }
         }
@@ -81,6 +87,10 @@ namespace ClearCanvas.ImageViewer.Common
 
                     double prevMaxUsed = _storageConfig != null ? _storageConfig.MaximumUsedSpacePercent : 0;
                     _storageConfig = StudyStore.GetConfiguration();
+
+                    // TODO (CR Jun 2012): redundant because accessing storageConfig.MaximumUsedSpacePercent
+                    // has already caused that object to create a DiskSpace object and check the current space.
+                    // May as well just delete this code.
 
                     // detect change
                     if (prevMaxUsed == 0 || prevMaxUsed != _storageConfig.MaximumUsedSpacePercent)
@@ -99,6 +109,7 @@ namespace ClearCanvas.ImageViewer.Common
         {
             get
             {
+                // TODO (CR Jun 2012): why do this when StorageConfiguration will have already created a Diskspace object?
                 if (_diskspace == null)
                 {
                     _diskspace = new Diskspace(FileStoreRootPath);

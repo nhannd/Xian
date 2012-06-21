@@ -24,6 +24,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common
 {
+    // TODO (CR Jun 2012): I think this should go back in Shreds or at least in a "ServiceUtilities" subnamespace or something.
+    // Its presence in Common implies it's usable from anywhere, which technically isn't true.
+
 	internal static class PublishManager<T>
 		where T : class
 	{

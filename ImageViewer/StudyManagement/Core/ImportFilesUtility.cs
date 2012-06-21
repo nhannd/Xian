@@ -79,6 +79,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// <param name="configuration">Storage configuration. </param>
         public DicomReceiveImportContext(string sourceAE, StorageConfiguration configuration) : base(sourceAE, configuration)
         {
+            // TODO (CR Jun 2012): This object is disposable and should be cleaned up.
+
             _monitor = WorkItemActivityMonitor.Create(false);
             _monitor.WorkItemsChanged += WorkItemsChanged;
 
@@ -124,6 +126,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
         private void WorkItemsChanged(object sender, WorkItemsChangedEventArgs e)
         {
+            // TODO (CR Jun 2012): ObservableDictionary is not thread safe, and even though this
+            // is a "read" operation, all usages of StudyWorkItems should be inside a lock.
             foreach (var item in e.ChangedItems)
             {
                 if (item.Request is DicomReceiveRequest)
@@ -306,8 +310,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
             String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
             String accessionNumber = message.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
-            String patientsName = message.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);            
+            String patientsName = message.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
 
+            // TODO (CR Jun 2012): This appears to do nothing.
             string newName = patientsName;
             if (!newName.Equals(patientsName))
                 message.DataSet[DicomTags.PatientsName].SetStringValue(newName);
@@ -456,6 +461,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     {
                         result.DicomStatus = DicomStatuses.Success;
 
+                        // TODO (CR Jun 2012): What about the first image imported? It won't be in this dictionary.
                         if (_context.StudyWorkItems.ContainsKey(result.StudyInstanceUid))
                         {
                             var progress = command.WorkItem.Progress as ProcessStudyProgress;
@@ -477,6 +483,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                 }
                             }
 
+                            // TODO (CR Jun 2012): ImportItemProcess publishes as items are added to the dictionary, which happens right after this.
                             Platform.GetService(
                                  (IWorkItemActivityMonitorService service) =>
                                  service.Publish(new WorkItemPublishRequest { Item = WorkItemDataHelper.FromWorkItem(command.WorkItem) }));
@@ -556,6 +563,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
             if (string.IsNullOrEmpty(studyInstanceUid))
                 throw new DicomDataException("Study Instance UID does not have a value.");
+
+            // TODO (CR Jun 2012): What about SeriesInstanceUid?
 
             String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
             if (string.IsNullOrEmpty(sopInstanceUid))

@@ -149,7 +149,6 @@ namespace ClearCanvas.ImageViewer.Common
             return false;
         }
 
-        //TODO (Marmot):Name?
         public static IDicomServiceNode FindServer(this IIdentifier identifier, bool defaultToLocal)
         {
             if (identifier.RetrieveAE != null)

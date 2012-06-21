@@ -21,6 +21,8 @@ using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
+    // TODO (CR Jun 2012): Should re-index be auditing all the studies it finds/deletes?
+
     /// <summary>
     /// Class for performing a Reindex of the database.
     /// </summary>
@@ -212,6 +214,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
             StudyFoldersToScan = DirectoryList.Count;
 
+            // TODO (CR Jun 2012): Seems we're using the "work item" mutex for all updates to the database.
+            // Should we just pass in a boolean specifying whether or not to use a mutex?
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var broker = context.GetStudyBroker();
@@ -375,6 +379,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                                               {
                                                                   var del = new ThreadPoolStopProxy(r);
                                                                   _threadPool.StartStopStateChangedEvent += del.ProxyDelegate;
+                                                                  // TODO (CR Jun 2012): Should check the thread pool state right after
+                                                                  // subscribing; otherwise, the folder will process to completion, rather than canceling.
 
                                                                   r.Process();
 
@@ -394,6 +400,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             }
             catch (Exception x)
             {
+                // TODO (CR Jun 2012): Shouldn't this cause the work item to fail?
                 Platform.Log(LogLevel.Error, x, "Unexpected exception reindexing folder: {0}", folder);
             }
         }

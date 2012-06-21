@@ -122,6 +122,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 
         #endregion
 
+	    // TODO (CR Jun 2012): Delete
 	    public int[] BitsAllocatedInSeries
 	    {
 	        get 
@@ -132,6 +133,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             }
 	    }
 
+        // TODO (CR Jun 2012): Delete
         public int[] BitsStoredInSeries
         {
             get
@@ -142,6 +144,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             }
         }
 
+        // TODO (CR Jun 2012): Delete
         public string[] PhotometricInterpretationsInSeries
         {
             get
@@ -162,6 +165,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             }
         }
 
+        // TODO (CR Jun 2012): Delete
         public string[] TransferSyntaxesInSeries
         {
             get

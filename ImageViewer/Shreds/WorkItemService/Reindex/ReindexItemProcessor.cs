@@ -204,6 +204,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
                     return false;
                 foreach (var item in list)
                 {
+                    // TODO (CR Jun 2012): What about "StudyDelete"?
                     if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
                     {
                         reason = string.Format("Waiting for: {0}",

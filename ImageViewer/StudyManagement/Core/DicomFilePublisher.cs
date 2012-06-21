@@ -154,12 +154,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
             var configuration = GetServerConfiguration();
             var context = new ImportStudyContext(configuration.AETitle, StudyStore.GetConfiguration());
+
+            // TODO (CR Jun 2012): Should the ImportFilesUtility be doing the auditing?
             var utility = new ImportFilesUtility(context);
 
             // setup auditing information
             var result = EventResult.Success;
 
-            // TODO (CR Jun 2012): We audit here, but not in PublishRemote.
+            // TODO (CR Jun 2012): We audit here, but not in PublishRemote?
             var auditedInstances = GetAuditedInstances(files, true);
             try
             {

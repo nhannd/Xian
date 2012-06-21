@@ -121,6 +121,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 Item.Progress = Progress;
                 Item.FailureCount = Item.FailureCount + 1;
                 Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);
+
+                // TODO (CR Jun 2012): Not clear from method signature what this failureCount argument is for.
                 if (Item.FailureCount >= failureCount
                     || failureType == WorkItemFailureType.Fatal )
                 {

@@ -35,6 +35,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
 
         protected override void OnUndo()
         {
+            // TODO (CR Jun 2012): Possible for it to have already been true when OnExecute fired?
             _uid.Complete = false;
         }
     }

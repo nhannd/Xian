@@ -113,6 +113,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             {
                 try
                 {
+                    // TODO (CR Jun 2012): We don't modify any work items - do we need the mutex?
                     using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
                     {
                         var broker = context.GetStudyBroker();

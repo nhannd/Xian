@@ -31,6 +31,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 	    /// <returns></returns>
 	    public List<WorkItem> GetPendingWorkItemsByPriority(int n, WorkItemPriorityEnum priority)
         {
+	        // TODO (CR Jun 2012): Name of the method isn't really accurate. Should it be GetInactive or something?
+
             return (from w in Context.WorkItems
                     where (w.Status == WorkItemStatusEnum.Pending
                            || w.Status == WorkItemStatusEnum.Idle)
@@ -70,6 +72,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         /// <returns></returns>
         public List<WorkItem> GetPendingWorkItems(int n)
         {
+            // TODO (CR Jun 2012): Name of the method isn't really accurate. Should it be GetInactive or something?
+
             return (from w in Context.WorkItems
                     where (w.Status == WorkItemStatusEnum.Pending
                            || w.Status == WorkItemStatusEnum.Idle)
@@ -108,6 +112,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             return query.AsEnumerable();
         }
 
+	    // TODO (CR Jun 2012): Name - Prior doesn't seem right. Isn't it more like GetWorkItemsScheduledBefore or something?
         /// <summary>
         /// General the WorkItems with the specified parameters.
         /// </summary>
@@ -171,6 +176,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         /// <returns></returns>
         public IEnumerable<WorkItem> GetPendingWorkItemForStudy(string type, string studyInstanceUid)
         {
+            // TODO (CR Jun 2012): Should name of this method be GetActive or GetNonTerminated?
+
             var list = (from w in Context.WorkItems
                         where w.StudyInstanceUid == studyInstanceUid
                               && w.Type == type &&

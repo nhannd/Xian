@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 				if (!context.ApplyDeleteActions)
 					return;
 
-				//TODO (Marmot): do we need WorkItemMutex here??
+			    // TODO (CR Jun 2012): Again, seem to use "work item" mutex for all database updates. Should just pass in a boolean.
 				using (var dac = new DataAccessContext(DataAccessContext.WorkItemMutex))
 				{
 					var broker = dac.GetStudyBroker();

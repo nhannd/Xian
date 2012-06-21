@@ -143,6 +143,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         {
             _sendRequest = request;
 
+            // TODO (CR Jun 2012): Just set it since it's not an event?
+
             // Add a delegate to do the actual selection of the contexts;
             PresentationContextSelectionDelegate += SelectPresentationContext;
 

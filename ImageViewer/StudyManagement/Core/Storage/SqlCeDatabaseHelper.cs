@@ -40,6 +40,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 		public static IDbConnection CreateConnection(string fileName)
 		{
 			string filePath = GetDatabaseFilePath(fileName);
+		    // TODO (CR Jun 2012): Why are we limiting the database size?
             var connectString = string.Format("Data Source = {0}; Default Lock Timeout = 10000;Max Database Size=2048;", filePath);
 
 			if (!File.Exists(filePath))

@@ -212,6 +212,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 return !ReindexScheduled();
             }
 
+            // TODO (CR Jun 2012): I would agree this was true generally, if it weren't for the fact that re-index items are "NonStudy",
+            // and the ReindexItemProcessor overrides this method.
+
             // WorkItemConcurrency.NonStudy entries can just run
             reason = string.Empty;
             return true;
@@ -281,6 +284,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 else
                     sop.FailureCount = (byte) (sop.FailureCount.Value + 1);
 
+                // TODO (CR Jun 2012): In sprint review, we saw RetryCount getting set to 10000, which exceeds byte.MaxValue.
                 if (sop.FailureCount > WorkItemServiceSettings.Default.RetryCount)
                     sop.Failed = true;
 
@@ -367,6 +371,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                     break;
                 }
 
+                // TODO (CR Jun 2012): That's a long time to sleep for a db retry.
+
                 // Sleep for 2-3 minutes
                 DateTime now = Platform.Time;
                 if (now - start > TimeSpan.FromMinutes(rand.Next(2, 3)))
@@ -374,6 +380,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
         }
 
+
+        // TODO (CR Jun 2012): Name - GetCompetingWorkItems? Technically, this is only getting items that can potentially run before "this" item.
 
         /// <summary>
         /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
@@ -409,6 +417,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
         }
 
+        // TODO (CR Jun 2012): Name - GetCompetingInProgressWorkItems?
         /// <summary>
         /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
         /// and related to the given <see cref="WorkItem"/> 
@@ -435,6 +444,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
         }
 
+        // TODO (CR Jun 2012): Comment/Description no longer correct.
+        // TODO (CR Jun 2012): Name isn't totally accurate. It's not just whether a re-index is scheduled, but it's
+        // whether or not one is scheduled ahead of "this" item.
+
         /// <summary>
         /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
         /// and related to the given <see cref="WorkItem"/> 
@@ -457,6 +470,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                                                              && item.Status != WorkItemStatusEnum.Canceled
                                                              && item.Status != WorkItemStatusEnum.Failed);
 
+                // TODO (CR Jun 2012): Need a comment about why this is here - not totally clear.
                 if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
                 {
                     newList = CollectionUtils.Select(newList,
@@ -467,6 +481,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
         }
 
+        // TODO (CR Jun 2012): Name - GetInProgressWorkItems
         /// <summary>
         /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
         /// and related to the given <see cref="WorkItem"/> 

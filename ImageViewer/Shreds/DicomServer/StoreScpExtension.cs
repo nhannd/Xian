@@ -149,6 +149,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                     (IWorkItemActivityMonitorService service) => service.Publish(new WorkItemPublishRequest {Item = WorkItemDataHelper.FromWorkItem(args.Item)}));
             }
 
+		    // TODO (CR Jun 2012): Doesn't look like received files are audited?
 		    var importer = new ImportFilesUtility(_importContext);
 
 		    var result = importer.Import(message,BadFileBehaviourEnum.Ignore, FileImportBehaviourEnum.Save);

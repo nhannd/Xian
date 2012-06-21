@@ -24,7 +24,10 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common
 {
-	internal static class SubscriptionManager<T>
+    // TODO (CR Jun 2012): I think this should go back in Shreds or at least in a "ServiceUtilities" subnamespace or something.
+    // Its presence in Common implies it's usable from anywhere, which technically isn't true.
+    
+    internal static class SubscriptionManager<T>
 		where T : class 
 	{
 		private static readonly object _syncLock;

@@ -69,6 +69,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			: base(GetSupportedSops())
 		{
 			_sendOperations = new List<SendOperationInfo>();
+            // TODO (CR Jun 2012): This item is disposable and should ideally be cleaned up.
             _activityMonitor = WorkItemActivityMonitor.Create(false);
 		    _activityMonitor.WorkItemsChanged += UpdateProgress;
 		}
@@ -121,6 +122,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
                 return progress;
             }
+
+            // TODO (CR Jun 2012): this actually happen?
             var aggregateProgress = new DicomSendProgress();
             foreach (var sendOperation in list)
             {
@@ -373,6 +376,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				OnReceiveCancelRequest(message);
 				return true;
 			}
+
+		    // TODO (CR Jun 2012): Log when there's more than 1.
 
 		    var remoteAE = ServerDirectory.GetRemoteServersByAETitle(message.MoveDestination).FirstOrDefault();
             if (remoteAE == null)

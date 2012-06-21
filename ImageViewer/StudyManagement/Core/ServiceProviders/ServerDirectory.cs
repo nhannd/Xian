@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
 
                 var existing = broker.GetDeviceByName(request.ServerEntry.Server.Name);
                 if (existing != null)
-                    throw new ArgumentException();
+                    throw new ArgumentException(); // TODO (CR Jun 2012): Should set the message, but it's just re-interpreted as a Fault.
 
                 var device = request.ServerEntry.ToDevice();
                 broker.AddDevice(device);
