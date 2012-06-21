@@ -187,9 +187,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             var context = new ImportStudyContext(configuration.AETitle, StudyStore.GetConfiguration());
 
             // Publish the creation of the StudyImport WorkItems
-            context.StudyWorkItems.ItemAdded += (sender, args) => Platform.GetService(
-                (IWorkItemActivityMonitorService service) =>
-                service.Publish(new WorkItemPublishRequest {Item = WorkItemDataHelper.FromWorkItem(args.Item)}));
+            lock (context.StudyWorkItemsSyncLock)
+            {
+                context.StudyWorkItems.ItemAdded += (sender, args) => Platform.GetService(
+                    (IWorkItemActivityMonitorService service) =>
+                    service.Publish(new WorkItemPublishRequest {Item = WorkItemDataHelper.FromWorkItem(args.Item)}));
+                context.StudyWorkItems.ItemChanged += (sender, args) => Platform.GetService(
+                    (IWorkItemActivityMonitorService service) =>
+                    service.Publish(new WorkItemPublishRequest { Item = WorkItemDataHelper.FromWorkItem(args.Item) }));
+            }
 
             var extensions = new List<string>();
 

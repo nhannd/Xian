@@ -146,8 +146,16 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 _importContext = new DicomReceiveImportContext(association.CallingAE, GetRemoteHostName(association), StudyStore.GetConfiguration());
 
                 // Publish new WorkItems as they're added to the context
-                _importContext.StudyWorkItems.ItemAdded += (sender, args) => Platform.GetService(
-                    (IWorkItemActivityMonitorService service) => service.Publish(new WorkItemPublishRequest {Item = WorkItemDataHelper.FromWorkItem(args.Item)}));
+                lock (_importContext.StudyWorkItemsSyncLock)
+                {
+                    _importContext.StudyWorkItems.ItemAdded += (sender, args) => Platform.GetService(
+                        (IWorkItemActivityMonitorService service) =>
+                        service.Publish(new WorkItemPublishRequest {Item = WorkItemDataHelper.FromWorkItem(args.Item)}));
+
+                    _importContext.StudyWorkItems.ItemChanged += (sender, args) => Platform.GetService(
+                        (IWorkItemActivityMonitorService service) =>
+                        service.Publish(new WorkItemPublishRequest {Item = WorkItemDataHelper.FromWorkItem(args.Item)}));
+                }
             }
 
 		    // TODO (CR Jun 2012 - High): Doesn't look like received files are audited?
