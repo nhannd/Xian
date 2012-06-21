@@ -66,6 +66,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         public WorkItemInsertResponse Insert(WorkItemInsertRequest request)
         {
+            // TODO (CR Jun 2012): The fact that there is special processing in here for particular types of work items
+            // indicates there is something wrong with the design that may make adding custom work item types difficult.
+            // Maybe the different "processors" need to perform the insert, or at least have some kind of method (rule)
+            // for processing the insert?
+
             var response = new WorkItemInsertResponse();
 
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
@@ -110,7 +115,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                         }
                     }
                 }
-
 
                 var item = new WorkItem
                                {
