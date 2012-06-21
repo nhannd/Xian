@@ -76,6 +76,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
         private void AuditRetrieveOperation(bool noExceptions)
         {
+            // TODO (CR Jun 2012): This the right place to do this? Maybe just let the received file processor do it.
             var receivedInstances = new AuditedInstances();
             receivedInstances.AddInstance(_patientToRetrieve.PatientId, _patientToRetrieve.PatientsName, _studyToRetrieve.StudyInstanceUid);
             AuditHelper.LogReceivedInstances(RemoteAE, RemoteHost, receivedInstances, EventSource.CurrentProcess,
