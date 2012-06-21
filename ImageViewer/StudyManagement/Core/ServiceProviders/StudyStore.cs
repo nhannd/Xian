@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
             {
                 var entries = context.GetStudyStoreQuery().GetStudyEntries(request.Criteria);
 
-                var criteria = request.Criteria.Study ?? new StudyRootStudyIdentifier();
+                var criteria = (request.Criteria ?? new StudyEntry()).Study ?? new StudyRootStudyIdentifier();
                 AuditHelper.LogQueryIssued(null, null, EventSource.CurrentUser, EventResult.Success,
                     SopClass.StudyRootQueryRetrieveInformationModelFindUid, criteria.ToDicomAttributeCollection());
                 
@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
             {
                 var entries = context.GetStudyStoreQuery().GetSeriesEntries(request.Criteria);
 
-                var criteria = request.Criteria.Series ?? new SeriesIdentifier();
+                var criteria = (request.Criteria ?? new SeriesEntry()).Series ?? new SeriesIdentifier();
                 AuditHelper.LogQueryIssued(null, null, EventSource.CurrentUser, EventResult.Success,
                     SopClass.StudyRootQueryRetrieveInformationModelFindUid, criteria.ToDicomAttributeCollection());
 
@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
             {
                 var entries = context.GetStudyStoreQuery().GetImageEntries(request.Criteria);
 
-                var criteria = request.Criteria.Image ?? new ImageIdentifier();
+                var criteria = (request.Criteria ?? new ImageEntry()).Image ?? new ImageIdentifier();
                 AuditHelper.LogQueryIssued(null, null, EventSource.CurrentUser, EventResult.Success,
                     SopClass.StudyRootQueryRetrieveInformationModelFindUid, criteria.ToDicomAttributeCollection());
 
