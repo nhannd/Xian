@@ -293,9 +293,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            // TODO (CR Jun 2012 - High): This will confuse the user because it says "Send Series", but the filter type in the activity monitor will be "publish files".
-            // (SW) yes, cleanup.
-            get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, Destination); }
+            get { return string.Format(SR.PublishFilesRequest_ActivityDescription, Destination); }
         }
 
         public override string ActivityTypeString
