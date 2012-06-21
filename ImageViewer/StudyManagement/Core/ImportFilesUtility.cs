@@ -11,6 +11,7 @@
 
 using System;
 using System.Data.Linq;
+using System.Data.SqlServerCe;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -505,9 +506,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     }
                     else
                     {
-                        if (commandProcessor.FailureException is ChangeConflictException)
-                            result.RetrySuggested = true; // Change conflict may work if we just retry
-
+                        if (commandProcessor.FailureException is ChangeConflictException
+                            || commandProcessor.FailureException is SqlCeLockTimeoutException)
+                            result.RetrySuggested = true; // Change conflict or lock timeout may work if we just retry
+                       
                         Platform.Log(LogLevel.Warn, "Failure Importing file: {0}", file.Filename);
                         string failureMessage = String.Format(
                             "Failure processing message: {0}. Sending failure status.",
