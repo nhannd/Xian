@@ -78,10 +78,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve
             EnsureMaxUsedSpaceNotExceeded();
 
             DicomServerConfiguration configuration = GetServerConfiguration();
-            var remoteAE = ServerDirectory.GetRemoteServerByName(Request.Source);
+            var remoteAE = ServerDirectory.GetRemoteServerByName(Request.ServerName);
             if (remoteAE == null)
             {
-                Proxy.Fail(string.Format("Unknown destination: {0}", Request.Source), WorkItemFailureType.Fatal);
+                Proxy.Fail(string.Format("Unknown destination: {0}", Request.ServerName), WorkItemFailureType.Fatal);
                 return;
             }
 

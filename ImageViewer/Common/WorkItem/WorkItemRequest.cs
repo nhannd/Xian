@@ -483,10 +483,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return WorkItemConcurrency.StudyRead; }
         }
 
-        /// TODO (CR Jun 2012 - Med): Unclear what this is supposed to be (AE, Server Name). Should be server name.
-        /// (SW) it is stored as server name
         [DataMember]
-        public string Source { get; set; }
+        public string ServerName { get; set; }
     }
 
     /// <summary>
@@ -505,15 +503,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             CancellationCanResultInPartialStudy = true;
         }
 
-        // TODO (CR Jun 2012): redundant - already returned by base class.
-        public override WorkItemConcurrency ConcurrencyType
-        {
-            get { return WorkItemConcurrency.StudyRead; }
-        }
-
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomRetreiveRequest_ActivityDescription, Source); }
+            get { return string.Format(SR.DicomRetreiveRequest_ActivityDescription, ServerName); }
         }
 
         public override string ActivityTypeString
@@ -544,7 +536,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomRetreiveSeriesRequest_ActivityDescription, Source); }
+            get { return string.Format(SR.DicomRetreiveSeriesRequest_ActivityDescription, ServerName); }
         }
 
         public override string ActivityTypeString
