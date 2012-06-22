@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
@@ -142,11 +143,19 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
             if (_importContext == null)
             {
-                _importContext = new DicomReceiveImportContext(association.CallingAE, StudyStore.GetConfiguration());
+                _importContext = new DicomReceiveImportContext(association.CallingAE, GetRemoteHostName(association), StudyStore.GetConfiguration());
 
                 // Publish new WorkItems as they're added to the context
-                _importContext.StudyWorkItems.ItemAdded += (sender, args) => Platform.GetService(
-                    (IWorkItemActivityMonitorService service) => service.Publish(new WorkItemPublishRequest {Item = WorkItemDataHelper.FromWorkItem(args.Item)}));
+                lock (_importContext.StudyWorkItemsSyncLock)
+                {
+                    _importContext.StudyWorkItems.ItemAdded += (sender, args) => Platform.GetService(
+                        (IWorkItemActivityMonitorService service) =>
+                        service.Publish(new WorkItemPublishRequest {Item = WorkItemDataHelper.FromWorkItem(args.Item)}));
+
+                    _importContext.StudyWorkItems.ItemChanged += (sender, args) => Platform.GetService(
+                        (IWorkItemActivityMonitorService service) =>
+                        service.Publish(new WorkItemPublishRequest {Item = WorkItemDataHelper.FromWorkItem(args.Item)}));
+                }
             }
 
 		    // TODO (CR Jun 2012 - High): Doesn't look like received files are audited?
@@ -177,5 +186,32 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                
 			return true;
 		}
+
+        private static string GetRemoteHostName(AssociationParameters association)
+        {
+            string remoteHostName = null;
+            try
+            {
+                if (association.RemoteEndPoint != null)
+                {
+                    try
+                    {
+                        IPHostEntry entry = Dns.GetHostEntry(association.RemoteEndPoint.Address);
+                        remoteHostName = entry.HostName;
+                    }
+                    catch
+                    {
+                        remoteHostName = association.RemoteEndPoint.Address.ToString();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                remoteHostName = null;
+                Platform.Log(LogLevel.Warn, e, "Unable to resolve remote host name.");
+            }
+
+            return remoteHostName;
+        }
 	}
 }

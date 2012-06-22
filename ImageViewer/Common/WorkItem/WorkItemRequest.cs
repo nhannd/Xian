@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         /// TODO (CR Jun 2012 - High): Unclear what this is supposed to be (AE, Server Name). Should be server name.
         /// (SW) - This is server name, but should be renamed.
         [DataMember]
-        public string Destination { get; set; }
+        public string DestinationServerName { get; set; }
 
         [DataMember]
         public CompressionType CompressionType { get; set; }
@@ -188,7 +188,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomSendStudyRequest_ActivityDescription, Destination); }
+            get { return string.Format(SR.DicomSendStudyRequest_ActivityDescription, DestinationServerName); }
         }
 
         public override string ActivityTypeString
@@ -218,7 +218,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, Destination); }
+            get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, DestinationServerName); }
         }
 
         public override string ActivityTypeString
@@ -252,7 +252,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomSendSopRequest_ActivityDescription, Destination); }
+            get { return string.Format(SR.DicomSendSopRequest_ActivityDescription, DestinationServerName); }
         }
 
         public override string ActivityTypeString
@@ -290,9 +290,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            // TODO (CR Jun 2012 - High): This will confuse the user because it says "Send Series", but the filter type in the activity monitor will be "publish files".
-            // (SW) yes, cleanup.
-            get { return string.Format(SR.DicomSendSeriesRequest_ActivityDescription, Destination); }
+            get { return string.Format(SR.PublishFilesRequest_ActivityDescription, DestinationServerName); }
         }
 
         public override string ActivityTypeString
@@ -325,7 +323,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomAutoRouteRequest_ActivityDescription, Destination, Patient.PatientsName); }
+            get { return string.Format(SR.DicomAutoRouteRequest_ActivityDescription, DestinationServerName, Patient.PatientsName); }
         }
 
         public override string ActivityTypeString
@@ -482,10 +480,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return WorkItemConcurrency.StudyRead; }
         }
 
-        /// TODO (CR Jun 2012 - Med): Unclear what this is supposed to be (AE, Server Name). Should be server name.
-        /// (SW) it is stored as server name
         [DataMember]
-        public string Source { get; set; }
+        public string ServerName { get; set; }
     }
 
     /// <summary>
@@ -504,15 +500,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             CancellationCanResultInPartialStudy = true;
         }
 
-        // TODO (CR Jun 2012): redundant - already returned by base class.
-        public override WorkItemConcurrency ConcurrencyType
-        {
-            get { return WorkItemConcurrency.StudyRead; }
-        }
-
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomRetreiveRequest_ActivityDescription, Source); }
+            get { return string.Format(SR.DicomRetreiveRequest_ActivityDescription, ServerName); }
         }
 
         public override string ActivityTypeString
@@ -543,7 +533,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomRetreiveSeriesRequest_ActivityDescription, Source); }
+            get { return string.Format(SR.DicomRetreiveSeriesRequest_ActivityDescription, ServerName); }
         }
 
         public override string ActivityTypeString
@@ -588,11 +578,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         /// TODO (CR Jun 2012 - High): Should be server name because we need to support the possibility of multiple servers with same AE.
         [DataMember(IsRequired = true)]
-        public string FromAETitle { get; set; }
+        public string SourceServerName { get; set; }
 
         public override string ActivityDescription
         {
-            get { return string.Format(SR.DicomReceiveRequest_ActivityDescription, FromAETitle); }
+            get { return string.Format(SR.DicomReceiveRequest_ActivityDescription, SourceServerName); }
         }
 
         public override string ActivityTypeString

@@ -76,8 +76,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// Constructor.
         /// </summary>
         /// <param name="sourceAE">The AE title of the remote application sending the SOP Instances.</param>
+        /// <param name="hostname">The hostname. </param>
         /// <param name="configuration">Storage configuration. </param>
-        public DicomReceiveImportContext(string sourceAE, StorageConfiguration configuration) : base(sourceAE, configuration)
+        public DicomReceiveImportContext(string sourceAE, string hostname, StorageConfiguration configuration) : base(sourceAE, configuration)
         {
             // TODO (CR Jun 2012 - Med): This object is disposable and should be cleaned up.
 
@@ -85,8 +86,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             _monitor.WorkItemsChanged += WorkItemsChanged;
 
             var serverList = ServerDirectory.GetRemoteServersByAETitle(sourceAE);
-            if (serverList.Count > 0)
+            if (serverList.Count == 1)
                 _dicomServerNode = CollectionUtils.FirstElement(serverList);
+            else if (serverList.Count > 1)
+                foreach (var node in serverList)
+                {
+                    if (node.ScpParameters != null && hostname != null && node.ScpParameters.HostName.ToLower().Equals(hostname.ToLower()))
+                    {
+                        _dicomServerNode = node;
+                        break;
+                    }
+                }
         }
 
         #endregion
@@ -102,7 +112,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         {
             var request = new DicomReceiveRequest
                               {
-                                  FromAETitle = _dicomServerNode == null ? SourceAE : _dicomServerNode.Name,
+                                  SourceServerName = _dicomServerNode == null ? SourceAE : _dicomServerNode.Name,
                                   Priority = WorkItemPriorityEnum.High,
                                   Patient = new WorkItemPatient(message.DataSet),
                                   Study = new WorkItemStudy(message.DataSet)
@@ -132,13 +142,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             {
                 if (item.Request is DicomReceiveRequest)
                 {
-                    WorkItem workItem;
-                    if (StudyWorkItems.TryGetValue(item.StudyInstanceUid, out workItem))
+                    lock (StudyWorkItemsSyncLock)
                     {
-                        if (workItem.Oid == item.Identifier)
+                        WorkItem workItem;
+                        if (StudyWorkItems.TryGetValue(item.StudyInstanceUid, out workItem))
                         {
-                            workItem.Status = item.Status;
-                            workItem.Progress = item.Progress;
+                            if (workItem.Oid == item.Identifier)
+                            {
+                                workItem.Status = item.Status;
+                                workItem.Progress = item.Progress;
+                            }
                         }
                     }
                 }
@@ -220,6 +233,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Sync object used when accessing <see cref="StudyWorkItems"/> 
+        /// </summary>
+        public readonly object StudyWorkItemsSyncLock = new object();
 
         /// <summary>
         /// Gets the source AE title where the image(s) are imported from
@@ -307,9 +325,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// <returns>An instance of <see cref="DicomProcessingResult"/> that describes the result of the processing.</returns>
         /// <exception cref="DicomDataException">Thrown when the DICOM object contains invalid data</exception>
         public DicomProcessingResult Import(DicomMessageBase message, BadFileBehaviourEnum badFileBehavior, FileImportBehaviourEnum fileImportBehaviour)
-        {
-            // TODO (CR Jun 2012): This is a pretty long method.
-            
+        {             
             Platform.CheckForNullReference(message, "message");
             String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
             String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
@@ -332,7 +348,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 			                               	};
 
             WorkItem workItem;
-            _context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem);
+            lock (_context.StudyWorkItemsSyncLock)
+                _context.StudyWorkItems.TryGetValue(studyInstanceUid, out workItem);
             
         	try
 			{
@@ -455,10 +472,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     if (commandProcessor.Execute())
                     {
                         result.DicomStatus = DicomStatuses.Success;
-
-                        // TODO (CR Jun 2012): What about the first image imported? It won't be in this dictionary.
-                        if (_context.StudyWorkItems.ContainsKey(result.StudyInstanceUid))
+                       
+                        bool foundStudy;
+                        lock (_context.StudyWorkItemsSyncLock)
+                            foundStudy = _context.StudyWorkItems.ContainsKey(result.StudyInstanceUid);
+                        if (foundStudy)
                         {
+                            // First image imported already has the TotalFilesToProcess pre-set to 1, so only update after the first
                             var progress = command.WorkItem.Progress as ProcessStudyProgress;
                             if (progress != null)
                             {
@@ -477,15 +497,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                     context.Commit();
                                 }
                             }
-
-                            // TODO (CR Jun 2012): ImportItemProcess publishes as items are added to the dictionary, which happens right after this.
-                            Platform.GetService(
-                                 (IWorkItemActivityMonitorService service) =>
-                                 service.Publish(new WorkItemPublishRequest { Item = WorkItemDataHelper.FromWorkItem(command.WorkItem) }));
-
-                            // Save the updated WorkItem
-                            _context.StudyWorkItems[result.StudyInstanceUid] = command.WorkItem;
                         }
+                        
+                        // Save the updated WorkItem, note that this also publishes the workitem automatically
+                        lock (_context.StudyWorkItemsSyncLock)
+                            _context.StudyWorkItems[result.StudyInstanceUid] = command.WorkItem;                        
                     }
                     else
                     {

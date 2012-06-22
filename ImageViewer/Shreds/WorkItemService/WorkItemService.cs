@@ -92,10 +92,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     }
                 }
 
-                var studyRequest = request.Request as WorkItemStudyRequest;
-                if (studyRequest != null)
+                var deleteStudyRequest = request.Request as DeleteStudyRequest;
+                if (deleteStudyRequest != null)
                 {
-                    var list = broker.GetWorkItems(request.Request.WorkItemType, null, studyRequest.Study.StudyInstanceUid);
+                    var list = broker.GetWorkItems(request.Request.WorkItemType, null, deleteStudyRequest.Study.StudyInstanceUid);
                     foreach (var workItem in list)
                     {
                         if (workItem.Status == WorkItemStatusEnum.Pending
@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                         {
                             // Mark studies to delete as "deleted" in the database.
                             var studyBroker = context.GetStudyBroker();
-                            var study = studyBroker.GetStudy(studyRequest.Study.StudyInstanceUid);
+                            var study = studyBroker.GetStudy(deleteStudyRequest.Study.StudyInstanceUid);
                             if (study != null)
                             {
                                 study.Deleted = true;
@@ -130,6 +130,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                                    Status = WorkItemStatusEnum.Pending
                                };
 
+                var studyRequest = request.Request as WorkItemStudyRequest;
                 if (studyRequest != null)
                 {
                     item.StudyInstanceUid = studyRequest.Study.StudyInstanceUid;

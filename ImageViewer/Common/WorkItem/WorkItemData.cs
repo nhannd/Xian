@@ -96,6 +96,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember(IsRequired = false)]
         public DateTime? DeleteTime { get; set; }
 
+        //TODO (CR Jun 2012) - This is stored as a smallint in the database, but modeled as an int, should probabaly change the DB.
         [DataMember(IsRequired = true)]
         public int FailureCount { get; set; }
 

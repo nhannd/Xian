@@ -399,7 +399,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 var request = new DicomSendStudyRequest
                 {
-                    Destination = remoteAEInfo.Name,
+                    DestinationServerName = remoteAEInfo.Name,
                     Priority = priority,
                     Study = new WorkItemStudy(study),
                     Patient = new WorkItemPatient(study)
@@ -436,7 +436,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 var request = new DicomSendSeriesRequest
                                   {
-                                      Destination = remoteAEInfo.Name,
+                                      DestinationServerName = remoteAEInfo.Name,
                                       SeriesInstanceUids = new List<string>(),
                                       Priority = priority,
                                       Study = new WorkItemStudy(study),
@@ -473,7 +473,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 var request = new DicomSendSopRequest
                                   {
-                                      Destination = remoteAEInfo.Name,
+                                      DestinationServerName = remoteAEInfo.Name,
                                       SeriesInstanceUid = seriesInstanceUid,
                                       SopInstanceUids = new List<string>(),
                                       Priority = priority,
@@ -510,7 +510,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 var request = new PublishFilesRequest
                                   {
-                                      Destination = remoteAEInfo.Name,
+                                      DestinationServerName = remoteAEInfo.Name,
                                       Priority = WorkItemPriorityEnum.High,
                                       DeletionBehaviour = behaviour,
                                       Study = new WorkItemStudy(study),
@@ -549,7 +549,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 var request = new DicomRetrieveStudyRequest
                 {
-                    Source = remoteAEInfo.Name,
+                    ServerName = remoteAEInfo.Name,
                     Study = new WorkItemStudy(study),
                     Patient = new WorkItemPatient(study)
 
@@ -559,7 +559,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 if (data != null)
                 {
                     var existingRequest = data.Request as DicomRetrieveStudyRequest;
-                    if (existingRequest != null && remoteAEInfo.Name == existingRequest.Source)
+                    if (existingRequest != null && remoteAEInfo.Name == existingRequest.ServerName)
                     {
                         Request = data.Request;
                         return;
@@ -594,7 +594,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             {
                 var request = new DicomRetrieveSeriesRequest
                 {
-                    Source = remoteAEInfo.Name,
+                    ServerName = remoteAEInfo.Name,
                     SeriesInstanceUids = new List<string>(),
                     Study = new WorkItemStudy(study),
                     Patient = new WorkItemPatient(study)

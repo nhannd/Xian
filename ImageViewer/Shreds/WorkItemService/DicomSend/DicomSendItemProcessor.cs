@@ -137,10 +137,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
         public override void Process()
         {
             DicomServerConfiguration configuration = GetServerConfiguration();
-            var remoteAE = ServerDirectory.GetRemoteServerByName(Request.Destination);
+            var remoteAE = ServerDirectory.GetRemoteServerByName(Request.DestinationServerName);
             if (remoteAE == null)
             {
-                Proxy.Fail(string.Format("Unknown destination: {0}",Request.Destination),WorkItemFailureType.Fatal);
+                Proxy.Fail(string.Format("Unknown destination: {0}",Request.DestinationServerName),WorkItemFailureType.Fatal);
                 return;
 
             }

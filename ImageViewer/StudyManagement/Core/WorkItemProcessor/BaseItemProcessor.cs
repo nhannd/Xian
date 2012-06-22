@@ -137,7 +137,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
          
             if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
             {
-                var relatedList = FindRelatedWorkItems();
+                var relatedList = GetCompetingWorkItems();
                 if (relatedList != null)
                 {
                     foreach (var relatedWorkItem in relatedList)
@@ -152,12 +152,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                     }
                 }
                 reason = string.Empty;
-                return !ReindexScheduled();
+                return !CompetingReindexScheduled();
             }
 
             if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete)
             {
-                var inProgressList = FindRelatedInProgressWorkItems();
+                var inProgressList = GetCompetingInProgressWorkItems();
                 if (inProgressList != null)
                 {
                     foreach (var relatedWorkItem in inProgressList)
@@ -174,7 +174,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                     }
                 }
 
-                var relatedList = FindRelatedWorkItems();
+                var relatedList = GetCompetingWorkItems();
                 if (relatedList != null)
                 {
                     foreach (var relatedWorkItem in relatedList)
@@ -188,12 +188,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                     }
                 }
                 reason = string.Empty;
-                return !ReindexScheduled();
+                return !CompetingReindexScheduled();
             }
 
             if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyRead)
             {
-                var relatedList = FindRelatedWorkItems();
+                var relatedList = GetCompetingWorkItems();
                 if (relatedList != null)
                 {
                     foreach (var relatedWorkItem in relatedList)
@@ -209,13 +209,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 }
 
                 reason = string.Empty;
-                return !ReindexScheduled();
+                return !CompetingReindexScheduled();
             }
 
             // TODO (CR Jun 2012): I would agree this was true generally, if it weren't for the fact that re-index items are "NonStudy",
             // and the ReindexItemProcessor overrides this method.
 
-            // WorkItemConcurrency.NonStudy entries can just run
+            // WorkItemConcurrency.NonStudy entries that haven't overriden this method can just run
             reason = string.Empty;
             return true;
         }
@@ -285,6 +285,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                     sop.FailureCount = (byte) (sop.FailureCount.Value + 1);
 
                 // TODO (CR Jun 2012 - High): In sprint review, we saw RetryCount getting set to 10000, which exceeds byte.MaxValue.
+                // This retry count is not the same as that configured in the GUI saw in the sprint review.
                 if (sop.FailureCount > WorkItemServiceSettings.Default.RetryCount)
                     sop.Failed = true;
 
@@ -293,102 +294,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
         }
 
-        /// <summary>
-        /// Delete an entry in the <see cref="WorkItemUid"/> table.
-        /// </summary>
-        /// <param name="uid">The <see cref="WorkItemUid"/> entry to delete.</param>
-        protected virtual WorkItemUid CompleteWorkItemUid(WorkItemUid uid)
-        {
-            // Must retry in case of db error.
-            // Failure to do so may lead to orphaned WorkQueueUid and FileNotFoundException 
-            // when the work queue is reset.
-            int retryCount = 0;
-            while (true)
-            {
-                try
-                {
-                    using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
-                    {
-                        var broker = context.GetWorkItemUidBroker();
-                        var sop = broker.GetWorkItemUid(uid.Oid);
-                        sop.Complete = true;
-                        context.Commit();
-                        return sop;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (ex is SqlException)
-                    {
-                        if (retryCount > MAX_DB_RETRY)
-                        {
-                            Platform.Log(LogLevel.Error, ex,
-                                         "Error occurred when calling DeleteWorkQueueUid. Max db retry count has been reached.");
-                            Proxy.Fail(
-                                String.Format(
-                                    "Error occurred when deleting WorkItemUid. Max db retry count has been reached."),
-                                WorkItemFailureType.Fatal);
-                            return uid;
-                        }
-
-                        Platform.Log(LogLevel.Error, ex,
-                                     "Error occurred when calling DeleteWorkQueueUid(). Retry later. OID={0}", uid.Oid);
-                        SleepForRetry();
-
-
-                        // Service is stoping
-                        if (CancelPending)
-                        {
-                            Platform.Log(LogLevel.Warn, "Termination Requested. DeleteWorkQueueUid() is now terminated.");
-                            break;
-                        }
-                        retryCount++;
-                    }
-                    else
-                        throw;
-                }
-            }
-            return uid;
-        }
-
-
-        /// <summary>
-        /// Put the workqueue thread to sleep for 2-3 minutes.
-        /// </summary>
-        /// <remarks>
-        /// This method does not return until 2-3 minutes later or if the service is stoppping.
-        /// </remarks>
-        private void SleepForRetry()
-        {
-            var start = Platform.Time;
-            var rand = new Random();
-            while (!CancelPending)
-            {
-                // sleep, wake up every 1-3 sec and check if the service is stopping
-                Thread.Sleep(rand.Next(1000, 3000));
-                if (CancelPending)
-                {
-                    break;
-                }
-
-                // TODO (CR Jun 2012): That's a long time to sleep for a db retry.
-
-                // Sleep for 2-3 minutes
-                DateTime now = Platform.Time;
-                if (now - start > TimeSpan.FromMinutes(rand.Next(2, 3)))
-                    break;
-            }
-        }
-
-
         // TODO (CR Jun 2012): Name - GetCompetingWorkItems? Technically, this is only getting items that can potentially run before "this" item.
 
         /// <summary>
-        /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
-        /// and related to the given <see cref="WorkItem"/> 
+        /// Returns a list of <see cref="WorkItem"/>s with specified types and status (both are optional)
+        /// that are scheduled before the <see cref="WorkItem"/> being processed.
         /// </summary>
         /// <returns></returns>
-        protected IList<WorkItem> FindRelatedWorkItems( )
+        protected IList<WorkItem> GetCompetingWorkItems( )
         {
             using (var context = new DataAccessContext())
             {
@@ -406,7 +319,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 {
                     prioritiesToBlock.Add(WorkItemPriorityEnum.Normal);
                 }
-                var list = broker.GetPriorWorkItems(Proxy.Item.ScheduledTime,prioritiesToBlock, Proxy.Item.StudyInstanceUid);
+                var list = broker.GetPriorWorkItems(Proxy.Item.ScheduledTime, prioritiesToBlock, Proxy.Item.StudyInstanceUid);
 
                 if (list == null)
                     return null;
@@ -419,11 +332,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 
         // TODO (CR Jun 2012): Name - GetCompetingInProgressWorkItems?
         /// <summary>
-        /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
-        /// and related to the given <see cref="WorkItem"/> 
+        /// Returns a list of related <see cref="WorkItem"/>s with specified types and status (both are optional)
+        /// that are In Progress and scheduled before the <see cref="WorkItem"/> being processed.
         /// </summary>
         /// <returns></returns>
-        protected IList<WorkItem> FindRelatedInProgressWorkItems()
+        protected IList<WorkItem> GetCompetingInProgressWorkItems()
         {
             using (var context = new DataAccessContext())
             {
@@ -449,11 +362,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         // whether or not one is scheduled ahead of "this" item.
 
         /// <summary>
-        /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
-        /// and related to the given <see cref="WorkItem"/> 
+        /// Checks if a Reindex is scheduled that should prevent the current <see cref="WorkItem"/> from processing.
         /// </summary>
         /// <returns></returns>
-        protected bool ReindexScheduled()
+        protected bool CompetingReindexScheduled()
         {
             using (var context = new DataAccessContext())
             {
@@ -485,8 +397,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 
         // TODO (CR Jun 2012): Name - GetInProgressWorkItems
         /// <summary>
-        /// Returns a list of related <see cref="WorkItem"/> with specified types and status (both are optional).
-        /// and related to the given <see cref="WorkItem"/> 
+        /// Returns true if there are any WorkItemStatusEnum.InProgress work items.
         /// </summary>
         /// <returns></returns>
         protected bool InProgressWorkItems(out string reason)
