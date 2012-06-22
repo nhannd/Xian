@@ -571,6 +571,45 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 			}
 		}
 
+	    /// <summary>
+	    /// Generates a "Dicom Instances Accessed" update event in the audit log (with ActionCode of Delete), according to DICOM Supplement 95.
+	    /// </summary>
+	    /// <remarks>
+	    /// This method automatically separates different patients into separately logged events, as required by DICOM.
+	    /// 
+        /// We chose to impleemnt the DicomInstancesAccessed audit log, as opposed to the DicomStudyDeleted audit message because the whole
+        /// study isn't being deleted, just a series.
+	    /// </remarks>
+	    /// <param name="aeTitles">The application entities from which the instances were accessed.</param>
+	    /// <param name="instances">The studies that the series belong that are being deleted.</param>
+	    /// <param name="eventSource">The source user or application entity which invoked the operation.</param>
+	    /// <param name="eventResult">The result of the operation.</param>
+	    public static void LogDeleteSeries(IEnumerable<string> aeTitles, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
+        {
+            if (!AuditingEnabled)
+                return;
+
+            try
+            {
+                var aeTitlesArray = ToArray(aeTitles);
+                foreach (var patient in instances.EnumeratePatients())
+                {
+                    var auditHelper = new DicomInstancesAccessedAuditHelper(eventSource, eventResult, EventIdentificationContentsEventActionCode.D);
+                    auditHelper.AddUser(eventSource);
+                    if (aeTitlesArray.Length > 0)
+                        auditHelper.AddUser(new AuditProcessActiveParticipant(aeTitlesArray));
+                    auditHelper.AddPatientParticipantObject(patient);
+                    foreach (var study in instances.EnumerateStudies(patient))
+                        auditHelper.AddStudyParticipantObject(study);
+                    Log(auditHelper);
+                }
+            }
+            catch (Exception ex)
+            {
+                Platform.Log(LogLevel.Warn, ex, MessageAuditFailed);
+            }
+        }
+
 		/// <summary>
 		/// Gets the current or last known AETitle of the local server.
 		/// </summary>
