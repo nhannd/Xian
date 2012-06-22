@@ -356,15 +356,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         {
             if (saveToDatabase)
             {
-                using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+                try
                 {
-                    var broker = context.GetWorkItemBroker();
+                    using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+                    {
+                        var broker = context.GetWorkItemBroker();
 
-                    Item = broker.GetWorkItem(Item.Oid);
+                        Item = broker.GetWorkItem(Item.Oid);
 
-                    Item.Progress = Progress;
+                        Item.Progress = Progress;
 
-                    context.Commit();
+                        context.Commit();
+                    }
+                }
+                catch (Exception)
+                {
+                    // Saw ChangeCOnflictException here a few times
                 }
             }
             else
