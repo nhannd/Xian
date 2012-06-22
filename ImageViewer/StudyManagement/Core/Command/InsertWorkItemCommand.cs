@@ -161,8 +161,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
                                 var request = item.Request as DicomReceiveRequest;
                                 if (request != null)
                                 {
-                                    // TODO (CR Jun 2012 - High): Retrieve requests should use the server name because
-                                    // we have to support the possibility of multiple servers with the same name.
                                     if (request.SourceServerName.Equals(thisRequest.SourceServerName))
                                     {
                                         WorkItem = item;

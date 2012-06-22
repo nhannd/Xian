@@ -576,7 +576,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return WorkItemConcurrency.StudyInsert; }
         }
 
-        /// TODO (CR Jun 2012 - High): Should be server name because we need to support the possibility of multiple servers with same AE.
         [DataMember(IsRequired = true)]
         public string SourceServerName { get; set; }
 
