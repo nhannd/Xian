@@ -157,9 +157,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember]
         public string Destination { get; set; }
 
-        // TODO (CR Jun 2012 - Med): Isn't it better to just pass a TS UID?
-        // (SW) No - because at the time of request, we don't know if it should be Baseline vs. Extended for JPEG lossy, we push the decision
-        // down to negotiation time.
         [DataMember]
         public CompressionType CompressionType { get; set; }
 

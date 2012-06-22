@@ -31,8 +31,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
     {
         #region Private Members
 
-        // TODO (CR Jun 2012 - Med): Should be volatile because it's modified on a different thread than it's read on.
-        private bool _cancelRequested;
+        private volatile bool _cancelRequested;
         
         #endregion
 

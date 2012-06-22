@@ -26,12 +26,10 @@ namespace ClearCanvas.ImageViewer.Common
     {
         #region Private Fields
 
-        static private readonly Dictionary<string, Diskspace> _cached = new Dictionary<string, Diskspace>();
         static private readonly object _sync = new object();
         static DateTime? _scheduledRefreshTime;
         static DateTime? _lastConfigUpdate;
 
-        static string _fileStorePath;
         static StorageConfiguration _storageConfig;
         static Diskspace _diskspace;
 
@@ -60,10 +58,10 @@ namespace ClearCanvas.ImageViewer.Common
         {
             get 
             {
-                // TODO (CR Jun 2012 - Med): Reading this property requires a lock, too, not just writes. Otherwise,
-                // threads that don't first call IsMaxUsedSpaceExceeded before accessing this property may
-                // continually see old values, causing the same problem to occur that this class was written to prevent!
-                return StorageConfiguration.MaximumUsedSpacePercent;
+                lock (_sync)
+                {
+                    return StorageConfiguration.MaximumUsedSpacePercent;
+                }
             }
         }
 
@@ -71,10 +69,10 @@ namespace ClearCanvas.ImageViewer.Common
         {
             get
             {
-                // TODO (CR Jun 2012 - Med): Reading this property requires a lock, too, not just writes. Otherwise,
-                // threads that don't first call IsMaxUsedSpaceExceeded before accessing this property may
-                // continually see old values, causing the same problem to occur that this class was written to prevent!
-                return FileStoreDiskSpace.UsedSpacePercent;
+                lock (_sync)
+                {
+                    return FileStoreDiskSpace.UsedSpacePercent;
+                }
             }
         }
 
