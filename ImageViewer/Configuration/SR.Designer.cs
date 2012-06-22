@@ -61,6 +61,24 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} other servers exist with the same AE Title, but different host names and/or ports. Are you sure you want to apply this change?.
+        /// </summary>
+        internal static string ConfirmAETitleConflict_MultipleServers {
+            get {
+                return ResourceManager.GetString("ConfirmAETitleConflict_MultipleServers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Another server exists with the same AE Title, but a different host name and/or port. Are you sure you want to apply this change?.
+        /// </summary>
+        internal static string ConfirmAETitleConflict_OneServer {
+            get {
+                return ResourceManager.GetString("ConfirmAETitleConflict_OneServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to If you wish to keep your existing studies, you must manually copy them to the new
         ///location before restarting the local service. Otherwise, you should restart the local service
         ///and immediately re-index..

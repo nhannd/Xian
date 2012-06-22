@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
@@ -295,7 +296,20 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			}
 			else
 			{
-                var newServer = new ServerTreeDicomServer(
+			    var current = _serverTree.CurrentNode;
+			    var allButCurrent = _serverTree.RootServerGroup.GetAllServers().Where(s => s != current).Cast<IServerTreeDicomServer>();
+                var sameAETitleCount = allButCurrent.Count(s => s.AETitle == _serverAE);
+                if (sameAETitleCount > 0)
+                {
+                    var message = sameAETitleCount == 1
+                                      ? SR.ConfirmAETitleConflict_OneServer
+                                      : String.Format(SR.ConfirmAETitleConflict_MultipleServers, sameAETitleCount);
+
+                    if (DialogBoxAction.No == Host.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
+                        return;
+                }
+
+			    var newServer = new ServerTreeDicomServer(
 					_serverName, 
 					_serverLocation, 
 					_serverHost, 

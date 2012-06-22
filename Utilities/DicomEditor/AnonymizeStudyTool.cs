@@ -24,6 +24,7 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
@@ -47,6 +48,12 @@ namespace ClearCanvas.Utilities.DicomEditor
 			if (ApplicationComponentExitCode.Accepted == 
 				ApplicationComponent.LaunchAsDialog(Context.DesktopWindow, _component, SR.TitleAnonymizeStudy))
 			{
+                if (LocalStorageMonitor.IsMaxUsedSpaceExceeded)
+                {
+                    Context.DesktopWindow.ShowMessageBox(SR.MessageCannotAnonymizeMaxDiskUsageExceeded, MessageBoxActions.Ok);
+                    return;
+                }
+
 				BackgroundTask task = null;
 				try
 				{
@@ -56,8 +63,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 				catch(Exception e)
 				{
 					Platform.Log(LogLevel.Error, e);
-					string message = String.Format(SR.MessageFormatStudyMustBeDeletedManually, string.Empty);
-					Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
+					Context.DesktopWindow.ShowMessageBox(SR.MessageAnonymizeStudyFailed, MessageBoxActions.Ok);
 				}
 				finally
 				{					
