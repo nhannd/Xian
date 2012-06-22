@@ -313,4 +313,7 @@ NOTE: the edited file is from the local store so it should be re-indexed, otherw
   <data name="MessageConfirmAnonymizeOneOrMoreReportsAndAttachments" xml:space="preserve">
     <value>One or more files being anonymized are reports and/or other documents. These often contain patient information that cannot be completely cleaned by this tool. Are you sure you want to continue anonymization?</value>
   </data>
+  <data name="MessageCannotAnonymizeMaxDiskUsageExceeded" xml:space="preserve">
+    <value>The study cannot be anonymized because the maximum disk usage has been exceeded.</value>
+  </data>
 </root>

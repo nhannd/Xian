@@ -232,6 +232,15 @@ namespace ClearCanvas.Utilities.DicomEditor {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The study cannot be anonymized because the maximum disk usage has been exceeded..
+        /// </summary>
+        internal static string MessageCannotAnonymizeMaxDiskUsageExceeded {
+            get {
+                return ResourceManager.GetString("MessageCannotAnonymizeMaxDiskUsageExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Would you like to anonymize *all* loaded files in addition to this one?.
         /// </summary>
         internal static string MessageConfirmAnonymizeAllFiles {
