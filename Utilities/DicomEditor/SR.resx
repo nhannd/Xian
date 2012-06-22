@@ -194,8 +194,8 @@ NOTE: if any of the edited files are from the local store, it should be re-index
   <data name="MessageFailedDump" xml:space="preserve">
     <value>DICOM Dump operation failed.  File(s) in selection may not be DICOM.</value>
   </data>
-  <data name="MessageFormatStudyMustBeDeletedManually" xml:space="preserve">
-    <value>An error occurred while attempting to anonymize the study.  The files should be manually deleted from {0}.</value>
+  <data name="MessageAnonymizeStudyFailed" xml:space="preserve">
+    <value>An error occurred while attempting to anonymize the study.  Please check the logs for more details.</value>
   </data>
   <data name="MessageNoTagsWereDeleted" xml:space="preserve">
     <value>No tags were deleted.  This is often because the selection only contains Sequence Items, Sequence Delimiter Items, and Item Delimiter Items which cannot be deleted.</value>

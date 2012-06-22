@@ -214,6 +214,15 @@ namespace ClearCanvas.Utilities.DicomEditor {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occurred while attempting to anonymize the study.  Please check the logs for more details..
+        /// </summary>
+        internal static string MessageAnonymizeStudyFailed {
+            get {
+                return ResourceManager.GetString("MessageAnonymizeStudyFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Anonymizing Study ....
         /// </summary>
         internal static string MessageAnonymizingStudy {
@@ -349,15 +358,6 @@ namespace ClearCanvas.Utilities.DicomEditor {
         internal static string MessageFailedDump {
             get {
                 return ResourceManager.GetString("MessageFailedDump", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to An error occurred while attempting to anonymize the study.  The files should be manually deleted from {0}..
-        /// </summary>
-        internal static string MessageFormatStudyMustBeDeletedManually {
-            get {
-                return ResourceManager.GetString("MessageFormatStudyMustBeDeletedManually", resourceCulture);
             }
         }
         

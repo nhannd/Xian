@@ -56,8 +56,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 				catch(Exception e)
 				{
 					Platform.Log(LogLevel.Error, e);
-					string message = String.Format(SR.MessageFormatStudyMustBeDeletedManually, string.Empty);
-					Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
+					Context.DesktopWindow.ShowMessageBox(SR.MessageAnonymizeStudyFailed, MessageBoxActions.Ok);
 				}
 				finally
 				{					
