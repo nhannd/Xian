@@ -12,7 +12,9 @@
 #if	UNIT_TESTS
 
 using System.Configuration;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Common.Utilities;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Common.Configuration.Tests
@@ -20,6 +22,18 @@ namespace ClearCanvas.ImageViewer.Common.Configuration.Tests
     [TestFixture]
     public class SystemConfigurationSettingsProviderTests
     {
+        [TestFixtureSetUp]
+        public void Initialize1()
+        {
+            TestSettingsStore.Instance.Reset();
+
+            Platform.SetExtensionFactory(new UnitTestExtensionFactory
+                                             {
+                                                 { typeof(ServiceProviderExtensionPoint), typeof(TestSystemConfigurationServiceProvider) }
+                                             });   
+        }
+
+
         [Test]
         public void UserScopedSettingsTest()
         {
@@ -92,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Common.Configuration.Tests
             TestSettingsStore.Instance.Reset();
 
             var settings = new MigrationAppSettings();
-
+            
             const string testVal1 = "A man, a plan, a canal, panama";
             const string testVal2 = "Now is the time for all good men to come to the aide of their country";
 
@@ -100,12 +114,23 @@ namespace ClearCanvas.ImageViewer.Common.Configuration.Tests
             settings.App2 = testVal2;
             settings.Save();
 
+            Assert.IsTrue(SettingsMigrator.MigrateSharedSettings(typeof (MigrationAppSettings), null));
+
+            var settings1a = new MigrationAppSettings();
+            Assert.AreEqual(settings1a.App1, testVal1);
+            Assert.AreEqual(settings1a.App2, testVal2);
+            Assert.AreEqual(settings1a.App3, MigrationAppSettings.DefaultValueApp);
+
+            var group = new SettingsGroupDescriptor(typeof (MigrationAppSettings));
+            TestSettingsStore.Instance.GetPreviousSettingsGroup(group);
+            TestSettingsStore.Instance.RemoveSettingsGroup(group);
+
             var settings2 = new MigrationAppSettings();
-            Assert.AreEqual(settings2.App1, testVal1);
-            Assert.AreEqual(settings2.App2, testVal2);
+            Assert.AreEqual(settings2.App1, MigrationAppSettings.DefaultValueApp);
+            Assert.AreEqual(settings2.App2, MigrationAppSettings.DefaultValueApp);
             Assert.AreEqual(settings2.App3, MigrationAppSettings.DefaultValueApp);
 
-            SettingsMigrator.MigrateSharedSettings(typeof (MigrationAppSettings), null);
+            Assert.IsTrue(SettingsMigrator.MigrateSharedSettings(typeof (MigrationAppSettings), null));
 
             var settings3 = new MigrationAppSettings();
             Assert.AreEqual(settings3.App1, testVal1 + TestSettingsStore.TestString);
