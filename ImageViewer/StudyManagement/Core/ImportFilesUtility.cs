@@ -10,15 +10,18 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Data.Linq;
 using System.Data.SqlServerCe;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
@@ -38,6 +41,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         public String StudyInstanceUid;
         public String SeriesInstanceUid;
         public String SopInstanceUid;
+        public String PatientsName;
+        public String PatientId;
         public bool Successful;
         public String ErrorMessage;
         public DicomStatus DicomStatus;
@@ -79,7 +84,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// <param name="sourceAE">The AE title of the remote application sending the SOP Instances.</param>
         /// <param name="configuration">Storage configuration. </param>
         /// <param name="hostname">The IP Address the remote app is connecting with.</param>
-        public DicomReceiveImportContext(string sourceAE, string hostname, StorageConfiguration configuration) : base(sourceAE, configuration)
+        /// <param name="auditSource">The source of the request for auditing purposes </param>
+        public DicomReceiveImportContext(string sourceAE, string hostname, StorageConfiguration configuration, EventSource auditSource) : base(sourceAE, configuration, auditSource)
         {
             // TODO (CR Jun 2012 - Med): This object is disposable and should be cleaned up.
 
@@ -167,8 +173,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// </summary>
         /// <param name="sourceAE">The local AE title of the application importing the studies.</param>
         /// <param name="configuration">The storage configuration. </param>
-        public ImportStudyContext(string sourceAE, StorageConfiguration configuration)
-            : base(sourceAE, configuration)
+        /// <param name="auditSource">The source of the import. </param>
+        public ImportStudyContext(string sourceAE, StorageConfiguration configuration, EventSource auditSource)
+            : base(sourceAE, configuration, auditSource)
         {
         }
 
@@ -189,6 +196,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                   Patient = new WorkItemPatient(message.DataSet),
                                   Study = new WorkItemStudy(message.DataSet)
                               };
+            var participant = (AuditActiveParticipant) AuditSource;
+            if (participant != null)
+                request.UserName = participant.UserName;
             return request;
         }
 
@@ -215,12 +225,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// Creates an instance of <see cref="ImportFilesContext"/> to be used
         /// by <see cref="ImportFilesUtility"/> 
         /// </summary>
-        protected ImportFilesContext(string sourceAE, StorageConfiguration configuration)
+        protected ImportFilesContext(string sourceAE, StorageConfiguration configuration, EventSource auditSource)
         {
             StudyWorkItems = new ObservableDictionary<string, WorkItem>();
+            FailedStudyAudits = new Dictionary<string, string>();
             SourceAE = sourceAE;
             StorageConfiguration = configuration;
-
+            AuditSource = auditSource;
             ExpirationDelaySeconds = WorkItemServiceSettings.Default.ExpireDelaySeconds;
         }
 
@@ -244,6 +255,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         public ObservableDictionary<string,WorkItem> StudyWorkItems { get; private set; }
 
         /// <summary>
+        /// Dictionary of all the studies that have audited a failure import, so we don't duplicate
+        /// </summary>
+        public Dictionary<string, string> FailedStudyAudits { get; private set; } 
+
+        /// <summary>
         /// Storage configuration.
         /// </summary>
         public StorageConfiguration StorageConfiguration { get; private set; }
@@ -257,6 +273,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// Delay to expire inserted WorkItems
         /// </summary>
         public int ExpirationDelaySeconds { get; set; }
+
+        /// <summary>
+        /// Event Source for Audit messages
+        /// </summary>
+        public EventSource AuditSource { get; private set; }
 
         #endregion
 
@@ -276,7 +297,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         public abstract ProcessStudyProgress CreateProgress();
 
         #endregion
-    }
+}
 
     /// <summary>
     /// Import utility for importing specific SOP Instances, either in memory from the network or on disk.
@@ -326,11 +347,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
             String accessionNumber = message.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
             String patientsName = message.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
-
-            // TODO (CR Jun 2012): This appears to do nothing.
-            string newName = patientsName;
-            if (!newName.Equals(patientsName))
-                message.DataSet[DicomTags.PatientsName].SetStringValue(newName);
+            String patientId = message.DataSet[DicomTags.PatientId].GetString(0, string.Empty);
 
 			var result = new DicomProcessingResult
 			                               	{
@@ -338,7 +355,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 			                               		StudyInstanceUid = studyInstanceUid,
 			                               		SeriesInstanceUid = seriesInstanceUid,
 			                               		SopInstanceUid = sopInstanceUid,
-			                               		AccessionNumber = accessionNumber
+			                               		AccessionNumber = accessionNumber,
+                                                PatientsName = patientsName,
+                                                PatientId = patientId,
 			                               	};
 
             WorkItem workItem;
@@ -352,6 +371,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 			catch (DicomDataException e)
 			{
 				result.SetError(DicomStatuses.ProcessingFailure, e.Message);
+                AuditFailure(result);
                 return result;
 			}
 
@@ -361,6 +381,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 {
                     // TODO Marmot (CR June 2012): not DicomStatuses.Cancel?
                     result.SetError(DicomStatuses.StorageStorageOutOfResources, "Canceled by user");
+                    AuditFailure(result);
                     return result;                       
                 }
             }
@@ -369,6 +390,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             {
                 _context.FatalError = true;
                 result.SetError(DicomStatuses.StorageStorageOutOfResources, string.Format("Import failed, disk space usage exceeded"));
+                AuditFailure(result);
                 return result;
             }
 
@@ -385,6 +407,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     Process(message, fileImportBehaviour, workItem, result);
                 }
             }
+
+            if (result.DicomStatus != DicomStatuses.Success)
+            {
+                AuditFailure(result);
+            }
             return result;
         }
 
@@ -392,6 +419,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
         #region Private Methods
         
+        private void AuditFailure(DicomProcessingResult result)
+        {
+            if (!_context.FailedStudyAudits.ContainsKey(result.StudyInstanceUid))
+            {
+                var auditedInstances = new AuditedInstances();
+
+                auditedInstances.AddInstance(result.PatientId, result.PatientsName,
+                                             result.StudyInstanceUid);
+
+                AuditHelper.LogImportStudies(auditedInstances, _context.AuditSource, EventResult.MajorFailure);
+
+                _context.FailedStudyAudits.Add(result.StudyInstanceUid, result.StudyInstanceUid);
+            }
+        }
         private void Process(DicomMessageBase message, FileImportBehaviourEnum fileImportBehaviour, WorkItem workItem, DicomProcessingResult result)
         {
             result.Initialize();
@@ -508,8 +549,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                             "Failure processing message: {0}. Sending failure status.",
                             commandProcessor.FailureReason);
                         result.SetError(DicomStatuses.ProcessingFailure, failureMessage);
-           
-                        // processor already rolled back                     
+                        
+                        // processor already rolled back
                     }
                 }
                 catch (Exception e)

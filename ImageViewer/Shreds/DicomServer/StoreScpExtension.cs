@@ -17,6 +17,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
+using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
@@ -143,14 +144,39 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
             if (_importContext == null)
             {
-                _importContext = new DicomReceiveImportContext(association.CallingAE, GetRemoteHostName(association), StudyStore.GetConfiguration());
+                _importContext = new DicomReceiveImportContext(association.CallingAE, GetRemoteHostName(association), StudyStore.GetConfiguration(), EventSource.CurrentProcess);
 
                 // Publish new WorkItems as they're added to the context
                 lock (_importContext.StudyWorkItemsSyncLock)
                 {
-                    _importContext.StudyWorkItems.ItemAdded += (sender, args) => Platform.GetService(
-                        (IWorkItemActivityMonitorService service) =>
-                        service.Publish(new WorkItemPublishRequest {Item = WorkItemDataHelper.FromWorkItem(args.Item)}));
+                    _importContext.StudyWorkItems.ItemAdded += delegate(object sender, DictionaryEventArgs<string,WorkItem> args)
+                                                                   {
+                                                                       Platform.GetService(
+                                                                           (IWorkItemActivityMonitorService service) =>
+                                                                           service.Publish(new WorkItemPublishRequest
+                                                                                               {
+                                                                                                   Item =
+                                                                                                       WorkItemDataHelper
+                                                                                                       .FromWorkItem(
+                                                                                                           args.Item)
+                                                                                               }));
+
+
+                                                                       var auditedInstances = new AuditedInstances();
+                                                                       var request =
+                                                                           args.Item.Request as DicomReceiveRequest;
+                                                                       if (request != null)
+                                                                       {
+                                                                           auditedInstances.AddInstance(request.Patient.PatientId, request.Patient.PatientsName,
+                                                                                                        request.Study.StudyInstanceUid);
+                                                                       }
+
+                                                                       AuditHelper.LogReceivedInstances(
+                                                                           association.CallingAE, GetRemoteHostName(association),
+                                                                           auditedInstances, EventSource.CurrentProcess,
+                                                                           EventResult.Success, EventReceiptAction.ActionUnknown);
+                                                                   }
+                ;
 
                     _importContext.StudyWorkItems.ItemChanged += (sender, args) => Platform.GetService(
                         (IWorkItemActivityMonitorService service) =>
@@ -158,7 +184,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 }
             }
 
-		    // TODO (CR Jun 2012 - High): Doesn't look like received files are audited?
 		    var importer = new ImportFilesUtility(_importContext);
 
 		    var result = importer.Import(message,BadFileBehaviourEnum.Ignore, FileImportBehaviourEnum.Save);

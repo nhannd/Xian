@@ -213,8 +213,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 FileImportBehaviour = fileImportBehavior
             };
 
-            var result = EventResult.Success;
-
             try
             {
                 InsertRequest(request, null);
@@ -222,12 +220,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             catch (Exception ex)
             {
                 Exception = ex;
-                result = EventResult.MajorFailure;
                 throw;
-            }
-            finally
-            {
-                AuditHelper.LogImportStudies(new AuditedInstances(), EventSource.CurrentUser, result);
             }
         }
     }

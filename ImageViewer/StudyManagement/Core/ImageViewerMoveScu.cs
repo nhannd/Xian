@@ -17,7 +17,6 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.ImageViewer.Common.Auditing;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {
@@ -68,20 +67,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             : this(localAETitle, remoteAEInfo, patient, studyInformation)
         {
             _seriesInstanceUids = seriesInstanceUids;
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private void AuditRetrieveOperation(bool noExceptions)
-        {
-            // TODO (CR Jun 2012): This the right place to do this? Maybe just let the received file processor do it.
-            var receivedInstances = new AuditedInstances();
-            receivedInstances.AddInstance(_patientToRetrieve.PatientId, _patientToRetrieve.PatientsName, _studyToRetrieve.StudyInstanceUid);
-            AuditHelper.LogReceivedInstances(RemoteAE, RemoteHost, receivedInstances, EventSource.CurrentProcess,
-                                             noExceptions ? EventResult.Success : EventResult.MajorFailure,
-                                             EventReceiptAction.ActionUnknown);
         }
 
         #endregion
@@ -163,9 +148,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     _errorDescriptionDetails = String.Format("The Retrieve failed ({0}: {1}).",
                        RemoteAE, FailureDescription ?? "no failure description provided");
                     Failed = true;
-                }
-
-                AuditRetrieveOperation(true);
+                }             
             }
             catch (Exception e)
             {
@@ -181,8 +164,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     _errorDescriptionDetails = String.Format("An unexpected error has occurred in the Move Scu: {0}:{1}:{2} -> {3}; {4}",
                                                   RemoteAE, RemoteHost, RemotePort, ClientAETitle, e.Message);
                 }
-
-                AuditRetrieveOperation(false);
             }
             finally
             {

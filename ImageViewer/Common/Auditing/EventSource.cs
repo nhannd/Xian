@@ -44,6 +44,11 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 			return new OtherEventSource(otherSourceName);
 		}
 
+        public static EventSource GetUserEventSource(string userName)
+        {
+            return new UserEventSource(userName);
+        }
+
 		private EventSource() {}
 
 		/// <summary>
@@ -67,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 		/// </summary>
 		public static implicit operator AuditProcessActiveParticipant(EventSource eventSource)
 		{
-			AuditProcessActiveParticipant result = eventSource.AsAuditActiveParticipant() as AuditProcessActiveParticipant;
+			var result = eventSource.AsAuditActiveParticipant() as AuditProcessActiveParticipant;
 			if (result == null)
 				throw new InvalidCastException();
 			return result;
@@ -116,21 +121,19 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 
 			protected override DicomAuditSource AsDicomAuditSource()
 			{
-				if (_currentUserAuditSource == null)
-					_currentUserAuditSource = new DicomAuditSource(GetUserName(), string.Empty, AuditSourceTypeCodeEnum.EndUserInterface);
-
-				return _currentUserAuditSource;
+			    return _currentUserAuditSource ??
+			           (_currentUserAuditSource =
+			            new DicomAuditSource(GetUserName(), string.Empty, AuditSourceTypeCodeEnum.EndUserInterface));
 			}
 
-			protected override AuditActiveParticipant AsAuditActiveParticipant()
-			{
-				if (_currentUserActiveParticipant == null)
-					_currentUserActiveParticipant = new AuditPersonActiveParticipant(GetUserName(), string.Empty, GetUserName());
+		    protected override AuditActiveParticipant AsAuditActiveParticipant()
+		    {
+		        return _currentUserActiveParticipant ??
+		               (_currentUserActiveParticipant =
+		                new AuditPersonActiveParticipant(GetUserName(), string.Empty, GetUserName()));
+		    }
 
-				return _currentUserActiveParticipant;
-			}
-
-			private static string GetUserName()
+		    private static string GetUserName()
 			{
 				IPrincipal p = Thread.CurrentPrincipal;
 				if (p == null || p.Identity == null || string.IsNullOrEmpty(p.Identity.Name))
@@ -138,5 +141,31 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 				return p.Identity.Name;
 			}
 		}
+
+        private class UserEventSource : EventSource
+        {
+            private DicomAuditSource _currentUserAuditSource;
+            private AuditActiveParticipant _currentUserActiveParticipant;
+            private readonly string _username;
+
+            internal UserEventSource(string name)
+            {
+                _username = name;
+            }
+
+            protected override DicomAuditSource AsDicomAuditSource()
+            {
+                return _currentUserAuditSource ??
+                       (_currentUserAuditSource =
+                        new DicomAuditSource(_username, string.Empty, AuditSourceTypeCodeEnum.EndUserInterface));
+            }
+
+            protected override AuditActiveParticipant AsAuditActiveParticipant()
+            {
+                return _currentUserActiveParticipant ??
+                       (_currentUserActiveParticipant =
+                        new AuditPersonActiveParticipant(_username, string.Empty, _username));
+            }
+        }
 	}
 }

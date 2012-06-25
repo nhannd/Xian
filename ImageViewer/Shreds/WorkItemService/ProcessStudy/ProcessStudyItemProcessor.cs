@@ -16,6 +16,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
@@ -152,7 +153,23 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                 DateTime now = Platform.Time;
 
                 if (failed)
+                {
                     Proxy.Fail(WorkItemFailureType.NonFatal);
+
+                    if (Proxy.Item.Status == WorkItemStatusEnum.Failed)
+                    {
+                        var auditedInstances = new AuditedInstances();
+
+                        auditedInstances.AddInstance(Request.Patient.PatientId, Request.Patient.PatientsName,
+                                                     Request.Study.StudyInstanceUid);
+
+                        AuditHelper.LogImportStudies(auditedInstances,
+                                                     string.IsNullOrEmpty(Request.UserName)
+                                                         ? EventSource.CurrentProcess
+                                                         : EventSource.GetUserEventSource(Request.UserName),
+                                                     EventResult.MajorFailure);
+                    }
+                }
                 else if (!complete)
                     Proxy.Idle();
                 else if (now > Proxy.Item.ExpirationTime)
@@ -165,9 +182,20 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                                               ApplyDeleteActions = true,
                                               ApplyRouteActions = true
                                           };
-					RulesEngine.Create().ApplyStudyRules(Study.ToStoreEntry(), ruleOptions);
+                    RulesEngine.Create().ApplyStudyRules(Study.ToStoreEntry(), ruleOptions);
 
                     Proxy.Complete();
+
+                    var auditedInstances = new AuditedInstances();
+
+                    auditedInstances.AddInstance(Request.Patient.PatientId, Request.Patient.PatientsName,
+                                                 Request.Study.StudyInstanceUid);
+
+                    AuditHelper.LogImportStudies(auditedInstances,
+                                                 string.IsNullOrEmpty(Request.UserName)
+                                                     ? EventSource.CurrentProcess
+                                                     : EventSource.GetUserEventSource(Request.UserName),
+                                                 EventResult.Success);
                 }
                 else
                 {

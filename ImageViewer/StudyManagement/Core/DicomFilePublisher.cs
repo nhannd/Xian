@@ -153,16 +153,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 return;
 
             var configuration = GetServerConfiguration();
-            var context = new ImportStudyContext(configuration.AETitle, StudyStore.GetConfiguration());
+            var context = new ImportStudyContext(configuration.AETitle, StudyStore.GetConfiguration(),EventSource.CurrentUser);
 
-            // TODO (CR Jun 2012): Should the ImportFilesUtility be doing the auditing?
             var utility = new ImportFilesUtility(context);
 
-            // setup auditing information
-            var result = EventResult.Success;
-
-            // TODO (CR Jun 2012): We audit here, but not in PublishRemote?
-            var auditedInstances = GetAuditedInstances(files, true);
             try
             {
                 DicomProcessingResult failureResult = null;
@@ -182,17 +176,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     throw new ApplicationException(failureResult.ErrorMessage);
             }
             catch (Exception ex)
-            {                
-                result = EventResult.MajorFailure;
-
+            {
                 var message = string.Format("Failed to import files");
                 throw new DicomFilePublishingException(message, ex);
             }
-            finally
-            {
-                // audit attempt to import these instances to local store
-                AuditHelper.LogImportStudies(auditedInstances, EventSource.CurrentUser, result);
-            }            
+              
         }
 
         public void PublishRemote(ICollection<DicomFile> files, IDicomServiceNode destinationServer)
