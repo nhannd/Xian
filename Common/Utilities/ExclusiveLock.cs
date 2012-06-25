@@ -84,7 +84,10 @@ namespace ClearCanvas.Common.Utilities
 			Platform.CheckForEmptyString(fileOrDirectoryName, "fileOrDirectoryName");
 			var mutexName = fileOrDirectoryName.ToLower();
 			mutexName = Path.GetInvalidFileNameChars().Aggregate(mutexName, (current, invalidFileNameChar) => current.Replace(invalidFileNameChar, '-'));
-			mutexName = "cc-filesystem-lock-" + mutexName;
+
+			// If "Global\" prefix is not included, the mutex is considered Local\ and will not block across different terminal sessions
+			// The ShredHostService typically runs as a Windows Service which is a separate terminal session from the desktop
+			mutexName = "Global\\cc-filesystem-lock-" + mutexName;
 
 			Platform.Log(LogLevel.Debug, "Creating file system lock for: {0}\r\nMutex name: {1}", fileOrDirectoryName, mutexName);
 			return new NamedMutexLock(mutexName);
