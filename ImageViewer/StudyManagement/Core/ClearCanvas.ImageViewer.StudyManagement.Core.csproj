@@ -144,9 +144,7 @@
     <Compile Include="ReprocessStudyFolder.cs" />
     <Compile Include="ImportFilesUtility.cs" />
     <Compile Include="ProcessStudyUtility.cs" />
-    <Compile Include="ServiceProviders\DicomServerConfiguration.cs" />
     <Compile Include="ServiceProviders\ServerDirectory.cs" />
-    <Compile Include="ServiceProviders\ServiceProxyHelper.cs" />
     <Compile Include="ServiceProviders\StorageConfiguration.cs" />
     <Compile Include="ServiceProviders\StudyStore.cs" />
     <Compile Include="ServiceProviders\Tests\ServerDirectoryTests.cs" />

@@ -2,7 +2,7 @@
 using System.ServiceModel;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders
+namespace ClearCanvas.ImageViewer.Common
 {
     //TODO (Marmot):Add the ability to translate exceptions to faults?
     public class ServiceProxyHelper

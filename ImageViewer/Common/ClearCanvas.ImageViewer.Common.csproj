@@ -99,6 +99,12 @@
     <Compile Include="DicomServer\DataContracts.cs" />
     <Compile Include="DicomServer\DicomServer.cs" />
     <Compile Include="DicomServer\DicomServerClient.cs" />
+    <Compile Include="DicomServer\DicomServerSettings.cs" />
+    <Compile Include="DicomServer\DicomServerSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>DicomServerSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="DicomServer\IDicomServerConfiguration.cs" />
     <Compile Include="DicomServer\IDicomServer.cs" />
     <Compile Include="Diskspace.cs" />
@@ -113,6 +119,7 @@
     <Compile Include="ServerDirectory\Tests\ServerDirectoryTests.cs" />
     <Compile Include="DicomServer\Tests\DicomServerTestServiceProvider.cs" />
     <Compile Include="ServerDirectory\Tests\ServerDirectoryTestServiceProvider.cs" />
+    <Compile Include="ServiceProxyHelper.cs" />
     <Compile Include="StorageMonitorSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -199,6 +206,10 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="DataContracts.cd" />
+    <None Include="DicomServer\DicomServerSettings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DicomServerSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="MemoryManagementSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>MemoryManagementSettings.Designer.cs</LastGenOutput>

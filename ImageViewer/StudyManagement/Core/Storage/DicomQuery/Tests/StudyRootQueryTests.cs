@@ -16,6 +16,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.DicomServer.Tests;
 using ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders;
 using NUnit.Framework;
 
@@ -33,7 +34,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Tests
         {
             var extensionFactory = new UnitTestExtensionFactory
                                        {
-                                            { typeof(ServiceProviderExtensionPoint), typeof(DicomServerConfigurationServiceProvider) },
+                                            { typeof(ServiceProviderExtensionPoint), typeof(DicomServerTestServiceProvider) },
                                             { typeof(ServiceProviderExtensionPoint), typeof(StudyStoreQueryServiceProvider) },
                                             { typeof (ServiceProviderExtensionPoint), typeof (ServerDirectoryServiceProvider) }
                                        };
