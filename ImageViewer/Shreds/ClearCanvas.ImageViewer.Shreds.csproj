@@ -70,12 +70,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DicomServer\AssociationVerifier.cs" />
+    <Compile Include="DicomServer\DicomServerLegacySettings.cs" />
     <Compile Include="DicomServer\DicomServerManager.cs" />
     <Compile Include="DicomServer\FindScpExtension.cs" />
     <Compile Include="DicomServer\DicomServer.cs" />
     <Compile Include="DicomServer\DicomServerExtension.cs" />
     <Compile Include="DicomServer\DicomServerServiceType.cs" />
-    <Compile Include="DicomServer\DicomServerSettings.cs" />
     <Compile Include="DicomServer\MoveScpExtension.cs" />
     <Compile Include="DicomServer\ScpExtension.cs" />
     <Compile Include="DicomServer\StoreScpExtension.cs" />
@@ -144,11 +144,6 @@
       <Project>{624BC225-49A8-4E92-942D-CDC976292EB9}</Project>
       <Name>ClearCanvas.ImageViewer.StudyManagement.Core</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="DicomServer\ImageSopClasses.xml" />
-    <EmbeddedResource Include="DicomServer\NonImageSopClasses.xml" />
-    <EmbeddedResource Include="DicomServer\TransferSyntaxes.xml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

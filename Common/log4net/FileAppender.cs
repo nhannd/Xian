@@ -564,7 +564,7 @@ namespace ClearCanvas.Common.log4net
                 canonicalName = canonicalName.Replace('/', '_');
                 canonicalName = canonicalName.Replace(':', '_');
 
-                return "filelock-mutex-" + canonicalName;
+                return "Global\\filelock-mutex-" + canonicalName;
             }
 
             /// <summary>

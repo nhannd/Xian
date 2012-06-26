@@ -270,7 +270,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             var sopClasses = (from series in _studyXml
                               from instance in series
                               where instance.SopClass != null
-                              select instance.SopClass.DicomUid).Distinct();
+                              select instance.SopClass.Uid).Distinct();
             SopClassesInStudy = DicomStringHelper.GetDicomStringArray(sopClasses);
 
             #region Meta Info

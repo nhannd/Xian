@@ -148,7 +148,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
 
             if (WorkItem == null)
             {
-                var list = workItemBroker.GetPendingWorkItemForStudy(_request.WorkItemType, _studyInstanceUid);
+                var list = workItemBroker.GetActiveWorkItemsForStudy(_request.WorkItemType, _studyInstanceUid);
                 if (list != null)
                 {
                     foreach (var item in list)

@@ -115,10 +115,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 SendOperationInfo sendOperation = CollectionUtils.FirstElement(list);
                 var progress = sendOperation.WorkItemData.Progress as DicomSendProgress ?? new DicomSendProgress
                                                                                                {
-                                                                                                   ImagesToSend = sendOperation.SubOperations
+                                                                                                   TotalImagesToSend = sendOperation.SubOperations
                                                                                                };
-                if (progress.ImagesToSend == 0)
-                    progress.ImagesToSend = sendOperation.SubOperations;
+                if (progress.TotalImagesToSend == 0)
+                    progress.TotalImagesToSend = sendOperation.SubOperations;
 
                 return progress;
             }
@@ -131,11 +131,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 var currentProgress = sendOperation.WorkItemData.Progress as DicomSendProgress;
                 if (currentProgress == null)
                 {
-                    aggregateProgress.ImagesToSend += sendOperation.SubOperations;
+                    aggregateProgress.TotalImagesToSend += sendOperation.SubOperations;
                 }
                 else
                 {
-                    aggregateProgress.ImagesToSend += currentProgress.ImagesToSend;
+                    aggregateProgress.TotalImagesToSend += currentProgress.TotalImagesToSend;
                     aggregateProgress.FailureSubOperations += currentProgress.FailureSubOperations;
                     aggregateProgress.SuccessSubOperations += currentProgress.SuccessSubOperations;
                     aggregateProgress.WarningSubOperations += currentProgress.WarningSubOperations;
@@ -266,7 +266,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                             subOperations = identifier.NumberOfStudyRelatedInstances.Value;
 
                         var client = new DicomSendBridge();
-                        client.MoveStudy(remoteAEInfo, identifier, WorkItemPriorityEnum.High);
+                        client.SendStudy(remoteAEInfo, identifier, WorkItemPriorityEnum.High);
                         _sendOperations.Add(new SendOperationInfo(client.WorkItem, message.MessageId,
                                                                   presentationID,
                                                                   server)
@@ -311,7 +311,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                     var identifier = CollectionUtils.FirstElement(s);
                     var client = new DicomSendBridge();
 
-                    client.MoveSeries(remoteAEInfo, identifier, seriesUids, WorkItemPriorityEnum.High);
+                    client.SendSeries(remoteAEInfo, identifier, seriesUids, WorkItemPriorityEnum.High);
                     _sendOperations.Add(new SendOperationInfo(client.WorkItem, message.MessageId, presentationID,
                                                               server)
                                             {
@@ -337,7 +337,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                     var identifier = CollectionUtils.FirstElement(s);
 
                     var client = new DicomSendBridge();
-                    client.MoveSops(remoteAEInfo, identifier, seriesInstanceUid, sopInstanceUids, WorkItemPriorityEnum.High);
+                    client.SendSops(remoteAEInfo, identifier, seriesInstanceUid, sopInstanceUids, WorkItemPriorityEnum.High);
                     _sendOperations.Add(new SendOperationInfo(client.WorkItem, message.MessageId, presentationID, server)
                                             {
                                                 SubOperations = sopInstanceUids.Length

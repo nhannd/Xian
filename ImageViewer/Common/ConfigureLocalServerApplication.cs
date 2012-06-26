@@ -14,7 +14,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
-using System.Globalization;
 
 namespace ClearCanvas.ImageViewer.Common
 {

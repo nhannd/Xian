@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             Progress.IsCancelable = true;
             Progress.Complete = false;
             Progress.StudiesToProcess = 0;
-            Progress.StudyFoldersToProcess = 0;
+            Progress.TotalStudyFolders = 0;
             Progress.StudiesDeleted = 0;
             Progress.StudyFoldersProcessed = 0;
             Progress.StudiesProcessed = 0;
@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 
             // Reset progress, in case of retry
             Progress.StudiesToProcess = _reindexUtility.DatabaseStudiesToScan;
-            Progress.StudyFoldersToProcess = _reindexUtility.StudyFoldersToScan;
+            Progress.TotalStudyFolders = _reindexUtility.StudyFoldersToScan;
             Progress.StudiesDeleted = 0;
             Progress.StudyFoldersProcessed = 0;
             Progress.StudiesProcessed = 0;
@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
                 return false;
             }
 
-            return !InProgressWorkItems(out reason);
+            return !AnyInProgressWorkItems(out reason);
         }
 
         #endregion
@@ -198,7 +198,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetWorkItemBroker();             
-                var list = broker.GetPriorWorkItems(Proxy.Item.ScheduledTime, null, null);
+                var list = broker.GetWorkItemsScheduledBeforeTime(Proxy.Item.ScheduledTime, null, null);
 
                 if (list == null)
                     return false;

@@ -18,6 +18,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
@@ -98,7 +99,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                                                                     file);
                                                                        var context =
                                                                            new ImportStudyContext(
-                                                                               dicomFile.SourceApplicationEntityTitle, StudyStore.GetConfiguration());
+                                                                               dicomFile.SourceApplicationEntityTitle, StudyStore.GetConfiguration(),EventSource.CurrentProcess);
                                                                        var importer = new ImportFilesUtility(context);
                                                                        var result = importer.Import(dicomFile, BadFileBehaviourEnum.Delete, FileImportBehaviourEnum.Move);
                                                                        if (!result.DicomStatus.Equals(DicomStatuses.Success))
@@ -192,7 +193,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                                                            var context =
                                                                                new ImportStudyContext(
                                                                                    lastFile.SourceApplicationEntityTitle,
-                                                                                   StudyStore.GetConfiguration());
+                                                                                   StudyStore.GetConfiguration(),EventSource.CurrentProcess);
                                                                            var importer = new ImportFilesUtility(context);
                                                                            var result = importer.Import(lastFile,
                                                                                                         BadFileBehaviourEnum.Delete,

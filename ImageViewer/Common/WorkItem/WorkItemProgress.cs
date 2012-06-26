@@ -64,13 +64,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return NumberOfFilesImported + NumberOfImportFailures; }
         }
 
-        // TODO (CR Jun 2012): Can this cause confusion with the Complete status?
-        // (SW) - this can be deleted, its not used.
-        public bool IsImportComplete()
-        {
-            return TotalFilesToImport == TotalImportsProcessed;
-        }
-
         public override string Status
         {
             get
@@ -99,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get
             {
                 if (NumberOfImportFailures > 0)
-                    return (Decimal)NumberOfImportFailures / (NumberOfImportFailures + NumberOfFilesImported); // TODO (CR Jun 2012): TotalImportsProcessed?
+                    return (Decimal)NumberOfImportFailures / TotalImportsProcessed;
 
                 return new decimal(0.0);
             }
@@ -128,13 +121,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public int TotalFilesProcessed
         {
             get { return NumberOfFilesProcessed + NumberOfProcessingFailures; }
-        }
-
-        // TODO (CR Jun 2012): Can this cause confusion with the Complete status?
-        // (SW) not used and can be deleted.
-        public bool IsImportComplete()
-        {
-            return TotalFilesToProcess == TotalFilesProcessed;
         }
 
         public override string Status
@@ -185,10 +171,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember(IsRequired = true)]
         public int StudiesProcessed { get; set; }
 
-        // TODO (CR Jun 2012 - Med): Is this a total, or remaining? Unclear from name.
-        // (SW) Rename to "TotalStudyFolders"
         [DataMember(IsRequired = true)]
-        public int StudyFoldersToProcess { get; set; }
+        public int TotalStudyFolders { get; set; }
 
         [DataMember(IsRequired = true)]
         public int StudyFoldersProcessed { get; set; }
@@ -206,13 +190,13 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                if (StudiesDeleted == 0 && StudiesToProcess == 0 && StudyFoldersProcessed == 0 && StudyFoldersToProcess == 0 && StudiesProcessed == 0 && StudiesFailed == 0)
+                if (StudiesDeleted == 0 && StudiesToProcess == 0 && StudyFoldersProcessed == 0 && TotalStudyFolders == 0 && StudiesProcessed == 0 && StudiesFailed == 0)
                 {
                     return Complete ? SR.ReindexProgress_StatusNoStudies : string.Empty;
                 }
 
                 return string.Format(SR.ReindexProgress_Status, StudiesProcessed, StudiesToProcess,
-                    StudyFoldersProcessed, StudyFoldersToProcess, StudiesDeleted, StudiesFailed);
+                    StudyFoldersProcessed, TotalStudyFolders, StudiesDeleted, StudiesFailed);
             }
         }
 
@@ -223,8 +207,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 if (Complete && StudiesToProcess == 0)
                     return new decimal(100.0);
 
-                if (StudiesToProcess > 0 || StudyFoldersToProcess > 0)
-                    return (Decimal)(StudiesProcessed + StudyFoldersProcessed) / (StudiesToProcess+StudyFoldersToProcess);
+                if (StudiesToProcess > 0 || TotalStudyFolders > 0)
+                    return (Decimal)(StudiesProcessed + StudyFoldersProcessed) / (StudiesToProcess+TotalStudyFolders);
 
                 return new decimal(0.0);
             }
@@ -234,8 +218,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                if ((StudiesToProcess > 0 || StudyFoldersToProcess > 0) && StudiesFailed > 0)
-                    return (Decimal)StudiesFailed / (StudiesToProcess + StudyFoldersToProcess);
+                if ((StudiesToProcess > 0 || TotalStudyFolders > 0) && StudiesFailed > 0)
+                    return (Decimal)StudiesFailed / (StudiesToProcess + TotalStudyFolders);
 
                 return new decimal(0.0);
             }
@@ -252,10 +236,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             IsCancelable = false;
         }
 
-        // TODO (CR Jun 2012 - Med): Is this a total, or remaining? Unclear from name.
-        // (SW) Rename to TotalStudiesToProcess
         [DataMember(IsRequired = true)]
-        public int StudiesToProcess { get; set; }
+        public int TotalStudiesToProcess { get; set; }
 
         [DataMember(IsRequired = true)]
         public int StudiesProcessed { get; set; }
@@ -267,12 +249,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                if (StudiesToProcess == 0 && StudiesProcessed == 0)
+                if (TotalStudiesToProcess == 0 && StudiesProcessed == 0)
                 {
                     return Complete ? SR.ReapplyRulesProgress_StatusNoStudies : string.Empty;
                 }
 
-                return string.Format(SR.ReapplyRulesProgress_Status, StudiesProcessed, StudiesToProcess);
+                return string.Format(SR.ReapplyRulesProgress_Status, StudiesProcessed, TotalStudiesToProcess);
             }
         }
 
@@ -280,11 +262,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                if (Complete && StudiesToProcess == 0)
+                if (Complete && TotalStudiesToProcess == 0)
                     return new decimal(100.0);
 
-                if (StudiesToProcess > 0)
-                    return (Decimal)StudiesProcessed / StudiesToProcess ;
+                if (TotalStudiesToProcess > 0)
+                    return (Decimal)StudiesProcessed / TotalStudiesToProcess ;
 
                 return new decimal(0.0);
             }
@@ -301,9 +283,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             IsCancelable = true;
         }
 
-        // TODO (CR Jun 2012 - Med): Is this a total, or remaining? Unclear from name.
         [DataMember(IsRequired = true)]
-        public int ImagesToSend { get; set; }
+        public int TotalImagesToSend { get; set; }
 
         [DataMember(IsRequired = true)]
         public int WarningSubOperations { get; set; }
@@ -316,14 +297,14 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public int RemainingSubOperations
         {
-            get { return ImagesToSend - (WarningSubOperations + FailureSubOperations + SuccessSubOperations); }
+            get { return TotalImagesToSend - (WarningSubOperations + FailureSubOperations + SuccessSubOperations); }
         }
 
         public override string Status
         {
             get
             {
-                if (ImagesToSend == 0)
+                if (TotalImagesToSend == 0)
                     return string.Empty;
 
                 return string.Format(SR.DicomSendProgress_Status,
@@ -337,8 +318,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                if (ImagesToSend > 0)
-                    return (Decimal) (WarningSubOperations + FailureSubOperations + SuccessSubOperations)/ImagesToSend;
+                if (TotalImagesToSend > 0)
+                    return (Decimal) (WarningSubOperations + FailureSubOperations + SuccessSubOperations)/TotalImagesToSend;
 
                 return new decimal(0.0);
             }
@@ -348,8 +329,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                if (ImagesToSend > 0 && FailureSubOperations > 0)
-                    return (Decimal)FailureSubOperations / ImagesToSend;
+                if (TotalImagesToSend > 0 && FailureSubOperations > 0)
+                    return (Decimal)FailureSubOperations / TotalImagesToSend;
 
                 return new decimal(0.0);
             }
@@ -429,9 +410,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             IsCancelable = true;
         }
 
-        // TODO (CR Jun 2012 - Med): Is this a total, or remaining? Unclear from name.
         [DataMember(IsRequired = true)]
-        public int ImagesToDelete { get; set; }
+        public int TotalImagesToDelete { get; set; }
 
         [DataMember(IsRequired = true)]
         public int ImagesDeleted { get; set; }
@@ -440,7 +420,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                if (ImagesToDelete == 0)
+                if (TotalImagesToDelete == 0)
                     return string.Empty;
 
                 if (ImagesDeleted == 1)
@@ -454,8 +434,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                if (ImagesToDelete > 0)
-                    return (Decimal)(ImagesDeleted) / ImagesToDelete;
+                if (TotalImagesToDelete > 0)
+                    return (Decimal)(ImagesDeleted) / TotalImagesToDelete;
 
                 return new decimal(0.0);
             }

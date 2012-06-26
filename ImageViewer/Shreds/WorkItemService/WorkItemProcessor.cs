@@ -347,7 +347,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     else if (priority == WorkItemPriorityEnum.High)
                         workItems = workItemBroker.GetPendingWorkItemsByPriority(count, priority);
                     else
-                        workItems = workItemBroker.GetPendingWorkItems(count);
+                        workItems = workItemBroker.GetWorkItemsForProcessing(count);
 
                     foreach (var item in workItems)
                     {

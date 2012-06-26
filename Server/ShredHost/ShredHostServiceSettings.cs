@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -9,93 +9,75 @@
 
 #endregion
 
+using System.ComponentModel;
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Server.ShredHost
 {
-	public class ShredHostServiceSettings : ShredConfigSection
+	[SettingsGroupDescription("Configuration for the Shred Host Service.")]
+	[SettingsProvider(typeof (LocalFileSettingsProvider))]
+	internal sealed partial class ShredHostServiceSettings
 	{
 		public const int DefaultShredHostHttpPort = 51121;
 		public const int DefaultSharedHttpPort = 51122;
-		public const int DefaultSharedTcpPort = 50123;
+		public const int DefaultSharedTcpPort = 51123;
 		public const string DefaultServiceAddressBase = "";
 
-		private static ShredHostServiceSettings _instance;
+		private static Proxy _instance;
 
-		private ShredHostServiceSettings()
+		public static Proxy Instance
 		{
+			get { return _instance ?? (_instance = new Proxy(Default)); }
 		}
 
-		public static string SettingName
+		public sealed class Proxy
 		{
-			get { return "ShredHostServiceSettings"; }
-		}
+			private readonly ShredHostServiceSettings _settings;
 
-		public static ShredHostServiceSettings Instance
-		{
-			get
+			public Proxy(ShredHostServiceSettings settings)
 			{
-				if (_instance == null)
-				{
-					_instance = ShredConfigManager.GetConfigSection(ShredHostServiceSettings.SettingName) as ShredHostServiceSettings;
-					if (_instance == null)
-					{
-						_instance = new ShredHostServiceSettings();
-						ShredConfigManager.UpdateConfigSection(ShredHostServiceSettings.SettingName, _instance);
-					}
-				}
-
-				return _instance;
+				_settings = settings;
 			}
-		}
 
-		public static void Save()
-		{
-			ShredConfigManager.UpdateConfigSection(ShredHostServiceSettings.SettingName, _instance);
-		}
+			private object this[string propertyName]
+			{
+				get { return _settings[propertyName]; }
+				set { ApplicationSettingsExtensions.SetSharedPropertyValue(_settings, propertyName, value); }
+			}
 
-		#region Public Properties
+			[DefaultValue(DefaultShredHostHttpPort)]
+			public int ShredHostHttpPort
+			{
+				get { return (int) this["ShredHostHttpPort"]; }
+				set { this["ShredHostHttpPort"] = value; }
+			}
 
-		[ConfigurationProperty("ShredHostHttpPort", DefaultValue = ShredHostServiceSettings.DefaultShredHostHttpPort)]
-		public int ShredHostHttpPort
-		{
-			get { return (int)this["ShredHostHttpPort"]; }
-			set { this["ShredHostHttpPort"] = value; }
-		}
+			[DefaultValue(DefaultSharedHttpPort)]
+			public int SharedHttpPort
+			{
+				get { return (int) this["SharedHttpPort"]; }
+				set { this["SharedHttpPort"] = value; }
+			}
 
-		[ConfigurationProperty("SharedHttpPort", DefaultValue = ShredHostServiceSettings.DefaultSharedHttpPort)]
-		public int SharedHttpPort
-		{
-			get { return (int)this["SharedHttpPort"]; }
-			set { this["SharedHttpPort"] = value; }
-		}
+			[DefaultValue(DefaultSharedTcpPort)]
+			public int SharedTcpPort
+			{
+				get { return (int) this["SharedTcpPort"]; }
+				set { this["SharedTcpPort"] = value; }
+			}
 
-		[ConfigurationProperty("SharedTcpPort", DefaultValue = ShredHostServiceSettings.DefaultSharedTcpPort)]
-		public int SharedTcpPort
-		{
-			get { return (int)this["SharedTcpPort"]; }
-			set { this["SharedTcpPort"] = value; }
-		}
+			[DefaultValue(DefaultServiceAddressBase)]
+			public string ServiceAddressBase
+			{
+				get { return (string) this["ServiceAddressBase"]; }
+				set { this["ServiceAddressBase"] = value; }
+			}
 
-		[ConfigurationProperty("ServiceAddressBase", DefaultValue = ShredHostServiceSettings.DefaultServiceAddressBase)]
-		public string ServiceAddressBase
-		{
-			get { return (string)this["ServiceAddressBase"]; }
-			set { this["ServiceAddressBase"] = value; ; }
-		}
-
-		#endregion
-
-		public override object Clone()
-		{
-			ShredHostServiceSettings clone = new ShredHostServiceSettings();
-
-			clone.ShredHostHttpPort = _instance.ShredHostHttpPort;
-			clone.SharedHttpPort = _instance.SharedHttpPort;
-			clone.SharedTcpPort = _instance.SharedTcpPort;
-			clone.ServiceAddressBase = _instance.ServiceAddressBase;
-
-			return clone;
+			public void Save()
+			{
+				_settings.Save();
+			}
 		}
 	}
 }

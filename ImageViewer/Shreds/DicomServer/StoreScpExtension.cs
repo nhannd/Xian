@@ -17,6 +17,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
+using ClearCanvas.ImageViewer.Common.Auditing;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
@@ -35,7 +37,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private static IEnumerable<SupportedSop> GetSupportedSops()
 		{
-			foreach (SopClass sopClass in GetSopClasses(DicomServerSettings.Instance.ImageStorageSopClasses))
+		    var settings = new DicomServerSettings();
+            foreach (SopClass sopClass in GetSopClasses(settings.ImageStorageSopClasses))
 			{
 			    var supportedSop = new SupportedSop
 			                           {
@@ -45,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			    supportedSop.AddSyntax(TransferSyntax.ExplicitVrLittleEndian);
 				supportedSop.AddSyntax(TransferSyntax.ImplicitVrLittleEndian);
 
-				foreach (TransferSyntax transferSyntax in GetTransferSyntaxes(DicomServerSettings.Instance.StorageTransferSyntaxes))
+                foreach (TransferSyntax transferSyntax in GetTransferSyntaxes(settings.StorageTransferSyntaxes))
 				{
 					if (transferSyntax.DicomUid.UID != TransferSyntax.ExplicitVrLittleEndianUid &&
 						transferSyntax.DicomUid.UID != TransferSyntax.ImplicitVrLittleEndianUid)
@@ -68,7 +71,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private static IEnumerable<SupportedSop> GetSupportedSops()
 		{
-			foreach (SopClass sopClass in GetSopClasses(DicomServerSettings.Instance.NonImageStorageSopClasses))
+            var settings = new DicomServerSettings();
+            foreach (SopClass sopClass in GetSopClasses(settings.NonImageStorageSopClasses))
 			{
 			    var supportedSop = new SupportedSop
 			                           {
