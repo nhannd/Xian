@@ -34,15 +34,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Command
 
         public ViewerCommandProcessorContext()
         {
-            try
-            {
-                BackupDirectory = Path.Combine(Path.GetTempPath(), ProductInformation.Component + " " + ProductInformation.FamilyName);
-                Directory.CreateDirectory(BackupDirectory);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                BackupDirectory = Path.Combine(Platform.InstallDirectory, "dicom_interim");
-            }  
+            BackupDirectory = Path.Combine(Platform.ApplicationDataDirectory, "TemporaryFiles");
+            Directory.CreateDirectory(BackupDirectory);
         }
 
         public void Dispose()

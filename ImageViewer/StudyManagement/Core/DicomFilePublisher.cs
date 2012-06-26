@@ -108,8 +108,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
         private static void SaveFiles(IEnumerable<DicomFile> files, string tempDirectoryPrefix, out string tempDirectory, out List<string> savedFiles)
         {
-            tempDirectory = Path.Combine(Path.GetTempPath(), "ClearCanvas");
-            tempDirectory = Path.Combine(tempDirectory, "Publishing");
+            tempDirectory = Path.Combine(Platform.ApplicationDataDirectory, "Publishing");
 
             DeleteEmptyFolders(tempDirectory);
             tempDirectory = GetTempDirectory(tempDirectory, tempDirectoryPrefix);
@@ -122,19 +121,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 file.Save(savePath);
                 savedFiles.Add(savePath);
             }
-        }
-
-        private static AuditedInstances GetAuditedInstances(IEnumerable<DicomFile> files, bool includeFilename)
-        {
-            var instances = new AuditedInstances();
-            foreach (var file in files)
-            {
-                var patientId = file.DataSet[DicomTags.PatientId].ToString();
-                var patientsName = file.DataSet[DicomTags.PatientsName].ToString();
-                var studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
-                instances.AddInstance(patientId, patientsName, studyInstanceUid, includeFilename ? file.Filename : null);
-            }
-            return instances;
         }
 
         private static DicomServerConfiguration GetServerConfiguration()
