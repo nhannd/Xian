@@ -18,7 +18,7 @@ using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Common.Configuration.Tests
 {
-    internal class TestSystemConfigurationServiceProvider : IServiceProvider
+    public class TestSystemConfigurationServiceProvider : IServiceProvider
     {
         #region IServiceProvider Members
 

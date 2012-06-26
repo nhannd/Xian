@@ -34,6 +34,8 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
         #endregion
 
+        // TODO (CR Jun 2012): Move to a helper class?
+
         #region Implementation of IStorageConfiguration
 
         public GetStorageConfigurationResult GetConfiguration(GetStorageConfigurationRequest request)
@@ -79,8 +81,8 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
 
             if (newConfiguration.DefaultDeletionRule == null)
             {
-                storageSettings.Reset();
-                storageSettings.Save();
+                deletionSettings.Reset();
+                deletionSettings.Save();
             }
             else
             {

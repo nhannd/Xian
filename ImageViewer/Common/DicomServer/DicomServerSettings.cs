@@ -109,6 +109,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
             return new Proxy(this);
         }
 
+        // TODO (CR Jun 2012): Move to a helper class?
         public DicomServerConfiguration GetBasicConfiguration()
         {
             return new DicomServerConfiguration {AETitle = AETitle, HostName = HostName, Port = Port};

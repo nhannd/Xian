@@ -16,6 +16,7 @@ using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.Configuration.Tests;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using NUnit.Framework;
@@ -27,12 +28,15 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory.Tests
     {
         public void Initialize1()
         {
-            ServerDirectoryTestServiceProvider.Reset();
             DicomServer.Tests.DicomServerTestServiceProvider.Reset();
             StudyManagement.Tests.StudyStoreTestServiceProvider.Reset();
 
             Platform.SetExtensionFactory(new UnitTestExtensionFactory
                                              {
+                                                 {
+                                                     typeof (ServiceProviderExtensionPoint),
+                                                     typeof (TestSystemConfigurationServiceProvider)
+                                                     },
                                                  {
                                                      typeof (ServiceProviderExtensionPoint),
                                                      typeof (ServerDirectoryTestServiceProvider)
@@ -53,11 +57,14 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory.Tests
 
         public void Initialize2()
         {
-            ServerDirectoryTestServiceProvider.Reset();
             DicomServer.Tests.DicomServerTestServiceProvider.Reset();
 
             Platform.SetExtensionFactory(new UnitTestExtensionFactory
                                              {
+                                                 {
+                                                     typeof (ServiceProviderExtensionPoint),
+                                                     typeof (TestSystemConfigurationServiceProvider)
+                                                     },
                                                  {
                                                      typeof (ServiceProviderExtensionPoint),
                                                      typeof (ServerDirectoryTestServiceProvider)
@@ -79,14 +86,14 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory.Tests
 
             var local = ServerDirectory.GetLocalServer();
             Assert.AreEqual("<local>", local.Name);
-            Assert.AreEqual("Local", local.AETitle);
+            Assert.AreEqual("CLEARCANVAS", local.AETitle); //default value from DicomServerSettings.
             Assert.AreEqual("localhost", local.ScpParameters.HostName);
             Assert.AreEqual(104, local.ScpParameters.Port);
             Assert.IsTrue(local.IsLocal);
 
             var contract = local.ToDataContract();
             Assert.AreEqual("<local>", contract.Server.Name);
-            Assert.AreEqual("Local", contract.Server.AETitle);
+            Assert.AreEqual("CLEARCANVAS", contract.Server.AETitle);
             Assert.AreEqual("localhost", contract.Server.ScpParameters.HostName);
             Assert.AreEqual(104, contract.Server.ScpParameters.Port);
 

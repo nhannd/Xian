@@ -19,7 +19,6 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer.Tests
     {
         public static void Reset()
         {
-            TestDicomServerConfiguration.Reset();
             TestDicomServer.Reset();
         }
 
@@ -28,55 +27,12 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer.Tests
         public object GetService(Type serviceType)
         {
             if (typeof(IDicomServerConfiguration) == serviceType)
-                return new TestDicomServerConfiguration();
+                return new DicomServerConfigurationProxy();
 
             if (typeof(IDicomServer) == serviceType)
                 return new TestDicomServer();
 
             return null;
-        }
-
-        #endregion
-    }
-
-    public class TestDicomServerConfiguration : IDicomServerConfiguration
-    {
-        public static DicomServerConfiguration Configuration;
-
-        static TestDicomServerConfiguration()
-        {
-            Reset();
-        }
-
-        public static void Reset()
-        {
-            Configuration = new DicomServerConfiguration { AETitle = "Local", HostName = "localhost", Port = 104 };
-        }
-
-        #region IDicomServerConfiguration Members
-
-        public GetDicomServerConfigurationResult GetConfiguration(GetDicomServerConfigurationRequest request)
-        {
-            return new GetDicomServerConfigurationResult
-                       {
-                           Configuration = Configuration
-                       };
-        }
-
-        public UpdateDicomServerConfigurationResult UpdateConfiguration(UpdateDicomServerConfigurationRequest request)
-        {
-            Configuration = request.Configuration;
-            return new UpdateDicomServerConfigurationResult();
-        }
-
-        public GetDicomServerExtendedConfigurationResult GetExtendedConfiguration(GetDicomServerExtendedConfigurationRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public UpdateDicomServerExtendedConfigurationResult UpdateExtendedConfiguration(UpdateDicomServerExtendedConfigurationRequest request)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion

@@ -81,22 +81,30 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 
         public static DicomServerConfiguration GetConfiguration()
         {
-            return new DicomServerSettings().GetBasicConfiguration();
+            DicomServerConfiguration configuration = null;
+                Platform.GetService<IDicomServerConfiguration>(
+                    s => configuration = s.GetConfiguration(new GetDicomServerConfigurationRequest()).Configuration);
+            return configuration;
         }
 
         public static void UpdateConfiguration(DicomServerConfiguration configuration)
         {
-            new DicomServerSettings().UpdateBasicConfiguration(configuration);
+            Platform.GetService<IDicomServerConfiguration>(
+                s => s.UpdateConfiguration(new UpdateDicomServerConfigurationRequest{Configuration = configuration}));
         }
 
         public static DicomServerExtendedConfiguration GetExtendedConfiguration()
         {
-            return new DicomServerSettings().GetExtendedConfiguration();
+            DicomServerExtendedConfiguration configuration = null;
+            Platform.GetService<IDicomServerConfiguration>(
+                s => configuration = s.GetExtendedConfiguration(new GetDicomServerExtendedConfigurationRequest()).ExtendedConfiguration);
+            return configuration;
         }
 
         public static void UpdateExtendedConfiguration(DicomServerExtendedConfiguration configuration)
         {
-            new DicomServerSettings().UpdateExtendedConfiguration(configuration);
+            Platform.GetService<IDicomServerConfiguration>(
+                s => s.UpdateExtendedConfiguration(new UpdateDicomServerExtendedConfigurationRequest { ExtendedConfiguration = configuration }));
         }
 
         public static void RestartListener()

@@ -46,30 +46,6 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement.Tests
         }
 
         [Test]
-        public void TestStudyEntry_ToDicomAttributeCollection()
-        {
-            var entry = new StudyEntry
-                                   {
-                                       Study = new StudyRootStudyIdentifier
-                                                   {
-                                                       PatientId = "123"
-                                                   },
-                                       Data = new StudyEntryData
-                                                  {
-                                                      SourceAETitlesInStudy = new string[]{"PACS1", "PACS2"},
-                                                      StationNamesInStudy = new string[] { "STN1", "STN2" },
-                                                      InstitutionNamesInStudy = new string[] { "INST1", "INST2" },
-                                                  }
-                                   };
-
-            var collection = entry.Study.ToDicomAttributeCollection();
-
-            Assert.AreEqual("PACS1\\PACS2", collection[DicomTags.SourceApplicationEntityTitle].ToString());
-            Assert.AreEqual("STN1\\STN2", collection[DicomTags.StationName].ToString());
-            Assert.AreEqual("INST1\\INST2", collection[DicomTags.InstitutionName].ToString());
-        }
-
-        [Test]
         public void TestIsSupported()
         {
             Initialize1();

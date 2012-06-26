@@ -11,9 +11,11 @@
 
 #if UNIT_TESTS
 
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.Configuration.Tests;
 using ClearCanvas.ImageViewer.Common.DicomServer.Tests;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders;
@@ -33,6 +35,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Tests
         {
             var extensionFactory = new UnitTestExtensionFactory
                                        {
+                                            { typeof(ServiceProviderExtensionPoint), typeof(TestSystemConfigurationServiceProvider) },
                                             { typeof(ServiceProviderExtensionPoint), typeof(DicomServerTestServiceProvider) },
                                             { typeof(ServiceProviderExtensionPoint), typeof(StudyStoreQueryServiceProvider) },
                                             { typeof (ServiceProviderExtensionPoint), typeof (ServerDirectoryServiceProvider) }
@@ -40,7 +43,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Tests
 
             Platform.SetExtensionFactory(extensionFactory);
 
-            SqlCeDatabaseHelper<DicomStoreDataContext>.CreateDatabase(_testDatabaseFilename);
+            if (!File.Exists(SqlCeDatabaseHelper<DicomStoreDataContext>.GetDatabaseFilePath(_testDatabaseFilename)))
+                SqlCeDatabaseHelper<DicomStoreDataContext>.CreateDatabase(_testDatabaseFilename);
         }
 
         private static DataAccessContext CreateContext()
