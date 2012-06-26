@@ -380,7 +380,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
                 {
                     newList = CollectionUtils.Select(newList,
-                                                     item => item.ScheduledTime < Proxy.Item.ScheduledTime && item.Status != WorkItemStatusEnum.InProgress);
+                                                     item => item.ScheduledTime < Proxy.Item.ScheduledTime || item.Status == WorkItemStatusEnum.InProgress);
                 }
 
                 return newList.Count > 0;
