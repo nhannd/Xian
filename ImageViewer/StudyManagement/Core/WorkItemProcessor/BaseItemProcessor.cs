@@ -293,9 +293,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 return sop;
             }
         }
-
-        // TODO (CR Jun 2012): Name - GetCompetingWorkItems? Technically, this is only getting items that can potentially run before "this" item.
-
+   
         /// <summary>
         /// Returns a list of <see cref="WorkItem"/>s with specified types and status (both are optional)
         /// that are scheduled before the <see cref="WorkItem"/> being processed.
@@ -319,7 +317,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 {
                     prioritiesToBlock.Add(WorkItemPriorityEnum.Normal);
                 }
-                var list = broker.GetPriorWorkItems(Proxy.Item.ScheduledTime, prioritiesToBlock, Proxy.Item.StudyInstanceUid);
+                var list = broker.GetWorkItemsScheduledBeforeTime(Proxy.Item.ScheduledTime, prioritiesToBlock, Proxy.Item.StudyInstanceUid);
 
                 if (list == null)
                     return null;
@@ -330,7 +328,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
         }
 
-        // TODO (CR Jun 2012): Name - GetCompetingInProgressWorkItems?
         /// <summary>
         /// Returns a list of related <see cref="WorkItem"/>s with specified types and status (both are optional)
         /// that are In Progress and scheduled before the <see cref="WorkItem"/> being processed.
@@ -357,10 +354,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
         }
 
-        // TODO (CR Jun 2012): Comment/Description no longer correct.
-        // TODO (CR Jun 2012): Name isn't totally accurate. It's not just whether a re-index is scheduled, but it's
-        // whether or not one is scheduled ahead of "this" item.
-
         /// <summary>
         /// Checks if a Reindex is scheduled that should prevent the current <see cref="WorkItem"/> from processing.
         /// </summary>
@@ -382,7 +375,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                                                              && item.Status != WorkItemStatusEnum.Canceled
                                                              && item.Status != WorkItemStatusEnum.Failed);
 
-                // TODO (CR Jun 2012): Need a comment about why this is here - not totally clear.
                 // Study Inserts only wait for reindexes scheduled before itself, not for those after.  All other 
                 // WorkItem types wait for any reindex scheduled, whether its scheduled before or after itself.
                 if (Proxy.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
@@ -395,12 +387,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
             }
         }
 
-        // TODO (CR Jun 2012): Name - GetInProgressWorkItems
         /// <summary>
         /// Returns true if there are any WorkItemStatusEnum.InProgress work items.
         /// </summary>
         /// <returns></returns>
-        protected bool InProgressWorkItems(out string reason)
+        protected bool AnyInProgressWorkItems(out string reason)
         {
             reason = string.Empty;
             using (var context = new DataAccessContext())

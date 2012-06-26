@@ -136,8 +136,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
         private void WorkItemsChanged(object sender, WorkItemsChangedEventArgs e)
         {
-            // TODO (CR Jun 2012 - Med): ObservableDictionary is not thread safe, and even though this
-            // is a "read" operation, all usages of StudyWorkItems should be inside a lock.
             foreach (var item in e.ChangedItems)
             {
                 if (item.Request is DicomReceiveRequest)

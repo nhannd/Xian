@@ -29,8 +29,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
     /// </summary>
     internal class StudyProcessProcessor : BaseItemProcessor<ProcessStudyRequest,ProcessStudyProgress>
     {
-        // TODO (CR Jun 2012 - Med): I think this class should be doing some auditing.
-
         #region Public Properties
 
         public Study Study { get; set; }

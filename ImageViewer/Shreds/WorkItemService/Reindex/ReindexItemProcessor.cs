@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
                 return false;
             }
 
-            return !InProgressWorkItems(out reason);
+            return !AnyInProgressWorkItems(out reason);
         }
 
         #endregion
@@ -198,7 +198,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetWorkItemBroker();             
-                var list = broker.GetPriorWorkItems(Proxy.Item.ScheduledTime, null, null);
+                var list = broker.GetWorkItemsScheduledBeforeTime(Proxy.Item.ScheduledTime, null, null);
 
                 if (list == null)
                     return false;

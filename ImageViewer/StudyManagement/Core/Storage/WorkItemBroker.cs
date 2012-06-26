@@ -30,9 +30,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 	    /// <param name="priority"> </param>
 	    /// <returns></returns>
 	    public List<WorkItem> GetPendingWorkItemsByPriority(int n, WorkItemPriorityEnum priority)
-        {
-	        // TODO (CR Jun 2012): Name of the method isn't really accurate. Should it be GetInactive or something?
-
+        {	   
             return (from w in Context.WorkItems
                     where (w.Status == WorkItemStatusEnum.Pending
                            || w.Status == WorkItemStatusEnum.Idle)
@@ -70,10 +68,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         /// </summary>
         /// <param name="n"></param>
         /// <returns></returns>
-        public List<WorkItem> GetPendingWorkItems(int n)
+        public List<WorkItem> GetWorkItemsForProcessing(int n)
         {
-            // TODO (CR Jun 2012): Name of the method isn't really accurate. Should it be GetInactive or something?
-
             return (from w in Context.WorkItems
                     where (w.Status == WorkItemStatusEnum.Pending
                            || w.Status == WorkItemStatusEnum.Idle)
@@ -112,15 +108,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             return query.AsEnumerable();
         }
 
-	    // TODO (CR Jun 2012): Name - Prior doesn't seem right. Isn't it more like GetWorkItemsScheduledBefore or something?
-        /// <summary>
-        /// General the WorkItems with the specified parameters.
+	    /// <summary>
+        /// Get the WorkItems scheduled before <paramref name="scheduledTime"/> for <paramref name="studyInstanceUid"/>. 
         /// </summary>
-        /// <param name="scheduledTime"></param>
-        /// <param name="prioritiesToBlock"></param>
-        /// <param name="studyInstanceUid"></param>
+        /// <param name="scheduledTime">The scheduled time to get related WorkItems for.</param>
+        /// <param name="prioritiesToBlock">A list of priorities to NOT include in the results.  Can be null.</param>
+        /// <param name="studyInstanceUid">The Study Instance UID to search for matching WorkItems.  Can be null.</param>
         /// <returns></returns>
-        public IEnumerable<WorkItem> GetPriorWorkItems(DateTime scheduledTime,
+        public IEnumerable<WorkItem> GetWorkItemsScheduledBeforeTime(DateTime scheduledTime,
             IEnumerable<WorkItemPriorityEnum> prioritiesToBlock, string studyInstanceUid)
         {
             IQueryable<WorkItem> query = from w in Context.WorkItems select w;
@@ -174,10 +169,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         /// <param name="type"></param>
         /// <param name="studyInstanceUid"></param>
         /// <returns></returns>
-        public IEnumerable<WorkItem> GetPendingWorkItemForStudy(string type, string studyInstanceUid)
+        public IEnumerable<WorkItem> GetActiveWorkItemsForStudy(string type, string studyInstanceUid)
         {
-            // TODO (CR Jun 2012): Should name of this method be GetActive or GetNonTerminated?
-
             var list = (from w in Context.WorkItems
                         where w.StudyInstanceUid == studyInstanceUid
                               && w.Type == type &&
