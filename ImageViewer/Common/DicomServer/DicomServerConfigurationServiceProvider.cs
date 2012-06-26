@@ -55,7 +55,9 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
             settings.HostName = request.Configuration.HostName;
             settings.Port = request.Configuration.Port;
 
-            //TODO (Marmot): While it doesn't do any harm to do this here, the listener should also poll periodically for configuration changes, just in case.
+            // TODO (Marmot): While it doesn't do any harm to do this here, the listener should also poll periodically for configuration changes, just in case.
+            // TODO (CR Jun 2012): Also, now that we have settings classes, this suddenly becomes more important, especially if this class gets removed,
+            // or is no longer used.
             try
             {
                 DicomServer.RestartListener();
