@@ -12,12 +12,13 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using ClearCanvas.Common;
 using System.Xml;
 
 namespace ClearCanvas.Server.ShredHost
 {
-	//TODO (CR Sept 2010): Turn these into ApplicationSettingsBase classes and use the ApplicationSettingsExtensions to set the shared property values.
+	[Obsolete("Use standard ApplicationSettingsBase-derived classes with ApplicationSettingsExtensions to set shared settings if so desired. Use LegacyShredConfigSectionAttribute and IMigrateLegacyShredConfigSection to maintain shred settings migration compatibility.")]
     public abstract class ShredConfigSection : ConfigurationSection, ICloneable
     {
     	private Dictionary<string, string> _removedProperties;
@@ -73,8 +74,18 @@ namespace ClearCanvas.Server.ShredHost
 
 			return true;
 		}
+
+		internal void LoadXml(string xml)
+		{
+			using (var stringReader = new StringReader(xml))
+			using (var xmlReader = XmlReader.Create(stringReader))
+			{
+				base.DeserializeSection(xmlReader);
+			}
+		}
 	}
-    
+
+	[Obsolete("Use standard ApplicationSettingsBase-derived classes with ApplicationSettingsExtensions to set shared settings if so desired. Use LegacyShredConfigSectionAttribute and IMigrateLegacyShredConfigSection to maintain shred settings migration compatibility.")]
     public static class ShredConfigManager
     {
         public static ConfigurationSection GetConfigSection(string sectionName)

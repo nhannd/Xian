@@ -15,7 +15,6 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using System.Diagnostics;
-using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
