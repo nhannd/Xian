@@ -19,6 +19,7 @@ using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.ImageViewer.Common.Auditing;
 using System.Net;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -72,6 +73,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			String level = message.DataSet[DicomTags.QueryRetrieveLevel].GetString(0, "").Trim();
 
+            var settings = new DicomServerSettings();
+            var queryResponsesInUtf8 = settings.QueryResponsesInUtf8;
+
 			if (message.AffectedSopClassUid.Equals(SopClass.StudyRootQueryRetrieveInformationModelFindUid))
 			{
 				try
@@ -82,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 						foreach (DicomAttributeCollection result in results)
 						{
                             const string utf8 = "ISO_IR 192";
-                            if (DicomServerSettings.Instance.QueryResponsesInUtf8)
+                            if (queryResponsesInUtf8)
                                 ChangeCharacterSet(result, utf8);
 
                             var response = new DicomMessage(null, result);

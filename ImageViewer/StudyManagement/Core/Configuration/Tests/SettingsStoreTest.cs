@@ -21,6 +21,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration.Tests
     [TestFixture]
     internal class SettingsStoreTest
     {
+        [TestFixtureSetUp]
+        public void Initialize()
+        {
+            using (var context = new DataAccessContext())
+            {
+                var broker = context.GetConfigurationDocumentBroker();
+                broker.DeleteAllDocuments();
+            }
+        }
+
         [Test]
         public void SettingsStorePutGet()
         {

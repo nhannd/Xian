@@ -18,6 +18,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.ImageViewer.Common.Auditing;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
@@ -36,7 +37,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private static IEnumerable<SupportedSop> GetSupportedSops()
 		{
-			foreach (SopClass sopClass in GetSopClasses(DicomServerSettings.Instance.ImageStorageSopClasses))
+		    var settings = new DicomServerSettings();
+            foreach (SopClass sopClass in GetSopClasses(settings.ImageStorageSopClasses))
 			{
 			    var supportedSop = new SupportedSop
 			                           {
@@ -46,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			    supportedSop.AddSyntax(TransferSyntax.ExplicitVrLittleEndian);
 				supportedSop.AddSyntax(TransferSyntax.ImplicitVrLittleEndian);
 
-				foreach (TransferSyntax transferSyntax in GetTransferSyntaxes(DicomServerSettings.Instance.StorageTransferSyntaxes))
+                foreach (TransferSyntax transferSyntax in GetTransferSyntaxes(settings.StorageTransferSyntaxes))
 				{
 					if (transferSyntax.DicomUid.UID != TransferSyntax.ExplicitVrLittleEndianUid &&
 						transferSyntax.DicomUid.UID != TransferSyntax.ImplicitVrLittleEndianUid)
@@ -69,7 +71,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private static IEnumerable<SupportedSop> GetSupportedSops()
 		{
-			foreach (SopClass sopClass in GetSopClasses(DicomServerSettings.Instance.NonImageStorageSopClasses))
+            var settings = new DicomServerSettings();
+            foreach (SopClass sopClass in GetSopClasses(settings.NonImageStorageSopClasses))
 			{
 			    var supportedSop = new SupportedSop
 			                           {
@@ -144,39 +147,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
             if (_importContext == null)
             {
-                _importContext = new DicomReceiveImportContext(association.CallingAE, GetRemoteHostName(association), StudyStore.GetConfiguration(), EventSource.CurrentProcess);
+                _importContext = new DicomReceiveImportContext(association.CallingAE, GetRemoteHostName(association), StudyStore.GetConfiguration());
 
                 // Publish new WorkItems as they're added to the context
                 lock (_importContext.StudyWorkItemsSyncLock)
                 {
-                    _importContext.StudyWorkItems.ItemAdded += delegate(object sender, DictionaryEventArgs<string,WorkItem> args)
-                                                                   {
-                                                                       Platform.GetService(
-                                                                           (IWorkItemActivityMonitorService service) =>
-                                                                           service.Publish(new WorkItemPublishRequest
-                                                                                               {
-                                                                                                   Item =
-                                                                                                       WorkItemDataHelper
-                                                                                                       .FromWorkItem(
-                                                                                                           args.Item)
-                                                                                               }));
-
-
-                                                                       var auditedInstances = new AuditedInstances();
-                                                                       var request =
-                                                                           args.Item.Request as DicomReceiveRequest;
-                                                                       if (request != null)
-                                                                       {
-                                                                           auditedInstances.AddInstance(request.Patient.PatientId, request.Patient.PatientsName,
-                                                                                                        request.Study.StudyInstanceUid);
-                                                                       }
-
-                                                                       AuditHelper.LogReceivedInstances(
-                                                                           association.CallingAE, GetRemoteHostName(association),
-                                                                           auditedInstances, EventSource.CurrentProcess,
-                                                                           EventResult.Success, EventReceiptAction.ActionUnknown);
-                                                                   }
-                ;
+                    _importContext.StudyWorkItems.ItemAdded += (sender, args) => Platform.GetService(
+                        (IWorkItemActivityMonitorService service) =>
+                        service.Publish(new WorkItemPublishRequest {Item = WorkItemDataHelper.FromWorkItem(args.Item)}));
 
                     _importContext.StudyWorkItems.ItemChanged += (sender, args) => Platform.GetService(
                         (IWorkItemActivityMonitorService service) =>
@@ -184,6 +162,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 }
             }
 
+		    // TODO (CR Jun 2012 - High): Doesn't look like received files are audited?
 		    var importer = new ImportFilesUtility(_importContext);
 
 		    var result = importer.Import(message,BadFileBehaviourEnum.Ignore, FileImportBehaviourEnum.Save);

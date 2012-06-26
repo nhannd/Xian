@@ -99,8 +99,16 @@
     <Compile Include="DicomServer\DataContracts.cs" />
     <Compile Include="DicomServer\DicomServer.cs" />
     <Compile Include="DicomServer\DicomServerClient.cs" />
+    <Compile Include="DicomServer\DicomServerConfigurationServiceProvider.cs" />
+    <Compile Include="DicomServer\DicomServerSettings.cs" />
+    <Compile Include="DicomServer\DicomServerSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>DicomServerSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="DicomServer\IDicomServerConfiguration.cs" />
     <Compile Include="DicomServer\IDicomServer.cs" />
+    <Compile Include="DicomServer\Tests\DicomServerSettingsTests.cs" />
     <Compile Include="Diskspace.cs" />
     <Compile Include="DiskspaceMonitor.cs" />
     <Compile Include="ExtensionData.cs" />
@@ -113,11 +121,13 @@
     <Compile Include="ServerDirectory\Tests\ServerDirectoryTests.cs" />
     <Compile Include="DicomServer\Tests\DicomServerTestServiceProvider.cs" />
     <Compile Include="ServerDirectory\Tests\ServerDirectoryTestServiceProvider.cs" />
+    <Compile Include="ServiceProxyHelper.cs" />
     <Compile Include="StorageMonitorSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>StorageMonitorSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="StudyManagement\StudyDeletionSettings.cs" />
     <Compile Include="StudyManagement\DataContracts.cs" />
     <Compile Include="StudyManagement\IPublishFiles.cs" />
     <Compile Include="StudyManagement\IStorageConfiguration.cs" />
@@ -125,7 +135,19 @@
     <Compile Include="RulesApplicationOptions.cs" />
     <Compile Include="StudyManagement\RemoteStudyRootQuery.cs" />
     <Compile Include="StudyManagement\DataContracts2.cs" />
+    <Compile Include="StudyManagement\StorageConfigurationServiceProvider.cs" />
+    <Compile Include="StudyManagement\StorageSettings.cs" />
+    <Compile Include="StudyManagement\StorageSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>StorageSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="StudyManagement\StoreStudyRootQuery.cs" />
+    <Compile Include="StudyManagement\StudyDeletionSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>StudyDeletionSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="StudyManagement\StudyRootQueryStoreAdapter.cs" />
     <Compile Include="StudyManagement\StudyStore.cs" />
     <Compile Include="MemoryCollector.cs" />
@@ -199,6 +221,10 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="DataContracts.cd" />
+    <None Include="DicomServer\DicomServerSettings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DicomServerSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="MemoryManagementSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>MemoryManagementSettings.Designer.cs</LastGenOutput>
@@ -206,6 +232,14 @@
     <None Include="StorageMonitorSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>StorageMonitorSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="StudyManagement\StorageSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>StorageSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="StudyManagement\StudyDeletionSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>StudyDeletionSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="WorkItem\DicomSendSettings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>

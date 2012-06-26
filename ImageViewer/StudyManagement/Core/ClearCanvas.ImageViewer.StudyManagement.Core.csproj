@@ -101,6 +101,7 @@
     <Compile Include="Configuration\ConfigurationDocumentBroker.cs" />
     <Compile Include="Configuration\DataAccessContext.cs" />
     <Compile Include="Configuration\SystemConfigurationSettingsStore.cs" />
+    <Compile Include="Configuration\Tests\BrokerTests.cs" />
     <Compile Include="Configuration\Tests\SettingsStoreTest.cs" />
     <Compile Include="Configuration\Tests\TestSettingsClasses.cs" />
     <Compile Include="Configuration\VersionUtils.cs" />
@@ -144,10 +145,7 @@
     <Compile Include="ReprocessStudyFolder.cs" />
     <Compile Include="ImportFilesUtility.cs" />
     <Compile Include="ProcessStudyUtility.cs" />
-    <Compile Include="ServiceProviders\DicomServerConfiguration.cs" />
     <Compile Include="ServiceProviders\ServerDirectory.cs" />
-    <Compile Include="ServiceProviders\ServiceProxyHelper.cs" />
-    <Compile Include="ServiceProviders\StorageConfiguration.cs" />
     <Compile Include="ServiceProviders\StudyStore.cs" />
     <Compile Include="ServiceProviders\Tests\ServerDirectoryTests.cs" />
     <Compile Include="SR.Designer.cs">
@@ -156,7 +154,6 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="Storage\Broker.cs" />
-    <Compile Include="Storage\ConfigurationBroker.cs" />
     <Compile Include="Storage\DataAccessContext.cs" />
     <Compile Include="Storage\DeviceBroker.cs" />
     <Compile Include="Storage\DicomStoreDataContext.designer.cs">

@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HttpListenerShred.cs" />
+    <Compile Include="LegacyShredConfigSectionAttribute.cs" />
     <Compile Include="ShredConfigManager.cs" />
     <Compile Include="IShredHost.cs" />
     <Compile Include="IWcfShred.cs" />
@@ -79,8 +80,16 @@
     <Compile Include="ShredCommunicationServiceType.cs" />
     <Compile Include="ShredController.cs" />
     <Compile Include="ShredControllerList.cs" />
+    <Compile Include="ShredHostServiceLegacySettings.cs" />
+    <Compile Include="ShredHostServiceSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ShredHostServiceSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ShredHostServiceSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ShredHostServiceType.cs" />
-    <Compile Include="ShredHostServiceSettings.cs" />
     <Compile Include="ShredSettingsMigrator.cs" />
     <Compile Include="ShredStartupInfo.cs" />
     <Compile Include="ShredStartupInfoList.cs" />
@@ -111,6 +120,13 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="ShredHostServiceSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ShredHostServiceSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

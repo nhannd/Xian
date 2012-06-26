@@ -60,26 +60,39 @@ namespace ClearCanvas.Server.ShredHost
 			return _shredSettingsTypes.Contains(section.GetType());
 		}
 
-		private static IEnumerable<ConfigurationSectionEntry> GetConfigurationSections(Configuration configuration)
+		private delegate ConfigurationSection ConfigurationSectionErrorHandler(ConfigurationSectionGroupPath groupPath, string sectionKey);
+
+		private static IEnumerable<ConfigurationSectionEntry> GetConfigurationSections(Configuration configuration, ConfigurationSectionErrorHandler errorHandler)
 		{
 			ConfigurationSectionGroupPath rootPath = ConfigurationSectionGroupPath.Root;
-			foreach (var childSection in GetConfigurationSections(configuration.RootSectionGroup, rootPath, true))
+			foreach (var childSection in GetConfigurationSections(configuration.RootSectionGroup, rootPath, errorHandler, true))
 				yield return childSection;
 		}
 
-		private static IEnumerable<ConfigurationSectionEntry> GetConfigurationSections(ConfigurationSectionGroup group, ConfigurationSectionGroupPath groupPath, bool recursive)
+		private static IEnumerable<ConfigurationSectionEntry> GetConfigurationSections(ConfigurationSectionGroup group, ConfigurationSectionGroupPath groupPath, ConfigurationSectionErrorHandler errorHandler, bool recursive)
 		{
 			if (recursive)
 			{
 				foreach (ConfigurationSectionGroup childGroup in group.SectionGroups)
 				{
-					foreach (var sectionEntry in GetConfigurationSections(childGroup, groupPath.GetChildGroupPath(childGroup.Name), true))
+					foreach (var sectionEntry in GetConfigurationSections(childGroup, groupPath.GetChildGroupPath(childGroup.Name), errorHandler, true))
 						yield return sectionEntry;
 				}
 			}
 
-			foreach (ConfigurationSection section in group.Sections)
-				yield return new ConfigurationSectionEntry(groupPath, section);
+			for (var n = 0; n < group.Sections.Count; ++n)
+			{
+				ConfigurationSection section = null;
+				try
+				{
+					section = group.Sections[n];
+				}
+				catch (ConfigurationErrorsException)
+				{
+					if (errorHandler != null) section = errorHandler.Invoke(groupPath, group.Sections.Keys[n]);
+				}
+				if (section != null) yield return new ConfigurationSectionEntry(groupPath, section);
+			}
 		}
 
 		private static void MigrateSection(ConfigurationSection sourceSection, ConfigurationSectionGroupPath groupPath, Configuration destinationConfiguration)
@@ -132,18 +145,51 @@ namespace ClearCanvas.Server.ShredHost
 				Configuration previousConfiguration = SystemConfigurationHelper.GetExeConfiguration(previousExeConfigFilename);
 				Configuration currentConfiguration = SystemConfigurationHelper.GetExeConfiguration();
 
-				foreach (var sectionEntry in GetConfigurationSections(previousConfiguration))
+				var legacySections = new List<IMigrateLegacyShredConfigSection>();
+				foreach (var sectionEntry in GetConfigurationSections(previousConfiguration, (p, k) => HandleLegacyConfigurationSection(previousExeConfigFilename, p, k)))
 				{
+					// don't migrate legacy sections with the shred settings migration handler
+					if (sectionEntry.Section is IMigrateLegacyShredConfigSection)
+					{
+						legacySections.Add((IMigrateLegacyShredConfigSection) sectionEntry.Section);
+						continue;
+					}
+
 					if (IsShredSettingsClass(sectionEntry.Section))
 						MigrateSection(sectionEntry.Section, sectionEntry.ParentPath, currentConfiguration);
 				}
 
 				currentConfiguration.Save(ConfigurationSaveMode.Full);
+
+				// migrate all legacy sections
+				foreach (var legacySection in legacySections) legacySection.Migrate();
 			}
 			finally
 			{
 				IsMigrating = false;
 			}
+		}
+
+		private static ConfigurationSection HandleLegacyConfigurationSection(string exeConfigFilename, ConfigurationSectionGroupPath groupPath, string sectionKey)
+		{
+			var sectionPath = groupPath.GetChildGroupPath(sectionKey).ToString();
+			foreach (var shredSettingsType in _shredSettingsTypes)
+			{
+				if (LegacyShredConfigSectionAttribute.IsMatchingLegacyShredConfigSectionType(shredSettingsType, sectionPath))
+				{
+					var xmlDocument = new ConfigXmlDocument();
+					xmlDocument.Load(exeConfigFilename);
+
+					var sectionElement = xmlDocument.SelectSingleNode("//" + sectionPath);
+					if (sectionElement != null)
+					{
+						var section = (ShredConfigSection) Activator.CreateInstance(shredSettingsType, true);
+						section.LoadXml(sectionElement.OuterXml);
+						return section;
+					}
+				}
+			}
+			return null;
 		}
 	}
 }
