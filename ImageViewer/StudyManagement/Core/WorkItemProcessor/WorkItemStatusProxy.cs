@@ -114,8 +114,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         /// </summary>
         /// <param name="failureType"></param>
         /// <param name="failureTime">The time to reschedule the WorkItem if it isn't a fatal error. </param>
-        /// <param name="failureCount"> </param>
-        public void Fail(WorkItemFailureType failureType, DateTime failureTime, int failureCount)
+        /// <param name="maxRetryCount">The maximum number of times the WorkItem should be retried before a fatal error occurs.</param>
+        public void Fail(WorkItemFailureType failureType, DateTime failureTime, int maxRetryCount)
         {
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
@@ -128,8 +128,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 Item.FailureCount = Item.FailureCount + 1;
                 Item.DeleteTime = now.AddMinutes(WorkItemServiceSettings.Default.DeleteDelayMinutes);
 
-                // TODO (CR Jun 2012): Not clear from method signature what this failureCount argument is for.
-                if (Item.FailureCount >= failureCount
+                if (Item.FailureCount >= maxRetryCount
                     || failureType == WorkItemFailureType.Fatal )
                 {
                     Item.Status = WorkItemStatusEnum.Failed;
