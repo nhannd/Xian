@@ -266,7 +266,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                             subOperations = identifier.NumberOfStudyRelatedInstances.Value;
 
                         var client = new DicomSendBridge();
-                        client.MoveStudy(remoteAEInfo, identifier, WorkItemPriorityEnum.High);
+                        client.SendStudy(remoteAEInfo, identifier, WorkItemPriorityEnum.High);
                         _sendOperations.Add(new SendOperationInfo(client.WorkItem, message.MessageId,
                                                                   presentationID,
                                                                   server)
@@ -311,7 +311,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                     var identifier = CollectionUtils.FirstElement(s);
                     var client = new DicomSendBridge();
 
-                    client.MoveSeries(remoteAEInfo, identifier, seriesUids, WorkItemPriorityEnum.High);
+                    client.SendSeries(remoteAEInfo, identifier, seriesUids, WorkItemPriorityEnum.High);
                     _sendOperations.Add(new SendOperationInfo(client.WorkItem, message.MessageId, presentationID,
                                                               server)
                                             {
@@ -337,7 +337,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                     var identifier = CollectionUtils.FirstElement(s);
 
                     var client = new DicomSendBridge();
-                    client.MoveSops(remoteAEInfo, identifier, seriesInstanceUid, sopInstanceUids, WorkItemPriorityEnum.High);
+                    client.SendSops(remoteAEInfo, identifier, seriesInstanceUid, sopInstanceUids, WorkItemPriorityEnum.High);
                     _sendOperations.Add(new SendOperationInfo(client.WorkItem, message.MessageId, presentationID, server)
                                             {
                                                 SubOperations = sopInstanceUids.Length

@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
             {
                 try
                 {
-                    client.MoveSeries(destination, Context.Study, seriesUids.ToArray(), WorkItemPriorityEnum.Normal);
+                    client.SendSeries(destination, Context.Study, seriesUids.ToArray(), WorkItemPriorityEnum.Normal);
                     DateTime? studyDate = DateParser.Parse(Context.Study.StudyDate);
                     Context.DesktopWindow.ShowAlert(AlertLevel.Info,
                                                     string.Format(SR.MessageFormatSendSeriesScheduled, seriesUids.Count,

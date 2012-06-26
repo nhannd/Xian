@@ -139,8 +139,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             WorkItemInsertResponse response = null;
 
-            // TODO (CR Jun 2012): This used?
-            // (SW) This was intended to be used for auditing purposes on the server side, and may be needed to get auditing working properly
+           // Used for auditing purposes in the ShredHostService.
             if(string.IsNullOrEmpty(request.UserName))
                 request.UserName = GetUserName();
             
@@ -158,8 +157,13 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 WorkItem = response.Item;
         }
 
-        // TODO (CR Jun 2012): Name? It's not returning a request, but a WorkItemData object.
-        protected WorkItemData GetMatchingRequest(WorkItemRequest request)
+        /// <summary>
+        /// Get the first WorkItem where the request type matches <paramref name="request"/> and if its a <see cref="WorkItemStudyRequest"/>, the
+        /// Study Instance UID also matches.  The WorkItem must be Idle/Pending/InProgress status.
+        /// </summary>
+        /// <param name="request">The request to match </param>
+        /// <returns>The matching WorkItem or null if none found.</returns>
+        protected WorkItemData GetMatchingActiveWorkItem(WorkItemRequest request)
         {
             WorkItemData returnedItem = null;
 
@@ -174,8 +178,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                                                                : null
                                                                    });
 
-                                        // TODO (CR Jun 2012): The name of this method doesn't seem to describe what it returns.
-                                        // Is it returning the first "active" work item for a study?
                                         foreach (var relatedItem in response.Items)
                                         {
                                             if (relatedItem.Status == WorkItemStatusEnum.Idle
@@ -384,8 +386,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
     public class DicomSendBridge : WorkItemBridge
     {
-        // TODO (CR Jun 2012): Name?
-        public void MoveStudy(IDicomServiceNode remoteAEInfo, IStudyRootData study, WorkItemPriorityEnum priority)
+        public void SendStudy(IDicomServiceNode remoteAEInfo, IStudyRootData study, WorkItemPriorityEnum priority)
         {
             EventResult result = EventResult.Success;
             try
@@ -421,8 +422,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        // TODO (CR Jun 2012): Name?
-        public void MoveSeries(IDicomServiceNode remoteAEInfo, IStudyRootData study, string[] seriesInstanceUids, WorkItemPriorityEnum priority)
+        public void SendSeries(IDicomServiceNode remoteAEInfo, IStudyRootData study, string[] seriesInstanceUids, WorkItemPriorityEnum priority)
         {
             EventResult result = EventResult.Success;
             try
@@ -458,8 +458,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             }
         }
 
-        // TODO (CR Jun 2012): Name
-        public void MoveSops(IDicomServiceNode remoteAEInfo, IStudyRootData study, string seriesInstanceUid, string[] sopInstanceUids, WorkItemPriorityEnum priority)
+        public void SendSops(IDicomServiceNode remoteAEInfo, IStudyRootData study, string seriesInstanceUid, string[] sopInstanceUids, WorkItemPriorityEnum priority)
         {
             EventResult result = EventResult.Success;
             try
@@ -548,7 +547,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
                 };
 
-                var data = GetMatchingRequest(request);
+                var data = GetMatchingActiveWorkItem(request);
                 if (data != null)
                 {
                     var existingRequest = data.Request as DicomRetrieveStudyRequest;
