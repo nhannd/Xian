@@ -112,6 +112,8 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
         // TODO (CR Jun 2012): Move to a helper class?
         public DicomServerConfiguration GetBasicConfiguration()
         {
+            var ae = String.IsNullOrEmpty(AETitle) ? "CLEARCANVAS" : AETitle;
+            var host = String.IsNullOrEmpty(HostName) ? "localhost" : HostName;
             return new DicomServerConfiguration {AETitle = AETitle, HostName = HostName, Port = Port};
         }
 
@@ -137,6 +139,8 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
             newConfiguration.AETitle = newConfiguration.AETitle.Trim();
             if (!String.IsNullOrEmpty(newConfiguration.HostName))
                 newConfiguration.HostName = newConfiguration.HostName.Trim();
+            else
+                newConfiguration.HostName = "localhost"; //reset to default.
 
             var settings = new DicomServerSettings();
             var proxy = settings.GetProxy();
