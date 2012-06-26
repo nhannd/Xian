@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -11,10 +11,7 @@
 
 namespace ClearCanvas.Healthcare.Brokers
 {
-    /// <summary>
-    /// Custom broker that provides Accession numbers.
-    /// </summary>
-	public interface IAccessionNumberBroker : ISequenceBroker
-    {
-    }
+	public interface IMrnBroker : ISequenceBroker
+	{
+	}
 }

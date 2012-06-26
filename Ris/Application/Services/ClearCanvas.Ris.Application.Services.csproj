@@ -70,6 +70,12 @@
   <ItemGroup>
     <Compile Include="AddressAssembler.cs" />
     <Compile Include="Admin\DepartmentAdmin\DepartmentAdminService.cs" />
+    <Compile Include="Admin\PatientAdmin\PatientAdminSettings.cs" />
+    <Compile Include="Admin\PatientAdmin\PatientAdminSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PatientAdminSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="AttachmentStore.cs" />
     <Compile Include="PatientAllergyAssembler.cs" />
     <Compile Include="DepartmentAssembler.cs" />
@@ -222,6 +228,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Admin\PatientAdmin\PatientAdminSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PatientAdminSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="app.config" />
     <None Include="LogicalHL7EventSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

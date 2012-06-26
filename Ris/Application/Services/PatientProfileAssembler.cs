@@ -148,10 +148,13 @@ namespace ClearCanvas.Ris.Application.Services
 			return detail;
 		}
 
-		public void UpdatePatientProfile(PatientProfile profile, PatientProfileDetail detail, IPersistenceContext context)
+		public void UpdatePatientProfile(PatientProfile profile, PatientProfileDetail detail, bool updateMrn, IPersistenceContext context)
 		{
-			profile.Mrn.Id = detail.Mrn.Id;
-			profile.Mrn.AssigningAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.Mrn.AssigningAuthority, context);
+			if(updateMrn)
+			{
+				profile.Mrn.Id = detail.Mrn.Id;
+				profile.Mrn.AssigningAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.Mrn.AssigningAuthority, context);
+			}
 
 			profile.Healthcard = new HealthcardNumber();
 			new HealthcardAssembler().UpdateHealthcard(profile.Healthcard, detail.Healthcard, context);
