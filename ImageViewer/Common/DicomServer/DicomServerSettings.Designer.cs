@@ -61,62 +61,71 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<ImageSopClassCollection xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n " +
-            " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <SopClass Uid=\"1.2.840.10008.5" +
-            ".1.4.1.1.1\" Description=\"Computed Radiography Image Storage\" />\r\n  <SopClass Uid" +
-            "=\"1.2.840.10008.5.1.4.1.1.2\" Description=\"CT Image Storage\" />\r\n  <SopClass Uid=" +
-            "\"1.2.840.10008.5.1.4.1.1.1.3\" Description=\"Digital Intra-oral X-Ray Image Storag" +
-            "e – For Presentation\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.1.3.1\" Descri" +
-            "ption=\"Digital Intra-oral X-Ray Image Storage – For Processing\" />\r\n  <SopClass " +
-            "Uid=\"1.2.840.10008.5.1.4.1.1.1.2\" Description=\"Digital Mammography X-Ray Image S" +
-            "torage – For Presentation\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.1.2.1\" D" +
-            "escription=\"Digital Mammography X-Ray Image Storage – For Processing\" />\r\n  <Sop" +
-            "Class Uid=\"1.2.840.10008.5.1.4.1.1.1.1\" Description=\"Digital X-Ray Image Storage" +
-            " – For Presentation\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.1.1.1\" Descrip" +
-            "tion=\"Digital X-Ray Image Storage – For Processing\" />\r\n  <SopClass Uid=\"1.2.840" +
-            ".10008.5.1.4.1.1.2.1\" Description=\"Enhanced CT Image Storage\" />\r\n  <SopClass Ui" +
-            "d=\"1.2.840.10008.5.1.4.1.1.4.1\" Description=\"Enhanced MR Image Storage\" />\r\n  <S" +
-            "opClass Uid=\"1.2.840.10008.5.1.4.1.1.12.1.1\" Description=\"Enhanced XA Image Stor" +
-            "age\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.12.2.1\" Description=\"Enhanced " +
-            "XRF Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.4\" Description=\"" +
-            "MR Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.7.2\" Description=" +
-            "\"Multi-frame Grayscale Byte Secondary Capture Image Storage\" />\r\n  <SopClass Uid" +
-            "=\"1.2.840.10008.5.1.4.1.1.7.3\" Description=\"Multi-frame Grayscale Word Secondary" +
-            " Capture Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.7.1\" Descri" +
-            "ption=\"Multi-frame Single Bit Secondary Capture Image Storage\" />\r\n  <SopClass U" +
-            "id=\"1.2.840.10008.5.1.4.1.1.7.4\" Description=\"Multi-frame True Color Secondary C" +
-            "apture Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.5\" Descriptio" +
-            "n=\"Nuclear Medicine Image  Storage (Retired)\" />\r\n  <SopClass Uid=\"1.2.840.10008" +
-            ".5.1.4.1.1.20\" Description=\"Nuclear Medicine Image Storage\" />\r\n  <SopClass Uid=" +
-            "\"1.2.840.10008.5.1.4.1.1.77.1.5.2\" Description=\"Ophthalmic Photography 16 Bit Im" +
-            "age Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.77.1.5.1\" Description=" +
-            "\"Ophthalmic Photography 8 Bit Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008." +
-            "5.1.4.1.1.77.1.5.4\" Description=\"Ophthalmic Tomography Image Storage\" />\r\n  <Sop" +
-            "Class Uid=\"1.2.840.10008.5.1.4.1.1.128\" Description=\"Positron Emission Tomograph" +
-            "y Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.481.1\" Description" +
-            "=\"RT Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.7\" Description=" +
-            "\"Secondary Capture Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.6" +
-            ".1\" Description=\"Ultrasound Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5." +
-            "1.4.1.1.6\" Description=\"Ultrasound Image Storage (Retired)\" />\r\n  <SopClass Uid=" +
-            "\"1.2.840.10008.5.1.4.1.1.3.1\" Description=\"Ultrasound Multi-frame Image Storage\"" +
-            " />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.3\" Description=\"Ultrasound Multi-f" +
-            "rame Image Storage (Retired)\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.77.1." +
-            "1.1\" Description=\"Video Endoscopic Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.1" +
-            "0008.5.1.4.1.1.77.1.2.1\" Description=\"Video Microscopic Image Storage\" />\r\n  <So" +
-            "pClass Uid=\"1.2.840.10008.5.1.4.1.1.77.1.4.1\" Description=\"Video Photographic Im" +
-            "age Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.77.1.1\" Description=\"V" +
-            "L Endoscopic Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.77.1.2\"" +
-            " Description=\"VL Microscopic Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5" +
-            ".1.4.1.1.77.1.4\" Description=\"VL Photographic Image Storage\" />\r\n  <SopClass Uid" +
-            "=\"1.2.840.10008.5.1.4.1.1.77.1.3\" Description=\"VL Slide-Coordinates Microscopic " +
-            "Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.13.1.1\" Description=" +
-            "\"X-Ray 3D Angiographic Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1" +
-            ".1.13.1.2\" Description=\"X-Ray 3D Craniofacial Image Storage\" />\r\n  <SopClass Uid" +
-            "=\"1.2.840.10008.5.1.4.1.1.12.3\" Description=\"X-Ray Angiographic Bi-Plane Image S" +
-            "torage (Retired)\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.12.1\" Description" +
-            "=\"X-Ray Angiographic Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1" +
-            ".12.2\" Description=\"X-Ray Radiofluoroscopic Image Storage\" />\r\n</ImageSopClassCo" +
-            "llection>")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool QueryResponsesInUtf8 {
+            get {
+                return ((bool)(this["QueryResponsesInUtf8"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ImageSopClassCollection xmlns:xsi=\"http" +
+            "://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSche" +
+            "ma\">\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.1\" Description=\"Computed Radiogra" +
+            "phy Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.2\" Description=\"" +
+            "CT Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.1.3\" Description=" +
+            "\"Digital Intra-oral X-Ray Image Storage – For Presentation\" />\r\n  <SopClass Uid=" +
+            "\"1.2.840.10008.5.1.4.1.1.1.3.1\" Description=\"Digital Intra-oral X-Ray Image Stor" +
+            "age – For Processing\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.1.2\" Descript" +
+            "ion=\"Digital Mammography X-Ray Image Storage – For Presentation\" />\r\n  <SopClass" +
+            " Uid=\"1.2.840.10008.5.1.4.1.1.1.2.1\" Description=\"Digital Mammography X-Ray Imag" +
+            "e Storage – For Processing\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.1.1\" De" +
+            "scription=\"Digital X-Ray Image Storage – For Presentation\" />\r\n  <SopClass Uid=\"" +
+            "1.2.840.10008.5.1.4.1.1.1.1.1\" Description=\"Digital X-Ray Image Storage – For Pr" +
+            "ocessing\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.2.1\" Description=\"Enhance" +
+            "d CT Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.4.1\" Descriptio" +
+            "n=\"Enhanced MR Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.12.1." +
+            "1\" Description=\"Enhanced XA Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5." +
+            "1.4.1.1.12.2.1\" Description=\"Enhanced XRF Image Storage\" />\r\n  <SopClass Uid=\"1." +
+            "2.840.10008.5.1.4.1.1.4\" Description=\"MR Image Storage\" />\r\n  <SopClass Uid=\"1.2" +
+            ".840.10008.5.1.4.1.1.7.2\" Description=\"Multi-frame Grayscale Byte Secondary Capt" +
+            "ure Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.7.3\" Description" +
+            "=\"Multi-frame Grayscale Word Secondary Capture Image Storage\" />\r\n  <SopClass Ui" +
+            "d=\"1.2.840.10008.5.1.4.1.1.7.1\" Description=\"Multi-frame Single Bit Secondary Ca" +
+            "pture Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.7.4\" Descripti" +
+            "on=\"Multi-frame True Color Secondary Capture Image Storage\" />\r\n  <SopClass Uid=" +
+            "\"1.2.840.10008.5.1.4.1.1.5\" Description=\"Nuclear Medicine Image  Storage (Retire" +
+            "d)\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.20\" Description=\"Nuclear Medici" +
+            "ne Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.77.1.5.2\" Descrip" +
+            "tion=\"Ophthalmic Photography 16 Bit Image Storage\" />\r\n  <SopClass Uid=\"1.2.840." +
+            "10008.5.1.4.1.1.77.1.5.1\" Description=\"Ophthalmic Photography 8 Bit Image Storag" +
+            "e\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.77.1.5.4\" Description=\"Ophthalmi" +
+            "c Tomography Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.128\" De" +
+            "scription=\"Positron Emission Tomography Image Storage\" />\r\n  <SopClass Uid=\"1.2." +
+            "840.10008.5.1.4.1.1.481.1\" Description=\"RT Image Storage\" />\r\n  <SopClass Uid=\"1" +
+            ".2.840.10008.5.1.4.1.1.7\" Description=\"Secondary Capture Image Storage\" />\r\n  <S" +
+            "opClass Uid=\"1.2.840.10008.5.1.4.1.1.6.1\" Description=\"Ultrasound Image Storage\"" +
+            " />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.6\" Description=\"Ultrasound Image S" +
+            "torage (Retired)\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.3.1\" Description=" +
+            "\"Ultrasound Multi-frame Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4." +
+            "1.1.3\" Description=\"Ultrasound Multi-frame Image Storage (Retired)\" />\r\n  <SopCl" +
+            "ass Uid=\"1.2.840.10008.5.1.4.1.1.77.1.1.1\" Description=\"Video Endoscopic Image S" +
+            "torage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.77.1.2.1\" Description=\"Vide" +
+            "o Microscopic Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.77.1.4" +
+            ".1\" Description=\"Video Photographic Image Storage\" />\r\n  <SopClass Uid=\"1.2.840." +
+            "10008.5.1.4.1.1.77.1.1\" Description=\"VL Endoscopic Image Storage\" />\r\n  <SopClas" +
+            "s Uid=\"1.2.840.10008.5.1.4.1.1.77.1.2\" Description=\"VL Microscopic Image Storage" +
+            "\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.77.1.4\" Description=\"VL Photograp" +
+            "hic Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.77.1.3\" Descript" +
+            "ion=\"VL Slide-Coordinates Microscopic Image Storage\" />\r\n  <SopClass Uid=\"1.2.84" +
+            "0.10008.5.1.4.1.1.13.1.1\" Description=\"X-Ray 3D Angiographic Image Storage\" />\r\n" +
+            "  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.13.1.2\" Description=\"X-Ray 3D Craniofac" +
+            "ial Image Storage\" />\r\n  <SopClass Uid=\"1.2.840.10008.5.1.4.1.1.12.3\" Descriptio" +
+            "n=\"X-Ray Angiographic Bi-Plane Image Storage (Retired)\" />\r\n  <SopClass Uid=\"1.2" +
+            ".840.10008.5.1.4.1.1.12.1\" Description=\"X-Ray Angiographic Image Storage\" />\r\n  " +
+            "<SopClass Uid=\"1.2.840.10008.5.1.4.1.1.12.2\" Description=\"X-Ray Radiofluoroscopi" +
+            "c Image Storage\" />\r\n</ImageSopClassCollection>")]
         public global::ClearCanvas.ImageViewer.Common.DicomServer.ImageSopClassConfigurationElementCollection ImageStorageSopClasses {
             get {
                 return ((global::ClearCanvas.ImageViewer.Common.DicomServer.ImageSopClassConfigurationElementCollection)(this["ImageStorageSopClasses"]));
@@ -125,8 +134,8 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"<NonImageSopClassCollection xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
-  xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<NonImageSopClassCollection xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
   <SopClass Uid=""1.2.840.10008.5.1.4.1.1.88.59"" Description=""Key Object Selection Document Storage"" />
   <SopClass Uid=""1.2.840.10008.5.1.4.1.1.11.3"" Description=""Pseudo-Color Softcopy Presentation State Storage SOP Class"" />
   <SopClass Uid=""1.2.840.10008.5.1.4.1.1.11.2"" Description=""Color Softcopy Presentation State Storage SOP Class"" />
@@ -140,8 +149,8 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"<TransferSyntaxCollection xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
-  xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<TransferSyntaxCollection xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
   <TransferSyntax Uid=""1.2.840.10008.1.2.1"" Description=""Explicit VR Little Endian"" />
   <TransferSyntax Uid=""1.2.840.10008.1.2"" Description=""Implicit VR Little Endian: Default Transfer Syntax for DICOM"" />
   <TransferSyntax Uid=""1.2.840.10008.1.2.2"" Description=""Explicit VR Big Endian"" />
@@ -151,20 +160,10 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer {
   <TransferSyntax Uid=""1.2.840.10008.1.2.4.91"" Description=""JPEG 2000 Image Compression"" />
   <TransferSyntax Uid=""1.2.840.10008.1.2.4.50"" Description=""JPEG Baseline (Process 1): Default Transfer Syntax for Lossy JPEG 8 Bit Image Compression"" />
   <TransferSyntax Uid=""1.2.840.10008.1.2.4.51"" Description=""JPEG Extended (Process 2 &amp; 4): Default Transfer Syntax for Lossy JPEG 12 Bit Image Compression (Process 4 only)"" />
-</TransferSyntaxCollection>
-")]
+</TransferSyntaxCollection>")]
         public global::ClearCanvas.ImageViewer.Common.DicomServer.TransferSyntaxConfigurationElementCollection StorageTransferSyntaxes {
             get {
                 return ((global::ClearCanvas.ImageViewer.Common.DicomServer.TransferSyntaxConfigurationElementCollection)(this["StorageTransferSyntaxes"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool QueryResponsesInUtf8 {
-            get {
-                return ((bool)(this["QueryResponsesInUtf8"]));
             }
         }
     }

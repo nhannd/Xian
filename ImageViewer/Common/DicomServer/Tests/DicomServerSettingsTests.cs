@@ -15,7 +15,7 @@ using System.IO;
 using System.Xml.Serialization;
 using NUnit.Framework;
 
-namespace ClearCanvas.ImageViewer.Shreds.DicomServer.Tests
+namespace ClearCanvas.ImageViewer.Common.DicomServer.Tests
 {
 	[TestFixture]
 	internal class DicomServerSettingsTests
