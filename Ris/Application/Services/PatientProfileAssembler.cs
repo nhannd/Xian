@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Application.Services
 			if (includeAttachments)
 			{
 				var attachmentAssembler = new PatientAttachmentAssembler();
-				detail.Attachments = new List<PatientAttachmentSummary>();
+				detail.Attachments = new List<AttachmentSummary>();
 				foreach (var a in profile.Patient.Attachments)
 				{
 					

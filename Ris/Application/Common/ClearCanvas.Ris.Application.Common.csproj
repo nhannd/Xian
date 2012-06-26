@@ -171,6 +171,8 @@
     <Compile Include="AttachmentSummary.cs" />
     <Compile Include="CannedTextService\EditCannedTextCategoriesRequest.cs" />
     <Compile Include="CannedTextService\EditCannedTextCategoriesResponse.cs" />
+    <Compile Include="Documents\UploadResponse.cs" />
+    <Compile Include="Documents\UploadRequest.cs" />
     <Compile Include="Jsml\ShimUtil.cs" />
     <Compile Include="ModalityProcedureStepSummary.cs" />
     <Compile Include="ModalityWorkflow\DicomSeriesDetail.cs" />
@@ -333,11 +335,9 @@
     <Compile Include="Admin\ProtocolAdmin\UpdateProtocolGroupResponse.cs" />
     <Compile Include="ModalityWorkflow\CanCompleteOrderDocumentationRequest.cs" />
     <Compile Include="ModalityWorkflow\CanCompleteOrderDocumentationResponse.cs" />
-    <Compile Include="PatientAttachmentSummary.cs" />
-    <Compile Include="OrderAttachmentSummary.cs" />
-    <Compile Include="AttachedDocumentService\GetAttachedDocumentFormDataRequest.cs" />
-    <Compile Include="AttachedDocumentService\GetAttachedDocumentFormDataResponse.cs" />
-    <Compile Include="AttachedDocumentService\IAttachedDocumentService.cs" />
+    <Compile Include="Documents\GetAttachedDocumentFormDataRequest.cs" />
+    <Compile Include="Documents\GetAttachedDocumentFormDataResponse.cs" />
+    <Compile Include="Documents\IDocumentsService.cs" />
     <Compile Include="ExternalPractitionerDetail.cs" />
     <Compile Include="ExternalPractitionerSummary.cs" />
     <Compile Include="Admin\EnumerationAdmin\AddValueRequest.cs" />

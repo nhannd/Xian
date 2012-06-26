@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Application.Common
         public List<OrderNoteSummary> Notes;
 
 		[DataMember]
-		public List<OrderAttachmentSummary> Attachments;
+		public List<AttachmentSummary> Attachments;
 
 		[DataMember]
 		public List<ResultRecipientDetail> ResultRecipients;

@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					Procedures = CollectionUtils.Map<Procedure, ProcedureRequisition>(
 						order.Procedures,
 						procedure => CreateProcedureRequisition(procedure, context)),
-					Attachments = CollectionUtils.Map<OrderAttachment, OrderAttachmentSummary>(
+					Attachments = CollectionUtils.Map<OrderAttachment, AttachmentSummary>(
 						order.Attachments,
 						attachment => attachmentAssembler.CreateOrderAttachmentSummary(attachment, context)),
 					Notes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(

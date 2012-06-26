@@ -49,5 +49,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_component.OnControlLoad();
 		}
 
+		private void _attachments_ItemDoubleClicked(object sender, System.EventArgs e)
+		{
+			_component.DoubleClickedSelectedAttachment();
+		}
+
 	}
 }

@@ -214,7 +214,7 @@ namespace ClearCanvas.Ris.Client
 		private event EventHandler _changeCommitted;
 
 		private readonly AttachedDocumentPreviewComponent _attachmentSummaryComponent;
-		private readonly List<OrderAttachmentSummary> _newAttachments = new List<OrderAttachmentSummary>();
+		private readonly List<AttachmentSummary> _newAttachments = new List<AttachmentSummary>();
 		private readonly OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 
 		private TabComponentContainer _rightHandComponentContainer;
@@ -247,7 +247,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor for creating a new order with attachments.
 		/// </summary>
-		public OrderEditorComponent(EntityRef patientRef, EntityRef profileRef, List<OrderAttachmentSummary> attachments)
+		public OrderEditorComponent(EntityRef patientRef, EntityRef profileRef, List<AttachmentSummary> attachments)
 			: this(patientRef, profileRef, null, Mode.NewOrder)
 		{
 			_newAttachments = attachments;
@@ -256,7 +256,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor for adding attachments to an existing order.
 		/// </summary>
-		public OrderEditorComponent(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef, List<OrderAttachmentSummary> attachments)
+		public OrderEditorComponent(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef, List<AttachmentSummary> attachments)
 			: this(patientRef, profileRef, orderRef, Mode.ModifyOrder)
 		{
 			_newAttachments = attachments;
@@ -337,7 +337,7 @@ namespace ClearCanvas.Ris.Client
 			_noteSummaryComponent = new OrderNoteSummaryComponent(OrderNoteCategory.General);
 			_noteSummaryComponent.ModifiedChanged += ((sender, args) => this.Modified = true);
 
-			_attachmentSummaryComponent = new AttachedDocumentPreviewComponent(false, AttachedDocumentPreviewComponent.AttachmentMode.Order);
+			_attachmentSummaryComponent = new AttachedDocumentPreviewComponent(false, AttachmentSite.Order);
 			_attachmentSummaryComponent.ModifiedChanged += ((sender, args) => this.Modified = true);
 			this.ChangeCommitted += ((sender, args) => _attachmentSummaryComponent.SaveChanges());
 
@@ -371,7 +371,7 @@ namespace ClearCanvas.Ris.Client
 				_orderingFacility = LoginSession.Current.WorkingFacility;
 				_schedulingRequestTime = Platform.Time;
 				_orderAdditionalInfoComponent.OrderExtendedProperties = _extendedProperties;
-				_attachmentSummaryComponent.OrderAttachments = _newAttachments;
+				_attachmentSummaryComponent.Attachments = _newAttachments;
 			}
 
 			InitializeTabPages();
@@ -1141,7 +1141,7 @@ namespace ClearCanvas.Ris.Client
 				SchedulingRequestTime = _schedulingRequestTime,
 				OrderingPractitioner = _selectedOrderingPractitioner,
 				Procedures = new List<ProcedureRequisition>(_proceduresTable.Items),
-				Attachments = new List<OrderAttachmentSummary>(_attachmentSummaryComponent.OrderAttachments),
+				Attachments = new List<AttachmentSummary>(_attachmentSummaryComponent.Attachments),
 				Notes = new List<OrderNoteDetail>(_noteSummaryComponent.Notes),
 				ExtendedProperties = _extendedProperties,
 				ResultRecipients = new List<ResultRecipientDetail>(_recipientsTable.Items)
@@ -1184,9 +1184,9 @@ namespace ClearCanvas.Ris.Client
 			_proceduresTable.Items.Clear();
 			_proceduresTable.Items.AddRange(existingOrder.Procedures);
 
-			var attachments = new List<OrderAttachmentSummary>(existingOrder.Attachments);
+			var attachments = new List<AttachmentSummary>(existingOrder.Attachments);
 			attachments.AddRange(_newAttachments);
-			_attachmentSummaryComponent.OrderAttachments = attachments;
+			_attachmentSummaryComponent.Attachments = attachments;
 
 			_noteSummaryComponent.Notes = existingOrder.Notes;
 			_orderAdditionalInfoComponent.OrderExtendedProperties = _extendedProperties = existingOrder.ExtendedProperties;

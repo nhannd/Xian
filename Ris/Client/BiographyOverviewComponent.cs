@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Client
 			_orderHistoryComponent = new BiographyOrderHistoryComponent(_initialSelectedOrderRef) { PatientRef = _patientRef };
 			_visitHistoryComponent = new BiographyVisitHistoryComponent { PatientRef = _patientRef };
 			_demographicComponent = new BiographyDemographicComponent { DefaultProfileRef = _profileRef, PatientRef = _patientRef };
-			_documentComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Patient);
+			_documentComponent = new AttachedDocumentPreviewComponent(true, AttachmentSite.Patient);
 			_noteComponent = new BiographyNoteComponent();
 			_allergyComponent = new PatientAllergiesComponent();
 
@@ -217,7 +217,7 @@ namespace ClearCanvas.Ris.Client
 
 					this.Host.Title = string.Format(SR.TitleBiography, PersonNameFormat.Format(_patientProfile.Name), MrnFormat.Format(_patientProfile.Mrn));
 					_bannerComponent.HealthcareContext = _patientProfile;
-					_documentComponent.PatientAttachments = _patientProfile.Attachments;
+					_documentComponent.Attachments = _patientProfile.Attachments;
 					_noteComponent.Notes = _patientProfile.Notes;
 					_allergyComponent.Allergies = _patientProfile.Allergies;
 
@@ -230,7 +230,7 @@ namespace ClearCanvas.Ris.Client
 
 					_patientProfile = null;
 					_bannerComponent.HealthcareContext = null;
-					_documentComponent.PatientAttachments = new List<PatientAttachmentSummary>();
+					_documentComponent.Attachments = new List<AttachmentSummary>();
 					_noteComponent.Notes = new List<PatientNoteDetail>();
 
 					NotifyPropertyChanged("SelectedOrder");

@@ -415,7 +415,7 @@ namespace ClearCanvas.Ris.Client
 							SchedulingRequestTime = scheduledTime,
 							Procedures = new List<ProcedureRequisition>(),
 							ResultRecipients = new List<ResultRecipientDetail>(),
-							Attachments = new List<OrderAttachmentSummary>(),
+							Attachments = new List<AttachmentSummary>(),
 							Notes = new List<OrderNoteDetail>()
 						};
 

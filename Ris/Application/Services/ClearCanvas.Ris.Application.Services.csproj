@@ -116,7 +116,7 @@
     <Compile Include="PatientAttachmentAssembler.cs" />
     <Compile Include="ProtocolAssembler.cs" />
     <Compile Include="ReportAssembler.cs" />
-    <Compile Include="AttachedDocumentService\AttachedDocumentService.cs" />
+    <Compile Include="Documents\DocumentsService.cs" />
     <Compile Include="ExternalPractitionerAssembler.cs" />
     <Compile Include="Admin\EnumerationAdmin\EnumerationAdminService.cs" />
     <Compile Include="Admin\Import\ImportService.cs" />

@@ -28,7 +28,7 @@ namespace ClearCanvas.Ris.Client
 		private EntityRef _profileRef;
 		private PatientProfileDetail _profile;
 		private readonly bool _isNew;
-		private readonly List<PatientAttachmentSummary> _newAttachments;
+		private readonly List<AttachmentSummary> _newAttachments;
 
 		private PatientProfileDetailsEditorComponent _patientEditor;
 		private AddressesSummaryComponent _addressesSummary;
@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			_profileRef = profileRef;
 			_isNew = false;
-			_newAttachments = new List<PatientAttachmentSummary>();
+			_newAttachments = new List<AttachmentSummary>();
 		}
 
 		/// <summary>
@@ -56,13 +56,13 @@ namespace ClearCanvas.Ris.Client
 		public PatientProfileEditorComponent()
 		{
 			_isNew = true;
-			_newAttachments = new List<PatientAttachmentSummary>();
+			_newAttachments = new List<AttachmentSummary>();
 		}
 
 		/// <summary>
 		/// Constructs an editor to edit a new profile with attachments
 		/// </summary>
-		public PatientProfileEditorComponent(EntityRef profileRef, List<PatientAttachmentSummary> attachments)
+		public PatientProfileEditorComponent(EntityRef profileRef, List<AttachmentSummary> attachments)
 		{
 			Platform.CheckForNullReference(attachments, "attachments");
 
@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructs an editor to edit a new profile with attachments
 		/// </summary>
-		public PatientProfileEditorComponent(List<PatientAttachmentSummary> attachments)
+		public PatientProfileEditorComponent(List<AttachmentSummary> attachments)
 		{
 			Platform.CheckForNullReference(attachments, "attachments");
 
@@ -194,9 +194,9 @@ namespace ClearCanvas.Ris.Client
 						var patientDocumentsPage = new NavigatorPage(
 							"Patient/Attachments",
 							_documentSummary =
-							new AttachedDocumentPreviewComponent(false, AttachedDocumentPreviewComponent.AttachmentMode.Patient));
+							new AttachedDocumentPreviewComponent(false, AttachmentSite.Patient));
 						this.Pages.Add(patientDocumentsPage);
-						_documentSummary.PatientAttachments = _profile.Attachments;
+						_documentSummary.Attachments = _profile.Attachments;
 
 						if (_newAttachments.Count > 0)
 						{
@@ -273,7 +273,7 @@ namespace ClearCanvas.Ris.Client
 			// (the document summary does not use the same object for its list of attachments,
 			// so changes must be manually synchronized.
 			_profile.Attachments.Clear();
-			_profile.Attachments.AddRange(_documentSummary.PatientAttachments);
+			_profile.Attachments.AddRange(_documentSummary.Attachments);
 		}
 	}
 }

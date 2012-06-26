@@ -12,7 +12,7 @@
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Application.Common.AttachedDocumentService
+namespace ClearCanvas.Ris.Application.Common.Documents
 {
     [DataContract]
     public class GetAttachedDocumentFormDataRequest : DataContractBase

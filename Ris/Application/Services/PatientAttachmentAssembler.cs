@@ -20,7 +20,7 @@ namespace ClearCanvas.Ris.Application.Services
 {
     public class PatientAttachmentAssembler
     {
-        class PatientAttachmentSynchronizeHelper : CollectionSynchronizeHelper<PatientAttachment, PatientAttachmentSummary>
+		class PatientAttachmentSynchronizeHelper : CollectionSynchronizeHelper<PatientAttachment, AttachmentSummary>
         {
             private readonly PatientAttachmentAssembler _assembler;
             private readonly IPersistenceContext _context;
@@ -34,19 +34,19 @@ namespace ClearCanvas.Ris.Application.Services
                 _currentUserStaff = currentUserStaff;
             }
 
-            protected override bool CompareItems(PatientAttachment domainItem, PatientAttachmentSummary sourceItem)
+			protected override bool CompareItems(PatientAttachment domainItem, AttachmentSummary sourceItem)
             {
                 return Equals(domainItem.Document.GetRef(), sourceItem.Document.DocumentRef);
             }
 
-            protected override void AddItem(PatientAttachmentSummary sourceItem, ICollection<PatientAttachment> domainList)
+			protected override void AddItem(AttachmentSummary sourceItem, ICollection<PatientAttachment> domainList)
             {
                 PatientAttachment attachment = _assembler.CreatePatientAttachment(sourceItem, _currentUserStaff, _context);
                 attachment.Document.Attach();
                 domainList.Add(attachment);
             }
 
-            protected override void UpdateItem(PatientAttachment domainItem, PatientAttachmentSummary sourceItem, ICollection<PatientAttachment> domainList)
+			protected override void UpdateItem(PatientAttachment domainItem, AttachmentSummary sourceItem, ICollection<PatientAttachment> domainList)
             {
                 _assembler.UpdatePatientAttachment(domainItem, sourceItem, _context);
             }
@@ -58,25 +58,25 @@ namespace ClearCanvas.Ris.Application.Services
             }
         }
 
-        public void Synchronize(IList<PatientAttachment> domainList, IList<PatientAttachmentSummary> sourceList, Staff currentUserStaff, IPersistenceContext context)
+		public void Synchronize(IList<PatientAttachment> domainList, IList<AttachmentSummary> sourceList, Staff currentUserStaff, IPersistenceContext context)
         {
             PatientAttachmentSynchronizeHelper synchronizer = new PatientAttachmentSynchronizeHelper(this, currentUserStaff, context);
             synchronizer.Synchronize(domainList, sourceList);
         }
 
-        public PatientAttachmentSummary CreatePatientAttachmentSummary(PatientAttachment attachment, IPersistenceContext context)
+		public AttachmentSummary CreatePatientAttachmentSummary(PatientAttachment attachment, IPersistenceContext context)
         {
             AttachedDocumentAssembler attachedDocAssembler = new AttachedDocumentAssembler();
             StaffAssembler staffAssembler = new StaffAssembler();
 
-            return new PatientAttachmentSummary(
+			return new AttachmentSummary(
                 EnumUtils.GetEnumValueInfo(attachment.Category),
                 staffAssembler.CreateStaffSummary(attachment.AttachedBy, context),
                 attachment.AttachedTime,
                 attachedDocAssembler.CreateAttachedDocumentSummary(attachment.Document));
         }
 
-        public PatientAttachment CreatePatientAttachment(PatientAttachmentSummary summary, Staff currentUserStaff, IPersistenceContext context)
+		public PatientAttachment CreatePatientAttachment(AttachmentSummary summary, Staff currentUserStaff, IPersistenceContext context)
         {
             return new PatientAttachment(
                 EnumUtils.GetEnumValue<PatientAttachmentCategoryEnum>(summary.Category, context),
@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Application.Services
                 context.Load<AttachedDocument>(summary.Document.DocumentRef));
         }
 
-        public void UpdatePatientAttachment(PatientAttachment attachment, PatientAttachmentSummary summary, IPersistenceContext context)
+		public void UpdatePatientAttachment(PatientAttachment attachment, AttachmentSummary summary, IPersistenceContext context)
         {
             AttachedDocumentAssembler attachedDocAssembler = new AttachedDocumentAssembler();
             attachment.Category = EnumUtils.GetEnumValue<PatientAttachmentCategoryEnum>(summary.Category, context);
