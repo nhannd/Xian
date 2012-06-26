@@ -10,10 +10,13 @@
 #endregion
 
 using System.ComponentModel;
+using System.Configuration;
 using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Server.ShredHost
 {
+	[SettingsGroupDescription("Configuration for the Shred Host Service.")]
+	[SettingsProvider(typeof (LocalFileSettingsProvider))]
 	internal sealed partial class ShredHostServiceSettings
 	{
 		public const int DefaultShredHostHttpPort = 51121;
@@ -21,21 +24,26 @@ namespace ClearCanvas.Server.ShredHost
 		public const int DefaultSharedTcpPort = 51123;
 		public const string DefaultServiceAddressBase = "";
 
-		private static readonly Proxy _instance = new Proxy();
+		private static Proxy _instance;
 
 		public static Proxy Instance
 		{
-			get { return _instance; }
+			get { return _instance ?? (_instance = new Proxy(Default)); }
 		}
 
 		public sealed class Proxy
 		{
-			internal Proxy() {}
+			private readonly ShredHostServiceSettings _settings;
+
+			public Proxy(ShredHostServiceSettings settings)
+			{
+				_settings = settings;
+			}
 
 			private object this[string propertyName]
 			{
-				get { return Default[propertyName]; }
-				set { ApplicationSettingsExtensions.SetSharedPropertyValue(Default, propertyName, value); }
+				get { return _settings[propertyName]; }
+				set { ApplicationSettingsExtensions.SetSharedPropertyValue(_settings, propertyName, value); }
 			}
 
 			[DefaultValue(DefaultShredHostHttpPort)]
@@ -68,7 +76,7 @@ namespace ClearCanvas.Server.ShredHost
 
 			public void Save()
 			{
-				Default.Save();
+				_settings.Save();
 			}
 		}
 	}
