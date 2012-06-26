@@ -82,8 +82,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_visit.DataSource = _component.ActiveVisits;
 			_visit.DataBindings.Add("Value", _component, "SelectedVisit", true, DataSourceUpdateMode.OnPropertyChanged);
 			_visit.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
+			_visit.DataBindings.Add("Visible", _component, "VisitVisible");
 			_visit.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatVisit(e.ListItem); };
 			_visitSummaryButton.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
+			_visitSummaryButton.DataBindings.Add("Visible", _component, "VisitVisible");
 
 			_priority.DataSource = _component.PriorityChoices;
 			_priority.DataBindings.Add("Value", _component, "SelectedPriority", true, DataSourceUpdateMode.OnPropertyChanged);

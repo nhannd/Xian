@@ -2101,9 +2101,9 @@ Preview.VisitDetailsSection = function () {
 			Field.setValue($("VisitStatus"), visitDetail.Status.Value);
 			Field.setValue($("AdmitTime"), Ris.formatDateTime(visitDetail.AdmitTime));
 			Field.setValue($("DischargeTime"), Ris.formatDateTime(visitDetail.DischargeTime));
-			Field.setValue($("PatientClass"), visitDetail.PatientClass.Value);
-			Field.setValue($("PatientType"), visitDetail.PatientType.Value);
-			Field.setValue($("AdmissionType"), visitDetail.AdmissionType.Value);
+			Field.setValue($("PatientClass"), visitDetail.PatientClass ? visitDetail.PatientClass.Value : "");
+			Field.setValue($("PatientType"), visitDetail.PatientType ? visitDetail.PatientType.Value : "");
+			Field.setValue($("AdmissionType"), visitDetail.AdmissionType ? visitDetail.AdmissionType.Value : "");
 			Field.setValue($("DischargeDisposition"), visitDetail.DischargeDisposition);
 			Field.setValue($("CurrentLocation"), visitDetail.CurrentLocation ? visitDetail.CurrentLocation.Name : null);
 			Field.setValue($("CurrentRoom"), visitDetail.CurrentRoom ? visitDetail.CurrentRoom : null);
