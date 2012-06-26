@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             Progress.IsCancelable = true;
             Progress.Complete = false;
             Progress.StudiesToProcess = 0;
-            Progress.StudyFoldersToProcess = 0;
+            Progress.TotalStudyFolders = 0;
             Progress.StudiesDeleted = 0;
             Progress.StudyFoldersProcessed = 0;
             Progress.StudiesProcessed = 0;
@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 
             // Reset progress, in case of retry
             Progress.StudiesToProcess = _reindexUtility.DatabaseStudiesToScan;
-            Progress.StudyFoldersToProcess = _reindexUtility.StudyFoldersToScan;
+            Progress.TotalStudyFolders = _reindexUtility.StudyFoldersToScan;
             Progress.StudiesDeleted = 0;
             Progress.StudyFoldersProcessed = 0;
             Progress.StudiesProcessed = 0;

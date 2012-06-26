@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ReapplyRules
 
 
             // Reset progress, in case of retry
-            Progress.StudiesToProcess = processor.DatabaseStudiesToScan;
+            Progress.TotalStudiesToProcess = processor.DatabaseStudiesToScan;
             Progress.StudiesProcessed = 0;
             Progress.Complete = false;
 

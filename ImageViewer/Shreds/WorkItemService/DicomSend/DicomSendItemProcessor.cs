@@ -166,7 +166,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
                 _scu.LoadPreferredSyntaxes(Request);    
             }
 
-            Progress.ImagesToSend = _scu.TotalSubOperations;            
+            Progress.TotalImagesToSend = _scu.TotalSubOperations;            
             Progress.FailureSubOperations = 0;
             Progress.WarningSubOperations = 0;
             Progress.SuccessSubOperations = 0;
@@ -261,7 +261,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomSend
         private void OnImageSent(object sender, StorageInstance storageInstance)
         {
             var scu = sender as ImageViewerStorageScu;
-            Progress.ImagesToSend = _scu.TotalSubOperations;
+            Progress.TotalImagesToSend = _scu.TotalSubOperations;
 
             if (storageInstance.SendStatus.Status == DicomState.Success)
             {

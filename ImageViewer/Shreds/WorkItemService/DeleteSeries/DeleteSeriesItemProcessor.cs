@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteSeries
                     var deleteStudy = new DeleteStudyUtility();
                     deleteStudy.Initialize(Location);
                     Progress.IsCancelable = false;
-                    Progress.ImagesToDelete = deleteStudy.NumberOfStudyRelatedInstances;
+                    Progress.TotalImagesToDelete = deleteStudy.NumberOfStudyRelatedInstances;
                     Progress.ImagesDeleted = 0;
                     Proxy.UpdateProgress();
 
@@ -57,14 +57,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteSeries
                 else
                 {
                     Progress.IsCancelable = false;
-                    Progress.ImagesToDelete = deleteSeries.NumberOfSeriesRelatedInstances;
+                    Progress.TotalImagesToDelete = deleteSeries.NumberOfSeriesRelatedInstances;
                     Progress.ImagesDeleted = 0;
                     Proxy.UpdateProgress();
 
                     deleteSeries.Process();
                 }
 
-                Progress.ImagesDeleted = Progress.ImagesToDelete;
+                Progress.ImagesDeleted = Progress.TotalImagesToDelete;
 
                 Proxy.Complete();
             }

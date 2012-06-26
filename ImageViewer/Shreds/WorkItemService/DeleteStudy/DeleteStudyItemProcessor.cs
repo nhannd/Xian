@@ -39,13 +39,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteStudy
                 // Reset progress, in case of retry
                 Progress.IsCancelable = false;
                 Progress.ImagesDeleted = 0;
-                Progress.ImagesToDelete = 0;
+                Progress.TotalImagesToDelete = 0;
 
                 var delete = new DeleteStudyUtility();
 
                 delete.Initialize(Location);
 
-                Progress.ImagesToDelete = delete.NumberOfStudyRelatedInstances;
+                Progress.TotalImagesToDelete = delete.NumberOfStudyRelatedInstances;
                 Proxy.UpdateProgress();
 
                 delete.Process();

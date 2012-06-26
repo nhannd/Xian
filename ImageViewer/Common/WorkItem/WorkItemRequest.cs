@@ -152,8 +152,6 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
             get { return WorkItemConcurrency.StudyRead; }
         }
 
-        /// TODO (CR Jun 2012 - High): Unclear what this is supposed to be (AE, Server Name). Should be server name.
-        /// (SW) - This is server name, but should be renamed.
         [DataMember]
         public string DestinationServerName { get; set; }
 
