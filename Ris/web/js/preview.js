@@ -1636,7 +1636,7 @@ Preview.PatientDemographicsSection = function () {
 		'		<td class="ContactInfoDemographicsLabel" nowrap="nowrap">Home Address:</td>'+
 		'		<td colspan="3" class="ContactInfoDemographicsCell" nowrap="nowrap"><div id="currentHomeAddress"/></td>'+
 		'	</tr>'+
-		'	<tr><td colspan="4"><img src="../images/blank.gif" height="10" /></td></tr>'
+		'	<tr><td colspan="4"><img src="../images/blank.gif"/></td></tr>'+
 		'</table>';
 
 	return {
