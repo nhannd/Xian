@@ -351,7 +351,7 @@ namespace ClearCanvas.Ris.Client
 			Search(searchParams);
 		}
 
-		public void Search(SearchParams searchParams)
+		protected void Search(SearchParams searchParams)
 		{
 			if (!searchParams.UseAdvancedSearch && string.IsNullOrEmpty(searchParams.TextSearch))
 			{

@@ -19,7 +19,7 @@ using ClearCanvas.Ris.Application.Common;
 namespace ClearCanvas.Ris.Client
 {
 	[ExtensionPoint]
-	public class ExternalPractitionerFolderExtensionPoint : ExtensionPoint<IWorklistFolder>
+	public class ExternalPractitionerFolderExtensionPoint : ExtensionPoint<IFolder>
 	{
 	}
 
