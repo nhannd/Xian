@@ -79,6 +79,7 @@
     <Compile Include="DicomServer\MoveScpExtension.cs" />
     <Compile Include="DicomServer\ScpExtension.cs" />
     <Compile Include="DicomServer\StoreScpExtension.cs" />
+    <Compile Include="DicomServer\Tests\DicomServerSettingsTests.cs" />
     <Compile Include="DicomServer\VerifyScpExtension.cs" />
     <Compile Include="FilestoreManagement\FilestoreManagementProcessor.cs" />
     <Compile Include="FilestoreManagement\FilestoreManagementShred.cs" />
