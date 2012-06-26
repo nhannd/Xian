@@ -127,11 +127,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 
 		#endregion
 
-        public ConfigurationBroker GetConfigurationBroker()
-        {
-            return new ConfigurationBroker(_context);
-        }
-
         public DeviceBroker GetDeviceBroker()
 		{
             return new DeviceBroker(_context);

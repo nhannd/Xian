@@ -31,23 +31,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration
         /// <returns></returns>
         public ConfigurationDocument GetConfigurationDocument(ConfigurationDocumentKey documentKey)
         {
-            IQueryable<ConfigurationDocument> query = from d in Context.ConfigurationDocuments select d;
-
-            // TODO (CR Jun 2012 - Med): do in memory caching based on rowversion like in the other broker?
-
-            query = !string.IsNullOrEmpty(documentKey.InstanceKey) 
-                ? query.Where(d => d.InstanceKey == documentKey.InstanceKey) 
-                : query.Where(d => d.InstanceKey == null);
-
-            query = !string.IsNullOrEmpty(documentKey.User) 
-                ? query.Where(d => d.User == documentKey.User) 
-                : query.Where(d => d.User == null);
-
-            query = query.Where(d => d.DocumentVersionString == VersionUtils.ToPaddedVersionString(documentKey.Version, false, false));
-
-            query = query.Where(d => d.DocumentName == documentKey.DocumentName);
-
-            return query.FirstOrDefault();
+            return GetConfigurationDocument(documentKey, false);
         }
 
         /// <summary>
@@ -57,21 +41,35 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration
         /// <returns></returns>
         public ConfigurationDocument GetPriorConfigurationDocument(ConfigurationDocumentKey documentKey)
         {
+            return GetConfigurationDocument(documentKey, true);
+        }
+
+        private ConfigurationDocument GetConfigurationDocument(ConfigurationDocumentKey documentKey, bool prior)
+        {
             IQueryable<ConfigurationDocument> query = from d in Context.ConfigurationDocuments select d;
 
-            // TODO (CR Jun 2012 - Med): do in memory caching based on rowversion like in the other broker?
-
-            query = !string.IsNullOrEmpty(documentKey.InstanceKey)
+            query = !string.IsNullOrEmpty(documentKey.InstanceKey) 
                 ? query.Where(d => d.InstanceKey == documentKey.InstanceKey)
                 : query.Where(d => d.InstanceKey == null);
 
-            query = !string.IsNullOrEmpty(documentKey.User)
-                ? query.Where(d => d.User == documentKey.User)
+            query = !string.IsNullOrEmpty(documentKey.User) 
+                ? query.Where(d => d.User == documentKey.User) 
                 : query.Where(d => d.User == null);
 
-            query = query.Where(d => d.DocumentVersionString.CompareTo(VersionUtils.ToPaddedVersionString(documentKey.Version, false, false)) < 0);
-
             query = query.Where(d => d.DocumentName == documentKey.DocumentName);
+
+            var paddedVersionString = VersionUtils.ToPaddedVersionString(documentKey.Version, false, false);
+
+            if (prior)
+            {
+                query = query.Where(d => d.DocumentVersionString.CompareTo(paddedVersionString) < 0);
+                //You want the most recent prior version.
+                query = query.OrderByDescending(d => d.DocumentVersionString);
+            }
+            else
+            {
+                query = query.Where(d => d.DocumentVersionString == paddedVersionString);
+            }
 
             return query.FirstOrDefault();
         }
@@ -84,6 +82,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration
         {
             Context.ConfigurationDocuments.InsertOnSubmit(entity);
         }
-    }
 
+        internal void DeleteAllDocuments()
+        {
+            Context.ConfigurationDocuments.DeleteAllOnSubmit(Context.ConfigurationDocuments);
+        }
+    }
 }
