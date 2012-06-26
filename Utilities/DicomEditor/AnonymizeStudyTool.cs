@@ -73,18 +73,6 @@ namespace ClearCanvas.Utilities.DicomEditor
 			}
 		}
 
-        private static DicomServerConfiguration GetServerConfiguration()
-        {
-            // TODO (CR Jun 2012): This can be done in one line now via DicomServer.GetConfiguration().
-            DicomServerConfiguration configuration = null;
-            var request = new GetDicomServerConfigurationRequest();
-            Platform.GetService<IDicomServerConfiguration>(s =>
-                                                            configuration =
-                                                            s.GetConfiguration(request).Configuration);
-
-            return configuration;
-        }
-
         private void Anonymize(IBackgroundTaskContext context)
         {
             //TODO (Marmot) This probably should be its own WorkItem type and have it done in the background there.
@@ -110,7 +98,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                 }
 
                 // Setup the ImportFilesUtility to perform the import
-                var configuration = GetServerConfiguration();
+                var configuration = DicomServer.GetConfiguration();
 
                 // setup auditing information
                 var result = EventResult.Success;
