@@ -30,7 +30,7 @@
 						return;
 					}
 
-					Ris.getPatientDataService().getDataAsync(CreateRequest(context), OnPatientDataLoaded);
+					Ris.getPatientDataService().getDataAsync(CreateRequest(reportRef), OnPatientDataLoaded);
 				}
 				catch(e)
 				{
@@ -39,7 +39,7 @@
 				}
 			}
 
-			function CreateRequest(context)
+			function CreateRequest(reportRef)
 			{
 				return {
 					// only request the report detail if there is a report     
