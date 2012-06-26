@@ -9,12 +9,11 @@
 
 #endregion
 
-using System;
 using System.ServiceModel;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
+    // TODO (CR Jun 2012): Remove this? It's really not used anymore, although the "data contracts" remain useful.
     [ServiceContract(SessionMode = SessionMode.Allowed,
         ConfigurationName = "IDicomServerConfiguration",
         Namespace = DicomServerNamespace.Value)]
@@ -25,5 +24,11 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 
         [OperationContract]
         UpdateDicomServerConfigurationResult UpdateConfiguration(UpdateDicomServerConfigurationRequest request);
+
+        [OperationContract]
+        GetDicomServerExtendedConfigurationResult GetExtendedConfiguration(GetDicomServerExtendedConfigurationRequest request);
+
+        [OperationContract]
+        UpdateDicomServerExtendedConfigurationResult UpdateExtendedConfiguration(UpdateDicomServerExtendedConfigurationRequest request);
     }
 }

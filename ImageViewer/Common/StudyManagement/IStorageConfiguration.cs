@@ -2,8 +2,7 @@
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement
 {
-    /// TODO (CR Jun 2012): Can leave the interface, but probably should make this use new settings provider, just so we don't have to figure out how to upgrade/migrate it.
-
+    // TODO (CR Jun 2012): Remove this? It's really not used anymore, although the "data contracts" remain useful.
     [ServiceContract(SessionMode = SessionMode.Allowed,
         ConfigurationName = "IStorageConfiguration",
         Namespace = StudyManagementNamespace.Value)]
@@ -13,7 +12,6 @@ namespace ClearCanvas.ImageViewer.Common.StudyManagement
         GetStorageConfigurationResult GetConfiguration(GetStorageConfigurationRequest request);
 
         [OperationContract]
-        [FaultContract(typeof(ServiceStateFault))]
         UpdateStorageConfigurationResult UpdateConfiguration(UpdateStorageConfigurationRequest request);
     }
 }

@@ -69,6 +69,16 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer.Tests
             return new UpdateDicomServerConfigurationResult();
         }
 
+        public GetDicomServerExtendedConfigurationResult GetExtendedConfiguration(GetDicomServerExtendedConfigurationRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public UpdateDicomServerExtendedConfigurationResult UpdateExtendedConfiguration(UpdateDicomServerExtendedConfigurationRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 

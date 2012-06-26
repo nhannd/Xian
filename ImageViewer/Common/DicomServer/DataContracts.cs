@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
@@ -31,6 +32,17 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
     {}
 
     [DataContract(Namespace = DicomServerNamespace.Value)]
+    public class GetDicomServerExtendedConfigurationResult
+    {
+        [DataMember(IsRequired = true)]
+        public DicomServerExtendedConfiguration ExtendedConfiguration { get; set; }
+    }
+
+    [DataContract(Namespace = DicomServerNamespace.Value)]
+    public class GetDicomServerExtendedConfigurationRequest
+    { }
+
+    [DataContract(Namespace = DicomServerNamespace.Value)]
     public class UpdateDicomServerConfigurationResult
     {
     }
@@ -40,6 +52,18 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
     {
         [DataMember(IsRequired = true)]
         public DicomServerConfiguration Configuration { get; set; }
+    }
+
+    [DataContract(Namespace = DicomServerNamespace.Value)]
+    public class UpdateDicomServerExtendedConfigurationResult
+    {
+    }
+
+    [DataContract(Namespace = DicomServerNamespace.Value)]
+    public class UpdateDicomServerExtendedConfigurationRequest
+    {
+        [DataMember(IsRequired = true)]
+        public DicomServerExtendedConfiguration ExtendedConfiguration { get; set; }
     }
 
     [DataContract(Namespace = DicomServerNamespace.Value)]
@@ -104,5 +128,34 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
         }
 
         #endregion
+    }
+
+    [DataContract(Namespace = DicomServerNamespace.Value)]
+    public class DicomUidDescriptor
+    {
+        [DataMember(IsRequired = true)]
+        public string Uid { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public string Description { get; set; }
+    }
+
+    [DataContract(Namespace = DicomServerNamespace.Value)]
+    public class DicomServerExtendedConfiguration
+    {
+        [DataMember(IsRequired = true)]
+        public bool QueryResponsesInUtf8 { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public bool AllowUnknownCaller { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public List<string> StorageTransferSyntaxUids { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public List<string> ImageStorageSopClassUids { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public List<string> NonImageStorageSopClassUids { get; set; }
     }
 }

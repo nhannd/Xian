@@ -222,7 +222,7 @@
     <None Include="App.config" />
     <None Include="DataContracts.cd" />
     <None Include="DicomServer\DicomServerSettings.settings">
-      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DicomServerSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="MemoryManagementSettings.settings">

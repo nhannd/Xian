@@ -1,5 +1,4 @@
 using System;
-using System.ServiceModel;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
@@ -27,51 +26,26 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
         public GetDicomServerConfigurationResult GetConfiguration(GetDicomServerConfigurationRequest request)
         {
             var settings = new DicomServerSettings();
-            return new GetDicomServerConfigurationResult
-            {
-                Configuration = new DicomServerConfiguration
-                {
-                    AETitle = settings.AETitle,
-                    HostName = settings.HostName,
-                    Port = settings.Port
-                }
-            };
+            return new GetDicomServerConfigurationResult { Configuration = settings.GetBasicConfiguration() };
         }
 
         public UpdateDicomServerConfigurationResult UpdateConfiguration(UpdateDicomServerConfigurationRequest request)
         {
             Platform.CheckForNullReference(request, "request");
-            Platform.CheckForNullReference(request.Configuration, "Configuration");
-            Platform.CheckForEmptyString(request.Configuration.AETitle, "AETitle");
-            Platform.CheckArgumentRange(request.Configuration.Port, 1, 65535, "Port");
-
-            //Trim the strings before saving.
-            request.Configuration.AETitle = request.Configuration.AETitle.Trim();
-            if (!String.IsNullOrEmpty(request.Configuration.HostName))
-                request.Configuration.HostName = request.Configuration.HostName.Trim();
-
-            var settings = new DicomServerSettings().GetProxy();
-            settings.AETitle = request.Configuration.AETitle;
-            settings.HostName = request.Configuration.HostName;
-            settings.Port = request.Configuration.Port;
-
-            // TODO (Marmot): While it doesn't do any harm to do this here, the listener should also poll periodically for configuration changes, just in case.
-            // TODO (CR Jun 2012): Also, now that we have settings classes, this suddenly becomes more important, especially if this class gets removed,
-            // or is no longer used.
-            try
-            {
-                DicomServer.RestartListener();
-            }
-            catch (EndpointNotFoundException)
-            {
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Warn, e, "Failed to restart the DICOM Server listener.");
-                throw;
-            }
-
+            new DicomServerSettings().UpdateBasicConfiguration(request.Configuration);
             return new UpdateDicomServerConfigurationResult();
+        }
+
+        public GetDicomServerExtendedConfigurationResult GetExtendedConfiguration(GetDicomServerExtendedConfigurationRequest request)
+        {
+            return new GetDicomServerExtendedConfigurationResult {ExtendedConfiguration = new DicomServerSettings().GetExtendedConfiguration()};
+        }
+
+        public UpdateDicomServerExtendedConfigurationResult UpdateExtendedConfiguration(UpdateDicomServerExtendedConfigurationRequest request)
+        {
+            Platform.CheckForNullReference(request, "request");
+            new DicomServerSettings().UpdateExtendedConfiguration(request.ExtendedConfiguration);
+            return new UpdateDicomServerExtendedConfigurationResult();
         }
 
         #endregion

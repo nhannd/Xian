@@ -17,6 +17,7 @@ using System.IO;
 using ClearCanvas.Common.Utilities;
 using System.Xml;
 using ClearCanvas.Common.Configuration;
+using LocalDicomServer = ClearCanvas.ImageViewer.Common.DicomServer.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -347,13 +348,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		void IMigrateLegacyShredConfigSection.Migrate()
 		{
-		    var settingsProxy = new DicomServerSettings().GetProxy();
-            settingsProxy.HostName = HostName;
-            settingsProxy.AETitle = AETitle;
-            settingsProxy.Port = Port;
-            settingsProxy.AllowUnknownCaller = AllowUnknownCaller;
-			settingsProxy.QueryResponsesInUtf8 = QueryResponsesInUtf8;
-			settingsProxy.Save();
+            LocalDicomServer.UpdateConfiguration(new DicomServerConfiguration { AETitle = AETitle, HostName = HostName, Port = Port });
+            LocalDicomServer.UpdateExtendedConfiguration(new DicomServerExtendedConfiguration
+                                                             {
+                                                                 AllowUnknownCaller = AllowUnknownCaller,
+                                                                 QueryResponsesInUtf8 = QueryResponsesInUtf8
+                                                             });
 		}
 	}
 }

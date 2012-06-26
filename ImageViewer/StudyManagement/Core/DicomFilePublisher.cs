@@ -139,12 +139,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
         private static DicomServerConfiguration GetServerConfiguration()
         {
-            DicomServerConfiguration configuration = null;
-            var request = new GetDicomServerConfigurationRequest();
-            Platform.GetService<IDicomServerConfiguration>(s =>
-                                                           configuration = s.GetConfiguration(request).Configuration);
-
-            return configuration;
+            return Common.DicomServer.DicomServer.GetConfiguration();
         }
 
         public void PublishLocal(ICollection<DicomFile> files)

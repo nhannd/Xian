@@ -418,12 +418,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
 
         protected static DicomServerConfiguration GetServerConfiguration()
         {
-            DicomServerConfiguration configuration = null;
-            var request = new GetDicomServerConfigurationRequest();
-            Platform.GetService<IDicomServerConfiguration>(s =>
-                                                           configuration = s.GetConfiguration(request).Configuration);
-
-            return configuration;
+            return DicomServer.GetConfiguration();
         }
 
         protected Study LoadRelatedStudy()

@@ -15,6 +15,9 @@ using ClearCanvas.ImageViewer.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Common.StudyManagement
 {
+    // TODO (CR Jun 2012): Leaving internal, at least for now, since the StorageConfiguration data contract
+    // actually provides a useful abstraction and some important logic, and there's really no immediate need to change it.
+
     [SettingsGroupDescription("Configuration for local study deletion.")]
     [SettingsProvider(typeof (SystemConfigurationSettingsProvider))]
     internal sealed partial class StudyDeletionSettings

@@ -27,11 +27,7 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory
 
         public IDicomServiceNode GetLocalServer()
         {
-            DicomServerConfiguration configuration = null;
-            Platform.GetService<IDicomServerConfiguration>(
-                s => configuration = s.GetConfiguration(new GetDicomServerConfigurationRequest()).Configuration);
-
-            return new DicomServiceNode(configuration);
+            return new DicomServiceNode(DicomServer.DicomServer.GetConfiguration());
         }
 
         public List<IDicomServiceNode> GetServers()

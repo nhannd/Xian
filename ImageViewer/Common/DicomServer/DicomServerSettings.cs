@@ -15,17 +15,22 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Linq;
+using System.ServiceModel;
 using System.Xml.Serialization;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.ImageViewer.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Common.DicomServer
 {
-	[SettingsGroupDescription("Configuration for the local DICOM server.")]
+    // TODO (CR Jun 2012): Leaving internal, at least for now, since the DicomServerConfiguration data contract
+    // and some of the internal get/set code actually provides a useful abstraction, and there's really no immediate need to change it.
+
+    [SettingsGroupDescription("Configuration for the local DICOM server.")]
 	[SettingsProvider(typeof (SystemConfigurationSettingsProvider))]
-	public sealed partial class DicomServerSettings : IMigrateSettings
+	internal sealed partial class DicomServerSettings : IMigrateSettings
 	{
-		public sealed class Proxy
+	    public sealed class Proxy
 		{
 			private readonly DicomServerSettings _settings;
 
@@ -61,7 +66,14 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 				set { this["Port"] = value; }
 			}
 
-			[DefaultValue(true)]
+            [DefaultValue(false)]
+            public bool QueryResponsesInUtf8
+            {
+                get { return (bool)this["QueryResponsesInUtf8"]; }
+                set { this["QueryResponsesInUtf8"] = value; }
+            }
+            
+            [DefaultValue(true)]
 			public bool AllowUnknownCaller
 			{
 				get { return (bool) this["AllowUnknownCaller"]; }
@@ -86,13 +98,6 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 				set { this["StorageTransferSyntaxes"] = value; }
 			}
 
-			[DefaultValue(false)]
-			public bool QueryResponsesInUtf8
-			{
-				get { return (bool) this["QueryResponsesInUtf8"]; }
-				set { this["QueryResponsesInUtf8"] = value; }
-			}
-
 			public void Save()
 			{
 				_settings.Save();
@@ -104,7 +109,72 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
             return new Proxy(this);
         }
 
-		#region IMigrateSettings Members
+        public DicomServerConfiguration GetBasicConfiguration()
+        {
+            return new DicomServerConfiguration {AETitle = AETitle, HostName = HostName, Port = Port};
+        }
+
+        public DicomServerExtendedConfiguration GetExtendedConfiguration()
+        {
+            return new DicomServerExtendedConfiguration
+                       {
+                           AllowUnknownCaller = AllowUnknownCaller,
+                           QueryResponsesInUtf8 = QueryResponsesInUtf8,
+                           ImageStorageSopClassUids = ImageStorageSopClasses.Select(e => e.Uid).ToList(),
+                           NonImageStorageSopClassUids = NonImageStorageSopClasses.Select(e => e.Uid).ToList(),
+                           StorageTransferSyntaxUids = StorageTransferSyntaxes.Select(e => e.Uid).ToList()
+                       };
+        }
+
+        public DicomServerConfiguration UpdateBasicConfiguration(DicomServerConfiguration newConfiguration)
+        {
+            Platform.CheckForNullReference(newConfiguration, "newConfiguration");
+            Platform.CheckForEmptyString(newConfiguration.AETitle, "AETitle");
+            Platform.CheckArgumentRange(newConfiguration.Port, 1, 65535, "Port");
+
+            //Trim the strings before saving.
+            newConfiguration.AETitle = newConfiguration.AETitle.Trim();
+            if (!String.IsNullOrEmpty(newConfiguration.HostName))
+                newConfiguration.HostName = newConfiguration.HostName.Trim();
+
+            var settings = new DicomServerSettings();
+            var proxy = settings.GetProxy();
+            proxy.AETitle = newConfiguration.AETitle;
+            proxy.HostName = newConfiguration.HostName;
+            proxy.Port = newConfiguration.Port;
+            proxy.Save();
+
+            // TODO (Marmot): While it doesn't do any harm to do this here, the listener should also poll periodically for configuration changes, just in case.
+            // TODO (CR Jun 2012): Also, now that we have settings classes, this suddenly becomes more important, especially if this class gets removed,
+            // or is no longer used.
+            try
+            {
+                DicomServer.RestartListener();
+            }
+            catch (EndpointNotFoundException)
+            {
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Warn, e, "Failed to restart the DICOM Server listener.");
+                throw;
+            }
+            
+            return settings.GetBasicConfiguration();
+        }
+
+        public DicomServerExtendedConfiguration UpdateExtendedConfiguration(DicomServerExtendedConfiguration newConfiguration)
+        {
+            var settings = new DicomServerSettings();
+            var proxy = settings.GetProxy();
+            proxy.AllowUnknownCaller = newConfiguration.AllowUnknownCaller;
+            proxy.QueryResponsesInUtf8 = newConfiguration.QueryResponsesInUtf8;
+            // TODO (CR Jun 2012): For now, the storage SOP Classes and Transfer Syntaxes are ignored.
+            
+            return settings.GetExtendedConfiguration();
+        }
+
+	    #region IMigrateSettings Members
 
 		public void MigrateSettingsProperty(SettingsPropertyMigrationValues migrationValues)
 		{
@@ -113,7 +183,6 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer
 				case "HostName":
 				case "AETitle":
 				case "Port":
-				case "InterimStorageDirectory":
 				case "AllowUnknownCaller":
 				case "QueryResponsesInUtf8":
 					migrationValues.CurrentValue = migrationValues.PreviousValue;

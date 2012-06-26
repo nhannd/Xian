@@ -17,12 +17,17 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
+<<<<<<< local
+using ClearCanvas.ImageViewer.Common.DicomServer;
+=======
 using ClearCanvas.ImageViewer.Common.Auditing;
+>>>>>>> other
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
+using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
-using LocalDicomServer = ClearCanvas.ImageViewer.Common.DicomServer.DicomServer;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -35,9 +40,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private static IEnumerable<SupportedSop> GetSupportedSops()
 		{
-            var extendedConfiguration = LocalDicomServer.GetExtendedConfiguration();
-
-            foreach (SopClass sopClass in GetSopClasses(extendedConfiguration.ImageStorageSopClassUids))
+		    var settings = new DicomServerSettings();
+            foreach (SopClass sopClass in GetSopClasses(settings.ImageStorageSopClasses))
 			{
 			    var supportedSop = new SupportedSop
 			                           {
@@ -47,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			    supportedSop.AddSyntax(TransferSyntax.ExplicitVrLittleEndian);
 				supportedSop.AddSyntax(TransferSyntax.ImplicitVrLittleEndian);
 
-                foreach (TransferSyntax transferSyntax in GetTransferSyntaxes(extendedConfiguration.StorageTransferSyntaxUids))
+                foreach (TransferSyntax transferSyntax in GetTransferSyntaxes(settings.StorageTransferSyntaxes))
 				{
 					if (transferSyntax.DicomUid.UID != TransferSyntax.ExplicitVrLittleEndianUid &&
 						transferSyntax.DicomUid.UID != TransferSyntax.ImplicitVrLittleEndianUid)
@@ -70,8 +74,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private static IEnumerable<SupportedSop> GetSupportedSops()
 		{
-            var extendedConfiguration = LocalDicomServer.GetExtendedConfiguration();
-            foreach (SopClass sopClass in GetSopClasses(extendedConfiguration.NonImageStorageSopClassUids))
+            var settings = new DicomServerSettings();
+            foreach (SopClass sopClass in GetSopClasses(settings.NonImageStorageSopClasses))
 			{
 			    var supportedSop = new SupportedSop
 			                           {
@@ -93,26 +97,26 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 		}
 
-		protected static IEnumerable<SopClass> GetSopClasses(IEnumerable<string> sopClassUids)
+		protected static IEnumerable<SopClass> GetSopClasses(SopClassConfigurationElementCollection config)
 		{
-            foreach (var sopClassUid in sopClassUids)
+			foreach (SopClassConfigurationElement element in config)
 			{
-                if (!String.IsNullOrEmpty(sopClassUid))
+				if (!String.IsNullOrEmpty(element.Uid))
 				{
-                    SopClass sopClass = SopClass.GetSopClass(sopClassUid);
+					SopClass sopClass = SopClass.GetSopClass(element.Uid);
 					if (sopClass != null)
 						yield return sopClass;
 				}
 			}
 		}
 
-        protected static IEnumerable<TransferSyntax> GetTransferSyntaxes(IEnumerable<string> transferSyntaxUids)
+		protected static IEnumerable<TransferSyntax> GetTransferSyntaxes(TransferSyntaxConfigurationElementCollection config)
 		{
-            foreach (var transferSyntaxUid in transferSyntaxUids)
+			foreach (TransferSyntaxConfigurationElement element in config)
 			{
-                if (!String.IsNullOrEmpty(transferSyntaxUid))
+				if (!String.IsNullOrEmpty(element.Uid))
 				{
-                    TransferSyntax syntax = TransferSyntax.GetTransferSyntax(transferSyntaxUid);
+					TransferSyntax syntax = TransferSyntax.GetTransferSyntax(element.Uid);
 					if (syntax != null)
 					{
 						//at least for now, restrict to available codecs for compressed syntaxes.
