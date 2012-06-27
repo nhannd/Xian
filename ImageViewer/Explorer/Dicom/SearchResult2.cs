@@ -147,8 +147,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (_synchronizationContext == null)
                 return;
 
-            bool hasUserSearched = SearchInProgress || _lastSearchEnded.HasValue;
-            bool updateQueryStartedBeforeUserSearchEnded = _lastSearchEnded.HasValue && queryStartTime < _lastSearchEnded.Value;
+            bool hasUserSearched = SearchInProgress || _lastSearchEndTime.HasValue;
+            bool updateQueryStartedBeforeUserSearchEnded = _lastSearchEndTime.HasValue && queryStartTime < _lastSearchEndTime.Value;
 
             //If the user has ever searched, and the query for study updates started before the user's search completed,
             //then we just ignore these updates. Otherwise, the user might get out-of-date updates, and may even see
@@ -292,6 +292,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             var syncContext = _synchronizationContext;
             if (syncContext == null)
                 return;
+
+            syncContext.Post(ignore => RefreshStudyTable(), null);
 
             DateTime? queryStartTime;
             List<string> deletedStudyUids;

@@ -25,8 +25,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private readonly List<StudyTableItem> _hiddenItems;
 
 		private bool _filterDuplicates;
-        private DateTime? _lastSearchEnded;
+        private DateTime? _lastSearchEndTime;
         private string _resultsTitle;
+
+        private DateTime? _lastTableRefreshTime;
 
 	    public SearchResult()
 		{
@@ -146,7 +148,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public void SearchEnded(List<StudyTableItem> tableItems, bool filterDuplicates)
         {
-            _lastSearchEnded = DateTime.Now;
+            _lastSearchEndTime = DateTime.Now;
 	        SearchInProgress = false;
 			_filterDuplicates = filterDuplicates;
 
@@ -171,9 +173,38 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             SetResultsTitle();
         }
 
+        // Hack for #10072. We can't inspect the values that are actually shown in the table to see if they need
+        // updated because, for example, midnight crossed and a value needs to change. So, we're hacking it
+        // just for the one specific case where midnight is crossed and the "Delete On" column needs to say
+        // "Today" instead of "Yesterday", for example.
+        private bool RefreshStudyTable()
+        {
+            if (!_lastSearchEndTime.HasValue)
+                return false;
+
+            var lastRefreshTime = _lastTableRefreshTime.HasValue ? _lastTableRefreshTime.Value : _lastSearchEndTime.Value;
+            var now = DateTime.Now;
+            var timeSinceLastRefresh = now - lastRefreshTime;
+            var nowTimeOfDay = now.TimeOfDay;
+            if (timeSinceLastRefresh < nowTimeOfDay)
+                return false; //haven't crossed midnight yet.
+
+            _lastTableRefreshTime = now;
+            var allItems = new List<StudyTableItem>(_studyTable.Items);
+
+            using (_studyTable.Items.BeginTransaction())
+            {
+                _studyTable.Items.BeginTransaction();
+                _studyTable.Items.Clear();
+                _studyTable.Items.AddRange(allItems);
+            }
+
+            return true;
+        }
+        
         private void SetResultsTitle()
         {
-            var everSearched = _lastSearchEnded.HasValue;
+            var everSearched = _lastSearchEndTime.HasValue;
             if (!everSearched)
             {
                 ResultsTitle = Reindexing

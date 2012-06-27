@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using ClearCanvas.Common;
@@ -25,6 +26,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
+using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -58,19 +60,86 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     }
 
 	[AssociateView(typeof(StudyBrowserComponentViewExtensionPoint))]
-	public partial class StudyBrowserComponent : ApplicationComponent, IStudyBrowserComponent
+	public class StudyBrowserComponent : ApplicationComponent, IStudyBrowserComponent
 	{
-		#region Tool Context
+#if DEBUG
+
+        [MenuAction("populate", "dicomstudybrowser-contextmenu/Populate with 10000 studies", "Populate")]
+        [ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
+	    public class ManipulateTableTool : StudyBrowserTool
+        {
+            private int _nextPatientId = 1;
+            private int _dateCount = 0;
+
+            public ManipulateTableTool()
+            {
+            }
+
+            public void Populate()
+            {
+                var context = (StudyBrowserToolContext) base.Context;
+                var items = new List<StudyTableItem>();
+                var now = DateTime.Now;
+
+                for (int i = 0; i < 10000; ++i)
+                {
+                    var idString = _nextPatientId.ToString(CultureInfo.InvariantCulture);
+                    var entry = new StudyEntry();
+                    var study = new StudyRootStudyIdentifier
+                                    {
+                                        PatientsName = String.Format("Test{0}^Patient{0}", idString),
+                                        PatientId = idString,
+                                        AccessionNumber = "A" + idString,
+                                        InstanceAvailability = "ONLINE",
+                                        ModalitiesInStudy = new[] {"MR"},
+                                        NumberOfStudyRelatedInstances = 10,
+                                        NumberOfStudyRelatedSeries = 5,
+                                        StudyDescription = "Study" + idString,
+                                        StudyInstanceUid = idString,
+                                        StudyDate = now.ToString(DateParser.DicomDateFormat)
+                                    };
+
+                    if (_dateCount >= 5)
+                        _dateCount = 0;
+
+                    var deleteOn = now.AddDays(_dateCount);
+                    ++_dateCount;
+
+                    entry.Study = study;
+                    entry.Data = new StudyEntryData {DeleteTime = deleteOn};
+                    var item = new StudyTableItem(entry);
+
+                    items.Add(item);
+                    ++_nextPatientId;
+                }
+
+                var searchResult = context.Component.CurrentSearchResult;
+                searchResult.SearchEnded(items, false);
+            }
+
+            protected override void OnSelectedServerChanged(object sender, EventArgs e)
+            {
+                Enabled = Visible = true;
+            }
+
+            protected override void OnSelectedStudyChanged(object sender, EventArgs e)
+            {
+                Enabled = Visible = true;
+            }
+        }
+#endif
+
+	    #region Tool Context
 
 		private class StudyBrowserToolContext : ToolContext, IStudyBrowserToolContext
 		{
-			private readonly StudyBrowserComponent _component;
-
 			public StudyBrowserToolContext(StudyBrowserComponent component)
 			{
 				Platform.CheckForNullReference(component, "component");
-				_component = component;
+                Component = component;
 			}
+
+            internal StudyBrowserComponent Component { get; private set; }
 
 			#region IStudyBrowserToolContext Members
 
@@ -78,7 +147,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				get
 				{
-					return _component.SelectedStudy;
+					return Component.SelectedStudy;
 				}
 			}
 
@@ -86,47 +155,47 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			{
 				get
 				{
-					return _component.SelectedStudies;
+                    return Component.SelectedStudies;
 				}
 			}
 
 			public DicomServiceNodeList SelectedServers
 			{
-				get { return _component._selectedServers; }
+                get { return Component._selectedServers; }
 			}
 
 			public event EventHandler SelectedStudyChanged
 			{
-				add { _component.SelectedStudyChanged += value; }
-				remove { _component.SelectedStudyChanged -= value; }
+                add { Component.SelectedStudyChanged += value; }
+                remove { Component.SelectedStudyChanged -= value; }
 			}
 
 			public event EventHandler SelectedServerChanged
 			{
-				add { _component.SelectedServerChanged += value; }
-				remove { _component.SelectedServerChanged -= value; }
+                add { Component.SelectedServerChanged += value; }
+                remove { Component.SelectedServerChanged -= value; }
 			}
 
 			public ClickHandlerDelegate DefaultActionHandler
 			{
-				get { return _component._defaultActionHandler; }
-				set { _component._defaultActionHandler = value; }
+                get { return Component._defaultActionHandler; }
+                set { Component._defaultActionHandler = value; }
 			}
 
 			public IDesktopWindow DesktopWindow
 			{
-				get { return _component.Host.DesktopWindow; }
+                get { return Component.Host.DesktopWindow; }
 			}
 
 			public void RefreshStudyTable()
 			{
 				try
 				{
-					_component.Search(_component._lastQueryCriteria);
+                    Component.Search(Component._lastQueryCriteria);
 				}
 				catch (Exception e)
 				{
-					ExceptionHandler.Report(e, _component.Host.DesktopWindow);
+                    ExceptionHandler.Report(e, Component.Host.DesktopWindow);
 				}
 			}
 
