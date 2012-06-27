@@ -313,6 +313,7 @@
   <Target Name="Copy ShredHost App Config">
     <CombineAppConfigs SourceFiles="@(ShredHostAppConfigCreatorSourceFiles)" OutputFile="$(DistributionShredHostConfig)" />
     <Copy SourceFiles="@(CriticalConfigFiles)" DestinationFiles="$(DistributionShredHostCriticalConfig)" />
+    <Copy SourceFiles="@(CriticalConfigFiles)" DestinationFiles="$(DistributionShredHostCriticalConfig)" />
   </Target>
 
   <Target Name="Copy Database Files">
@@ -466,7 +467,7 @@
 
   <Target Name="Copy JScript Files">
 
-    <MSBuild Projects="$(TrunkDirectory)\JScript\Build.proj" Properties="Configuration=$(Configuration)"/>
+    <MSBuild Projects="$(TrunkDirectory)\JScript\Build.proj" Properties="Configuration=$(Configuration);KeyFile=$(StrongNameKeyFile)"/>
     <Copy Condition="$(DesktopBuild)" SourceFiles="@(JScriptFiles)" DestinationFolder="$(PluginsDirectory)" />
 
   </Target>

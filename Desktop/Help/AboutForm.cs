@@ -84,10 +84,13 @@ namespace ClearCanvas.Desktop.Help
                 this._manifest.ForeColor = AboutSettings.Default.ManifestForeColor;
 				this._manifest.Font = AboutSettings.Default.ManifestFontBold ? new Font(this._manifest.Font, FontStyle.Bold) : this._manifest.Font;
                 this._manifest.TextAlign = AboutSettings.Default.ManifestTextAlign;
-
+			    
 				this._closeButton.Anchor = AnchorStyles.Right | AnchorStyles.Top;
 				this._closeButton.Location = AboutSettings.Default.CloseButtonLocation;
 				this._closeButton.LinkColor = AboutSettings.Default.CloseButtonLinkColor;
+
+                AddExtraLabels();
+
 			}
 
 			this.ResumeLayout();
@@ -95,7 +98,55 @@ namespace ClearCanvas.Desktop.Help
 			this._closeButton.Click += new EventHandler(OnCloseClicked);
 		}
 
-		private static Stream OpenResourceStream()
+        private void AddExtraLabels()
+        {
+            var text = ProductStateInfo.GetProductLicenseStateDescription();
+            if (!string.IsNullOrEmpty(text))
+            {
+                var label = new Label()
+                {
+                    Text = text,
+                    Visible = AboutSettings.Default.EvaluationVisible,
+                    BackColor = System.Drawing.Color.Transparent,
+                    Location = AboutSettings.Default.EvaluationLocation,
+                    Size = AboutSettings.Default.EvaluationSize,
+                    AutoSize = AboutSettings.Default.EvaluationAutoSize,
+                    ForeColor = AboutSettings.Default.EvaluationForeColor,
+                    TextAlign = AboutSettings.Default.EvaluationTextAlign
+                };
+                if (AboutSettings.Default.EvaluationFontBold)
+                    label.Font = new Font(label.Font, FontStyle.Bold);
+
+                this.Controls.Add(label);
+            }
+            
+
+            if (LicenseInformation.DiagnosticUse != LicenseDiagnosticUse.Allowed)
+            {
+                text = LicenseInformation.DiagnosticUse == LicenseDiagnosticUse.None
+                               ? SR.LabelNotForClinicalUse
+                               : SR.LabelNotForHumanDiagnosticUse;
+
+                var notForDiagnosticUseLabel = new Label()
+                {
+                    Text = text,
+                    Visible = AboutSettings.Default.NotForDiagnosticUseVisible,
+                    BackColor = System.Drawing.Color.Transparent,
+                    Location = AboutSettings.Default.NotForDiagnosticUseLocation,
+                    Size = AboutSettings.Default.NotForDiagnosticUseSize,
+                    AutoSize = AboutSettings.Default.NotForDiagnosticUseAutoSize,
+                    ForeColor = AboutSettings.Default.NotForDiagnosticUseForeColor,
+                    TextAlign = AboutSettings.Default.NotForDiagnosticUseTextAlign
+                };
+                if (AboutSettings.Default.NotForDiagnosticUseFontBold)
+                    notForDiagnosticUseLabel.Font = new Font(notForDiagnosticUseLabel.Font, FontStyle.Bold);
+
+                this.Controls.Add(notForDiagnosticUseLabel);
+
+            }
+        }
+
+	    private static Stream OpenResourceStream()
 		{
 			var oemPath = System.IO.Path.Combine(Platform.InstallDirectory, @"oem\about.png");
 			if (File.Exists(oemPath))
@@ -121,4 +172,6 @@ namespace ClearCanvas.Desktop.Help
 			Close();
 		}
 	}
+
+
 }

@@ -457,11 +457,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			if (bitsAllocated != 8 && bitsAllocated != 16)
 				throw new ArgumentException("BitsAllocated must be either 8 or 16.", "dicomAttributeProvider");
-            if (highBit + 1 < bitsStored || highBit >= bitsAllocated)
-            {
-                // #10029
-                highBit = bitsStored - 1; // if high bit is out of range for some reason, just assume bits stored - 1 (which is probably the case for 99% of all DICOM images)
-            }
+			if (highBit + 1 < bitsStored || highBit >= bitsAllocated)
+				highBit = bitsStored - 1; // #10029 - if high bit is out of range for some reason, just assume bits stored - 1 (which is probably the case for 99% of all DICOM images)
+
 			unsafe
 			{
 				//TODO (CR May 2011): this is not as efficient as it could be, and more confusing than it needs to be.

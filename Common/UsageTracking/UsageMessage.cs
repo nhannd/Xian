@@ -146,6 +146,18 @@ namespace ClearCanvas.Common.UsageTracking
         public string LicenseString { get; set; }
 
         /// <summary>
+        /// Short Description of the License Type, if exists, for the product.
+        /// </summary>
+        [DataMember(IsRequired = false)]
+        public string LicenseType{ get; set; }
+
+        /// <summary>
+        /// License Expiry Time, if exists, for the product.
+        /// </summary>
+        [DataMember(IsRequired = false)]
+        public DateTime? LicenseExpiryTimeUTC { get; set; }
+
+        /// <summary>
         /// A unique machine identifier.
         /// </summary>
         [DataMember(IsRequired = true)]

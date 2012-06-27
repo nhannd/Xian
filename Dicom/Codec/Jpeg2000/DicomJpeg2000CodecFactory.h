@@ -39,6 +39,7 @@ namespace Jpeg2000 {
 public ref class DicomJpeg2000LosslessCodecFactory : public IDicomCodecFactory {
 public:
     virtual property String^ Name { String^ get() ;}
+    virtual property bool Enabled { bool get() ;}
     virtual property ClearCanvas::Dicom::TransferSyntax^ CodecTransferSyntax {  ClearCanvas::Dicom::TransferSyntax^ get(); };
 
     virtual DicomCodecParameters^ GetCodecParameters(DicomAttributeCollection^ dataSet);
@@ -50,6 +51,7 @@ public:
 public ref class DicomJpeg2000LossyCodecFactory : public IDicomCodecFactory {
 public:
     virtual property String^ Name { String^ get();}
+    virtual property bool Enabled { bool get() ;}
     virtual property ClearCanvas::Dicom::TransferSyntax^ CodecTransferSyntax { ClearCanvas::Dicom::TransferSyntax^ get(); };
 
     virtual DicomCodecParameters^ GetCodecParameters(DicomAttributeCollection^ dataSet);

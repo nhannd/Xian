@@ -302,7 +302,7 @@ namespace ClearCanvas.Desktop.View.WinForms {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Forecolor of the version.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("White")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Black")]
         public global::System.Drawing.Color VersionForeColor {
             get {
                 return ((global::System.Drawing.Color)(this["VersionForeColor"]));
@@ -624,6 +624,132 @@ namespace ClearCanvas.Desktop.View.WinForms {
         public global::System.Drawing.ContentAlignment MessageTextAlign {
             get {
                 return ((global::System.Drawing.ContentAlignment)(this["MessageTextAlign"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EvaluationVisible {
+            get {
+                return ((bool)(this["EvaluationVisible"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("617, 9")]
+        public global::System.Drawing.Point EvaluationLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["EvaluationLocation"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("44, 13")]
+        public global::System.Drawing.Size EvaluationSize {
+            get {
+                return ((global::System.Drawing.Size)(this["EvaluationSize"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EvaluationAutoSize {
+            get {
+                return ((bool)(this["EvaluationAutoSize"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Black")]
+        public global::System.Drawing.Color EvaluationForeColor {
+            get {
+                return ((global::System.Drawing.Color)(this["EvaluationForeColor"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EvaluationFontBold {
+            get {
+                return ((bool)(this["EvaluationFontBold"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("TopLeft")]
+        public global::System.Drawing.ContentAlignment EvaluationTextAlign {
+            get {
+                return ((global::System.Drawing.ContentAlignment)(this["EvaluationTextAlign"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool NotForDiagnosticUseVisible {
+            get {
+                return ((bool)(this["NotForDiagnosticUseVisible"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("617, 9")]
+        public global::System.Drawing.Point NotForDiagnosticUseLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["NotForDiagnosticUseLocation"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("44, 13")]
+        public global::System.Drawing.Size NotForDiagnosticUseSize {
+            get {
+                return ((global::System.Drawing.Size)(this["NotForDiagnosticUseSize"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NotForDiagnosticUseAutoSize {
+            get {
+                return ((bool)(this["NotForDiagnosticUseAutoSize"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Red")]
+        public global::System.Drawing.Color NotForDiagnosticUseForeColor {
+            get {
+                return ((global::System.Drawing.Color)(this["NotForDiagnosticUseForeColor"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool NotForDiagnosticUseFontBold {
+            get {
+                return ((bool)(this["NotForDiagnosticUseFontBold"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("TopLeft")]
+        public global::System.Drawing.ContentAlignment NotForDiagnosticUseTextAlign {
+            get {
+                return ((global::System.Drawing.ContentAlignment)(this["NotForDiagnosticUseTextAlign"]));
             }
         }
     }

@@ -10,9 +10,9 @@
 #endregion
 
 using System;
+using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.View.WinForms;
-using System.Windows.Forms;
 
 namespace ClearCanvas.Desktop.Executable
 {
@@ -48,7 +48,7 @@ namespace ClearCanvas.Desktop.Executable
             }
             else
             {
-                Platform.StartApp();
+                Platform.StartApp(@"ClearCanvas.Desktop.Application", new string[0]);
             }
 		}
 

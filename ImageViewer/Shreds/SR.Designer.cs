@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Images could not be received because the remote device was having a problem reaching your computer, possibly due to misconfiguration..
+        /// </summary>
+        internal static string DicomError_QRMoveDestinationUnknown {
+            get {
+                return ResourceManager.GetString("DicomError_QRMoveDestinationUnknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DICOM Server.
         /// </summary>
         internal static string DicomServer {

@@ -20,11 +20,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
 	public abstract class StudyBrowserTool : Tool<IStudyBrowserToolContext>
 	{
-		private bool _enabled;
+		private bool _enabled = true;
 		private event EventHandler _enabledChangedEvent;
 
-        private bool _visible = true;
-        private event EventHandler _visibleChangedEvent; 
+		private bool _visible = true;
+		private event EventHandler _visibleChangedEvent;
+
 
 		public override void Initialize()
 		{
@@ -62,19 +63,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			remove { _enabledChangedEvent -= value; }
 		}
 
-		protected int ProcessItemsAsync<T>(IEnumerable<T> items, Action<T> processAction, bool cancelable)
-		{
-			var itemsToProcess = items.ToList();
-			return ProgressDialog.Show(this.Context.DesktopWindow,
-				itemsToProcess,
-				(item, i) =>
-				{
-					processAction(item);
-					return string.Format(SR.MessageProcessedItemsProgress, i + 1, itemsToProcess.Count);
-				},
-				cancelable);
-		}
-
 		public bool Visible
 		{
 			get { return _visible; }
@@ -92,6 +80,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			add { _visibleChangedEvent += value; }
 			remove { _visibleChangedEvent -= value; }
+		}
+		
+		protected int ProcessItemsAsync<T>(IEnumerable<T> items, Action<T> processAction, bool cancelable)
+		{
+			var itemsToProcess = items.ToList();
+			return ProgressDialog.Show(this.Context.DesktopWindow,
+				itemsToProcess,
+				(item, i) =>
+				{
+					processAction(item);
+					return string.Format(SR.MessageProcessedItemsProgress, i + 1, itemsToProcess.Count);
+				},
+				cancelable);
 		}
 	}
 }

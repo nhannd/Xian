@@ -40,6 +40,9 @@ namespace Jpeg2000 {
 	String^ DicomJpeg2000LosslessCodecFactory::Name::get()  {
 		return ClearCanvas::Dicom::TransferSyntax::Jpeg2000ImageCompressionLosslessOnly->Name;	
 	}
+	bool DicomJpeg2000LosslessCodecFactory::Enabled::get()  {
+		return true;
+	}
 	DicomCodecParameters^ DicomJpeg2000LosslessCodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet) {
 		return gcnew DicomJpeg2000Parameters();
 	}
@@ -75,6 +78,10 @@ namespace Jpeg2000 {
 
 	String^ DicomJpeg2000LossyCodecFactory::Name::get()  {
 		return ClearCanvas::Dicom::TransferSyntax::Jpeg2000ImageCompression->Name;	
+	}
+
+	bool DicomJpeg2000LossyCodecFactory::Enabled::get()  {
+		return true;
 	}
 
 	DicomCodecParameters^ DicomJpeg2000LossyCodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet) {

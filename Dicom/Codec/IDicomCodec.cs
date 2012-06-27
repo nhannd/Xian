@@ -98,6 +98,10 @@ namespace ClearCanvas.Dicom.Codec
         /// </summary>
         string Name { get; }
         /// <summary>
+        /// Gets a value indicating whether or not the codec factory is enabled.
+        /// </summary>
+        bool Enabled { get; }
+        /// <summary>
         /// The transfer syntax associated with the factory.
         /// </summary>
         TransferSyntax CodecTransferSyntax { get; }

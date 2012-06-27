@@ -104,7 +104,7 @@
     </PropertyGroup>
     
     <!--TargetPlatform=x86 because samples only work for x86-->
-    <MSBuild Projects="$(TrunkDirectory)\ImageViewer\ImageViewer_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=x86;Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(CoreBuildOptions)" />
+    <MSBuild Projects="$(TrunkDirectory)\ImageViewer\ImageViewer_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=x86;Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);StrongNameKeyFile=$(StrongNameKeyFile);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(CoreBuildOptions)" />
 
     <!--Changed to 32bit "mode" for samples because they only work on x86 -->
     <CallTarget Condition="$(DesktopBuild)" Targets="SetExeX86Flag"/>
