@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Common.DicomServer {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("CLEARCANVAS")]
+        [global::System.Configuration.DefaultSettingValueAttribute("AETITLE")]
         public string AETitle {
             get {
                 return ((string)(this["AETitle"]));
