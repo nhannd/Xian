@@ -132,7 +132,6 @@
     <Compile Include="AsyncTask.cs" />
     <Compile Include="AlertViewerComponent.cs" />
     <Compile Include="IDesktopAlertContext.cs" />
-    <Compile Include="Actions\LanguagePickerAction.cs" />
     <Compile Include="Tables\ComboBoxCellEditor.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeBranch.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeLeafAction.cs" />
