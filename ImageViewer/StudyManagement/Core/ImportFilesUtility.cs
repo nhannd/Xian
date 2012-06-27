@@ -112,6 +112,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         {
             var request = new DicomReceiveRequest
                               {
+                                  // TODO (CR Jun 2012): Ok, but anyone writing code that relied on these request objects may take
+                                  // for granted that it is in fact always a server name. Might be better to put 3 properties on the request
+                                  // and document how they work (SourceServerName, SourceAE, Hostname), or change the property to a
+                                  // data contract object (ServerDescriptor).
                                   SourceServerName = _dicomServerNode == null ? string.Format("{0}/{1}",SourceAE,_hostname) : _dicomServerNode.Name,
                                   Priority = WorkItemPriorityEnum.High,
                                   Patient = new WorkItemPatient(message.DataSet),
