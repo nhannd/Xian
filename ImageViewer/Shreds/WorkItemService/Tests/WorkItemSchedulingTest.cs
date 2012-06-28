@@ -165,9 +165,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             {
                 string reason;
                 if (test.CanStart)
-                    Assert.IsTrue(test.Processor.CanStart(out reason), "Scheduling test failed for: " + test.Message);
+                    Assert.IsTrue(WorkItemQuery.UnitTestCanStart(test.Processor.Proxy.Item, out reason), "Scheduling test failed for: " + test.Message);
                 else
-                    Assert.IsFalse(test.Processor.CanStart(out reason), "Scheduling test failed for: " + test.Message);
+                    Assert.IsFalse(WorkItemQuery.UnitTestCanStart(test.Processor.Proxy.Item, out reason), "Scheduling test failed for: " + test.Message);
             }
 
             DeleteWorkItems(list);

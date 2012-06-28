@@ -111,6 +111,7 @@
     <Compile Include="WorkItemService\WorkItemActivityMonitorServiceType.cs" />
     <Compile Include="WorkItemService\WorkItemProcessor.cs" />
     <Compile Include="WorkItemService\WorkItemProcessorExtension.cs" />
+    <Compile Include="WorkItemService\WorkItemQuery.cs" />
     <Compile Include="WorkItemService\WorkItemService.cs" />
     <Compile Include="WorkItemService\WorkItemServiceExtension.cs" />
     <Compile Include="WorkItemService\WorkItemServiceType.cs" />

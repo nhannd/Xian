@@ -176,16 +176,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             }           
         }
 
-        public override bool CanStart(out string reason)
-        {                        
-            if (ScheduledAheadInsertItems(out reason))
-            {
-                return false;
-            }
-
-            return !AnyInProgressWorkItems(out reason);
-        }
-
         #endregion
 
 

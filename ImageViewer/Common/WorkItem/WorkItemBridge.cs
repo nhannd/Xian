@@ -400,7 +400,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
                 };
 
-                InsertRequest(request, null);
+                InsertRequest(request, new DicomSendProgress());
             }
             catch (Exception ex)
             {
@@ -437,7 +437,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                   };
 
                 request.SeriesInstanceUids.AddRange(seriesInstanceUids);
-                InsertRequest(request, null);
+                InsertRequest(request, new DicomSendProgress());
             }
             catch (Exception ex)
             {
@@ -473,7 +473,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                       Patient = new WorkItemPatient(study)
                                   };
                 request.SopInstanceUids.AddRange(sopInstanceUids);
-                InsertRequest(request, null);
+                InsertRequest(request, new DicomSendProgress());
             }
             catch (Exception ex)
             {
@@ -509,7 +509,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                                       Patient = new WorkItemPatient(study),
                                       FilePaths = files
                                   };
-                InsertRequest(request, null);
+                InsertRequest(request, new DicomSendProgress());
             }
             catch (Exception ex)
             {

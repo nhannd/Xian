@@ -29,9 +29,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
         #region Methods
 
         bool Initialize(WorkItemStatusProxy proxy);
-
-        bool CanStart(out string reason);
-
+        
         void Process();
 
         void Cancel();

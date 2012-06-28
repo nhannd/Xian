@@ -17,7 +17,6 @@ using ClearCanvas.Common.Shreds;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
-using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
@@ -165,17 +164,17 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 if (_threadPool.StatThreadsAvailable > 0)
                 {
-                    list = GetWorkItems(_threadPool.StatThreadsAvailable, WorkItemPriorityEnum.Stat);
+                    list = WorkItemQuery.GetWorkItems(_threadPool.StatThreadsAvailable, WorkItemPriorityEnum.Stat);
                 }
 
                 if ((list == null || list.Count == 0) && _threadPool.NormalThreadsAvailable > 0)
                 {
-                    list = GetWorkItems(_threadPool.NormalThreadsAvailable, WorkItemPriorityEnum.High);
+                    list = WorkItemQuery.GetWorkItems(_threadPool.NormalThreadsAvailable, WorkItemPriorityEnum.High);
                 }
 
                 if ((list == null || list.Count == 0) && _threadPool.NormalThreadsAvailable > 0)
                 {
-                    list = GetWorkItems(_threadPool.NormalThreadsAvailable, WorkItemPriorityEnum.Normal);
+                    list = WorkItemQuery.GetWorkItems(_threadPool.NormalThreadsAvailable, WorkItemPriorityEnum.Normal);
                 }
                 
                 if ( list == null)
@@ -279,22 +278,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     return;
                 }
 
-                string failureDescription;
                 if (!processor.Initialize(proxy))
                 {
                     proxy.Postpone();
                     return;
                 }
 
-                if (processor.CanStart(out failureDescription))
-                {
-                    processor.Process();
-                }
-                else
-                {
-                    proxy.Progress.StatusDetails = failureDescription;
-                    proxy.Postpone();
-                }
+                processor.Process();
             }
             catch (NotEnoughStorageException e)
             {
@@ -323,49 +313,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 			}
 		}
 
-        /// <summary>
-        /// Method for getting next <see cref="WorkItem"/> entry.
-		/// </summary>
-		/// <param name="count">The count.</param>
-		/// <param name="priority">Search for stat items.</param>
-		/// <remarks>
-		/// </remarks>
-		/// <returns>
-		/// A <see cref="WorkItem"/> entry if found, or else null;
-		/// </returns>
-        private List<WorkItem> GetWorkItems(int count, WorkItemPriorityEnum priority)
-        {
-            try
-            {
-                using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
-                {
-                    var workItemBroker = context.GetWorkItemBroker();
-
-                    List<WorkItem> workItems;
-                    if (priority == WorkItemPriorityEnum.Stat)
-                        workItems = workItemBroker.GetPendingWorkItemsByPriority(count, priority);
-                    else if (priority == WorkItemPriorityEnum.High)
-                        workItems = workItemBroker.GetPendingWorkItemsByPriority(count, priority);
-                    else
-                        workItems = workItemBroker.GetWorkItemsForProcessing(count);
-
-                    foreach (var item in workItems)
-                    {
-                        item.Status = WorkItemStatusEnum.InProgress;
-                    }
-
-                    context.Commit();
-                    return workItems;
-                }
-            }
-            catch (Exception x)
-            {
-                Platform.Log(LogLevel.Warn, x, "Unexpected error querying for {0} {1} priority WorkItems", count, priority.GetDescription() );
-                return null;
-            }
-        }
-
-
+     
         /// <summary>
         /// Method for getting next <see cref="WorkItem"/> entry.
         /// </summary>
