@@ -42,7 +42,6 @@ namespace ClearCanvas.Dicom.Network.Scu
         #region Private Variables
 
         protected bool _cancelRequested = false;
-        private bool _cancelSent = false;
         private ushort _moveMessageId = 0;
 
         private int _warningSubOperations = 0;
@@ -156,7 +155,16 @@ namespace ClearCanvas.Dicom.Network.Scu
             if (LogInformation)
                 Platform.Log(LogLevel.Info, "Canceling Scu connected from {0} to {1}:{2}:{3}...", ClientAETitle, RemoteAE,
                              RemoteHost, RemotePort);
-            _cancelRequested = true;
+
+            if (!_cancelRequested)
+            {
+                // Force a 10 second timeout.  This is mostly to cope with an ImageServer bug that
+                // doesn't handle the C-CANCEL request properly.
+                Client.AssociationParams.ReadTimeout = 10 * 1000;
+
+                _cancelRequested = true;
+                SendMoveCancelRequest(Client, AssociationParameters);
+            }            
         }
 
         /// <summary>
@@ -396,15 +404,6 @@ namespace ClearCanvas.Dicom.Network.Scu
         	if (message.Status.Status == DicomState.Pending)
         	{
         		OnImageMoveCompleted();
-                if (_cancelRequested && !_cancelSent)
-                {
-                    // Force a 10 second timeout.  This is mostly to cope with an ImageServer bug that
-                    // doesn't handle the C-CANCEL request properly.
-                    association.ReadTimeout = 10 * 1000;
-
-                    _cancelSent = true;
-                    SendMoveCancelRequest(client, association);
-                }
         	}
         	else
         	{
