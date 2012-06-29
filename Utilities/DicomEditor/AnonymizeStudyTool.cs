@@ -171,6 +171,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 			UpdateEnabled();
 		}
 
+	    // TODO (CR Jun 2012): Move to a more common place, like a SopClassExtensions class in IV.Common, or CC.Dicom?
 		internal static bool IsReportOrAttachmentSopClass(string sopClassUid)
 		{
 			return sopClassUid == SopClass.EncapsulatedPdfStorageUid
