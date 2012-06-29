@@ -14,16 +14,17 @@ using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
-using ClearCanvas.ImageViewer.Services.Auditing;
+using ClearCanvas.ImageViewer.Common.Auditing;
 using System.Net;
+using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
+using LocalDicomServer = ClearCanvas.ImageViewer.Common.DicomServer.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
 	[ExtensionOf(typeof(DicomScpExtensionPoint<IDicomServerContext>))]
-	public class FindScpExtension : ScpExtension, IDicomScp<IDicomServerContext>
+	public class FindScpExtension : ScpExtension
 	{
 		public FindScpExtension()
 			: base(GetSupportedSops())
@@ -32,9 +33,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private static IEnumerable<SupportedSop> GetSupportedSops()
 		{
-			SupportedSop sop = new SupportedSop();
-			sop.SopClass = SopClass.StudyRootQueryRetrieveInformationModelFind;
-			sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
+		    var sop = new SupportedSop
+		                  {
+		                      SopClass = SopClass.StudyRootQueryRetrieveInformationModelFind
+		                  };
+		    sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
 			sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
 			yield return sop;
 		}
@@ -66,21 +69,24 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			return remoteHostName;
 		}
 
-		public override bool OnReceiveRequest(Dicom.Network.DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
+        public override bool OnReceiveRequest(ClearCanvas.Dicom.Network.DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
 		{
 			String level = message.DataSet[DicomTags.QueryRetrieveLevel].GetString(0, "").Trim();
+
+            var extendedConfiguration = Common.DicomServer.DicomServer.GetExtendedConfiguration();
+            var queryResponsesInUtf8 = extendedConfiguration.QueryResponsesInUtf8;
 
 			if (message.AffectedSopClassUid.Equals(SopClass.StudyRootQueryRetrieveInformationModelFindUid))
 			{
 				try
 				{
-					using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+					using (var context = new DataAccessContext())
 					{
-						IEnumerable<DicomAttributeCollection> results = reader.Query(message.DataSet);
+						IEnumerable<DicomAttributeCollection> results = context.GetStudyStoreQuery().Query(message.DataSet);
 						foreach (DicomAttributeCollection result in results)
 						{
                             const string utf8 = "ISO_IR 192";
-                            if (DicomServerSettings.Instance.QueryResponsesInUtf8)
+                            if (queryResponsesInUtf8)
                                 ChangeCharacterSet(result, utf8);
 
                             var response = new DicomMessage(null, result);
@@ -101,7 +107,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 					try
 					{
-						DicomMessage errorResponse = new DicomMessage();
+						var errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 						                         DicomStatuses.QueryRetrieveUnableToProcess);
 
@@ -116,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 				try
 				{
-					DicomMessage finalResponse = new DicomMessage();
+					var finalResponse = new DicomMessage();
 					server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
 
 					AuditHelper.LogQueryReceived(association.CallingAE, GetRemoteHostName(association), EventResult.Success,

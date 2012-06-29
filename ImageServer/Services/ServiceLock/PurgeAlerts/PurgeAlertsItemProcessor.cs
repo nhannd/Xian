@@ -15,7 +15,7 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using Alert=ClearCanvas.ImageServer.Model.Alert;
@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.PurgeAlerts
 			criteria.InsertTime.LessThan(cutOffTime);
 			criteria.InsertTime.SortAsc(0);
 
-			using (ExecutionContext context = new ExecutionContext())
+			using (ServerExecutionContext context = new ServerExecutionContext())
 			{
 				IAlertEntityBroker broker = context.ReadContext.GetBroker<IAlertEntityBroker>();
 

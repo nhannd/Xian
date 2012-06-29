@@ -9,10 +9,11 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
-using System.Collections.Generic;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client

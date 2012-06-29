@@ -16,13 +16,37 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.Services.Auditing;
-using ClearCanvas.ImageViewer.Services.ServerTree;
+using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 {
+    [ExtensionOf(typeof(ServiceNodeServiceProviderExtensionPoint))]
+    internal class StudyFinderServiceProvider : ServiceNodeServiceProvider
+    {
+        private bool IsRemoteServiceNode
+        {
+            get
+            {
+                var dicomServiceNode = Context.ServiceNode as IDicomServiceNode;
+                return dicomServiceNode != null && !dicomServiceNode.IsLocal;
+            }
+        }
+
+        public override bool IsSupported(Type type)
+        {
+            return type == typeof(IStudyFinder) && IsRemoteServiceNode;
+        }
+
+        public override object GetService(Type type)
+        {
+            return IsSupported(type) ? new RemoteStudyFinder() : null;
+        }
+    }
+
     [ExtensionOf(typeof(StudyFinderExtensionPoint))]
     public class RemoteStudyFinder : StudyFinder
 	{
@@ -31,9 +55,12 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 		{
 		}
 
-        public override StudyItemList Query(QueryParameters queryParams, object targetServer)
+        public override StudyItemList Query(QueryParameters queryParams, IApplicationEntity targetServer)
         {
-			var selectedServer = (ApplicationEntity)targetServer;
+            Platform.CheckForNullReference(queryParams, "queryParams");
+            Platform.CheckForNullReference(targetServer, "targetServer");
+
+            var selectedServer = targetServer.ToServiceNode();
 
             //.NET strings are unicode, therefore, so is all the query data.
             const string utf8 = "ISO_IR 192";
@@ -92,7 +119,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			StudyItemList studyItemList = new StudyItemList();
 			foreach (DicomAttributeCollection result in results)
 			{
-				StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].GetString(0, ""), selectedServer, Name);
+				StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].GetString(0, ""), selectedServer);
 
 				//TODO: add DicomField attributes to the StudyItem class (implement typeconverter for PersonName class).
 				item.PatientsBirthDate = result[DicomTags.PatientsBirthDate].GetString(0, "");
@@ -139,14 +166,14 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 				studyItemList.Add(item);
 			}
 
-        	AuditHelper.LogQueryIssued(selectedServer.AETitle, selectedServer.Host, EventSource.CurrentUser,
+        	AuditHelper.LogQueryIssued(selectedServer.AETitle, selectedServer.ScpParameters.HostName, EventSource.CurrentUser,
         	                           EventResult.Success, SopClass.StudyRootQueryRetrieveInformationModelFindUid,
         	                           requestCollection);
 
 			return studyItemList;
         }
 
-		protected static IList<DicomAttributeCollection> Query(ApplicationEntity server, DicomAttributeCollection requestCollection)
+        protected static IList<DicomAttributeCollection> Query(IApplicationEntity server, DicomAttributeCollection requestCollection)
 		{
 			//special case code for ModalitiesInStudy.  An IStudyFinder must accept a multi-valued
 			//string for ModalitiesInStudy (e.g. "MR\\CT") and process it appropriately for the 
@@ -177,9 +204,8 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 					{
 						requestCollection[DicomTags.ModalitiesInStudy].SetStringValue(modalityFilter);
 
-						IList<DicomAttributeCollection> results = scu.Find(ServerTree.GetClientAETitle(),
-							server.AETitle, server.Host, server.Port,
-							requestCollection);
+                        IList<DicomAttributeCollection> results = scu.Find(
+                            DicomServer.AETitle, server.AETitle, server.ScpParameters.HostName, server.ScpParameters.Port, requestCollection);
 
 						scu.Join(new TimeSpan(0, 0, 0, 0, 1000));
 

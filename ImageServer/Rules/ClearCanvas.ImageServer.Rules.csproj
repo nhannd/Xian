@@ -15,7 +15,8 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -54,6 +55,7 @@
     <Compile Include="GrantAccessAction\GrantAccessActionOperator.cs" />
     <Compile Include="GrantAccessAction\GrantAccessSamples.cs" />
     <Compile Include="GrantAccessAction\InsertStudyDataAccessCommand.cs" />
+    <Compile Include="InsertArchiveQueueCommand.cs" />
     <Compile Include="InsertFilesystemQueueCommand.cs" />
     <Compile Include="ISampleRule.cs" />
     <Compile Include="CompressSamples\CompressSamples.cs" />
@@ -62,24 +64,16 @@
     <Compile Include="OnlineRetentionAction\OnlineRetentionActionItem.cs" />
     <Compile Include="OnlineRetentionAction\OnlineRetentionActionOperator.cs" />
     <Compile Include="OnlineRetentionAction\Sample_OnlineRetention.cs" />
-    <Compile Include="Rule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RuleEngineStatistics.cs" />
     <Compile Include="RuleSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>RuleSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="RuleTypeCollection.cs" />
     <Compile Include="SampleRuleBase.cs" />
     <Compile Include="SampleRuleExtensionPoint.cs" />
     <Compile Include="ServerActionContext.cs" />
     <Compile Include="ServerRulesEngine.cs" />
-    <Compile Include="Specifications\DicomAgeGreaterThanSpecification.cs" />
-    <Compile Include="Specifications\DicomAgeLessThanSpecification.cs" />
-    <Compile Include="Specifications\DicomExpression.cs" />
-    <Compile Include="ActionOperatorCompilerBase.cs" />
-    <Compile Include="ServerActionItemBase.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

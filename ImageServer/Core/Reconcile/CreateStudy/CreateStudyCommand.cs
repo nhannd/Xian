@@ -14,10 +14,11 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
@@ -68,7 +69,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 		#region Overriden Protected Methods
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
 		{
 			Platform.CheckForNullReference(Context, "Context");
 			Platform.CheckForNullReference(Context.WorkQueueItem, "Context.WorkQueueItem");
@@ -98,7 +99,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 			if (_complete)
 			{
-				StudyRulesEngine engine = new StudyRulesEngine(_destinationStudyStorage, Context.Partition);
+				var engine = new StudyRulesEngine(_destinationStudyStorage, Context.Partition);
 				engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed, theProcessor);
 			}
 		}
@@ -108,7 +109,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
             // Load the mapping for the study
             if (_destinationStudyStorage != null)
             {
-                UidMapXml xml = new UidMapXml();
+                var xml = new UidMapXml();
                 xml.Load(_destinationStudyStorage);
                 UidMapper = new UidMapper(xml);
             }
@@ -173,9 +174,9 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 		    foreach (WorkQueueUid uid in Context.WorkQueueUidList)
 			{
 				string imagePath = GetReconcileUidPath(uid);
-				DicomFile file = new DicomFile(imagePath);
+				var file = new DicomFile(imagePath);
 
-				SopInstanceProcessor sopProcessor = new SopInstanceProcessor(context) { EnforceNameRules = true };
+				var sopProcessor = new SopInstanceProcessor(context) { EnforceNameRules = true };
 
 				try
 				{
@@ -271,7 +272,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 		}
 
 		public InitializeStorageCommand(ReconcileStudyProcessorContext context, DicomMessageBase file)
-			:base("InitializeStorageCommand", true, context)
+			:base("InitializeStorageCommand", context)
 		{
 			Platform.CheckForNullReference(file, "file");
 			_studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
@@ -281,7 +282,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 		public InitializeStorageCommand(ReconcileStudyProcessorContext context, string studyInstanceUid,
 			string studyDate, TransferSyntax transferSyntax)
-			: base("InitializeStorageCommand", true, context)
+			: base("InitializeStorageCommand", context)
 		{
 			Platform.CheckForNullReference(studyInstanceUid, "studyInstanceUid");
 			Platform.CheckForNullReference(studyDate, "studyDate");
@@ -292,7 +293,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			_transferSyntax = transferSyntax;
 		}
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+		protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			_location = FindOrCreateStudyStorageLocation();
 		}

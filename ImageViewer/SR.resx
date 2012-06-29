@@ -213,9 +213,6 @@
   <data name="ExceptionInvalidStride" xml:space="preserve">
     <value>Stride improperly calculated (correct stride = {0}, calculated stride = {1}).</value>
   </data>
-  <data name="ExceptionInvalidTransferSyntaxUID" xml:space="preserve">
-    <value>Transfer syntax UID must be one of: 1.2.840.10008.1.2, 1.2.840.10008.1.2.1, 1.2.840.10008.1.2.2 or 1.2.840.10008.1.2.5</value>
-  </data>
   <data name="ExceptionLayoutIsNotRectangular" xml:space="preserve">
     <value>The layout of the physical workspace is either non-rectangular or has not been set.</value>
   </data>
@@ -368,9 +365,6 @@
   <data name="MessageFailedToApplyDicomHeaderGraphics" xml:space="preserve">
     <value>An error occurred while trying to add graphics from the image header.  Some or all of them will not appear.</value>
   </data>
-  <data name="MessageFailedToGetVOIDataLUTs" xml:space="preserve">
-    <value>Creation of VOI Data LUTs failed.</value>
-  </data>
   <data name="MessageFormatLoadStudyIncomplete" xml:space="preserve">
     <value>ClearCanvas was only able to load {0} of the {1} images you requested.</value>
   </data>
@@ -514,12 +508,6 @@ Use image with caution.</value>
   </data>
   <data name="MessageLoadStudyFailedNearline" xml:space="preserve">
     <value>The study is currently being restored from archive and cannot be loaded at this time.  Please try again later.</value>
-  </data>
-  <data name="MessageFailedToOpenImages" xml:space="preserve">
-    <value>Failed to open the selected images.</value>
-  </data>
-  <data name="MessageFailedToOpenStudy" xml:space="preserve">
-    <value>Failed to open the selected studies.</value>
   </data>
   <data name="FormatReason" xml:space="preserve">
     <value>Reason: {0}</value>
@@ -667,11 +655,17 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   <data name="LabelUnitsMlml" xml:space="preserve">
     <value>ml/ml</value>
   </data>
+  <data name="LabelUnitsMm2" xml:space="preserve">
+    <value>mm²</value>
+  </data>
   <data name="LabelUnitsOD" xml:space="preserve">
     <value>1/1000 OD</value>
   </data>
   <data name="LabelUnitsPcnt" xml:space="preserve">
     <value>%</value>
+  </data>
+  <data name="LabelUnitsPixels" xml:space="preserve">
+    <value>pixels</value>
   </data>
   <data name="LabelUnitsPropcnts" xml:space="preserve">
     <value>prop. to counts</value>
@@ -690,11 +684,5 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   </data>
   <data name="LabelUnitsUnspecified" xml:space="preserve">
     <value />
-  </data>
-  <data name="LabelUnitsMm2" xml:space="preserve">
-    <value>mm²</value>
-  </data>
-  <data name="LabelUnitsPixels" xml:space="preserve">
-    <value>pixels</value>
   </data>
 </root>

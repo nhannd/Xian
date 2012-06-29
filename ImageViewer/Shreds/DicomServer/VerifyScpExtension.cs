@@ -18,7 +18,7 @@ using ClearCanvas.Dicom.Network.Scp;
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
 	[ExtensionOf(typeof(DicomScpExtensionPoint<IDicomServerContext>))]
-	public class VerifyScpExtension : ScpExtension, IDicomScp<IDicomServerContext>
+	public class VerifyScpExtension : ScpExtension
 	{
 		public VerifyScpExtension()
 			: base(GetSupportedSops())
@@ -27,14 +27,16 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private static IEnumerable<SupportedSop> GetSupportedSops()
 		{
-			SupportedSop sop = new SupportedSop();
-			sop.SopClass = SopClass.VerificationSopClass;
-			sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
+		    var sop = new SupportedSop
+		                  {
+		                      SopClass = SopClass.VerificationSopClass
+		                  };
+		    sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
 			sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
 			yield return sop;
 		}
 
-		public override bool OnReceiveRequest(Dicom.Network.DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
+        public override bool OnReceiveRequest(ClearCanvas.Dicom.Network.DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
 		{
 			server.SendCEchoResponse(presentationID, message.MessageId, DicomStatuses.Success);
 			return true;

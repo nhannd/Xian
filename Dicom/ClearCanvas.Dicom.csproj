@@ -24,7 +24,7 @@
     <UpgradeBackupLocation />
     <OldToolsVersion>3.5</OldToolsVersion>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <PublishUrl>http://localhost/ClearCanvas.Dicom/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -92,10 +92,7 @@
       <HintPath>..\ReferencedAssemblies\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="sysglobl" />
-    <Reference Include="System">
-      <Name>System</Name>
-      <HintPath>C:\WINDOWS\assembly\GAC_MSIL\System\2.0.0.0__b77a5c561934e089\System.dll</HintPath>
-    </Reference>
+    <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -127,6 +124,14 @@
     <Compile Include="DicomAttributeSingleValueText.cs" />
     <Compile Include="DicomAttributeSQ.cs" />
     <Compile Include="Iod\ComponentGroup.cs" />
+    <Compile Include="Network\SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\Command\AggregateCommand.cs" />
+    <Compile Include="Utilities\Command\RemoveSeriesFromStudyXml.cs" />
+    <Compile Include="Utilities\Command\Tests\CommandTests.cs" />
     <Compile Include="Utilities\DateParser.cs" />
     <Compile Include="Utilities\DateRangeHelper.cs" />
     <Compile Include="Utilities\DateTimeParser.cs" />
@@ -175,6 +180,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Network\SR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
@@ -405,7 +415,6 @@
     <Compile Include="Network\Scu\StorageScu.cs" />
     <Compile Include="Network\Scu\VerificationScu.cs" />
     <Compile Include="Network\SupportedSop.cs" />
-    <Compile Include="ServiceModel\DicomServerApplicationEntity.cs" />
     <Compile Include="ServiceModel\ApplicationEntity.cs" />
     <Compile Include="ServiceModel\FaultContracts.cs" />
     <Compile Include="ServiceModel\Query\Comparers.cs" />
@@ -428,7 +437,6 @@
     <Compile Include="ServiceModel\Query\StudyRootQueryServiceClient.cs" />
     <Compile Include="ServiceModel\Query\StudyRootStudyIdentifier.cs" />
     <Compile Include="ServiceModel\Query\Tests\SortStudyTests.cs" />
-    <Compile Include="ServiceModel\StreamingServerApplicationEntity.cs" />
     <Compile Include="ServiceModel\Streaming\HeaderStreamingParameters.cs" />
     <Compile Include="ServiceModel\Streaming\IHeaderStreamingService.cs" />
     <Compile Include="ServiceModel\Streaming\StreamingClient.cs" />
@@ -454,6 +462,33 @@
     <Compile Include="Tests\ScuTests.cs" />
     <Compile Include="Tests\UnknowVrTests.cs" />
     <Compile Include="Utilities\Anonymization\ValidationStrategy.cs" />
+    <Compile Include="Utilities\Command\CommandProcessor.cs" />
+    <Compile Include="Utilities\Command\CopyDirectoryCommand.cs" />
+    <Compile Include="Utilities\Command\CopyFileCommand.cs" />
+    <Compile Include="Utilities\Command\CreateDirectoryCommand.cs" />
+    <Compile Include="Utilities\Command\DeleteDirectoryCommand.cs" />
+    <Compile Include="Utilities\Command\DicomCompressCommand.cs" />
+    <Compile Include="Utilities\Command\FileDeleteCommand.cs" />
+    <Compile Include="Utilities\Command\IAggregateCommand.cs" />
+    <Compile Include="Utilities\Command\ICommandProcessorContext.cs" />
+    <Compile Include="Utilities\Command\ICommand.cs" />
+    <Compile Include="Utilities\Command\CommandBase.cs" />
+    <Compile Include="Utilities\Command\CommandStatistics.cs" />
+    <Compile Include="Utilities\Command\InsertInstanceXmlCommand.cs" />
+    <Compile Include="Utilities\Command\MoveDirectoryCommand.cs" />
+    <Compile Include="Utilities\Command\RenameFileCommand.cs" />
+    <Compile Include="Utilities\Command\SaveDicomFileCommand.cs" />
+    <Compile Include="Utilities\DicomTagPath.cs" />
+    <Compile Include="Utilities\Rules\ActionContext.cs" />
+    <Compile Include="Utilities\Rules\ActionItemBase.cs" />
+    <Compile Include="Utilities\Rules\ActionOperatorCompilerBase.cs" />
+    <Compile Include="Utilities\Rules\Rule.cs" />
+    <Compile Include="Utilities\Rules\RulesEngineStatistics.cs" />
+    <Compile Include="Utilities\Rules\RulesEngine.cs" />
+    <Compile Include="Utilities\Rules\RuleTypeCollection.cs" />
+    <Compile Include="Utilities\Rules\Specifications\DicomAgeGreaterThanSpecification.cs" />
+    <Compile Include="Utilities\Rules\Specifications\DicomAgeLessThanSpecification.cs" />
+    <Compile Include="Utilities\Rules\Specifications\DicomExpression.cs" />
     <Compile Include="Utilities\StudyBuilder\DicomConverter.cs" />
     <Compile Include="Utilities\StudyBuilder\IUidCollection.cs" />
     <Compile Include="Utilities\StudyBuilder\PatientNode.cs" />
@@ -467,6 +502,7 @@
     <Compile Include="Utilities\StudyBuilder\StudyBuilderNode.cs" />
     <Compile Include="Utilities\StudyBuilder\StudyNode.cs" />
     <Compile Include="Utilities\StudyBuilder\StudyNodeCollection.cs" />
+    <Compile Include="Utilities\Tests\DicomTagPathTests.cs" />
     <Compile Include="Utilities\Xml\InstanceXmlDicomAttributeCollection.cs" />
     <Compile Include="Utilities\Xml\Tests\InstanceXmlTests.cs" />
     <Compile Include="Utilities\Xml\Tests\StudyXmlTests.cs" />

@@ -12,28 +12,21 @@
 using System;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Services.DicomServer;
+using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
 	internal class DicomServerManager
 	{
-		private enum ServerState
-		{
-			Stopped = 0,
-			Starting,
-			Started,
-			Stopping
-		}
-
 		public static readonly DicomServerManager Instance = new DicomServerManager();
 
 		#region Private Fields
 
 		private readonly object _syncLock = new object();
 		private DicomServer _server;
-		private ServerState _serverState;
+		private ServiceStateEnum _serviceState;
 
 		private bool _active;
 		private bool _restart;
@@ -48,10 +41,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private void StartServerAsync(object nothing)
 		{
-			DicomServerConfiguration configuration;
-			lock (_syncLock)
-			{
-				configuration = GetServerConfiguration();
+			DicomServerConfiguration serverConfiguration;
+            lock (_syncLock)
+            {
+                serverConfiguration = Common.DicomServer.DicomServer.GetConfiguration();
 				_restart = false;
 			}
 
@@ -61,14 +54,13 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				Trace.WriteLine("Starting Dicom server.");
 
-				server = new DicomServer(configuration.AETitle, configuration.HostName,
-				                         configuration.Port, configuration.InterimStorageDirectory);
+				server = new DicomServer(serverConfiguration);
 				server.Start();
 			}
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e, "Failed to start dicom server ({0}/{1}:{2}",
-				             configuration.HostName, configuration.AETitle, configuration.Port);
+				             serverConfiguration.HostName, serverConfiguration.AETitle, serverConfiguration.Port);
 
 				server = null;
 			}
@@ -78,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				{
 					//the server may be null here, we are just reflecting the state based on the method calls.
 					_server = server;
-					_serverState = ServerState.Started;
+					_serviceState = ServiceStateEnum.Started;
 					OnServerStarted();
 				}
 			}
@@ -97,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					server.Stop();
 				}
 
-				_serverState = ServerState.Stopped;
+				_serviceState = ServiceStateEnum.Stopped;
 				OnServerStopped();
 			}
 		}
@@ -136,15 +128,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			lock (_syncLock)
 			{
-				if (_serverState == ServerState.Stopped)
+				if (_serviceState == ServiceStateEnum.Stopped)
 				{
-					_serverState = ServerState.Starting;
+					_serviceState = ServiceStateEnum.Starting;
 					ThreadPool.QueueUserWorkItem(StartServerAsync);
 				}
 
 				if (wait)
 				{
-					while (_serverState != ServerState.Started)
+					while (_serviceState != ServiceStateEnum.Started)
 						Monitor.Wait(_syncLock, 50);
 				}
 			}
@@ -154,29 +146,16 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			lock (_syncLock)
 			{
-				if (_serverState == ServerState.Started)
+				if (_serviceState == ServiceStateEnum.Started)
 				{
-					_serverState = ServerState.Stopping;
+					_serviceState = ServiceStateEnum.Stopping;
 					ThreadPool.QueueUserWorkItem(StopServerAsync);
 				}
 
 				if (wait)
 				{
-					while (_serverState != ServerState.Stopped)
+					while (_serviceState != ServiceStateEnum.Stopped)
 						Monitor.Wait(_syncLock, 50);
-				}
-			}
-		}
-
-		private void OnConfigurationChanged()
-		{
-			lock (_syncLock)
-			{
-				if (_active)
-				{
-					Trace.WriteLine("Configuration change detected - restarting Dicom server.");
-					_restart = true;
-					StopServer(false);
 				}
 			}
 		}
@@ -185,7 +164,18 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#region Public Methods
 
-		public void Start()
+	    public ServiceStateEnum State
+	    {
+            get
+            {
+                lock (_syncLock)
+                {
+                    return _serviceState;
+                }
+            }
+	    }
+
+	    public void Start()
 		{
 			lock (_syncLock)
 			{
@@ -204,48 +194,18 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-		public DicomServerConfiguration GetServerConfiguration()
-		{
-			lock (_syncLock)
-			{
-				if (!_active)
-					throw new InvalidOperationException("The Dicom Server service is not active.");
-
-				return new DicomServerConfiguration(DicomServerSettings.Instance.HostName,
-												DicomServerSettings.Instance.AETitle,
-												DicomServerSettings.Instance.Port,
-												DicomServerSettings.Instance.InterimStorageDirectory);
-			}
-		}
-
-		public void UpdateServerConfiguration(DicomServerConfiguration newConfiguration)
-		{
-			lock (_syncLock)
-			{
-				if (!_active)
-					throw new InvalidOperationException("The Dicom Server service is not active.");
-
-				DicomServerSettings.Instance.HostName = newConfiguration.HostName;
-				DicomServerSettings.Instance.AETitle = newConfiguration.AETitle;
-				DicomServerSettings.Instance.Port = newConfiguration.Port;
-				DicomServerSettings.Instance.InterimStorageDirectory = newConfiguration.InterimStorageDirectory;
-				DicomServerSettings.Instance.Save();
-
-				OnConfigurationChanged();
-			}
-		}
-
-		internal void UpdateApplicationLicensingStatus()
-		{
-			lock (_syncLock)
-			{
-				if (!_active)
-					return;
-
-				// when licensing has changed, just restart
-				OnConfigurationChanged();
-			}
-		}
+        public void Restart()
+        {
+            lock (_syncLock)
+            {
+                if (_active)
+                {
+                    Trace.WriteLine("DICOM server listener restart requested.");
+                    _restart = true;
+                    StopServer(false);
+                }
+            }
+        }
 
 		#endregion
 	}

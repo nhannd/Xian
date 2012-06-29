@@ -13,11 +13,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -248,7 +248,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 						{
 							String sopInstanceUid = sopFile.Name.Replace(sopFile.Extension, string.Empty);
 
-							using (ExecutionContext context = new ExecutionContext())
+							using (ServerExecutionContext context = new ServerExecutionContext())
 							{
 								// Just use a read context here, in hopes of improving 
 								// performance.  Every other place in the code should use
@@ -296,7 +296,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
 		private static bool GetStudyStorage(ServerPartition partition, string studyInstanceUid, out StudyStorage storage)
 		{
-			using (ExecutionContext context = new ExecutionContext())
+			using (ServerExecutionContext context = new ServerExecutionContext())
 			{
 				storage = StudyStorage.Load(context.ReadContext, partition.Key, studyInstanceUid);
 				if (storage != null)
@@ -312,7 +312,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
         protected override void OnProcess(Model.ServiceLock item)
         {
             _store = PersistentStoreRegistry.GetDefaultStore();
-			using (ExecutionContext context = new ExecutionContext())
+			using (ServerExecutionContext context = new ServerExecutionContext())
 			{
 				IServerPartitionEntityBroker broker = context.ReadContext.GetBroker<IServerPartitionEntityBroker>();
 				ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();

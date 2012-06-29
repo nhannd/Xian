@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		private void EditServer()
 		{
-			ImageViewer.Services.ServerTree.ServerTree serverTree = this.Context.ServerTree;
+			ServerTree serverTree = this.Context.ServerTree;
 			this.Context.UpdateType = (int)ServerUpdateType.Edit;
 
 			if (serverTree.CurrentNode.IsServer)
@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			{
 				//enabled if it is a server or server group and is not the "My Servers" root node
 				this.Enabled = (this.Context.ServerTree.CurrentNode.IsServer || this.Context.ServerTree.CurrentNode.IsServerGroup) &&
-				               this.Context.ServerTree.CurrentNode != this.Context.ServerTree.RootNode.ServerGroupNode;
+				               this.Context.ServerTree.CurrentNode != this.Context.ServerTree.RootServerGroup;
 			}
 		}
 	}

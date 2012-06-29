@@ -9,6 +9,8 @@
 
 #endregion
 
+#define DEBUG_SERVER
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -113,12 +115,15 @@ namespace ClearCanvas.Common.UsageTracking
 				{
 					if (_first)
 					{
+#if DEBUG_SERVER
 						// Note, this is required when in debug mode and communicating with 4rf,
 						// which doesn't have an official cert, it isn't required for communicating with
 						// the production server.
 						ServicePointManager.ServerCertificateValidationCallback +=
 							((sender, certificate, chain, sslPolicyErrors) =>
 							 true);
+#endif
+
 						_first = false;
 					}
 				}
@@ -160,7 +165,7 @@ namespace ClearCanvas.Common.UsageTracking
 			}
 			catch (Exception e)
 			{
-				// silient
+				// Fail silently
 #if	DEBUG
 				Platform.Log(LogLevel.Debug, e);
 #endif

@@ -10,8 +10,6 @@
 #endregion
 
 using System.Configuration;
-using ClearCanvas.Common.Configuration;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Common
 {
@@ -21,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Common
 	{
 		private MemoryManagementSettings()
 		{
-			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+			//ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 	}
 }

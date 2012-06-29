@@ -16,7 +16,8 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -31,7 +32,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -62,15 +62,19 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ReferencedAssemblies\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="System">
-      <HintPath>C:\WINDOWS\assembly\GAC_MSIL\System\2.0.0.0__b77a5c561934e089\System.dll</HintPath>
-    </Reference>
+    <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
-    <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\Action.cs" />
@@ -80,6 +84,7 @@
     <Compile Include="Actions\ActionBuilderException.cs" />
     <Compile Include="Actions\ActionDecoratorAttribute.cs" />
     <Compile Include="Actions\ActionFeatureAttribute.cs" />
+    <Compile Include="Actions\ActionFormerlyAttribute.cs" />
     <Compile Include="Actions\ActionInitiatorAttribute.cs" />
     <Compile Include="Actions\ActionModelNode.cs" />
     <Compile Include="Actions\ActionModelNodeList.cs" />
@@ -114,6 +119,9 @@
     <Compile Include="Actions\LabelValueObserverAttribute.cs" />
     <Compile Include="Actions\ObservablePropertyCoupler.cs" />
     <Compile Include="Actions\TextBoxAction.cs" />
+    <Compile Include="AlertLevel.cs" />
+    <Compile Include="AlertLog.cs" />
+    <Compile Include="AlertNotificationArgs.cs" />
     <Compile Include="ApplicationSettingsRegistry.cs" />
     <Compile Include="ApplicationTheme.cs" />
     <Compile Include="ApplicationThemeManager.cs" />
@@ -122,6 +130,9 @@
     <Compile Include="ApplicationThemeResourceResolver.cs" />
     <Compile Include="Async.cs" />
     <Compile Include="AsyncTask.cs" />
+    <Compile Include="AlertViewerComponent.cs" />
+    <Compile Include="IDesktopAlertContext.cs" />
+    <Compile Include="Tables\ComboBoxCellEditor.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeBranch.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeLeafAction.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeLeafClickAction.cs" />
@@ -141,7 +152,6 @@
     <Compile Include="Configuration\ConfigurationDialog.cs" />
     <Compile Include="Configuration\ConfigurationDialogComponent.cs" />
     <Compile Include="Configuration\ConfigurationPage.cs" />
-    <Compile Include="Configuration\ConfigurationPageManager.cs" />
     <Compile Include="Configuration\IConfigurationApplicationComponent.cs" />
     <Compile Include="Configuration\IConfigurationPage.cs" />
     <Compile Include="Configuration\IConfigurationPageProvider.cs" />
@@ -252,6 +262,7 @@
     <Compile Include="Tables\ITableCellEditor.cs" />
     <Compile Include="Tables\ITableCellEditorView.cs" />
     <Compile Include="Tables\TableFilterParams.cs" />
+    <Compile Include="Tests\ItemCollectionTests.cs" />
     <Compile Include="Tests\FormatTests.cs" />
     <Compile Include="Tests\ModifierFlagsConverterTest.cs" />
     <Compile Include="Tests\PathSegmentTests.cs" />
@@ -589,6 +600,24 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>XKeysNames.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ErrorMedium.png" />
+    <EmbeddedResource Include="Icons\InfoMedium.png" />
+    <EmbeddedResource Include="Icons\InfoTipMedium.png" />
+    <EmbeddedResource Include="Icons\WarningMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ErrorSmall.png" />
+    <EmbeddedResource Include="Icons\InfoSmall.png" />
+    <EmbeddedResource Include="Icons\InfoTipSmall.png" />
+    <EmbeddedResource Include="Icons\WarningSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ErrorMini.png" />
+    <EmbeddedResource Include="Icons\InfoMini.png" />
+    <EmbeddedResource Include="Icons\InfoTipMini.png" />
+    <EmbeddedResource Include="Icons\WarningMini.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tools\Tests\" />

@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Codec;
+using System.Text;
 
 namespace ClearCanvas.Dicom.Network.Scu
 {
@@ -71,12 +72,19 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// Delegate for starting Send in ASynch mode with <see cref="BeginSend"/>.
 		/// </summary>
 		public delegate void SendDelegate();
-
+        /// <summary>
+        /// Delegate for selecting the presentation context that a SOP Uses.
+        /// </summary>
+        /// <param name="association">The association parameters.</param>
+        /// <param name="file">An input DICOM file.</param>
+        /// <param name="message">An output DICOM Message to be sent over the returned presentation context</param>
+        /// <returns>The presentation context to send over, will return 0 if none found.</returns>
+	    public delegate byte SelectPresentationContextDelegate(ClientAssociationParameters association, DicomFile file, out DicomMessage message); 
 		#endregion
 
 		#region Private Variables...
 		private readonly List<StorageInstance> _storageInstanceList = new List<StorageInstance>();
-		private Dictionary<string, TransferSyntax> _preferredSyntaxes;
+        private Dictionary<string, SupportedSop> _preferredSyntaxes;
 		private int _fileListIndex;
 		private readonly string _moveOriginatorAe;
 		private readonly ushort _moveOriginatorMessageId;
@@ -170,6 +178,11 @@ namespace ClearCanvas.Dicom.Network.Scu
 			get { return _remainingSubOperations; }
 		}
 
+        /// <summary>
+        /// Delegate that will be called to select a presentation context for sending each image.
+        /// </summary>
+        public SelectPresentationContextDelegate PresentationContextSelectionDelegate { get; set; }
+
 		#endregion
 
 		#region Public Methods...
@@ -192,16 +205,16 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// </para>
 		/// </remarks>
 		/// <param name="list"></param>
-		public void SetPreferredSyntaxList(IList<SupportedSop> list)
+		public void SetPreferredSyntaxList(IEnumerable<SupportedSop> list)
 		{
 			if (_preferredSyntaxes == null)
-				_preferredSyntaxes = new Dictionary<string, TransferSyntax>();
+                _preferredSyntaxes = new Dictionary<string, SupportedSop>();
 
 			// Store the preferred syntaxs in a dictionary to make them easier to 
 			// lookup later.
 			foreach (SupportedSop sop in list)
 			{
-				_preferredSyntaxes.Add(sop.SopClass.Uid,sop.SyntaxList[0]);
+				_preferredSyntaxes.Add(sop.SopClass.Uid,sop);
 			}
 		}
 
@@ -315,7 +328,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		{
 			try
 			{
-				SendDelegate sendDelegate = ((System.Runtime.Remoting.Messaging.AsyncResult) ar).AsyncDelegate as SendDelegate;
+				var sendDelegate = ((System.Runtime.Remoting.Messaging.AsyncResult) ar).AsyncDelegate as SendDelegate;
 
 				if (sendDelegate != null)
 				{
@@ -449,26 +462,115 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <param name="association">Association Parameters</param>
 		private void SendCStoreUntilSuccess(DicomClient client, ClientAssociationParameters association)
 		{
+		    /// TODO (CR Jun 2012): Probably shouldn't use thread pool threads for potentially long-running operations.
+		    /// Although unlikely, this could exhaust the .NET thread pool.
+		    
             // Added the background thread as part of ticket #9568.  Note that we probably should have some threading 
             // built into NetworkBase as opposed to here.
 		    ThreadPool.QueueUserWorkItem(delegate
 		                                     {
-		                                         bool ok = SendCStore(client, association);
-		                                         while (ok == false)
-		                                         {
-		                                             _fileListIndex++;
-		                                             if (_fileListIndex >= _storageInstanceList.Count)
-		                                             {
-		                                                 Platform.Log(LogLevel.Info,
-		                                                              "Completed sending C-STORE-RQ messages, releasing association.");
-		                                                 client.SendReleaseRequest();
-		                                                 StopRunningOperation();
-		                                                 return;
-		                                             }
-		                                             ok = SendCStore(client, association);
-		                                         }
+                                                 try
+                                                 {
+                                                     bool ok = SendCStore(client, association);
+                                                     while (ok == false)
+                                                     {
+                                                         Platform.Log(LogLevel.Info, "Attempted to send {0} of {1} instances to {2}.", _fileListIndex + 1, _storageInstanceList.Count, client.AssociationParams.CalledAE);
+                                                         _fileListIndex++;
+                                                         if (_fileListIndex >= _storageInstanceList.Count)
+                                                         {
+                                                             Platform.Log(LogLevel.Info,
+                                                                          "Completed sending C-STORE-RQ messages, releasing association.");
+                                                             client.SendReleaseRequest();
+                                                             StopRunningOperation();
+                                                             return;
+                                                         }
+
+                                                         /// TODO (CR Jun 2012): Do we need to check for a stop signal?
+                                                         // TODO (Marmot): Check stop?
+                                                         // TODO (CR Jun 2012): Stop is checked for in OnReceiveResponseMessage after each c-store-rsp received.
+                                                         // There's a small chance that every image we're attempting to send wasn't negotiated over the association and it
+                                                         // takes awhile to go through the list, but the chances of that are small, plus it should be quick.
+                                                         ok = SendCStore(client, association);                                                             
+                                                     }                                                     
+                                                 }
+                                                 catch
+                                                 {
+                                                     Platform.Log(LogLevel.Error, "Error when sending C-STORE-RQ messages, aborted on-going send operations");
+                                                     try
+                                                     {
+                                                         client.SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.NotSpecified);
+                                                         StopRunningOperation();    
+                                                     }
+                                                     catch
+                                                     {
+                                                         Platform.Log(LogLevel.Error, "Error attempting to abort association");
+                                                     }                                                     
+                                                 }
 		                                     }, null);
 		}
+
+        private byte SelectUncompressedPresentationContext(ClientAssociationParameters association, DicomMessage msg)
+        {
+            byte pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
+                                                                         TransferSyntax.ExplicitVrLittleEndian);
+            if (pcid == 0)
+                pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
+                                                                        TransferSyntax.ImplicitVrLittleEndian);
+            return pcid;
+        }
+
+	    private byte SelectPresentationContext(ClientAssociationParameters association, StorageInstance fileToSend, DicomFile dicomFile, out DicomMessage msg)
+        {
+            byte pcid = 0;
+            if (PresentationContextSelectionDelegate != null)
+            {
+                // Note, this may do a conversion of the file according to codecs, need to catch a codec exception if it occurs
+                pcid = PresentationContextSelectionDelegate(association, dicomFile, out msg);
+            }
+            else
+            {
+                msg = new DicomMessage(dicomFile);
+
+                if (fileToSend.TransferSyntax.Encapsulated)
+                {
+                    pcid = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass,
+                                                                            msg.TransferSyntax);
+
+                    if (DicomCodecRegistry.GetCodec(fileToSend.TransferSyntax) != null)
+                    {
+                        // We can compress/decompress the file. Check if remote device accepts it
+                        if (pcid == 0)
+                            pcid = SelectUncompressedPresentationContext(association, msg);
+                    }
+                }
+                else
+                {
+                    if (pcid == 0)
+                        pcid = SelectUncompressedPresentationContext(association, msg);
+                }
+            }
+            return pcid;
+        }
+
+        private void SendOnPresentationContext(DicomClient client, ClientAssociationParameters association, byte pcid, StorageInstance fileToSend, DicomMessage msg)
+        {
+            var presContext = association.GetPresentationContext(pcid);
+            if (msg.TransferSyntax.Encapsulated
+                && presContext.AcceptedTransferSyntax.Encapsulated
+                && !msg.TransferSyntax.Equals(presContext.AcceptedTransferSyntax))
+            {
+                // Compressed in different syntaxes, decompress here first, ChangeTransferSyntax does not convert syntaxes properly in this case.
+                msg.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
+            }
+
+            fileToSend.SentMessageId = client.NextMessageID();
+
+            if (_moveOriginatorAe == null)
+                client.SendCStoreRequest(pcid, fileToSend.SentMessageId, DicomPriority.Medium, msg);
+            else
+                client.SendCStoreRequest(pcid, fileToSend.SentMessageId, DicomPriority.Medium, _moveOriginatorAe,
+                                         _moveOriginatorMessageId, msg);
+        }
 
 		/// <summary>
 		/// Generic routine to send the next C-STORE-RQ message in the <see cref="StorageInstanceList"/>.
@@ -507,84 +609,98 @@ namespace ClearCanvas.Dicom.Network.Scu
 				return false;
 			}
 
-			DicomMessage msg = new DicomMessage(dicomFile);
+		    try
+            {
+                DicomMessage msg;
 
-			byte pcid = 0;
+                byte pcid = SelectPresentationContext(association, fileToSend, dicomFile, out msg);
 
-			if (fileToSend.TransferSyntax.Encapsulated)
-			{
-				pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass, fileToSend.TransferSyntax);
+                if (pcid == 0)
+                {
+                    fileToSend.SendStatus = DicomStatuses.SOPClassNotSupported;
+                    fileToSend.ExtendedFailureDescription = string.Format(SR.ErrorSendSopClassNotSupported, msg.SopClass);
 
-				if (DicomCodecRegistry.GetCodec(fileToSend.TransferSyntax) != null)
-				{
-					if (pcid == 0)
-						pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
-						                                                        TransferSyntax.ExplicitVrLittleEndian);
-					if (pcid == 0)
-						pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
-						                                                        TransferSyntax.ImplicitVrLittleEndian);
-				}
-			}
-			else
-			{
-				if (pcid == 0)
-					pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
-					                                                        TransferSyntax.ExplicitVrLittleEndian);
-				if (pcid == 0)
-					pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.SopClass,
-					                                                        TransferSyntax.ImplicitVrLittleEndian);
-			}
+                    LogError(fileToSend, msg, DicomStatuses.SOPClassNotSupported);
 
-			if (pcid == 0)
-			{
-				fileToSend.SendStatus = DicomStatuses.SOPClassNotSupported;
-				fileToSend.ExtendedFailureDescription = "No valid presentation contexts for file.";
-				OnImageStoreCompleted(fileToSend);
-				_failureSubOperations++;
-				_remainingSubOperations--;
-				return false;
-			}
+                    OnImageStoreCompleted(fileToSend);
+                    _failureSubOperations++;
+                    _remainingSubOperations--;
+                    return false;
+                }
 
-			try
-			{			    
-                fileToSend.SentMessageId = client.NextMessageID();
+                try
+                {
+                    SendOnPresentationContext(client, association, pcid, fileToSend, msg);
+                }
+                catch (DicomCodecUnsupportedSopException e)
+                {
+                    if (!msg.TransferSyntax.Encapsulated)
+                    {
+                        pcid = SelectUncompressedPresentationContext(association, msg);
+                        if (pcid != 0)
+                        {
+                            SendOnPresentationContext(client, association, pcid, fileToSend, msg);
+                            Platform.Log(LogLevel.Warn, "Could not send SOP as compressed, sent as uncompressed: {0}, file: {1}", e.Message, fileToSend.SopInstanceUid);
+                            return true;
+                        }
+                    }
 
-				if (_moveOriginatorAe == null)
-                    client.SendCStoreRequest(pcid, fileToSend.SentMessageId, DicomPriority.Medium, msg);
-				else
-                    client.SendCStoreRequest(pcid, fileToSend.SentMessageId, DicomPriority.Medium, _moveOriginatorAe,
-					                         _moveOriginatorMessageId, msg);
-			}
-			catch(DicomNetworkException)
-			{
-				throw; //This is a DicomException-derived class that we want to throw.
-			}
-			catch(DicomCodecException e)
-			{
-				Platform.Log(LogLevel.Error, e, "Unexpected exception when compressing or decompressing file before send {0}", fileToSend.Filename);
+                    throw;
+                }
+            }
+            catch (DicomNetworkException)
+            {
+                throw; //This is a DicomException-derived class that we want to throw.
+            } 
+            catch (DicomCodecException e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when compressing or decompressing file before send {0}", fileToSend.Filename);
 
-				fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
-				fileToSend.ExtendedFailureDescription = "Error decompressing or compressing file before send.";
-				OnImageStoreCompleted(fileToSend);
-				_failureSubOperations++;
-				_remainingSubOperations--;
-				return false;
+                fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
+                fileToSend.ExtendedFailureDescription = string.Format("Error decompressing or compressing file before send: {0}", e.Message);
+                OnImageStoreCompleted(fileToSend);
+                _failureSubOperations++;
+                _remainingSubOperations--;
+                return false;
 
-			}
-			catch(DicomException e)
-			{
-				Platform.Log(LogLevel.Error, e, "Unexpected exception while sending file {0}", fileToSend.Filename);
+            }
+            catch (DicomException e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception while sending file {0}", fileToSend.Filename);
 
-				fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
-				fileToSend.ExtendedFailureDescription = "Unexpected exception while sending file.";
-				OnImageStoreCompleted(fileToSend);
-				_failureSubOperations++;
-				_remainingSubOperations--;
-				return false;
-			}
+                fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
+                fileToSend.ExtendedFailureDescription = string.Format("Unexpected exception while sending file: {0}", e.Message);
+                OnImageStoreCompleted(fileToSend);
+                _failureSubOperations++;
+                _remainingSubOperations--;
+                return false;
+            }
 
 			return true;
 		}
+
+        private void LogError(StorageInstance instance, DicomMessage msg, DicomStatus dicomStatus)
+        {
+            if (dicomStatus == DicomStatuses.SOPClassNotSupported)
+            {
+                var log = new StringBuilder();
+
+                log.AppendLine(string.Format("Unable to transfer SOP {0} in study {1}. Remote device does not accept {2} in {3} transfer syntax", 
+                                instance.SopInstanceUid, instance.StudyInstanceUid, msg.SopClass, msg.TransferSyntax));
+
+                if (instance.TransferSyntax.Encapsulated)
+                {
+                    var codecExists = DicomCodecRegistry.GetCodec(instance.TransferSyntax) != null;
+
+                    log.AppendLine(codecExists
+                                       ? string.Format("Note: codec is available for {0} but remote device does not support it?", instance.TransferSyntax)
+                                       : string.Format("Note: codec is NOT available for {0}", instance.TransferSyntax));
+                }
+
+                Platform.Log(LogLevel.Error, log.ToString());        
+            }
+        }
+
 
 		#endregion
 
@@ -646,22 +762,26 @@ namespace ClearCanvas.Dicom.Network.Scu
 				// Now add the preferred syntaxes, if its been set.
 				if (_preferredSyntaxes != null)
 				{
-					TransferSyntax syntax;
-					if (_preferredSyntaxes.TryGetValue(sendStruct.SopClass.Uid, out syntax))
+					SupportedSop supportedSop;
+					if (_preferredSyntaxes.TryGetValue(sendStruct.SopClass.Uid, out supportedSop))
 					{
-						byte pcid = AssociationParameters.FindAbstractSyntaxWithTransferSyntax(sendStruct.SopClass,
-						                                                                            syntax);
+                        foreach (TransferSyntax syntax in supportedSop.SyntaxList)
+                        {
+                            byte pcid = AssociationParameters.FindAbstractSyntaxWithTransferSyntax(sendStruct.SopClass,
+                                                                                                   syntax);
 
-						// If we have more than 1 transfer syntax associated with the preferred, we want to 
-						// have a dedicated presentation context for the preferred, so that we ensure it
-						// gets accepted if the SCP supports it.  This is only really going to happen if
-						// the preferred is Explicit VR Little Endian or Implicit VR Little Endian.
-						if ((pcid == 0) || (AssociationParameters.GetPresentationContextTransferSyntaxes(pcid).Count > 1))
-						{
-							pcid = AssociationParameters.AddPresentationContext(sendStruct.SopClass);
+                            // If we have more than 1 transfer syntax associated with the preferred, we want to 
+                            // have a dedicated presentation context for the preferred, so that we ensure it
+                            // gets accepted if the SCP supports it.  This is only really going to happen if
+                            // the preferred is Explicit VR Little Endian or Implicit VR Little Endian.
+                            if ((pcid == 0) ||
+                                (AssociationParameters.GetPresentationContextTransferSyntaxes(pcid).Count > 1))
+                            {
+                                pcid = AssociationParameters.AddPresentationContext(sendStruct.SopClass);
 
-							AssociationParameters.AddTransferSyntax(pcid, syntax);
-						}
+                                AssociationParameters.AddTransferSyntax(pcid, syntax);
+                            }
+                        }
 					}
 				}
 			}
@@ -693,9 +813,12 @@ namespace ClearCanvas.Dicom.Network.Scu
 		public override void OnReceiveResponseMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
 		{
             if (_storageInstanceList.Count > 0)
-			    _storageInstanceList[_fileListIndex].SendStatus = message.Status;
+            {
+                _storageInstanceList[_fileListIndex].SendStatus = message.Status;
+                _storageInstanceList[_fileListIndex].ExtendedFailureDescription = message.ErrorComment;
+            }
 
-			if (message.Status.Status != DicomState.Success)
+		    if (message.Status.Status != DicomState.Success)
 			{
 				if (message.Status.Status == DicomState.Warning)
 				{
@@ -738,15 +861,14 @@ namespace ClearCanvas.Dicom.Network.Scu
 				StopRunningOperation();
 				return;
 			}
-			else
-				SendCStoreUntilSuccess(client, association);
+		    SendCStoreUntilSuccess(client, association);
 		}
 
 		#endregion
 
 		#region IDisposable Members
 
-		private bool _disposed = false;
+		private bool _disposed;
 		/// <summary>
 		/// Disposes the specified disposing.
 		/// </summary>

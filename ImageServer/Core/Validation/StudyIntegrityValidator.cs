@@ -12,7 +12,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Validation
@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageServer.Core.Validation
             if (modes == StudyIntegrityValidationModes.None)
                 return;
 
-            using (ExecutionContext scope = new ExecutionContext())
+            using (ServerExecutionContext scope = new ServerExecutionContext())
             {
 
                 Study study = studyStorage.LoadStudy(scope.PersistenceContext);

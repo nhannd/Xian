@@ -11,19 +11,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Anonymization;
 using ClearCanvas.ImageViewer;
+using ClearCanvas.ImageViewer.Common.Auditing;
+using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Services.Auditing;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
-using Path=System.IO.Path;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
@@ -40,163 +41,124 @@ namespace ClearCanvas.Utilities.DicomEditor
 	public class AnonymizeStudyTool : StudyBrowserTool
 	{
 		private volatile AnonymizeStudyComponent _component;
-		private string _tempPath;
-		private static object _localStudyLoader = null;
 		
-		public AnonymizeStudyTool()
-		{
-		}
-
-		private static IStudyLoader LocalStudyLoader
-		{
-			get
-			{
-				if (_localStudyLoader == null)
-					_localStudyLoader = StudyLoader.Create("DICOM_LOCAL") ?? new object();
-
-				return _localStudyLoader as IStudyLoader;
-			}
-		}
-
 		public void AnonymizeStudy()
 		{
-			StudyItem selectedStudy = this.Context.SelectedStudy;
-
-			_component = new AnonymizeStudyComponent(this.Context.SelectedStudy);
+			_component = new AnonymizeStudyComponent(Context.SelectedStudy);
 			if (ApplicationComponentExitCode.Accepted == 
-				ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, _component, SR.TitleAnonymizeStudy))
+				ApplicationComponent.LaunchAsDialog(Context.DesktopWindow, _component, SR.TitleAnonymizeStudy))
 			{
+                if (LocalStorageMonitor.IsMaxUsedSpaceExceeded)
+                {
+                    Context.DesktopWindow.ShowMessageBox(SR.MessageCannotAnonymizeMaxDiskUsageExceeded, MessageBoxActions.Ok);
+                    return;
+                }
+
 				BackgroundTask task = null;
 				try
 				{
-					task = new BackgroundTask(Anonymize, false, this.Context.SelectedStudy);
-					ProgressDialog.Show(task, this.Context.DesktopWindow, true);
+					task = new BackgroundTask(Anonymize, false, Context.SelectedStudy);
+					ProgressDialog.Show(task, Context.DesktopWindow, true);
 				}
 				catch(Exception e)
 				{
 					Platform.Log(LogLevel.Error, e);
-					string message = String.Format(SR.MessageFormatStudyMustBeDeletedManually, _tempPath);
-					this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
+					Context.DesktopWindow.ShowMessageBox(SR.MessageAnonymizeStudyFailed, MessageBoxActions.Ok);
 				}
 				finally
-				{
-					_tempPath = null;
-
+				{					
 					if (task != null)
 						task.Dispose();
 				}
 			}
 		}
 
-		private void Anonymize(IBackgroundTaskContext context)
+        private void Anonymize(IBackgroundTaskContext context)
+        {
+            //TODO (Marmot) This probably should be its own WorkItem type and have it done in the background there.
+            var study = (StudyTableItem) context.UserState;
+            var anonymizedInstances = new AuditedInstances();
+
+            try
+            {
+
+                context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageAnonymizingStudy));
+
+                var loader = study.Server.GetService<IStudyLoader>();
+                int numberOfSops = loader.Start(new StudyLoaderArgs(study.StudyInstanceUid, null));
+                if (numberOfSops <= 0)
+                    return;
+
+                var anonymizer = new DicomAnonymizer {StudyDataPrototype = _component.AnonymizedData};
+
+                if (_component.PreserveSeriesData)
+                {
+                    //The default anonymizer removes the series data, so we just clone the original.
+                    anonymizer.AnonymizeSeriesDataDelegate = original => original.Clone();
+                }
+
+                // Setup the ImportFilesUtility to perform the import
+                var configuration = DicomServer.GetConfiguration();
+
+                // setup auditing information
+                var result = EventResult.Success;
+
+                string patientsSex = null;
+
+                for (int i = 0; i < numberOfSops; ++i)
+                {
+                    using (var sop = loader.LoadNextSop())
+                    {
+                        if (sop != null &&
+                            (_component.KeepReportsAndAttachments || !IsReportOrAttachmentSopClass(sop.SopClassUid)))
+                        {
+                            //preserve the patient sex.
+                            if (patientsSex == null)
+                                anonymizer.StudyDataPrototype.PatientsSex = patientsSex = sop.PatientsSex ?? "";
+
+                            var localSopDataSource = sop.DataSource as ILocalSopDataSource;
+                            if (localSopDataSource != null)
+                            {
+                                string filename = string.Format("{0}.dcm", i);
+                                DicomFile file = (localSopDataSource).File;
+
+                                // make sure we anonymize a new instance, not the same instance that the Sop cache holds!!
+                                file = new DicomFile(filename, file.MetaInfo.Copy(), file.DataSet.Copy());
+                                anonymizer.Anonymize(file);
+
+                                // TODO (CR Jun 2012): Importing each file separately?
+                                Platform.GetService((IPublishFiles w) => w.PublishLocal(new List<DicomFile> {file}));
+
+                                string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
+                                string patientId = file.DataSet[DicomTags.PatientId].ToString();
+                                string patientsName = file.DataSet[DicomTags.PatientsName].ToString();
+                                anonymizedInstances.AddInstance(patientId, patientsName, studyInstanceUid);
+
+                                var progressPercent = (int)Math.Floor((i + 1) / (float)numberOfSops * 100);
+                                var progressMessage = String.Format(SR.MessageAnonymizingStudy, file.MediaStorageSopInstanceUid);
+                                context.ReportProgress(new BackgroundTaskProgress(progressPercent, progressMessage));
+                            }
+                        }
+                    }                 
+                }
+
+                AuditHelper.LogCreateInstances(new[]{configuration.AETitle}, anonymizedInstances, EventSource.CurrentUser, result);
+
+                context.Complete();
+            }
+            catch (Exception e)
+            {
+                AuditHelper.LogCreateInstances(new[] { string.Empty }, anonymizedInstances, EventSource.CurrentUser, EventResult.MajorFailure);
+                context.Error(e);
+            }
+        }
+
+	    private void UpdateEnabled()
 		{
-			StudyItem study = (StudyItem)context.UserState;
-			AuditedInstances anonymizedInstances = new AuditedInstances();
-
-			try
-			{
-				_tempPath = Path.Combine(Path.GetTempPath(), "ClearCanvas");
-				_tempPath = Path.Combine(_tempPath, "Anonymization");
-				_tempPath = Path.Combine(_tempPath, Path.GetRandomFileName());
-				Directory.CreateDirectory(_tempPath);
-
-				context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageAnonymizingStudy));
-
-				int numberOfSops = LocalStudyLoader.Start(new StudyLoaderArgs(study.StudyInstanceUid, null));
-				if (numberOfSops <= 0)
-					return;
-
-				DicomAnonymizer anonymizer = new DicomAnonymizer();
-				anonymizer.StudyDataPrototype = _component.AnonymizedData;
-
-				if (_component.PreserveSeriesData)
-				{
-					//The default anonymizer removes the series data, so we just clone the original.
-					anonymizer.AnonymizeSeriesDataDelegate = 
-						delegate(SeriesData original) { return original.Clone(); };
-				}
-
-				string patientsSex = null;
-				List<string> filePaths = new List<string>();
-
-				for (int i = 0; i < numberOfSops; ++i)
-				{
-					using (var sop = LocalStudyLoader.LoadNextSop())
-					{
-						if (sop != null && (_component.KeepReportsAndAttachments || !IsReportOrAttachmentSopClass(sop.SopClassUid)))
-						{
-							//preserve the patient sex.
-							if (patientsSex == null)
-								anonymizer.StudyDataPrototype.PatientsSex = patientsSex = sop.PatientsSex ?? "";
-
-							if (sop.DataSource is ILocalSopDataSource)
-							{
-								string filename = Path.Combine(_tempPath, string.Format("{0}.dcm", i));
-								DicomFile file = ((ILocalSopDataSource) sop.DataSource).File;
-
-								// make sure we anonymize a new instance, not the same instance that the Sop cache holds!!
-								file = new DicomFile(filename, file.MetaInfo.Copy(), file.DataSet.Copy());
-								anonymizer.Anonymize(file);
-								filePaths.Add(filename);
-								file.Save(filename);
-
-								string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
-								string patientId = file.DataSet[DicomTags.PatientId].ToString();
-								string patientsName = file.DataSet[DicomTags.PatientsName].ToString();
-								anonymizedInstances.AddInstance(patientId, patientsName, studyInstanceUid);
-							}
-						}
-					}
-
-					int progressPercent = (int)Math.Floor((i + 1) / (float)numberOfSops * 100);
-					string progressMessage = String.Format(SR.MessageAnonymizingStudy, _tempPath);
-					context.ReportProgress(new BackgroundTaskProgress(progressPercent, progressMessage));
-				}
-
-				//trigger an import of the anonymized files.
-				LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
-				client.Open();
-				try
-				{
-					FileImportRequest request = new FileImportRequest();
-					request.BadFileBehaviour = BadFileBehaviour.Move;
-					request.FileImportBehaviour = FileImportBehaviour.Move;
-					request.FilePaths = new string[] {_tempPath};
-					request.Recursive = false;
-					request.IsBackground = true;
-					client.Import(request);
-					client.Close();
-				}
-				catch
-				{
-					client.Abort();
-					throw;
-				}
-
-				AuditHelper.LogCreateInstances(new string[0], anonymizedInstances, EventSource.CurrentUser, EventResult.Success);
-
-				context.Complete();
-			}
-			catch(Exception e)
-			{
-				context.Error(e);
-			}
-		}
-
-		private void UpdateEnabled()
-		{
-			this.Visible = this.Context.SelectedServerGroup.IsLocalDatastore;
-
-			if (this.Context.SelectedStudy == null)
-			{
-				this.Enabled = false;
-				return;
-			}
-
-			this.Enabled = LocalStudyLoader != null && 
-							LocalDataStoreActivityMonitor.IsConnected && 
-							this.Context.SelectedStudies.Count == 1 && 
-							this.Context.SelectedServerGroup.IsLocalDatastore;
+            Visible = Context.SelectedServers.AllSupport<IWorkItemService>();
+		    Enabled = Context.SelectedStudies.Count == 1
+		              && Context.SelectedServers.AllSupport<IWorkItemService>()
+		              && WorkItemActivityMonitor.IsRunning;
 		}
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)

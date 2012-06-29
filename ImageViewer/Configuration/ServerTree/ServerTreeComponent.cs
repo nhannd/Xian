@@ -15,7 +15,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
@@ -34,9 +33,9 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 		IDesktopWindow DesktopWindow { get; }
 		ClickHandlerDelegate DefaultActionHandler { get; set; }
 
-		ImageViewer.Services.ServerTree.ServerTree ServerTree { get; }
+		ServerTree ServerTree { get; }
 
-		AEServerGroup SelectedServers { get; }
+		DicomServiceNodeList SelectedServers { get; }
 		event EventHandler SelectedServerChanged;
 
 		bool IsReadOnly { get; }
@@ -58,12 +57,12 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 			#region IServerTreeToolContext Members
 
-			public ImageViewer.Services.ServerTree.ServerTree ServerTree
+			public ServerTree ServerTree
 			{
 				get { return _component._serverTree; }
 			}
 
-			public AEServerGroup SelectedServers
+			public DicomServiceNodeList SelectedServers
 			{
 				get { return _component.SelectedServers; }
 			}
@@ -101,9 +100,9 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		#region Fields
 
-		private ImageViewer.Services.ServerTree.ServerTree _serverTree;
+		private ServerTree _serverTree;
 		private event EventHandler _selectedServerChanged;
-		private AEServerGroup _selectedServers;
+		private DicomServiceNodeList _selectedServers;
 		private int _updateType;
 		private ToolSet _toolSet;
 		private ActionModelRoot _toolbarModel;
@@ -111,7 +110,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 		private ClickHandlerDelegate _defaultActionHandler;
 		private bool _showTools = true;
 		private bool _showTitlebar = true;
-		private bool _showLocalDataStoreNode = true;
+		private bool _showLocalServerNode = true;
 		private bool _isReadOnly = false;
 		private bool _showCheckBoxes = false;
 		private bool _isEnabled = true;
@@ -121,14 +120,16 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		public ServerTreeComponent()
 		{
-			_selectedServers = new AEServerGroup();
-			_serverTree = new ImageViewer.Services.ServerTree.ServerTree();
+			_serverTree = new ServerTree();
 
-			if (_serverTree.CurrentNode != null && (_serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalDataStore))
+			if (_serverTree.CurrentNode != null)
 			{
-				_selectedServers.Servers.Add(_serverTree.CurrentNode);
-				_selectedServers.Name = _serverTree.CurrentNode.DisplayName;
-				_selectedServers.GroupID = _serverTree.CurrentNode.Path;
+                _selectedServers = new DicomServiceNodeList(_serverTree.CurrentNode.ToDicomServiceNodes())
+			                           {Name = _serverTree.CurrentNode.DisplayName, Id = _serverTree.CurrentNode.Path};
+			}
+			else
+			{
+                _selectedServers = new DicomServiceNodeList();
 			}
 		}
 
@@ -147,12 +148,12 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			}
 		}
 
-		public ImageViewer.Services.ServerTree.ServerTree ServerTree
+		public ServerTree ServerTree
 		{
 			get { return _serverTree; }
 		}
 
-		public AEServerGroup SelectedServers
+		public DicomServiceNodeList SelectedServers
 		{
 			get { return _selectedServers; }
 		}
@@ -191,10 +192,10 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			set { _showCheckBoxes = value; }
 		}
 
-		public bool ShowLocalDataStoreNode
+		public bool ShowLocalServerNode
 		{
-			get { return _showLocalDataStoreNode; }
-			set { _showLocalDataStoreNode = value; }
+			get { return _showLocalServerNode; }
+			set { _showLocalServerNode = value; }
 		}
 
 		public bool IsReadOnly
@@ -205,62 +206,51 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		#endregion
 
-		public void SetSelection(IServerTreeNode dataNode)
+		public void SetSelection(IServerTreeNode serverTreeNode)
 		{
-			if (dataNode.IsServer || dataNode.IsLocalDataStore)
-			{
-				_selectedServers = new AEServerGroup();
-				_selectedServers.Servers.Add(dataNode);
-				_selectedServers.Name = dataNode.DisplayName;
-				_selectedServers.GroupID = dataNode.Path;
-				_serverTree.CurrentNode = dataNode;
-				FireSelectedServerChangedEvent();
-			}
-			else if (dataNode.IsServerGroup)
-			{
-				_selectedServers = new AEServerGroup();
-				_selectedServers.Servers = _serverTree.FindChildServers(dataNode as ServerGroup);
-				_selectedServers.GroupID = dataNode.Path;
-				_selectedServers.Name = dataNode.DisplayName;
-				_serverTree.CurrentNode = dataNode;
-				FireSelectedServerChangedEvent();
-			}
+		    _selectedServers = new DicomServiceNodeList(serverTreeNode.ToDicomServiceNodes())
+		                           {
+		                               Name = serverTreeNode.DisplayName,
+		                               Id = serverTreeNode.Path
+		                           };
 
+		    _serverTree.CurrentNode = serverTreeNode;
+            FireSelectedServerChangedEvent();
 		}
 
 		public bool NodeMoved(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
 		{
-			if (!CanMoveOrAdd(destinationNode, movingDataNode))
+			if (!CanMove(destinationNode, movingDataNode))
 				return false;
 
 			if (movingDataNode.IsServer)
 			{
-				Server movingServer = (Server)movingDataNode;
 				_serverTree.CurrentNode = movingDataNode;
-				_serverTree.DeleteDicomServer();
+				_serverTree.DeleteServer();
 
-				((ServerGroup)destinationNode).AddChild(movingDataNode);
+				((IServerTreeGroup)destinationNode).AddChild(movingDataNode);
 				SetSelection(movingDataNode);
 			}
 			else if (movingDataNode.IsServerGroup)
 			{
-				ServerGroup movingGroup = (ServerGroup)movingDataNode;
+                var movingGroup = (IServerTreeGroup)movingDataNode;
 				_serverTree.CurrentNode = movingGroup;
-				_serverTree.DeleteServerGroup();
+				_serverTree.DeleteGroup();
+                _serverTree.Save();
 
-				((ServerGroup)destinationNode).AddChild(movingGroup);
+                ((IServerTreeGroup)destinationNode).AddChild(movingGroup);
 				SetSelection(movingGroup);
 			}
 			_serverTree.Save();
 			return true;
 		}
 
-		public bool CanMoveOrAdd(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
+		public bool CanMove(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
 		{
 			if (IsReadOnly)
 				return false;
 
-			return _serverTree.CanMoveOrAdd(destinationNode, movingDataNode);
+			return _serverTree.CanMove(destinationNode, movingDataNode);
 		}
 		
 		public event EventHandler SelectedServerChanged
@@ -304,7 +294,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			// and we want to retain the behaviour of expanding the tree node when
 			// a ServerGroup is d-clicked, we only want the edit tool invoked if
 			// the node is a Server
-			if (!_serverTree.CurrentNode.IsLocalDataStore && 
+			if (!_serverTree.CurrentNode.IsLocalServer && 
 			    !_serverTree.CurrentNode.IsServerGroup && 
 			    null != _defaultActionHandler &&
 			    _showTools)

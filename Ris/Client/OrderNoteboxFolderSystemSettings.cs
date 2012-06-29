@@ -12,6 +12,7 @@
 using System;
 using System.Configuration;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;

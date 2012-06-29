@@ -11,11 +11,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Model;
@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 		                                        StudyStorageLocation studyLocation, 
                                                 DicomFile file, String duplicateStoragePath, String relativePath,
                                                  List<DicomAttributeComparisonResult> reasons) 
-			: base("Insert Duplicate Queue Entry Command", true)
+			: base("Insert Duplicate Queue Entry Command")
 		{
             Platform.CheckForNullReference(groupId, "groupId");
 			Platform.CheckForNullReference(studyLocation, "studyLocation");
@@ -52,10 +52,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 	        _reasons = reasons;
 		}
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+		protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
 		{
-			IInsertDuplicateSopReceivedQueue broker = updateContext.GetBroker<IInsertDuplicateSopReceivedQueue>();
-			InsertDuplicateSopReceivedQueueParameters parms = new InsertDuplicateSopReceivedQueueParameters
+			var broker = updateContext.GetBroker<IInsertDuplicateSopReceivedQueue>();
+			var parms = new InsertDuplicateSopReceivedQueueParameters
                       	{
                       		GroupID = _groupId,
                       		ServerPartitionKey = _studyLocation.ServerPartitionKey,
@@ -67,18 +67,18 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
                       	};
 			ReconcileStudyQueueDescription queueDesc = CreateQueueEntryDescription(_file);
 		    parms.Description = queueDesc != null ? queueDesc.ToString() : String.Empty;
-            DuplicateSIQQueueData queueData = new DuplicateSIQQueueData
-                                                  {
-                                                      StoragePath = _duplicateStoragePath,
-                                                      Details = new ImageSetDetails(_file.DataSet),
-                                                      TimeStamp = Platform.Time
-                                                  };
+		    var queueData = new DuplicateSIQQueueData
+		                        {
+		                            StoragePath = _duplicateStoragePath,
+		                            Details = new ImageSetDetails(_file.DataSet),
+		                            TimeStamp = Platform.Time
+		                        };
 			if (_reasons != null && _reasons.Count>0)
             {
                 queueData.ComparisonResults = _reasons;
             }
             
-			ImageSetDescriptor imageSet = new ImageSetDescriptor(_file.DataSet);
+			var imageSet = new ImageSetDescriptor(_file.DataSet);
 			parms.StudyData = XmlUtils.SerializeAsXmlDoc(imageSet);
             parms.Details = XmlUtils.SerializeAsXmlDoc(queueData);
 		    parms.UidRelativePath = _relativePath;
@@ -89,31 +89,33 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
 			DuplicateSopReceivedQueue queueEntry = entries[0];
 
-			DuplicateSIQQueueData data = XmlUtils.Deserialize<DuplicateSIQQueueData>(queueEntry.Details);
+			var data = XmlUtils.Deserialize<DuplicateSIQQueueData>(queueEntry.Details);
 			data.Details.InsertFile(_file);
 
 			queueEntry.Details = XmlUtils.SerializeAsXmlDoc(data);
 
-			IStudyIntegrityQueueEntityBroker siqBroker = updateContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
+			var siqBroker = updateContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
 			if (!siqBroker.Update(queueEntry))
 				throw new ApplicationException("Unable to update duplicate queue entry");
 		}
 
         private ReconcileStudyQueueDescription CreateQueueEntryDescription(DicomFile file)
 	    {
-	        using(ExecutionContext context = new ExecutionContext())
+	        using(var context = new ServerExecutionContext())
 	        {
 	            Study study = _studyLocation.LoadStudy(context.PersistenceContext);
                 if (study!=null)
                 {
-                    ReconcileStudyQueueDescription desc = new ReconcileStudyQueueDescription();
-                    desc.ExistingPatientId = study.PatientId;
-                    desc.ExistingPatientName = study.PatientsName;
-                    desc.ExistingAccessionNumber = study.AccessionNumber;
+                    var desc = new ReconcileStudyQueueDescription
+                                   {
+                                       ExistingPatientId = study.PatientId,
+                                       ExistingPatientName = study.PatientsName,
+                                       ExistingAccessionNumber = study.AccessionNumber,
+                                       ConflictingPatientName = file.DataSet[DicomTags.PatientsName].ToString(),
+                                       ConflictingPatientId = file.DataSet[DicomTags.PatientId].ToString(),
+                                       ConflictingAccessionNumber = file.DataSet[DicomTags.AccessionNumber].ToString()
+                                   };
 
-                    desc.ConflictingPatientName = file.DataSet[DicomTags.PatientsName].ToString();
-                    desc.ConflictingPatientId = file.DataSet[DicomTags.PatientId].ToString();
-                    desc.ConflictingAccessionNumber = file.DataSet[DicomTags.AccessionNumber].ToString();
 
                     return desc;
                 }

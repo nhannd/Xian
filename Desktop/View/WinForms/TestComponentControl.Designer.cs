@@ -76,7 +76,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._crashDelay = new System.Windows.Forms.NumericUpDown();
 			this._catchAndReport = new System.Windows.Forms.CheckBox();
 			this._circumventCrash = new System.Windows.Forms.CheckBox();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this._errorAlertButton = new System.Windows.Forms.Button();
+			this._infoAlertButton = new System.Windows.Forms.Button();
+			this._warningAlertButton = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this._crashDelay)).BeginInit();
+			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _label
@@ -139,7 +144,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this._setTitle.Location = new System.Drawing.Point(253, 149);
 			this._setTitle.Name = "_setTitle";
-			this._setTitle.Size = new System.Drawing.Size(102, 23);
+			this._setTitle.Size = new System.Drawing.Size(62, 23);
 			this._setTitle.TabIndex = 2;
 			this._setTitle.Text = "Set Title";
 			this._setTitle.UseVisualStyleBackColor = true;
@@ -257,10 +262,53 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._circumventCrash.Text = "Circumvent";
 			this._circumventCrash.UseVisualStyleBackColor = true;
 			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this._errorAlertButton);
+			this.groupBox1.Controls.Add(this._infoAlertButton);
+			this.groupBox1.Controls.Add(this._warningAlertButton);
+			this.groupBox1.Location = new System.Drawing.Point(351, 115);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(119, 114);
+			this.groupBox1.TabIndex = 17;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Alerts";
+			// 
+			// _errorAlertButton
+			// 
+			this._errorAlertButton.Location = new System.Drawing.Point(8, 75);
+			this._errorAlertButton.Name = "_errorAlertButton";
+			this._errorAlertButton.Size = new System.Drawing.Size(102, 23);
+			this._errorAlertButton.TabIndex = 15;
+			this._errorAlertButton.Text = "Error";
+			this._errorAlertButton.UseVisualStyleBackColor = true;
+			this._errorAlertButton.Click += new System.EventHandler(this._errorAlertButton_Click);
+			// 
+			// _infoAlertButton
+			// 
+			this._infoAlertButton.Location = new System.Drawing.Point(8, 17);
+			this._infoAlertButton.Name = "_infoAlertButton";
+			this._infoAlertButton.Size = new System.Drawing.Size(102, 23);
+			this._infoAlertButton.TabIndex = 14;
+			this._infoAlertButton.Text = "Info";
+			this._infoAlertButton.UseVisualStyleBackColor = true;
+			this._infoAlertButton.Click += new System.EventHandler(this._infoAlertButton_Click);
+			// 
+			// _warningAlertButton
+			// 
+			this._warningAlertButton.Location = new System.Drawing.Point(8, 46);
+			this._warningAlertButton.Name = "_warningAlertButton";
+			this._warningAlertButton.Size = new System.Drawing.Size(102, 23);
+			this._warningAlertButton.TabIndex = 13;
+			this._warningAlertButton.Text = "Warning";
+			this._warningAlertButton.UseVisualStyleBackColor = true;
+			this._warningAlertButton.Click += new System.EventHandler(this._warningAlertButton_Click);
+			// 
 			// TestComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this._circumventCrash);
 			this.Controls.Add(this._catchAndReport);
 			this.Controls.Add(this._crashDelay);
@@ -281,6 +329,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.Name = "TestComponentControl";
 			this.Size = new System.Drawing.Size(483, 353);
 			((System.ComponentModel.ISupportInitialize)(this._crashDelay)).EndInit();
+			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -305,6 +354,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private System.Windows.Forms.NumericUpDown _crashDelay;
 		private System.Windows.Forms.CheckBox _catchAndReport;
 		private System.Windows.Forms.CheckBox _circumventCrash;
+		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.Button _errorAlertButton;
+		private System.Windows.Forms.Button _infoAlertButton;
+		private System.Windows.Forms.Button _warningAlertButton;
 
     }
 }

@@ -249,9 +249,6 @@
   <data name="ExceptionExtensionPointMustSubclassExtensionPoint" xml:space="preserve">
     <value>The extension point {0} is invalid because it is not a direct subclass of ExtensionPoint&lt;&gt;</value>
   </data>
-  <data name="ExceptionNoServiceProviderCanProvide" xml:space="preserve">
-    <value>No service provider was found that can provide the service {0}</value>
-  </data>
   <data name="ExceptionThreadPoolAlreadyStarted" xml:space="preserve">
     <value>The thread pool has already been started.</value>
   </data>

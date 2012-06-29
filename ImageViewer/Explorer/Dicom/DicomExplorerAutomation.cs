@@ -11,18 +11,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.Common.Automation;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.DesktopServices;
-using ClearCanvas.ImageViewer.Services.Automation;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 using System.Threading;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -52,10 +50,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, UseSynchronizationContext = true, ConfigurationName = "DicomExplorerAutomation", Namespace = AutomationNamespace.Value)]
 	public class DicomExplorerAutomation : IDicomExplorerAutomation
 	{
-		public DicomExplorerAutomation()
-		{
-		}
-
 		#region IDicomExplorerAutomation Members
 
 		public SearchLocalStudiesResult SearchLocalStudies(SearchLocalStudiesRequest request)
@@ -63,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (request == null)
 				throw new FaultException("The request cannot be null.");
 			
-			if (!DicomExplorerComponent.HasLocalDatastoreSupport())
+			if (!StudyStore.IsSupported)
 				throw new FaultException<NoLocalStoreFault>(new NoLocalStoreFault(), "No local store was found.");
 
 			DicomExplorerComponent explorerComponent = GetDicomExplorer();
@@ -71,16 +65,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (request.SearchCriteria == null)
 				request.SearchCriteria = new DicomExplorerSearchCriteria();
 
-			//Select the local data store node.
-			explorerComponent.ServerTreeComponent.SetSelection(explorerComponent.ServerTreeComponent.ServerTree.RootNode.LocalDataStoreNode);
+			//Select the local server node.
+			explorerComponent.ServerTreeComponent.SetSelection(explorerComponent.ServerTreeComponent.ServerTree.LocalServer);
 
 			SynchronizationContext.Current.Post(
-				delegate
-				{
-					var queryParams = explorerComponent.StudyBrowserComponent.CreateOpenSearchQueryParams();
-					PrepareQueryParameters(request.SearchCriteria, queryParams);
-					explorerComponent.StudyBrowserComponent.Search(new List<QueryParameters> { queryParams });
-				}, null); 
+			    ignore => explorerComponent.StudyBrowserComponent.Search(request.SearchCriteria.ToIdentifier(true)), null); 
 
 			return new SearchLocalStudiesResult();
 		}
@@ -98,18 +87,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			string aeTitle = (request.AETitle ?? "").Trim();
 			if (String.IsNullOrEmpty(aeTitle))
 			{
-				explorerComponent.SelectDefaultServers();
+				explorerComponent.SelectPriorsServers();
 			}
 			else
 			{
-				Server server = CollectionUtils.SelectFirst(explorerComponent.ServerTreeComponent.ServerTree.FindChildServers(),
-													 delegate(IServerTreeNode node)
-													 {
-														 if (node is Server)
-															 return ((Server)node).AETitle == aeTitle;
-
-														 return false;
-													 }) as Server;
+			    var server = explorerComponent.ServerTreeComponent.ServerTree.RootServerGroup
+                    .GetAllServers().OfType<IServerTreeDicomServer>().FirstOrDefault(s => s.AETitle == aeTitle);
 				if (server == null)
 					throw new FaultException<ServerNotFoundFault>(new ServerNotFoundFault(), String.Format("Server '{0}' not found.", aeTitle));
 
@@ -117,12 +100,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 
 			SynchronizationContext.Current.Post(
-				delegate
-					{
-						var queryParams = explorerComponent.StudyBrowserComponent.CreateOpenSearchQueryParams();
-						PrepareQueryParameters(request.SearchCriteria, queryParams);
-						explorerComponent.StudyBrowserComponent.Search(new List<QueryParameters> { queryParams });
-					}, null); 
+			    ignore => explorerComponent.StudyBrowserComponent.Search(request.SearchCriteria.ToIdentifier(true)), null); 
 			
 			return new SearchRemoteStudiesResult();
 		}
@@ -175,41 +153,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					}
 				}
 			}
-		}
-
-		private static string GetFirstDefaultServerAETitle()
-		{
-			List<Server> defaultServers = DefaultServers.GetAll();
-
-			//since streaming servers are queried automatically, it's more likely users will
-			//want to query non-streaming servers.
-			foreach (Server server in defaultServers)
-			{
-				if (!server.IsStreaming)
-					return server.AETitle;
-			}
-
-			foreach (Server server in defaultServers)
-				return server.AETitle;
-
-			return null;
-		}
-
-		private static void PrepareQueryParameters(DicomExplorerSearchCriteria searchCriteria, QueryParameters queryParams)
-		{
-		    /// TODO (CR Nov 2011): This is wrong - it's going to put the wildcards into the search fields, which it should not do.
-			queryParams["PatientsName"] = QueryStringHelper.ConvertNameToSearchCriteria(searchCriteria.PatientsName);
-			queryParams["ReferringPhysiciansName"] = QueryStringHelper.ConvertNameToSearchCriteria(searchCriteria.ReferringPhysiciansName);
-			queryParams["PatientId"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(searchCriteria.PatientId, false, true);
-			queryParams["AccessionNumber"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(searchCriteria.AccessionNumber, false, true);
-			queryParams["StudyDescription"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(searchCriteria.StudyDescription, false, true);
-			queryParams["StudyDate"] = DateRangeHelper.GetDicomDateRangeQueryString(searchCriteria.StudyDateFrom, searchCriteria.StudyDateTo);
-
-			//At the application level, ClearCanvas defines the 'ModalitiesInStudy' filter as a multi-valued
-			//Key Attribute.  This goes against the Dicom standard for C-FIND SCU behaviour, so the
-			//underlying IStudyFinder(s) must handle this special case, either by ignoring the filter
-			//or by running multiple queries, one per modality specified (for example).
-			queryParams["ModalitiesInStudy"] = DicomStringHelper.GetDicomStringArray(searchCriteria.Modalities ?? new List<string>());
 		}
 	}
 }

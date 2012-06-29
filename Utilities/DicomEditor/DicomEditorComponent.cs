@@ -19,7 +19,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Anonymization;
-using ClearCanvas.ImageViewer.Services.Auditing;
+using ClearCanvas.ImageViewer.Common.Auditing;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {

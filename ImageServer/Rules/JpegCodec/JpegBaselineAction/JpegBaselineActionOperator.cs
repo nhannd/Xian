@@ -15,6 +15,7 @@ using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
+using ClearCanvas.Dicom.Utilities.Rules;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegBaselineAction
@@ -47,7 +48,7 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegBaselineAction
 			string xmlUnit = xmlNode.Attributes["unit"].Value;
 
 			// this will throw exception if the unit is not defined
-			TimeUnit unit = (TimeUnit)Enum.Parse(typeof(TimeUnit), xmlUnit, true);
+			var unit = (TimeUnit)Enum.Parse(typeof(TimeUnit), xmlUnit, true);
 
 			bool convertFromPalette = false;
 			if (xmlNode.Attributes["convertFromPalette"] != null)

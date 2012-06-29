@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Indicates that the units of the values are unknown.
 		/// </summary>
-		public static readonly RescaleUnits Unspecified = new RescaleUnits(@"US", string.Empty, SR.LabelUnitsUnspecified, SR.DescriptionUnitsUnspecified);
+		public static readonly RescaleUnits Unspecified = new RescaleUnits(@"US", string.Empty, ImageViewer.SR.LabelUnitsUnspecified, ImageViewer.SR.DescriptionUnitsUnspecified);
 
 		/// <summary>
 		/// Gets the units of the output of the rescaling function (modality LUT) in the specified DICOM data set.
@@ -88,12 +88,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Indicates that the values are in Hounsfield Units (HU).
 		/// </summary>
-		public static readonly RescaleUnits HounsfieldUnits = new RescaleUnits(@"HU", null, SR.LabelUnitsHU, SR.DescriptionUnitsHU);
+		public static readonly RescaleUnits HounsfieldUnits = new RescaleUnits(@"HU", null, ImageViewer.SR.LabelUnitsHU, ImageViewer.SR.DescriptionUnitsHU);
 
 		/// <summary>
 		/// Indicates that the values are in 1/1000ths of optical density (i.e. 2140 represents an optical density of 2.140).
 		/// </summary>
-		public static readonly RescaleUnits OpticalDensity = new RescaleUnits(@"OD", null, SR.LabelUnitsOD, SR.DescriptionUnitsOD);
+		public static readonly RescaleUnits OpticalDensity = new RescaleUnits(@"OD", null, ImageViewer.SR.LabelUnitsOD, ImageViewer.SR.DescriptionUnitsOD);
 
 		/// <summary>
 		/// Parses a <see cref="RescaleUnits"/> from the value of a Rescale Type (0028,1054) attribute.
@@ -129,92 +129,92 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Indicates that the values are in square centimetres.
 		/// </summary>
-		public static readonly RescaleUnits Cm2 = new RescaleUnits(null, @"CM2", SR.LabelUnitsCm2, SR.DescriptionUnitsCm2);
+		public static readonly RescaleUnits Cm2 = new RescaleUnits(null, @"CM2", ImageViewer.SR.LabelUnitsCm2, ImageViewer.SR.DescriptionUnitsCm2);
 
 		/// <summary>
 		/// Indicates that the values are in square centimetres per millilitre.
 		/// </summary>
-		public static readonly RescaleUnits Cm2PerMl = new RescaleUnits(null, @"CM2ML", SR.LabelUnitsCm2ml, SR.DescriptionUnitsCm2ml);
+		public static readonly RescaleUnits Cm2PerMl = new RescaleUnits(null, @"CM2ML", ImageViewer.SR.LabelUnitsCm2ml, ImageViewer.SR.DescriptionUnitsCm2ml);
 
 		/// <summary>
 		/// Indicates that the values are in percent.
 		/// </summary>
-		public static readonly RescaleUnits Percent = new RescaleUnits(null, @"PCNT", SR.LabelUnitsPcnt, SR.DescriptionUnitsPcnt);
+		public static readonly RescaleUnits Percent = new RescaleUnits(null, @"PCNT", ImageViewer.SR.LabelUnitsPcnt, ImageViewer.SR.DescriptionUnitsPcnt);
 
 		/// <summary>
 		/// Indicates that the values are in counts per second.
 		/// </summary>
-		public static readonly RescaleUnits CountsPerSec = new RescaleUnits(null, @"CPS", SR.LabelUnitsCps, SR.DescriptionUnitsCps);
+		public static readonly RescaleUnits CountsPerSec = new RescaleUnits(null, @"CPS", ImageViewer.SR.LabelUnitsCps, ImageViewer.SR.DescriptionUnitsCps);
 
 		/// <summary>
 		/// Indicates that the values are in counts.
 		/// </summary>
-		public static readonly RescaleUnits Counts = new RescaleUnits(null, @"CNTS", SR.LabelUnitsCnts, SR.DescriptionUnitsCnts);
+		public static readonly RescaleUnits Counts = new RescaleUnits(null, @"CNTS", ImageViewer.SR.LabelUnitsCnts, ImageViewer.SR.DescriptionUnitsCnts);
 
 		/// <summary>
 		/// Indicates that the values are in becquerels per millilitre.
 		/// </summary>
-		public static readonly RescaleUnits BecquerelsPerMl = new RescaleUnits(null, @"BQML", SR.LabelUnitsBqml, SR.DescriptionUnitsBqml);
+		public static readonly RescaleUnits BecquerelsPerMl = new RescaleUnits(null, @"BQML", ImageViewer.SR.LabelUnitsBqml, ImageViewer.SR.DescriptionUnitsBqml);
 
 		/// <summary>
 		/// Indicates that the values are in milligrams per minute per millilitre.
 		/// </summary>
-		public static readonly RescaleUnits MgPerMinPerMl = new RescaleUnits(null, @"MGMINML", SR.LabelUnitsMgminml, SR.DescriptionUnitsMgminml);
+		public static readonly RescaleUnits MgPerMinPerMl = new RescaleUnits(null, @"MGMINML", ImageViewer.SR.LabelUnitsMgminml, ImageViewer.SR.DescriptionUnitsMgminml);
 
 		/// <summary>
 		/// Indicates that the values are in micromoles per minute per millilitre.
 		/// </summary>
-		public static readonly RescaleUnits UmolPerMinPerMl = new RescaleUnits(null, @"UMOLMINML", SR.LabelUnitsUmolminml, SR.DescriptionUnitsUmolminml);
+		public static readonly RescaleUnits UmolPerMinPerMl = new RescaleUnits(null, @"UMOLMINML", ImageViewer.SR.LabelUnitsUmolminml, ImageViewer.SR.DescriptionUnitsUmolminml);
 
 		/// <summary>
 		/// Indicates that the values are in millilitres per minute per gram.
 		/// </summary>
-		public static readonly RescaleUnits MlPerMinPerG = new RescaleUnits(null, @"MLMING", SR.LabelUnitsMlming, SR.DescriptionUnitsMlming);
+		public static readonly RescaleUnits MlPerMinPerG = new RescaleUnits(null, @"MLMING", ImageViewer.SR.LabelUnitsMlming, ImageViewer.SR.DescriptionUnitsMlming);
 
 		/// <summary>
 		/// Indicates that the values are in millilitres per gram.
 		/// </summary>
-		public static readonly RescaleUnits MlPerG = new RescaleUnits(null, @"MLG", SR.LabelUnitsMlg, SR.DescriptionUnitsMlg);
+		public static readonly RescaleUnits MlPerG = new RescaleUnits(null, @"MLG", ImageViewer.SR.LabelUnitsMlg, ImageViewer.SR.DescriptionUnitsMlg);
 
 		/// <summary>
 		/// Indicates that the values are in units per centimetre.
 		/// </summary>
-		public static readonly RescaleUnits PerCm = new RescaleUnits(null, @"1CM", SR.LabelUnits1cm, SR.DescriptionUnits1cm);
+		public static readonly RescaleUnits PerCm = new RescaleUnits(null, @"1CM", ImageViewer.SR.LabelUnits1cm, ImageViewer.SR.DescriptionUnits1cm);
 
 		/// <summary>
 		/// Indicates that the values are in micromoles per millilitre.
 		/// </summary>
-		public static readonly RescaleUnits UmolPerMl = new RescaleUnits(null, @"UMOLML", SR.LabelUnitsUmolml, SR.DescriptionUnitsUmolml);
+		public static readonly RescaleUnits UmolPerMl = new RescaleUnits(null, @"UMOLML", ImageViewer.SR.LabelUnitsUmolml, ImageViewer.SR.DescriptionUnitsUmolml);
 
 		/// <summary>
 		/// Indicates that the values are proportional to counts.
 		/// </summary>
-		public static readonly RescaleUnits PropCounts = new RescaleUnits(null, @"PROPCNTS", SR.LabelUnitsPropcnts, SR.DescriptionUnitsPropcnts);
+		public static readonly RescaleUnits PropCounts = new RescaleUnits(null, @"PROPCNTS", ImageViewer.SR.LabelUnitsPropcnts, ImageViewer.SR.DescriptionUnitsPropcnts);
 
 		/// <summary>
 		/// Indicates that the values are proportional to counts per second.
 		/// </summary>
-		public static readonly RescaleUnits PropCountsPerSec = new RescaleUnits(null, @"PROPCPS", SR.LabelUnitsPropcps, SR.DescriptionUnitsPropcps);
+		public static readonly RescaleUnits PropCountsPerSec = new RescaleUnits(null, @"PROPCPS", ImageViewer.SR.LabelUnitsPropcps, ImageViewer.SR.DescriptionUnitsPropcps);
 
 		/// <summary>
 		/// Indicates that the values are in millilitres per minute per millilitre.
 		/// </summary>
-		public static readonly RescaleUnits MlPerMinPerMl = new RescaleUnits(null, @"MLMINML", SR.LabelUnitsMlminml, SR.DescriptionUnitsMlminml);
+		public static readonly RescaleUnits MlPerMinPerMl = new RescaleUnits(null, @"MLMINML", ImageViewer.SR.LabelUnitsMlminml, ImageViewer.SR.DescriptionUnitsMlminml);
 
 		/// <summary>
 		/// Indicates that the values are in millilitres per millilitre.
 		/// </summary>
-		public static readonly RescaleUnits MlPerMl = new RescaleUnits(null, @"MLML", SR.LabelUnitsMlml, SR.DescriptionUnitsMlml);
+		public static readonly RescaleUnits MlPerMl = new RescaleUnits(null, @"MLML", ImageViewer.SR.LabelUnitsMlml, ImageViewer.SR.DescriptionUnitsMlml);
 
 		/// <summary>
 		/// Indicates that the values are in grams per millilitre.
 		/// </summary>
-		public static readonly RescaleUnits GPerMl = new RescaleUnits(null, @"GML", SR.LabelUnitsGml, SR.DescriptionUnitsGml);
+		public static readonly RescaleUnits GPerMl = new RescaleUnits(null, @"GML", ImageViewer.SR.LabelUnitsGml, ImageViewer.SR.DescriptionUnitsGml);
 
 		/// <summary>
 		/// Indicates that the values are in standard deviations.
 		/// </summary>
-		public static readonly RescaleUnits StdDev = new RescaleUnits(null, @"STDDEV", SR.LabelUnitsStddev, SR.DescriptionUnitsStddev);
+		public static readonly RescaleUnits StdDev = new RescaleUnits(null, @"STDDEV", ImageViewer.SR.LabelUnitsStddev, ImageViewer.SR.DescriptionUnitsStddev);
 
 		/// <summary>
 		/// Parses a <see cref="RescaleUnits"/> from the value of a Units (0054,1001) attribute in a PET Series Module.

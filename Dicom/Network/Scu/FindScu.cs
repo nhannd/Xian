@@ -320,24 +320,23 @@ namespace ClearCanvas.Dicom.Network.Scu
             else
             {
 				_cancelSent = false;
-				DicomState status = message.Status.Status;
-				if (message.Status.Status != DicomState.Success)
+				DicomStatus status = DicomStatuses.LookupQueryRetrieve(message.Status.Code);
+                if (status.Status != DicomState.Success)
 				{
-					if (status == DicomState.Cancel)
+					if (status.Status == DicomState.Cancel)
 					{
-						if (LogInformation) Platform.Log(LogLevel.Info, "Cancel status received in Find Scu: {0}", message.Status);
+						if (LogInformation) Platform.Log(LogLevel.Info, "Cancel status received in Find Scu: {0}", status);
 						Status = ScuOperationStatus.Canceled;
 					}
-					else if (status == DicomState.Failure)
+                    else if (status.Status == DicomState.Failure)
 					{
-						string msg = String.Format("Failure status received in Find Scu: {0}", message.Status);
-						Platform.Log(LogLevel.Error, msg);
+                        Platform.Log(LogLevel.Error, "Failure status received in Find Scu: {0}", status);
 						Status = ScuOperationStatus.Failed;
-						FailureDescription = msg;
+						FailureDescription = status.ToString();
 					}
-					else if (status == DicomState.Warning)
+                    else if (status.Status == DicomState.Warning)
 					{
-						Platform.Log(LogLevel.Warn, "Warning status received in Find Scu: {0}", message.Status);
+						Platform.Log(LogLevel.Warn, "Warning status received in Find Scu: {0}", status);
 					}
 					else if (Status == ScuOperationStatus.Canceled)
 					{

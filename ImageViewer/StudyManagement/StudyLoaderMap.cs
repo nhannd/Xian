@@ -31,13 +31,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public class StudyLoaderNotFoundException : Exception
 	{
+        internal StudyLoaderNotFoundException()
+        {}
+
+        internal StudyLoaderNotFoundException(Exception innerException)
+            : base("Study loader could not be found.", innerException)
+        {
+            LoaderName = "";
+        }
+
 		internal StudyLoaderNotFoundException(string loaderName)
 		{
 			LoaderName = loaderName;
 		}
 
 		/// <summary>
-		/// Gets the name of the requested <see cref="IStudyLoader"/>.
+		/// Gets the name of the requested <see cref="IStudyLoader"/>, if it was specified.
 		/// </summary>
 		public readonly string LoaderName;
 	}
@@ -54,7 +63,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		static StudyLoaderMap()
 		{
-			StudyLoaderMap map = new StudyLoaderMap();
+			var map = new StudyLoaderMap();
 			_supportedStudyLoaders = new Dictionary<string, string>();
 			foreach (IStudyLoader loader in map._studyLoaderMap.Values)
 				_supportedStudyLoaders[loader.Name] = loader.Name;

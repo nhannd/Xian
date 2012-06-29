@@ -11,14 +11,15 @@
 
 using System.Xml;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.Dicom.Utilities.Command;
+using ClearCanvas.Dicom.Utilities.Rules;
 
 namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegBaselineAction
 {
 	/// <summary>
 	/// JPEG Baseline SOP Compress action for <see cref="ServerRulesEngine"/>.
 	/// </summary>
-	public class JpegBaselineSopActionItem : ServerActionItemBase
+	public class JpegBaselineSopActionItem : ActionItemBase<ServerActionContext>
 	{
 		private readonly int _quality;
 		private readonly bool _convertFromPalette;

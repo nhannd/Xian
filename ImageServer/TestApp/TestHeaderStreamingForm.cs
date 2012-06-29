@@ -10,22 +10,13 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.IO.Compression;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
-using System.ServiceModel.Security;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.TestApp.services;
 

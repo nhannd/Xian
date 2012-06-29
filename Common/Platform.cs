@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Text;
 using log4net;
 using ClearCanvas.Common.Utilities;
@@ -108,6 +109,16 @@ namespace ClearCanvas.Common
     {
     }
 
+    public interface IDuplexServiceProvider
+    {
+        object GetService(Type type, object callback);
+    }
+
+    [ExtensionPoint]
+    public sealed class DuplexServiceProviderExtensionPoint : ExtensionPoint<IDuplexServiceProvider>
+    {
+    }
+
 	/// <summary>
 	/// A collection of useful utility functions.
 	/// </summary>
@@ -136,6 +147,7 @@ namespace ClearCanvas.Common
 		private static volatile IMessageBox _messageBox;
 		private static volatile ITimeProvider _timeProvider;
         private static volatile IServiceProvider[] _serviceProviders;
+        private static volatile IDuplexServiceProvider[] _duplexServiceProviders;
 
 		#endregion
 
@@ -151,7 +163,17 @@ namespace ClearCanvas.Common
         /// <param name="factory"></param>
         public static void SetExtensionFactory(IExtensionFactory factory)
         {
-            ExtensionPoint.SetExtensionFactory(factory);
+            lock (_syncRoot)
+            {
+                //I'm sure there are other places where this might be a problem, but if
+                //you use an extension factory that creates service provider extensions,
+                //you can get UnknownServiceException problems in unit tests unless
+                //these 2 variables are repopulated.
+                _serviceProviders = null;
+                _duplexServiceProviders = null;
+            }
+
+		    ExtensionPoint.SetExtensionFactory(factory);
         }
 #endif
 
@@ -368,16 +390,19 @@ namespace ClearCanvas.Common
 			}
 		}
 
-		private static string GetApplicationDataDirectory()
-		{
-			var path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-			path = Path.Combine(path, "ClearCanvas_Inc"); //TODO this seems to be derived from the AssemblyCompanyAttribute
-			if (string.IsNullOrEmpty(ProductInformation.FamilyName))
-				path = Path.Combine(path, ProductInformation.GetName(true, false));
-			else
-				path = Path.Combine(path, string.Format("{0} {1}", ProductInformation.Component, ProductInformation.FamilyName));
-			return path;
-		}
+        private static string GetApplicationDataDirectory()
+        {
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+            path = Path.Combine(path, "ClearCanvas_Inc"); //TODO this seems to be derived from the AssemblyCompanyAttribute
+            if (string.IsNullOrEmpty(ProductInformation.FamilyName))
+                path = Path.Combine(path, ProductInformation.GetName(true, false));
+            else
+            {
+                path = Path.Combine(path, string.Format("{0} {1}", ProductInformation.Component, ProductInformation.FamilyName));
+            }
+
+            return path;
+        }
 
         /// <summary>
         /// Gets the current time from an extension of <see cref="TimeProviderExtensionPoint"/>, if one exists.
@@ -538,7 +563,7 @@ namespace ClearCanvas.Common
         /// <param name="proc">A delegate that will receive the service for one-time use.</param>
         public static void GetService<TService>(WithServiceDelegate<TService> proc)
         {
-            TService service = Platform.GetService<TService>();
+            var service = GetService<TService>();
 
             try
             {
@@ -580,11 +605,7 @@ namespace ClearCanvas.Common
                 lock (_syncRoot)
                 {
                     if (_serviceProviders == null)
-                    {
-                        _serviceProviders = Array.ConvertAll<object, IServiceProvider>(
-                                                (new ServiceProviderExtensionPoint()).CreateExtensions(),
-                                                    delegate(object sp) { return (IServiceProvider)sp; });
-                    }
+                        _serviceProviders = new ServiceProviderExtensionPoint().CreateExtensions().Cast<IServiceProvider>().ToArray();
                 }
             }
 
@@ -600,7 +621,66 @@ namespace ClearCanvas.Common
                         return impl;
                 }
             }
-            throw new UnknownServiceException(string.Format(SR.ExceptionNoServiceProviderCanProvide, service.FullName));
+
+            var message = string.Format("No service provider was found that can provide the service {0}.", service.FullName);
+            throw new UnknownServiceException(message);
+        }
+
+        /// <summary>
+        /// Obtains an instance of the specified duplex service for use by the application.
+        /// </summary>
+        /// <remarks>
+        /// This method is thread-safe.
+        /// </remarks>
+        /// <typeparam name="TService">The type of service to obtain.</typeparam>
+        /// <typeparam name="TCallback">The type of the callback contract.</typeparam>
+        /// <param name="callback">An object that implements the callback contract.</param>
+        /// <returns>An instance of the specified service.</returns>
+        /// <exception cref="UnknownServiceException">The requested service cannot be provided.</exception>
+        public static TService GetDuplexService<TService, TCallback>(TCallback callback)
+        {
+            return (TService)GetDuplexService(typeof(TService), callback);
+        }
+
+        /// <summary>
+        /// Obtains an instance of the specified duplex service for use by the application.
+        /// </summary>
+        /// <remarks>
+        /// This method is thread-safe.
+        /// </remarks>
+        /// <param name="service">The type of service to obtain.</param>
+        /// <param name="callback">An object implementing the callback service contract.</param>
+        /// <returns>An instance of the specified service.</returns>
+        /// <exception cref="UnknownServiceException">The requested service cannot be provided.</exception>
+        public static object GetDuplexService(Type service, object callback)
+        {
+            CheckForNullReference(callback, "callback");
+
+            // load all service providers if not yet loaded
+            if (_duplexServiceProviders == null)
+            {
+                lock (_syncRoot)
+                {
+                    if (_duplexServiceProviders == null)
+                        _duplexServiceProviders = (new DuplexServiceProviderExtensionPoint()).CreateExtensions().Cast<IDuplexServiceProvider>().ToArray();
+                }
+            }
+
+            // attempt to instantiate the requested service
+            foreach (IDuplexServiceProvider sp in _duplexServiceProviders)
+            {
+                // the service provider itself may not be thread-safe, so we need to ensure only one thread will access it
+                // at a time
+                lock (sp)
+                {
+                    object impl = sp.GetService(service, callback);
+                    if (impl != null)
+                        return impl;
+                }
+            }
+
+            var message = string.Format("No duplex service provider was found that can provide the service {0}.", service.FullName);
+            throw new UnknownServiceException(message);
         }
 
 		/// <summary>

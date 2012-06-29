@@ -14,23 +14,23 @@ using System.IO;
 using System.Threading;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
-    public class UpdateStudyXmlCommand : ServerCommand
+    public class UpdateStudyXmlCommand : CommandBase
     {
         #region Private Members
 
         private readonly DicomFile _file;
         private readonly StudyXml _stream;
         private readonly StudyStorageLocation _studyStorageLocation;
-    	private DicomAttributeCollection _saveCollection = null;
+    	private DicomAttributeCollection _saveCollection;
 
         #endregion
 
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         #endregion
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
         {
             // Setup the insert parameters
         	string seriesInstanceUid = _file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         	long fileSize = 0;
 			if (File.Exists(_file.Filename))
 			{
-				FileInfo finfo = new FileInfo(_file.Filename);
+				var finfo = new FileInfo(_file.Filename);
 
 				fileSize = finfo.Length;
 			}
@@ -104,11 +104,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 			if (_saveCollection != null)
 			{
-				DicomFile file = new DicomFile(_file.Filename, new DicomAttributeCollection(), _saveCollection);
+				var file = new DicomFile(_file.Filename, new DicomAttributeCollection(), _saveCollection);
 				long fileSize = 0;
 				if (File.Exists(file.Filename))
 				{
-					FileInfo finfo = new FileInfo(file.Filename);
+					var finfo = new FileInfo(file.Filename);
 					fileSize = finfo.Length;
 				}
 				_stream.AddFile(file, fileSize, _outputSettings);
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 			XmlDocument doc = theStream.GetMemento(_outputSettings);
 
 			// allocate the random number generator here, in case we need it below
-			Random rand = new Random();
+			var rand = new Random();
 			string tmpStreamFile = streamFile + "_tmp";
 			string tmpGzStreamFile = gzStreamFile + "_tmp";
 			for (int i = 0; ; i++)

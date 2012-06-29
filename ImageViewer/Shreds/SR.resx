@@ -112,17 +112,11 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DicomSendService" xml:space="preserve">
-    <value>DICOM Send</value>
-  </data>
-  <data name="DicomSendServiceDescription" xml:space="preserve">
-    <value>Sends SOP instances to remote DICOM servers</value>
-  </data>
   <data name="DicomServer" xml:space="preserve">
     <value>DICOM Server</value>
   </data>
@@ -135,147 +129,20 @@
   <data name="DiskspaceManagerDescription" xml:space="preserve">
     <value>This shred hosts the Diskspace Manager service</value>
   </data>
-  <data name="ExceptionBadFileStorageDirectoryDoesNotExist" xml:space="preserve">
-    <value>The 'bad file' storage directory is inaccessible.  The service has been disabled.</value>
-  </data>
-  <data name="ExceptionCancellationOfAtLeastOneItemFailed" xml:space="preserve">
-    <value>Cancellation of at least one of the specified items has failed.</value>
-  </data>
-  <data name="ExceptionCannotDeleteStudyDoesNotExist" xml:space="preserve">
-    <value>Cannot delete the specified study (StudyInstanceUid = {0}) because it could not be found in the data store.</value>
-  </data>
-  <data name="ExceptionCannotDeleteWhileReindexIsInProgress" xml:space="preserve">
-    <value>Cannot perform deletion while reindex is in progress.</value>
-  </data>
-  <data name="ExceptionCannotReindexWhileDeletionIsInProgress" xml:space="preserve">
-    <value>Cannot perform a reindex operation while a deletion is in progress.</value>
-  </data>
-  <data name="ExceptionCannotStartNewImportJobWhileReindexing" xml:space="preserve">
-    <value>Cannot start a new import operation while reindex is still running.</value>
-  </data>
-  <data name="ExceptionDriveIsNotValid" xml:space="preserve">
-    <value>The specified drive '{0}' is not available or does not exist.</value>
-  </data>
-  <data name="ExceptionErrorAttemptingToRefresh" xml:space="preserve">
-    <value>An error occurred while attempting to refresh the Local Data Store activities.</value>
-  </data>
-  <data name="ExceptionErrorProcessingDeleteRequest" xml:space="preserve">
-    <value>Failed to process delete request.</value>
-  </data>
-  <data name="ExceptionErrorProcessingImportRequest" xml:space="preserve">
-    <value>An error has occurred while attempting to process the file import request.</value>
-  </data>
-  <data name="ExceptionErrorProcessingReceivedFile" xml:space="preserve">
-    <value>An error has occurred while attempting to process a received file ({0})</value>
-  </data>
-  <data name="ExceptionErrorProcessingReceiveError" xml:space="preserve">
-    <value>An error occurred while processing the 'receive error' operation.</value>
-  </data>
-  <data name="ExceptionErrorProcessingReindexRequest" xml:space="preserve">
-    <value>An error has occurred while attempting to process the reindex request.</value>
-  </data>
-  <data name="ExceptionErrorProcessingRetrieveStarted" xml:space="preserve">
-    <value>An error occurred while processing the 'retrieve started' operation.</value>
-  </data>
-  <data name="ExceptionErrorProcessingSendError" xml:space="preserve">
-    <value>An error occurred while processing the 'send error' operation.</value>
-  </data>
-  <data name="ExceptionErrorProcessingSendStarted" xml:space="preserve">
-    <value>An error occurred while processing the 'send started' operation.</value>
-  </data>
-  <data name="ExceptionErrorProcessingSentFile" xml:space="preserve">
-    <value>An error has occurred while attempting to process a sent file ({0})</value>
-  </data>
-  <data name="ExceptionErrorRetrievingLocalDataStoreConfiguration" xml:space="preserve">
-    <value>Failed to retrieve the Local Data Store configuration parameters.</value>
-  </data>
-  <data name="ExceptionErrorWhileAttemptingToClearInactiveItems" xml:space="preserve">
-    <value>An error occurred while attempting to clear the inactive items.</value>
-  </data>
-  <data name="ExceptionFailedToAddSubscriber" xml:space="preserve">
-    <value>Failed to add subscriber to the Local DataStore Activity Monitor service.</value>
-  </data>
-  <data name="ExceptionFailedToDeleteStudy" xml:space="preserve">
-    <value>Failed to delete study (StudyInstanceUid = {0}) from the data store.  Please check the service log for details.</value>
-  </data>
-  <data name="ExceptionFailedToGetServerConfiguration" xml:space="preserve">
-    <value>Failed to get Server configuration.</value>
-  </data>
-  <data name="ExceptionFailedToImportFile" xml:space="preserve">
-    <value>An error has occurred while attempting to import the file into the local file store.</value>
-  </data>
-  <data name="ExceptionFailedToInitiateRetrieve" xml:space="preserve">
-    <value>Failed to initiate a retrieval of the specified items.</value>
-  </data>
-  <data name="ExceptionFailedToInitiateSend" xml:space="preserve">
-    <value>Failed to initiate a send of the specified items.</value>
-  </data>
-  <data name="ExceptionFailedToRemoveSubscriber" xml:space="preserve">
-    <value>Failed to remove subscriber from the Local DataStore Activity Monitor service.</value>
-  </data>
-  <data name="ExceptionFailedToUpdateServerConfiguration" xml:space="preserve">
-    <value>Failed to update Server configuration.</value>
-  </data>
-  <data name="ExceptionImporterAlreadyStarted" xml:space="preserve">
-    <value>The file importer has already been started.</value>
-  </data>
-  <data name="ExceptionImporterNotStarted" xml:space="preserve">
-    <value>The file importer is not running.</value>
-  </data>
-  <data name="ExceptionInvalidPatientId" xml:space="preserve">
-    <value>The Patient Id cannot be empty.</value>
-  </data>
-  <data name="ExceptionNamedThreadPoolDoesNotExist" xml:space="preserve">
-    <value>The specified thread pool '{0}' does not exist.</value>
-  </data>
   <data name="ExceptionNoFilesHaveBeenSpecifiedToImport" xml:space="preserve">
     <value>No files have been specified to import.</value>
   </data>
-  <data name="ExceptionNoValidFilesHaveBeenSpecifiedToImport" xml:space="preserve">
-    <value>No valid files have been specified to import.</value>
-  </data>
-  <data name="ExceptionOnlyStudyLevelDeletionCurrentlySupported" xml:space="preserve">
-    <value>Only study level deletion is currently supported.</value>
+  <data name="ExceptionInvalidFilesHaveBeenSpecifiedToImport" xml:space="preserve">
+    <value>Files specified for import are no longer accessible.</value>
   </data>
   <data name="ExceptionServiceHasBeenDisabled" xml:space="preserve">
     <value>Unable to process request. The service has been disabled.</value>
   </data>
-  <data name="ExceptionSpecifiedRetrieveLevelNotSupported" xml:space="preserve">
-    <value>The specified retrieve level is unsupported at this time.</value>
-  </data>
-  <data name="ExceptionStorageDirectoryDoesNotExist" xml:space="preserve">
-    <value>The storage directory is inaccessible.  The service has been disabled.</value>
-  </data>
-  <data name="ExceptionUnableToDetermineDrive" xml:space="preserve">
-    <value>Unrecoverable Error: unable to determine drive.</value>
-  </data>
-  <data name="FormatCheckUsage" xml:space="preserve">
-    <value>Checking usage - Used Space(%): {0:F3}, High Watermark(%): {1:F3}, Low Watermark(%): {2:F3}, Studies: {3}</value>
-  </data>
-  <data name="FormatDeletionRequest" xml:space="preserve">
-    <value>Requesting deletion of {0} studies; Expected space freed (bytes): {1}</value>
-  </data>
   <data name="FormatEnumeratingFile" xml:space="preserve">
     <value>Enumerating: {0}</value>
   </data>
-  <data name="FormatFailedToCommitToDatastore" xml:space="preserve">
-    <value>Failed to commit a file to the datastore ({0}); This file will need to be imported manually.</value>
-  </data>
-  <data name="FormatFileCannotBeInsertedIntoDataStore" xml:space="preserve">
-    <value>The file cannot be inserted into the Data Store ({0}).</value>
-  </data>
-  <data name="FormatFileHasBeenMoved" xml:space="preserve">
-    <value>  The file has been moved to {0}</value>
-  </data>
   <data name="FormatMultipleFilesDescription" xml:space="preserve">
     <value>+ {0}</value>
-  </data>
-  <data name="FormatProcessingFile" xml:space="preserve">
-    <value>Processing: {0}</value>
-  </data>
-  <data name="FormatReceiveErrorSummary" xml:space="preserve">
-    <value>total errors: {0}, last error: {1}
-Please check the service logs for more details.</value>
   </data>
   <data name="FormatServiceFailedToStart" xml:space="preserve">
     <value>The {0} service has failed to start.  Please check the log for more details.</value>
@@ -286,12 +153,6 @@ Please check the service logs for more details.</value>
   <data name="FormatServiceStoppedSuccessfully" xml:space="preserve">
     <value>The {0} service has stopped successfully.</value>
   </data>
-  <data name="FormatTooltipServerDetails" xml:space="preserve">
-    <value>Dicom Server Shred (Name: {0} AE: {1} Host: {2} Port: {3} Location: {4})</value>
-  </data>
-  <data name="FormatUnableToParseFile" xml:space="preserve">
-    <value>Unable to parse the file ({0}); the sent file information may not be accurate for this study.</value>
-  </data>
   <data name="FormatWCFServiceFailedToStart" xml:space="preserve">
     <value>The {0} WCF service has failed to start.  Please check the log for more details.</value>
   </data>
@@ -301,71 +162,59 @@ Please check the service logs for more details.</value>
   <data name="FormatWCFServiceStoppedSuccessfully" xml:space="preserve">
     <value>The {0} WCF service has stopped successfully.</value>
   </data>
-  <data name="LocalDataStore" xml:space="preserve">
-    <value>Local Data Store</value>
-  </data>
-  <data name="LocalDataStoreActivityMonitor" xml:space="preserve">
-    <value>Local Data Store Activity Monitor</value>
-  </data>
-  <data name="LocalDataStoreDescription" xml:space="preserve">
-    <value>Hosts the Local Data Store and Activity Monitor Services</value>
-  </data>
-  <data name="MessageBeginDeleting" xml:space="preserve">
-    <value>High Watermark reached; begin removing studies</value>
-  </data>
-  <data name="MessageCancelled" xml:space="preserve">
-    <value>Cancelled.</value>
-  </data>
-  <data name="MessageClearingDatabase" xml:space="preserve">
-    <value>Clearing Data Store  ...</value>
-  </data>
-  <data name="MessageComplete" xml:space="preserve">
-    <value>Complete.</value>
-  </data>
-  <data name="MessageCompleteWithFailures" xml:space="preserve">
-    <value>Complete (one or more failures).</value>
-  </data>
-  <data name="MessageFailedToClearDatabase" xml:space="preserve">
-    <value>Failed: unable to clear data store prior to reindex operation.</value>
-  </data>
-  <data name="MessageFailedToProcessBadFile" xml:space="preserve">
-    <value>Processing of the bad file failed.</value>
-  </data>
-  <data name="MessageFileHasBeenDeleted" xml:space="preserve">
-    <value>  The file has been deleted.</value>
-  </data>
-  <data name="MessageImportPausedForDelete" xml:space="preserve">
-    <value>Import has been paused waiting for delete operation to complete.</value>
-  </data>
-  <data name="MessageImportPausedForReindex" xml:space="preserve">
-    <value>Import has been paused waiting for reindex to complete.</value>
-  </data>
-  <data name="MessageInactive" xml:space="preserve">
-    <value>Inactive.</value>
-  </data>
   <data name="MessageNoFilesToImport" xml:space="preserve">
     <value>Complete.  No files could be found to import.</value>
   </data>
   <data name="MessageNoFilesToReindex" xml:space="preserve">
     <value>Complete.  No files could be found to reindex.</value>
   </data>
-  <data name="MessageNothingToDelete" xml:space="preserve">
-    <value>No studies could be found in the datastore to delete</value>
+  <data name="ExceptionErrorProcessingInsert" xml:space="preserve">
+    <value>Failed to process WorkItem Insert request.</value>
   </data>
-  <data name="MessagePausingActiveImportJobs" xml:space="preserve">
-    <value>Pausing active import jobs ...</value>
+  <data name="ExceptionErrorProcessingQuery" xml:space="preserve">
+    <value>Failed to process WorkItem Query request.</value>
   </data>
-  <data name="MessagePending" xml:space="preserve">
-    <value>Pending ...</value>
+  <data name="ExceptionErrorProcessingSubscribe" xml:space="preserve">
+    <value>Failed to process WorkItem Subscribe request.</value>
   </data>
-  <data name="MessageRetrieveLikelyFailed" xml:space="preserve">
-    <value>This operation appears to have failed.  This can be caused by a number of problems including an incorrect DICOM configuration (client or server) or the local firewall blocking the inbound DICOM port. </value>
+  <data name="ExceptionErrorProcessingUnsubscribe" xml:space="preserve">
+    <value>Failed to process WorkItem Unsubscribe request.</value>
   </data>
-  <data name="MessageWaitingForFilesToBecomeAvailable" xml:space="preserve">
-    <value>Waiting for all files to become available ...</value>
+  <data name="ExceptionErrorProcessingUpdate" xml:space="preserve">
+    <value>Failed to process WorkItem Update request.</value>
   </data>
-  <data name="StudyLocator" xml:space="preserve">
-    <value>Study Locator</value>
+  <data name="WorkItemService" xml:space="preserve">
+    <value>Work Item</value>
+  </data>
+  <data name="WorkItemServiceDescription" xml:space="preserve">
+    <value>Hosts the WorkItem Services</value>
+  </data>
+  <data name="WorkItemProcessorDescription" xml:space="preserve">
+    <value>Hosts the WorkItem Processor Service</value>
+  </data>
+  <data name="WorkItemProcessorService" xml:space="preserve">
+    <value>Work Item Processor</value>
+  </data>
+  <data name="ExceptionErrorRestartingDICOMServer" xml:space="preserve">
+    <value>Error restarting DICOM server.</value>
+  </data>
+  <data name="WorkItemActivityMonitorService" xml:space="preserve">
+    <value>Work Item Activity Monitor</value>
+  </data>
+  <data name="InternalError" xml:space="preserve">
+    <value>Internal error.</value>
+  </data>
+  <data name="ExceptionErrorProcessingPublish" xml:space="preserve">
+    <value>Failed to process WorkItem Publish request.</value>
+  </data>
+  <data name="ExceptionErrorProcessingRefresh" xml:space="preserve">
+    <value>Failed to process WorkItem Refresh request.</value>
+  </data>
+  <data name="FilestoreManagementShred" xml:space="preserve">
+    <value>Filestore Management Processor</value>
+  </data>
+  <data name="ExceptionNotEnoughStorage" xml:space="preserve">
+    <value>Disk usage exceeds maximum configured usage.</value>
   </data>
   <data name="DicomError_QRMoveDestinationUnknown" xml:space="preserve">
     <value>Images could not be received because the remote device was having a problem reaching your computer, possibly due to misconfiguration.</value>

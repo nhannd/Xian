@@ -761,7 +761,7 @@ namespace ClearCanvas.Dicom.Tests
 		// Justification: to fully exercise boundary condition culture infos
 		public CandyMountainCultureAttributeTest() : base(CreateCultureInfo()) {}
 
-		private const string _cultureName = "x-cc-test-candy-mountain";
+		private const string _cultureName = "x_cc";
 
 		private static CultureInfo CreateCultureInfo()
 		{
@@ -779,8 +779,8 @@ namespace ClearCanvas.Dicom.Tests
 				cultureAndRegionInfoBuilder.TwoLetterISORegionName = "mc";
 				cultureAndRegionInfoBuilder.RegionEnglishName = "Candy Mountain";
 				cultureAndRegionInfoBuilder.RegionNativeName = "Come inside the cave, Charlie";
-				cultureAndRegionInfoBuilder.NumberFormat.NegativeSign = "++---";
-				cultureAndRegionInfoBuilder.NumberFormat.PositiveSign = "--+++";
+				cultureAndRegionInfoBuilder.NumberFormat.NegativeSign = "++--";
+				cultureAndRegionInfoBuilder.NumberFormat.PositiveSign = "--++";
 				cultureAndRegionInfoBuilder.NumberFormat.NumberDecimalSeparator = ";";
 				cultureAndRegionInfoBuilder.NumberFormat.NumberGroupSeparator = ":";
 				cultureAndRegionInfoBuilder.NumberFormat.NumberGroupSizes = new int[] {2, 3, 4, 5};

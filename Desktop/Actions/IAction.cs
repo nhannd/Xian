@@ -10,7 +10,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop.Actions
 {
@@ -57,6 +59,17 @@ namespace ClearCanvas.Desktop.Actions
         /// Gets the fully-qualified logical identifier for this action.
         /// </summary>
         string ActionID { get; }
+
+        /// <summary>
+        /// Gets any former <see cref="IAction.ActionID"/>s, in case an <see cref="IAction"/>
+        /// or <see cref="Tool{TContextInterface}"/> has moved.
+        /// </summary>
+        /// <remarks>Use the <see cref="ActionFormerlyAttribute"/> in action declarations to indicate to the framework
+        /// that an action used to have a different <see cref="IAction.ActionID"/>. This way, the action will not lose it's place
+        /// in the action model just because the code moved. Obviously, only do this if, indeed, you want the action
+        /// to maintain it's same place in the action model.
+        /// </remarks>
+        IList<string> FormerActionIDs { get; }
 
         /// <summary>
         /// Gets or sets the menu or toolbar path for this action.

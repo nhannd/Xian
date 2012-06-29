@@ -23,37 +23,56 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 	{
 		public static void Write(XmlDocument theDoc, Stream theStream)
 		{
-			XmlWriterSettings xmlSettings = new XmlWriterSettings();
+		    var xmlSettings = new XmlWriterSettings
+		                          {
+		                              Encoding = Encoding.UTF8,
+		                              ConformanceLevel = ConformanceLevel.Document,
+		                              Indent = false,
+		                              NewLineOnAttributes = false,
+		                              CheckCharacters = true,
+		                              IndentChars = string.Empty
+		                          };
 
-			xmlSettings.Encoding = Encoding.UTF8;
-			xmlSettings.ConformanceLevel = ConformanceLevel.Document;
-			xmlSettings.Indent = false;
-			xmlSettings.NewLineOnAttributes = false;
-			xmlSettings.CheckCharacters = true;
-			xmlSettings.IndentChars = "";
 
-			XmlWriter tw = XmlWriter.Create(theStream, xmlSettings);
-
+		    XmlWriter tw = XmlWriter.Create(theStream, xmlSettings);
 			theDoc.WriteTo(tw);
-
 			tw.Flush();
-
 			tw.Close();
 		}
 
+        public static void Write(XmlDocument theDoc, string filename)
+        {
+            var xmlSettings = new XmlWriterSettings
+            {
+                Encoding = Encoding.UTF8,
+                ConformanceLevel = ConformanceLevel.Document,
+                Indent = false,
+                NewLineOnAttributes = false,
+                CheckCharacters = true,
+                IndentChars = string.Empty
+            };
+
+            XmlWriter tw = XmlWriter.Create(filename, xmlSettings);
+            theDoc.WriteTo(tw);
+            tw.Flush();
+            tw.Close();
+        }
+
 		public static void WriteGzip(XmlDocument theDoc, Stream theStream)
 		{
-			MemoryStream ms = new MemoryStream();
-			XmlWriterSettings xmlSettings = new XmlWriterSettings();
+			var ms = new MemoryStream();
+		    var xmlSettings = new XmlWriterSettings
+		                          {
+		                              Encoding = Encoding.UTF8,
+		                              ConformanceLevel = ConformanceLevel.Document,
+		                              Indent = false,
+		                              NewLineOnAttributes = false,
+		                              CheckCharacters = true,
+		                              IndentChars = string.Empty
+		                          };
 
-			xmlSettings.Encoding = Encoding.UTF8;
-			xmlSettings.ConformanceLevel = ConformanceLevel.Document;
-			xmlSettings.Indent = false;
-			xmlSettings.NewLineOnAttributes = false;
-			xmlSettings.CheckCharacters = true;
-			xmlSettings.IndentChars = "";
 
-			XmlWriter tw = XmlWriter.Create(ms, xmlSettings);
+		    XmlWriter tw = XmlWriter.Create(ms, xmlSettings);
 
 			theDoc.WriteTo(tw);
 			tw.Flush();
@@ -61,7 +80,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 			byte[] buffer = ms.GetBuffer();
 
-			GZipStream compressedzipStream = new GZipStream(theStream, CompressionMode.Compress, true);
+			var compressedzipStream = new GZipStream(theStream, CompressionMode.Compress, true);
 			compressedzipStream.Write(buffer, 0, buffer.Length);
 			// Close the stream.
 			compressedzipStream.Flush();

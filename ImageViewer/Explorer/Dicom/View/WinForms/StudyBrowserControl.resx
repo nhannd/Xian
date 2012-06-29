@@ -129,7 +129,7 @@
     <value>0, 0</value>
   </data>
   <data name="_resultsTitleBar.Size" type="System.Drawing.Size, System.Drawing">
-    <value>731, 30</value>
+    <value>729, 30</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="_resultsTitleBar.TabIndex" type="System.Int32, mscorlib">
@@ -150,6 +150,9 @@
   <data name="&gt;&gt;_resultsTitleBar.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="_studyTableView.ColumnHeaderTooltip" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
   <data name="_studyTableView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
@@ -157,7 +160,10 @@
     <value>0, 30</value>
   </data>
   <data name="_studyTableView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>731, 325</value>
+    <value>729, 323</value>
+  </data>
+  <data name="_studyTableView.SortButtonTooltip" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
   </data>
   <data name="_studyTableView.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -184,7 +190,7 @@
     <value>2, 2, 2, 2</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>731, 355</value>
+    <value>729, 353</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>StudyBrowserControl</value>

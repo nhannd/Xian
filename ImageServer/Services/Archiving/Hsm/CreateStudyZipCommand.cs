@@ -11,16 +11,16 @@
 
 using System;
 using System.IO;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
 using Ionic.Zip;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
 	/// <summary>
-	/// <see cref="ServerCommand"/> to create Zip file containing all the dcm files in a study
+	/// <see cref="CommandBase"/> to create Zip file containing all the dcm files in a study
 	/// </summary>
-	public class CreateStudyZipCommand : ServerCommand
+	public class CreateStudyZipCommand : CommandBase
 	{
 		private readonly string _zipFile;
 		private readonly StudyXml _studyXml;
@@ -45,9 +45,9 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// <summary>
 		/// Do the work.
 		/// </summary>
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
 		{
-			using (ZipFile zip = new ZipFile(_zipFile))
+			using (var zip = new ZipFile(_zipFile))
 			{
 				zip.ForceNoCompression = !HsmSettings.Default.CompressZipFiles;
 				zip.TempFileFolder = _tempFolder;

@@ -46,7 +46,7 @@ namespace ClearCanvas.Common.Shreds
 		/// must be implemented in such a way as to heed
 		/// a request to stop within a timely manner.
 		/// </remarks>
-		public void RequestStop()
+		public virtual void RequestStop()
 		{
 			_stopRequested = true;
 		}

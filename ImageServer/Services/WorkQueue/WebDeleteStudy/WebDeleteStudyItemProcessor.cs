@@ -14,14 +14,18 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
+using ClearCanvas.ImageServer.Core.Command;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Rules;
 using ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy;
+using DeleteDirectoryCommand = ClearCanvas.ImageServer.Core.Command.DeleteDirectoryCommand;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 {
@@ -160,7 +164,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                         if (studyXml.Contains(uid.SeriesInstanceUid))
                         {
                             //Note: DeleteDirectoryCommand  doesn't throw exception if the folder doesn't exist
-                            RemoveSeriesFromStudyXml xmlUpdate = new RemoveSeriesFromStudyXml(studyXml, uid.SeriesInstanceUid);
+                            var xmlUpdate = new RemoveSeriesFromStudyXml(studyXml, uid.SeriesInstanceUid);
                             processor.AddCommand(xmlUpdate);
                         }
 
@@ -168,7 +172,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                         string path = StorageLocation.GetSeriesPath(uid.SeriesInstanceUid);
                         if (Directory.Exists(path))
                         {
-                            DeleteDirectoryCommand delDir = new DeleteDirectoryCommand(path, true);
+                            var delDir = new DeleteDirectoryCommand(path, true);
                             processor.AddCommand(delDir);
                         }
                     }
@@ -187,7 +191,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                         if (theSeries!=null)
                         {
                             _seriesToDelete.Add(theSeries);
-                            DeleteSeriesFromDBCommand delSeries = new DeleteSeriesFromDBCommand(StorageLocation, theSeries);
+                            var delSeries = new DeleteSeriesFromDBCommand(StorageLocation, theSeries);
                             processor.AddCommand(delSeries);
                             delSeries.Executing += DeleteSeriesFromDbExecuting;
                         }
@@ -198,7 +202,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                         }
 
 						// The WorkQueueUid must be cleared before the entry can be removed from the queue
-                        DeleteWorkQueueUidCommand deleteUid = new DeleteWorkQueueUidCommand(uid);
+                        var deleteUid = new DeleteWorkQueueUidCommand(uid);
                         processor.AddCommand(deleteUid);
 
 						// Force a re-archival if necessary
@@ -243,7 +247,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
             {
                 try
                 {
-                    WebDeleteProcessorContext context = new WebDeleteProcessorContext(this, Level, StorageLocation, _reason, _userId, _userName );
+                    var context = new WebDeleteProcessorContext(this, Level, StorageLocation, _reason, _userId, _userName );
                     extension.OnCompleted(context, _seriesToDelete);
                 }
                 catch (Exception ex)

@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ColumnHeadingGroupElement" xml:space="preserve">
     <value>Group-Element</value>
@@ -186,7 +186,7 @@
   <data name="MessageConfirmSaveAllFiles" xml:space="preserve">
     <value>The changes will be saved to *all* loaded files and the original files will be overwritten.  Are you sure you want to continue?
 
-NOTE: if any of the edited files are from the local data store, it should be reindexed, otherwise the edited values may appear unchanged.</value>
+NOTE: if any of the edited files are from the local store, it should be re-indexed, otherwise the edited values may appear unchanged.</value>
   </data>
   <data name="MessageDumpProgressBar" xml:space="preserve">
     <value>Processing Files...</value>
@@ -194,8 +194,8 @@ NOTE: if any of the edited files are from the local data store, it should be rei
   <data name="MessageFailedDump" xml:space="preserve">
     <value>DICOM Dump operation failed.  File(s) in selection may not be DICOM.</value>
   </data>
-  <data name="MessageFormatStudyMustBeDeletedManually" xml:space="preserve">
-    <value>An error occurred while attempting to anonymize the study.  The files should be manually deleted from {0}.</value>
+  <data name="MessageAnonymizeStudyFailed" xml:space="preserve">
+    <value>An error occurred while attempting to anonymize the study.  Please check the logs for more details.</value>
   </data>
   <data name="MessageNoTagsWereDeleted" xml:space="preserve">
     <value>No tags were deleted.  This is often because the selection only contains Sequence Items, Sequence Delimiter Items, and Item Delimiter Items which cannot be deleted.</value>
@@ -293,7 +293,7 @@ NOTE: if any of the edited files are from the local data store, it should be rei
   <data name="MessageConfirmSaveSingleLocalFile" xml:space="preserve">
     <value>The changes will be saved to the loaded file and the original file will be overwritten. Are you sure you want to continue?
 
-NOTE: the edited file is from the local data store so it should be reindexed, otherwise the edited values may appear unchanged.</value>
+NOTE: the edited file is from the local store so it should be re-indexed, otherwise the edited values may appear unchanged.</value>
   </data>
   <data name="MessageConfirmSaveSingleRemoteFile" xml:space="preserve">
     <value>The changes will be saved to the loaded file and the original file will be overwritten. Are you sure you want to continue?</value>
@@ -312,5 +312,8 @@ NOTE: the edited file is from the local data store so it should be reindexed, ot
   </data>
   <data name="MessageConfirmAnonymizeOneOrMoreReportsAndAttachments" xml:space="preserve">
     <value>One or more files being anonymized are reports and/or other documents. These often contain patient information that cannot be completely cleaned by this tool. Are you sure you want to continue anonymization?</value>
+  </data>
+  <data name="MessageCannotAnonymizeMaxDiskUsageExceeded" xml:space="preserve">
+    <value>The study cannot be anonymized because the maximum disk usage has been exceeded.</value>
   </data>
 </root>

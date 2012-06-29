@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop
@@ -41,7 +42,7 @@ namespace ClearCanvas.Desktop
     /// <remarks>
     /// An application component must implement this interface in order to be hosted by the desktop framework.
     /// </remarks>
-    public interface IApplicationComponent
+	public interface IApplicationComponent : INotifyPropertyChanged
     {
         /// <summary>
         /// Called by the framework to initialize the component with a host.

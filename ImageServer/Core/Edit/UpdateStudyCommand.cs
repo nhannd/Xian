@@ -15,20 +15,23 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Diagnostics;
-using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Common.Command;
+using ClearCanvas.ImageServer.Core.Command;
+using ClearCanvas.ImageServer.Core.Diagnostics;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
-using Settings=ClearCanvas.ImageServer.Common.Diagnostics.Settings;
+using SaveDicomFileCommand = ClearCanvas.ImageServer.Core.Command.SaveDicomFileCommand;
+using Settings=ClearCanvas.ImageServer.Core.Diagnostics.Settings;
 
 namespace ClearCanvas.ImageServer.Core.Edit
 {
@@ -78,7 +81,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		                          StudyStorageLocation studyLocation,
 		                          IList<BaseImageLevelUpdateCommand> imageLevelCommands,
 								  ServerRuleApplyTimeEnum applyTime) 
-			: base("Update existing study", true)
+			: base("Update existing study")
 		{
 			_partition = partition;
 			_oldStudyLocation = studyLocation;
@@ -106,7 +109,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 		#region Protected Method
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+		protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			Statistics.ProcessTime.Start();
             
@@ -142,7 +145,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		{
 			using (IPersistenceContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
 			{
-				_backupDir = ExecutionContext.BackupDirectory;
+				_backupDir = ServerExecutionContext.Current.BackupDirectory;
 
 				_oldStudyPath = _oldStudyLocation.GetStudyPath();
 				_oldStudyInstanceUid = _oldStudyLocation.StudyInstanceUid;

@@ -123,14 +123,18 @@ namespace ClearCanvas.Utilities.Manifest
             }
             catch (CommandLineException e)
             {
+                Platform.Log(LogLevel.Error, e, "Command line exception when generating manifest.");
                 Console.WriteLine(e.Message);
                 _cmdLine.PrintUsage(Console.Out);
                 Environment.ExitCode = -1;
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unexpected exception when generating manifest: {0}", e.Message);
-                Console.WriteLine(e.StackTrace);
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when generating manifest.");
+                string message = String.Format("Unexpected exception when generating manifest: {0}", e.Message);
+                string stackTrace = e.StackTrace;
+                Console.WriteLine(message);
+                Console.WriteLine(stackTrace);
                 Environment.ExitCode = -1;
             }
         }

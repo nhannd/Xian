@@ -12,8 +12,8 @@
 using System;
 using System.Runtime.Serialization;
 using System.Xml;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using System.IO;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl

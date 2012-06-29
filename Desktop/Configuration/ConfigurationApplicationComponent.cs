@@ -59,7 +59,7 @@ namespace ClearCanvas.Desktop.Configuration
 		void IConfigurationApplicationComponent.Save()
 		{
 			this.Save();
-			base.Modified = false;
+			Modified = false;
 		}
 
 		#endregion

@@ -206,27 +206,30 @@ namespace IJGVERS {
 	}
 }
 
-void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressedPixelData^ newPixelData, DicomJpegParameters^ params, int frame) {
-	if ((oldPixelData->PhotometricInterpretation == "YBR_ICT")      ||
-		(oldPixelData->PhotometricInterpretation == "YBR_RCT"))
-		throw gcnew DicomCodecUnsupportedSopException(String::Format("Photometric Interpretation '{0}' not supported by JPEG encoder!",
-														oldPixelData->PhotometricInterpretation));
-	if ((oldPixelData->PhotometricInterpretation == "PALETTE COLOR") 
-	    && Mode != JpegMode::Lossless)
-		throw gcnew DicomCodecUnsupportedSopException(String::Format("Photometric Interpretation '{0}' not supported by lossy JPEG encoder!",
-														oldPixelData->PhotometricInterpretation));
-	array<unsigned char>^ frameData = oldPixelData->GetFrame(frame);
-	pin_ptr<unsigned char> framePin = &frameData[0];
-	unsigned char* framePtr = framePin;
-	unsigned int frameSize = frameData->Length;
-
-	DataBuffer = gcnew array<unsigned char>(IJGE_BLOCKSIZE);
-	pin_ptr<unsigned char> DataPin = &DataBuffer[0];
-	DataPtr = DataPin;
-	
+void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressedPixelData^ newPixelData, DicomJpegParameters^ params, int frame) 
+{
 	struct jpeg_compress_struct cinfo;
+	bool cleanupRequired = false;
+	try{
+		if ((oldPixelData->PhotometricInterpretation == "YBR_ICT")      ||
+			(oldPixelData->PhotometricInterpretation == "YBR_RCT"))
+			throw gcnew DicomCodecUnsupportedSopException(String::Format("Photometric Interpretation '{0}' not supported by JPEG encoder!",
+															oldPixelData->PhotometricInterpretation));
+		if ((oldPixelData->PhotometricInterpretation == "PALETTE COLOR") 
+			&& Mode != JpegMode::Lossless)
+			throw gcnew DicomCodecUnsupportedSopException(String::Format("Photometric Interpretation '{0}' not supported by lossy JPEG encoder!",
+															oldPixelData->PhotometricInterpretation));
+		array<unsigned char>^ frameData = oldPixelData->GetFrame(frame);
+		pin_ptr<unsigned char> framePin = &frameData[0];
+		unsigned char* framePtr = framePin;
+		unsigned int frameSize = frameData->Length;
+
+		DataBuffer = gcnew array<unsigned char>(IJGE_BLOCKSIZE);
+		pin_ptr<unsigned char> DataPin = &DataBuffer[0];
+		DataPtr = DataPin;
+	
 		
-	try {
+	
 		if (oldPixelData->IsPlanar && oldPixelData->SamplesPerPixel > 1) {
 			newPixelData->PlanarConfiguration = 0;
 			DicomUncompressedPixelData::TogglePlanarConfiguration(frameData, frameData->Length / oldPixelData->BytesAllocated, 
@@ -274,6 +277,7 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 		jerr.pub.output_message = IJGVERS::OutputMessage;
 	
 		jpeg_create_compress(&cinfo);
+		cleanupRequired = true;
 
 		cinfo.client_data = nullptr;
 		
@@ -367,9 +371,15 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 			MemoryBuffer->WriteByte(0);
 			
 		newPixelData->AddFrameFragment(MemoryBuffer->ToArray());
-	} finally {
+	}
+	catch(DicomException^ e){
+		Console::WriteLine(e->Message);
+		throw;
+	}
+	finally {
 		MemoryBuffer = nullptr;
-	    jpeg_destroy_compress(&cinfo);
+		if (cleanupRequired)
+			jpeg_destroy_compress(&cinfo);
     }	
 }
 
@@ -449,74 +459,87 @@ namespace IJGVERS {
 void JPEGCODEC::Decode(DicomCompressedPixelData^ oldPixelData, DicomUncompressedPixelData^ newPixelData, DicomJpegParameters^ params, int frame) {
   //              IList<DicomFragment> rleData = oldPixelData.GetFrameFragments(i);
           
-	array<unsigned char>^ jpegData = oldPixelData->GetFrameFragmentData(frame);
-	pin_ptr<unsigned char> jpegPin = &jpegData[0];
-	unsigned char* jpegPtr = jpegPin;
-	size_t jpegSize = jpegData->Length;
-	
+	bool cleanupRequired = false;
 	jpeg_decompress_struct dinfo;
-	memset(&dinfo, 0, sizeof(dinfo));
+	
+	try
+	{
+		array<unsigned char>^ jpegData = oldPixelData->GetFrameFragmentData(frame);
+		pin_ptr<unsigned char> jpegPin = &jpegData[0];
+		unsigned char* jpegPtr = jpegPin;
+		size_t jpegSize = jpegData->Length;
+	
+		memset(&dinfo, 0, sizeof(dinfo));
 
-	IJGVERS::SourceManagerStruct src;
-	memset(&src, 0, sizeof(IJGVERS::SourceManagerStruct));
-	src.pub.init_source       = IJGVERS::initSource;
-	src.pub.fill_input_buffer = IJGVERS::fillInputBuffer;
-	src.pub.skip_input_data   = IJGVERS::skipInputData;
-	src.pub.resync_to_restart = jpeg_resync_to_restart;
-	src.pub.term_source       = IJGVERS::termSource;
-	src.pub.bytes_in_buffer   = 0;
-	src.pub.next_input_byte   = NULL;
-	src.skip_bytes            = 0;
-	src.next_buffer           = jpegPin;
-	src.next_buffer_size      = (unsigned int*)jpegSize;
+		IJGVERS::SourceManagerStruct src;
+		memset(&src, 0, sizeof(IJGVERS::SourceManagerStruct));
+		src.pub.init_source       = IJGVERS::initSource;
+		src.pub.fill_input_buffer = IJGVERS::fillInputBuffer;
+		src.pub.skip_input_data   = IJGVERS::skipInputData;
+		src.pub.resync_to_restart = jpeg_resync_to_restart;
+		src.pub.term_source       = IJGVERS::termSource;
+		src.pub.bytes_in_buffer   = 0;
+		src.pub.next_input_byte   = NULL;
+		src.skip_bytes            = 0;
+		src.next_buffer           = jpegPin;
+		src.next_buffer_size      = (unsigned int*)jpegSize;
 
-    IJGVERS::ErrorStruct jerr;
-	memset(&jerr, 0, sizeof(IJGVERS::ErrorStruct));
-	dinfo.err = jpeg_std_error(&jerr.pub);
-	jerr.pub.error_exit = IJGVERS::ErrorExit;
-	jerr.pub.output_message = IJGVERS::OutputMessage;
+		IJGVERS::ErrorStruct jerr;
+		memset(&jerr, 0, sizeof(IJGVERS::ErrorStruct));
+		dinfo.err = jpeg_std_error(&jerr.pub);
+		jerr.pub.error_exit = IJGVERS::ErrorExit;
+		jerr.pub.output_message = IJGVERS::OutputMessage;
 
-	jpeg_create_decompress(&dinfo);
-	dinfo.src = (jpeg_source_mgr*)&src.pub;
+		jpeg_create_decompress(&dinfo);
+		cleanupRequired = true;
 
-	if (jpeg_read_header(&dinfo, TRUE) == JPEG_SUSPENDED)
-		throw gcnew DicomCodecException(gcnew String("Unable to decompress JPEG. Reason: Suspended"));
+		dinfo.src = (jpeg_source_mgr*)&src.pub;
 
-    if (params->ConvertYBRtoRGB) {
-        if (dinfo.out_color_space == JCS_YCbCr || dinfo.out_color_space == JCS_RGB)
-        {
-            if (oldPixelData->IsSigned)
-			    throw gcnew DicomCodecException(gcnew String("JPEG codec unable to perform colorspace conversion on signed pixel data"));
-	        dinfo.out_color_space = JCS_RGB;
+		if (jpeg_read_header(&dinfo, TRUE) == JPEG_SUSPENDED)
+			throw gcnew DicomCodecException(gcnew String("Unable to decompress JPEG. Reason: Suspended"));
+
+		if (params->ConvertYBRtoRGB) {
+			if (dinfo.out_color_space == JCS_YCbCr || dinfo.out_color_space == JCS_RGB)
+			{
+				if (oldPixelData->IsSigned)
+					throw gcnew DicomCodecException(gcnew String("JPEG codec unable to perform colorspace conversion on signed pixel data"));
+				dinfo.out_color_space = JCS_RGB;
+			}
 		}
-	}
-    else 
-    {
-  		    dinfo.jpeg_color_space = JCS_UNKNOWN;
-	        dinfo.out_color_space = JCS_UNKNOWN;
-    }
+		else 
+		{
+  				dinfo.jpeg_color_space = JCS_UNKNOWN;
+				dinfo.out_color_space = JCS_UNKNOWN;
+		}
      
-	jpeg_calc_output_dimensions(&dinfo);
+		jpeg_calc_output_dimensions(&dinfo);
 
-	int bufsize = dinfo.output_width * dinfo.output_components;
-	size_t rowsize = bufsize * sizeof(JSAMPLE);
-	int outsize = (int)(rowsize * dinfo.output_height);
+		int bufsize = dinfo.output_width * dinfo.output_components;
+		size_t rowsize = bufsize * sizeof(JSAMPLE);
+		int outsize = (int)(rowsize * dinfo.output_height);
 
-	jpeg_start_decompress(&dinfo);
+		jpeg_start_decompress(&dinfo);
 
-	MemoryStream^ stream = gcnew MemoryStream(outsize);
-	array<unsigned char>^ rowbuf = gcnew array<unsigned char>(rowsize);
-	pin_ptr<unsigned char> rowpin = &rowbuf[0];
-	unsigned char* rowptr = rowpin;
+		MemoryStream^ stream = gcnew MemoryStream(outsize);
+		array<unsigned char>^ rowbuf = gcnew array<unsigned char>(rowsize);
+		pin_ptr<unsigned char> rowpin = &rowbuf[0];
+		unsigned char* rowptr = rowpin;
 
-	while (dinfo.output_scanline < dinfo.output_height) {
-		jpeg_read_scanlines(&dinfo, (JSAMPARRAY)&rowptr, 1);
-		stream->Write(rowbuf, 0, rowbuf->Length);
+		while (dinfo.output_scanline < dinfo.output_height) {
+			jpeg_read_scanlines(&dinfo, (JSAMPARRAY)&rowptr, 1);
+			stream->Write(rowbuf, 0, rowbuf->Length);
+		}
+
+		//oldPixelData->Unload();
+		newPixelData->AppendFrame(stream->GetBuffer());
 	}
-
-	//oldPixelData->Unload();
-	newPixelData->AppendFrame(stream->GetBuffer());
-
-	jpeg_destroy_decompress(&dinfo);
+	catch(DicomException^ e){
+		Console::WriteLine(e->Message);
+		throw;
+	}
+	finally {
+		if (cleanupRequired)
+			jpeg_destroy_decompress(&dinfo);
+    }	
 	
 }

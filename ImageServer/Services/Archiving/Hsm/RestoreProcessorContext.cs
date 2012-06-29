@@ -12,7 +12,7 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
     /// <summary>
     /// Represents the execution context of a <cref="RestoreQueue"/> item.
     /// </summary>
-    public class RestoreProcessorContext : ExecutionContext
+    public class RestoreProcessorContext : ServerExecutionContext
     {
         #region Private Fields
         private readonly Model.RestoreQueue _item;

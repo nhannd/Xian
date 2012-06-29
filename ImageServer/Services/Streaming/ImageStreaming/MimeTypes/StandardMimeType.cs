@@ -12,7 +12,7 @@
 using System.IO;
 using System.Net;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.MimeTypes

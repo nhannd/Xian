@@ -12,9 +12,9 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -35,8 +35,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
         {
             using (IUpdateContext context = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                IStudyEntityBroker study = context.GetBroker<IStudyEntityBroker>();
-                StudySelectCriteria criteria = new StudySelectCriteria();
+                var study = context.GetBroker<IStudyEntityBroker>();
+                var criteria = new StudySelectCriteria();
 
                 criteria.StudyInstanceUid.EqualTo(StorageLocation.StudyInstanceUid);
                 criteria.ServerPartitionKey.EqualTo(item.ServerPartitionKey);
@@ -44,13 +44,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
                 int count = study.Count(criteria);
                 if (count == 0)
                 {
-                    IDeleteStudyStorage delete = context.GetBroker<IDeleteStudyStorage>();
+                    var delete = context.GetBroker<IDeleteStudyStorage>();
 
-                    DeleteStudyStorageParameters parms = new DeleteStudyStorageParameters
-                                                         	{
-                                                         		ServerPartitionKey = item.ServerPartitionKey,
-                                                         		StudyStorageKey = item.StudyStorageKey
-                                                         	};
+                    var parms = new DeleteStudyStorageParameters
+                                    {
+                                        ServerPartitionKey = item.ServerPartitionKey,
+                                        StudyStorageKey = item.StudyStorageKey
+                                    };
 
                 	delete.Execute(parms);
                 }
@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
 					Platform.Log(LogLevel.Info, "Applying rules engine to study being cleaned up to ensure disk management is applied.");
 
 					// Run Study / Series Rules Engine.
-					StudyRulesEngine engine = new StudyRulesEngine(StorageLocation,ServerPartition);
+					var engine = new StudyRulesEngine(StorageLocation,ServerPartition);
 					engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed);
 					StorageLocation.LogFilesystemQueue();
 
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
                         {
 							FileUtils.Delete(path);
                         }
-                        IWorkQueueUidEntityBroker delete = context.GetBroker<IWorkQueueUidEntityBroker>();
+                        var delete = context.GetBroker<IWorkQueueUidEntityBroker>();
 
                         delete.Delete(sop.GetKey());
                     }

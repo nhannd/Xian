@@ -9,6 +9,9 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
@@ -81,5 +84,52 @@ namespace ClearCanvas.Desktop
             if (result == ApplicationComponentExitCode.Error)
                 throw progressComponent.TaskException;
         }
-    }
+
+		/// <summary>
+		/// Shows a progress dialog that processes the specified list of items on a background task.
+		/// </summary>
+		/// <remarks>
+		/// This is essentially a convenience method for processing a list of items.  It creates a background task internally.
+		/// </remarks>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="desktopWindow"></param>
+		/// <param name="items"></param>
+		/// <param name="processor"></param>
+		/// <param name="cancelable"></param>
+		/// <returns></returns>
+		public static int Show<T>(IDesktopWindow desktopWindow, IList<T> items, Func<T, int, string> processor, bool cancelable)
+		{
+			var totalItems = items.Count;
+			var processedCount = 0;
+			var task = new BackgroundTask(
+				context =>
+					{
+						try
+						{
+							foreach (var item in items)
+							{
+								if (context.CancelRequested)
+								{
+									context.Cancel();
+									return;
+								}
+
+								var msg = processor(item, processedCount);
+								context.ReportProgress(new BackgroundTaskProgress(processedCount, totalItems, msg));
+								processedCount++;
+							}
+							context.Complete();
+						}
+						catch (Exception e)
+						{
+							context.Error(e);
+						}
+					}, cancelable);
+
+			//note: any exceptions occurring on the background task will be re-thrown from this call
+			Show(task, desktopWindow, true);
+
+			return processedCount;
+		}
+	}
 }

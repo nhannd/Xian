@@ -14,10 +14,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules
@@ -39,17 +41,13 @@ namespace ClearCanvas.ImageServer.Rules
 		public StudyRulesEngine(StudyStorageLocation location, ServerPartition partition)
 		{
 			_location = location;
-			_partition = partition;
-			if (_partition == null)
-				_partition = ServerPartition.Load(_location.ServerPartitionKey);
+			_partition = partition ?? ServerPartition.Load(_location.ServerPartitionKey);
 		}
 		public StudyRulesEngine(StudyStorageLocation location, ServerPartition partition, StudyXml studyXml)
 		{
 			_studyXml = studyXml;
 			_location = location;
-			_partition = partition;
-			if (_partition == null)
-				_partition = ServerPartition.Load(_location.ServerPartitionKey);
+			_partition = partition ?? ServerPartition.Load(_location.ServerPartitionKey);
 		}
 		#endregion
 
@@ -74,7 +72,7 @@ namespace ClearCanvas.ImageServer.Rules
 		public void Apply(ServerRuleApplyTimeEnum applyTime)
 		{
 
-			using(ServerCommandProcessor theProcessor = new ServerCommandProcessor("Study Rule Processor"))
+			using(var theProcessor = new ServerCommandProcessor("Study Rule Processor"))
 			{
                 Apply(applyTime, theProcessor);
 
@@ -89,7 +87,7 @@ namespace ClearCanvas.ImageServer.Rules
 			
 		}
 
-		public void Apply(ServerRuleApplyTimeEnum applyTime, ServerCommandProcessor theProcessor)
+		public void Apply(ServerRuleApplyTimeEnum applyTime, CommandProcessor theProcessor)
 		{
 			_studyRulesEngine = new ServerRulesEngine(applyTime, _location.ServerPartitionKey);
 			_studyRulesEngine.Load();
@@ -109,12 +107,12 @@ namespace ClearCanvas.ImageServer.Rules
 
 			foreach (string seriesFilePath in files)
 			{
-				DicomFile theFile = new DicomFile(seriesFilePath);
+				var theFile = new DicomFile(seriesFilePath);
 				theFile.Load(DicomReadOptions.Default);
-				ServerActionContext context =
-					new ServerActionContext(theFile, _location.FilesystemKey, _partition, _location.Key);
-				context.CommandProcessor = theProcessor;
-				_studyRulesEngine.Execute(context);
+			    var context =
+			        new ServerActionContext(theFile, _location.FilesystemKey, _partition, _location.Key)
+			            {CommandProcessor = theProcessor};
+			    _studyRulesEngine.Execute(context);
 
 				ProcessSeriesRules(theFile, theProcessor);
 			}
@@ -139,7 +137,7 @@ namespace ClearCanvas.ImageServer.Rules
 		/// <returns></returns>
 		private List<string> GetFirstInstanceInEachStudySeries()
 		{
-			List<string> fileList = new List<string>();
+			var fileList = new List<string>();
 
 			if (_studyXml == null)
 			{
@@ -154,7 +152,7 @@ namespace ClearCanvas.ImageServer.Rules
 
 				using (FileStream stream = FileStreamOpener.OpenForRead(studyXml, FileMode.Open))
 				{
-					XmlDocument theDoc = new XmlDocument();
+					var theDoc = new XmlDocument();
 					StudyXmlIo.Read(theDoc, stream);
 					stream.Close();
 					_studyXml.SetMemento(theDoc);
@@ -198,7 +196,7 @@ namespace ClearCanvas.ImageServer.Rules
 		/// </summary>
 		/// <param name="file">The DICOM file being processed.</param>
 		/// <param name="processor">The command processor</param>
-		private void ProcessSeriesRules(DicomFile file, ServerCommandProcessor processor)
+		private void ProcessSeriesRules(DicomFile file, CommandProcessor processor)
 		{
 			if (_seriesRulesEngine == null)
 			{
@@ -211,11 +209,11 @@ namespace ClearCanvas.ImageServer.Rules
 				_seriesRulesEngine.Statistics.ExecutionTime.Reset();
 			}
 
-			ServerActionContext context = new ServerActionContext(file, _location.FilesystemKey, _partition, _location.Key);
+		    var context = new ServerActionContext(file, _location.FilesystemKey, _partition, _location.Key)
+		                      {CommandProcessor = processor};
 
-			context.CommandProcessor = processor;
 
-			_seriesRulesEngine.Execute(context);
+		    _seriesRulesEngine.Execute(context);
 
 		}
 		#endregion

@@ -12,11 +12,12 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
+using ClearCanvas.Dicom.Utilities.Rules;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
 {
-    public class OnlineRetentionActionItem : ServerActionItemBase
+    public class OnlineRetentionActionItem : ActionItemBase<ServerActionContext>
     {
         private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.PurgeStudy;
         private readonly Expression _exprScheduledTime;

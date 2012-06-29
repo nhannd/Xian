@@ -9,9 +9,12 @@
 
 #endregion
 
+using System;
+using ClearCanvas.Dicom.Iod;
+
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	//TODO (later): move this stuff into ImageViewer.Services and deprecate it.
+	//TODO (later): move this stuff into ImageViewer.Common and deprecate it.
 
 	/// <summary>
 	/// Defines a study finder.
@@ -31,6 +34,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Queries for studies on a target server matching the specified query parameters.
 		/// </summary>
-        StudyItemList Query(QueryParameters queryParams, object targetServer);
+        StudyItemList Query(QueryParameters queryParams, IApplicationEntity targetServer);
     }
 }

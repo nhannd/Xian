@@ -11,7 +11,7 @@
 
 using System;
 using System.Runtime.Serialization;
-
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.PatientReconciliation

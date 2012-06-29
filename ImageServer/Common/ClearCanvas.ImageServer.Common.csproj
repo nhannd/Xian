@@ -15,7 +15,7 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -68,36 +68,19 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.IdentityModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
-    <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
-    <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alert.cs" />
+    <Compile Include="Command\ServerCommandProcessor.cs" />
+    <Compile Include="Command\ServerDatabaseCommand.cs" />
+    <Compile Include="Command\ServerExecutionContext.cs" />
     <Compile Include="ConstantResourceManager.cs" />
     <Compile Include="ExceptionLogAdviceAttribute.cs" />
     <Compile Include="Exceptions\AutoReconcileException.cs" />
-    <Compile Include="CommandProcessor\CopyDirectoryCommand.cs" />
-    <Compile Include="CommandProcessor\CreateDirectoryCommand.cs" />
-    <Compile Include="CommandProcessor\CreateTempDirectoryCommand.cs" />
-    <Compile Include="CommandProcessor\DeleteDirectoryCommand.cs" />
-    <Compile Include="CommandProcessor\DeleteFileCommand.cs" />
-    <Compile Include="CommandProcessor\DeleteWorkQueueUidCommand.cs" />
-    <Compile Include="CommandProcessor\DicomCompressCommand.cs" />
-    <Compile Include="CommandProcessor\ExecutionContext.cs" />
-    <Compile Include="CommandProcessor\IAggregateServerCommand.cs" />
-    <Compile Include="CommandProcessor\InsertInstanceXmlCommand.cs" />
-    <Compile Include="CommandProcessor\LockStudyCommand.cs" />
-    <Compile Include="CommandProcessor\UpdateWorkQueueCommand.cs" />
-    <Compile Include="Diagnostics\DiagnosticSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>DiagnosticSettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="Diagnostics\RandomError.cs" />
-    <Compile Include="Diagnostics\Settings.cs" />
     <Compile Include="EnumInfoAttribute.cs" />
     <Compile Include="Exceptions\FilesystemNotReadableException.cs" />
     <Compile Include="Exceptions\FilesystemNotWritableException.cs" />
@@ -109,10 +92,6 @@
     <Compile Include="Exceptions\StudyNotFoundException.cs" />
     <Compile Include="FileSystemMonitor.cs" />
     <Compile Include="Helpers\DicomTagPath.cs" />
-    <Compile Include="CommandProcessor\FileDeleteCommand.cs" />
-    <Compile Include="CommandProcessor\InsertArchiveQueueCommand.cs" />
-    <Compile Include="CommandProcessor\IServerCommand.cs" />
-    <Compile Include="CommandProcessor\MoveDirectoryCommand.cs" />
     <Compile Include="FilesystemSelector.cs" />
     <Compile Include="InProcessImageServerServiceProvider.cs" />
     <Compile Include="ServerAuditHelper.cs" />
@@ -127,9 +106,6 @@
     <Compile Include="ImageServerCommonConfiguration.cs" />
     <Compile Include="ImageServerLogWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CommandProcessor\RenameFileCommand.cs" />
-    <Compile Include="CommandProcessor\SaveDicomFileCommand.cs" />
-    <Compile Include="CommandProcessor\SaveXmlCommand.cs" />
     <Compile Include="RemoteImageServerServiceProvider.cs" />
     <Compile Include="RemoteImageServerServiceSettings.cs" />
     <Compile Include="RemoteImageServerServiceSettings.Designer.cs">
@@ -138,14 +114,9 @@
       <DependentUpon>RemoteImageServerServiceSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="ServerAddress.cs" />
-    <Compile Include="CommandProcessor\ServerCommand.cs" />
-    <Compile Include="CommandProcessor\ServerCommandProcessor.cs" />
-    <Compile Include="CommandProcessor\ServerCommandStatistics.cs" />
-    <Compile Include="CommandProcessor\ServerDatabaseCommand.cs" />
     <Compile Include="ServerCache.cs" />
     <Compile Include="ServerFilesystemInfo.cs" />
     <Compile Include="ServerPartitionMonitor.cs" />
-    <Compile Include="FileStreamOpener.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -157,10 +128,8 @@
     <Compile Include="ThreadedService.cs" />
     <Compile Include="Utilities\CustomXmlTextWriter.cs" />
     <Compile Include="Utilities\DicomNameUtils.cs" />
-    <Compile Include="Utilities\DirectoryUtility.cs" />
     <Compile Include="Utilities\FilesystemInfo.cs" />
     <Compile Include="Utilities\FilesystemUtils.cs" />
-    <Compile Include="Utilities\FileUtils.cs" />
     <Compile Include="Utilities\StringUtils.cs" />
     <Compile Include="Utilities\Test\DicomNameUtilsTest.cs" />
     <Compile Include="Utilities\XmlUtils.cs" />
@@ -204,10 +173,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Diagnostics\DiagnosticSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>DiagnosticSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="RemoteImageServerServiceSettings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>RemoteImageServerServiceSettings.Designer.cs</LastGenOutput>

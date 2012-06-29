@@ -38,7 +38,7 @@ namespace ClearCanvas.Common.Specifications
             get { return _childSpecs.Count == 0; }
         }
 
-        protected internal IEnumerable<ISpecification> Elements
+        public IEnumerable<ISpecification> Elements
         {
             get { return _childSpecs; }
         }

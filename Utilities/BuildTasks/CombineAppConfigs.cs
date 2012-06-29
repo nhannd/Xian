@@ -313,7 +313,7 @@ namespace ClearCanvas.Utilities.BuildTasks
 
 					foreach (XmlElement client in serviceModelClientElement)
 					{
-						xPath = string.Format("endpoint[@address='{0}']", client.GetAttribute("address"));
+                        xPath = string.Format("endpoint[@name='{0}']", client.GetAttribute("name"));
 						UpdateNode(newServiceModelClientElement, client, xPath);
 					}
 				}
