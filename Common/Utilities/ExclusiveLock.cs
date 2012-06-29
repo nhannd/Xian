@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;
@@ -161,7 +162,7 @@ namespace ClearCanvas.Common.Utilities
 		public abstract bool Lock(TimeSpan timeSpan);
 		public abstract bool Unlock();
 		
-		public static void WithLock<T>(ExclusiveLock @lock, Action<T> action) where T : class
+	    public static void WithLock<T>(ExclusiveLock @lock, Action<T> action) where T : class 
 		{
 			WithLock(@lock, action, null);
 		}
@@ -201,7 +202,7 @@ namespace ClearCanvas.Common.Utilities
 
 		#endregion
 
-		public static ExclusiveLock CreateFileLock(System.IO.FileInfo file)
+	    public static ExclusiveLock CreateFileLock(System.IO.FileInfo file)
 		{
 			return CreateFileSystemLock(file);
 		}
@@ -222,7 +223,7 @@ namespace ClearCanvas.Common.Utilities
 			Platform.CheckForEmptyString(fileOrDirectoryName, "fileOrDirectoryName");
 			var mutexName = fileOrDirectoryName.ToLower();
 			foreach(var invalidFileNameChar in Path.GetInvalidFileNameChars())
-				mutexName = mutexName.Replace(invalidFileNameChar.ToString(), "-");
+				mutexName = mutexName.Replace(invalidFileNameChar.ToString(CultureInfo.InvariantCulture), "-");
 
             // If "Global\" prefix is not included, the mutex is considered Local\ and will not block across users
             // The ShredHostService + Desktop app run under different users

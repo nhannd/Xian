@@ -259,6 +259,15 @@ namespace ClearCanvas.Utilities.DicomEditor {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The file being anonymized is a report or other document. These often contain patient information that cannot be completely cleaned by this tool. Are you sure you want to continue anonymization?.
+        /// </summary>
+        internal static string MessageConfirmAnonymizeReportOrAttachment {
+            get {
+                return ResourceManager.GetString("MessageConfirmAnonymizeReportOrAttachment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The selected tag(s) will be deleted.  Are you sure you want to continue?.
         /// </summary>
         internal static string MessageConfirmDeleteSelectedTags {
@@ -320,6 +329,24 @@ namespace ClearCanvas.Utilities.DicomEditor {
         internal static string MessageConfirmSaveAllFiles {
             get {
                 return ResourceManager.GetString("MessageConfirmSaveAllFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The edited file is a report and/or other document. If you have modified any patient information, this tool cannot modify the document to match your changes. Are you sure you want to continue?.
+        /// </summary>
+        internal static string MessageConfirmSaveReportOrAttachment {
+            get {
+                return ResourceManager.GetString("MessageConfirmSaveReportOrAttachment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One or more of the edited files are reports and/or other documents. If you have modified any patient information, this tool cannot modify the document to match your changes. Are you sure you want to continue?.
+        /// </summary>
+        internal static string MessageConfirmSaveReportsOrAttachments {
+            get {
+                return ResourceManager.GetString("MessageConfirmSaveReportsOrAttachments", resourceCulture);
             }
         }
         
