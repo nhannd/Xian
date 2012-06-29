@@ -183,7 +183,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                                                    lastFile = new DicomFile(file);
                                                                    lastFile.Load(DicomReadOptions.Default |
                                                                                   DicomReadOptions.StorePixelDataReferences);
-                                                                   if (Path.GetFileNameWithoutExtension(file) == lastFile.MediaStorageSopInstanceUid)
+
+                                                                   String sopInstanceUid = lastFile.DataSet[DicomTags.SopInstanceUid].GetString(0, lastFile.MediaStorageSopInstanceUid);
+                                                                   if (Path.GetFileNameWithoutExtension(file) == sopInstanceUid)
                                                                    {
                                                                        if (!studyXml.AddFile(lastFile))
                                                                        {
