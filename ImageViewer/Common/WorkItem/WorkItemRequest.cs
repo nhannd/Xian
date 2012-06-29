@@ -394,11 +394,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     [DataContract(Name = "WorkItemConcurrency", Namespace = ImageViewerWorkItemNamespace.Value)]
     public enum WorkItemConcurrency
     {
-        // TODO (CR Jun 2012): Should there be an AllStudiesRead/Write for Re-index and re-apply rules? Feel like there's more to it than this.
-        // (SW) If we change it to a new type, we could re-do the BaseItemProcessor.CanStart() method to more generically handle these.
-        // Re-apply rules is a bit different becasue we let it run no matter what.
         [EnumMember]
-        NonStudy,
+        Blocking,
 
         // TODO (CR Jun 2012 - Med): Update, rather than Insert?
         [EnumMember]
@@ -406,7 +403,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [EnumMember]
         StudyDelete,
         [EnumMember]
-        StudyRead
+        StudyRead,
+        [EnumMember]
+        Free
     }
 
     /// <summary>
@@ -429,7 +428,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override WorkItemConcurrency ConcurrencyType
         {
-            get { return WorkItemConcurrency.NonStudy; }
+            get { return WorkItemConcurrency.Free; }
         }
 
         [DataMember(IsRequired = true)]
@@ -633,7 +632,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public override WorkItemConcurrency ConcurrencyType
         {
             // TODO (CR Jun 2012): NonStudy seems a bit odd, since it's actually rewriting all studies.
-            get { return WorkItemConcurrency.NonStudy; }
+            get { return WorkItemConcurrency.Blocking; }
         }
 
         public override string ActivityDescription
@@ -735,8 +734,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override WorkItemConcurrency ConcurrencyType
         {
-            // TODO (CR Jun 2012): Again, a bit weird, since it may actually change the Delete Time for all the studies.
-            get { return WorkItemConcurrency.NonStudy; }
+            get { return WorkItemConcurrency.Free; }
         }
 
 		/// <summary>

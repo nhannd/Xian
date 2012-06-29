@@ -316,7 +316,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
                          {
                              Processor = InsertStudyProcess(msg),
                              Message = "Study Process",
-                             CanStart = true
+                             CanStart = false
                          });
 
             Thread.Sleep(2);
@@ -351,7 +351,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
                          {
                              Processor = InsertSendStudy(msg),
                              Message = "Study Send",
-                             CanStart = false
+                             CanStart = true
                          });
 
             Thread.Sleep(2);
@@ -359,7 +359,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
                          {
                              Processor = InsertStudyProcess(msg),
                              Message = "Study Process",
-                             CanStart = false
+                             CanStart = true
                          });
 
             Thread.Sleep(2);

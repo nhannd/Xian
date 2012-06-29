@@ -131,26 +131,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         /// Get the WorkItems scheduled before <paramref name="scheduledTime"/> for <paramref name="studyInstanceUid"/>. 
         /// </summary>
         /// <param name="scheduledTime">The scheduled time to get related WorkItems for.</param>
-        /// <param name="prioritiesToBlock">A list of priorities to NOT include in the results.  Can be null.</param>
         /// <param name="studyInstanceUid">The Study Instance UID to search for matching WorkItems.  Can be null.</param>
         /// <returns></returns>
         public IEnumerable<WorkItem> GetWorkItemsScheduledBeforeTime(DateTime scheduledTime,
-            IEnumerable<WorkItemPriorityEnum> prioritiesToBlock, string studyInstanceUid)
+             string studyInstanceUid)
         {
             IQueryable<WorkItem> query = from w in Context.WorkItems select w;
 
             query = query.Where(w => w.ScheduledTime < scheduledTime);
 
-	        query = query.WhereIsActive();
-
-            if (prioritiesToBlock != null)
-            {
-                foreach (var priority in prioritiesToBlock)
-                {
-                    WorkItemPriorityEnum priority1 = priority;
-                    query = query.Where(w => w.Priority != priority1);
-                }
-            }
+	        query = query.WhereIsActive();      
 
             if (!string.IsNullOrEmpty(studyInstanceUid))
                 query = query.Where(w => w.StudyInstanceUid == studyInstanceUid);

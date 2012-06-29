@@ -188,7 +188,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetWorkItemBroker();             
-                var list = broker.GetWorkItemsScheduledBeforeTime(Proxy.Item.ScheduledTime, null, null);
+                var list = broker.GetWorkItemsScheduledBeforeTime(Proxy.Item.ScheduledTime, null);
 
                 if (list == null)
                     return false;

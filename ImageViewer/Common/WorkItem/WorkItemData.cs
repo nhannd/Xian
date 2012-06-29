@@ -50,6 +50,28 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [EnumMember]
         Canceling = 9,
     }
+
+    public static class WorkItemStatusEnumExtensions
+    {
+        public static bool IsActive(this  WorkItemStatusEnum query)
+        {
+            return query == WorkItemStatusEnum.Pending
+                   || query == WorkItemStatusEnum.Idle
+                   || query == WorkItemStatusEnum.InProgress
+                   || query == WorkItemStatusEnum.Canceling;
+        }
+
+        public static bool IsPending(this  WorkItemStatusEnum query)
+        {
+            return query  == WorkItemStatusEnum.Pending 
+                ||query == WorkItemStatusEnum.Idle;            
+        }
+
+        public static bool IsInProgress(this  WorkItemStatusEnum query)
+        {
+            return query == WorkItemStatusEnum.InProgress;
+        }
+    }
     
     /// <summary>
     /// Base WorkItem representing a unit of Work to be done.

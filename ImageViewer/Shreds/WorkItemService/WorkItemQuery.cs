@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
@@ -53,11 +52,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             using (var query = new WorkItemQuery())
             {
-                if (item.Request is ReindexRequest)
-                {
-                    return query.CanStartReindex(item, out reason);
-                }
-                return query.CanStartReindex(item, out reason);
+                return query.CanStart(item, out reason);
             }
         }
         #endif
@@ -96,66 +91,39 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 List<WorkItem> workItems;
                 if (priority == WorkItemPriorityEnum.Stat)
-                    workItems = workItemBroker.GetWorkItemsForProcessingByPriority(count * 3, priority);
+                    workItems = workItemBroker.GetWorkItemsForProcessingByPriority(count * 4, priority);
                 else if (priority == WorkItemPriorityEnum.High)
-                    workItems = workItemBroker.GetWorkItemsForProcessingByPriority(count * 3, priority);
+                    workItems = workItemBroker.GetWorkItemsForProcessingByPriority(count * 4, priority);
                 else
-                    workItems = workItemBroker.GetWorkItemsForProcessing(count * 3);
+                    workItems = workItemBroker.GetWorkItemsForProcessing(count * 4);
 
                 foreach (var item in workItems)
                 {
                     string reason;
-                    if (item.Request is ReindexRequest)
+                    if (CanStart(item, out reason))
                     {
-                        if (CanStartReindex(item, out reason))
-                        {
-                            item.Status = WorkItemStatusEnum.InProgress;
-                            returnedItems.Add(item);
-                        }
-                        else
-                        {
-                            Postpone(item);
-                            WorkItemProgress progress = item.Progress;
-                            if (progress != null)
-                            {
-                                progress.StatusDetails = reason;
-                                item.Progress = progress;
-                                itemsToPublish.Add(WorkItemDataHelper.FromWorkItem(item));
-                            }
-                        }
+                        item.Status = WorkItemStatusEnum.InProgress;
+                        returnedItems.Add(item);
                     }
                     else
                     {
-                        if (CanStart(item, out reason))
+                        Postpone(item);
+                        WorkItemProgress progress = item.Progress;
+                        if (progress != null)
                         {
-                            item.Status = WorkItemStatusEnum.InProgress;
-                            returnedItems.Add(item);
-                        }
-                        else
-                        {
-                            Postpone(item);
-                            WorkItemProgress progress = item.Progress;
-                            if (progress != null)
-                            {
-                                progress.StatusDetails = reason;
-                                item.Progress = progress;
-                                itemsToPublish.Add(WorkItemDataHelper.FromWorkItem(item));
-                            }
+                            progress.StatusDetails = reason;
+                            item.Progress = progress;
+                            itemsToPublish.Add(WorkItemDataHelper.FromWorkItem(item));
                         }
                     }
+
                     if (returnedItems.Count >= count)
                         break;
                 }
 
                 _context.Commit();
 
-                if (itemsToPublish.Count > 0)
-                {
-                    WorkItemPublishSubscribeHelper.PublishWorkItemsChanged(WorkItemsChangedEventType.Update, itemsToPublish);
-                }
-
                 return returnedItems;
-
             }
             catch (Exception x)
             {
@@ -163,108 +131,111 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                              priority.GetDescription());
                 return null;
             }
-        }
-
-        private bool CanStartReindex(WorkItem workItem, out string reason)
-        {
-            if (ScheduledAheadInsertItems(workItem, out reason))
+            finally
             {
-                return false;
+                if (itemsToPublish.Count > 0)
+                {
+                    WorkItemPublishSubscribeHelper.PublishWorkItemsChanged(WorkItemsChangedEventType.Update, itemsToPublish);
+                }   
             }
-
-            return !AnyInProgressWorkItems(workItem, out reason);
         }
 
         private bool CanStart(WorkItem item, out string reason)
         {
+            if (item.Request.ConcurrencyType == WorkItemConcurrency.Free)
+            {
+                reason = string.Empty;
+                return true;
+            }
 
             if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
-            {
-                var relatedList = GetCompetingWorkItems(item);
-                if (relatedList != null)
-                {
-                    foreach (var relatedWorkItem in relatedList)
-                    {
-                        if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete
-                         || relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
-                        {
-                            reason = string.Format("Waiting for: {0}",
-                                                         relatedWorkItem.Request.ActivityDescription);
-                            return false;
-                        }
-                    }
-                }
-                
-                return !CompetingReindexScheduled(item, out reason);
-            }
+                return CanStartStudyInsert(item, out reason);
 
             if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete)
-            {
-                var inProgressList = GetCompetingInProgressWorkItems(item);
-                if (inProgressList != null)
-                {
-                    foreach (var relatedWorkItem in inProgressList)
-                    {
-                        // This check is done because it is possible that 2 entries for the
-                        // Same study are entered into the queue, and they both don't run because
-                        // of the other entry.  This will allow the one scheduled first to run.
-                        if (relatedWorkItem.ScheduledTime < item.ScheduledTime)
-                        {
-                            reason = string.Format("Waiting for: {0}",
-                                                   relatedWorkItem.Request.ActivityDescription);
-                            return false;
-                        }
-                    }
-                }
-
-                var relatedList = GetCompetingWorkItems(item);
-                if (relatedList != null)
-                {
-                    foreach (var relatedWorkItem in relatedList)
-                    {
-                        if (relatedWorkItem.Request.ConcurrencyType != WorkItemConcurrency.NonStudy)
-                        {
-                            reason = string.Format("Waiting for: {0}",
-                                                   relatedWorkItem.Request.ActivityDescription);
-                            return false;
-                        }
-                    }
-                }
-                return !CompetingReindexScheduled(item, out reason);
-            }
+                return CanStartStudyDelete(item, out reason);
 
             if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyRead)
+                return CanStartStudyRead(item, out reason);
+
+            // Blocking Concurrency Type here
+            return CanStartBlocking(out reason);
+        }
+
+        private bool CanStartStudyInsert(WorkItem workItem, out string reason)
+        {
+            var relatedList = GetCompetingWorkItems(workItem);
+            if (relatedList != null)
             {
-                var relatedList = GetCompetingWorkItems(item);
-                if (relatedList != null)
+                foreach (var relatedWorkItem in relatedList)
                 {
-                    foreach (var relatedWorkItem in relatedList)
+                    if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete
+                     || relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
                     {
-                        if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete
-                            || relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
-                        {
-                            reason = string.Format("Waiting for: {0}",
-                                                   relatedWorkItem.Request.ActivityDescription);
-                            return false;
-                        }
+                        reason = string.Format("Waiting for: {0}",
+                                                     relatedWorkItem.Request.ActivityDescription);
+                        return false;
                     }
                 }
-
-                return !CompetingReindexScheduled(item, out reason);
             }
 
-            // TODO (CR Jun 2012): I would agree this was true generally, if it weren't for the fact that re-index items are "NonStudy",
-            // and the ReindexItemProcessor overrides this method.
+            if (BlockingInProgressWorkItem(out reason))
+                return false;
 
-            // WorkItemConcurrency.NonStudy entries that haven't overriden this method can just run
-            reason = string.Empty;
             return true;
+        }
+
+        private bool CanStartStudyDelete(WorkItem workItem, out string reason)
+        {
+            var relatedList = GetCompetingWorkItems(workItem);
+            if (relatedList != null)
+            {
+                foreach (var relatedWorkItem in relatedList)
+                {
+                    if (relatedWorkItem.Request.ConcurrencyType != WorkItemConcurrency.Blocking)
+                    {
+                        reason = string.Format("Waiting for: {0}", relatedWorkItem.Request.ActivityDescription);
+                        return false;
+                    }
+                }
+            }
+
+            if (BlockingInProgressWorkItem(out reason))
+                return false;
+
+            return true;
+        }
+
+        private bool CanStartStudyRead(WorkItem workItem, out string reason)
+        {
+            var relatedList = GetCompetingWorkItems(workItem);
+            if (relatedList != null)
+            {
+                foreach (var relatedWorkItem in relatedList)
+                {
+                    if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete
+                        || relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
+                    {
+                        reason = string.Format("Waiting for: {0}", relatedWorkItem.Request.ActivityDescription);
+                        return false;
+                    }
+                }
+            }
+
+            if (BlockingInProgressWorkItem(out reason))
+                return false;
+
+            return true;
+        }
+
+        private bool CanStartBlocking(out string reason)
+        {
+            return !AnyInProgressWorkItems(out reason);    
         }
 
         /// <summary>
         /// Postpone a <see cref="WorkItem"/>
         /// </summary>
-        public void Postpone(WorkItem item)
+        private void Postpone(WorkItem item)
         {
             DateTime now = Platform.Time;
 
@@ -283,7 +254,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
             if (item.ProcessTime > item.ExpirationTime)
                 item.ExpirationTime = item.ProcessTime;
-
         }
 
         /// <summary>
@@ -293,101 +263,23 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// <returns></returns>
         private IEnumerable<WorkItem> GetCompetingWorkItems(WorkItem item)
         {
-            using (var context = new DataAccessContext())
-            {
-                var broker = context.GetWorkItemBroker();
-
-                var prioritiesToBlock = new List<WorkItemPriorityEnum>();
-
-
-                if (item.Request.Priority == WorkItemPriorityEnum.Stat)
-                {
-                    prioritiesToBlock.Add(WorkItemPriorityEnum.High);
-                    prioritiesToBlock.Add(WorkItemPriorityEnum.Normal);
-                }
-                if (item.Request.Priority == WorkItemPriorityEnum.High)
-                {
-                    prioritiesToBlock.Add(WorkItemPriorityEnum.Normal);
-                }
-                var list = broker.GetWorkItemsScheduledBeforeTime(item.ScheduledTime, prioritiesToBlock, item.StudyInstanceUid);
-
-                if (list == null)
-                    return null;
-
-                var newList = new List<WorkItem>();
-                newList.AddRange(list);
-                return newList;
-            }
-        }
-
-        /// <summary>
-        /// Returns a list of related <see cref="WorkItem"/>s with specified types and status (both are optional)
-        /// that are In Progress and scheduled before the <see cref="WorkItem"/> being processed.
-        /// </summary>
-        /// <returns></returns>
-        private IList<WorkItem> GetCompetingInProgressWorkItems(WorkItem workItem)
-        {
             var broker = _context.GetWorkItemBroker();
 
-            var list = broker.GetWorkItems(null, WorkItemStatusEnum.InProgress, workItem.StudyInstanceUid);
+            var list = broker.GetWorkItemsScheduledBeforeTime(item.ScheduledTime, item.StudyInstanceUid);
 
             if (list == null)
                 return null;
 
             var newList = new List<WorkItem>();
-            foreach (var item in list)
-            {
-                if (item.Oid != workItem.Oid)
-                    newList.Add(item);
-            }
+            newList.AddRange(list);
             return newList;
         }
 
         /// <summary>
-        /// Checks if a Reindex is scheduled that should prevent the current <see cref="WorkItem"/> from processing.
+        /// Returns true if there are any WorkItemStatusEnum.InProgress work items with <see cref="WorkItemConcurrency.Blocking"/>.
         /// </summary>
         /// <returns></returns>
-        private bool CompetingReindexScheduled(WorkItem workItem, out string reason)
-        {
-            reason = string.Empty;
-
-            var broker = _context.GetWorkItemBroker();
-
-            var list = broker.GetWorkItems(ReindexRequest.WorkItemTypeString, null, null);
-
-            if (list == null)
-                return false;
-
-            var newList = CollectionUtils.Select(list,
-                                                 item => item.Status != WorkItemStatusEnum.Complete
-                                                         && item.Status != WorkItemStatusEnum.Deleted
-                                                         && item.Status != WorkItemStatusEnum.Canceled
-                                                         && item.Status != WorkItemStatusEnum.Failed);
-
-            // Study Inserts only wait for reindexes scheduled before itself, not for those after.  All other 
-            // WorkItem types wait for any reindex scheduled, whether its scheduled before or after itself.
-            if (workItem.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
-            {
-                newList = CollectionUtils.Select(newList,
-                                                 item =>
-                                                 item.ScheduledTime < workItem.ScheduledTime ||
-                                                 item.Status == WorkItemStatusEnum.InProgress);
-            }
-
-            foreach (var item in newList)
-            {
-                reason = string.Format("Waiting for: {0}", item.Request.ActivityDescription);
-                break;
-            }
-
-            return newList.Count > 0;
-        }
-
-        /// <summary>
-        /// Returns true if there are any WorkItemStatusEnum.InProgress work items.
-        /// </summary>
-        /// <returns></returns>
-        private bool AnyInProgressWorkItems(WorkItem workItem, out string reason)
+        private bool BlockingInProgressWorkItem(out string reason)
         {
             reason = string.Empty;
 
@@ -398,40 +290,37 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             if (list == null)
                 return false;
 
-            // remove the current item 
-            var newList = CollectionUtils.Reject(list, item => item.Oid.Equals(workItem.Oid));
-
-            foreach (var item in newList)
+            foreach (var item in list)
             {
-                reason = string.Format("Waiting for: {0}", item.Request.ActivityDescription);
-                break;
+                if (item.Request.ConcurrencyType == WorkItemConcurrency.Blocking)
+                {
+                    reason = string.Format("Waiting for: {0}", item.Request.ActivityDescription);
+                    return true;
+                }
             }
 
-            return newList.Count > 0;
+            return false;
         }
 
-        private bool ScheduledAheadInsertItems(WorkItem workItem, out string reason)
+        /// <summary>
+        /// Returns true if there are any WorkItemStatusEnum.InProgress work items.
+        /// </summary>
+        /// <returns></returns>
+        private bool AnyInProgressWorkItems(out string reason)
         {
             reason = string.Empty;
 
             var broker = _context.GetWorkItemBroker();
-            var list = broker.GetWorkItemsScheduledBeforeTime(workItem.ScheduledTime, null, null);
+
+            var list = broker.GetWorkItems(null, WorkItemStatusEnum.InProgress, null);
 
             if (list == null)
                 return false;
 
             foreach (var item in list)
             {
-                // TODO (CR Jun 2012 - Med): Does this mean it can run at the same time as a study delete?
-                // StudyInserts only wait for reindexes scheduled before themselves.  They will not wait
-                // for a reindex after.  So, the reindex must wait until any study insert before it
-                // completes.
-                // A delete will wait for any re-index scheduled, even ones scheduled after it.
-                if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
-                {
-                    reason = string.Format("Waiting for: {0}", item.Request.ActivityDescription);
-                    return true;
-                }
+                reason = string.Format("Waiting for: {0}", item.Request.ActivityDescription);
+                return true;
             }
 
             return false;
