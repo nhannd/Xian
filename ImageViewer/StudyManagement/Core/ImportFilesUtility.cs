@@ -423,6 +423,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         
         private void AuditFailure(DicomProcessingResult result)
         {
+            // This primarily happens with DICOMDIR files
+            if (string.IsNullOrEmpty(result.StudyInstanceUid))
+                return;
+
             if (!_context.FailedStudyAudits.ContainsKey(result.StudyInstanceUid))
             {
                 var auditedInstances = new AuditedInstances();
@@ -568,17 +572,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
        
         private static void Validate(DicomMessageBase message)
         {
+            String sopClassUid = message.MetaInfo[DicomTags.MediaStorageSopClassUid].GetString(0, string.Empty);
+            if (sopClassUid.Equals(SopClass.MediaStorageDirectoryStorageUid))
+                throw new DicomDataException("Unable to import DICOMDIR files");
+
             String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
 
             if (string.IsNullOrEmpty(studyInstanceUid))
                 throw new DicomDataException("Study Instance UID does not have a value.");
 
-            // TODO (CR Jun 2012): What about SeriesInstanceUid?
+            String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
+
+            if (string.IsNullOrEmpty(seriesInstanceUid))
+                throw new DicomDataException("Series Instance UID does not have a value.");
 
             String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
             if (string.IsNullOrEmpty(sopInstanceUid))
                 throw new DicomDataException("SOP Instance UID does not have a value.");
-
         }
 
         static private DicomFile ConvertToDicomFile(DicomMessageBase message, string filename, string sourceAE)
