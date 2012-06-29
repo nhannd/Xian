@@ -216,4 +216,7 @@
   <data name="ExceptionNotEnoughStorage" xml:space="preserve">
     <value>Disk usage exceeds maximum configured usage.</value>
   </data>
+  <data name="ImportFailedPartialStudies" xml:space="preserve">
+    <value>{0}.  There may be incomplete imported studies, see the log file for details.</value>
+  </data>
 </root>

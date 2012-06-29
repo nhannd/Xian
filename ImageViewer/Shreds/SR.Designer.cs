@@ -286,6 +286,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}.  There may be incomplete imported studies, see the log file for details..
+        /// </summary>
+        internal static string ImportFailedPartialStudies {
+            get {
+                return ResourceManager.GetString("ImportFailedPartialStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Internal error..
         /// </summary>
         internal static string InternalError {

@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
             else if (StopPending)
                 Proxy.Postpone();
             else if (fatalError || Progress.NumberOfImportFailures > 0)
-                Proxy.Fail(WorkItemFailureType.Fatal);
+                Proxy.Fail(string.Format(SR.ImportFailedPartialStudies, Progress.StatusDetails), WorkItemFailureType.Fatal);
             else
                 Proxy.Complete();
         }
