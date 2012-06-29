@@ -136,7 +136,8 @@ namespace ClearCanvas.Dicom.Network
         private readonly BlockingQueue<RawPDU> _pduQueue = new BlockingQueue<RawPDU>();
         private readonly BlockingQueue<NetworkProcessor> _processingQueue = new BlockingQueue<NetworkProcessor>(); 
         private readonly object _syncLock = new object();
-        private bool _multiThreaded ;
+        private readonly object _writeSyncLock = new object();
+        private bool _multiThreaded;
         #endregion
 
         #region Public members
@@ -1879,23 +1880,29 @@ namespace ClearCanvas.Dicom.Network
                                                 DimseMessageSending(_assoc, pcid, command, dataset);
                                         };
 
-                LogSendReceive(false, command, dataset);
-
-                OnSendDimseBegin(pcid, command, dataset);
-
-
-                var dsw = new DicomStreamWriter(pdustream);
-                dsw.Write(TransferSyntax.ImplicitVrLittleEndian,
-                          command, DicomWriteOptions.Default | DicomWriteOptions.CalculateGroupLengths);
-
-                if ((dataset != null) && !dataset.IsEmpty())
+                // Introduced lock as risk mitigation for ticket #10147.  Note that a more thorough locking
+                // mechanism should be developed to work across PDU types, and also should take into account
+                // if we do end up using _multiThreaded = true
+                lock (_writeSyncLock)
                 {
-                    pdustream.IsCommand = false;
-                    dsw.Write(ts, dataset, DicomWriteOptions.Default);
-                }
+                    LogSendReceive(false, command, dataset);
 
-                // flush last pdu
-                pdustream.Flush(true);
+                    OnSendDimseBegin(pcid, command, dataset);
+
+
+                    var dsw = new DicomStreamWriter(pdustream);
+                    dsw.Write(TransferSyntax.ImplicitVrLittleEndian,
+                              command, DicomWriteOptions.Default | DicomWriteOptions.CalculateGroupLengths);
+
+                    if ((dataset != null) && !dataset.IsEmpty())
+                    {
+                        pdustream.IsCommand = false;
+                        dsw.Write(ts, dataset, DicomWriteOptions.Default);
+                    }
+
+                    // flush last pdu
+                    pdustream.Flush(true);
+                }
 
                 _assoc.TotalBytesSent += total;
 
