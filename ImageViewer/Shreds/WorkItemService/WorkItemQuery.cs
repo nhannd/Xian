@@ -96,9 +96,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 List<WorkItem> workItems;
                 if (priority == WorkItemPriorityEnum.Stat)
-                    workItems = workItemBroker.GetPendingWorkItemsByPriority(count * 3, priority);
+                    workItems = workItemBroker.GetWorkItemsForProcessingByPriority(count * 3, priority);
                 else if (priority == WorkItemPriorityEnum.High)
-                    workItems = workItemBroker.GetPendingWorkItemsByPriority(count * 3, priority);
+                    workItems = workItemBroker.GetWorkItemsForProcessingByPriority(count * 3, priority);
                 else
                     workItems = workItemBroker.GetWorkItemsForProcessing(count * 3);
 
