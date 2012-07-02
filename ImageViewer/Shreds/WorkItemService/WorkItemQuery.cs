@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         #region Private Members
 
         private readonly DataAccessContext _context;
-
+      
         #endregion
 
         #region Contructors
@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
         }
 
-        #if UNIT_TESTS
+#if UNIT_TESTS
         public static bool UnitTestCanStart(WorkItem item, out string reason)
         {
             using (var query = new WorkItemQuery())
@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 return query.CanStart(item, out reason);
             }
         }
-        #endif
+#endif
 
 
         #endregion
@@ -91,11 +91,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 List<WorkItem> workItems;
                 if (priority == WorkItemPriorityEnum.Stat)
-                    workItems = workItemBroker.GetWorkItemsForProcessingByPriority(count * 4, priority);
+                    workItems = workItemBroker.GetWorkItemsForProcessingByPriority(count*4, priority);
                 else if (priority == WorkItemPriorityEnum.High)
-                    workItems = workItemBroker.GetWorkItemsForProcessingByPriority(count * 4, priority);
+                    workItems = workItemBroker.GetWorkItemsForProcessingByPriority(count*4, priority);
                 else
-                    workItems = workItemBroker.GetWorkItemsForProcessing(count * 4);
+                    workItems = workItemBroker.GetWorkItemsForProcessing(count*4);
 
                 foreach (var item in workItems)
                 {
@@ -135,21 +135,19 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {
                 if (itemsToPublish.Count > 0)
                 {
-                    WorkItemPublishSubscribeHelper.PublishWorkItemsChanged(WorkItemsChangedEventType.Update, itemsToPublish);
-                }   
+                    WorkItemPublishSubscribeHelper.PublishWorkItemsChanged(WorkItemsChangedEventType.Update,
+                                                                           itemsToPublish);
+                }
             }
         }
 
         private bool CanStart(WorkItem item, out string reason)
         {
-            if (item.Request.ConcurrencyType == WorkItemConcurrency.Free)
-            {
-                reason = string.Empty;
-                return true;
-            }
+            if (item.Request.ConcurrencyType == WorkItemConcurrency.NonExclusive)
+                return CanStartNonExclusive(out reason);
 
-            if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
-                return CanStartStudyInsert(item, out reason);
+            if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyUpdate)
+                return CanStartStudyUpdate(item, out reason);
 
             if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete)
                 return CanStartStudyDelete(item, out reason);
@@ -157,28 +155,49 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyRead)
                 return CanStartStudyRead(item, out reason);
 
-            // Blocking Concurrency Type here
-            return CanStartBlocking(out reason);
+            return CanStartExclusive(item, out reason);
         }
 
-        private bool CanStartStudyInsert(WorkItem workItem, out string reason)
+        private bool CanStartNonExclusive(out string reason)
         {
-            var relatedList = GetCompetingWorkItems(workItem);
+            if (ExclusiveInProgressWorkItem(out reason))
+                return false;
+
+            return true;
+        }
+
+        private bool CanStartStudyUpdate(WorkItem workItem, out string reason)
+        {
+            var relatedList = GetInProgressWorkItemsForStudy(workItem);
             if (relatedList != null)
             {
                 foreach (var relatedWorkItem in relatedList)
                 {
-                    if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete
-                     || relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
-                    {
-                        reason = string.Format("Waiting for: {0}",
-                                                     relatedWorkItem.Request.ActivityDescription);
-                        return false;
-                    }
+                    reason = string.Format("Waiting for: {0}", relatedWorkItem.Request.ActivityDescription);
+                    return false;
+                }
+            }
+            
+            var competingList = GetCompetingWorkItems(workItem);
+            if (competingList != null)
+            {
+                foreach (var competingWorkItem in competingList)
+                {
+                    // Study Updates/Reads should only block if "In Progress", otherwise they can run at the same time.
+                    if (!competingWorkItem.Status.IsInProgress() && competingWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyUpdate)
+                        continue;
+                    if (!competingWorkItem.Status.IsInProgress() && competingWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyRead)
+                        continue;
+
+                    reason = string.Format("Waiting for: {0}", competingWorkItem.Request.ActivityDescription);
+                    return false;
                 }
             }
 
-            if (BlockingInProgressWorkItem(out reason))
+            if (ExclusiveInProgressWorkItem(out reason))
+                return false;
+
+            if (ExclusiveCompetingWorkItem(workItem, out reason))
                 return false;
 
             return true;
@@ -186,20 +205,30 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         private bool CanStartStudyDelete(WorkItem workItem, out string reason)
         {
-            var relatedList = GetCompetingWorkItems(workItem);
+            var relatedList = GetInProgressWorkItemsForStudy(workItem);
             if (relatedList != null)
             {
                 foreach (var relatedWorkItem in relatedList)
                 {
-                    if (relatedWorkItem.Request.ConcurrencyType != WorkItemConcurrency.Blocking)
-                    {
-                        reason = string.Format("Waiting for: {0}", relatedWorkItem.Request.ActivityDescription);
-                        return false;
-                    }
+                    reason = string.Format("Waiting for: {0}", relatedWorkItem.Request.ActivityDescription);
+                    return false;
                 }
             }
 
-            if (BlockingInProgressWorkItem(out reason))
+            var competingList = GetCompetingWorkItems(workItem);
+            if (competingList != null)
+            {
+                foreach (var competingItem in competingList)
+                {
+                    reason = string.Format("Waiting for: {0}", competingItem.Request.ActivityDescription);
+                    return false;
+                }
+            }
+
+            if (ExclusiveInProgressWorkItem(out reason))
+                return false;
+
+            if (ExclusiveCompetingWorkItem(workItem, out reason))
                 return false;
 
             return true;
@@ -207,29 +236,52 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         private bool CanStartStudyRead(WorkItem workItem, out string reason)
         {
-            var relatedList = GetCompetingWorkItems(workItem);
+            var relatedList = GetInProgressWorkItemsForStudy(workItem);
             if (relatedList != null)
             {
                 foreach (var relatedWorkItem in relatedList)
                 {
-                    if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete
-                        || relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
-                    {
-                        reason = string.Format("Waiting for: {0}", relatedWorkItem.Request.ActivityDescription);
-                        return false;
-                    }
+                    if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyRead) continue;
+
+                    reason = string.Format("Waiting for: {0}", relatedWorkItem.Request.ActivityDescription);
+                    return false;
                 }
             }
 
-            if (BlockingInProgressWorkItem(out reason))
+            var competingList = GetCompetingWorkItems(workItem);
+            if (competingList != null)
+            {
+                foreach (var competingItem in competingList)
+                {
+                    if (competingItem.Request.ConcurrencyType == WorkItemConcurrency.StudyRead)
+                        continue;
+                    reason = string.Format("Waiting for: {0}", competingItem.Request.ActivityDescription);
+                    return false;
+                }
+            }
+
+            if (ExclusiveInProgressWorkItem(out reason))
+                return false;
+
+            if (ExclusiveCompetingWorkItem(workItem, out reason))
                 return false;
 
             return true;
         }
 
-        private bool CanStartBlocking(out string reason)
+        private bool CanStartExclusive(WorkItem workItem, out string reason)
         {
-            return !AnyInProgressWorkItems(out reason);    
+            var relatedList = GetCompetingWorkItems(workItem);
+            if (relatedList != null)
+            {
+                foreach (var relatedWorkItem in relatedList)
+                {
+                    reason = string.Format("Waiting for: {0}", relatedWorkItem.Request.ActivityDescription);
+                    return false;
+                }
+            }
+
+            return !AnyInProgressWorkItems(out reason);
         }
 
         /// <summary>
@@ -243,7 +295,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
             if (timeWindowRequest != null && item.Request.Priority != WorkItemPriorityEnum.Stat)
             {
-                DateTime scheduledTime = timeWindowRequest.GetScheduledTime(now, WorkItemServiceSettings.Default.PostponeSeconds);
+                DateTime scheduledTime = timeWindowRequest.GetScheduledTime(now,
+                                                                            WorkItemServiceSettings.Default.
+                                                                                PostponeSeconds);
                 item.ProcessTime = scheduledTime;
                 item.ScheduledTime = scheduledTime;
             }
@@ -265,21 +319,20 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             var broker = _context.GetWorkItemBroker();
 
-            var list = broker.GetWorkItemsScheduledBeforeTime(item.ScheduledTime, item.StudyInstanceUid);
+            var list = broker.GetWorkItemsScheduledBeforeOrHigherPriority(item.ScheduledTime, item.Priority,
+                                                                          item.StudyInstanceUid);
 
             if (list == null)
                 return null;
-
-            var newList = new List<WorkItem>();
-            newList.AddRange(list);
-            return newList;
+       
+            return list;
         }
 
         /// <summary>
-        /// Returns true if there are any WorkItemStatusEnum.InProgress work items with <see cref="WorkItemConcurrency.Blocking"/>.
+        /// Returns true if there are any WorkItemStatusEnum.InProgress work items with <see cref="WorkItemConcurrency.Exclusive"/>.
         /// </summary>
         /// <returns></returns>
-        private bool BlockingInProgressWorkItem(out string reason)
+        private bool ExclusiveInProgressWorkItem(out string reason)
         {
             reason = string.Empty;
 
@@ -292,7 +345,34 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
             foreach (var item in list)
             {
-                if (item.Request.ConcurrencyType == WorkItemConcurrency.Blocking)
+                if (item.Request.ConcurrencyType == WorkItemConcurrency.Exclusive)
+                {
+                    reason = string.Format("Waiting for: {0}", item.Request.ActivityDescription);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns true if there are any WorkItemStatusEnum.InProgress work items with <see cref="WorkItemConcurrency.Exclusive"/>.
+        /// </summary>
+        /// <returns></returns>
+        private bool ExclusiveCompetingWorkItem(WorkItem workItem, out string reason)
+        {
+            reason = string.Empty;
+
+            var broker = _context.GetWorkItemBroker();
+
+            var list = broker.GetActiveExclusiveWorkItems(workItem.ScheduledTime, workItem.Priority);
+
+            if (list == null)
+                return false;
+
+            foreach (var item in list)
+            {
+                if (item.Request.ConcurrencyType == WorkItemConcurrency.Exclusive)
                 {
                     reason = string.Format("Waiting for: {0}", item.Request.ActivityDescription);
                     return true;
@@ -325,6 +405,24 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
             return false;
         }
+
+        /// <summary>
+        /// Returns true if there are any WorkItemStatusEnum.InProgress work items.
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerable<WorkItem> GetInProgressWorkItemsForStudy(WorkItem workItem)
+        {
+           
+            var broker = _context.GetWorkItemBroker();
+
+            var list = broker.GetWorkItems(null, WorkItemStatusEnum.InProgress, null);
+
+            if (list == null)
+                return null;
+            
+            return list;
+        }
+
 
         #endregion
     }

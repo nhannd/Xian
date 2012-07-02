@@ -178,41 +178,5 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Reindex
 
         #endregion
 
-
-        #region Private Methods
-
-        protected bool ScheduledAheadInsertItems(out string reason)
-        {
-            reason = string.Empty;
-
-            using (var context = new DataAccessContext())
-            {
-                var broker = context.GetWorkItemBroker();             
-                var list = broker.GetWorkItemsScheduledBeforeTime(Proxy.Item.ScheduledTime, null);
-
-                if (list == null)
-                    return false;
-                
-                foreach (var item in list)
-                {
-                    // TODO (CR Jun 2012 - Med): Does this mean it can run at the same time as a study delete?
-                    // StudyInserts only wait for reindexes scheduled before themselves.  They will not wait
-                    // for a reindex after.  So, the reindex must wait until any study insert before it
-                    // completes.
-                    // A delete will wait for any re-index scheduled, even ones scheduled after it.
-                    if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert)
-                    {
-                        reason = string.Format("Waiting for: {0}",
-                                                       item.Request.ActivityDescription);                         
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-        }
-
-        #endregion
-
     }
 }

@@ -1093,7 +1093,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private void WorkItemsChanged(object sender, WorkItemsChangedEventArgs e)
 		{
 			var workItems = e.ChangedItems;
-			if (workItems.Any(item => item.Request.ConcurrencyType == WorkItemConcurrency.StudyInsert
+			if (workItems.Any(item => item.Request.ConcurrencyType == WorkItemConcurrency.StudyUpdate
 									|| item.Request.ConcurrencyType == WorkItemConcurrency.StudyDelete
 									|| item.Type.Equals(ReindexRequest.WorkItemTypeString)))
 			{

@@ -395,17 +395,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     public enum WorkItemConcurrency
     {
         [EnumMember]
-        Blocking,
-
-        // TODO (CR Jun 2012 - Med): Update, rather than Insert?
+        Exclusive,
         [EnumMember]
-        StudyInsert,
+        StudyUpdate,
         [EnumMember]
         StudyDelete,
         [EnumMember]
         StudyRead,
         [EnumMember]
-        Free
+        NonExclusive
     }
 
     /// <summary>
@@ -428,7 +426,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override WorkItemConcurrency ConcurrencyType
         {
-            get { return WorkItemConcurrency.Free; }
+            get { return WorkItemConcurrency.NonExclusive; }
         }
 
         [DataMember(IsRequired = true)]
@@ -570,7 +568,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         public override WorkItemConcurrency ConcurrencyType
         {
-            get { return WorkItemConcurrency.StudyInsert; }
+            get { return WorkItemConcurrency.StudyUpdate; }
         }
 
         [DataMember(IsRequired = true)]
@@ -598,7 +596,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         public override WorkItemConcurrency ConcurrencyType
         {
-            get { return WorkItemConcurrency.StudyInsert; }
+            get { return WorkItemConcurrency.StudyUpdate; }
         }
 
         public override string ActivityDescription
@@ -632,7 +630,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public override WorkItemConcurrency ConcurrencyType
         {
             // TODO (CR Jun 2012): NonStudy seems a bit odd, since it's actually rewriting all studies.
-            get { return WorkItemConcurrency.Blocking; }
+            get { return WorkItemConcurrency.Exclusive; }
         }
 
         public override string ActivityDescription
@@ -734,7 +732,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override WorkItemConcurrency ConcurrencyType
         {
-            get { return WorkItemConcurrency.Free; }
+            get { return WorkItemConcurrency.NonExclusive; }
         }
 
 		/// <summary>

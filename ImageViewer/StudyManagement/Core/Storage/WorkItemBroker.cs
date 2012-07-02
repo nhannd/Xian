@@ -10,8 +10,12 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
@@ -42,8 +46,43 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
     }
 
 	public class WorkItemBroker : Broker
-	{
-		internal WorkItemBroker(DicomStoreDataContext context)
+    {
+        #region Static Exclusive WorkItemRequestTypes
+        public static string[] ExclusiveWorkItemRequestTypes = GetExclusiveWorkItemTypes();
+
+        private static string[] GetExclusiveWorkItemTypes()
+        {
+            try
+            {
+                // build the contract map by finding all types having a T attribute
+                var types = (from p in Platform.PluginManager.Plugins
+                             from t in p.Assembly.GetTypes()
+                             let a = AttributeUtils.GetAttribute<WorkItemRequestAttribute>(t)
+                             where (a != null)
+                             select t).ToList();
+
+                var requestTypes = new List<string>();
+
+                foreach (Type t in types)
+                {
+                    var dataObject = Activator.CreateInstance(t,
+                                                              BindingFlags.Public | BindingFlags.NonPublic |
+                                                              BindingFlags.Instance, null, null, null);
+                    var request = dataObject as WorkItemRequest;
+                    if (request != null && request.ConcurrencyType == WorkItemConcurrency.Exclusive)
+                        requestTypes.Add(request.WorkItemType);
+                }
+                return requestTypes.ToArray();
+            }
+            catch (Exception)
+            {
+                return new[] {ReindexRequest.WorkItemTypeString};
+            }
+        }
+
+	    #endregion
+
+        internal WorkItemBroker(DicomStoreDataContext context)
 			: base(context)
 		{
 		}
@@ -128,25 +167,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         }
 
 	    /// <summary>
-        /// Get the WorkItems scheduled before <paramref name="scheduledTime"/> for <paramref name="studyInstanceUid"/>. 
-        /// </summary>
-        /// <param name="scheduledTime">The scheduled time to get related WorkItems for.</param>
-        /// <param name="studyInstanceUid">The Study Instance UID to search for matching WorkItems.  Can be null.</param>
-        /// <returns></returns>
-        public IEnumerable<WorkItem> GetWorkItemsScheduledBeforeTime(DateTime scheduledTime,
+	    /// Get the WorkItems scheduled before <paramref name="scheduledTime"/> for <paramref name="studyInstanceUid"/> or that are a higher priority
+	    /// and eligible to be run. 
+	    /// </summary>
+	    /// <param name="scheduledTime">The scheduled time to get related WorkItems for.</param>
+	    /// <param name="priority">The priority of the workitem to compare with </param>
+	    /// <param name="studyInstanceUid">The Study Instance UID to search for matching WorkItems.  Can be null.</param>
+	    /// <returns></returns>
+	    public IEnumerable<WorkItem> GetWorkItemsScheduledBeforeOrHigherPriority(DateTime scheduledTime, WorkItemPriorityEnum priority,
              string studyInstanceUid)
         {
             IQueryable<WorkItem> query = from w in Context.WorkItems select w;
 
-            query = query.Where(w => w.ScheduledTime < scheduledTime);
-
+            query = query.Where(w => w.ScheduledTime < DateTime.Now );
+            query = query.Where(w => (w.ScheduledTime < scheduledTime && w.Priority <= priority) || w.Priority < priority);
 	        query = query.WhereIsActive();      
 
             if (!string.IsNullOrEmpty(studyInstanceUid))
                 query = query.Where(w => w.StudyInstanceUid == studyInstanceUid);
 
             query = query.OrderBy(w => w.ScheduledTime);
-
+            query = query.OrderBy(w => w.Priority);
             return query.AsEnumerable();
         }
 
@@ -199,5 +240,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         {
             Context.WorkItems.DeleteOnSubmit(entity);
         }
-	}
+
+        public IEnumerable<WorkItem> GetActiveExclusiveWorkItems(DateTime scheduledTime, WorkItemPriorityEnum priority)
+	    {
+            IQueryable<WorkItem> query = from w in Context.WorkItems select w;
+            query = query.Where(w => ExclusiveWorkItemRequestTypes.Contains(w.Type));
+            query = query.Where(w => w.ScheduledTime < DateTime.Now);
+            query = query.Where(w => w.ScheduledTime < scheduledTime || w.Priority < priority);
+            query = query.WhereIsActive();
+
+        
+            query = query.OrderBy(w => w.Priority);
+            query = query.OrderBy(w => w.ScheduledTime);
+            return query.AsEnumerable();
+	    }
+    }
 }

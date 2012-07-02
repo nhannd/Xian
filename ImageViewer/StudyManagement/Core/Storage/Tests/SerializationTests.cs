@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.Tests
 		{
             public override WorkItemConcurrency ConcurrencyType
             {
-                get { return WorkItemConcurrency.Blocking; }
+                get { return WorkItemConcurrency.Exclusive; }
             }
 
 		    public override string ActivityDescription
@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.Tests
 		{
 		    public override WorkItemConcurrency ConcurrencyType
 		    {
-		        get { return WorkItemConcurrency.Blocking;}
+		        get { return WorkItemConcurrency.Exclusive;}
 		    }
 
 		    public override string ActivityDescription
