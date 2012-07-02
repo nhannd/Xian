@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			var client = new DicomSendBridge();
 			foreach (var destination in destinations)
 			{
-				client.SendStudy(destination, study, WorkItemPriorityEnum.Normal);
+				client.SendStudy(destination, study, WorkItemPriorityEnum.High);
 			}
 		}
 
