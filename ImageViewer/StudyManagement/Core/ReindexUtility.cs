@@ -245,7 +245,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
             if (_cancelRequested)
             {
-                ResetDeletedStudies();
+                ResetReindexStudies();
                 return;
             }
 
@@ -256,7 +256,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
             if (_cancelRequested)
             {
-                ResetDeletedStudies();
+                ResetReindexStudies();
             }
         }
 
@@ -274,7 +274,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
         #region Private Methods
 
-        private void ResetDeletedStudies()
+        private void ResetReindexStudies()
         {
             var resetStudyUids = new List<string>();
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))

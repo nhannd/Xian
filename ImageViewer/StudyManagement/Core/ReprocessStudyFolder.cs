@@ -174,30 +174,31 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             {                        
                 var studyXml = new StudyXml(Location.Study.StudyInstanceUid);
 
-                DicomFile lastFile = null;
+                DicomFile lastLoadedFile = null;
+
                 FileProcessor.Process(Location.StudyFolder, "*.dcm", delegate(string file, out bool cancel)
                                                            {
                                                                cancel = _cancelRequested;
                                                                try
                                                                {
-                                                                   lastFile = new DicomFile(file);
-                                                                   lastFile.Load(DicomReadOptions.Default |
+                                                                   var dicomFile = new DicomFile(file);
+                                                                   dicomFile.Load(DicomReadOptions.Default |
                                                                                   DicomReadOptions.StorePixelDataReferences);
-
-                                                                   String sopInstanceUid = lastFile.DataSet[DicomTags.SopInstanceUid].GetString(0, lastFile.MediaStorageSopInstanceUid);
+                                                                  
+                                                                   String sopInstanceUid = dicomFile.DataSet[DicomTags.SopInstanceUid].GetString(0, dicomFile.MediaStorageSopInstanceUid);
                                                                    if (Path.GetFileNameWithoutExtension(file) == sopInstanceUid)
                                                                    {
-                                                                       if (!studyXml.AddFile(lastFile))
+                                                                       if (!studyXml.AddFile(dicomFile))
                                                                        {
                                                                            Platform.Log(LogLevel.Warn,
                                                                                         "Importing file that was in the wrong study folder: {0}",
                                                                                         file);
                                                                            var context =
                                                                                new ImportStudyContext(
-                                                                                   lastFile.SourceApplicationEntityTitle,
+                                                                                   dicomFile.SourceApplicationEntityTitle,
                                                                                    StudyStore.GetConfiguration(),EventSource.CurrentProcess);
                                                                            var importer = new ImportFilesUtility(context);
-                                                                           var result = importer.Import(lastFile,
+                                                                           var result = importer.Import(dicomFile,
                                                                                                         BadFileBehaviourEnum.Delete,
                                                                                                         FileImportBehaviourEnum.Move);
                                                                            if (result.DicomStatus != DicomStatuses.Success)
@@ -209,6 +210,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                                                                                FailureMessage = result.ErrorMessage;
                                                                            }
                                                                        }
+                                                                       else
+                                                                           lastLoadedFile = dicomFile;
                                                                    }
                                                                    else
                                                                    {
@@ -227,11 +230,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                 // This saves the study Xml to disk, and ensures the database is updated and the study is not marked as "deleted".
                 // If a cancel was requested, don't save the file, and it will remain "as is"
-                if (lastFile !=null && !_cancelRequested)
+                if (lastLoadedFile !=null && !_cancelRequested)
                 {
                     var p = new ProcessStudyUtility(Location) { IsReprocess = true };
 
-                    p.ProcessFile(lastFile, studyXml, null);
+                    p.ProcessFile(lastLoadedFile, studyXml, null);
                 }
             }
             catch (Exception x)

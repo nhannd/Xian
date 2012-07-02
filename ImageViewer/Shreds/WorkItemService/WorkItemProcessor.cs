@@ -372,6 +372,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         /// </summary>
         private void ResetInProgressWorkItems()
         {
+            bool reindexInProgress = false;
+
             using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
             {
                 var workItemBroker = context.GetWorkItemBroker();
@@ -380,6 +382,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 foreach (var item in list)
                 {
                     item.Status = WorkItemStatusEnum.Pending;
+                    if (item.Type.Equals(ReindexRequest.WorkItemTypeString))
+                        reindexInProgress = true;
                 }
 
                 context.Commit();
@@ -406,9 +410,27 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 foreach (var item in list)
                 {
                     item.Status = WorkItemStatusEnum.Canceled;
+                    if (item.Type.Equals(ReindexRequest.WorkItemTypeString))
+                        reindexInProgress = true;
                 }
 
                 context.Commit();
+            }
+
+            if (reindexInProgress)
+            {
+                using (var context = new DataAccessContext(DataAccessContext.WorkItemMutex))
+                {
+                    var studyBroker = context.GetStudyBroker();
+                    var studyList = studyBroker.GetReindexStudies();
+
+                    foreach (var item in studyList)
+                    {
+                        item.Reindex = false;
+                    }
+
+                    context.Commit();
+                }
             }
         }
 
