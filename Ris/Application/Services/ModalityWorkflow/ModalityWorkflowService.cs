@@ -90,7 +90,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
 			var assembler = new ModalityPerformedProcedureStepAssembler();
 
-			ISet<PerformedStep> mppsSet = new HashedSet<PerformedStep>();
+			var mppsSet = new HashedSet<PerformedStep>();
 			foreach (var procedure in order.Procedures)
 			{
 				foreach (var mps in procedure.ModalityProcedureSteps)

@@ -89,7 +89,7 @@ namespace ClearCanvas.Healthcare
 	/// <typeparam name="T"></typeparam>
 	public abstract class WorklistMultiValuedFilter<T> : WorklistFilter, IEquatable<WorklistMultiValuedFilter<T>>
 	{
-		private ISet<T> _values;
+		private Iesi.Collections.Generic.ISet<T> _values;
 
 		/// <summary>
 		/// Constructor.
@@ -102,7 +102,7 @@ namespace ClearCanvas.Healthcare
 		/// <summary>
 		/// Gets the set of values for this filter.
 		/// </summary>
-		public ISet<T> Values
+		public Iesi.Collections.Generic.ISet<T> Values
 		{
 			get { return _values; }
 			// private setter for NHibernate compatibility
