@@ -28,11 +28,6 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
         }
 
         internal ServerTree(StoredServerGroup rootGroup, List<ApplicationEntity> directoryServers)
-            : this(rootGroup, directoryServers, true)
-        {
-        }
-
-        internal ServerTree(StoredServerGroup rootGroup, List<ApplicationEntity> directoryServers, bool save)
         {
             LocalServer = new ServerTreeLocalServer();
 
@@ -40,8 +35,6 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
             directoryServers = directoryServers == null
                 ? new List<ApplicationEntity>()
                 : new List<ApplicationEntity>(directoryServers);
-
-            var directoryServerCount = directoryServers.Count;
 
             if (rootGroup == null)
             {
@@ -54,21 +47,11 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
                 RootServerGroup = rootGroup.ToServerTreeGroup(directoryServers);
             }
 
-            if (directoryServerCount == 0)
-            {
-                AddExamples();
-                //TODO (Marmot): Move the add examples code out.
-                if (save)
-                    Save();
-            }
-            else
-            {
-                //rootGroup.ToServerTreeGroup above deletes the entries from the list of servers,
-                //so if there are any left, that means there was no match in the tree. So,
-                //we will just add those servers to the root.
-                foreach (ApplicationEntity server in directoryServers)
-                    RootServerGroup.Servers.Add(new ServerTreeDicomServer(server));
-            }
+            //rootGroup.ToServerTreeGroup above deletes the entries from the list of servers,
+            //so if there are any left, that means there was no match in the tree. So,
+            //we will just add those servers to the root.
+            foreach (ApplicationEntity server in directoryServers)
+                RootServerGroup.Servers.Add(new ServerTreeDicomServer(server));
 
             InitializePaths();
             CurrentNode = LocalServer;
@@ -81,7 +64,6 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
             if (legacyRoot == null)
             {
                 InitializeRootGroup();
-                AddExamples();
             }
             else
             {
@@ -103,13 +85,13 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
             ((ServerTreeGroup)RootServerGroup).ChangeParentPath(_rootPath);
         }
 
-        //TODO (Marmot): Factor this out to ServerTreeComponent, since saving is done outside everywhere else.
-        private void AddExamples()
-        {
-            RootServerGroup.ChildGroups.Add(new ServerTreeGroup(SR.ExampleGroup));
-            var exampleServer = new ServerTreeDicomServer(SR.ExampleServer, "", "localhost", "SAMPLE", 104, false, 50221, 1000);
-            RootServerGroup.Servers.Add(exampleServer);
-        }
+        ////TODO (Marmot): Factor this out to ServerTreeComponent, since saving is done outside everywhere else.
+        //private void AddExamples()
+        //{
+        //    RootServerGroup.ChildGroups.Add(new ServerTreeGroup(SR.ExampleGroup));
+        //    var exampleServer = new ServerTreeDicomServer(SR.ExampleServer, "", "localhost", "SAMPLE", 104, false, 50221, 1000);
+        //    RootServerGroup.Servers.Add(exampleServer);
+        //}
 
         internal static List<ApplicationEntity> GetServersFromDirectory()
         {

@@ -22,16 +22,6 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         }
 
         [Test]
-        public void TestCreateExampleTree()
-        {
-            var tree = new ServerTree(null);
-            TestHelper.AssertExampleTree(tree);
-
-            tree = new ServerTree(null, null, false);
-            TestHelper.AssertExampleTree(tree);
-        }
-
-        [Test]
         public void TestGetAllServers()
         {
             var tree = TestHelper.CreateTestTree1();

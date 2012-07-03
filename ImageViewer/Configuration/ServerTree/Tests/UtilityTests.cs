@@ -14,6 +14,7 @@
 using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Common.Configuration.Tests;
 using ClearCanvas.ImageViewer.Common.DicomServer.Tests;
 using ClearCanvas.ImageViewer.Common.ServerDirectory.Tests;
 using ClearCanvas.ImageViewer.Common.StudyManagement.Tests;
@@ -35,7 +36,8 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
                               {
                                   { typeof (ServiceProviderExtensionPoint), typeof (DicomServerTestServiceProvider) },
                                   { typeof (ServiceProviderExtensionPoint), typeof (StudyStoreTestServiceProvider) },
-                                  { typeof (ServiceProviderExtensionPoint), typeof (ServerDirectoryTestServiceProvider) }
+                                  { typeof (ServiceProviderExtensionPoint), typeof (ServerDirectoryTestServiceProvider) },
+                                  {typeof(ServiceProviderExtensionPoint), typeof(TestSystemConfigurationServiceProvider)}
                               };
             Platform.SetExtensionFactory(factory);
         }
@@ -67,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         [Test]
         public void TestToDicomServiceNodes_Local()
         {
-            var tree = new ServerTree(null, null, false);
+            var tree = new ServerTree(null, null);
             tree.CurrentNode = tree.LocalServer;
             var serviceNodes = tree.CurrentNode.ToDicomServiceNodes();
             Assert.AreEqual(1, serviceNodes.Count);
@@ -75,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
 
             Assert.AreEqual(@"<local>", ae.Name);
             Assert.AreEqual(string.Empty, ae.Location ?? "");
-            Assert.AreEqual("Local", ae.AETitle);
+            Assert.AreEqual("AETITLE", ae.AETitle);
             Assert.AreEqual("localhost", ae.ScpParameters.HostName);
             Assert.AreEqual(104, ae.ScpParameters.Port);
             Assert.IsNull(ae.StreamingParameters);
