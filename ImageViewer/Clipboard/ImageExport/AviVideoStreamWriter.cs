@@ -237,7 +237,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		{
 			private readonly Codec _codec;
 
-			private int _aviFileRef = 0;
+            private IntPtr _aviFileRef = IntPtr.Zero;
 			private IntPtr _aviStreamRef = IntPtr.Zero;
 			private IntPtr _aviCompressedStreamRef = IntPtr.Zero;
 
@@ -327,7 +327,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 			public bool IsOpen
 			{
-				get { return _aviFileRef != 0; }
+				get { return _aviFileRef != IntPtr.Zero; }
 			}
 
 			#endregion
@@ -395,7 +395,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				{
 					_aviCompressedStreamRef = IntPtr.Zero;
 					_aviStreamRef = IntPtr.Zero;
-					_aviFileRef = 0;
+					_aviFileRef = IntPtr.Zero;
 
 					if (_initialized)
 					{
@@ -436,10 +436,12 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				Avi.AVIFileInit();
 				_initialized = true;
 
-				int result = Avi.AVIFileOpen(ref _aviFileRef, _fileName, Avi.OF_WRITE | Avi.OF_CREATE, 0);
+                IntPtr aviFileRef;
+                int result = Avi.AVIFileOpen(out aviFileRef, _fileName, Avi.OF_WRITE | Avi.OF_CREATE, 0);
 				if (result != 0)
 					throw new VideoStreamWriterException("Avi file could not be created.");
 
+			    _aviFileRef = aviFileRef;
 				CreateStream();
 			}
 
@@ -602,7 +604,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 			private void ReleaseFile()
 			{
-				if (_aviFileRef != 0)
+				if (_aviFileRef != IntPtr.Zero)
 				{
 					int result = Avi.AVIFileRelease(_aviFileRef);
 					if (result != 0)
