@@ -420,7 +420,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
            
             var broker = _context.GetWorkItemBroker();
 
-            var list = broker.GetWorkItems(null, WorkItemStatusEnum.InProgress, null);
+            var list = broker.GetWorkItems(null, WorkItemStatusEnum.InProgress, workItem.StudyInstanceUid);
 
             if (list == null)
                 return null;
