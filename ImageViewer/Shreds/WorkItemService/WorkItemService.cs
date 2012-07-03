@@ -183,7 +183,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     if (workItem.Status != WorkItemStatusEnum.InProgress)
                     {
                         workItem.Status = WorkItemStatusEnum.Deleted;
-                        deleted = true;            
+                        deleted = true;
+
+                        // If StudyDelete we're removing, "undelete" the study
+                        CheckDeleteStudyCanceled(context, workItem);
                     }
                 }
                 if (!deleted)
@@ -220,16 +223,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                             {
                                 workItem.Status = WorkItemStatusEnum.Canceled;
 
-                                // Force the study to be visible again if its a DeleteStudyRequest we're canceling
-                                if (workItem.Type.Equals(DeleteStudyRequest.WorkItemTypeString))
-                                {
-                                    var studyBroker = context.GetStudyBroker();
-                                    var study = studyBroker.GetStudy(workItem.StudyInstanceUid);
-                                    if (study != null)
-                                    {
-                                        study.Deleted = false;
-                                    }
-                                }
+                                // If StudyDelete we're removing, "undelete" the study
+                                CheckDeleteStudyCanceled(context, workItem);
                             }
                             else if (workItem.Status.Equals(WorkItemStatusEnum.InProgress))
                             {
@@ -269,6 +264,24 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 response.Items = results.ToArray();
             }
             return response;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void CheckDeleteStudyCanceled(DataAccessContext context, WorkItem workItem)
+        {
+            // Force the study to be visible again if its a DeleteStudyRequest we're canceling
+            if (workItem.Type.Equals(DeleteStudyRequest.WorkItemTypeString))
+            {
+                var studyBroker = context.GetStudyBroker();
+                var study = studyBroker.GetStudy(workItem.StudyInstanceUid);
+                if (study != null)
+                {
+                    study.Deleted = false;
+                }
+            }
         }
 
         #endregion

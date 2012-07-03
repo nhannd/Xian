@@ -173,6 +173,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {
                 foreach (var relatedWorkItem in relatedList)
                 {
+                    // Don't block on StudyReads, so we can process a study at the same time its coming over the network.
+                    if (relatedWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyRead)
+                        continue;
+
                     reason = string.Format("Waiting for: {0}", relatedWorkItem.Request.ActivityDescription);
                     return false;
                 }
@@ -186,7 +190,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     // Study Updates/Reads should only block if "In Progress", otherwise they can run at the same time.
                     if (!competingWorkItem.Status.IsInProgress() && competingWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyUpdate)
                         continue;
-                    if (!competingWorkItem.Status.IsInProgress() && competingWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyRead)
+                    // Don't block on StudyReads, so we can process a study at the same time its coming over the network.
+                    if (competingWorkItem.Request.ConcurrencyType == WorkItemConcurrency.StudyRead)
                         continue;
 
                     reason = string.Format("Waiting for: {0}", competingWorkItem.Request.ActivityDescription);

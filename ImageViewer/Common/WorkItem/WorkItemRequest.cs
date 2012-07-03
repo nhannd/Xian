@@ -180,7 +180,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public DicomSendStudyRequest()
         {
             WorkItemType = WorkItemTypeString;
-            Priority = WorkItemPriorityEnum.Normal;
+            Priority = WorkItemPriorityEnum.High;
             CancellationCanResultInPartialStudy = true;
         }
 
@@ -207,7 +207,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         public DicomSendSeriesRequest()
         {
             WorkItemType = WorkItemTypeString;
-            Priority = WorkItemPriorityEnum.Normal;
+            Priority = WorkItemPriorityEnum.High;
             CancellationCanResultInPartialStudy = true;
         }
 
