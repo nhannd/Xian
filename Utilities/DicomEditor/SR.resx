@@ -316,4 +316,13 @@ NOTE: the edited file is from the local store so it should be re-indexed, otherw
   <data name="MessageCannotAnonymizeMaxDiskUsageExceeded" xml:space="preserve">
     <value>The study cannot be anonymized because the maximum disk usage has been exceeded.</value>
   </data>
+  <data name="MessageConfirmAnonymizeReportOrAttachment" xml:space="preserve">
+    <value>The file being anonymized is a report or other document. These often contain patient information that cannot be completely cleaned by this tool. Are you sure you want to continue anonymization?</value>
+  </data>
+  <data name="MessageConfirmSaveReportOrAttachment" xml:space="preserve">
+    <value>The edited file is a report and/or other document. If you have modified any patient information, this tool cannot modify the document to match your changes. Are you sure you want to continue?</value>
+  </data>
+  <data name="MessageConfirmSaveReportsOrAttachments" xml:space="preserve">
+    <value>One or more of the edited files are reports and/or other documents. If you have modified any patient information, this tool cannot modify the document to match your changes. Are you sure you want to continue?</value>
+  </data>
 </root>

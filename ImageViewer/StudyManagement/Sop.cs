@@ -1187,6 +1187,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return IsImageSop(SopClass.GetSopClass(sopClassUid));
 		}
 
+        // TODO (CR Jun 2012): Move to a more common place, like a SopClassExtensions class in IV.Common, or CC.Dicom?
+
 		internal static bool IsImageSop(SopClass sopClass)
 		{
 			return _imageSopClasses.Contains(sopClass);
