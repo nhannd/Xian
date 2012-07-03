@@ -52,16 +52,6 @@ namespace ClearCanvas.Desktop.Tables
         /// </summary>
         void Sort(TableSortParams sortParams);
 
-		///// <summary>
-		///// Raised before the table is sorted.
-		///// </summary>
-		//event EventHandler BeforeSorted;
-		
-		///// <summary>
-		///// Raised after the table is sorted.
-		///// </summary>
-		//event EventHandler Sorted;
-
         /// <summary>
         /// Gets the cached sort parameters, or returns null if this table has not been sorted.
         /// </summary>

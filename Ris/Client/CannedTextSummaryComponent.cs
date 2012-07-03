@@ -21,6 +21,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Desktop;
 using ClearCanvas.Ris.Application.Common.CannedTextService;
+using Action = ClearCanvas.Desktop.Actions.Action;
 
 namespace ClearCanvas.Ris.Client
 {
