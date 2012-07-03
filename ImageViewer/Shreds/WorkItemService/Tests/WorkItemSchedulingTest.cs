@@ -773,19 +773,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             DeleteAllWorkItems();
             var list = new List<SchedulingTest>();
 
+            // Reindex causes later scheduled/lower priority non-exclusive entries to wait
             list.Add(new SchedulingTest
             {
                 Processor = InsertReapplyRules(WorkItemPriorityEnum.Normal, WorkItemStatusEnum.Pending),
                 Message = "Reapply Rules 1",
-                CanStart = true
-            });
-
-            Thread.Sleep(2);
-            list.Add(new SchedulingTest
-            {
-                Processor = InsertReapplyRules(WorkItemPriorityEnum.Normal, WorkItemStatusEnum.Pending),
-                Message = "Reapply Rules 2",
-                CanStart = true
+                CanStart = false
             });
 
             Thread.Sleep(2);
@@ -813,7 +806,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             {
                 Processor = InsertReapplyRules(WorkItemPriorityEnum.Normal, WorkItemStatusEnum.Pending),
                 Message = "Reapply Rules 2",
-                CanStart = true
+                CanStart = false
             });
 
             Thread.Sleep(2);
@@ -1180,6 +1173,39 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
                              Message = "Reapply Rules",
                              CanStart = false
                          });
+            DoTest(list);
+        }
+
+        [Test]
+        public void Test21InProgress()
+        {
+            DeleteAllWorkItems();
+            var list = new List<SchedulingTest>();
+     
+            // Reindex waits for lower priority item
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertImportFiles(WorkItemPriorityEnum.High, WorkItemStatusEnum.InProgress),
+                Message = "Import Files"
+            });
+
+            Thread.Sleep(2);
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertReindex(WorkItemPriorityEnum.High, WorkItemStatusEnum.Pending),
+                Message = "Reindex",
+                CanStart = false,
+            });
+
+            Thread.Sleep(2);
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertImportFiles(WorkItemPriorityEnum.High, WorkItemStatusEnum.Pending),
+                Message = "Import Files",
+                CanStart = false
+            });
+
+
             DoTest(list);
         }
     }
