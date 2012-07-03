@@ -228,11 +228,11 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 
 		private class Study
 		{
-			public readonly string InstanceUid;
+		    private readonly string _instanceUid;
 
 			public Study(string instanceUid)
 			{
-				this.InstanceUid = instanceUid;
+				this._instanceUid = instanceUid ?? string.Empty;
 			}
 
 			public override bool Equals(object obj)
@@ -240,33 +240,32 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 				if (obj is Study)
 				{
 					Study s = (Study) obj;
-					return this.InstanceUid == s.InstanceUid;
+					return this._instanceUid == s._instanceUid;
 				}
 				return base.Equals(obj);
 			}
 
 			public override int GetHashCode()
 			{
-				return 0x471A0695
-				       ^ (InstanceUid != null ? InstanceUid.GetHashCode() : 0);
+			    return 0x471A0695 ^ _instanceUid.GetHashCode();
 			}
 
 			public static implicit operator AuditStudyParticipantObject(Study study)
 			{
-				AuditStudyParticipantObject auditObject = new AuditStudyParticipantObject(study.InstanceUid);
+				var auditObject = new AuditStudyParticipantObject(study._instanceUid);
 				return auditObject;
 			}
 		}
 
 		private class Patient
 		{
-			public readonly string PatientId;
-			public readonly string PatientName;
+		    private readonly string _patientId;
+		    private readonly string _patientName;
 
 			public Patient(string patientId, string patientName)
 			{
-				this.PatientId = patientId;
-				this.PatientName = patientName;
+				this._patientId = patientId ?? string.Empty;
+                this._patientName = patientName ?? string.Empty;
 			}
 
 			public override bool Equals(object obj)
@@ -274,21 +273,19 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 				if (obj is Patient)
 				{
 					Patient p = (Patient) obj;
-					return this.PatientId == p.PatientId && this.PatientName == p.PatientName;
+					return this._patientId == p._patientId && this._patientName == p._patientName;
 				}
 				return base.Equals(obj);
 			}
 
 			public override int GetHashCode()
 			{
-				return 0x517F0000
-				       ^ (PatientId != null ? PatientId.GetHashCode() : 0)
-				       ^ (PatientName != null ? PatientName.GetHashCode() : 0);
+			    return 0x517F0000 ^ _patientId.GetHashCode() ^ _patientName.GetHashCode();
 			}
 
 			public static implicit operator AuditPatientParticipantObject(Patient patient)
 			{
-				AuditPatientParticipantObject auditObject = new AuditPatientParticipantObject(patient.PatientName, patient.PatientId);
+				var auditObject = new AuditPatientParticipantObject(patient._patientName, patient._patientId);
 				return auditObject;
 			}
 		}

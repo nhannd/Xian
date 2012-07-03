@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 		{
 		    if (!string.IsNullOrEmpty(mutexName))
             {
-                _mutex = ExclusiveLock.CreateFileSystemLock(SqlCeDatabaseHelper<DicomStoreDataContext>.GetDatabaseFilePath(mutexName + DefaultDatabaseFileName));
+                _mutex = ExclusiveLock.CreateFileSystemLock(SqlCeDatabaseHelper<DicomStoreDataContext>.GetDatabaseFilePath(mutexName + databaseFilename));
                 _mutex.Lock();
             }
 
