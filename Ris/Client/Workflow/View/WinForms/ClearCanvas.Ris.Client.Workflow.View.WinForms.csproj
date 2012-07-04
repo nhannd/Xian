@@ -138,20 +138,6 @@
     </Compile>
     <Compile Include="PriorReportComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProtocolEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ProtocolEditorComponentControl.Designer.cs">
-      <DependentUpon>ProtocolEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProtocolEditorComponentView.cs" />
-    <Compile Include="ProtocollingComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ProtocollingComponentControl.Designer.cs">
-      <DependentUpon>ProtocollingComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProtocollingComponentView.cs" />
     <Compile Include="ReasonSelectionComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -166,20 +152,6 @@
       <DependentUpon>ReassignComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ReassignComponentView.cs" />
-    <Compile Include="ReconciliationComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ReconciliationComponentControl.Designer.cs">
-      <DependentUpon>ReconciliationComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ReconciliationComponentView.cs" />
-    <Compile Include="ReconciliationConfirmComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ReconciliationConfirmComponentControl.Designer.cs">
-      <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ReconciliationConfirmComponentView.cs" />
     <Compile Include="ReportEditorComponentView.cs" />
     <Compile Include="ReportEditorComponentViewBase.cs" />
     <Compile Include="ReportingComponentControl.cs">
@@ -310,14 +282,6 @@
       <DependentUpon>PerformedProcedureComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ReconciliationComponentControl.resx">
-      <DependentUpon>ReconciliationComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ReconciliationConfirmComponentControl.resx">
-      <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="PerformingDocumentationComponentControl.resx">
       <DependentUpon>PerformingDocumentationComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -364,14 +328,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PriorReportComponentControl.resx">
       <DependentUpon>PriorReportComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProtocolEditorComponentControl.resx">
-      <DependentUpon>ProtocolEditorComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProtocollingComponentControl.resx">
-      <DependentUpon>ProtocollingComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ReasonSelectionComponentControl.resx">

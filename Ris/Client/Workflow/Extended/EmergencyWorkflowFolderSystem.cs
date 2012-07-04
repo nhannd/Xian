@@ -17,7 +17,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	[ExtensionPoint]
 	public class EmergencyWorkflowFolderExtensionPoint : ExtensionPoint<IWorklistFolder>
@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         protected override SearchResultsFolder CreateSearchResultsFolder()
         {
-            return new Folders.Registration.RegistrationSearchFolder();
+            return new Workflow.Folders.Registration.RegistrationSearchFolder();
         }
     }
 }

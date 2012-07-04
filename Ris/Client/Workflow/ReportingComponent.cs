@@ -708,9 +708,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return;
 			}
 
-			PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(this.WorklistItem, this.Host.DesktopWindow,
-				delegate
-				{
+			// JR: removed during re-org to Extended Workflow plugin... 
+			// We can put a hook in here if we need to, but for now assume it isn't needed
+
+			//PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(this.WorklistItem, this.Host.DesktopWindow,
+			//    delegate
+			//    {
 					try
 					{
 						CloseImages();
@@ -745,7 +748,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					{
 						ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
 					}
-				});
+				//});
 		}
 
 		public bool VerifyEnabled

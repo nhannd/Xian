@@ -85,7 +85,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>DowntimeSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="EditProtocolTool.cs" />
     <Compile Include="EditReportTool.cs" />
     <Compile Include="Folders\RadiologistAdminWorkflowFolders.cs" />
     <Compile Include="Folders\TranscriptionWorkflowFolders.cs" />
@@ -94,23 +93,12 @@
     <Compile Include="MergeOrdersTool.cs" />
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="PerformedProcedureDicomSeriesComponent.cs" />
-    <Compile Include="PreliminaryDiagnosisSettings.cs" />
-    <Compile Include="PreliminaryDiagnosisSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>PreliminaryDiagnosisSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="PriorReportComponentSettings.cs" />
     <Compile Include="PriorReportComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PriorReportComponentSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ProtocollingComponentWorklistItemManager.cs" />
-    <Compile Include="ProtocollingOrderDetailViewComponent.cs" />
-    <Compile Include="ProtocolReasonComponent.cs" />
-    <Compile Include="ProtocolWorkflowItemTool.cs" />
-    <Compile Include="ProtocolWorkflowTools.cs" />
     <Compile Include="RadiologistAdminWorkflowFolderSystem.cs" />
     <Compile Include="RadiologistAdminWorkflowItemTools.cs" />
     <Compile Include="ReassignComponent.cs" />
@@ -135,10 +123,6 @@
     <Compile Include="TranscriptionWorkflowItemTool.cs" />
     <Compile Include="TranscriptionWorkflowTools.cs" />
     <Compile Include="ViewImagesTool.cs" />
-    <Compile Include="EmergencyWorkflowFolder.cs" />
-    <Compile Include="EmergencyWorkflowFolderSystem.cs" />
-    <Compile Include="EmergencyWorkflowItemTools.cs" />
-    <Compile Include="Folders\EmergencyPhysicianWorkflowFolders.cs" />
     <Compile Include="Folders\FolderOptionComponent.cs" />
     <Compile Include="Folders\RegistrationWorkflowFolders.cs" />
     <Compile Include="Folders\ReportingWorkflowFolders.cs" />
@@ -150,33 +134,13 @@
     <Compile Include="PatientAddTool.cs" />
     <Compile Include="PatientBiographyTool.cs" />
     <Compile Include="PatientEditTool.cs" />
-    <Compile Include="PatientProfileDiffComponent.cs" />
-    <Compile Include="PatientReconcileTool.cs" />
-    <Compile Include="PatientReconciliation.cs" />
     <Compile Include="PerformedProcedureComponent.cs" />
-    <Compile Include="PreliminaryDiagnosis.cs" />
     <Compile Include="SendReportToQueueTool.cs" />
     <Compile Include="PriorReportComponent.cs" />
     <Compile Include="PriorSummaryTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProtocolEditorComponent.cs" />
-    <Compile Include="ProtocolEditorProcedurePlanSummaryTable.cs" />
-    <Compile Include="ProtocolEditorProcedurePlanSummaryTableItem.cs" />
-    <Compile Include="ProtocollingSettings.cs" />
-    <Compile Include="ProtocollingSettings.Designer.cs">
-      <DependentUpon>ProtocollingSettings.settings</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <Compile Include="ProtocollingComponent.cs" />
-    <Compile Include="ProtocolDocument.cs" />
     <Compile Include="ReasonSelectionComponentBase.cs" />
-    <Compile Include="ProtocolWorkflowFolderSystem.cs" />
     <Compile Include="RandomOrderTool.cs" />
-    <Compile Include="ReconciliationCandidateTable.cs" />
-    <Compile Include="ReconciliationCandidateTableEntry.cs" />
-    <Compile Include="ReconciliationComponent.cs" />
-    <Compile Include="ReconciliationConfirmComponent.cs" />
     <Compile Include="RegistrationWorkflowFolder.cs" />
     <Compile Include="RegistrationWorkflowFolderSystem.cs" />
     <Compile Include="RegistrationWorkflowFolderSystemBase.cs" />
@@ -187,7 +151,6 @@
     <Compile Include="ReportEditorComponent.cs" />
     <Compile Include="ReportingComponent.cs" />
     <Compile Include="ReportingComponentWorklistItemManager.cs" />
-    <Compile Include="ReportingPreliminaryDiagnosisConversationTool.cs" />
     <Compile Include="ReportingSettings.cs" />
     <Compile Include="ReportingSettings.Designer.cs">
       <DependentUpon>ReportingSettings.settings</DependentUpon>
@@ -199,7 +162,6 @@
     <Compile Include="ReportingWorkflowFolderSystemBase.cs" />
     <Compile Include="ReportingWorkflowItemTool.cs" />
     <Compile Include="ReportingWorkflowTools.cs" />
-    <Compile Include="ResubmitProtocolTool.cs" />
     <Compile Include="ReviseReportTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -275,17 +237,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>OrderMergeSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="PreliminaryDiagnosisSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>PreliminaryDiagnosisSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="PriorReportComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>PriorReportComponentSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="ProtocollingSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>ProtocollingSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ReportingSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -471,11 +425,6 @@
     <EmbeddedResource Include="Icons\AssignLarge.png" />
     <EmbeddedResource Include="Icons\AssignMedium.png" />
     <EmbeddedResource Include="Icons\AssignSmall.png" />
-    <EmbeddedResource Include="PreliminaryDiagnosisFromEmergencyTemplates.xml" />
-    <EmbeddedResource Include="PreliminaryDiagnosisFromEmergencySoftKeys.xml" />
-    <EmbeddedResource Include="PreliminaryDiagnosisFromRadiologySoftKeys.xml" />
-    <EmbeddedResource Include="PreliminaryDiagnosisFromVerificationTemplates.xml" />
-    <EmbeddedResource Include="PreliminaryDiagnosisFromVerificationSoftKeys.xml" />
     <Content Include="Icons\ClearFilterLarge.png" />
     <Content Include="Icons\ClearFilterMedium.png" />
     <Content Include="Icons\ClearFilterSmall.png" />
@@ -495,7 +444,6 @@
     <EmbeddedResource Include="Icons\UnmergeOrdersLarge.png" />
     <EmbeddedResource Include="Icons\UnmergeOrdersMedium.png" />
     <EmbeddedResource Include="Icons\UnmergeOrdersSmall.png" />
-    <EmbeddedResource Include="PreliminaryDiagnosisFromRadiologyTemplates.xml" />
     <EmbeddedResource Include="Icons\RejectProtocolLarge.png" />
     <EmbeddedResource Include="Icons\RejectProtocolMedium.png" />
     <EmbeddedResource Include="Icons\RejectProtocolSmall.png" />

@@ -11,7 +11,7 @@
 
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	public abstract class EmergencyWorkflowFolder : WorklistFolder<RegistrationWorklistItemSummary, IRegistrationWorkflowService>
 	{

@@ -31,7 +31,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(OrderNoteboxItemToolExtensionPoint))]
-	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(BiographyOrderReportsToolExtensionPoint))]
 	public class ViewImagesTool : Tool<IToolContext>
 	{

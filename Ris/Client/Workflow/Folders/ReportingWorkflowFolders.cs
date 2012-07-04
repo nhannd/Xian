@@ -130,67 +130,6 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 
 		#endregion
 
-		#region Protocol Worklists
-
-		[ExtensionOf(typeof(ProtocolWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.ReportingToBeProtocolledWorklist)]
-		[FolderPath("To be Protocolled", true)]
-		[FolderDescription("ReportingToBeProtocolledFolderDescription")]
-		public class ToBeProtocolledFolder : ReportingWorkflowFolder
-		{
-		}
-
-		[FolderForWorklistClass(WorklistClassNames.ReportingAssignedProtocolWorklist)]
-		[FolderPath("My Items/To be Protocolled")]
-		[FolderDescription("ReportingAssignedToBeProtocolFolderDescription")]
-		public class AssignedToBeProtocolFolder : ReportingWorkflowFolder
-		{
-		}
-
-		[ExtensionOf(typeof(ProtocolWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.ReportingToBeReviewedProtocolWorklist)]
-		[FolderPath("To be Reviewed", true)]
-		[FolderDescription("ReportingToBeReviewedProtocolFolderDescription")]
-		public class ToBeReviewedProtocolFolder : ReportingWorkflowFolder
-		{
-		}
-
-		[FolderForWorklistClass(WorklistClassNames.ReportingAssignedReviewProtocolWorklist)]
-		[FolderPath("My Items/To be Reviewed")]
-		[FolderDescription("ReportingAssignedForReviewProtocolFolderDescription")]
-		public class AssignedForReviewProtocolFolder : ReportingWorkflowFolder
-		{
-		}
-
-		[FolderForWorklistClass(WorklistClassNames.ReportingDraftProtocolWorklist)]
-		[FolderPath("My Items/Draft")]
-		[FolderDescription("ReportingDraftProtocolFolderDescription")]
-		public class DraftProtocolFolder : ReportingWorkflowFolder
-		{
-		}
-
-		[FolderForWorklistClass(WorklistClassNames.ReportingCompletedProtocolWorklist)]
-		[FolderPath("My Items/Completed")]
-		[FolderDescription("ReportingCompletedProtocolFolderDescription")]
-		public class CompletedProtocolFolder : ReportingWorkflowFolder
-		{
-		}
-
-		[FolderForWorklistClass(WorklistClassNames.ReportingAwaitingApprovalProtocolWorklist)]
-		[FolderPath("My Items/Awaiting Review")]
-		[FolderDescription("ReportingAwaitingApprovalProtocolFolderDescription")]
-		public class AwaitingApprovalProtocolFolder : ReportingWorkflowFolder
-		{
-		}
-
-		[FolderForWorklistClass(WorklistClassNames.ReportingRejectedProtocolWorklist)]
-		[FolderPath("My Items/Rejected")]
-		[FolderDescription("ReportingRejectedProtocolFolderDescription")]
-		public class RejectedProtocolFolder : ReportingWorkflowFolder
-		{
-		}
-
-		#endregion
 
 		[FolderPath("Search Results")]
 		public class ReportingSearchFolder : WorklistSearchResultsFolder<ReportingWorklistItemSummary, IReportingWorkflowService>
@@ -207,22 +146,6 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 				get { return "ReportingProcedureStep"; }
 			}
 
-		}
-
-		[FolderPath("Search Results")]
-		public class ProtocollingSearchFolder : WorklistSearchResultsFolder<ReportingWorklistItemSummary, IReportingWorkflowService>
-		{
-			public ProtocollingSearchFolder()
-				: base(new ReportingWorklistTable())
-			{
-			}
-
-			//TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
-			//it is the only way to get things working right now
-			protected override string ProcedureStepClassName
-			{
-				get { return "ProtocolAssignmentStep"; }
-			}
 		}
 	}
 }

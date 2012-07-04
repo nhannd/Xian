@@ -16,7 +16,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Open Protocol", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Open Protocol", "Apply")]

@@ -97,15 +97,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rec..
-        /// </summary>
-        internal static string ColumnAbbreviationReconciliation {
-            get {
-                return ResourceManager.GetString("ColumnAbbreviationReconciliation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Accession #.
         /// </summary>
         internal static string ColumnAccessionNumber {
@@ -484,15 +475,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Score.
-        /// </summary>
-        internal static string ColumnScore {
-            get {
-                return ResourceManager.GetString("ColumnScore", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Sex.
         /// </summary>
         internal static string ColumnSex {
@@ -808,15 +790,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to reconcile patient profiles.
-        /// </summary>
-        internal static string ExceptionReconcilePatientProfiles {
-            get {
-                return ResourceManager.GetString("ExceptionReconcilePatientProfiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0} from the &quot;{1}&quot; worklist.
         /// </summary>
         internal static string FormatContinuousWorkflowDescription {
@@ -858,15 +831,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string FormatReportingStatusText {
             get {
                 return ResourceManager.GetString("FormatReportingStatusText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Review Preliminary Diagnosis - {0} {1} - {2}.
-        /// </summary>
-        internal static string FormatTitleContextDescriptionReviewOrderNoteConversation {
-            get {
-                return ResourceManager.GetString("FormatTitleContextDescriptionReviewOrderNoteConversation", resourceCulture);
             }
         }
         
@@ -921,15 +885,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string MessageConfirmDiscardSelectedAddendum {
             get {
                 return ResourceManager.GetString("MessageConfirmDiscardSelectedAddendum", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Discard the selected protocol?.
-        /// </summary>
-        internal static string MessageConfirmDiscardSelectedProtocol {
-            get {
-                return ResourceManager.GetString("MessageConfirmDiscardSelectedProtocol", resourceCulture);
             }
         }
         
@@ -1011,27 +966,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string MessagePrintWorklist {
             get {
                 return ResourceManager.GetString("MessagePrintWorklist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You are currently editing the protocol for {0}.
-        ///Do you want to save it to your Drafts folder and open the protocol for {1}?.
-        /// </summary>
-        internal static string MessageProtocollingComponentAlreadyOpened {
-            get {
-                return ResourceManager.GetString("MessageProtocollingComponentAlreadyOpened", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You are about to verify a &apos;{0}&apos; procedure.  Do you wish to send a review request for this report?
-        ///Choose &quot;Yes&quot; to open up the Preliminary Diagnosis window and enter your request.
-        ///Choose &quot;No&quot; to verify this report without further action..
-        /// </summary>
-        internal static string MessageQueryPrelimDiagnosisReviewRequired {
-            get {
-                return ResourceManager.GetString("MessageQueryPrelimDiagnosisReviewRequired", resourceCulture);
             }
         }
         
@@ -1434,24 +1368,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Protocolling:.
-        /// </summary>
-        internal static string TextLinkProtocolHeading {
-            get {
-                return ResourceManager.GetString("TextLinkProtocolHeading", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Check any additional procedures that should be linked to this protocol.
-        /// </summary>
-        internal static string TextLinkProtocolInstructions {
-            get {
-                return ResourceManager.GetString("TextLinkProtocolInstructions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Check any additional procedures that should be linked to this report.
         /// </summary>
         internal static string TextLinkReportInstructions {
@@ -1614,15 +1530,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Confirm Reconciliation.
-        /// </summary>
-        internal static string TitleConfirmReconciliation {
-            get {
-                return ResourceManager.GetString("TitleConfirmReconciliation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Contact Persons.
         /// </summary>
         internal static string TitleContactPersons {
@@ -1745,15 +1652,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string TitleEmailAddresses {
             get {
                 return ResourceManager.GetString("TitleEmailAddresses", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Emergency.
-        /// </summary>
-        internal static string TitleEmergencyFolderSystem {
-            get {
-                return ResourceManager.GetString("TitleEmergencyFolderSystem", resourceCulture);
             }
         }
         
@@ -1911,15 +1809,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Patient Reconciliation.
-        /// </summary>
-        internal static string TitlePatientReconciliation {
-            get {
-                return ResourceManager.GetString("TitlePatientReconciliation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Patient Search.
         /// </summary>
         internal static string TitlePatientSearch {
@@ -2006,15 +1895,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string TitlePriors {
             get {
                 return ResourceManager.GetString("TitlePriors", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Protocolling.
-        /// </summary>
-        internal static string TitleProtocollingFolderSystem {
-            get {
-                return ResourceManager.GetString("TitleProtocollingFolderSystem", resourceCulture);
             }
         }
         

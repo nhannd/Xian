@@ -14,7 +14,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
 	public class EmergencyOrdersConversationTool : PreliminaryDiagnosisConversationTool<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>

@@ -233,11 +233,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			// show PD dialog if required
-			return PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(item, this.Context.DesktopWindow,
-				delegate
-				{
-					try
-					{
+			//return PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(item, this.Context.DesktopWindow,
+			//	delegate
+			//	{
+					//try
+					//{
 						try
 						{
 							ExecuteHelper(item.ProcedureStepName, item.ProcedureStepRef, null);
@@ -246,14 +246,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 						{
 							ExecuteHelper(item.ProcedureStepName, item.ProcedureStepRef, GetSupervisorRef());
 						}
-					}
-					catch (Exception e)
-					{
-						ExceptionHandler.Report(e, this.Context.DesktopWindow);
-					}
+					//}
+					//catch (Exception e)
+					//{
+					//    ExceptionHandler.Report(e, this.Context.DesktopWindow);
+					//}
 
 					this.Context.InvalidateFolders(typeof(Folders.Reporting.VerifiedFolder));
-				});
+			//	});
+			return true;
 		}
 
 		private void ExecuteHelper(string procedureStepName, EntityRef procedureStepRef, EntityRef supervisorRef)

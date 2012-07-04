@@ -14,9 +14,6 @@
     <Setting Name="SupervisorID" Description="Stores user default supervisor." Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="PreliminaryDiagnosisReviewForPatientClass" Description="A comma separated list of patient classes used to prompt a preliminary diagnosis review dialog." Type="System.String" Scope="Application">
-      <Value Profile="(Default)">E</Value>
-    </Setting>
     <Setting Name="ShouldApplyDefaultSupervisor" Description="Indicates if a default supervisor should be automatically loaded if it is not yet specified." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>

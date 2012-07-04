@@ -82,20 +82,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        /// A comma separated list of patient classes used to prompt a preliminary diagnosis review dialog.
-        /// </summary>
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("A comma separated list of patient classes used to prompt a preliminary diagnosis " +
-            "review dialog.")]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("E")]
-        public string PreliminaryDiagnosisReviewForPatientClass {
-            get {
-                return ((string)(this["PreliminaryDiagnosisReviewForPatientClass"]));
-            }
-        }
-        
-        /// <summary>
         /// Indicates if a default supervisor should be automatically loaded if it is not yet specified.
         /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
