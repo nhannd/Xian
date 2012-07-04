@@ -42,10 +42,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool Visible
 		{
-			get
-			{
-				return ReportingSettings.Default.EnableTranscriptionWorkflow;
-			}
+			get { return WorkflowSettings.Default.EnableTranscriptionWorkflow; }
 		}
 
 		public event EventHandler VisibleChanged

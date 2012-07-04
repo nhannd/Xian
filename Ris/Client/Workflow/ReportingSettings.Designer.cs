@@ -39,19 +39,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        /// Indicates whether Transcription workflow is enabled.
-        /// </summary>
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Indicates whether Transcription workflow is enabled.")]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool EnableTranscriptionWorkflow {
-            get {
-                return ((bool)(this["EnableTranscriptionWorkflow"]));
-            }
-        }
-        
-        /// <summary>
         /// A comma separated list of staff types used to filter the Supervisor lookup field.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]

@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	}
 
 	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
-	[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FolderSystems.Reporting)]
+	[PrincipalPermission(SecurityAction.Demand, Role = Application.Common.AuthorityTokens.FolderSystems.Reporting)]
 	public class ReportingWorkflowFolderSystem
 		: ReportingWorkflowFolderSystemBase<ReportingWorkflowFolderExtensionPoint, ReportingWorkflowFolderToolExtensionPoint,
 			ReportingWorkflowItemToolExtensionPoint>
@@ -49,20 +49,21 @@ namespace ClearCanvas.Ris.Client.Workflow
 			// add the personal folders, since they are not extensions and will not be automatically added
 			this.Folders.Add(new Folders.Reporting.AssignedFolder());
 
-			if (CurrentStaffCanSupervise())
+			if (WorkflowSettings.Default.EnableResidentSupervisorWorkflow && CurrentStaffCanSupervise())
 			{
 				this.Folders.Add(new Folders.Reporting.AssignedForReviewFolder());
 			}
 
 			this.Folders.Add(new Folders.Reporting.DraftFolder());
 
-			if (ReportingSettings.Default.EnableTranscriptionWorkflow)
+			if (WorkflowSettings.Default.EnableTranscriptionWorkflow)
 			{
 				this.Folders.Add(new Folders.Reporting.InTranscriptionFolder());
 				this.Folders.Add(new Folders.Reporting.ReviewTranscriptionFolder());
 			}
 
-			if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview))
+			if (WorkflowSettings.Default.EnableResidentSupervisorWorkflow && 
+				Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview))
 				this.Folders.Add(new Folders.Reporting.AwaitingReviewFolder());
 
 			this.Folders.Add(new Folders.Reporting.VerifiedFolder());

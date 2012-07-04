@@ -849,12 +849,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool ReturnToInterpreterEnabled
 		{
-			get { return _canReturnToInterpreter; }
+			get { return _canReturnToInterpreter && WorkflowSettings.Default.EnableResidentSupervisorWorkflow; }
 		}
 
 		public bool ReturnToInterpreterVisible
 		{
-			get { return _canReturnToInterpreter && Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify); }
+			get { return _canReturnToInterpreter && WorkflowSettings.Default.EnableResidentSupervisorWorkflow
+				&& Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Report.Verify); }
 		}
 
 		#endregion
@@ -904,7 +905,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool SendToTranscriptionVisible
 		{
-			get { return ReportingSettings.Default.EnableTranscriptionWorkflow; }
+			get { return WorkflowSettings.Default.EnableTranscriptionWorkflow; }
 		}
 
 		#endregion
@@ -1026,7 +1027,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get
 			{
 				return _canCompleteInterpretationForTranscription
-					&& ReportingSettings.Default.EnableTranscriptionWorkflow;
+					&& WorkflowSettings.Default.EnableTranscriptionWorkflow;
 			}
 		}
 
