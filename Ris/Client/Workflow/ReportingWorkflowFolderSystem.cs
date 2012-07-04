@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			// add the personal folders, since they are not extensions and will not be automatically added
 			this.Folders.Add(new Folders.Reporting.AssignedFolder());
 
-			if (WorkflowSettings.Default.EnableResidentSupervisorWorkflow && CurrentStaffCanSupervise())
+			if (WorkflowSettings.Default.EnableInterpretationReviewWorkflow && CurrentStaffCanSupervise())
 			{
 				this.Folders.Add(new Folders.Reporting.AssignedForReviewFolder());
 			}
@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				this.Folders.Add(new Folders.Reporting.ReviewTranscriptionFolder());
 			}
 
-			if (WorkflowSettings.Default.EnableResidentSupervisorWorkflow && 
+			if (WorkflowSettings.Default.EnableInterpretationReviewWorkflow && 
 				Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview))
 				this.Folders.Add(new Folders.Reporting.AwaitingReviewFolder());
 

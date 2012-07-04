@@ -849,12 +849,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool ReturnToInterpreterEnabled
 		{
-			get { return _canReturnToInterpreter && WorkflowSettings.Default.EnableResidentSupervisorWorkflow; }
+			get { return _canReturnToInterpreter && WorkflowSettings.Default.EnableInterpretationReviewWorkflow; }
 		}
 
 		public bool ReturnToInterpreterVisible
 		{
-			get { return _canReturnToInterpreter && WorkflowSettings.Default.EnableResidentSupervisorWorkflow
+			get { return _canReturnToInterpreter && WorkflowSettings.Default.EnableInterpretationReviewWorkflow
 				&& Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Report.Verify); }
 		}
 

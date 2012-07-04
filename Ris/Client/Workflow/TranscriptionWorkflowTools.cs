@@ -100,6 +100,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Submit for Review", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.VerifyReportSmall.png", "Icons.VerifyReportMedium.png", "Icons.VerifyReportLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview)]
 	[ExtensionOf(typeof(TranscriptionWorkflowItemToolExtensionPoint))]
 	public class SubmitTranscriptionForReviewTool : TranscriptionWorkflowItemTool
@@ -114,6 +115,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Context.RegisterDropHandler(typeof(Folders.Transcription.AwaitingReviewFolder), this);
 
 			base.Initialize();
+		}
+
+		public bool Visible
+		{
+			get { return WorkflowSettings.Default.EnableTranscriptionReviewWorkflow; }
 		}
 
 		protected override bool Execute(ReportingWorklistItemSummary item)

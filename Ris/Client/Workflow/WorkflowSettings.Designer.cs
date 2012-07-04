@@ -37,15 +37,31 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        /// Specifies whether the resident/supervisor portion of the workflow is enabled.
+        /// Specifies whether the interpretation review (i.e. resident/supervisor) portion of the workflow is enabled.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether the resident/supervisor portion of the workflow is enabled.")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether the interpretation review (i.e. resident/supervisor) portion of" +
+            " the workflow is enabled.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool EnableResidentSupervisorWorkflow {
+        public bool EnableInterpretationReviewWorkflow {
             get {
-                return ((bool)(this["EnableResidentSupervisorWorkflow"]));
+                return ((bool)(this["EnableInterpretationReviewWorkflow"]));
+            }
+        }
+        
+        /// <summary>
+        /// Specifies whether the transcription review (i.e. supervising transcriptionist) portion of the workflow is enabled.  This value is ignored if EnableTranscriptionWorkflow is false.
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether the transcription review (i.e. supervising transcriptionist) po" +
+            "rtion of the workflow is enabled.  This value is ignored if EnableTranscriptionW" +
+            "orkflow is false.")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableTranscriptionReviewWorkflow {
+            get {
+                return ((bool)(this["EnableTranscriptionReviewWorkflow"]));
             }
         }
     }
