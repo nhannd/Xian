@@ -46,8 +46,8 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 					service.ResubmitProtocol(new ResubmitProtocolRequest(item.OrderRef));
 				});
 
-			this.Context.InvalidateFolders(typeof(Workflow.Folders.Registration.RejectedProtocolFolder));
-			this.Context.InvalidateFolders(typeof(Workflow.Folders.Registration.PendingProtocolFolder));
+			this.Context.InvalidateFolders(typeof(Folders.Booking.RejectedProtocolFolder));
+			this.Context.InvalidateFolders(typeof(Folders.Booking.PendingProtocolFolder));
 
 			return true;
 		}

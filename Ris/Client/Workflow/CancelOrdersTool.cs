@@ -104,20 +104,6 @@ namespace ClearCanvas.Ris.Client.Workflow
         }
     }
 
-    [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-    public class BookingCancelOrderTool : CancelOrderToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
-    {
-        protected override bool Execute(RegistrationWorklistItemSummary item)
-        {
-            return ExecuteCore(item);
-        }
-
-        protected override void InvalidateFolders()
-        {
-            DocumentManager.InvalidateFolder(typeof(Folders.Registration.ToBeScheduledFolder));
-            DocumentManager.InvalidateFolder(typeof(Folders.Registration.PendingProtocolFolder));
-        }
-    }
 
     [ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
     public class PerformingCancelOrderTool : CancelOrderToolBase<ModalityWorklistItemSummary, IPerformingWorkflowItemToolContext>

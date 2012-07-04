@@ -32,7 +32,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[EnabledStateObserver("view", "Enabled", "EnabledChanged")]
 	[Tooltip("view", "View workflow history")]
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(RadiologistAdminWorkflowItemToolExtensionPoint))]

@@ -57,37 +57,6 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		{
 		}
 
-		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.RegistrationToBeScheduledWorklist)]
-		[FolderPath("To Be Scheduled")]
-		[FolderDescription("BookingToBeScheduledFolderDescription")]
-		public class ToBeScheduledFolder : RegistrationWorkflowFolder
-		{
-		}
-
-		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.RegistrationPendingProtocolWorklist)]
-		[FolderPath("Pending Protocol")]
-		[FolderDescription("BookingPendingProtocolFolderDescription")]
-		public class PendingProtocolFolder : RegistrationWorkflowFolder
-		{
-		}
-
-		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.RegistrationCompletedProtocolWorklist)]
-		[FolderPath("Completed Protocol", true)]
-		[FolderDescription("BookingCompletedProtocolFolderDescription")]
-		public class CompletedProtocolFolder : RegistrationWorkflowFolder
-		{
-		}
-
-		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.RegistrationRejectedProtocolWorklist)]
-		[FolderPath("Rejected Protocol")]
-		[FolderDescription("BookingRejectedProtocolFolderDescription")]
-		public class RejectedProtocolFolder : RegistrationWorkflowFolder
-		{
-		}
 
 		[FolderPath("Search Results")]
 		public class RegistrationSearchFolder : WorklistSearchResultsFolder<RegistrationWorklistItemSummary, IRegistrationWorkflowService>

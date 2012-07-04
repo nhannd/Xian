@@ -30,7 +30,6 @@ namespace ClearCanvas.Ris.Client.Workflow
     [ActionPermission("neworder", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Create)]
 
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
     public class NewOrderTool : Tool<IToolContext>
     {

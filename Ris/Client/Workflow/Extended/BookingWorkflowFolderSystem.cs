@@ -11,14 +11,11 @@
 
 using System.Collections.Generic;
 using System.Security.Permissions;
-using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	[ExtensionPoint]
 	public class BookingWorkflowFolderExtensionPoint : ExtensionPoint<IWorklistFolder>
@@ -53,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         protected override SearchResultsFolder CreateSearchResultsFolder()
         {
-            return new Folders.Registration.BookingSearchFolder();
+            return new Workflow.Folders.Registration.BookingSearchFolder();
         }
 
 	}

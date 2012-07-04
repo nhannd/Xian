@@ -298,6 +298,15 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Booking.
+        /// </summary>
+        internal static string TitleBookingFolderSystem {
+            get {
+                return ResourceManager.GetString("TitleBookingFolderSystem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Confirm Reconciliation.
         /// </summary>
         internal static string TitleConfirmReconciliation {

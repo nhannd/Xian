@@ -32,7 +32,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create)]
 
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
 	public class PatientAddTool : Tool<IToolContext>
 	{

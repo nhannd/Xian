@@ -29,7 +29,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", Application.Common.AuthorityTokens.Development.CreateTestOrder)]
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	public class RandomOrderTool : Tool<IToolContext>
 	{
 		private bool _enabled;

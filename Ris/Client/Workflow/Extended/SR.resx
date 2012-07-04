@@ -228,4 +228,7 @@ Choose "No" to verify this report without further action.</value>
   <data name="TitleSelectSupervisor" xml:space="preserve">
     <value>Select Supervisor</value>
   </data>
+  <data name="TitleBookingFolderSystem" xml:space="preserve">
+    <value>Booking</value>
+  </data>
 </root>

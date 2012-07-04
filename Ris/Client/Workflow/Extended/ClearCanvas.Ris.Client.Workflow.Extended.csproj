@@ -43,10 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BookingWorkflowFolderSystem.cs" />
+    <Compile Include="BookingWorkflowTools.cs" />
     <Compile Include="EditProtocolTool.cs" />
     <Compile Include="EmergencyWorkflowFolder.cs" />
     <Compile Include="EmergencyWorkflowFolderSystem.cs" />
     <Compile Include="EmergencyWorkflowItemTools.cs" />
+    <Compile Include="Folders\BookingWorkflowFolders.cs" />
     <Compile Include="Folders\ProtocollingWorkflowFolders.cs" />
     <Compile Include="FooTools.cs" />
     <Compile Include="PatientProfileDiffComponent.cs" />

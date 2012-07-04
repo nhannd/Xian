@@ -64,7 +64,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BookingWorkflowFolderSystem.cs" />
     <Compile Include="CancelOrderComponent.cs" />
     <Compile Include="CancelOrdersTool.cs" />
     <Compile Include="CheckInOrderComponent.cs" />

@@ -446,9 +446,6 @@ Do you want to save it to your Drafts folder and open the transcription for {1}?
   <data name="TitleAssignProtocol" xml:space="preserve">
     <value>Assign Protocol</value>
   </data>
-  <data name="TitleBookingFolderSystem" xml:space="preserve">
-    <value>Booking</value>
-  </data>
   <data name="TitleCancelOrder" xml:space="preserve">
     <value>Cancel Order for {0}</value>
   </data>

@@ -17,6 +17,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 	[Tooltip("apply", "Print Worklist")]
 	[IconSet("apply", IconScheme.Colour, "PrintSmall.png", "PrintMedium.png", "PrintLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
 	[ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Worklist.Print)]
@@ -187,6 +188,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 	[Tooltip("view", "Open patient biography")]
 	[IconSet("view", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
 	[ActionPermission("view", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.PatientBiography.View)]
+	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
 	public class PatientBiographyTool : Tool<IToolContext>
