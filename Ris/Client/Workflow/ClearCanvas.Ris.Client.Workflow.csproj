@@ -352,15 +352,6 @@
     <EmbeddedResource Include="Icons\ProcessMessageToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\ReconcilePatientToolLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\ReconcilePatientToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\ReconcilePatientToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\RegistrationHomeToolLarge.png" />
   </ItemGroup>
   <ItemGroup>
@@ -444,9 +435,6 @@
     <EmbeddedResource Include="Icons\UnmergeOrdersLarge.png" />
     <EmbeddedResource Include="Icons\UnmergeOrdersMedium.png" />
     <EmbeddedResource Include="Icons\UnmergeOrdersSmall.png" />
-    <EmbeddedResource Include="Icons\RejectProtocolLarge.png" />
-    <EmbeddedResource Include="Icons\RejectProtocolMedium.png" />
-    <EmbeddedResource Include="Icons\RejectProtocolSmall.png" />
     <EmbeddedResource Include="Icons\SubmitForReviewLarge.png" />
     <EmbeddedResource Include="Icons\SubmitForReviewMedium.png" />
     <EmbeddedResource Include="Icons\SubmitForReviewSmall.png" />
@@ -454,9 +442,6 @@
     <EmbeddedResource Include="Icons\SearchPatientToolMedium.png" />
     <EmbeddedResource Include="Icons\SearchPatientToolSmall.png" />
     <EmbeddedResource Include="Icons\SingleExclamation.png" />
-    <EmbeddedResource Include="Icons\ResubmitOrderLarge.png" />
-    <EmbeddedResource Include="Icons\ResubmitOrderMedium.png" />
-    <EmbeddedResource Include="Icons\ResubmitOrderSmall.png" />
     <EmbeddedResource Include="Icons\PerformingOpenDocumentationLarge.png" />
     <EmbeddedResource Include="Icons\PerformingOpenDocumentationMedium.png" />
     <EmbeddedResource Include="Icons\PerformingOpenDocumentationSmall.png" />
