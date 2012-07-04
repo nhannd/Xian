@@ -547,6 +547,8 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
                 };
 
+                // TODO (CR Jul 2012): The service itself has logic like this already, so this should probably be there, too.
+                // Then, we could also get rid of this GetMatching... method.
                 var data = GetMatchingActiveWorkItem(request);
                 if (data != null)
                 {

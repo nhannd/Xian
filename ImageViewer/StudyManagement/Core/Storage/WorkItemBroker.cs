@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             IQueryable<WorkItem> query = from w in Context.WorkItems select w;
             query = query.WhereIsPending();
             query = query.Where(w => w.ProcessTime < DateTime.Now);
-            // TODO (CR Jul 2012): Should still order by priority, even though the only caller of this method knows there's only Normal priority items.
+            // TODO (CR Jul 2012): Should this still order by priority, even though the only caller of this method knows there's only Normal priority items?
             query = query.OrderBy(w => w.ProcessTime);
             return query.Take(n).ToList();
         }
@@ -244,15 +244,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             Context.WorkItems.DeleteOnSubmit(entity);
         }
 
-        public IEnumerable<WorkItem> GetActiveExclusiveWorkItems(DateTime scheduledTime, WorkItemPriorityEnum priority)
+        public IEnumerable<WorkItem> GetExclusiveWorkItemsScheduledBeforeOrHigherPriority(DateTime scheduledTime, WorkItemPriorityEnum priority)
 	    {
             IQueryable<WorkItem> query = from w in Context.WorkItems select w;
             query = query.Where(w => ExclusiveWorkItemRequestTypes.Contains(w.Type));
             query = query.Where(w => w.ScheduledTime < DateTime.Now);
             query = query.Where(w => w.ScheduledTime < scheduledTime || w.Priority < priority);
             query = query.WhereIsActive();
-
-        
+            
             query = query.OrderBy(w => w.Priority);
             query = query.OrderBy(w => w.ScheduledTime);
             return query.AsEnumerable();

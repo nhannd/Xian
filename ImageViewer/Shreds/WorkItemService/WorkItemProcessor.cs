@@ -160,22 +160,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     }
                 }
 
-                List<WorkItem> list = null;
-
-                if (_threadPool.StatThreadsAvailable > 0)
-                {
-                    list = WorkItemQuery.GetWorkItems(_threadPool.StatThreadsAvailable, WorkItemPriorityEnum.Stat);
-                }
-
-                if ((list == null || list.Count == 0) && _threadPool.NormalThreadsAvailable > 0)
-                {
-                    list = WorkItemQuery.GetWorkItems(_threadPool.NormalThreadsAvailable, WorkItemPriorityEnum.High);
-                }
-
-                if ((list == null || list.Count == 0) && _threadPool.NormalThreadsAvailable > 0)
-                {
-                    list = WorkItemQuery.GetWorkItems(_threadPool.NormalThreadsAvailable, WorkItemPriorityEnum.Normal);
-                }
+                var list = GetWorkItems(_threadPool.StatThreadsAvailable, _threadPool.NormalThreadsAvailable);
                 
                 if ( list == null)
                 {
@@ -196,6 +181,27 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 QueueWorkItems(list);
             }
 		}
+
+        internal static List<WorkItem> GetWorkItems(int statThreadsAvailable, int normalThreadsAvailable)
+        {
+            List<WorkItem> list = null;
+            if (statThreadsAvailable > 0)
+            {
+                list = WorkItemQuery.GetWorkItems(statThreadsAvailable, WorkItemPriorityEnum.Stat);
+            }
+
+            if ((list == null || list.Count == 0) && normalThreadsAvailable > 0)
+            {
+                list = WorkItemQuery.GetWorkItems(normalThreadsAvailable, WorkItemPriorityEnum.High);
+            }
+
+            if ((list == null || list.Count == 0) && normalThreadsAvailable > 0)
+            {
+                list = WorkItemQuery.GetWorkItems(normalThreadsAvailable, WorkItemPriorityEnum.Normal);
+            }
+
+            return list;
+        }
 
         /// <summary>
         /// Cancel a current running WorkItem

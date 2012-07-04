@@ -472,7 +472,9 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override WorkItemConcurrency ConcurrencyType
         {
-            get { return WorkItemConcurrency.StudyRead; }
+            //Note: non-exclusive because, although it is a study-related work item, it does not actually read
+            //the study contents or otherwise require study integrity be maintained.
+            get { return WorkItemConcurrency.NonExclusive; }
         }
 
         [DataMember]

@@ -241,6 +241,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
         #region Public Properties
 
+        // TODO (CR Jul 2012): Ideally, this could all be managed internally in this class.
         /// <summary>
         /// Sync object used when accessing <see cref="StudyWorkItems"/> 
         /// </summary>

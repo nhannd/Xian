@@ -102,6 +102,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     string reason;
                     if (CanStart(item, out reason))
                     {
+                        // TODO (CR Jul 2012): Do subsequent queries see this item as "In Progress"?
                         item.Status = WorkItemStatusEnum.InProgress;
                         returnedItems.Add(item);
                     }
@@ -160,6 +161,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         private bool CanStartNonExclusive(WorkItem workItem, out string reason)
         {
+            // TODO (CR Jul 2012): Only in progress, or anything not pending or terminated?
             if (ExclusiveInProgressWorkItem(out reason))
                 return false;
 
@@ -182,6 +184,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         private bool CanStartStudyUpdate(WorkItem workItem, out string reason)
         {
+            // TODO (CR Jul 2012): Only in progress, or anything not pending or terminated?
             var relatedList = GetInProgressWorkItemsForStudy(workItem);
             if (relatedList != null)
             {
@@ -213,6 +216,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 }
             }
 
+            // TODO (CR Jul 2012): Only in progress, or anything not pending or terminated?
             if (ExclusiveInProgressWorkItem(out reason))
                 return false;
 
@@ -224,6 +228,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         private bool CanStartStudyDelete(WorkItem workItem, out string reason)
         {
+            // TODO (CR Jul 2012): Only in progress, or anything not pending or terminated?
             var relatedList = GetInProgressWorkItemsForStudy(workItem);
             if (relatedList != null)
             {
@@ -244,6 +249,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 }
             }
 
+            // TODO (CR Jul 2012): Only in progress, or anything not pending or terminated?
             if (ExclusiveInProgressWorkItem(out reason))
                 return false;
 
@@ -255,6 +261,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         private bool CanStartStudyRead(WorkItem workItem, out string reason)
         {
+            // TODO (CR Jul 2012): Only in progress, or anything not pending or terminated?
             var relatedList = GetInProgressWorkItemsForStudy(workItem);
             if (relatedList != null)
             {
@@ -279,6 +286,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 }
             }
 
+            // TODO (CR Jul 2012): Only in progress, or anything not pending or terminated?
             if (ExclusiveInProgressWorkItem(out reason))
                 return false;
 
@@ -300,6 +308,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                 }
             }
 
+            // TODO (CR Jul 2012): Only in progress, or anything not pending or terminated?
             return !AnyInProgressWorkItems(out reason);
         }
 
@@ -338,8 +347,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             var broker = _context.GetWorkItemBroker();
 
-            var list = broker.GetWorkItemsScheduledBeforeOrHigherPriority(item.ScheduledTime, item.Priority,
-                                                                          item.StudyInstanceUid);
+            var list = broker.GetWorkItemsScheduledBeforeOrHigherPriority(item.ScheduledTime, item.Priority, item.StudyInstanceUid);
 
             if (list == null)
                 return null;
@@ -380,7 +388,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
             var broker = _context.GetWorkItemBroker();
 
-            var list = broker.GetActiveExclusiveWorkItems(workItem.ScheduledTime, workItem.Priority);
+            var list = broker.GetExclusiveWorkItemsScheduledBeforeOrHigherPriority(workItem.ScheduledTime, workItem.Priority);
 
             if (list == null)
                 return false;

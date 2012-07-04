@@ -71,15 +71,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 	                var remaining = timeoutMilliseconds - elapsed;
 
 	                //retry if there's some time left before the timeout, or there hasn't been at least one retry.
-	                if (remaining > 0 || retryCount == 0)
-	                {
-	                    ++retryCount;
-	                    var waitMilliseconds = Math.Min(50, remaining);
-	                    Platform.Log(LogLevel.Warn, e,
-	                                    "Failed to create database connection for '{0}'; waiting {1}ms before trying again.",
-	                                    fileName, waitMilliseconds);
-	                    Thread.Sleep(waitMilliseconds);
-	                }
+	                if (remaining <= 0 && retryCount != 0)
+	                    throw;
+
+                    ++retryCount;
+	                var waitMilliseconds = Math.Min(50, remaining);
+	                Platform.Log(LogLevel.Warn, e,
+	                                "Failed to create database connection for '{0}'; waiting {1}ms before trying again.",
+	                                fileName, waitMilliseconds);
+	                Thread.Sleep(waitMilliseconds);
 	            }
 	        }
 	    }
