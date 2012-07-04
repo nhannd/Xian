@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         private bool CanStart(WorkItem item, out string reason)
         {
             if (item.Request.ConcurrencyType == WorkItemConcurrency.NonExclusive)
-                return CanStartNonExclusive(out reason);
+                return CanStartNonExclusive(item, out reason);
 
             if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyUpdate)
                 return CanStartStudyUpdate(item, out reason);
@@ -158,10 +158,24 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             return CanStartExclusive(item, out reason);
         }
 
-        private bool CanStartNonExclusive(out string reason)
+        private bool CanStartNonExclusive(WorkItem workItem, out string reason)
         {
             if (ExclusiveInProgressWorkItem(out reason))
                 return false;
+
+            var competingList = GetCompetingWorkItems(workItem);
+            if (competingList != null)
+            {
+                foreach (var competingWorkItem in competingList)
+                {
+                    // Block for Exclusive concurrency types scheduled ahead of us
+                    if (competingWorkItem.Request.ConcurrencyType == WorkItemConcurrency.Exclusive)
+                    {
+                        reason = string.Format("Waiting for: {0}", competingWorkItem.Request.ActivityDescription);
+                        return false;
+                    }
+                }
+            }
 
             return true;
         }
@@ -420,7 +434,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
            
             var broker = _context.GetWorkItemBroker();
 
-            var list = broker.GetWorkItems(null, WorkItemStatusEnum.InProgress, null);
+            var list = broker.GetWorkItems(null, WorkItemStatusEnum.InProgress, workItem.StudyInstanceUid);
 
             if (list == null)
                 return null;
