@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 
         protected override SearchResultsFolder CreateSearchResultsFolder()
         {
-            return new Workflow.Folders.Registration.BookingSearchFolder();
+            return new Folders.Booking.BookingSearchFolder();
         }
 
 	}

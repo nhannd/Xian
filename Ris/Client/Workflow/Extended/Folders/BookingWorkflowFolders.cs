@@ -11,6 +11,7 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended.Folders
 {
@@ -46,6 +47,24 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended.Folders
 		[FolderDescription("BookingRejectedProtocolFolderDescription")]
 		public class RejectedProtocolFolder : RegistrationWorkflowFolder
 		{
+		}
+
+		[FolderPath("Search Results")]
+		public class BookingSearchFolder : WorklistSearchResultsFolder<RegistrationWorklistItemSummary, IRegistrationWorkflowService>
+		{
+			public BookingSearchFolder()
+				: base(new RegistrationWorklistTable())
+			{
+			}
+
+
+			//TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
+			//it is the only way to get things working right now
+			protected override string ProcedureStepClassName
+			{
+				get { return "ProtocolResolutionStep"; }
+			}
+
 		}
 	}
 }

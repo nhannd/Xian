@@ -72,22 +72,5 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 			}
 		}
 
-		[FolderPath("Search Results")]
-		public class BookingSearchFolder : WorklistSearchResultsFolder<RegistrationWorklistItemSummary, IRegistrationWorkflowService>
-		{
-			public BookingSearchFolder()
-				: base(new RegistrationWorklistTable())
-			{
-			}
-
-
-			//TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
-			//it is the only way to get things working right now
-			protected override string ProcedureStepClassName
-			{
-				get { return "ProtocolResolutionStep"; }
-			}
-
-		}
 	}
 }
