@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                     workItems = workItemBroker.GetWorkItemsForProcessingByPriority(count*4, priority);
                 else if (priority == WorkItemPriorityEnum.High)
                     workItems = workItemBroker.GetWorkItemsForProcessingByPriority(count*4, priority);
-                else
+                else // TODO (CR Jul 2012): Should still probably get by Priority just to be safe/consistent?
                     workItems = workItemBroker.GetWorkItemsForProcessing(count*4);
 
                 foreach (var item in workItems)
@@ -374,10 +374,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             return false;
         }
 
-        /// <summary>
-        /// Returns true if there are any WorkItemStatusEnum.InProgress work items with <see cref="WorkItemConcurrency.Exclusive"/>.
-        /// </summary>
-        /// <returns></returns>
         private bool ExclusiveCompetingWorkItem(WorkItem workItem, out string reason)
         {
             reason = string.Empty;

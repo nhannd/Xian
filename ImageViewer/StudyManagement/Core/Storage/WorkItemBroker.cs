@@ -22,8 +22,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 {
     public static class WorkItemQueryExtensions
     {
-        public static IQueryable<WorkItem> WhereIsActive(this  IQueryable<WorkItem> query)
+        public static IQueryable<WorkItem> WhereIsActive(this IQueryable<WorkItem> query)
         {
+            // TODO (CR Jul 2012): Is Pending active? Is this WhereNotTerminated?
             query = query.Where(w => w.Status == WorkItemStatusEnum.Pending
                                      || w.Status == WorkItemStatusEnum.Idle
                                      || w.Status == WorkItemStatusEnum.InProgress
@@ -31,6 +32,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             return query;
         }
 
+        // TODO (CR Jul 2012): WhereWaitingToProcess?
         public static IQueryable<WorkItem> WhereIsPending(this  IQueryable<WorkItem> query)
         {
             query = query.Where(w => w.Status == WorkItemStatusEnum.Pending || w.Status == WorkItemStatusEnum.Idle);
@@ -136,6 +138,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
             IQueryable<WorkItem> query = from w in Context.WorkItems select w;
             query = query.WhereIsPending();
             query = query.Where(w => w.ProcessTime < DateTime.Now);
+            // TODO (CR Jul 2012): Should still order by priority, even though the only caller of this method knows there's only Normal priority items.
             query = query.OrderBy(w => w.ProcessTime);
             return query.Take(n).ToList();
         }
