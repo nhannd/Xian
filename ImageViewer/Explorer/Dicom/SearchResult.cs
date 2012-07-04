@@ -217,7 +217,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             using (_studyTable.Items.BeginTransaction())
             {
-                _studyTable.Items.BeginTransaction();
                 _studyTable.Items.Clear();
                 _studyTable.Items.AddRange(allItems);
             }

@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         /// <summary>
         /// Marshaled back to the UI thread from a worker thread.
         /// </summary>
-        private void UpdatedChangedStudies(DateTime queryStartTime, IEnumerable<string> deletedStudyUids, IEnumerable<StudyEntry> updatedStudies)
+        private void UpdatedChangedStudies(DateTime queryStartTime, IList<string> deletedStudyUids, IList<StudyEntry> updatedStudies)
         {
             //If the sync context is null, it's because we're not monitoring studies anymore (e.g. study browser closed).
             if (_synchronizationContext == null)
@@ -155,15 +155,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             //studies appearing in the table while the search is still in progress.
             if (hasUserSearched && updateQueryStartedBeforeUserSearchEnded)
             {
-                Platform.Log(LogLevel.Debug, "Disregarding updated studies; update query started before user search ended.");
+                Platform.Log(LogLevel.Debug, "Disregarding updated studies ({0} changed, {1} deleted); update query started before user search ended.", updatedStudies.Count, deletedStudyUids.Count);
                 return;
             }
 
+            Platform.Log(LogLevel.Debug, "{0} studies changed, {1} studies deleted.", updatedStudies.Count, deletedStudyUids.Count);
+            
             foreach (var updatedStudy in updatedStudies)
                 UpdateTableItem(updatedStudy);
 
             foreach (string deletedUid in deletedStudyUids)
                 DeleteStudy(deletedUid);
+
+            Platform.Log(LogLevel.Debug, "Study count = {0}.", _studyTable.Items.Count);
 
             SetResultsTitle();
         }
