@@ -250,16 +250,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             {
                 var broker = context.GetWorkItemBroker();
                 
-                foreach (var test in broker.GetWorkItemsForProcessing(1000))
-                {
+                foreach (var test in broker.GetWorkItems(null, null, null))
                     broker.Delete(test);
-                }
-
-                foreach (var test in broker.GetWorkItems(null, WorkItemStatusEnum.InProgress, null))
-                {
-                    broker.Delete(test);
-                }
-
 
                 context.Commit();
             }
@@ -1465,7 +1457,61 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
         }
 
         [Test]
-        public void Test31CancellingImportStatReindex()
+        public void Test31IdleImportWithSend()
+        {
+            DeleteAllWorkItems();
+            var list = new List<SchedulingTest>();
+            var msg1 = new DicomMessage();
+            SetupMR(msg1.DataSet);
+
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Idle),
+                Message = "Study Process",
+                ExpectedStatus = WorkItemStatusEnum.InProgress
+            });
+
+            Thread.Sleep(2);
+
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertSendStudy(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Pending),
+                Message = "Send Study",
+                ExpectedStatus = WorkItemStatusEnum.Pending,
+            });
+
+            DoTest(list, 1);
+        }
+
+        [Test]
+        public void Test32IdleImportWithStatSend()
+        {
+            DeleteAllWorkItems();
+            var list = new List<SchedulingTest>();
+            var msg1 = new DicomMessage();
+            SetupMR(msg1.DataSet);
+
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Idle, DateTime.Now + TimeSpan.FromSeconds(30)),
+                Message = "Study Process",
+                ExpectedStatus = WorkItemStatusEnum.Idle
+            });
+
+            Thread.Sleep(2);
+
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertSendStudy(msg1, WorkItemPriorityEnum.Stat, WorkItemStatusEnum.Pending),
+                Message = "Send Study",
+                ExpectedStatus = WorkItemStatusEnum.Pending,
+            });
+
+            DoTest(list, 0);
+        }
+
+        [Test]
+        public void Test33CancellingImportStatReindex()
         {
             DeleteAllWorkItems();
             var list = new List<SchedulingTest>();
@@ -1486,6 +1532,35 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
                 Processor = InsertReindex(WorkItemPriorityEnum.Stat, WorkItemStatusEnum.Pending),
                 Message = "Study Delete",
                 ExpectedStatus = WorkItemStatusEnum.Pending,
+            });
+
+            DoTest(list, 0);
+        }
+
+        [Test]
+        public void Test34CancellingReindexStatImport()
+        {
+            DeleteAllWorkItems();
+            var list = new List<SchedulingTest>();
+            var msg1 = new DicomMessage();
+            SetupMR(msg1.DataSet);
+
+            //A re-index that is canceling is still in the process of restoring study xml, etc. An import
+            //cannot run at the same time as a re-index that is canceling.
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertReindex(WorkItemPriorityEnum.High, WorkItemStatusEnum.Canceling),
+                Message = "Study Delete",
+                ExpectedStatus = WorkItemStatusEnum.Canceling,
+            });
+
+            Thread.Sleep(2);
+
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertImportFiles(WorkItemPriorityEnum.Stat, WorkItemStatusEnum.Pending),
+                Message = "Study Process",
+                ExpectedStatus = WorkItemStatusEnum.Pending
             });
 
             DoTest(list, 0);
