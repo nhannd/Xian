@@ -18,9 +18,9 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Extended.Common.ProtocollingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
@@ -245,7 +245,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 
 		#region Accept
 
-		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Accept)]
+		[PrincipalPermission(SecurityAction.Demand, Role = Application.Extended.Common.AuthorityTokens.Workflow.Protocol.Accept)]
 		public void Accept()
 		{
 			// don't allow accept if there are validation errors
@@ -277,7 +277,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 		{
 			get
 			{
-				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Accept);
+				return Thread.CurrentPrincipal.IsInRole(Application.Extended.Common.AuthorityTokens.Workflow.Protocol.Accept);
 			}
 		}
 
@@ -290,7 +290,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 
 		#region Submit For Approval
 
-		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
+		[PrincipalPermission(SecurityAction.Demand, Role = Application.Extended.Common.AuthorityTokens.Workflow.Protocol.Create)]
 		public void SubmitForApproval()
 		{
 			// don't allow accept if there are validation errors
@@ -325,14 +325,14 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 
 		public bool SubmitForApprovalVisible
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview); }
+			get { return Thread.CurrentPrincipal.IsInRole(Application.Extended.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview); }
 		}
 
 		#endregion
 
 		#region Reject
 
-		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
+		[PrincipalPermission(SecurityAction.Demand, Role = Application.Extended.Common.AuthorityTokens.Workflow.Protocol.Create)]
 		public void Reject()
 		{
 			if (SupervisorRequired())
@@ -375,13 +375,13 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 
 		#region Save
 
-		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
+		[PrincipalPermission(SecurityAction.Demand, Role = Application.Extended.Common.AuthorityTokens.Workflow.Protocol.Create)]
 		public void Save()
 		{
 			Save(false);
 		}
 
-		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
+		[PrincipalPermission(SecurityAction.Demand, Role = Application.Extended.Common.AuthorityTokens.Workflow.Protocol.Create)]
 		public void Save(bool overrideDoNotPerformNextItem)
 		{
 			try
@@ -627,7 +627,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 
 		private bool SupervisorRequired()
 		{
-			if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.OmitSupervisor))
+			if (Thread.CurrentPrincipal.IsInRole(Application.Extended.Common.AuthorityTokens.Workflow.Protocol.OmitSupervisor))
 				return false;
 
 			if (this.ProtocolDetail.Supervisor != null)

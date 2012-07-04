@@ -19,8 +19,8 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Application.Extended.Common.ProtocollingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
@@ -148,7 +148,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 		{
 			get
 			{
-				return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview);
+				return Thread.CurrentPrincipal.IsInRole(Application.Extended.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview);
 			}
 		}
 
@@ -227,4 +227,37 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 			return true;
 		}
 	}
+
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Reassign", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Reassign", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "Icons.AssignSmall.png", "Icons.AssignMedium.png", "Icons.AssignLarge.png")]
+	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[ActionPermission("apply", Application.Extended.Common.AuthorityTokens.Workflow.Protocol.Reassign)]
+	[ExtensionOf(typeof(RadiologistAdminWorkflowItemToolExtensionPoint))]
+	public class ReassignTool : ReportingWorkflowItemTool
+	{
+		public ReassignTool()
+			: base("ReassignProcedureStep")
+		{
+		}
+
+		protected override bool Execute(ReportingWorklistItemSummary item)
+		{
+			try
+			{
+				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+					this.Context.DesktopWindow,
+					new ReassignComponent(item),
+					SR.TitleReassignItem);
+
+				return exitCode == ApplicationComponentExitCode.Accepted;
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+				return false;
+			}
+		}
+	}
+
 }

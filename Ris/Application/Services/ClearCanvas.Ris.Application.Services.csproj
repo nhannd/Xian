@@ -129,7 +129,6 @@
     <Compile Include="ResultRecipientAssembler.cs" />
     <Compile Include="StaffGroupAssembler.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\ExternalPractitionerAdminService.cs" />
-    <Compile Include="Admin\ProtocolAdmin\ProtocolAdminService.cs" />
     <Compile Include="Login\LoginServiceRecorder.cs" />
     <Compile Include="OrderAttachmentAssembler.cs" />
     <Compile Include="OrderNoteAssembler.cs" />
@@ -171,7 +170,6 @@
     <Compile Include="EnumUtils.cs" />
     <Compile Include="InProcessApplicationServiceProvider.cs" />
     <Compile Include="Jsml\JsmlShimService.cs" />
-    <Compile Include="ProtocollingWorkflow\ProtocollingWorkflowService.cs" />
     <Compile Include="WorklistAssembler.cs" />
     <Compile Include="ApplicationServiceBase.cs" />
     <Compile Include="ApplicationServiceExtensionPoint.cs" />

@@ -22,7 +22,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Open Protocol", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
+	[ActionPermission("apply", Application.Extended.Common.AuthorityTokens.Workflow.Protocol.Create)]
 	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
 	public class EditProtocolTool : ProtocolWorkflowItemTool
 	{

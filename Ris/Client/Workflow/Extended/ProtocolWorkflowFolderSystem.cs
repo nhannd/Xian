@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 	}
 
 	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
-	[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FolderSystems.Protocolling)]
+	[PrincipalPermission(SecurityAction.Demand, Role = Application.Extended.Common.AuthorityTokens.FolderSystems.Protocolling)]
 	public class ProtocolWorkflowFolderSystem
 		: ReportingWorkflowFolderSystemBase<ProtocolWorkflowFolderExtensionPoint, ProtocolWorkflowFolderToolExtensionPoint,
 			ProtocolWorkflowItemToolExtensionPoint>
@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 			}
 			this.Folders.Add(new Folders.Reporting.DraftProtocolFolder());
 
-			if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview))
+			if (Thread.CurrentPrincipal.IsInRole(Application.Extended.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview))
 				this.Folders.Add(new Folders.Reporting.AwaitingApprovalProtocolFolder());
 
 			this.Folders.Add(new Folders.Reporting.CompletedProtocolFolder());

@@ -142,20 +142,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ProtocolCodeEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ProtocolCodeEditorComponentControl.Designer.cs">
-      <DependentUpon>ProtocolCodeEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProtocolCodeEditorComponentView.cs" />
-    <Compile Include="ProtocolGroupEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ProtocolGroupEditorComponentControl.Designer.cs">
-      <DependentUpon>ProtocolGroupEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProtocolGroupEditorComponentView.cs" />
     <Compile Include="ProcedureTypeGroupEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -293,14 +279,6 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProtocolCodeEditorComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ProtocolCodeEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProtocolGroupEditorComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ProtocolGroupEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProcedureTypeGroupEditorComponentControl.resx">
       <SubType>Designer</SubType>

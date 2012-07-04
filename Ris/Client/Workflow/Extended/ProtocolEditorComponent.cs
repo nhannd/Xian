@@ -18,8 +18,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Application.Extended.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 using System.Collections;
@@ -183,7 +183,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 			_selectedProtocolCodes.Items.Clear();
 			_selectedProtocolCodes.Items.AddRange(_protocolDetail.Codes);
 
-			if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview)
+			if (Thread.CurrentPrincipal.IsInRole(Application.Extended.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview)
 				&& _protocolDetail.Supervisor == null)
 			{
 				// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
@@ -247,7 +247,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 		{
 			get
 			{
-				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview)
+				return Thread.CurrentPrincipal.IsInRole(Application.Extended.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview)
 					|| (_canEdit == false && _protocolDetail != null && _protocolDetail.Supervisor != null);
 			}
 		}
@@ -271,8 +271,8 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 		{
 			get
 			{
-				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview)
-					&& !Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.OmitSupervisor);
+				return Thread.CurrentPrincipal.IsInRole(Application.Extended.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview)
+					&& !Thread.CurrentPrincipal.IsInRole(Application.Extended.Common.AuthorityTokens.Workflow.Protocol.OmitSupervisor);
 			}
 		}
 

@@ -79,6 +79,15 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        internal static string ColumnDescription {
+            get {
+                return ResourceManager.GetString("ColumnDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Family Name.
         /// </summary>
         internal static string ColumnFamilyName {
@@ -214,6 +223,33 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to save Protocol Code.
+        /// </summary>
+        internal static string ExceptionSaveProtocolCode {
+            get {
+                return ResourceManager.GetString("ExceptionSaveProtocolCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to savev Protocol Group.
+        /// </summary>
+        internal static string ExceptionSaveProtocolGroup {
+            get {
+                return ResourceManager.GetString("ExceptionSaveProtocolGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  - {0} {1} - {2}.
+        /// </summary>
+        internal static string FormatTitleContextDescriptionOrderNoteConversation {
+            get {
+                return ResourceManager.GetString("FormatTitleContextDescriptionOrderNoteConversation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Review Preliminary Diagnosis - {0} {1} - {2}.
         /// </summary>
         internal static string FormatTitleContextDescriptionReviewOrderNoteConversation {
@@ -298,6 +334,24 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Protocol Code.
+        /// </summary>
+        internal static string TitleAddProtocolCode {
+            get {
+                return ResourceManager.GetString("TitleAddProtocolCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Protocol Group.
+        /// </summary>
+        internal static string TitleAddProtocolGroup {
+            get {
+                return ResourceManager.GetString("TitleAddProtocolGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Booking.
         /// </summary>
         internal static string TitleBookingFolderSystem {
@@ -316,6 +370,15 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit Protocol Group.
+        /// </summary>
+        internal static string TitleEditProtocolGroup {
+            get {
+                return ResourceManager.GetString("TitleEditProtocolGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Emergency.
         /// </summary>
         internal static string TitleEmergencyFolderSystem {
@@ -330,6 +393,33 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended {
         internal static string TitleLinkProcedures {
             get {
                 return ResourceManager.GetString("TitleLinkProcedures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move down.
+        /// </summary>
+        internal static string TitleMoveProtocolCodeDown {
+            get {
+                return ResourceManager.GetString("TitleMoveProtocolCodeDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move up.
+        /// </summary>
+        internal static string TitleMoveProtocolCodeUp {
+            get {
+                return ResourceManager.GetString("TitleMoveProtocolCodeUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New code.
+        /// </summary>
+        internal static string TitleNewProtocolCode {
+            get {
+                return ResourceManager.GetString("TitleNewProtocolCode", resourceCulture);
             }
         }
         
@@ -379,11 +469,29 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Protocol Groups.
+        /// </summary>
+        internal static string TitleProtocolGroups {
+            get {
+                return ResourceManager.GetString("TitleProtocolGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Protocolling.
         /// </summary>
         internal static string TitleProtocollingFolderSystem {
             get {
                 return ResourceManager.GetString("TitleProtocollingFolderSystem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reassign Item.
+        /// </summary>
+        internal static string TitleReassignItem {
+            get {
+                return ResourceManager.GetString("TitleReassignItem", resourceCulture);
             }
         }
         

@@ -202,7 +202,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PatientSearchComponentSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="PreliminaryDiagnosisConversationTool.cs" />
     <Compile Include="IEPrintBackgroundSettings.cs" />
     <Compile Include="ProcedureEditorComponentBase.cs" />
     <Compile Include="ProcedureEditorComponent.cs" />

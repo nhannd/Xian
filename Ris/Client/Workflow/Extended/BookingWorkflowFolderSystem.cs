@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 	}
 
 	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
-	[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FolderSystems.Booking)]
+	[PrincipalPermission(SecurityAction.Demand, Role = Application.Extended.Common.AuthorityTokens.FolderSystems.Booking)]
 	public class BookingWorkflowFolderSystem
 		: RegistrationWorkflowFolderSystemBase<BookingWorkflowFolderExtensionPoint,
 			BookingWorkflowFolderToolExtensionPoint, BookingWorkflowItemToolExtensionPoint>

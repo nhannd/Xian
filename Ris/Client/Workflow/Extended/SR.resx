@@ -231,4 +231,40 @@ Choose "No" to verify this report without further action.</value>
   <data name="TitleBookingFolderSystem" xml:space="preserve">
     <value>Booking</value>
   </data>
+  <data name="ColumnDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ExceptionSaveProtocolCode" xml:space="preserve">
+    <value>Unable to save Protocol Code</value>
+  </data>
+  <data name="ExceptionSaveProtocolGroup" xml:space="preserve">
+    <value>Unable to savev Protocol Group</value>
+  </data>
+  <data name="FormatTitleContextDescriptionOrderNoteConversation" xml:space="preserve">
+    <value> - {0} {1} - {2}</value>
+  </data>
+  <data name="TitleAddProtocolCode" xml:space="preserve">
+    <value>Add Protocol Code</value>
+  </data>
+  <data name="TitleAddProtocolGroup" xml:space="preserve">
+    <value>Add Protocol Group</value>
+  </data>
+  <data name="TitleEditProtocolGroup" xml:space="preserve">
+    <value>Edit Protocol Group</value>
+  </data>
+  <data name="TitleMoveProtocolCodeDown" xml:space="preserve">
+    <value>Move down</value>
+  </data>
+  <data name="TitleMoveProtocolCodeUp" xml:space="preserve">
+    <value>Move up</value>
+  </data>
+  <data name="TitleNewProtocolCode" xml:space="preserve">
+    <value>New code</value>
+  </data>
+  <data name="TitleProtocolGroups" xml:space="preserve">
+    <value>Protocol Groups</value>
+  </data>
+  <data name="TitleReassignItem" xml:space="preserve">
+    <value>Reassign Item</value>
+  </data>
 </root>

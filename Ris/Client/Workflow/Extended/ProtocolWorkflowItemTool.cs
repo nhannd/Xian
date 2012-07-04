@@ -12,9 +12,8 @@
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Application.Extended.Common.ProtocollingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended
 {

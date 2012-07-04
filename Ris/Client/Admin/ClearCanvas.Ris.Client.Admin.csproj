@@ -89,11 +89,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProtocolCodeEditorComponent.cs" />
-    <Compile Include="ProtocolCodeSummaryComponent.cs" />
-    <Compile Include="ProtocolGroupEditorComponent.cs" />
-    <Compile Include="ProtocolGroupSummaryComponent.cs" />
-    <Compile Include="ProtocolGroupTable.cs" />
     <Compile Include="ProcedureTypeGroupEditorComponent.cs" />
     <Compile Include="ProcedureTypeGroupSummaryTable.cs" />
     <Compile Include="ProcedureTypeGroupSummaryTool.cs" />

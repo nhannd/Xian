@@ -35,7 +35,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 	}
 
 	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
-	[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FolderSystems.Emergency)]
+	[PrincipalPermission(SecurityAction.Demand, Role = Application.Extended.Common.AuthorityTokens.FolderSystems.Emergency)]
 	public class EmergencyWorkflowFolderSystem
 		: RegistrationWorkflowFolderSystemBase<EmergencyWorkflowFolderExtensionPoint, EmergencyWorkflowFolderToolExtensionPoint,
 			EmergencyWorkflowItemToolExtensionPoint>

@@ -12,9 +12,8 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
+using ClearCanvas.Ris.Application.Extended.Common.ProtocollingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
@@ -22,7 +21,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Re-submit for Protocol", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.ResubmitOrderSmall.png", "Icons.ResubmitOrderMedium.png", "Icons.ResubmitOrderLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Resubmit)]
+	[ActionPermission("apply", Application.Extended.Common.AuthorityTokens.Workflow.Protocol.Resubmit)]
 	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	public class ResubmitProtocolTool : WorkflowItemTool<RegistrationWorklistItemSummary, IWorkflowItemToolContext<RegistrationWorklistItemSummary>>
 	{

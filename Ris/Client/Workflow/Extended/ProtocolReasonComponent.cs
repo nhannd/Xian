@@ -12,7 +12,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
+using ClearCanvas.Ris.Application.Extended.Common.ProtocollingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended
 {

@@ -43,6 +43,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProtocolCodeEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProtocolCodeEditorComponentControl.designer.cs">
+      <DependentUpon>ProtocolCodeEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProtocolCodeEditorComponentView.cs" />
     <Compile Include="ProtocolEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -50,6 +57,13 @@
       <DependentUpon>ProtocolEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ProtocolEditorComponentView.cs" />
+    <Compile Include="ProtocolGroupEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProtocolGroupEditorComponentControl.designer.cs">
+      <DependentUpon>ProtocolGroupEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProtocolGroupEditorComponentView.cs" />
     <Compile Include="ProtocollingComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -99,8 +113,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ProtocolCodeEditorComponentControl.resx">
+      <DependentUpon>ProtocolCodeEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ProtocolEditorComponentControl.resx">
       <DependentUpon>ProtocolEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProtocolGroupEditorComponentControl.resx">
+      <DependentUpon>ProtocolGroupEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProtocollingComponentControl.resx">
       <DependentUpon>ProtocollingComponentControl.cs</DependentUpon>
