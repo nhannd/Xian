@@ -130,6 +130,7 @@ namespace ClearCanvas.Ris.Client
 				// need to update it to reflect current selection
 				_folderContentComponent.FolderSystem = selectedFolderExplorer.FolderSystem;
 				_folderContentComponent.SelectedFolder = selectedFolderExplorer.SelectedFolder;
+				_contentArea.Show(_defaultContentComponent);
 			}
 		}
 

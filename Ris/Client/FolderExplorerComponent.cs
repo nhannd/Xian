@@ -156,7 +156,7 @@ namespace ClearCanvas.Ris.Client
     	/// <returns></returns>
     	IApplicationComponent IFolderExplorerComponent.GetContentComponent()
     	{
-    		return GetContentComponent();
+    		return _folderSystem.GetContentComponent();
     	}
 
     	#endregion
@@ -243,20 +243,6 @@ namespace ClearCanvas.Ris.Client
         }
 
         #endregion
-
-		#region Protected API
-
-		/// <summary>
-		/// Override this method to return a custom content component.
-		/// </summary>
-		/// <returns></returns>
-		protected virtual IApplicationComponent GetContentComponent()
-		{
-			// returning null signals that the default folder content component should be used
-			return null;
-		}
-
-		#endregion
 
 		#region Private methods
 
