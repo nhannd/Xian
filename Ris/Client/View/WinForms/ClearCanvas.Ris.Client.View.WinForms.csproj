@@ -498,6 +498,13 @@
       <DependentUpon>StaffSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="StaffSummaryComponentView.cs" />
+    <Compile Include="StackedComponentContainerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StackedComponentContainerControl.Designer.cs">
+      <DependentUpon>StackedComponentContainerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StackedComponentContainerView.cs" />
     <Compile Include="WorkflowHistoryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -830,6 +837,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="StaffOrStaffGroupSummaryComponentControl.resx">
       <DependentUpon>StaffOrStaffGroupSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StackedComponentContainerControl.resx">
+      <DependentUpon>StackedComponentContainerControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WorkflowHistoryComponentControl.resx">
       <SubType>Designer</SubType>

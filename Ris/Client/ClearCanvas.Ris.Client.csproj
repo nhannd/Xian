@@ -79,6 +79,7 @@
     <Compile Include="DocumentDetachTool.cs" />
     <Compile Include="ExternalPractitionerReplaceDisabledContactPointsComponent.cs" />
     <Compile Include="ExternalPractitionerReplaceDisabledContactPointsTableItem.cs" />
+    <Compile Include="IFolderExplorerComponent.cs" />
     <Compile Include="MergeOutcomeReportComponent.cs" />
     <Compile Include="PatientAllergiesComponent.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
@@ -234,6 +235,7 @@
     <Compile Include="SearchResultsFolder.cs" />
     <Compile Include="SearchTool.cs" />
     <Compile Include="SessionManagerTool.cs" />
+    <Compile Include="StackedComponentContainer.cs" />
     <Compile Include="StaffGroupDetailsEditorComponent.cs" />
     <Compile Include="StaffGroupEditorComponent.cs" />
     <Compile Include="StaffGroupLookupHandler.cs" />

@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Client
     /// WorklistExplorerComponent class
     /// </summary>
     [AssociateView(typeof(FolderExplorerComponentViewExtensionPoint))]
-    public class FolderExplorerComponent : ApplicationComponent
+    public class FolderExplorerComponent : ApplicationComponent, IFolderExplorerComponent
     {
 		enum InitializationState
 		{
@@ -61,68 +61,50 @@ namespace ClearCanvas.Ris.Client
         	_owner = owner;
         }
 
+		#region IFolderExplorerComponent implementation
+
+    	/// <summary>
+    	/// Gets a value indicating whether this folder explorer has already been initialized.
+    	/// </summary>
+    	bool IFolderExplorerComponent.IsInitialized
+    	{
+			get { return IsInitialized; }
+    	}
+
+    	/// <summary>
+    	/// Instructs the folder explorer to initialize (build the folder system).
+    	/// </summary>
+    	void IFolderExplorerComponent.Initialize()
+		{
+			Initialize();
+		}
+
+		/// <summary>
+		/// Occurs when asynchronous initialization of this folder system has completed.
+		/// </summary>
+		event EventHandler IFolderExplorerComponent.Initialized
+		{
+			add { _intialized += value; }
+			remove { _intialized -= value; }
+		}
+
+
 		/// <summary>
 		/// Gets or sets the currently selected folder.
 		/// </summary>
-    	public IFolder SelectedFolder
-    	{
-			get { return _selectedTreeNode == null ? null : _selectedTreeNode.Folder; }
+		IFolder IFolderExplorerComponent.SelectedFolder
+		{
+			get { return this.SelectedFolder; }
 			set
 			{
-				this.SelectedFolderTreeNode = new Selection(_folderTreeRoot.FindNode(value));
+				this.SelectedFolder = value;
 			}
-    	}
-
-		/// <summary>
-		/// Gets a value indicating whether this folder explorer has already been initialized.
-		/// </summary>
-    	internal bool IsInitialized
-    	{
-			get { return _initializationState == InitializationState.Initialized; }
-    	}
-
-		/// <summary>
-		/// Instructs the folder explorer to initialize (build the folder system).
-		/// </summary>
-		internal void Initialize()
-		{
-			// check already initialized, or initialization in progress
-			if (_initializationState != InitializationState.NotInitialized)
-				return;
-
-			_initializationState = InitializationState.Initializing;
-
-			Async.Invoke(this,
-			    () => _folderSystem.Initialize(),
-				delegate
-				{
-					// subscribe to events
-					_folderSystem.Folders.ItemAdded += FolderAddedEventHandler;
-					_folderSystem.Folders.ItemRemoved += FolderRemovedEventHandler;
-					_folderSystem.FoldersChanged += FoldersChangedEventHandler;
-					_folderSystem.FoldersInvalidated += FoldersInvalidatedEventHandler;
-					_folderSystem.FolderPropertiesChanged += FolderPropertiesChangedEventHandler;
-
-					// build the initial folder tree, but do not udpate it, as this will be done on demand
-					// when this folder system is selected
-					BuildFolderTree();
-
-					// this timer is responsible for monitoring the auto-invalidation of all folders
-					// in the folder system, and performing the appropriate invalidations
-					// bug #6909: increase timer interval from 1 sec to 10 seconds, to reduce lockup issues when time provider can't access network
-					_folderInvalidateTimer = new Timer(delegate { AutoInvalidateFolders(); }) {IntervalMilliseconds = 10000};
-					_folderInvalidateTimer.Start();
-
-					// notify that this folder system is now initialized
-					_initializationState = InitializationState.Initialized;
-					EventsHelper.Fire(_intialized, this, EventArgs.Empty);
-				});
 		}
 
-    	/// <summary>
+		/// <summary>
 		/// Invalidates all folders.
 		/// </summary>
-		internal void InvalidateFolders()
+    	void IFolderExplorerComponent.InvalidateFolders()
 		{
 			// check initialized
 			if (!IsInitialized)
@@ -132,11 +114,28 @@ namespace ClearCanvas.Ris.Client
 			_folderSystem.InvalidateFolders();
 		}
 
+    	/// <summary>
+    	/// Gets the underlying folder system associated with this folder explorer.
+    	/// </summary>
+    	IFolderSystem IFolderExplorerComponent.FolderSystem
+		{
+			get { return _folderSystem; }
+		}
+
+    	/// <summary>
+    	/// Occurs when the selected folder changes.
+    	/// </summary>
+    	event EventHandler IFolderExplorerComponent.SelectedFolderChanged
+		{
+			add { _selectedFolderChanged += value; }
+			remove { _selectedFolderChanged -= value; }
+		}
+
 		/// <summary>
 		/// Executes a search on this folder system.
 		/// </summary>
 		/// <param name="searchParams"></param>
-		internal void ExecuteSearch(SearchParams searchParams)
+		void IFolderExplorerComponent.ExecuteSearch(SearchParams searchParams)
 		{
 			// check initialized
 			if (!IsInitialized)
@@ -146,18 +145,25 @@ namespace ClearCanvas.Ris.Client
 				_folderSystem.ExecuteSearch(searchParams);
 		}
 
-		/// <summary>
-		/// Occurs when asynchronous initialization of this folder system has completed.
-		/// </summary>
-		internal event EventHandler Initialized
+		void IFolderExplorerComponent.LaunchAdvancedSearchComponent()
 		{
-			add { _intialized += value; }
-			remove { _intialized -= value; }
+			_folderSystem.LaunchSearchComponent();
 		}
+
+    	/// <summary>
+    	/// Gets the application component that displays the content of a folder for this folder system.
+    	/// </summary>
+    	/// <returns></returns>
+    	IApplicationComponent IFolderExplorerComponent.GetContentComponent()
+    	{
+    		return GetContentComponent();
+    	}
+
+    	#endregion
 
 		#region Application Component overrides
 
-        public override void Start()
+		public override void Start()
         {
 			// if the folder system needs immediate initialization, do that now
 			if(!_folderSystem.LazyInitialize)
@@ -201,7 +207,7 @@ namespace ClearCanvas.Ris.Client
 
         #region Presentation Model
 
-        public ITree FolderTree
+    	public ITree FolderTree
         {
 			get { return _folderTreeRoot.GetSubTree(); }
         }
@@ -236,14 +242,63 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public IFolderSystem FolderSystem
-        {
-            get { return _folderSystem; }
-        }
-
         #endregion
 
-        #region Private methods
+		#region Protected API
+
+		/// <summary>
+		/// Override this method to return a custom content component.
+		/// </summary>
+		/// <returns></returns>
+		protected virtual IApplicationComponent GetContentComponent()
+		{
+			// returning null signals that the default folder content component should be used
+			return null;
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private bool IsInitialized
+		{
+			get { return _initializationState == InitializationState.Initialized; }
+		}
+
+		private void Initialize()
+		{
+			// check already initialized, or initialization in progress
+			if (_initializationState != InitializationState.NotInitialized)
+				return;
+
+			_initializationState = InitializationState.Initializing;
+
+			Async.Invoke(this,
+				() => _folderSystem.Initialize(),
+				delegate
+				{
+					// subscribe to events
+					_folderSystem.Folders.ItemAdded += FolderAddedEventHandler;
+					_folderSystem.Folders.ItemRemoved += FolderRemovedEventHandler;
+					_folderSystem.FoldersChanged += FoldersChangedEventHandler;
+					_folderSystem.FoldersInvalidated += FoldersInvalidatedEventHandler;
+					_folderSystem.FolderPropertiesChanged += FolderPropertiesChangedEventHandler;
+
+					// build the initial folder tree, but do not udpate it, as this will be done on demand
+					// when this folder system is selected
+					BuildFolderTree();
+
+					// this timer is responsible for monitoring the auto-invalidation of all folders
+					// in the folder system, and performing the appropriate invalidations
+					// bug #6909: increase timer interval from 1 sec to 10 seconds, to reduce lockup issues when time provider can't access network
+					_folderInvalidateTimer = new Timer(delegate { AutoInvalidateFolders(); }) { IntervalMilliseconds = 10000 };
+					_folderInvalidateTimer.Start();
+
+					// notify that this folder system is now initialized
+					_initializationState = InitializationState.Initialized;
+					EventsHelper.Fire(_intialized, this, EventArgs.Empty);
+				});
+		}
 
 		private void AutoInvalidateFolders()
 		{
@@ -277,7 +332,19 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-    	private void SelectFolder(FolderTreeNode node)
+		/// <summary>
+		/// Gets or sets the currently selected folder.
+		/// </summary>
+		private IFolder SelectedFolder
+		{
+			get { return _selectedTreeNode == null ? null : _selectedTreeNode.Folder; }
+			set
+			{
+				this.SelectedFolderTreeNode = new Selection(_folderTreeRoot.FindNode(value));
+			}
+		}
+
+		private void SelectFolder(FolderTreeNode node)
         {
             if (_selectedTreeNode != node)
             {
@@ -372,15 +439,5 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
-
-    	public SearchParams CreateSearchParams(string textSearch)
-    	{
-    		return _folderSystem.CreateSearchParams(textSearch);
-    	}
-
-    	public void LaunchSearchComponent()
-    	{
-    		_folderSystem.LaunchSearchComponent();
-    	}
     }
 }
