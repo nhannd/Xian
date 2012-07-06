@@ -34,6 +34,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
@@ -49,6 +50,10 @@
     <Compile Include="EmergencyWorkflowFolder.cs" />
     <Compile Include="EmergencyWorkflowFolderSystem.cs" />
     <Compile Include="EmergencyWorkflowItemTools.cs" />
+    <Compile Include="ExternalPractitionerFolder.cs" />
+    <Compile Include="ExternalPractitionerFolders.cs" />
+    <Compile Include="ExternalPractitionerFolderSystem.cs" />
+    <Compile Include="ExternalPractitionerTool.cs" />
     <Compile Include="Folders\BookingWorkflowFolders.cs" />
     <Compile Include="Folders\ProtocollingWorkflowFolders.cs" />
     <Compile Include="FooTools.cs" />

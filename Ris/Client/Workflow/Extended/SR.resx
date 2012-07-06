@@ -336,4 +336,16 @@ Choose "No" to verify this report without further action.</value>
   <data name="TitleStaffOrStaffGroups" xml:space="preserve">
     <value>Choose a staff or staff group</value>
   </data>
+  <data name="MessageSearchMessageExternalPractitioner" xml:space="preserve">
+    <value>Enter search criteria (Name, License #, or Billing #)</value>
+  </data>
+  <data name="TitleExternalPractitionerFolderSystem" xml:space="preserve">
+    <value>External Practitioners</value>
+  </data>
+  <data name="TitleMergePractitioner" xml:space="preserve">
+    <value>Merge Practitioners</value>
+  </data>
+  <data name="TitleUpdateExternalPractitioner" xml:space="preserve">
+    <value>Edit Practitioner</value>
+  </data>
 </root>

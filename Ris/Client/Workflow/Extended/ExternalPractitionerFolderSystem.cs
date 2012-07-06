@@ -16,7 +16,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	[ExtensionPoint]
 	public class ExternalPractitionerFolderExtensionPoint : ExtensionPoint<IFolder>
@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client
 	}
 
 	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
-	[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FolderSystems.ExternalPractitioner)]
+	[PrincipalPermission(SecurityAction.Demand, Role = Application.Extended.Common.AuthorityTokens.FolderSystems.ExternalPractitioner)]
 	public class ExternalPractitionerFolderSystem : WorkflowFolderSystem<
 		ExternalPractitionerSummary,
 		ExternalPractitionerFolderToolExtensionPoint,

@@ -442,6 +442,15 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter search criteria (Name, License #, or Billing #).
+        /// </summary>
+        internal static string MessageSearchMessageExternalPractitioner {
+            get {
+                return ResourceManager.GetString("MessageSearchMessageExternalPractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Searching is not supported.
         /// </summary>
         internal static string MessageSearchNotSupported {
@@ -568,11 +577,29 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to External Practitioners.
+        /// </summary>
+        internal static string TitleExternalPractitionerFolderSystem {
+            get {
+                return ResourceManager.GetString("TitleExternalPractitionerFolderSystem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Link Procedures.
         /// </summary>
         internal static string TitleLinkProcedures {
             get {
                 return ResourceManager.GetString("TitleLinkProcedures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge Practitioners.
+        /// </summary>
+        internal static string TitleMergePractitioner {
+            get {
+                return ResourceManager.GetString("TitleMergePractitioner", resourceCulture);
             }
         }
         
@@ -708,6 +735,15 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended {
         internal static string TitleStaffOrStaffGroups {
             get {
                 return ResourceManager.GetString("TitleStaffOrStaffGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Practitioner.
+        /// </summary>
+        internal static string TitleUpdateExternalPractitioner {
+            get {
+                return ResourceManager.GetString("TitleUpdateExternalPractitioner", resourceCulture);
             }
         }
     }

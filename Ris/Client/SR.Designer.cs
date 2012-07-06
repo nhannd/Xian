@@ -2131,15 +2131,6 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter search criteria (Name, License #, or Billing #).
-        /// </summary>
-        internal static string MessageSearchMessageExternalPractitioner {
-            get {
-                return ResourceManager.GetString("MessageSearchMessageExternalPractitioner", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Searching is not supported.
         /// </summary>
         internal static string MessageSearchNotSupported {
@@ -2748,15 +2739,6 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleExternalPractitioner {
             get {
                 return ResourceManager.GetString("TitleExternalPractitioner", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to External Practitioners.
-        /// </summary>
-        internal static string TitleExternalPractitionerFolderSystem {
-            get {
-                return ResourceManager.GetString("TitleExternalPractitionerFolderSystem", resourceCulture);
             }
         }
         

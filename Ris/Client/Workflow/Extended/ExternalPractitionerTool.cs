@@ -18,7 +18,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	public abstract class ExternalPractitionerTool :  Tool<IExternalPractitionerItemToolContext>
 	{

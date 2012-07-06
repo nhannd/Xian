@@ -13,7 +13,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	[ExtensionOf(typeof(ExternalPractitionerFolderExtensionPoint))]
 	[FolderPath("Unverfied")]

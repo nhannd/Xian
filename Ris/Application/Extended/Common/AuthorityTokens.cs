@@ -82,6 +82,9 @@ namespace ClearCanvas.Ris.Application.Extended.Common
 
 			[AuthorityToken(Description = "Allow access to the Order Notes folder system.")]
 			public const string OrderNotes = "RIS/Folder Systems/Order Notes";
+
+			[AuthorityToken(Description = "Allow access to the External Practitioner folder system.")]
+			public const string ExternalPractitioner = "RIS/Folder Systems/External Practitioner";
 		}
 	}
 }

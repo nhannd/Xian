@@ -285,9 +285,6 @@ namespace ClearCanvas.Ris.Application.Common
 
 			[AuthorityToken(Description = "Allow access to the Transcription folder system.")]
 			public const string Transcription = "RIS/Folder Systems/Transcription";
-
-			[AuthorityToken(Description = "Allow access to the External Practitioner folder system.")]
-			public const string ExternalPractitioner = "RIS/Folder Systems/External Practitioner";
 		}
 	}
 }

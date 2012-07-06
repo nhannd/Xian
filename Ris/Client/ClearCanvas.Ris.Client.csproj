@@ -100,16 +100,12 @@
     <Compile Include="CannedTextEditorComponent.cs" />
     <Compile Include="CannedTextTable.cs" />
     <Compile Include="CheckInSettings.cs" />
-    <Compile Include="ExternalPractitionerFolder.cs" />
-    <Compile Include="ExternalPractitionerFolders.cs" />
-    <Compile Include="ExternalPractitionerFolderSystem.cs" />
     <Compile Include="ExternalPractitionerMergeNavigatorComponent.cs" />
     <Compile Include="ExternalPractitionerMergePropertiesComponent.cs" />
     <Compile Include="ExternalPractitionerSelectDisabledContactPointsComponent.cs" />
     <Compile Include="ExternalPractitionerMergeSelectedDuplicateComponent.cs" />
     <Compile Include="ExternalPractitionerOverviewComponent.cs" />
     <Compile Include="ExternalPractitionerTable.cs" />
-    <Compile Include="ExternalPractitionerTool.cs" />
     <Compile Include="FolderExplorerConfiguration.cs" />
     <Compile Include="FolderSystemSettings.cs" />
     <Compile Include="FolderSystemSettings.Designer.cs">

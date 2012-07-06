@@ -918,9 +918,6 @@
   <data name="ColumnDefault" xml:space="preserve">
     <value>Default</value>
   </data>
-  <data name="TitleExternalPractitionerFolderSystem" xml:space="preserve">
-    <value>External Practitioners</value>
-  </data>
   <data name="ExternalPractitionerUnverifiedFolderDescription" xml:space="preserve">
     <value>List external practitioners that were unverified.</value>
   </data>
@@ -932,9 +929,6 @@
   </data>
   <data name="ColumnVerified" xml:space="preserve">
     <value>Verified</value>
-  </data>
-  <data name="MessageSearchMessageExternalPractitioner" xml:space="preserve">
-    <value>Enter search criteria (Name, License #, or Billing #)</value>
   </data>
   <data name="ColumnTime" xml:space="preserve">
     <value>Time</value>
