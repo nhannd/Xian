@@ -151,7 +151,12 @@ namespace ClearCanvas.Ris.Client
 
 			_rightHandComponentContainer = new TabComponentContainer();
 			_rightHandComponentContainer.Pages.Add(new TabPage("Order Details", _orderDetailComponent));
-			_rightHandComponentContainer.Pages.Add(new TabPage("Visit Details", _visitDetailComponent));
+
+			if (new WorkflowConfigurationReader().EnableVisitWorkflow)
+			{
+				_rightHandComponentContainer.Pages.Add(new TabPage("Visit Details", _visitDetailComponent));
+			}
+
 			_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _orderAdditionalInfoComponent));
 			_rightHandComponentContainer.Pages.Add(new TabPage("Reports", _orderReportsComponent));
 			_rightHandComponentContainer.Pages.Add(new TabPage("Order Attachments", _orderDocumentComponent));

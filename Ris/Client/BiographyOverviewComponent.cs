@@ -112,7 +112,6 @@ namespace ClearCanvas.Ris.Client
 			// Create component for each tab
 			_bannerComponent = new BannerComponent();
 			_orderHistoryComponent = new BiographyOrderHistoryComponent(_initialSelectedOrderRef) { PatientRef = _patientRef };
-			_visitHistoryComponent = new BiographyVisitHistoryComponent { PatientRef = _patientRef };
 			_demographicComponent = new BiographyDemographicComponent { DefaultProfileRef = _profileRef, PatientRef = _patientRef };
 			_documentComponent = new AttachedDocumentPreviewComponent(true, AttachmentSite.Patient);
 			_noteComponent = new BiographyNoteComponent();
@@ -121,7 +120,13 @@ namespace ClearCanvas.Ris.Client
 			// Create tab and tab groups
 			_pagesContainer = new TabComponentContainer();
 			_pagesContainer.Pages.Add(new TabPage(SR.TitleOrders, _orderHistoryComponent));
-			_pagesContainer.Pages.Add(new TabPage(SR.TitleVisits, _visitHistoryComponent));
+
+			if (new WorkflowConfigurationReader().EnableVisitWorkflow)
+			{
+				_visitHistoryComponent = new BiographyVisitHistoryComponent { PatientRef = _patientRef };
+				_pagesContainer.Pages.Add(new TabPage(SR.TitleVisits, _visitHistoryComponent));
+			}
+
 			_pagesContainer.Pages.Add(new TabPage(SR.TitleDemographicProfiles, _demographicComponent));
 			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientAttachments, _documentComponent));
 			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientNotes, _noteComponent));

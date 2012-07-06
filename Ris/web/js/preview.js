@@ -1378,7 +1378,11 @@ Preview.ImagingServiceSection = function () {
 			Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
 			Field.setLink($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name), function() { Ris.openPractitionerDetails(orderDetail.OrderingPractitioner); });
 			Field.setValue($("PerformingFacility"), formatPerformingFacility(orderDetail.Procedures));
-			Field.setValue($("PatientClass"), orderDetail.Visit.PatientClass.Value);
+			
+			// visit information may not exist, depending on whether the Visit Workflow feature is enabled
+			if(orderDetail.Visit && orderDetail.Visit.PatientClass) {
+				Field.setValue($("PatientClass"), orderDetail.Visit.PatientClass.Value);
+			}
 			Field.setValue($("LocationRoomBed"), Preview.formatVisitCurrentLocation(orderDetail.Visit));
 			Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
 			Field.setValue($("EnteredBy"), orderDetail.EnteredBy ? (Ris.formatPersonName(orderDetail.EnteredBy.Name) + ' (' + orderDetail.EnteredBy.StaffType.Value + ')') : "");
