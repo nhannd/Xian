@@ -28,6 +28,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	public class CompleteInterpretationForTranscriptionTool : ReportingWorkflowItemTool
 	{
+		private readonly WorkflowConfigurationReader _workflowConfiguration = new WorkflowConfigurationReader();
+
 		public CompleteInterpretationForTranscriptionTool()
 			: base("CompleteInterpretationForTranscription")
 		{
@@ -42,7 +44,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool Visible
 		{
-			get { return WorkflowSettings.Default.EnableTranscriptionWorkflow; }
+			get { return _workflowConfiguration.EnableTranscriptionWorkflow; }
 		}
 
 		public event EventHandler VisibleChanged

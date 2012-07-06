@@ -144,12 +144,6 @@
     <Compile Include="RegistrationWorkflowFolderSystem.cs" />
     <Compile Include="RegistrationWorkflowFolderSystemBase.cs" />
     <Compile Include="RegistrationWorkflowTool.cs" />
-    <Compile Include="WorkflowSettings.cs" />
-    <Compile Include="WorkflowSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>WorkflowSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="WorklistItemTable.cs" />
     <Compile Include="ReplaceOrderTool.cs" />
     <Compile Include="ReportDocument.cs" />
@@ -257,10 +251,6 @@
     <None Include="TranscriptionSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>TranscriptionSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="WorkflowSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>WorkflowSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="WorklistItemManagerSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

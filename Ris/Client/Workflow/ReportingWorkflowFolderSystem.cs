@@ -14,6 +14,7 @@ using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
@@ -49,20 +50,21 @@ namespace ClearCanvas.Ris.Client.Workflow
 			// add the personal folders, since they are not extensions and will not be automatically added
 			this.Folders.Add(new Folders.Reporting.AssignedFolder());
 
-			if (WorkflowSettings.Default.EnableInterpretationReviewWorkflow && CurrentStaffCanSupervise())
+			var workflowConfig = new WorkflowConfigurationReader();
+			if (workflowConfig.EnableInterpretationReviewWorkflow && CurrentStaffCanSupervise())
 			{
 				this.Folders.Add(new Folders.Reporting.AssignedForReviewFolder());
 			}
 
 			this.Folders.Add(new Folders.Reporting.DraftFolder());
 
-			if (WorkflowSettings.Default.EnableTranscriptionWorkflow)
+			if (workflowConfig.EnableTranscriptionWorkflow)
 			{
 				this.Folders.Add(new Folders.Reporting.InTranscriptionFolder());
 				this.Folders.Add(new Folders.Reporting.ReviewTranscriptionFolder());
 			}
 
-			if (WorkflowSettings.Default.EnableInterpretationReviewWorkflow && 
+			if (workflowConfig.EnableInterpretationReviewWorkflow && 
 				Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview))
 				this.Folders.Add(new Folders.Reporting.AwaitingReviewFolder());
 

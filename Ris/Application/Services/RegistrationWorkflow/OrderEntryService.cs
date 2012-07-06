@@ -106,9 +106,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				this.PersistenceContext.GetBroker<IDepartmentBroker>().Find(departmentSearchCriteria),
 				(Department d) => departmentAssembler.CreateSummary(d, this.PersistenceContext));
 
-			var settings = new OrderEntrySettings();
 			return new GetOrderEntryFormDataResponse(
-				settings.AutoGenerateVisit,
 				facilities,
 				departments,
 				EnumUtils.GetEnumValueList<OrderPriorityEnum>(this.PersistenceContext),
@@ -818,8 +816,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				return this.PersistenceContext.Load<Visit>(requisition.Visit.VisitRef, EntityLoadFlags.Proxy);
 			}
 
-			var settings = new OrderEntrySettings();
-			if (settings.AutoGenerateVisit)
+			// if Visit Workflow is disabled, then we must auto-generate a "dummy" visit in order to keep the system happy
+			// the user will never see this dummy visit
+			if (!new WorkflowConfigurationReader().EnableVisitWorkflow)
 			{
 				var patientClasses = PersistenceContext.GetBroker<IEnumBroker>().Load<PatientClassEnum>(false);
 

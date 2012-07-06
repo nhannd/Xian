@@ -105,6 +105,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ExtensionOf(typeof(TranscriptionWorkflowItemToolExtensionPoint))]
 	public class SubmitTranscriptionForReviewTool : TranscriptionWorkflowItemTool
 	{
+		private WorkflowConfigurationReader _workflowConfiguration = new WorkflowConfigurationReader();
+
 		public SubmitTranscriptionForReviewTool()
 			: base("SubmitTranscriptionForReview")
 		{
@@ -119,7 +121,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool Visible
 		{
-			get { return WorkflowSettings.Default.EnableTranscriptionReviewWorkflow; }
+			get { return _workflowConfiguration.EnableTranscriptionReviewWorkflow; }
 		}
 
 		protected override bool Execute(ReportingWorklistItemSummary item)

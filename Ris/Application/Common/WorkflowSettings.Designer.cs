@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Ris.Client.Workflow {
+namespace ClearCanvas.Ris.Application.Common {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -62,6 +62,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         public bool EnableTranscriptionReviewWorkflow {
             get {
                 return ((bool)(this["EnableTranscriptionReviewWorkflow"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableVisitWorkflow {
+            get {
+                return ((bool)(this["EnableVisitWorkflow"]));
             }
         }
     }

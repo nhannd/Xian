@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client.Workflow" GeneratedClassName="WorkflowSettings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Application.Common" GeneratedClassName="WorkflowSettings">
   <Profiles />
   <Settings>
     <Setting Name="EnableTranscriptionWorkflow" Description="Specifies whether the transcription portion of the workflow is enabled." Type="System.Boolean" Scope="Application">
@@ -9,6 +9,9 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="EnableTranscriptionReviewWorkflow" Description="Specifies whether the transcription review (i.e. supervising transcriptionist) portion of the workflow is enabled.  This value is ignored if EnableTranscriptionWorkflow is false." Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="EnableVisitWorkflow" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

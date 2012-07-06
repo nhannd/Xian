@@ -387,6 +387,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private bool _userCancelled;
 		private event EventHandler _worklistItemChanged;
 
+		private readonly WorkflowConfigurationReader _workflowConfiguration = new WorkflowConfigurationReader();
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -849,13 +851,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool ReturnToInterpreterEnabled
 		{
-			get { return _canReturnToInterpreter && WorkflowSettings.Default.EnableInterpretationReviewWorkflow; }
+			get { return _canReturnToInterpreter && _workflowConfiguration.EnableInterpretationReviewWorkflow; }
 		}
 
 		public bool ReturnToInterpreterVisible
 		{
-			get { return _canReturnToInterpreter && WorkflowSettings.Default.EnableInterpretationReviewWorkflow
-				&& Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Report.Verify); }
+			get
+			{ 
+				return _canReturnToInterpreter && _workflowConfiguration.EnableInterpretationReviewWorkflow
+						&& Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Report.Verify);
+			}
 		}
 
 		#endregion
@@ -905,7 +910,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool SendToTranscriptionVisible
 		{
-			get { return WorkflowSettings.Default.EnableTranscriptionWorkflow; }
+			get { return _workflowConfiguration.EnableTranscriptionWorkflow; }
 		}
 
 		#endregion
@@ -1027,7 +1032,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get
 			{
 				return _canCompleteInterpretationForTranscription
-					&& WorkflowSettings.Default.EnableTranscriptionWorkflow;
+					&& _workflowConfiguration.EnableTranscriptionWorkflow;
 			}
 		}
 

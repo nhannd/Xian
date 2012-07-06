@@ -111,12 +111,6 @@
       <DependentUpon>LogicalHL7EventSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="PersistentWorkflow.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntrySettings.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntrySettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>OrderEntrySettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="ReportingWorklistItemKey.cs" />
     <Compile Include="TranscriptionWorkflow\TranscriptionWorkflowService.cs" />
     <Compile Include="ModalityWorklistItemKey.cs" />
@@ -258,10 +252,6 @@
     <None Include="LogicalHL7EventSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>LogicalHL7EventSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="RegistrationWorkflow\OrderEntrySettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>OrderEntrySettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="WorklistSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

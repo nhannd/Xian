@@ -223,6 +223,13 @@
     <Compile Include="TranscriptionWorkflow\StartTranscriptionResponse.cs" />
     <Compile Include="TranscriptionWorkflow\SubmitTranscriptionForReviewRequest.cs" />
     <Compile Include="TranscriptionWorkflow\SubmitTranscriptionForReviewResponse.cs" />
+    <Compile Include="WorkflowConfigurationReader.cs" />
+    <Compile Include="WorkflowSettings.cs" />
+    <Compile Include="WorkflowSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>WorkflowSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="WorkQueueItemDetail.cs" />
     <Compile Include="ReportingWorkflow\CompleteDowntimeProcedureRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteDowntimeProcedureResponse.cs" />
@@ -648,6 +655,10 @@
     <None Include="AttachedDocumentSettings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>AttachedDocumentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="WorkflowSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>WorkflowSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

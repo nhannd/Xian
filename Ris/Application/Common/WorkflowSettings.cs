@@ -10,17 +10,15 @@
 #endregion
 
 using System.Configuration;
-using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Application.Common
 {
 	[SettingsGroupDescription("Enable or disable various aspects of the workflow.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class WorkflowSettings
 	{
-		private WorkflowSettings()
+		internal WorkflowSettings()
 		{
-			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 	}
 }
