@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Ris.Client {
+namespace ClearCanvas.Ris.Client.Workflow.Extended {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

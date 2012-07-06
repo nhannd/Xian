@@ -19,7 +19,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	[ExtensionPoint]
 	public class OrderNoteboxFolderExtensionPoint : ExtensionPoint<IFolder>

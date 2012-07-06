@@ -12,7 +12,7 @@
 using System.Configuration;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	[SettingsGroupDescription("Configures behaviour of Order Note Conversation component.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]

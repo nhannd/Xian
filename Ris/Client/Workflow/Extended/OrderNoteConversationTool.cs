@@ -22,7 +22,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Ris.Client.Formatting;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	/// <summary>
 	/// Base class for tools which open an <see cref="OrderNoteConversationComponent"/>

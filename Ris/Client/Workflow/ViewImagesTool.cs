@@ -30,7 +30,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
 	[ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-	[ExtensionOf(typeof(OrderNoteboxItemToolExtensionPoint))]
 	[ExtensionOf(typeof(BiographyOrderReportsToolExtensionPoint))]
 	public class ViewImagesTool : Tool<IToolContext>
 	{
@@ -64,13 +63,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
 			{
 				((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
-				{
-					this.Enabled = DetermineEnablement();
-				};
-			}
-			else if (this.ContextBase is IOrderNoteboxItemToolContext)
-			{
-				((IOrderNoteboxItemToolContext)this.ContextBase).SelectionChanged += delegate
 				{
 					this.Enabled = DetermineEnablement();
 				};
@@ -117,12 +109,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				return (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
 						&& ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
-			}
-
-			if (this.ContextBase is IOrderNoteboxItemToolContext)
-			{
-				return (((IOrderNoteboxItemToolContext)this.ContextBase).SelectedItems != null
-						&& ((IOrderNoteboxItemToolContext)this.ContextBase).SelectedItems.Count == 1);
 			}
 
 			if (this.ContextBase is IPerformingWorkflowItemToolContext)
@@ -181,11 +167,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 				var context = (IReportingWorkflowItemToolContext)this.ContextBase;
 				OpenViewer((WorklistItemSummaryBase)context.Selection.Item, context.DesktopWindow);
 			}
-			else if (this.ContextBase is IOrderNoteboxItemToolContext)
-			{
-				var context = (IOrderNoteboxItemToolContext)this.ContextBase;
-				OpenViewer((OrderNoteboxItemSummary)context.Selection.Item, context.DesktopWindow);
-			}
 			else if (this.ContextBase is IPerformingWorkflowItemToolContext)
 			{
 				var context = (IPerformingWorkflowItemToolContext)this.ContextBase;
@@ -199,12 +180,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 
 		private static void OpenViewer(WorklistItemSummaryBase item, IDesktopWindow desktopWindow)
-		{
-			if (item != null)
-				OpenViewer(item.AccessionNumber, desktopWindow);
-		}
-
-		private static void OpenViewer(OrderNoteboxItemSummary item, IDesktopWindow desktopWindow)
 		{
 			if (item != null)
 				OpenViewer(item.AccessionNumber, desktopWindow);

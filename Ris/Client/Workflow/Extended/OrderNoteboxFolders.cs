@@ -15,7 +15,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	[ExtensionOf(typeof(OrderNoteboxFolderExtensionPoint))]
 	[FolderPath("Posted to me")]

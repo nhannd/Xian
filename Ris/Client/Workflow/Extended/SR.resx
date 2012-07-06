@@ -267,4 +267,73 @@ Choose "No" to verify this report without further action.</value>
   <data name="TitleReassignItem" xml:space="preserve">
     <value>Reassign Item</value>
   </data>
+  <data name="ColumnFrom" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="ColumnPatientName" xml:space="preserve">
+    <value>Patient Name</value>
+  </data>
+  <data name="ColumnPostTime" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="ColumnTo" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="ColumnUrgent" xml:space="preserve">
+    <value>Urgent</value>
+  </data>
+  <data name="ExceptionFailedToSave" xml:space="preserve">
+    <value>An error occured while attempting to save changes to this item</value>
+  </data>
+  <data name="FormatFrom" xml:space="preserve">
+    <value>From: {0} - {1}</value>
+  </data>
+  <data name="FormatFromOnBehalf" xml:space="preserve">
+    <value>From: {0} on behalf of {1} - {2}</value>
+  </data>
+  <data name="FormatOrderNoteboxFolderSystemTitle" xml:space="preserve">
+    <value>{0} [{1} item(s)]</value>
+  </data>
+  <data name="FormatTo" xml:space="preserve">
+    <value>To:     {0}</value>
+  </data>
+  <data name="MessageBodyCannotBeEmpty" xml:space="preserve">
+    <value>You must provide a message body when creating a new note.</value>
+  </data>
+  <data name="MessageMustAcknowledge" xml:space="preserve">
+    <value>All unread notes in this conversation must be read and acknowledged by checking off the left-hand side checkbox.</value>
+  </data>
+  <data name="MessageMustAcknowledgeWithPost" xml:space="preserve">
+    <value>All unread notes in this conversation must be read and acknowledged by checking off the left-hand side checkbox before new notes can be posted.</value>
+  </data>
+  <data name="MessageMustSelectTemplate" xml:space="preserve">
+    <value>An action must be selected.</value>
+  </data>
+  <data name="MessageNoRecipientsSelected" xml:space="preserve">
+    <value>At least one recipient must be selected in order to post a note.</value>
+  </data>
+  <data name="MessageSearchNotSupported" xml:space="preserve">
+    <value>Searching is not supported</value>
+  </data>
+  <data name="TitleAcknowledge" xml:space="preserve">
+    <value>Acknowledge</value>
+  </data>
+  <data name="TitleAcknowledgeAndPost" xml:space="preserve">
+    <value>Acknowledge and Post</value>
+  </data>
+  <data name="TitleConversationHistory" xml:space="preserve">
+    <value>Conversation History</value>
+  </data>
+  <data name="TitleConversationHistoryWithCheckBoxes" xml:space="preserve">
+    <value>Conversation History: select all checkboxes to indicate that you have read and acknowledged the notes</value>
+  </data>
+  <data name="TitleOrderNoteboxFolderSystem" xml:space="preserve">
+    <value>Order Notes</value>
+  </data>
+  <data name="TitlePost" xml:space="preserve">
+    <value>Post</value>
+  </data>
+  <data name="TitleStaffOrStaffGroups" xml:space="preserve">
+    <value>Choose a staff or staff group</value>
+  </data>
 </root>

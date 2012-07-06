@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ColumnAbbreviationReconciliation" xml:space="preserve">
     <value>Rec.</value>
@@ -453,12 +453,6 @@
   <data name="FormatCheckedInTime" xml:space="preserve">
     <value>Checked-in at {0}</value>
   </data>
-  <data name="FormatFrom" xml:space="preserve">
-    <value>From: {0} - {1}</value>
-  </data>
-  <data name="FormatFromOnBehalf" xml:space="preserve">
-    <value>From: {0} on behalf of {1} - {2}</value>
-  </data>
   <data name="FormatNotCheckedIn" xml:space="preserve">
     <value>Not checked-in</value>
   </data>
@@ -467,9 +461,6 @@
   </data>
   <data name="FormatOnBehalfOf" xml:space="preserve">
     <value> on behalf of {0}</value>
-  </data>
-  <data name="FormatOrderNoteboxFolderSystemTitle" xml:space="preserve">
-    <value>{0} [{1} item(s)]</value>
   </data>
   <data name="FormatStatusCheckedIn" xml:space="preserve">
     <value>{0} (Checked-in)</value>
@@ -564,9 +555,6 @@
   <data name="MessageNoActiveProcedures" xml:space="preserve">
     <value>Order must have at least one active procedure. Consider cancelling the order instead.</value>
   </data>
-  <data name="MessageNoRecipientsSelected" xml:space="preserve">
-    <value>At least one recipient must be selected in order to post a note.</value>
-  </data>
   <data name="MessageResultsNotFound" xml:space="preserve">
     <value>No results were found using the specified criteria.</value>
   </data>
@@ -651,12 +639,6 @@
   <data name="PhoneNumberWork" xml:space="preserve">
     <value>Work</value>
   </data>
-  <data name="TitleAcknowledge" xml:space="preserve">
-    <value>Acknowledge</value>
-  </data>
-  <data name="TitleAcknowledgeAndPost" xml:space="preserve">
-    <value>Acknowledge and Post</value>
-  </data>
   <data name="TitleAdd" xml:space="preserve">
     <value>Add</value>
   </data>
@@ -711,12 +693,6 @@
   <data name="TitleContactPoints" xml:space="preserve">
     <value>Contact Points</value>
   </data>
-  <data name="TitleConversationHistory" xml:space="preserve">
-    <value>Conversation History</value>
-  </data>
-  <data name="TitleConversationHistoryWithCheckBoxes" xml:space="preserve">
-    <value>Conversation History: select all checkboxes to indicate that you have read and acknowledged the notes</value>
-  </data>
   <data name="TitleCopy" xml:space="preserve">
     <value>Copy</value>
   </data>
@@ -768,9 +744,6 @@
   <data name="TitleNoteText" xml:space="preserve">
     <value>Note Text</value>
   </data>
-  <data name="TitleOrderNoteboxFolderSystem" xml:space="preserve">
-    <value>Order Notes</value>
-  </data>
   <data name="TitleOrders" xml:space="preserve">
     <value>Orders</value>
   </data>
@@ -791,9 +764,6 @@
   </data>
   <data name="TitlePhoneNumbers" xml:space="preserve">
     <value>Phone Numbers</value>
-  </data>
-  <data name="TitlePost" xml:space="preserve">
-    <value>Post</value>
   </data>
   <data name="TitlePractitioner" xml:space="preserve">
     <value>Practitioner</value>
@@ -888,20 +858,8 @@
   <data name="MessageResetFolderSystem" xml:space="preserve">
     <value>Resetting the selected folder system will permanantly remove all customizations from its folders.  Are you sure you would like to reset the folder system?</value>
   </data>
-  <data name="MessageBodyCannotBeEmpty" xml:space="preserve">
-    <value>You must provide a message body when creating a new note.</value>
-  </data>
-  <data name="MessageMustAcknowledge" xml:space="preserve">
-    <value>All unread notes in this conversation must be read and acknowledged by checking off the left-hand side checkbox.</value>
-  </data>
-  <data name="MessageMustAcknowledgeWithPost" xml:space="preserve">
-    <value>All unread notes in this conversation must be read and acknowledged by checking off the left-hand side checkbox before new notes can be posted.</value>
-  </data>
   <data name="MessageResetAllFolders" xml:space="preserve">
     <value>Reset all folders in the selected folder system</value>
-  </data>
-  <data name="MessageMustSelectTemplate" xml:space="preserve">
-    <value>An action must be selected.</value>
   </data>
   <data name="MessageCheckInUnscheduledProcedure" xml:space="preserve">
     <value>The procedure has not been scheduled.</value>

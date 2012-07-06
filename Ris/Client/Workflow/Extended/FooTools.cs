@@ -9,6 +9,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.OrderNotes;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
@@ -59,6 +60,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 	[Tooltip("apply", "View Images")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
+	[ExtensionOf(typeof(OrderNoteboxItemToolExtensionPoint))]
 	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
 	public class ViewImagesTool : Tool<IToolContext>
 	{
@@ -89,6 +91,13 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 					this.Enabled = DetermineEnablement();
 				};
 			}
+			else if (this.ContextBase is IOrderNoteboxItemToolContext)
+			{
+				((IOrderNoteboxItemToolContext)this.ContextBase).SelectionChanged += delegate
+				{
+					this.Enabled = DetermineEnablement();
+				};
+			}
 		}
 
 		public bool Visible
@@ -111,6 +120,12 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 			{
 				return (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
 						&& ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+			}
+
+			if (this.ContextBase is IOrderNoteboxItemToolContext)
+			{
+				return (((IOrderNoteboxItemToolContext)this.ContextBase).SelectedItems != null
+						&& ((IOrderNoteboxItemToolContext)this.ContextBase).SelectedItems.Count == 1);
 			}
 
 			return false;
@@ -152,9 +167,20 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 				var context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
 				OpenViewer((WorklistItemSummaryBase)context.Selection.Item, context.DesktopWindow);
 			}
+			else if (this.ContextBase is IOrderNoteboxItemToolContext)
+			{
+				var context = (IOrderNoteboxItemToolContext)this.ContextBase;
+				OpenViewer((OrderNoteboxItemSummary)context.Selection.Item, context.DesktopWindow);
+			}
 		}
 
 		private static void OpenViewer(WorklistItemSummaryBase item, IDesktopWindow desktopWindow)
+		{
+			if (item != null)
+				OpenViewer(item.AccessionNumber, desktopWindow);
+		}
+
+		private static void OpenViewer(OrderNoteboxItemSummary item, IDesktopWindow desktopWindow)
 		{
 			if (item != null)
 				OpenViewer(item.AccessionNumber, desktopWindow);
@@ -191,6 +217,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(OrderNoteboxItemToolExtensionPoint))]
 	public class PatientBiographyTool : Tool<IToolContext>
 	{
 		private bool _enabled;
@@ -248,8 +275,16 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 			if (this.ContextBase is IWorkflowItemToolContext)
 			{
 				var context = (IWorkflowItemToolContext)ContextBase;
-				var item = (WorklistItemSummaryBase)context.Selection.Item;
-				OpenPatient(item.PatientRef, item.PatientProfileRef, item.OrderRef, context.DesktopWindow);
+				if (this.Context is IOrderNoteboxItemToolContext)
+				{
+					var item = (OrderNoteboxItemSummary)context.Selection.Item;
+					OpenPatient(item.PatientRef, item.PatientProfileRef, item.OrderRef, context.DesktopWindow);
+				}
+				else
+				{
+					var item = (WorklistItemSummaryBase)context.Selection.Item;
+					OpenPatient(item.PatientRef, item.PatientProfileRef, item.OrderRef, context.DesktopWindow);
+				}
 			}
 		}
 

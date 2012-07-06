@@ -52,6 +52,27 @@
     <Compile Include="Folders\BookingWorkflowFolders.cs" />
     <Compile Include="Folders\ProtocollingWorkflowFolders.cs" />
     <Compile Include="FooTools.cs" />
+    <Compile Include="OrderNoteboxConfigurationComponent.cs" />
+    <Compile Include="OrderNoteboxFolder.cs" />
+    <Compile Include="OrderNoteboxFolders.cs" />
+    <Compile Include="OrderNoteboxFolderSystem.cs" />
+    <Compile Include="OrderNoteboxFolderSystemSettings.cs" />
+    <Compile Include="OrderNoteboxFolderSystemSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>OrderNoteboxFolderSystemSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="OrderNoteboxTable.cs" />
+    <Compile Include="OrderNoteConversationComponent.cs" />
+    <Compile Include="OrderNoteConversationComponentRecipientTable.cs" />
+    <Compile Include="OrderNoteConversationComponentSettings.cs" />
+    <Compile Include="OrderNoteConversationComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>OrderNoteConversationComponentSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="OrderNoteConversationComponentTemplates.cs" />
+    <Compile Include="OrderNoteConversationTool.cs" />
     <Compile Include="PatientProfileDiffComponent.cs" />
     <Compile Include="PatientReconcileTool.cs" />
     <Compile Include="PatientReconciliation.cs" />
@@ -145,6 +166,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="OrderNoteboxFolderSystemSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>OrderNoteboxFolderSystemSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="OrderNoteConversationComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>OrderNoteConversationComponentSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="PreliminaryDiagnosisSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>PreliminaryDiagnosisSettings.Designer.cs</LastGenOutput>

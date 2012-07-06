@@ -22,7 +22,7 @@ using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Desktop.Validation;
 using System.Collections;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	/// <summary>
 	/// Extension point for views onto <see cref="OrderNoteConversationComponent"/>.

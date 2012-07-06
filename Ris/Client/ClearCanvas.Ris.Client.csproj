@@ -121,7 +121,6 @@
     <Compile Include="LookupHandlerAggregator.cs" />
     <Compile Include="LookupHandlerCellEditor.cs" />
     <Compile Include="MultipleProceduresEditorComponent.cs" />
-    <Compile Include="OrderNoteConversationComponentRecipientTable.cs" />
     <Compile Include="DateTimeEntryComponent.cs" />
     <Compile Include="DiagnosticServiceEditorComponent.cs" />
     <Compile Include="DiagnosticServiceLookupSettings.cs" />
@@ -145,18 +144,10 @@
     <Compile Include="HomepageConfigurationComponent.cs" />
     <Compile Include="IExtensionPageProvider.cs" />
     <Compile Include="AttachedDocument.cs" />
-    <Compile Include="OrderNoteConversationComponentTemplates.cs" />
     <Compile Include="MergeComponentBase.cs" />
     <Compile Include="FolderExplorerGroupComponent.cs" />
     <Compile Include="OrderEditorComponent.cs" />
     <Compile Include="OrderListTable.cs" />
-    <Compile Include="OrderNoteboxConfigurationComponent.cs" />
-    <Compile Include="OrderNoteboxFolderSystemSettings.cs" />
-    <Compile Include="OrderNoteboxFolderSystemSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>OrderNoteboxFolderSystemSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponent.cs" />
     <Compile Include="ExternalPractitionerContactPointEditorComponent.cs" />
     <Compile Include="ExternalPractitionerContactPointSummaryComponent.cs" />
@@ -175,17 +166,7 @@
     <Compile Include="IFolderSystem.cs" />
     <Compile Include="OrderAdditionalInfoComponent.cs" />
     <Compile Include="OrderDetailViewComponent.cs" />
-    <Compile Include="OrderNoteboxFolder.cs" />
-    <Compile Include="OrderNoteboxFolders.cs" />
-    <Compile Include="OrderNoteboxFolderSystem.cs" />
-    <Compile Include="OrderNoteboxTable.cs" />
     <Compile Include="OrderNoteCategory.cs" />
-    <Compile Include="OrderNoteConversationComponentSettings.cs" />
-    <Compile Include="OrderNoteConversationComponentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>OrderNoteConversationComponentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="OrderNoteEditorComponent.cs" />
     <Compile Include="OrderNoteViewComponent.cs" />
     <Compile Include="OrderNoteSummaryComponent.cs" />
@@ -195,8 +176,6 @@
     <Compile Include="PatientProfileAdditionalInfoEditorComponent.cs" />
     <Compile Include="PatientProfileDetailsEditorComponent.cs" />
     <Compile Include="PatientProfileEditorComponent.cs" />
-    <Compile Include="OrderNoteConversationComponent.cs" />
-    <Compile Include="OrderNoteConversationTool.cs" />
     <Compile Include="PatientSearchComponentSettings.cs" />
     <Compile Include="PatientSearchComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -456,14 +435,6 @@
     <None Include="HomePageSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>HomePageSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="OrderNoteboxFolderSystemSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>OrderNoteboxFolderSystemSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="OrderNoteConversationComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>OrderNoteConversationComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="PatientSearchComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

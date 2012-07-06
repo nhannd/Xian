@@ -15,7 +15,7 @@ using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	public partial class OrderNoteConversationComponent
 	{

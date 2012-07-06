@@ -23,7 +23,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	[MenuAction("apply", "folderexplorer-folders-contextmenu/Configure", "Apply")]
 	[ButtonAction("apply", "folderexplorer-folders-toolbar/Configure", "Apply")]

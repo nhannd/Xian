@@ -19,7 +19,7 @@ using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 
 	[SettingsGroupDescription("Configures behaviour of the Order Notes folder system.")]

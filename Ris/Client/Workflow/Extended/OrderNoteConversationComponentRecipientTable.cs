@@ -17,7 +17,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client.Formatting;
 using System.Collections;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	/// <summary>
 	/// PreliminaryDiagnosisConversationComponent class.
