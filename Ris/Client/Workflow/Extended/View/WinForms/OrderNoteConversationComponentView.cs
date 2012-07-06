@@ -18,7 +18,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Ris.Client;
 
-namespace ClearCanvas.Ris.Client.View.WinForms
+namespace ClearCanvas.Ris.Client.Workflow.Extended.View.WinForms
 {
     /// <summary>
     /// Provides a Windows Forms view onto <see cref="OrderNoteConversationComponent"/>.

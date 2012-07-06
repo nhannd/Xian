@@ -79,6 +79,9 @@ namespace ClearCanvas.Ris.Application.Extended.Common
 
 			[AuthorityToken(Description = "Allow access to the Emergency folder system.")]
 			public const string Emergency = "RIS/Folder Systems/Emergency";
+
+			[AuthorityToken(Description = "Allow access to the Order Notes folder system.")]
+			public const string OrderNotes = "RIS/Folder Systems/Order Notes";
 		}
 	}
 }

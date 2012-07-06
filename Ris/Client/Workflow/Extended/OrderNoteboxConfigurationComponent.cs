@@ -11,17 +11,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Extended.Common.OrderNotes;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended
 {

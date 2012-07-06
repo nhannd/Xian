@@ -15,8 +15,9 @@ using System.Text;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Application.Common.OrderNotes
+namespace ClearCanvas.Ris.Application.Extended.Common.OrderNotes
 {
     [DataContract]
     public class AcknowledgeAndPostRequest : DataContractBase

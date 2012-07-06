@@ -362,13 +362,6 @@
       <DependentUpon>MultipleProceduresEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="MultipleProceduresEditorComponentView.cs" />
-    <Compile Include="OrderNoteboxConfigurationComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="OrderNoteboxConfigurationComponentControl.Designer.cs">
-      <DependentUpon>OrderNoteboxConfigurationComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="OrderNoteboxConfigurationComponentView.cs" />
     <Compile Include="OrderNoteEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -411,13 +404,6 @@
     <Compile Include="PhoneNumberEditorControl.designer.cs">
       <DependentUpon>PhoneNumberEditorControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="OrderNoteConversationComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="OrderNoteConversationComponentControl.Designer.cs">
-      <DependentUpon>OrderNoteConversationComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="OrderNoteConversationComponentView.cs" />
     <Compile Include="ProcedureEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -684,10 +670,6 @@
       <DependentUpon>LookupField.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="OrderNoteboxConfigurationComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>OrderNoteboxConfigurationComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="OrderNoteEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>OrderNoteEditorComponentControl.cs</DependentUpon>
@@ -711,10 +693,6 @@
     <EmbeddedResource Include="PhoneNumberEditorControl.resx">
       <DependentUpon>PhoneNumberEditorControl.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="OrderNoteConversationComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>OrderNoteConversationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>

@@ -29,7 +29,9 @@
 
 #endregion
 
-namespace ClearCanvas.Ris.Client.View.WinForms
+using ClearCanvas.Ris.Client.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.Workflow.Extended.View.WinForms
 {
     partial class OrderNoteboxConfigurationComponentControl
     {

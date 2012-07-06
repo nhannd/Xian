@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -18,9 +19,9 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Desktop.Validation;
 using System.Collections;
+using ClearCanvas.Ris.Application.Extended.Common.OrderNotes;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
@@ -302,11 +303,11 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 			get { return _cannedTextLookupHandler; }
 		}
 
-		public IList<StaffGroupSummary> OnBehalfOfGroupChoices
+		public IList OnBehalfOfGroupChoices
 		{
 			get
 			{
-				return _onBehalfOfChoices;
+				return _onBehalfOfChoices.ToList();
 			}
 		}
 

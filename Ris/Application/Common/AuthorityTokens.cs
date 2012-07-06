@@ -280,9 +280,6 @@ namespace ClearCanvas.Ris.Application.Common
 			[AuthorityToken(Description = "Allow access to the Reporting folder system.")]
 			public const string Reporting = "RIS/Folder Systems/Reporting";
 
-			[AuthorityToken(Description = "Allow access to the Order Notes folder system.")]
-			public const string OrderNotes = "RIS/Folder Systems/Order Notes";
-
 			[AuthorityToken(Description = "Allow access to the Radiologist Admin folder system.")]
 			public const string RadiologistAdmin = "RIS/Folder Systems/Radiologist Admin";
 

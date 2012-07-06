@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -9,7 +7,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.OrderNotes;
+using ClearCanvas.Ris.Application.Extended.Common.OrderNotes;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended
 {

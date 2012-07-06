@@ -11,8 +11,9 @@
 
 using System.ServiceModel;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Application.Common.OrderNotes
+namespace ClearCanvas.Ris.Application.Extended.Common.OrderNotes
 {
     /// <summary>
     /// Defines a service contract for working with order notes.

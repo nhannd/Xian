@@ -15,7 +15,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.OrderNotes;
+using ClearCanvas.Ris.Application.Extended.Common.OrderNotes;
 using ClearCanvas.Ris.Client.Formatting;
 using System;
 

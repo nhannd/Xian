@@ -13,8 +13,9 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.View.WinForms
+namespace ClearCanvas.Ris.Client.Workflow.Extended.View.WinForms
 {
 	/// <summary>
 	/// Provides a Windows Forms user-interface for <see cref="OrderNoteConversationComponent"/>.

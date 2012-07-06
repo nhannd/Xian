@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Serialization;
@@ -19,7 +18,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.OrderNotes;
+using ClearCanvas.Ris.Application.Extended.Common.OrderNotes;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended

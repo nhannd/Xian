@@ -15,17 +15,10 @@ using System.Text;
 using ClearCanvas.Common.Serialization;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Application.Common.OrderNotes
+namespace ClearCanvas.Ris.Application.Extended.Common.OrderNotes
 {
 	[DataContract]
-	public class ListStaffGroupsResponse : DataContractBase
+	public class ListStaffGroupsRequest : DataContractBase
 	{
-		public ListStaffGroupsResponse(List<StaffGroupSummary> staffGroups)
-		{
-			this.StaffGroups = staffGroups;
-		}
-
-		[DataMember]
-		public List<StaffGroupSummary> StaffGroups;
 	}
 }

@@ -14,8 +14,9 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Application.Common.OrderNotes
+namespace ClearCanvas.Ris.Application.Extended.Common.OrderNotes
 {
 	[DataContract]
 	public class OrderNoteboxItemSummary : DataContractBase, IVersionedEquatable<OrderNoteboxItemSummary>

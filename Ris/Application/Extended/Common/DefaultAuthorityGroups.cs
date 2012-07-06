@@ -52,6 +52,7 @@ namespace ClearCanvas.Ris.Application.Extended.Common
 						AuthorityTokens.FolderSystems.Booking,
 						AuthorityTokens.FolderSystems.Protocolling,
 						AuthorityTokens.FolderSystems.Emergency,
+						AuthorityTokens.FolderSystems.OrderNotes,
                     }),
 
                 new AuthorityGroupDefinition(Clerical,
@@ -75,6 +76,7 @@ namespace ClearCanvas.Ris.Application.Extended.Common
                         AuthorityTokens.Workflow.PreliminaryDiagnosis.Create,
 
 						AuthorityTokens.FolderSystems.Protocolling,
+						AuthorityTokens.FolderSystems.OrderNotes,
                    }),
 
                 new AuthorityGroupDefinition(RadiologyResidents,
@@ -84,6 +86,7 @@ namespace ClearCanvas.Ris.Application.Extended.Common
                         AuthorityTokens.Workflow.PreliminaryDiagnosis.Create,
 
 						AuthorityTokens.FolderSystems.Protocolling,
+						AuthorityTokens.FolderSystems.OrderNotes,
                   }),
 
                 new AuthorityGroupDefinition(EmergencyPhysicians,
@@ -91,6 +94,7 @@ namespace ClearCanvas.Ris.Application.Extended.Common
                     {
                         AuthorityTokens.Workflow.PreliminaryDiagnosis.Create,
 						AuthorityTokens.FolderSystems.Emergency,
+						AuthorityTokens.FolderSystems.OrderNotes,
                     }),
 
             };

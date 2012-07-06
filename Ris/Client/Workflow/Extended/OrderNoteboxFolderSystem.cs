@@ -17,7 +17,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.OrderNotes;
+using ClearCanvas.Ris.Application.Extended.Common.OrderNotes;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 
 
 	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
-	[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FolderSystems.OrderNotes)]
+	[PrincipalPermission(SecurityAction.Demand, Role = Application.Extended.Common.AuthorityTokens.FolderSystems.OrderNotes)]
 	public class OrderNoteboxFolderSystem : WorkflowFolderSystem<
 		OrderNoteboxItemSummary,
 		OrderNoteboxFolderToolExtensionPoint,

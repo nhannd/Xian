@@ -9,29 +9,28 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Extended.Common.OrderNotes;
+using ClearCanvas.Ris.Application.Services;
 
-namespace ClearCanvas.Ris.Application.Services.OrderNotes
+namespace ClearCanvas.Ris.Application.Extended.Services.OrderNotes
 {
 	class OrderNoteboxItemAssembler
 	{
 		public OrderNoteboxItemSummary CreateSummary(OrderNoteboxItem item, IPersistenceContext context)
 		{
-			MrnAssembler mrnAssembler = new MrnAssembler();
-			PersonNameAssembler nameAssembler = new PersonNameAssembler();
-			StaffAssembler staffAssembler = new StaffAssembler();
-			StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
+			var mrnAssembler = new MrnAssembler();
+			var nameAssembler = new PersonNameAssembler();
+			var staffAssembler = new StaffAssembler();
+			var groupAssembler = new StaffGroupAssembler();
 
-			List<StaffSummary> staffRecipients = new List<StaffSummary>();
-			List<StaffGroupSummary> groupRecipients = new List<StaffGroupSummary>();
+			var staffRecipients = new List<StaffSummary>();
+			var groupRecipients = new List<StaffGroupSummary>();
 
-			foreach (object recipient in item.Recipients)
+			foreach (var recipient in item.Recipients)
 			{
 				if (recipient is Staff)
 					staffRecipients.Add(staffAssembler.CreateStaffSummary((Staff)recipient, context));

@@ -83,7 +83,6 @@ namespace ClearCanvas.Ris.Application.Common
 						AuthorityTokens.FolderSystems.Registration,
 						AuthorityTokens.FolderSystems.Performing,
 						AuthorityTokens.FolderSystems.Reporting,
-						AuthorityTokens.FolderSystems.OrderNotes,
 						AuthorityTokens.FolderSystems.RadiologistAdmin,
                     }),
 
@@ -139,7 +138,6 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.Report.OmitSupervisor,
 
 						AuthorityTokens.FolderSystems.Reporting,
-						AuthorityTokens.FolderSystems.OrderNotes,
                    }),
 
                 new AuthorityGroupDefinition(RadiologyResidents,
@@ -151,7 +149,6 @@ namespace ClearCanvas.Ris.Application.Common
 						AuthorityTokens.Workflow.Report.Create,
 
 						AuthorityTokens.FolderSystems.Reporting,
-						AuthorityTokens.FolderSystems.OrderNotes,
                    }),
 
                 new AuthorityGroupDefinition(EmergencyPhysicians,
@@ -160,8 +157,6 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.HomePage.View,
                         AuthorityTokens.Workflow.PatientBiography.View,
                         AuthorityTokens.Workflow.CannedText.Personal,
-
-						AuthorityTokens.FolderSystems.OrderNotes,
                     }),
 
             };

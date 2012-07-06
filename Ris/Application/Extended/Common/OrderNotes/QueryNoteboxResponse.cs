@@ -15,7 +15,7 @@ using System.Text;
 using ClearCanvas.Common.Serialization;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Application.Common.OrderNotes
+namespace ClearCanvas.Ris.Application.Extended.Common.OrderNotes
 {
     [DataContract]
     public class QueryNoteboxResponse : DataContractBase

@@ -16,12 +16,13 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Ris.Application.Extended.Common.OrderNotes;
+using ClearCanvas.Ris.Application.Services;
 
-namespace ClearCanvas.Ris.Application.Services.OrderNotes
+namespace ClearCanvas.Ris.Application.Extended.Services.OrderNotes
 {
 	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
 	[ServiceImplementsContract(typeof(IOrderNoteService))]

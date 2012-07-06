@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace ClearCanvas.Ris.Client.View.WinForms
+namespace ClearCanvas.Ris.Client.Workflow.Extended.View.WinForms
 {
     partial class OrderNoteConversationComponentControl
     {

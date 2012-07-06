@@ -124,8 +124,6 @@
     <Compile Include="WorkQueueItemAssembler.cs" />
     <Compile Include="CannedTextService\CannedTextAssembler.cs" />
     <Compile Include="CannedTextService\CannedTextService.cs" />
-    <Compile Include="OrderNotes\OrderNoteboxItemAssembler.cs" />
-    <Compile Include="OrderNotes\OrderNoteService.cs" />
     <Compile Include="ResultRecipientAssembler.cs" />
     <Compile Include="StaffGroupAssembler.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\ExternalPractitionerAdminService.cs" />
