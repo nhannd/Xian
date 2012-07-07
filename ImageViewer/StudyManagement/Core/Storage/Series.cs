@@ -122,39 +122,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 
         #endregion
 
-	    // TODO (CR Jun 2012): Delete
-	    public int[] BitsAllocatedInSeries
-	    {
-	        get 
-            { 
-                return SopInstances.Cast<SopInstance>()
-                    .Where(s => s.BitsAllocated.HasValue)
-                    .Select(s => s.BitsAllocated).Cast<int>().Distinct().ToArray(); 
-            }
-	    }
-
-        // TODO (CR Jun 2012): Delete
-        public int[] BitsStoredInSeries
-        {
-            get
-            {
-                return SopInstances.Cast<SopInstance>()
-                    .Where(s => s.BitsStored.HasValue)
-                    .Select(s => s.BitsStored).Cast<int>().Distinct().ToArray();
-            }
-        }
-
-        // TODO (CR Jun 2012): Delete
-        public string[] PhotometricInterpretationsInSeries
-        {
-            get
-            {
-                return SopInstances.Cast<SopInstance>()
-                    .Where(s => !String.IsNullOrEmpty(s.PhotometricInterpretation))
-                    .Select(s => s.PhotometricInterpretation).Distinct().ToArray();
-            }
-        }
-
         public string[] SourceAETitlesInSeries
         {
             get
@@ -162,17 +129,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
                 return SopInstances.Cast<SopInstance>()
                     .Where(s => !String.IsNullOrEmpty(s.SourceAETitle))
                     .Select(s => s.SourceAETitle).Distinct().ToArray();
-            }
-        }
-
-        // TODO (CR Jun 2012): Delete
-        public string[] TransferSyntaxesInSeries
-        {
-            get
-            {
-                return SopInstances.Cast<SopInstance>()
-                    .Where(s => !String.IsNullOrEmpty(s.TransferSyntaxUid))
-                    .Select(s => s.TransferSyntaxUid).Distinct().ToArray();
             }
         }
 
