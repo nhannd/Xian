@@ -63,17 +63,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	public class StudyBrowserComponent : ApplicationComponent, IStudyBrowserComponent
 	{
 #if DEBUG
+        #region Fake Study Query Tool
 
         [MenuAction("populate", "dicomstudybrowser-contextmenu/Populate with 10000 studies", "Populate")]
-        [ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
-	    public class ManipulateTableTool : StudyBrowserTool
+        [ExtensionOf(typeof(StudyBrowserToolExtensionPoint), Enabled = false)]
+	    internal class FakeStudyQueryTool : StudyBrowserTool
         {
             private int _nextPatientId = 1;
             private int _dateCount = 0;
-
-            public ManipulateTableTool()
-            {
-            }
 
             public void Populate()
             {
@@ -127,11 +124,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 Enabled = Visible = true;
             }
         }
+        #endregion
 #endif
 
-	    #region Tool Context
+        #region Tool Context
 
-		private class StudyBrowserToolContext : ToolContext, IStudyBrowserToolContext
+        private class StudyBrowserToolContext : ToolContext, IStudyBrowserToolContext
 		{
 			public StudyBrowserToolContext(StudyBrowserComponent component)
 			{

@@ -293,7 +293,26 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (syncContext == null)
                 return;
 
-            syncContext.Post(ignore => RefreshStudyTable(), null);
+            lock (_tableRefreshLock)
+            {
+                if (!_isTableRefreshCheckPending)
+                {
+                    //This timer executes every 100ms (10/sec), which is way too frequently for this check, however,
+                    //it's also silly to have another less frequent timer dedicated to this, so we just slow it down.
+                    if (!_lastTableRefreshCheck.HasValue || (DateTime.Now - _lastTableRefreshCheck.Value).TotalSeconds > 5)
+                    {
+                        _isTableRefreshCheckPending = true;
+                        syncContext.Post(delegate
+                                             {
+                                                 //Do the entire thing (check+refresh) on the UI thread, so we don't
+                                                 //need to worry about synchronization of the 2 "last" time variables.
+                                                 //(_lastSearchEndTime, _lastTableRefreshTime).
+                                                 if (StudyTableNeedsRefresh())
+                                                     RefreshStudyTable();
+                                             }, null);
+                    }
+                }
+            }
 
             DateTime? queryStartTime;
             List<string> deletedStudyUids;

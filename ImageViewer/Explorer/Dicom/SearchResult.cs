@@ -28,6 +28,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private DateTime? _lastSearchEndTime;
         private string _resultsTitle;
 
+        private readonly object _tableRefreshLock = new object();
+        private bool _isTableRefreshCheckPending;
+        private DateTime? _lastTableRefreshCheck;
         private DateTime? _lastTableRefreshTime;
 
 	    public SearchResult()
@@ -148,7 +151,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public void SearchEnded(List<StudyTableItem> tableItems, bool filterDuplicates)
         {
-            _lastSearchEndTime = DateTime.Now;
+            _lastSearchEndTime = _lastTableRefreshTime = DateTime.Now;
 	        SearchInProgress = false;
 			_filterDuplicates = filterDuplicates;
 
@@ -177,19 +180,39 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         // updated because, for example, midnight crossed and a value needs to change. So, we're hacking it
         // just for the one specific case where midnight is crossed and the "Delete On" column needs to say
         // "Today" instead of "Yesterday", for example.
-        private bool RefreshStudyTable()
+
+        #region Study Table Refresh Hack
+
+        private bool StudyTableNeedsRefresh()
         {
+            var now = DateTime.Now;
+            lock (_syncLock)
+            {
+                _lastTableRefreshCheck = now;
+                _isTableRefreshCheckPending = false;
+            }
+
+            //The user has never searched, so there is nothing to refresh.
             if (!_lastSearchEndTime.HasValue)
                 return false;
 
+            //There is nothing in the table to refresh.
+            if (_studyTable.Items.Count == 0)
+                return false;
+
+            //Has midnight been crossed since the last time the table was refreshed?
             var lastRefreshTime = _lastTableRefreshTime.HasValue ? _lastTableRefreshTime.Value : _lastSearchEndTime.Value;
-            var now = DateTime.Now;
             var timeSinceLastRefresh = now - lastRefreshTime;
             var nowTimeOfDay = now.TimeOfDay;
             if (timeSinceLastRefresh < nowTimeOfDay)
                 return false; //haven't crossed midnight yet.
 
-            _lastTableRefreshTime = now;
+            return true;
+        }
+
+        private void RefreshStudyTable()
+        {
+            _lastTableRefreshTime = DateTime.Now;
             var allItems = new List<StudyTableItem>(_studyTable.Items);
 
             using (_studyTable.Items.BeginTransaction())
@@ -198,10 +221,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 _studyTable.Items.Clear();
                 _studyTable.Items.AddRange(allItems);
             }
-
-            return true;
         }
-        
+
+        #endregion
+
         private void SetResultsTitle()
         {
             var everSearched = _lastSearchEndTime.HasValue;
