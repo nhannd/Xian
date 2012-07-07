@@ -18,8 +18,6 @@ using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer.Common.Configuration.Tests
 {
-    // TODO (Marmot) - When debugging, this service provider ends up being used by the desktop app and the GUI doesn't work properly
-    [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
     internal class TestSystemConfigurationServiceProvider : IServiceProvider
     {
         #region IServiceProvider Members
@@ -35,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Common.Configuration.Tests
         #endregion
     }
 
-    class TestSettingsStore : ISystemConfigurationSettingsStore
+    internal class TestSettingsStore : ISystemConfigurationSettingsStore
     {
         public static TestSettingsStore Instance = new TestSettingsStore();
         public static string TestString = "Prior Setting";
@@ -47,34 +45,55 @@ namespace ClearCanvas.ImageViewer.Common.Configuration.Tests
 
         }
 
-        private List<Setting> _settingsList = new List<Setting>();
-
-        public SettingsGroupDescriptor GetPreviousSettingsGroup(SettingsGroupDescriptor @group)
+        private Setting FindSetting(SettingsGroupDescriptor @group)
         {
             foreach (var setting in _settingsList)
             {
                 if (group.Name == setting.Group.Name && group.Version == setting.Group.Version)
                 {
-                    var newGroup = new SettingsGroupDescriptor(@group.Name, new Version(0, 9), @group.Description,
-                                                               @group.AssemblyQualifiedTypeName,
-                                                               @group.HasUserScopedSettings);
-                    var newSetting = new Setting
-                                         {
-                                             Group = newGroup,
-                                             Values = new Dictionary<string, string>()
-                                         };
-                    _settingsList.Add(newSetting);
-
-                    foreach (var key in setting.Values.Keys)
-                    {
-                        var val = setting.Values[key];
-
-                        newSetting.Values[key] = val + TestString;
-                    }
-                    return newGroup;
+                    return setting;
                 }
             }
             return null;
+        }
+
+
+        private List<Setting> _settingsList = new List<Setting>();
+
+        public SettingsGroupDescriptor GetPreviousSettingsGroup(SettingsGroupDescriptor @group)
+        {
+            var newGroup = new SettingsGroupDescriptor(@group.Name, new Version(0, 9), @group.Description,
+                                           @group.AssemblyQualifiedTypeName,
+                                           @group.HasUserScopedSettings);
+
+            var matchingSetting = FindSetting(@group);
+            var previousSetting = FindSetting(newGroup);
+            if (matchingSetting == null)
+            {
+                if (previousSetting != null)
+                    return newGroup;
+
+                return null;
+            }
+            
+            if (previousSetting == null)
+            {
+                var newSetting = new Setting
+                                     {
+                                         Group = newGroup,
+                                         Values = new Dictionary<string, string>()
+                                     };
+                _settingsList.Add(newSetting);
+
+                foreach (var key in matchingSetting.Values.Keys)
+                {
+                    var val = matchingSetting.Values[key];
+
+                    newSetting.Values[key] = val + TestString;
+                }
+            }
+
+            return newGroup;            
         }
 
         public Dictionary<string, string> GetSettingsValues(SettingsGroupDescriptor @group, string user, string instanceKey)
@@ -116,6 +135,22 @@ namespace ClearCanvas.ImageViewer.Common.Configuration.Tests
         public void Reset()
         {
             _settingsList = new List<Setting>();
+        }
+
+        public void RemoveSettingsGroup(SettingsGroupDescriptor @group)
+        {
+            Setting settingToRemove = null;
+            foreach (var setting in _settingsList)
+            {
+                if (group.Name == setting.Group.Name && group.Version == setting.Group.Version)
+                {
+                    settingToRemove = setting;
+                    break;
+                }
+            }
+
+            if (settingToRemove != null)
+                _settingsList.Remove(settingToRemove);            
         }
     }
 }

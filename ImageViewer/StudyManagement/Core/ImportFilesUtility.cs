@@ -11,6 +11,7 @@
 
 using System;
 using System.Data.Linq;
+using System.Data.SqlServerCe;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -67,7 +68,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
         private readonly IWorkItemActivityMonitor _monitor;
         private readonly IDicomServiceNode _dicomServerNode;
-
+        private readonly string _hostname;
         #endregion
 
         #region Constructor
@@ -76,8 +77,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         /// Constructor.
         /// </summary>
         /// <param name="sourceAE">The AE title of the remote application sending the SOP Instances.</param>
-        /// <param name="hostname">The hostname. </param>
         /// <param name="configuration">Storage configuration. </param>
+        /// <param name="hostname">The IP Address the remote app is connecting with.</param>
         public DicomReceiveImportContext(string sourceAE, string hostname, StorageConfiguration configuration) : base(sourceAE, configuration)
         {
             // TODO (CR Jun 2012 - Med): This object is disposable and should be cleaned up.
@@ -88,15 +89,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             var serverList = ServerDirectory.GetRemoteServersByAETitle(sourceAE);
             if (serverList.Count == 1)
                 _dicomServerNode = CollectionUtils.FirstElement(serverList);
-            else if (serverList.Count > 1)
-                foreach (var node in serverList)
-                {
-                    if (node.ScpParameters != null && hostname != null && node.ScpParameters.HostName.ToLower().Equals(hostname.ToLower()))
-                    {
-                        _dicomServerNode = node;
-                        break;
-                    }
-                }
+
+            _hostname = hostname;
         }
 
         #endregion
@@ -112,7 +106,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
         {
             var request = new DicomReceiveRequest
                               {
-                                  SourceServerName = _dicomServerNode == null ? SourceAE : _dicomServerNode.Name,
+                                  SourceServerName = _dicomServerNode == null ? string.Format("{0}/{1}",SourceAE,_hostname) : _dicomServerNode.Name,
                                   Priority = WorkItemPriorityEnum.High,
                                   Patient = new WorkItemPatient(message.DataSet),
                                   Study = new WorkItemStudy(message.DataSet)
@@ -505,9 +499,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                     }
                     else
                     {
-                        if (commandProcessor.FailureException is ChangeConflictException)
-                            result.RetrySuggested = true; // Change conflict may work if we just retry
-
+                        if (commandProcessor.FailureException is ChangeConflictException
+                            || commandProcessor.FailureException is SqlCeLockTimeoutException)
+                            result.RetrySuggested = true; // Change conflict or lock timeout may work if we just retry
+                       
                         Platform.Log(LogLevel.Warn, "Failure Importing file: {0}", file.Filename);
                         string failureMessage = String.Format(
                             "Failure processing message: {0}. Sending failure status.",

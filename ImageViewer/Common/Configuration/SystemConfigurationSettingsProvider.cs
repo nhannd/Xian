@@ -104,11 +104,7 @@ namespace ClearCanvas.ImageViewer.Common.Configuration
             var group = new SettingsGroupDescriptor(settingsClass);
 
             var storedValues = _store.GetSettingsValues(group, null, settingsKey);
-            // TODO (CR Jun 2012 - High): This says we can only upgrade if there are already settings values for the current version. Shouldn't it be the opposite?
-            // (SW) - Not sure on this, due to the logic below in UpgradeSharedPropertyValues, the actual upgrade did not work properly and it didn't actually 
-            // upgrade the settings.  I had copied the UpgradeSharedPropertyValues method from some other code.  I might not understand this properly and we need to 
-            // talk it through.
-            return storedValues != null && storedValues.Count > 0;
+            return storedValues == null || storedValues.Count == 0;
         }
 
         public void UpgradeSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)

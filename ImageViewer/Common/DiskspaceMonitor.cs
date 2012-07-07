@@ -30,7 +30,12 @@ namespace ClearCanvas.ImageViewer.Common
         static DateTime? _scheduledRefreshTime;
         static DateTime? _lastConfigUpdate;
 
+        // Note: _storageConfig is used to retrieve the configuration only (in most cases, we are only interested in MaximumUsedSpacePercent)
+        // This object is reloaded every 10 seconds
         static StorageConfiguration _storageConfig;
+
+        // Note: _diskspace is used instead of relying on the Diskspace object in _storageConfig because _storageConfig is reloaded every 10 seconds.
+        // In fact, WQI processors should avoid loading a StorageConfiguration object through StudyStore.GetConfiguration() to check the disk usage.
         static Diskspace _diskspace;
 
         #endregion
@@ -46,8 +51,11 @@ namespace ClearCanvas.ImageViewer.Common
             {
                 lock (_sync)
                 {
+
                     RefreshDiskspace();
-                    // TODO (CR Jun 2012): there is a IsMaxUsedSpaceExceeded property on StorageConfiguration. Why not use that?
+
+                    // Note: Because _storageConfig is reloaded every 10 seconds to detect any configuration change. 
+                    // Using _storageConfig.IsMaxUsedSpaceExceeded will cause diskspace to be recalculated every 10 seconds
                     return FileStoreDiskSpace.UsedSpacePercent > StorageConfiguration.MaximumUsedSpacePercent;
                 }
             }
@@ -86,10 +94,6 @@ namespace ClearCanvas.ImageViewer.Common
                     double prevMaxUsed = _storageConfig != null ? _storageConfig.MaximumUsedSpacePercent : 0;
                     _storageConfig = StudyStore.GetConfiguration();
 
-                    // TODO (CR Jun 2012): redundant because accessing storageConfig.MaximumUsedSpacePercent
-                    // has already caused that object to create a DiskSpace object and check the current space.
-                    // May as well just delete this code.
-
                     // detect change
                     if (prevMaxUsed == 0 || prevMaxUsed != _storageConfig.MaximumUsedSpacePercent)
                     {
@@ -107,7 +111,6 @@ namespace ClearCanvas.ImageViewer.Common
         {
             get
             {
-                // TODO (CR Jun 2012): why do this when StorageConfiguration will have already created a Diskspace object?
                 if (_diskspace == null)
                 {
                     _diskspace = new Diskspace(FileStoreRootPath);
@@ -115,7 +118,12 @@ namespace ClearCanvas.ImageViewer.Common
 
                 return _diskspace;
             }
-            set { _diskspace = value; }
+            set 
+            { 
+                _diskspace = value; 
+                if (value == null)
+                    _scheduledRefreshTime = null; // force diskspace to be recalculated                        
+            }
         }
 
         private static string FileStoreRootPath
@@ -123,6 +131,16 @@ namespace ClearCanvas.ImageViewer.Common
             get
             {
                 return StorageConfiguration.FileStoreRootPath;
+            }
+        }
+        
+        private static long MaximumUsedSpaceBytes
+        {
+            get
+            {
+
+                // note: not using StorageConfiguration.MaxUsedSpaceBytes because that will create another Diskspace object unnecessarily
+                return (long) (FileStoreDiskSpace.TotalSpace / 100 * StorageConfiguration.MaximumUsedSpacePercent);
             }
         }
 
@@ -141,14 +159,19 @@ namespace ClearCanvas.ImageViewer.Common
 
                 const long GB = 1024 * 1024 * 1024;
                 double delay;
-                double remain = StorageConfiguration.MaximumUsedSpaceBytes - FileStoreDiskSpace.UsedSpace;
+
+                double remain = MaximumUsedSpaceBytes - FileStoreDiskSpace.UsedSpace;
 
                 // Note: Ideally we should calculate the how fast the usage is changing and estimate how long it will take to reach the max level
                 if (Math.Abs(remain) <= 5 * GB)
+                {
                     // within the critical level window. Check more often.
                     delay = 15; // 15 seconds
+                }
                 else
+                {
                     delay = 5 * 60; // 5 minutes.
+                }
 
                 _scheduledRefreshTime = Platform.Time.AddSeconds(delay);
 

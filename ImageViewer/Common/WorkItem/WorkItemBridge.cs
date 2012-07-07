@@ -384,7 +384,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
                 var instances = new AuditedInstances();
                 instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
 
-                AuditHelper.LogUpdateInstances(new List<string> {AuditHelper.LocalAETitle}, instances, EventSource.CurrentUser, result);
+                AuditHelper.LogDeleteSeries(new List<string> {AuditHelper.LocalAETitle}, instances, EventSource.CurrentUser, result);
             }
         }
     }
