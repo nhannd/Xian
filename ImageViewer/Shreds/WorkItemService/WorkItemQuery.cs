@@ -161,7 +161,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         private bool CanStartNonExclusive(WorkItem workItem, out string reason)
         {
-            // TODO (CR Jul 2012): Only in progress, or anything not pending or terminated?
             if (ExclusiveInProgressWorkItem(out reason))
                 return false;
 

@@ -10,55 +10,60 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 {
     public static class WorkItemRequestHelper
     {
-        private static readonly IDictionary<WorkItemConcurrency, ReadOnlyCollection<string>> WorkItemTypesByConcurrency = InternalGetWorkItemTypesByConcurrency();
+        private static readonly Type[] _requestRuntimeTypes = InternalGetRequestRuntimeTypes();
+        private static readonly string[] _activityTypes = InternalGetActivityTypes();
+        private static readonly IDictionary<WorkItemConcurrency, string[]> _workItemTypesByConcurrency = InternalGetWorkItemTypesByConcurrency();
 
-        public static readonly ReadOnlyCollection<Type> RequestRuntimeTypes = GetRequestRuntimeTypes();
-        public static readonly ReadOnlyCollection<string> ActivityTypes = GetActivityTypes();
-
-        public static ReadOnlyCollection<string> GetWorkItemTypes(this WorkItemConcurrency concurrency)
+        public static List<Type> GetWorkItemRequestRuntimeTypes()
         {
-            return WorkItemTypesByConcurrency[concurrency];
+            return new List<Type>(_requestRuntimeTypes);
+        }
+        
+        public static List<string> GetWorkItemTypes(this WorkItemConcurrency concurrency)
+        {
+            return new List<string>(_workItemTypesByConcurrency[concurrency]);
         }
 
-        public static IDictionary<WorkItemConcurrency, ReadOnlyCollection<string>> GetWorkItemTypesByConcurrency()
+        public static List<string> GetActivityTypes()
         {
-            return new Dictionary<WorkItemConcurrency, ReadOnlyCollection<string>>(WorkItemTypesByConcurrency);
+            return new List<string>(_activityTypes);
         }
 
-        private static ReadOnlyCollection<Type> GetRequestRuntimeTypes()
+        public static Dictionary<WorkItemConcurrency, List<string>> GetWorkItemTypesByConcurrency()
+        {
+            return _workItemTypesByConcurrency.ToDictionary(k => k.Key, v => v.Value.ToList());
+        }
+
+        private static Type[] InternalGetRequestRuntimeTypes()
         {
             var types = (from p in Platform.PluginManager.Plugins
                          from t in p.Assembly.GetTypes()
                          let a = AttributeUtils.GetAttribute<WorkItemRequestAttribute>(t)
                          where (a != null)
-                         select t).ToList();
-            
-            return types.AsReadOnly();
+                         select t);
+
+            return types.ToArray();
         }
 
-        private static ReadOnlyCollection<string> GetActivityTypes()
+        private static string[] InternalGetActivityTypes()
         {
             // build the contract map by finding all types having a T attribute
-            var types = GetRequestRuntimeTypes();
+            var types = InternalGetRequestRuntimeTypes();
             var activityTypes = types.Select(t => Activator.CreateInstance(t, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, null, null))
                 .OfType<WorkItemRequest>()
                 .Select(request => request.ActivityTypeString).ToList();
 
-            return activityTypes.Distinct().ToList().AsReadOnly();
+            return activityTypes.Distinct().ToArray();
         }
 
-        private static IDictionary<WorkItemConcurrency, ReadOnlyCollection<string>> InternalGetWorkItemTypesByConcurrency()
+        private static IDictionary<WorkItemConcurrency, string[]> InternalGetWorkItemTypesByConcurrency()
         {
-            var types = GetRequestRuntimeTypes();
+            var types = InternalGetRequestRuntimeTypes();
             var requestsByConcurrency = types.Select(t => Activator.CreateInstance(t, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, null, null))
                 .OfType<WorkItemRequest>()
                 .GroupBy(w => w.ConcurrencyType);
 
-            IDictionary<WorkItemConcurrency, ReadOnlyCollection<string>> typesByConcurrency = new Dictionary<WorkItemConcurrency, ReadOnlyCollection<string>>();
-            foreach (var requestsOfConcurrency in requestsByConcurrency)
-                typesByConcurrency.Add(requestsOfConcurrency.Key, requestsOfConcurrency.Select(w => w.WorkItemType).ToList().AsReadOnly());
-
-            return typesByConcurrency;
+            return requestsByConcurrency.ToDictionary(k => k.Key, v => v.Select(w => w.WorkItemType).ToArray());
         }
     }
 }
