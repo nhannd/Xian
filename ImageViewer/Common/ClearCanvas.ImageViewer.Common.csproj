@@ -202,6 +202,7 @@
     <Compile Include="WorkItem\WorkItemKnownTypeAttribute.cs" />
     <Compile Include="WorkItem\WorkItemPublishSubscribeHelper.cs" />
     <Compile Include="WorkItem\WorkItemRequestAttribute.cs" />
+    <Compile Include="WorkItem\WorkItemRequestHelper.cs" />
     <Compile Include="WorkItem\WorkItemsChangedEventArgs.cs" />
     <Compile Include="WorkItem\WorkItemBridge.cs" />
     <Compile Include="WorkItem\WorkItemServiceClient.cs" />

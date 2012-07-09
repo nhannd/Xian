@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -22,18 +21,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 {
     public static class WorkItemQueryExtensions
     {
-        public static IQueryable<WorkItem> WhereIsActive(this IQueryable<WorkItem> query)
+        public static IQueryable<WorkItem> WhereNotTerminated(this IQueryable<WorkItem> query)
         {
-            // TODO (CR Jul 2012): Is Pending active? Is this WhereNotTerminated?
-            query = query.Where(w => w.Status == WorkItemStatusEnum.Pending
-                                     || w.Status == WorkItemStatusEnum.Idle
-                                     || w.Status == WorkItemStatusEnum.InProgress
-                                     || w.Status == WorkItemStatusEnum.Canceling);
+            query = query.Where(w => w.Status != WorkItemStatusEnum.Complete
+                                     && w.Status != WorkItemStatusEnum.Canceled
+                                     && w.Status != WorkItemStatusEnum.Deleted
+                                     && w.Status != WorkItemStatusEnum.DeleteInProgress);
             return query;
         }
 
-        // TODO (CR Jul 2012): WhereWaitingToProcess?
-        public static IQueryable<WorkItem> WhereIsPending(this  IQueryable<WorkItem> query)
+        public static IQueryable<WorkItem> WhereTerminated(this IQueryable<WorkItem> query)
+        {
+            query = query.Where(w => w.Status == WorkItemStatusEnum.Complete
+                                     || w.Status == WorkItemStatusEnum.Canceled
+                                     || w.Status == WorkItemStatusEnum.Deleted
+                                     || w.Status == WorkItemStatusEnum.DeleteInProgress);
+            return query;
+        }
+
+        public static IQueryable<WorkItem> WhereWaitingToProcess(this IQueryable<WorkItem> query)
         {
             query = query.Where(w => w.Status == WorkItemStatusEnum.Pending || w.Status == WorkItemStatusEnum.Idle);
             return query;
@@ -41,49 +47,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 
         public static IQueryable<WorkItem> WhereNotDeleted(this  IQueryable<WorkItem> query)
         {
-            query = query.Where(w => w.Status != WorkItemStatusEnum.Deleted);
-            query = query.Where(w => w.Status != WorkItemStatusEnum.DeleteInProgress);
+            query = query.Where(w => w.Status != WorkItemStatusEnum.Deleted && w.Status != WorkItemStatusEnum.DeleteInProgress);
             return query;
         } 
     }
 
 	public class WorkItemBroker : Broker
     {
-        #region Static Exclusive WorkItemRequestTypes
-        public static string[] ExclusiveWorkItemRequestTypes = GetExclusiveWorkItemTypes();
-
-        private static string[] GetExclusiveWorkItemTypes()
-        {
-            try
-            {
-                // build the contract map by finding all types having a T attribute
-                var types = (from p in Platform.PluginManager.Plugins
-                             from t in p.Assembly.GetTypes()
-                             let a = AttributeUtils.GetAttribute<WorkItemRequestAttribute>(t)
-                             where (a != null)
-                             select t).ToList();
-
-                var requestTypes = new List<string>();
-
-                foreach (Type t in types)
-                {
-                    var dataObject = Activator.CreateInstance(t,
-                                                              BindingFlags.Public | BindingFlags.NonPublic |
-                                                              BindingFlags.Instance, null, null, null);
-                    var request = dataObject as WorkItemRequest;
-                    if (request != null && request.ConcurrencyType == WorkItemConcurrency.Exclusive)
-                        requestTypes.Add(request.WorkItemType);
-                }
-                return requestTypes.ToArray();
-            }
-            catch (Exception)
-            {
-                return new[] {ReindexRequest.WorkItemTypeString};
-            }
-        }
-
-	    #endregion
-
         internal WorkItemBroker(DicomStoreDataContext context)
 			: base(context)
 		{
@@ -95,13 +65,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 	    /// <param name="n"></param>
 	    /// <param name="priority"> </param>
 	    /// <returns></returns>
-	    public List<WorkItem> GetWorkItemsForProcessingByPriority(int n, WorkItemPriorityEnum priority)
+	    public List<WorkItem> GetWorkItemsForProcessing(int n, WorkItemPriorityEnum? priority = null)
         {
             IQueryable<WorkItem> query = from w in Context.WorkItems select w;
-            query = query.WhereIsPending();
+            query = query.WhereWaitingToProcess();
             query = query.Where(w => w.ProcessTime < DateTime.Now);
-            query = query.Where(w => w.Priority == priority);
+            if (priority.HasValue)
+                query = query.Where(w => w.Priority == priority.Value);
+
             query = query.OrderBy(w => w.ProcessTime);
+            if (!priority.HasValue)
+                query = query.OrderBy(w => w.Priority);
+
             return query.Take(n).ToList();
         }
 
@@ -129,21 +104,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         }
 
         /// <summary>
-        /// Gets the specified number of pending work items.
-        /// </summary>
-        /// <param name="n"></param>
-        /// <returns></returns>
-        public List<WorkItem> GetWorkItemsForProcessing(int n)
-        {
-            IQueryable<WorkItem> query = from w in Context.WorkItems select w;
-            query = query.WhereIsPending();
-            query = query.Where(w => w.ProcessTime < DateTime.Now);
-            // TODO (CR Jul 2012): Should this still order by priority, even though the only caller of this method knows there's only Normal priority items?
-            query = query.OrderBy(w => w.ProcessTime);
-            return query.Take(n).ToList();
-        }
-
-        /// <summary>
         /// General the WorkItems with the specified parameters.
         /// </summary>
         /// <param name="type"></param>
@@ -165,35 +125,52 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
                 query = query.Where(w => w.StudyInstanceUid == studyInstanceUid);
 
             query = query.OrderBy(w => w.ProcessTime);
+            query = query.OrderBy(w => w.Priority);
 
             return query.AsEnumerable();
         }
 
-	    /// <summary>
-	    /// Get the WorkItems scheduled before <paramref name="scheduledTime"/> for <paramref name="studyInstanceUid"/> or that are a higher priority
-	    /// and eligible to be run. 
+        /// <summary>
+	    /// Get the WorkItems scheduled before <paramref name="scheduledTime"/> for <paramref name="studyInstanceUid"/>
+	    /// and/or that are a higher priority and have not yet terminated (e.g. Waiting to run, or actively running).
 	    /// </summary>
 	    /// <param name="scheduledTime">The scheduled time to get related WorkItems for.</param>
-	    /// <param name="priority">The priority of the workitem to compare with </param>
-	    /// <param name="studyInstanceUid">The Study Instance UID to search for matching WorkItems.  Can be null.</param>
-	    /// <returns></returns>
-	    public IEnumerable<WorkItem> GetWorkItemsScheduledBeforeOrHigherPriority(DateTime scheduledTime, WorkItemPriorityEnum priority,
-             string studyInstanceUid)
+	    /// <param name="priority">The priority of the workitem to compare with.</param>
+	    /// <param name="studyInstanceUid">The Study Instance UID to search for matching WorkItems. Can be null.</param>
+        /// <param name="concurrency">The concurrency type of the items to be returned.</param>
+        /// <returns></returns>
+	    public IEnumerable<WorkItem> GetWorkItemsScheduledBeforeOrHigherPriority(DateTime scheduledTime, WorkItemPriorityEnum priority, string studyInstanceUid, WorkItemConcurrency concurrency)
+        {
+            return GetWorkItemsScheduledBeforeOrHigherPriority(scheduledTime, priority, studyInstanceUid, concurrency.GetWorkItemTypes().ToArray());
+        }
+
+	    /// <summary>
+	    /// Get the WorkItems scheduled before <paramref name="scheduledTime"/> for <paramref name="studyInstanceUid"/>
+	    /// and/or that are a higher priority and have not yet terminated (e.g. Waiting to run, or actively running).
+	    /// </summary>
+	    /// <param name="scheduledTime">The scheduled time to get related WorkItems for.</param>
+	    /// <param name="priority">The priority of the workitem to compare with.</param>
+	    /// <param name="studyInstanceUid">The Study Instance UID to search for matching WorkItems. Can be null.</param>
+        /// <param name="workItemTypes">The work item type(s) of the items to be returned. Can be null.</param>
+        /// <returns></returns>
+        public IEnumerable<WorkItem> GetWorkItemsScheduledBeforeOrHigherPriority(DateTime scheduledTime, WorkItemPriorityEnum priority, string studyInstanceUid, params string[] workItemTypes)
         {
             IQueryable<WorkItem> query = from w in Context.WorkItems select w;
 
             query = query.Where(w => w.ScheduledTime < DateTime.Now );
             query = query.Where(w => (w.ScheduledTime < scheduledTime && w.Priority <= priority) || w.Priority < priority);
-	        query = query.WhereIsActive();      
+	        query = query.WhereNotTerminated();
 
             if (!string.IsNullOrEmpty(studyInstanceUid))
                 query = query.Where(w => w.StudyInstanceUid == studyInstanceUid);
+
+            if (workItemTypes != null)
+                query = query.Where(w => workItemTypes.Contains(w.Type));
 
             query = query.OrderBy(w => w.ScheduledTime);
             query = query.OrderBy(w => w.Priority);
             return query.AsEnumerable();
         }
-
 
 	    /// <summary>
         /// Get a specific WorkItem
@@ -220,9 +197,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         public IEnumerable<WorkItem> GetActiveWorkItemsForStudy(string type, string studyInstanceUid)
         {
             IQueryable<WorkItem> query = from w in Context.WorkItems select w;
+            
             query = query.Where(w => w.StudyInstanceUid == studyInstanceUid);
-            query = query.Where(w => w.Type == type);
-            query = query.WhereIsActive();
+            if (!String.IsNullOrEmpty(type))
+                query = query.Where(w => w.Type == type);
+
+            query = query.WhereNotTerminated();
             return query.AsEnumerable();
         }
 
@@ -243,18 +223,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         {
             Context.WorkItems.DeleteOnSubmit(entity);
         }
-
-        public IEnumerable<WorkItem> GetExclusiveWorkItemsScheduledBeforeOrHigherPriority(DateTime scheduledTime, WorkItemPriorityEnum priority)
-	    {
-            IQueryable<WorkItem> query = from w in Context.WorkItems select w;
-            query = query.Where(w => ExclusiveWorkItemRequestTypes.Contains(w.Type));
-            query = query.Where(w => w.ScheduledTime < DateTime.Now);
-            query = query.Where(w => w.ScheduledTime < scheduledTime || w.Priority < priority);
-            query = query.WhereIsActive();
-            
-            query = query.OrderBy(w => w.Priority);
-            query = query.OrderBy(w => w.ScheduledTime);
-            return query.AsEnumerable();
-	    }
     }
 }

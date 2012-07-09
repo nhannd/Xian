@@ -91,10 +91,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 List<WorkItem> workItems;
                 if (priority == WorkItemPriorityEnum.Stat)
-                    workItems = workItemBroker.GetWorkItemsForProcessingByPriority(count*4, priority);
+                    workItems = workItemBroker.GetWorkItemsForProcessing(count*4, priority);
                 else if (priority == WorkItemPriorityEnum.High)
-                    workItems = workItemBroker.GetWorkItemsForProcessingByPriority(count*4, priority);
-                else // TODO (CR Jul 2012): Should still probably get by Priority just to be safe/consistent?
+                    workItems = workItemBroker.GetWorkItemsForProcessing(count * 4, priority);
+                else
                     workItems = workItemBroker.GetWorkItemsForProcessing(count*4);
 
                 foreach (var item in workItems)
@@ -388,7 +388,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
             var broker = _context.GetWorkItemBroker();
 
-            var list = broker.GetExclusiveWorkItemsScheduledBeforeOrHigherPriority(workItem.ScheduledTime, workItem.Priority);
+            var list = broker.GetWorkItemsScheduledBeforeOrHigherPriority(workItem.ScheduledTime, workItem.Priority, null, WorkItemConcurrency.Exclusive);
 
             if (list == null)
                 return false;
