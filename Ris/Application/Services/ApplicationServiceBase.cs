@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Threading;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
@@ -100,7 +101,13 @@ namespace ClearCanvas.Ris.Application.Services
 		/// </summary>
 		public IPersistenceContext PersistenceContext
 		{
-			get { return PersistenceScope.CurrentContext; }
+			get
+			{
+				var context = PersistenceScope.CurrentContext;
+				if(context == null)
+					throw new InvalidOperationException("There is no active persistence context.  Ensure the appropriate ReadOperation or UpdateOperation attribute has been applied to the service method.");
+				return context;
+			}
 		}
 	}
 }
