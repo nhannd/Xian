@@ -1273,7 +1273,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             list.Add(new SchedulingTest
             {
                 Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.Stat, WorkItemStatusEnum.Pending),
-                Message = "Study Process msg1",
+                Message = "Study Process 2 msg1",
                 ExpectedStatus = WorkItemStatusEnum.Pending
             });
 
@@ -1300,7 +1300,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             list.Add(new SchedulingTest
             {
                 Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.Normal, WorkItemStatusEnum.Pending),
-                Message = "Study Process msg1",
+                Message = "Study Process 2 msg1",
                 ExpectedStatus = WorkItemStatusEnum.Pending
             });
 
@@ -1327,7 +1327,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             list.Add(new SchedulingTest
             {
                 Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Idle),
-                Message = "Study Process msg1",
+                Message = "Study Process 2 msg1",
                 ExpectedStatus = WorkItemStatusEnum.InProgress
             });
 
@@ -1561,7 +1561,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             list.Add(new SchedulingTest
             {
                 Processor = InsertImportFiles(WorkItemPriorityEnum.High, WorkItemStatusEnum.Canceling),
-                Message = "Study Process",
+                Message = "Import Files",
                 ExpectedStatus = WorkItemStatusEnum.Canceling
             });
 
@@ -1599,7 +1599,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             list.Add(new SchedulingTest
             {
                 Processor = InsertImportFiles(WorkItemPriorityEnum.Stat, WorkItemStatusEnum.Pending),
-                Message = "Study Process",
+                Message = "Import Files",
                 ExpectedStatus = WorkItemStatusEnum.Pending
             });
 
@@ -1609,6 +1609,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
         [Test]
         public void Test35SendWithRetrieve()
         {
+            DeleteAllWorkItems();
+
             var list = new List<SchedulingTest>();
             var msg1 = new DicomMessage();
             SetupMR(msg1.DataSet);
@@ -1634,6 +1636,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
         [Test]
         public void Test36RetrieveAndReceive()
         {
+            DeleteAllWorkItems();
+
             var list = new List<SchedulingTest>();
             var msg1 = new DicomMessage();
             SetupMR(msg1.DataSet);
@@ -1659,6 +1663,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
         [Test]
         public void Test37RetrieveAndDelete()
         {
+            DeleteAllWorkItems();
+
             var list = new List<SchedulingTest>();
             var msg1 = new DicomMessage();
             SetupMR(msg1.DataSet);
@@ -1684,6 +1690,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
         [Test]
         public void Test38DeleteAndRetrieve()
         {
+            DeleteAllWorkItems();
             var list = new List<SchedulingTest>();
             var msg1 = new DicomMessage();
             SetupMR(msg1.DataSet);
@@ -1710,6 +1717,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
         [Test]
         public void Test39ImportAndRetrieve()
         {
+            DeleteAllWorkItems();
             var list = new List<SchedulingTest>();
             var msg1 = new DicomMessage();
             SetupMR(msg1.DataSet);
@@ -1736,6 +1744,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
         [Test]
         public void Test40ImportAndRetrieve()
         {
+            DeleteAllWorkItems();
             var list = new List<SchedulingTest>();
             var msg1 = new DicomMessage();
             SetupMR(msg1.DataSet);
@@ -1759,9 +1768,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             DoTest(list, 1);
         }
 
-            [Test]
-        public void Test40RetrieveMultipleImports()
+        [Test]
+        public void Test41RetrieveMultipleImports()
         {
+            DeleteAllWorkItems();
             var list = new List<SchedulingTest>();
             var msg1 = new DicomMessage();
             SetupMR(msg1.DataSet);
@@ -1778,7 +1788,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             list.Add(new SchedulingTest
             {
                 Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Pending),
-                Message = "Receive Process",
+                Message = "Receive Study",
                 ExpectedStatus = WorkItemStatusEnum.InProgress
             });
 
@@ -1787,11 +1797,138 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             list.Add(new SchedulingTest
             {
                 Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Pending),
-                Message = "Import",
+                Message = "Import Study",
                 ExpectedStatus = WorkItemStatusEnum.Pending
             });
 
             DoTest(list, 2);
+        }
+
+        [Test]
+        public void Test42MultipleRetrievesFollowedByImport()
+        {
+            DeleteAllWorkItems();
+            var list = new List<SchedulingTest>();
+            var msg1 = new DicomMessage();
+            SetupMR(msg1.DataSet);
+
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertRetrieveStudy(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Pending),
+                Message = "Retrieve Study",
+                ExpectedStatus = WorkItemStatusEnum.InProgress
+            });
+
+            Thread.Sleep(2);
+
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertRetrieveStudy(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Pending),
+                Message = "Retrieve Study",
+                ExpectedStatus = WorkItemStatusEnum.Pending
+            });
+
+            Thread.Sleep(2);
+
+            // TODO (CR Jul 2012): This one's questionable, but once the 2nd retrieve goes, this'll go, followed by the last one.
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Pending),
+                Message = "Import Study",
+                ExpectedStatus = WorkItemStatusEnum.Pending
+            });
+
+            Thread.Sleep(2);
+
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Pending),
+                Message = "Import Study",
+                ExpectedStatus = WorkItemStatusEnum.Pending
+            });
+
+            DoTest(list, 1);
+        }
+
+        [Test]
+        public void Test43FailedImportWithReindex()
+        {
+            DeleteAllWorkItems();
+            var list = new List<SchedulingTest>();
+            var msg1 = new DicomMessage();
+            SetupMR(msg1.DataSet);
+
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Failed),
+                Message = "Study Process",
+                ExpectedStatus = WorkItemStatusEnum.Failed
+            });
+
+            Thread.Sleep(2);
+
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertReindex(WorkItemPriorityEnum.High, WorkItemStatusEnum.Pending),
+                Message = "Reindex",
+                ExpectedStatus = WorkItemStatusEnum.InProgress
+            });
+
+            DoTest(list, 1);
+        }
+
+        [Test]
+        public void Test44FailedImportWithSend()
+        {
+            DeleteAllWorkItems();
+            var list = new List<SchedulingTest>();
+            var msg1 = new DicomMessage();
+            SetupMR(msg1.DataSet);
+
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Failed),
+                Message = "Study Process",
+                ExpectedStatus = WorkItemStatusEnum.Failed
+            });
+
+            Thread.Sleep(2);
+
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertSendStudy(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Pending),
+                Message = "Send Study",
+                ExpectedStatus = WorkItemStatusEnum.InProgress
+            });
+
+            DoTest(list, 1);
+        }
+
+        [Test]
+        public void Test45CompleteImportWithSend()
+        {
+            DeleteAllWorkItems();
+            var list = new List<SchedulingTest>();
+            var msg1 = new DicomMessage();
+            SetupMR(msg1.DataSet);
+
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Complete),
+                Message = "Study Process",
+                ExpectedStatus = WorkItemStatusEnum.Complete
+            });
+
+            Thread.Sleep(2);
+
+            list.Add(new SchedulingTest
+            {
+                Processor = InsertSendStudy(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Pending),
+                Message = "Send Study",
+                ExpectedStatus = WorkItemStatusEnum.InProgress
+            });
+
+            DoTest(list, 1);
         }
     }
 }

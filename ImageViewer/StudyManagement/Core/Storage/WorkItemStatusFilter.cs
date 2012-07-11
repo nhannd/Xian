@@ -9,9 +9,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
         private static readonly WorkItemStatusEnum[] _terminatedStatuses = new[]
                                                                                {
                                                                                    WorkItemStatusEnum.Complete,
+                                                                                   WorkItemStatusEnum.Failed,
                                                                                    WorkItemStatusEnum.Canceled,
                                                                                    WorkItemStatusEnum.Deleted,
                                                                                    WorkItemStatusEnum.DeleteInProgress
+
                                                                                };
 
         private static readonly WorkItemStatusEnum[] _waitingStatuses = new[]
