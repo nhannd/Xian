@@ -396,6 +396,11 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         [EnumMember]
         Exclusive,
+        //Note: This is unlikely to be used for anything other than retrieves, but we want anything "study related" to wait for other study related things,
+        //but we also need retrieves and "study receive/process" items to be able to run concurrently. Also, since we know a retrieve will ultimately trigger
+        //a study process, it is reasonable to make, say, a send for the same study wait for the retrieve to finish.
+        [EnumMember]
+        StudyUpdateTrigger,
         [EnumMember]
         StudyUpdate,
         [EnumMember]
@@ -472,9 +477,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         public override WorkItemConcurrency ConcurrencyType
         {
-            //Note: non-exclusive because, although it is a study-related work item, it does not actually read
-            //the study contents or otherwise require study integrity be maintained.
-            get { return WorkItemConcurrency.NonExclusive; }
+            get { return WorkItemConcurrency.StudyUpdateTrigger; }
         }
 
         [DataMember]

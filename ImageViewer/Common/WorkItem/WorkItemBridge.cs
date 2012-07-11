@@ -313,7 +313,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
             try
             {
-                InsertRequest(request, null);
+                InsertRequest(request, new ReindexProgress());
             }
             catch (Exception ex)
             {

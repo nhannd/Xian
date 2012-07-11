@@ -145,6 +145,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             if (item.Request.ConcurrencyType == WorkItemConcurrency.NonExclusive)
                 return CanStartNonExclusive(item, out reason);
 
+            if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyUpdateTrigger)
+                return CanStartStudyUpdateTrigger(item, out reason);
+
             if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyUpdate)
                 return CanStartStudyUpdate(item, out reason);
 
@@ -174,9 +177,20 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             return !CompetingExclusiveWorkItem(workItem, out reason);
         }
 
+        private bool CanStartStudyUpdateTrigger(WorkItem workItem, out string reason)
+        {
+            //A retrieve (trigger) waits for other retrieves already running, as well as other running imports/receives (study import).
+            Predicate<WorkItem> canRunConcurrently = w => w.Request.ConcurrencyType == WorkItemConcurrency.NonExclusive;
+            if (CompetingStudyWorkItem(workItem, canRunConcurrently, out reason))
+                return false;
+
+            return !CompetingExclusiveWorkItem(workItem, out reason);
+        }
+
         private bool CanStartStudyUpdate(WorkItem workItem, out string reason)
         {
-            Predicate<WorkItem> canRunConcurrently = w => w.Request.ConcurrencyType == WorkItemConcurrency.NonExclusive;
+            //An import can start running when a retrieve is already running.
+            Predicate<WorkItem> canRunConcurrently = w => w.Request.ConcurrencyType == WorkItemConcurrency.StudyUpdateTrigger || w.Request.ConcurrencyType == WorkItemConcurrency.NonExclusive;
             if (CompetingStudyWorkItem(workItem, canRunConcurrently, out reason))
                 return false;
 
@@ -280,7 +294,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 //There is nothing either running or idle for the same study, so only pending items scheduled before, or of higher priority, can stop this item from running.
                 var moreImportantWorkItems = GetPendingStudyWorkItemsScheduledBeforeOrHigherPriority(workItem);
-                if (MustWaitForAny(moreImportantWorkItems.Where(w => !canRunConcurrently(w)), out reason))
+                if (MustWaitForAny(moreImportantWorkItems, out reason))
                     return true;
             }
             else //Idle
@@ -324,7 +338,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 //Although it would never actually happen, because the logic in this class prevents it, the only thing that could
                 //possibly stop the current (NOT exclusive) work item from starting is an exclusive work item that is already running,
-                //or an other idle (exclusive) item that is scheduled before it, or is of a higher priority.
+                //or another idle (exclusive) item that is scheduled before it, or is of a higher priority.
                 var runningExclusiveWorkItems = GetRunningExclusiveWorkItems();
                 if (MustWaitForAny(runningExclusiveWorkItems, out reason))
                     return true;
@@ -353,12 +367,21 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         private static IEnumerable<WorkItem> CombineWorkItems(IEnumerable<WorkItem> workItems, IEnumerable<WorkItem> addOrReplaceItems)
         {
+            // A bit hacky, but it avoids having to commit each change before requerying.
+
+            // This method is used to combine items that are already running (or idle) with items just started by this class that are not seen by database queries, so
+            // that we can determine which work item the current item is "waiting" for. So, we combine the items and then order them again by process time and priority
+            // to get the "correct" item the current item is waiting for.
+
             var addOrReplaceItemsList = addOrReplaceItems.ToList();
 
             // First remove any items in the "add or replace" list, then union the 2 lists.
             // This yields all the items in the 2 lists with no duplication.
             // Note that there may be a fancier way to do this with LINQ, but I couldn't figure it out.
-            return workItems.Where(o => !addOrReplaceItemsList.Any(i => o.Oid == i.Oid)).Union(addOrReplaceItemsList);
+            var combined = workItems.Where(o => !addOrReplaceItemsList.Any(i => o.Oid == i.Oid)).Union(addOrReplaceItemsList);
+            combined = combined.OrderBy(w => w.ProcessTime);
+            combined = combined.OrderBy(w => w.Priority);
+            return combined;
         }
 
         private IEnumerable<WorkItem> ExcludeNowRunningItems(IEnumerable<WorkItem> workItems)
@@ -377,6 +400,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                                                                                                      null,
                                                                                                      WorkItemConcurrency.Exclusive);
             //The stuff now running is not Pending anymore.
+            //Note that we don't do anything with the items we postponed because we only change the Scheduled Time
+            //for items with a time window, and that change will get picked up on the next query for items to "start".
             return ExcludeNowRunningItems(workItems);
         }
 
@@ -388,7 +413,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                                                                                                      WorkItemStatusEnum.Idle,
                                                                                                      null,
                                                                                                      WorkItemConcurrency.Exclusive);
-            //The stuff now running is not Pending anymore.
+            //The stuff now running is not Idle anymore.
+            //Note that we don't do anything with the items we postponed because we only change the Scheduled Time
+            //for items with a time window, and that change will get picked up on the next query for items to "start".
             return ExcludeNowRunningItems(workItems);
         }
 
@@ -421,6 +448,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                                                                                             workItem.Priority,
                                                                                             WorkItemStatusEnum.Idle, null);
             //The stuff now running is not Idle anymore.
+            //Note that we don't do anything with the items we postponed because we only change the Scheduled Time
+            //for items with a time window, and that change will get picked up on the next query for items to "start".
             return ExcludeNowRunningItems(workItems);
         }
 
@@ -441,6 +470,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                                                                                             WorkItemStatusEnum.Pending, null);
 
             //The stuff now running is not Pending anymore.
+            //Note that we don't do anything with the items we postponed because we only change the Scheduled Time
+            //for items with a time window, and that change will get picked up on the next query for items to "start".
             return ExcludeNowRunningItems(workItems);
         }
 
@@ -493,6 +524,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             var broker = _context.GetWorkItemBroker();
             var workItems = broker.GetWorkItems(null, statusFilter, workItem.StudyInstanceUid);
 
+            //Shouldn't get the same one back, but do this just to be safe.
             return workItems.Where(w => w.Oid != workItem.Oid);
         }
 
