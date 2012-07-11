@@ -142,6 +142,30 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
         }
 
+        /// <summary>
+        /// Postpone a <see cref="WorkItem"/>
+        /// </summary>
+        private void Postpone(WorkItem item)
+        {
+            DateTime now = Platform.Time;
+
+            var timeWindowRequest = item.Request as IWorkItemRequestTimeWindow;
+
+            if (timeWindowRequest != null && item.Request.Priority != WorkItemPriorityEnum.Stat)
+            {
+                DateTime scheduledTime = timeWindowRequest.GetScheduledTime(now, WorkItemServiceSettings.Default.PostponeSeconds);
+                item.ProcessTime = scheduledTime;
+                item.ScheduledTime = scheduledTime;
+            }
+            else
+            {
+                item.ProcessTime = now.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds);
+            }
+
+            if (item.ProcessTime > item.ExpirationTime)
+                item.ExpirationTime = item.ProcessTime;
+        }
+
         private bool CanStart(WorkItem item, out string reason)
         {
             if (item.Request.ConcurrencyType == WorkItemConcurrency.NonExclusive)
@@ -249,30 +273,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Postpone a <see cref="WorkItem"/>
-        /// </summary>
-        private void Postpone(WorkItem item)
-        {
-            DateTime now = Platform.Time;
-
-            var timeWindowRequest = item.Request as IWorkItemRequestTimeWindow;
-
-            if (timeWindowRequest != null && item.Request.Priority != WorkItemPriorityEnum.Stat)
-            {
-                DateTime scheduledTime = timeWindowRequest.GetScheduledTime(now, WorkItemServiceSettings.Default.PostponeSeconds);
-                item.ProcessTime = scheduledTime;
-                item.ScheduledTime = scheduledTime;
-            }
-            else
-            {
-                item.ProcessTime = now.AddSeconds(WorkItemServiceSettings.Default.PostponeSeconds);
-            }
-
-            if (item.ProcessTime > item.ExpirationTime)
-                item.ExpirationTime = item.ProcessTime;
         }
 
         private bool CompetingStudyWorkItem(WorkItem workItem, Predicate<WorkItem> canRunConcurrently, out string reason)
