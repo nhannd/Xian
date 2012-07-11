@@ -45,16 +45,9 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         public static List<WorkItem> GetWorkItems(int count, WorkItemPriorityEnum priority)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
             using (var query = new WorkItemQuery())
             {
-                var items = query.InternalGetWorkItems(count, priority);
-                stopwatch.Stop();
-                Platform.Log(LogLevel.Debug, "WorkItemQuery took {0} seconds.", stopwatch.Elapsed.TotalSeconds);
-                
-                return items;
+                return query.InternalGetWorkItems(count, priority);
             }
         }
 
