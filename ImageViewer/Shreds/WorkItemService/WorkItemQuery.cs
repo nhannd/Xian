@@ -11,13 +11,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
-using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 {
@@ -45,9 +45,16 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         public static List<WorkItem> GetWorkItems(int count, WorkItemPriorityEnum priority)
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             using (var query = new WorkItemQuery())
             {
-                return query.InternalGetWorkItems(count, priority);
+                var items = query.InternalGetWorkItems(count, priority);
+                stopwatch.Stop();
+                Platform.Log(LogLevel.Debug, "WorkItemQuery took {0} seconds.", stopwatch.Elapsed.TotalSeconds);
+                
+                return items;
             }
         }
 
@@ -94,17 +101,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
                 foreach (var item in workItems)
                 {
-                    Trace.WriteLine(String.Format("Checking CanStart for {{{0}}}", item));
                     string reason;
                     if (CanStart(item, out reason))
                     {
-                        Trace.WriteLine("Item started!");
                         item.Status = WorkItemStatusEnum.InProgress;
                         _nowRunningWorkItems.Add(item);
                     }
                     else
                     {
-                        Trace.WriteLine("Item postponed!");
                         Postpone(item);
                         _postponedWorkItems.Add(item);
                         WorkItemProgress progress = item.Progress;
@@ -115,8 +119,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
                             itemsToPublish.Add(WorkItemDataHelper.FromWorkItem(item));
                         }
                     }
-
-                    Trace.WriteLine("");
 
                     if (_nowRunningWorkItems.Count >= count)
                         break;
@@ -222,30 +224,27 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             {
                 //The current item is Exclusive and Pending.
 
+                //A pending work item scheduled before, or of higher priority, should stop the current item from starting.
+                var moreImportantWorkItems = GetPendingWorkItemsScheduledBeforeOrHigherPriority(workItem);
+                if (MustWaitForAny(moreImportantWorkItems, out reason))
+                    return false;
+
                 //Anything already running or idle must finish first, regardless of priority or schedule.
                 var runningOrIdleWorkItems = GetRunningOrIdleWorkItems();
                 if (MustWaitForAny(runningOrIdleWorkItems, out reason))
-                    return false;
-
-                //There is nothing running or idle, so only pending work items scheduled before, or of higher priority, can stop the current item from starting.
-                var moreImportantWorkItems = GetPendingWorkItemsScheduledBeforeOrHigherPriority(workItem);
-                if (MustWaitForAny(moreImportantWorkItems, out reason))
                     return false;
             }
             else
             {
                 //The current item is Exclusive and Idle.
 
-                //Although it would never actually happen, because the logic in this class prevents it, the only thing that could
-                //possibly stop the current work item from starting is another work item that is already running,
-                //or another idle item that is scheduled before it, or is of a higher priority.
-                var runningWorkItems = GetRunningWorkItems();
-                if (MustWaitForAny(runningWorkItems, out reason))
-                    return false;
-
-                //There is nothing running, so only other idle work items scheduled before, or of higher priority, can stop the current item from starting.
+                //Should never really happen, but only an already running item, or another idle item scheduled before or of higher priority, can stop the current one from starting.
                 var moreImportantWorkItems = GetIdleWorkItemsScheduledBeforeOrHigherPriority(workItem);
                 if (MustWaitForAny(moreImportantWorkItems, out reason))
+                    return false;
+
+                var runningWorkItems = GetRunningWorkItems();
+                if (MustWaitForAny(runningWorkItems, out reason))
                     return false;
             }
 
@@ -287,26 +286,25 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             //The input item is either Pending or Idle.
             if (workItem.Status == WorkItemStatusEnum.Pending)
             {
-                //A pending item cannot run until all running or idle work items for the same study terminate, regardless of priority or schedule.
-                var runningOrIdleWorkItems = GetRunningOrIdleStudyWorkItems(workItem);
-                if (MustWaitForAny(runningOrIdleWorkItems.Where(w => !canRunConcurrently(w)), out reason))
-                    return true;
-
-                //There is nothing either running or idle for the same study, so only pending items scheduled before, or of higher priority, can stop this item from running.
+                //A pending work item (same study) scheduled before, or of higher priority, should stop the current item from starting.
                 var moreImportantWorkItems = GetPendingStudyWorkItemsScheduledBeforeOrHigherPriority(workItem);
                 if (MustWaitForAny(moreImportantWorkItems, out reason))
+                    return true;
+
+                //Anything already running or idle (same study) must finish first, regardless of priority or schedule.
+                var runningOrIdleWorkItems = GetRunningOrIdleStudyWorkItems(workItem);
+                if (MustWaitForAny(runningOrIdleWorkItems.Where(w => !canRunConcurrently(w)), out reason))
                     return true;
             }
             else //Idle
             {
-                //This should never actually happen, but an idle item can't run if there are other items running for the same study.
-                var runningWorkItems = GetRunningStudyWorkItems(workItem);
-                if (MustWaitForAny(runningWorkItems.Where(w => !canRunConcurrently(w)), out reason))
-                    return true;
-
-                //Should also never really happen, but for the same study, only another idle item can stop this item from running.
+                //Should never really happen, but only an already running item (same study), or another idle item scheduled before or of higher priority, can stop the current one from starting.
                 var moreImportantWorkItems = GetIdleStudyWorkItemsScheduledBeforeOrHigherPriority(workItem);
                 if (MustWaitForAny(moreImportantWorkItems.Where(w => !canRunConcurrently(w)), out reason))
+                    return true;
+
+                var runningWorkItems = GetRunningStudyWorkItems(workItem);
+                if (MustWaitForAny(runningWorkItems.Where(w => !canRunConcurrently(w)), out reason))
                     return true;
             }
 
@@ -353,10 +351,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
 
         private bool MustWaitForAny(IEnumerable<WorkItem> workItems, out string reason)
         {
+            //The actual item being waited on is the one of lowest priority with process time furthest in the future.
+            workItems = workItems.OrderByDescending(w => w.ProcessTime).OrderByDescending(w => w.Priority);
             foreach (var workItem in workItems)
             {
-                Trace.WriteLine(String.Format("WAITING for {{{0}}}", workItem));
-
                 reason = string.Format("Waiting for: {0}", workItem.Request.ActivityDescription);
                 return true;
             }
@@ -369,9 +367,8 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
         {
             // A bit hacky, but it avoids having to commit each change before requerying.
 
-            // This method is used to combine items that are already running (or idle) with items just started by this class that are not seen by database queries, so
-            // that we can determine which work item the current item is "waiting" for. So, we combine the items and then order them again by process time and priority
-            // to get the "correct" item the current item is waiting for.
+            // This method is used to combine items that are already running (or idle) with items just started by this class
+            // that are not seen by database queries, so that we can determine which work item the current item is "waiting" for.
 
             var addOrReplaceItemsList = addOrReplaceItems.ToList();
 
@@ -379,8 +376,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             // This yields all the items in the 2 lists with no duplication.
             // Note that there may be a fancier way to do this with LINQ, but I couldn't figure it out.
             var combined = workItems.Where(o => !addOrReplaceItemsList.Any(i => o.Oid == i.Oid)).Union(addOrReplaceItemsList);
-            combined = combined.OrderBy(w => w.ProcessTime);
-            combined = combined.OrderBy(w => w.Priority);
             return combined;
         }
 
