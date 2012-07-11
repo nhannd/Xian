@@ -15,7 +15,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage
 {
 	partial class WorkItem
 	{
-		public WorkItemRequest Request
+        public override string ToString()
+        {
+            return string.Format("{0}\nType:{1}\nPriority: {2}\nScheduled: {3}\nProcess:{4}", Oid, Type, Priority, ScheduledTime, ProcessTime);
+        }
+		
+        public WorkItemRequest Request
 		{
 			get
 			{

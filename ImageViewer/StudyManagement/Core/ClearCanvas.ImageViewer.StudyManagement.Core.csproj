@@ -171,6 +171,7 @@
     <Compile Include="Storage\StudyBroker.cs" />
     <Compile Include="Storage\StudyLocation.cs" />
     <Compile Include="Storage\Tests\SerializationTests.cs" />
+    <Compile Include="Storage\WorkItemStatusFilter.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="Storage\WorkItem.cs" />
     <Compile Include="Storage\WorkItemBroker.cs" />

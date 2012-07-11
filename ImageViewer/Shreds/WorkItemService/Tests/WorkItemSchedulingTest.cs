@@ -1060,7 +1060,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             SetupMR(msg2.DataSet);
 
 
-            // Non-Exclusive In Progress doesn't block
             list.Add(new SchedulingTest
                          {
                              Processor = InsertImportFiles(WorkItemPriorityEnum.High, WorkItemStatusEnum.InProgress),
@@ -1085,6 +1084,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
                              ExpectedStatus = WorkItemStatusEnum.Pending
                          });
 
+            //This should start because it can run at the same time as the import files that is already running.
             Thread.Sleep(2);
             list.Add(new SchedulingTest
                          {
@@ -1225,7 +1225,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             {
                 Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Idle),
                 Message = "Study Process msg1",
-                ExpectedStatus = WorkItemStatusEnum.Idle
+                ExpectedStatus = WorkItemStatusEnum.InProgress
             });
 
             Thread.Sleep(2);
@@ -1234,7 +1234,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             {
                 Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.Stat, WorkItemStatusEnum.Pending),
                 Message = "Study Process msg1",
-                ExpectedStatus = WorkItemStatusEnum.InProgress
+                ExpectedStatus = WorkItemStatusEnum.Pending
             });
 
             DoTest(list, 1);
@@ -1261,10 +1261,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
             {
                 Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.Normal, WorkItemStatusEnum.Pending),
                 Message = "Study Process msg1",
-                ExpectedStatus = WorkItemStatusEnum.InProgress
+                ExpectedStatus = WorkItemStatusEnum.Pending
             });
 
-            DoTest(list, 1);
+            DoTest(list, 0);
         }
 
         [Test]
@@ -1345,7 +1345,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
                 ExpectedStatus = WorkItemStatusEnum.Pending,
             });
 
-            DoTest(list, 1);
+            DoTest(list, 0);
         }
 
         [Test]
