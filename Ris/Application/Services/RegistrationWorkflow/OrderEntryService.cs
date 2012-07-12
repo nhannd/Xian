@@ -193,7 +193,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.Requisition, "Requisition");
 
-			var order = PlaceOrderHelper(request.Requisition);
+			var order = PlaceOrderHelper(request.Requisition, request.ScheduleProcedures);
 
 			ValidateVisitsExist(order);
 
@@ -251,7 +251,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			DuplicateAttachmentsForOrderReplace(orderToReplace, request.Requisition);
 
 			// place new order
-			var newOrder = PlaceOrderHelper(request.Requisition);
+			var newOrder = PlaceOrderHelper(request.Requisition, request.ScheduleProcedures);
 			ValidateVisitsExist(newOrder);
 
 			// cancel existing order
@@ -511,12 +511,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			}
 		}
 
-		private Order PlaceOrderHelper(OrderRequisition requisition)
+		private Order PlaceOrderHelper(OrderRequisition requisition, bool scheduleProcedures)
 		{
 			// get appropriate A# for this order
 			var accNum = GetAccessionNumberForOrder(requisition);
 
-			var patient = this.PersistenceContext.Load<Patient>(requisition.Patient, EntityLoadFlags.Proxy);
+			var patient = this.PersistenceContext.Load<Patient>(requisition.Patient.PatientRef, EntityLoadFlags.Proxy);
 			var orderingFacility = this.PersistenceContext.Load<Facility>(requisition.OrderingFacility.FacilityRef, EntityLoadFlags.Proxy);
 			var visit = FindOrCreateVisit(requisition, patient, orderingFacility, accNum);
 			var orderingPhysician = this.PersistenceContext.Load<ExternalPractitioner>(requisition.OrderingPractitioner.PractitionerRef, EntityLoadFlags.Proxy);
@@ -525,7 +525,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 
 			var resultRecipients = CollectionUtils.Map(
-				requisition.ResultRecipients,
+				requisition.ResultRecipients ?? new List<ResultRecipientDetail>(),
 				(ResultRecipientDetail s) => new ResultRecipient(
 												this.PersistenceContext.Load<ExternalPractitionerContactPoint>(s.ContactPoint.ContactPointRef, EntityLoadFlags.Proxy),
 												EnumUtils.GetEnumValue<ResultCommunicationMode>(s.PreferredCommunicationMode)));
@@ -536,7 +536,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			var mapProcToReq = new Dictionary<Procedure, ProcedureRequisition>();
 			var procedureNumberBroker = PersistenceContext.GetBroker<IProcedureNumberBroker>();
 			var procedures = CollectionUtils.Map(
-				requisition.Procedures,
+				requisition.Procedures ?? new List<ProcedureRequisition>(),
 				delegate(ProcedureRequisition req)
 				{
 					var rpt = this.PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
@@ -577,16 +577,29 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			foreach (var procedure in order.Procedures)
 			{
 				procedure.CreateProcedureSteps();
-				orderAssembler.UpdateProcedureFromRequisition(procedure, mapProcToReq[procedure], this.CurrentUserStaff, this.PersistenceContext);
+				if(mapProcToReq.ContainsKey(procedure))
+				{
+					orderAssembler.UpdateProcedureFromRequisition(procedure, mapProcToReq[procedure], this.CurrentUserStaff, this.PersistenceContext);
+				}
+				else if (scheduleProcedures && !procedure.ScheduledStartTime.HasValue)
+				{
+					procedure.Schedule(requisition.SchedulingRequestTime);
+				}
 			}
 
 			// add order notes
-			var noteAssembler = new OrderNoteAssembler();
-			noteAssembler.SynchronizeOrderNotes(order, requisition.Notes, this.CurrentUserStaff, this.PersistenceContext);
+			if (requisition.Notes != null)
+			{
+				var noteAssembler = new OrderNoteAssembler();
+				noteAssembler.SynchronizeOrderNotes(order, requisition.Notes, this.CurrentUserStaff, this.PersistenceContext);
+			}
 
 			// add attachments
-			var attachmentAssembler = new OrderAttachmentAssembler();
-			attachmentAssembler.Synchronize(order.Attachments, requisition.Attachments, this.CurrentUserStaff, this.PersistenceContext);
+			if(requisition.Attachments != null)
+			{
+				var attachmentAssembler = new OrderAttachmentAssembler();
+				attachmentAssembler.Synchronize(order.Attachments, requisition.Attachments, this.CurrentUserStaff, this.PersistenceContext);
+			}
 
 			if (requisition.ExtendedProperties != null)
 			{

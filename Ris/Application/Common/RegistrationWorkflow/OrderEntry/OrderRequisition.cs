@@ -24,7 +24,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		/// Patient for which procedures are being ordered. Required for new orders. Ignored for order modification.
 		/// </summary>
 		[DataMember]
-		public EntityRef Patient;
+		public PatientProfileSummary Patient;
 
 		/// <summary>
 		/// Visit with which the order is associated. Required.

@@ -168,6 +168,7 @@ namespace ClearCanvas.Ris.Client
 		private bool _isComplete;
 		private readonly EntityRef _patientRef;
 		private readonly EntityRef _profileRef;
+		private PatientProfileSummary _patientProfile;
 		private EntityRef _orderRef;
 
 		private List<VisitSummary> _allVisits;
@@ -604,7 +605,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
-				var visitSummaryComponent = new VisitSummaryComponent(_patientRef, true);
+				var visitSummaryComponent = new VisitSummaryComponent(_patientProfile, true);
 
 				// Add a validation to the visit summary component, validating assigning authority of the selected visit.
 				var validCodes = GetValidVisitAssigningAuthorityCodes();
@@ -1133,7 +1134,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			var requisition = new OrderRequisition
 			{
-				Patient = _patientRef,
+				Patient = _patientProfile,
 				Visit = _selectedVisit,
 				DiagnosticService = _selectedDiagnosticService,
 				ReasonForStudy = _indication,
@@ -1174,6 +1175,7 @@ namespace ClearCanvas.Ris.Client
 
 		private void UpdateFromRequisition(OrderRequisition existingOrder)
 		{
+			_patientProfile = existingOrder.Patient;
 			_selectedVisit = existingOrder.Visit;
 			_selectedDiagnosticService = existingOrder.DiagnosticService;
 			_indication = existingOrder.ReasonForStudy;
