@@ -212,10 +212,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		public ModifyOrderResponse ModifyOrder(ModifyOrderRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
-			Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
 			Platform.CheckMemberIsSet(request.Requisition, "Requisition");
+			Platform.CheckMemberIsSet(request.Requisition.OrderRef, "OrderRef");
 
-			var order = this.PersistenceContext.Load<Order>(request.OrderRef);
+			var order = this.PersistenceContext.Load<Order>(request.Requisition.OrderRef);
 
 			var assembler = new OrderEntryAssembler();
 			assembler.UpdateOrderFromRequisition(order, request.Requisition, this.CurrentUserStaff, this.PersistenceContext);

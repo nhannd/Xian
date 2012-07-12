@@ -12,6 +12,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Serialization;
@@ -232,6 +233,8 @@ namespace ClearCanvas.Ris.Client
 		private bool _visitsLoaded;
 		private bool _formDataLoaded;
 
+		private OrderRequisition _preLoadedRequisition;
+
 		#endregion
 
 		#region Constructors
@@ -245,21 +248,14 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Constructor for creating a new order with attachments.
+		/// Constructor for editing a requisition, in any mode.
 		/// </summary>
-		public OrderEditorComponent(PatientProfileSummary patientProfile, List<AttachmentSummary> attachments)
-			: this(patientProfile, null, Mode.NewOrder)
+		/// <param name="requisition"></param>
+		/// <param name="mode"></param>
+		public OrderEditorComponent(OrderRequisition requisition, Mode mode)
+			:this(requisition.Patient, requisition.OrderRef, mode)
 		{
-			_newAttachments = attachments;
-		}
-
-		/// <summary>
-		/// Constructor for adding attachments to an existing order.
-		/// </summary>
-		public OrderEditorComponent(PatientProfileSummary patientProfile, EntityRef orderRef, List<AttachmentSummary> attachments)
-			: this(patientProfile, orderRef, Mode.ModifyOrder)
-		{
-			_newAttachments = attachments;
+			_preLoadedRequisition = requisition;
 		}
 
 		/// <summary>
@@ -383,8 +379,7 @@ namespace ClearCanvas.Ris.Client
 					_visitsLoaded = true;
 
 					this.Modified = false; // bug 6299: ensure we begin without modifications
-					if (_mode != Mode.NewOrder)
-						LoadOrderRequisition();
+					LoadOrderRequisition();
 				});
 
 
@@ -415,40 +410,10 @@ namespace ClearCanvas.Ris.Client
 					_formDataLoaded = true;
 
 					this.Modified = false; // bug 6299: ensure we begin without modifications
-					if (_mode != Mode.NewOrder)
-						LoadOrderRequisition();
+					LoadOrderRequisition();
 				});
 
 			base.Start();
-		}
-
-
-		private void LoadOrderRequisition()
-		{
-			if (!_visitsLoaded || !_formDataLoaded)
-				return;
-
-			// Pre-populate the order entry page with details
-			Async.Request(this,
-				(IOrderEntryService service) => service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest(_orderRef)),
-				response =>
-				{
-					// update order ref so we have the latest version
-					_orderRef = response.OrderRef;
-
-					// update form
-					UpdateFromRequisition(response.Requisition);
-					_isComplete = response.IsCompleted;
-
-					// bug #3506: in replace mode, overwrite the procedures with clean one(s) based on diagnostic service
-					if (_mode == Mode.ReplaceOrder)
-					{
-						UpdateDiagnosticService(_selectedDiagnosticService);
-					}
-
-					UpdateVisits();
-					this.Modified = false; // bug 6299: ensure we begin without modifications
-				});
 		}
 
 		public override void Stop()
@@ -1042,6 +1007,48 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
+		private void LoadOrderRequisition()
+		{
+			if (!_visitsLoaded || !_formDataLoaded)
+				return;
+
+			// if we have a pre-loaded requisition, just use that and don't call the service
+			if (_preLoadedRequisition != null)
+			{
+				OnOrderRequisitionLoaded(_preLoadedRequisition.OrderRef, _preLoadedRequisition, false);
+				return;
+			}
+
+			// otherwise, if it's a new order, there is nothing to retrieve from the server
+			if (_mode == Mode.NewOrder)
+				return;
+
+			// load the order requisition for editing
+			Async.Request(this,
+				(IOrderEntryService service) => service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest(_orderRef)),
+				response => OnOrderRequisitionLoaded(response.OrderRef, response.Requisition, response.IsCompleted));
+		}
+
+		private void OnOrderRequisitionLoaded(EntityRef orderRef, OrderRequisition requisition, bool isCompleted)
+		{
+			// update order ref so we have the latest version
+			_orderRef = orderRef;
+
+			// update form
+			UpdateFromRequisition(requisition);
+			_isComplete = isCompleted;
+
+			// bug #3506: in replace mode, overwrite the procedures with clean one(s) based on diagnostic service
+			// also for new orders, the pre-loaded requisition won't have any procedures, so these need to be loaded here
+			if (_mode == Mode.ReplaceOrder || _mode == Mode.NewOrder)
+			{
+				UpdateDiagnosticService(_selectedDiagnosticService);
+			}
+
+			UpdateVisits();
+			this.Modified = false; // bug 6299: ensure we begin without modifications
+		}
+
 		private string FormatPerformingFacility(ProcedureRequisition requisition)
 		{
 			var sb = new StringBuilder();
@@ -1178,20 +1185,25 @@ namespace ClearCanvas.Ris.Client
 			_selectedOrderingPractitioner = existingOrder.OrderingPractitioner;
 
 			_proceduresTable.Items.Clear();
-			_proceduresTable.Items.AddRange(existingOrder.Procedures);
+			_proceduresTable.Items.AddRange(EmptyIfNull(existingOrder.Procedures));
 
-			var attachments = new List<AttachmentSummary>(existingOrder.Attachments);
+			var attachments = new List<AttachmentSummary>(EmptyIfNull(existingOrder.Attachments));
 			attachments.AddRange(_newAttachments);
 			_attachmentSummaryComponent.Attachments = attachments;
 
-			_noteSummaryComponent.Notes = existingOrder.Notes;
+			_noteSummaryComponent.Notes = EmptyIfNull(existingOrder.Notes).ToList();
 			_orderAdditionalInfoComponent.OrderExtendedProperties = _extendedProperties = existingOrder.ExtendedProperties;
 
 			_recipientsTable.Items.Clear();
-			_recipientsTable.Items.AddRange(existingOrder.ResultRecipients);
+			_recipientsTable.Items.AddRange(EmptyIfNull(existingOrder.ResultRecipients));
 
 			// initialize contact point choices for ordering practitioner
 			UpdateOrderingPractitionerContactPointChoices();
+		}
+
+		private IEnumerable<T> EmptyIfNull<T>(IEnumerable<T> collection)
+		{
+			return collection ?? Enumerable.Empty<T>();
 		}
 
 		private bool SubmitOrder()
@@ -1246,9 +1258,10 @@ namespace ClearCanvas.Ris.Client
 
 		private void SubmitModifyOrder(OrderRequisition requisition)
 		{
+			requisition.OrderRef = _orderRef;
 			Platform.GetService<IOrderEntryService>(service =>
 			{
-				var response = service.ModifyOrder(new ModifyOrderRequest(_orderRef, requisition));
+				var response = service.ModifyOrder(new ModifyOrderRequest(requisition));
 				_orderRef = response.Order.OrderRef;
 			});
 		}

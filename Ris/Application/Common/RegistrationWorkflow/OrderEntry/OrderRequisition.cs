@@ -21,6 +21,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 	public class OrderRequisition : DataContractBase
 	{
 		/// <summary>
+		/// Reference to an existing order, or null for new orders.
+		/// </summary>
+		[DataMember]
+		public EntityRef OrderRef;
+
+		/// <summary>
 		/// Patient for which procedures are being ordered. Required for new orders. Ignored for order modification.
 		/// </summary>
 		[DataMember]
