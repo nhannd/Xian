@@ -1830,12 +1830,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
 
             Thread.Sleep(2);
 
-            // TODO (CR Jul 2012): This one's questionable, but once the 2nd retrieve goes, this'll go, followed by the last one.
             list.Add(new SchedulingTest
             {
                 Processor = InsertStudyProcess(msg1, WorkItemPriorityEnum.High, WorkItemStatusEnum.Pending),
                 Message = "Import Study",
-                ExpectedStatus = WorkItemStatusEnum.Pending
+                ExpectedStatus = WorkItemStatusEnum.InProgress
             });
 
             Thread.Sleep(2);
@@ -1847,7 +1846,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
                 ExpectedStatus = WorkItemStatusEnum.Pending
             });
 
-            DoTest(list, 1);
+            DoTest(list, 2);
         }
 
         [Test]

@@ -272,13 +272,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             if (workItem.Status == WorkItemStatusEnum.Pending)
             {
                 //A pending work item (same study) scheduled before, or of higher priority, should stop the current item from starting.
-                //This is true regardless of whether or not the items can run concurrently. Consider 2 long-running sends, where
-                //one delayed itself for 15 seconds because of another conflicting item. Technically, the second send scheduled after
-                //it (or of lower priority) could start if we did the "concurrency" check, which is technically wrong. Once the 1st
-                //send actually starts running, the 2nd one will then start, provided there's a thread available. This won't even
-                //be an issue most of the time when there's plenty of processing threads available.
+                //However, the only reason the other item would still be pending is if it was waiting for something else,
+                //so we'll start as long as the current item doesn't have a concurrency conflict with the other item.
+                //Then we can safely make the most of the available processing time.
                 var moreImportantWorkItems = GetPendingStudyWorkItemsScheduledBeforeOrHigherPriority(workItem);
-                if (MustWaitForAny(moreImportantWorkItems, out reason))
+                if (MustWaitForAny(moreImportantWorkItems.Where(w => !canRunConcurrently(w)), out reason))
                     return true;
 
                 //Anything already running or idle (same study) must finish first, regardless of priority or schedule.
