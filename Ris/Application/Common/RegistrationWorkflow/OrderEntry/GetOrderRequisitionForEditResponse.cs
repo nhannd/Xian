@@ -11,25 +11,20 @@
 
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
 	[DataContract]
 	public class GetOrderRequisitionForEditResponse : DataContractBase
 	{
-		public GetOrderRequisitionForEditResponse(EntityRef orderRef, OrderRequisition requisition, bool IsCompleted)
+		public GetOrderRequisitionForEditResponse(OrderRequisition requisition, bool isCompleted)
 		{
-			this.OrderRef = orderRef;
 			this.Requisition = requisition;
-			this.IsCompleted = IsCompleted;
+			this.IsCompleted = isCompleted;
 		}
 
 		[DataMember]
 		public OrderRequisition Requisition;
-
-		[DataMember]
-		public EntityRef OrderRef;
 
 		[DataMember]
 		public bool IsCompleted;

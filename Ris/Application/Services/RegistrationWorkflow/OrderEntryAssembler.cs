@@ -33,6 +33,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			var requisition = new OrderRequisition
 				{
+					OrderRef = order.GetRef(),
 					Patient = patientProfileAssembler.CreatePatientProfileSummary(CollectionUtils.FirstElement(order.Procedures).PatientProfile, context),
 					Visit = visitAssembler.CreateVisitSummary(order.Visit, context),
 					DiagnosticService = dsAssembler.CreateSummary(order.DiagnosticService),

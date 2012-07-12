@@ -37,9 +37,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         public OrderRequisition Requisition;
 
 		/// <summary>
-		/// Specifies that procedures that are otherwise unscheduled should be scheduled for the time specified in <see cref="OrderRequisition.SchedulingRequestTime"/>.
+		/// Specifies that procedures will be scheduled for the time specified in <see cref="OrderRequisition.SchedulingRequestTime"/>,
+		/// regardless of what is specified in individual <see cref="ProcedureRequistion"/> items.
 		/// </summary>
 		[DataMember]
-		public bool ScheduleProcedures;
+		public bool ApplySchedulingRequestTime;
 	}
 }

@@ -1015,7 +1015,7 @@ namespace ClearCanvas.Ris.Client
 			// if we have a pre-loaded requisition, just use that and don't call the service
 			if (_preLoadedRequisition != null)
 			{
-				OnOrderRequisitionLoaded(_preLoadedRequisition.OrderRef, _preLoadedRequisition, false);
+				OnOrderRequisitionLoaded(_preLoadedRequisition, false);
 				return;
 			}
 
@@ -1025,14 +1025,14 @@ namespace ClearCanvas.Ris.Client
 
 			// load the order requisition for editing
 			Async.Request(this,
-				(IOrderEntryService service) => service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest(_orderRef)),
-				response => OnOrderRequisitionLoaded(response.OrderRef, response.Requisition, response.IsCompleted));
+				(IOrderEntryService service) => service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest { OrderRef = _orderRef }),
+				response => OnOrderRequisitionLoaded(response.Requisition, response.IsCompleted));
 		}
 
-		private void OnOrderRequisitionLoaded(EntityRef orderRef, OrderRequisition requisition, bool isCompleted)
+		private void OnOrderRequisitionLoaded(OrderRequisition requisition, bool isCompleted)
 		{
 			// update order ref so we have the latest version
-			_orderRef = orderRef;
+			_orderRef = requisition.OrderRef;
 
 			// update form
 			UpdateFromRequisition(requisition);
