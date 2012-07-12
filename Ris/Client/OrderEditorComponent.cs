@@ -141,12 +141,12 @@ namespace ClearCanvas.Ris.Client
 
 			public EntityRef PatientRef
 			{
-				get { return _owner._patientRef; }
+				get { return _owner._patientProfile.PatientRef; }
 			}
 
 			public EntityRef PatientProfileRef
 			{
-				get { return _owner._profileRef; }
+				get { return _owner._patientProfile.PatientProfileRef; }
 			}
 
 			public EntityRef OrderRef
@@ -166,8 +166,6 @@ namespace ClearCanvas.Ris.Client
 
 		private readonly Mode _mode;
 		private bool _isComplete;
-		private readonly EntityRef _patientRef;
-		private readonly EntityRef _profileRef;
 		private PatientProfileSummary _patientProfile;
 		private EntityRef _orderRef;
 
@@ -241,16 +239,16 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor for creating a new order.
 		/// </summary>
-		public OrderEditorComponent(EntityRef patientRef, EntityRef profileRef)
-			: this(patientRef, profileRef, null, Mode.NewOrder)
+		public OrderEditorComponent(PatientProfileSummary patientProfile)
+			: this(patientProfile, null, Mode.NewOrder)
 		{
 		}
 
 		/// <summary>
 		/// Constructor for creating a new order with attachments.
 		/// </summary>
-		public OrderEditorComponent(EntityRef patientRef, EntityRef profileRef, List<AttachmentSummary> attachments)
-			: this(patientRef, profileRef, null, Mode.NewOrder)
+		public OrderEditorComponent(PatientProfileSummary patientProfile, List<AttachmentSummary> attachments)
+			: this(patientProfile, null, Mode.NewOrder)
 		{
 			_newAttachments = attachments;
 		}
@@ -258,8 +256,8 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor for adding attachments to an existing order.
 		/// </summary>
-		public OrderEditorComponent(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef, List<AttachmentSummary> attachments)
-			: this(patientRef, profileRef, orderRef, Mode.ModifyOrder)
+		public OrderEditorComponent(PatientProfileSummary patientProfile, EntityRef orderRef, List<AttachmentSummary> attachments)
+			: this(patientProfile, orderRef, Mode.ModifyOrder)
 		{
 			_newAttachments = attachments;
 		}
@@ -267,20 +265,15 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor for modifying or replacing an order.
 		/// </summary>
-		/// <param name="patientRef"></param>
-		/// <param name="profileRef"></param>
-		/// <param name="orderRef"></param>
-		/// <param name="mode"></param>
-		public OrderEditorComponent(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef, Mode mode)
+		public OrderEditorComponent(PatientProfileSummary patientProfile, EntityRef orderRef, Mode mode)
 		{
-			Platform.CheckForNullReference(patientRef, "patientRef");
-
-			_mode = mode;
+			Platform.CheckForNullReference(patientProfile, "patientProfile");
 			if (mode == Mode.ModifyOrder || mode == Mode.ReplaceOrder)
 				Platform.CheckForNullReference(orderRef, "orderRef");
 
-			_patientRef = patientRef;
-			_profileRef = profileRef;
+			_mode = mode;
+
+			_patientProfile = patientProfile;
 			_orderRef = orderRef;
 
 			_proceduresTable = new Table<ProcedureRequisition>();
@@ -353,10 +346,10 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			_bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(new HealthcareContext(_patientRef, _profileRef, _orderRef)));
+			_bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(new HealthcareContext(_patientProfile.PatientRef, _patientProfile.PatientProfileRef, _orderRef)));
 			_bannerComponentHost.StartComponent();
 
-			_orderAdditionalInfoComponent.HealthcareContext = new HealthcareContext(_patientRef, _profileRef, _orderRef);
+			_orderAdditionalInfoComponent.HealthcareContext = new HealthcareContext(_patientProfile.PatientRef, _patientProfile.PatientProfileRef, _orderRef);
 
 			_recipientLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
 			_diagnosticServiceLookupHandler = new DiagnosticServiceLookupHandler(this.Host.DesktopWindow);
@@ -379,7 +372,7 @@ namespace ClearCanvas.Ris.Client
 			InitializeTabPages();
 
 			Async.Request(this,
-				(IOrderEntryService service) => service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef)),
+				(IOrderEntryService service) => service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientProfile.PatientRef)),
 				response =>
 				{
 					_allVisits = response.Visits;
@@ -633,7 +626,7 @@ namespace ClearCanvas.Ris.Client
 				// condition where selected visit may be overwritten.
 				Platform.GetService<IOrderEntryService>(service =>
 				{
-					var response = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef));
+					var response = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientProfile.PatientRef));
 					_allVisits = response.Visits;
 					UpdateVisits();
 				});

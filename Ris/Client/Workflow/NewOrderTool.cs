@@ -16,6 +16,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 
@@ -109,7 +110,7 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             try
             {
-                OrderEditorComponent component = new OrderEditorComponent(patientRef, profileRef);
+				OrderEditorComponent component = new OrderEditorComponent(new PatientProfileSummary { PatientRef = patientRef, PatientProfileRef = profileRef });
                 IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
                     desktopWindow,
                     component,

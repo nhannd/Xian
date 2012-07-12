@@ -64,8 +64,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 
 			var component = new OrderEditorComponent(
-				item.PatientRef,
-				item.PatientProfileRef,
+				new PatientProfileSummary { PatientRef = item.PatientRef, PatientProfileRef = item.PatientProfileRef },
 				item.OrderRef,
 				OrderEditorComponent.Mode.ReplaceOrder);
 
