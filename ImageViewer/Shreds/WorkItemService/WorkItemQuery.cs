@@ -83,15 +83,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             try
             {
                 var workItemBroker = _context.GetWorkItemBroker();
-
-                List<WorkItem> workItems;
-                if (priority == WorkItemPriorityEnum.Stat)
-                    workItems = workItemBroker.GetWorkItemsForProcessing(count * 4, priority);
-                else if (priority == WorkItemPriorityEnum.High)
-                    workItems = workItemBroker.GetWorkItemsForProcessing(count * 4, priority);
-                else
-                    workItems = workItemBroker.GetWorkItemsForProcessing(count * 4);
-
+                List<WorkItem> workItems = workItemBroker.GetWorkItemsForProcessing(count * 4, priority);
                 foreach (var item in workItems)
                 {
                     string reason;
@@ -280,6 +272,11 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService
             if (workItem.Status == WorkItemStatusEnum.Pending)
             {
                 //A pending work item (same study) scheduled before, or of higher priority, should stop the current item from starting.
+                //This is true regardless of whether or not the items can run concurrently. Consider 2 long-running sends, where
+                //one delayed itself for 15 seconds because of another conflicting item. Technically, the second send scheduled after
+                //it (or of lower priority) could start if we did the "concurrency" check, which is technically wrong. Once the 1st
+                //send actually starts running, the 2nd one will then start, provided there's a thread available. This won't even
+                //be an issue most of the time when there's plenty of processing threads available.
                 var moreImportantWorkItems = GetPendingStudyWorkItemsScheduledBeforeOrHigherPriority(workItem);
                 if (MustWaitForAny(moreImportantWorkItems, out reason))
                     return true;

@@ -217,7 +217,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
             try
             {
-                InsertRequest(request, null);
+                InsertRequest(request, new ImportFilesProgress());
             }
             catch (Exception ex)
             {
