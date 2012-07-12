@@ -58,6 +58,12 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         [DataMember(IsRequired = true)]
         public int PathsImported { get; set; }
 
+        /// <summary>
+        /// When the work item completes, this value is set to either true or false to indicate
+        /// whether or not all the files were enumerated. If false, the work item terminated prematurely.
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        public bool? CompletedEnumeration { get; set; }
 
         public int TotalImportsProcessed
         {
@@ -68,8 +74,17 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                return string.Format(SR.ImportFilesProgress_Status, NumberOfFilesImported, TotalFilesToImport,
-                                   NumberOfImportFailures);
+                //If enumeration didn't complete, don't give the user a false impression of either
+                //the total number of files to import, or the total number of failures.
+                //If there were failures, the status will be "Failed", and that's good enough.
+                if (CompletedEnumeration.HasValue && !CompletedEnumeration.Value)
+                {
+                    return string.Format(SR.ImportFilesProgress_StatusEnumerationIncomplete, NumberOfFilesImported);
+                }
+
+                //If the work item hasn't completed yet, or if it is complete and all files were enumerated (and possibly failed),
+                //only then do we report all the numbers (#imported, total, #failures).
+                return string.Format(SR.ImportFilesProgress_Status, NumberOfFilesImported, TotalFilesToImport, NumberOfImportFailures);
             }
         }
 

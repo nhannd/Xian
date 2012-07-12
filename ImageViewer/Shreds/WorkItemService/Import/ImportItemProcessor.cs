@@ -40,10 +40,12 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
         public override void Process()
         {
+            Progress.TotalFilesToImport = 0;
             Progress.NumberOfFilesImported = 0;
             Progress.NumberOfImportFailures = 0;
             Progress.PathsImported = 0;
             Progress.PathsToImport = 0;
+            Progress.CompletedEnumeration = null;
 
             Progress.StatusDetails = Request.FilePaths.Count > 1
                                        ? String.Format(SR.FormatMultipleFilesDescription, Request.FilePaths[0])
@@ -210,6 +212,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
 
             Progress.PathsToImport = filePaths.Count;
 
+            bool completedEnumeration = true;
             foreach (string path in filePaths)
             {
                 FileProcessor.Process(path, string.Empty,
@@ -250,8 +253,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Import
                 Proxy.UpdateProgress();
 
                 if (CancelPending || StopPending || context.FatalError)
-                    break;
+                    completedEnumeration = false;
             }
+
+            Progress.CompletedEnumeration = completedEnumeration;
 
             return context.FatalError;
         }

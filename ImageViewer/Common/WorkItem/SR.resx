@@ -297,4 +297,7 @@
   <data name="RetryStatus" xml:space="preserve">
     <value>Retry #{0} will occur at {1}</value>
   </data>
+  <data name="ImportFilesProgress_StatusEnumerationIncomplete" xml:space="preserve">
+    <value>Import incomplete. {0} files imported.</value>
+  </data>
 </root>

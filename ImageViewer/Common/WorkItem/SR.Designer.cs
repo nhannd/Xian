@@ -322,6 +322,15 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Import incomplete. {0} files imported..
+        /// </summary>
+        internal static string ImportFilesProgress_StatusEnumerationIncomplete {
+            get {
+                return ResourceManager.GetString("ImportFilesProgress_StatusEnumerationIncomplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Processing files for import from {0} location.
         /// </summary>
         internal static string ImportFilesRequest_ActivityDescription {
