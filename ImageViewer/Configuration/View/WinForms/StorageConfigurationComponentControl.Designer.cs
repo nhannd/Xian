@@ -91,9 +91,10 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this._deleteTimeValue = new System.Windows.Forms.NumericUpDown();
             this._deleteTimeUnits = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
+            this._studyDeletionValidationPlaceholder = new System.Windows.Forms.Label();
             this._infoMessage = new System.Windows.Forms.Label();
             this._studyDeletion = new System.Windows.Forms.GroupBox();
-            this._studyDeletionValidationPlaceholder = new System.Windows.Forms.Label();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this._maxDiskSpace)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._upDownMaxDiskSpace)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).BeginInit();
@@ -103,6 +104,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._deleteTimeValue)).BeginInit();
             this._studyDeletion.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // _maxDiskSpace
@@ -310,6 +312,12 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.tableLayoutPanel2.SetColumnSpan(this.label3, 2);
             this.label3.Name = "label3";
             // 
+            // _studyDeletionValidationPlaceholder
+            // 
+            resources.ApplyResources(this._studyDeletionValidationPlaceholder, "_studyDeletionValidationPlaceholder");
+            this._studyDeletionValidationPlaceholder.Name = "_studyDeletionValidationPlaceholder";
+            this.tableLayoutPanel2.SetRowSpan(this._studyDeletionValidationPlaceholder, 2);
+            // 
             // _infoMessage
             // 
             this._infoMessage.AutoEllipsis = true;
@@ -324,20 +332,20 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this._studyDeletion.Name = "_studyDeletion";
             this._studyDeletion.TabStop = false;
             // 
-            // _studyDeletionValidationPlaceholder
+            // tableLayoutPanel3
             // 
-            resources.ApplyResources(this._studyDeletionValidationPlaceholder, "_studyDeletionValidationPlaceholder");
-            this._studyDeletionValidationPlaceholder.Name = "_studyDeletionValidationPlaceholder";
-            this.tableLayoutPanel2.SetRowSpan(this._studyDeletionValidationPlaceholder, 2);
+            resources.ApplyResources(this.tableLayoutPanel3, "tableLayoutPanel3");
+            this.tableLayoutPanel3.Controls.Add(this._infoMessage, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this._localServiceControlLink, 1, 0);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             // 
             // StorageConfigurationComponentControl
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._infoMessage);
+            this.Controls.Add(this.tableLayoutPanel3);
             this.Controls.Add(this._studyDeletion);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Controls.Add(this._localServiceControlLink);
             this.Name = "StorageConfigurationComponentControl";
             ((System.ComponentModel.ISupportInitialize)(this._maxDiskSpace)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._upDownMaxDiskSpace)).EndInit();
@@ -350,8 +358,9 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.tableLayoutPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._deleteTimeValue)).EndInit();
             this._studyDeletion.ResumeLayout(false);
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel3.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -388,5 +397,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         private System.Windows.Forms.Label _infoMessage;
         private System.Windows.Forms.GroupBox _studyDeletion;
         private System.Windows.Forms.Label _studyDeletionValidationPlaceholder;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
     }
 }
