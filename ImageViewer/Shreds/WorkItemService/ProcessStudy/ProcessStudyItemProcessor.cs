@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml;
@@ -45,19 +46,20 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
 
             foreach (WorkItemUid sop in WorkQueueUidList)
             {
+                var defaultFilePath = String.IsNullOrEmpty(sop.File);
+                var file = GetFilePath(sop);
                 if (sop.Failed || !sop.Complete)
                 {
-                    if (!string.IsNullOrEmpty(sop.File))
+                    if (!defaultFilePath)
                     {
                         try
                         {
-                            FileUtils.Delete(Path.Combine(Location.StudyFolder, sop.File));
+                            FileUtils.Delete(file);
                         }
                         catch (Exception e)
                         {
                             Platform.Log(LogLevel.Error, e,
-                                         "Unexpected exception attempting to cleanup file for Work Item {0}",
-                                         Proxy.Item.Oid);
+                                         "Unexpected exception attempting to cleanup file for Work Item {0}", Proxy.Item.Oid);
                         }
                     }
                     else
@@ -68,7 +70,6 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                             // multiple WorkItems that may have been canceled when others succeeded.
                             if (!studyXml.Contains(sop.SeriesInstanceUid, sop.SopInstanceUid))
                             {
-                                string file = Location.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid);
                                 FileUtils.Delete(file);
                             }
                         }
@@ -114,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
         /// </summary>
         public override void Process()
         {
-            int count = ProcessUidList();
+            bool stillProcessing = ProcessUidList();
 
             if (CancelPending)
             {
@@ -128,20 +129,24 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                 return;
             }
 
-            if (count == 0)
+            if (!stillProcessing)
             {               
-
-                
                 bool failed = false;
                 bool complete = true;
+                bool filesMissing = false;
                 foreach (WorkItemUid sop in WorkQueueUidList)
                 {
                     if (sop.Failed)
                     {
+                        //If any items failed simply because the file doesn't exist, then fail outright.
+                        if (!File.Exists(GetFilePath(sop)))
+                            filesMissing = true;
+
                         failed = true;
                         break;
                     }
-                    else if (!sop.Complete)
+                    
+                    if (!sop.Complete)
                     {
                         complete = false;
                         break;
@@ -152,14 +157,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
 
                 if (failed)
                 {
-                    Proxy.Fail(WorkItemFailureType.NonFatal);
+                    var failureType = filesMissing ? WorkItemFailureType.Fatal : WorkItemFailureType.NonFatal;
+                    Proxy.Fail(failureType);
 
                     if (Proxy.Item.Status == WorkItemStatusEnum.Failed)
                     {
                         var auditedInstances = new AuditedInstances();
 
-                        auditedInstances.AddInstance(Request.Patient.PatientId, Request.Patient.PatientsName,
-                                                     Request.Study.StudyInstanceUid);
+                        auditedInstances.AddInstance(Request.Patient.PatientId, Request.Patient.PatientsName, Request.Study.StudyInstanceUid);
 
                         AuditHelper.LogImportStudies(auditedInstances,
                                                      string.IsNullOrEmpty(Request.UserName)
@@ -210,13 +215,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
         /// Process all of the SOP Instances associated with a <see cref="WorkItem"/> item.
         /// </summary>
         /// <returns>Number of instances that have been processed successfully.</returns>
-        private int ProcessUidList()
+        private bool ProcessUidList()
         {
             StudyXml studyXml = Location.LoadStudyXml();
             
             int successfulProcessCount = 0;
             int lastSuccessProcessCount = -1;
 
+            bool filesStillBeingAdded = false;
 
             // Loop through requerying the database
             while (successfulProcessCount > lastSuccessProcessCount)
@@ -228,6 +234,10 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                 lastSuccessProcessCount = successfulProcessCount;
 
                 LoadUids();
+
+                //Keep idling as long as there's new stuff being added to process, regardless of success.
+                if (Progress.TotalFilesToProcess == 1 || Progress.TotalFilesToProcess != WorkQueueUidList.Count)
+                    filesStillBeingAdded = true;
 
                 Progress.TotalFilesToProcess = WorkQueueUidList.Count;
                 Proxy.UpdateProgress(true);
@@ -246,14 +256,14 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                     {
                         Platform.Log(LogLevel.Info, "Processing of study canceled: {0}",
                                      Location.Study.StudyInstanceUid);
-                        return successfulProcessCount;
+                        return successfulProcessCount > 0;
                     }
 
                     if (StopPending)
                     {
                         Platform.Log(LogLevel.Info, "Processing of study stopped: {0}",
                                      Location.Study.StudyInstanceUid);
-                        return successfulProcessCount;
+                        return successfulProcessCount > 0;
                     }
 
                     if (sop.FailureCount > 0)
@@ -301,7 +311,15 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                 }
             }
 
-            return successfulProcessCount;
+            int failureItems = WorkQueueUidList.Count(s => s.Failed);
+            if (failureItems != Progress.NumberOfProcessingFailures)
+            {
+                Progress.NumberOfProcessingFailures = failureItems;
+                Proxy.UpdateProgress(true);
+                return true;
+            }
+
+            return successfulProcessCount > 0 || filesStillBeingAdded;
         }
 
         /// <summary>
@@ -323,10 +341,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
 
                 foreach (var uid in sops)
                 {
-                    path = !string.IsNullOrEmpty(uid.File) 
-                        ? Path.Combine(Location.StudyFolder, uid.File) 
-                        : Location.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid);
-
+                    path = GetFilePath(uid);
                     fileList.Add(new ProcessStudyUtility.ProcessorFile(path,uid));
                 }
 
@@ -335,6 +350,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                 processor.ProcessBatch(fileList, studyXml);
 
                 Progress.NumberOfFilesProcessed += fileList.Count;
+                //If the file was not found, it'll fail outright.
                 Progress.StatusDetails = string.Empty;
                 Proxy.UpdateProgress(true);
                 Study = processor.StudyLocation.Study;
@@ -371,6 +387,13 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
 
                 return false;
             }
+        }
+
+        private string GetFilePath(WorkItemUid sop)
+        {
+            return String.IsNullOrEmpty(sop.File) 
+                ? Location.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid) 
+                : Path.Combine(Location.StudyFolder, sop.File);
         }
     }
 }

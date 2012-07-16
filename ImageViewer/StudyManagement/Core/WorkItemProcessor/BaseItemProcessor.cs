@@ -197,8 +197,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor
                 else
                     sop.FailureCount = (byte) (sop.FailureCount.Value + 1);
 
-                // TODO (CR Jun 2012 - High): In sprint review, we saw RetryCount getting set to 10000, which exceeds byte.MaxValue.
-                // This retry count is not the same as that configured in the GUI saw in the sprint review.
                 if (sop.FailureCount > WorkItemServiceSettings.Default.RetryCount)
                     sop.Failed = true;
 

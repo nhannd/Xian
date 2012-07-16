@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
     {
         public ProcessStudyProgress()
         {
-            IsCancelable = true;
+            IsCancelable = false;
         }
 
         [DataMember(IsRequired = true)]
