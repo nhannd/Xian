@@ -254,9 +254,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     if (theItem.Type.Equals(ReindexRequest.WorkItemTypeString))
                         syncContext.Post(ignore => UpdateReindexing(theItem.Status == WorkItemStatusEnum.InProgress), false);
                     
-                    if (item.Status == WorkItemStatusEnum.DeleteInProgress || item.Status == WorkItemStatusEnum.Deleted)
-                        continue; //Skip work items that are just being deleted.
-
                     if (item.Request.ConcurrencyType == WorkItemConcurrency.StudyRead)
                         continue; //If it's a "read" operation, don't update anything.
 
