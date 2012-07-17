@@ -86,14 +86,14 @@ namespace ClearCanvas.ImageViewer.Common.ServerDirectory.Tests
 
             var local = ServerDirectory.GetLocalServer();
             Assert.AreEqual("<local>", local.Name);
-            Assert.AreEqual("CLEARCANVAS", local.AETitle); //default value from DicomServerSettings.
+            Assert.AreEqual("AETITLE", local.AETitle); //default value from DicomServerSettings.
             Assert.AreEqual("localhost", local.ScpParameters.HostName);
             Assert.AreEqual(104, local.ScpParameters.Port);
             Assert.IsTrue(local.IsLocal);
 
             var contract = local.ToDataContract();
             Assert.AreEqual("<local>", contract.Server.Name);
-            Assert.AreEqual("CLEARCANVAS", contract.Server.AETitle);
+            Assert.AreEqual("AETITLE", contract.Server.AETitle);
             Assert.AreEqual("localhost", contract.Server.ScpParameters.HostName);
             Assert.AreEqual(104, contract.Server.ScpParameters.Port);
 
