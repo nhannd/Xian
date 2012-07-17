@@ -45,6 +45,8 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         [Test]
         public void TestToDataContract()
         {
+            TestSettingsStore.Instance.Reset();
+
             var treeServer = new ServerTreeDicomServer("name", "location", "host", "aetitle", 105, true, 51121, 51122);
             var ae = treeServer.ToDataContract();
             Assert.AreEqual("name", ae.Name);
@@ -69,6 +71,8 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         [Test]
         public void TestToDicomServiceNodes_Local()
         {
+            TestSettingsStore.Instance.Reset();
+
             var tree = new ServerTree(null, null);
             tree.CurrentNode = tree.LocalServer;
             var serviceNodes = tree.CurrentNode.ToDicomServiceNodes();
@@ -86,6 +90,8 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.Tests
         [Test]
         public void TestToDicomServiceNodes_Remote()
         {
+            TestSettingsStore.Instance.Reset();
+
             var tree = TestHelper.CreateTestTree1();
 
             tree.CurrentNode = tree.RootServerGroup;

@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Common.Configuration.Tests
         #endregion
     }
 
-    internal class TestSettingsStore : ISystemConfigurationSettingsStore
+    public class TestSettingsStore : ISystemConfigurationSettingsStore
     {
         public static TestSettingsStore Instance = new TestSettingsStore();
         public static string TestString = "Prior Setting";
