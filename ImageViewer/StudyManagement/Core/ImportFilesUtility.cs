@@ -395,10 +395,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                 //The input to this method is a VALID DICOM file, and we know we should have stored it if it weren't for
                 //the fact that we're out of disk space. So, we insert the work item UID anyway, knowing that it'll cause
                 //the work item to fail. In fact, that's why we're doing it.
+                result.SetError(DicomStatuses.StorageStorageOutOfResources, string.Format("Import failed, disk space usage exceeded"));
                 InsertFailedWorkItemUid(workItem, message, result);
 
                 _context.FatalError = true;
-                result.SetError(DicomStatuses.StorageStorageOutOfResources, string.Format("Import failed, disk space usage exceeded"));
                 AuditFailure(result);
                 return result;
             }
@@ -448,7 +448,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
 
                     if (commandProcessor.Execute())
                     {
-                        IncrementTotalFiles(insertWorkItemCommand, result.StudyInstanceUid);
+                        IncrementTotalFiles(insertWorkItemCommand, result.StudyInstanceUid, result.ErrorMessage);
                         return;
                     }
                 }
@@ -556,7 +556,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             }
         }
 
-        private void IncrementTotalFiles(InsertWorkItemCommand insertWorkItemCommand, string studyInstanceUid)
+        private void IncrementTotalFiles(InsertWorkItemCommand insertWorkItemCommand, string studyInstanceUid, string errorMessage = null)
         {
             bool foundStudy;
             lock (_context.StudyWorkItemsSyncLock)
@@ -576,6 +576,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
                         if (progress != null)
                         {
                             progress.TotalFilesToProcess++;
+                            if (!string.IsNullOrEmpty(errorMessage))
+                                progress.StatusDetails = errorMessage;
+
                             insertWorkItemCommand.WorkItem.Progress = progress;
                         }
 
