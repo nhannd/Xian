@@ -236,7 +236,7 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.ProcessStudy
                 LoadUids();
 
                 //Keep idling as long as there's new stuff being added to process, regardless of success.
-                if (Progress.TotalFilesToProcess == 1 || Progress.TotalFilesToProcess != WorkQueueUidList.Count)
+                if (Progress.TotalFilesToProcess != WorkQueueUidList.Count)
                     filesStillBeingAdded = true;
 
                 Progress.TotalFilesToProcess = WorkQueueUidList.Count;
