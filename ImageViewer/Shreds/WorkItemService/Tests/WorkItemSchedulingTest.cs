@@ -13,8 +13,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Caching;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Tests;
+using ClearCanvas.ImageViewer.Common.StudyManagement.Tests;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Shreds.WorkItemService.DeleteStudy;
 using ClearCanvas.ImageViewer.Shreds.WorkItemService.DicomRetrieve;
@@ -310,6 +314,17 @@ namespace ClearCanvas.ImageViewer.Shreds.WorkItemService.Tests
 
             Assert.AreEqual(expectedItemsCount, allItems.Count);
             DeleteWorkItems(list);
+        }
+
+        [TestFixtureSetUp]
+        public void Initialize()
+        {
+            Platform.SetExtensionFactory(new UnitTestExtensionFactory(
+                new Dictionary<Type, Type>
+                    {
+                        { typeof(CacheProviderExtensionPoint), typeof(DefaultCacheProvider) },
+                        { typeof(ServiceProviderExtensionPoint), typeof(StudyStoreTestServiceProvider) }
+                    }));
         }
 
         [Test]
