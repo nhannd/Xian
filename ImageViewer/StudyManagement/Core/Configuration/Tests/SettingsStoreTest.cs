@@ -13,7 +13,10 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.StudyManagement.Core.ServiceProviders;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration.Tests
@@ -24,6 +27,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Configuration.Tests
         [TestFixtureSetUp]
         public void Initialize()
         {
+            Platform.SetExtensionFactory(new UnitTestExtensionFactory(
+                new Dictionary<Type, Type>
+                    {
+                        {typeof(ServiceProviderExtensionPoint), typeof(SystemConfigurationServiceProvider)}
+                    }));
+
             using (var context = new DataAccessContext())
             {
                 var broker = context.GetConfigurationDocumentBroker();
