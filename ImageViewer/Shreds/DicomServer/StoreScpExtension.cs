@@ -214,6 +214,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			return true;
 		}
 
+
+        public override void Cleanup()
+        {
+            if (_importContext != null)
+                _importContext.Cleanup();
+        }
+
+
         private static string GetRemoteHostName(AssociationParameters association)
         {
             string remoteHostName = null;

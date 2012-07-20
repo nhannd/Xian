@@ -432,6 +432,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			return true;
 		}
 
+        public override void Cleanup()
+        {
+            _activityMonitor.WorkItemsChanged -= UpdateProgress;
+            _activityMonitor.Dispose();            
+        }
+
 		#endregion
 	}
 }

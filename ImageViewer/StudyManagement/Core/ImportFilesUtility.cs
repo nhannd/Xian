@@ -135,6 +135,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core
             return new ProcessStudyProgress { IsCancelable = false, TotalFilesToProcess = 1 };
         }
 
+        /// <summary>
+        /// Cleanup the activity monitor connections
+        /// </summary>
+        public void Cleanup()
+        {
+            _monitor.WorkItemsChanged -= WorkItemsChanged;
+            _monitor.Dispose();
+        }
+
         #endregion
 
         #region Private Methods
