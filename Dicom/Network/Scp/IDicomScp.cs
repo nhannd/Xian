@@ -47,5 +47,10 @@ namespace ClearCanvas.Dicom.Network.Scp
         /// </summary>
         /// <param name="context">A user specific context for the <see cref="DicomScp{TContext}"/> instance.</param>
         void SetContext(TContext context);
+
+        /// <summary>
+        /// Called when an association is closed/aborted/released.  Note that the routine will be called once on the extension.
+        /// </summary>
+        void Cleanup();
     }
 }

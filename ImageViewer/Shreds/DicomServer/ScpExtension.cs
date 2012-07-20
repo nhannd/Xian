@@ -69,6 +69,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			_context = context;	
 		}
 
-		#endregion
+	    public virtual void Cleanup()
+	    {
+	        
+	    }
+
+	    #endregion
 	}
 }
