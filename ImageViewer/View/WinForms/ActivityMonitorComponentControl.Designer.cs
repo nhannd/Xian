@@ -44,7 +44,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this._reindexLink = new System.Windows.Forms.LinkLabel();
             this._openFileStoreLink = new System.Windows.Forms.LinkLabel();
             this._localServerConfigLink = new System.Windows.Forms.LinkLabel();
-            this._hostName = new System.Windows.Forms.Label();
             this._diskSpacePanel = new System.Windows.Forms.Panel();
             this._diskSpaceMeter = new ClearCanvas.Desktop.View.WinForms.Meter();
             this._diskSpaceWarningIcon = new System.Windows.Forms.PictureBox();
@@ -52,6 +51,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this._diskSpace = new System.Windows.Forms.Label();
             this._logFileLink = new System.Windows.Forms.LinkLabel();
             this._studyRulesLink = new System.Windows.Forms.LinkLabel();
+            this._serverDetailsTable = new System.Windows.Forms.TableLayoutPanel();
+            this._hostName = new System.Windows.Forms.Label();
+            this._aeTitle = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panel1 = new System.Windows.Forms.Panel();
             this._workItemToolStrip = new System.Windows.Forms.ToolStrip();
@@ -63,19 +65,17 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this._textFilter = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this._toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this._aeTitle = new System.Windows.Forms.Label();
-            this._serverDetailsTable = new System.Windows.Forms.TableLayoutPanel();
             this._overviewPanel.SuspendLayout();
             this._dashboardTable.SuspendLayout();
             this._diskSpacePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).BeginInit();
+            this._serverDetailsTable.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.panel1.SuspendLayout();
             this._workItemToolStrip.SuspendLayout();
-            this._serverDetailsTable.SuspendLayout();
             this.SuspendLayout();
             // 
             // _workItemsTableView
@@ -95,20 +95,20 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             // _dashboardTable
             // 
             resources.ApplyResources(this._dashboardTable, "_dashboardTable");
-            this._dashboardTable.Controls.Add(this.label1, 4, 3);
-            this._dashboardTable.Controls.Add(this.label2, 7, 1);
-            this._dashboardTable.Controls.Add(this.label10, 1, 3);
+            this._dashboardTable.Controls.Add(this.label1, 4, 4);
+            this._dashboardTable.Controls.Add(this.label2, 7, 2);
+            this._dashboardTable.Controls.Add(this.label10, 1, 4);
+            this._dashboardTable.Controls.Add(this.label11, 1, 5);
+            this._dashboardTable.Controls.Add(this._totalStudies, 2, 4);
+            this._dashboardTable.Controls.Add(this._failures, 2, 5);
+            this._dashboardTable.Controls.Add(this._reindexLink, 7, 4);
+            this._dashboardTable.Controls.Add(this._openFileStoreLink, 7, 3);
+            this._dashboardTable.Controls.Add(this._localServerConfigLink, 7, 5);
+            this._dashboardTable.Controls.Add(this._diskSpacePanel, 4, 5);
+            this._dashboardTable.Controls.Add(this._diskSpace, 5, 4);
+            this._dashboardTable.Controls.Add(this._logFileLink, 7, 6);
+            this._dashboardTable.Controls.Add(this._studyRulesLink, 7, 7);
             this._dashboardTable.Controls.Add(this._statusLight, 0, 1);
-            this._dashboardTable.Controls.Add(this.label11, 1, 4);
-            this._dashboardTable.Controls.Add(this._totalStudies, 2, 3);
-            this._dashboardTable.Controls.Add(this._failures, 2, 4);
-            this._dashboardTable.Controls.Add(this._reindexLink, 7, 3);
-            this._dashboardTable.Controls.Add(this._openFileStoreLink, 7, 2);
-            this._dashboardTable.Controls.Add(this._localServerConfigLink, 7, 4);
-            this._dashboardTable.Controls.Add(this._diskSpacePanel, 4, 4);
-            this._dashboardTable.Controls.Add(this._diskSpace, 5, 3);
-            this._dashboardTable.Controls.Add(this._logFileLink, 7, 5);
-            this._dashboardTable.Controls.Add(this._studyRulesLink, 7, 6);
             this._dashboardTable.Controls.Add(this._serverDetailsTable, 1, 1);
             this._dashboardTable.Name = "_dashboardTable";
             // 
@@ -138,6 +138,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this._statusLight.LinkHoverTextYellow = null;
             this._statusLight.LinkVisible = false;
             this._statusLight.Name = "_statusLight";
+            this._dashboardTable.SetRowSpan(this._statusLight, 2);
             // 
             // label11
             // 
@@ -174,11 +175,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this._localServerConfigLink.Name = "_localServerConfigLink";
             this._localServerConfigLink.TabStop = true;
             this._localServerConfigLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._localServerConfigLink_LinkClicked);
-            // 
-            // _hostName
-            // 
-            resources.ApplyResources(this._hostName, "_hostName");
-            this._hostName.Name = "_hostName";
             // 
             // _diskSpacePanel
             // 
@@ -227,6 +223,25 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this._studyRulesLink.Name = "_studyRulesLink";
             this._studyRulesLink.TabStop = true;
             this._studyRulesLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this._studyRulesLink_LinkClicked);
+            // 
+            // _serverDetailsTable
+            // 
+            resources.ApplyResources(this._serverDetailsTable, "_serverDetailsTable");
+            this._dashboardTable.SetColumnSpan(this._serverDetailsTable, 5);
+            this._serverDetailsTable.Controls.Add(this._hostName, 0, 1);
+            this._serverDetailsTable.Controls.Add(this._aeTitle, 0, 0);
+            this._serverDetailsTable.Name = "_serverDetailsTable";
+            this._dashboardTable.SetRowSpan(this._serverDetailsTable, 3);
+            // 
+            // _hostName
+            // 
+            resources.ApplyResources(this._hostName, "_hostName");
+            this._hostName.Name = "_hostName";
+            // 
+            // _aeTitle
+            // 
+            resources.ApplyResources(this._aeTitle, "_aeTitle");
+            this._aeTitle.Name = "_aeTitle";
             // 
             // splitContainer1
             // 
@@ -301,20 +316,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
-            // _aeTitle
-            // 
-            resources.ApplyResources(this._aeTitle, "_aeTitle");
-            this._aeTitle.Name = "_aeTitle";
-            // 
-            // _serverDetailsTable
-            // 
-            resources.ApplyResources(this._serverDetailsTable, "_serverDetailsTable");
-            this._dashboardTable.SetColumnSpan(this._serverDetailsTable, 5);
-            this._serverDetailsTable.Controls.Add(this._hostName, 0, 1);
-            this._serverDetailsTable.Controls.Add(this._aeTitle, 0, 0);
-            this._serverDetailsTable.Name = "_serverDetailsTable";
-            this._dashboardTable.SetRowSpan(this._serverDetailsTable, 2);
-            // 
             // ActivityMonitorComponentControl
             // 
             resources.ApplyResources(this, "$this");
@@ -327,6 +328,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this._diskSpacePanel.ResumeLayout(false);
             this._diskSpacePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this._diskSpaceWarningIcon)).EndInit();
+            this._serverDetailsTable.ResumeLayout(false);
+            this._serverDetailsTable.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -334,8 +337,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
             this.panel1.ResumeLayout(false);
             this._workItemToolStrip.ResumeLayout(false);
             this._workItemToolStrip.PerformLayout();
-            this._serverDetailsTable.ResumeLayout(false);
-            this._serverDetailsTable.PerformLayout();
             this.ResumeLayout(false);
 
 		}
