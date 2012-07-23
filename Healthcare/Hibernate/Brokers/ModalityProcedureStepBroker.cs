@@ -9,17 +9,27 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Hibernate;
+using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
-    [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class ModalityProcedureStepBroker : EntityBroker<ModalityProcedureStep, ModalityProcedureStepSearchCriteria>, IModalityProcedureStepBroker
-    {
-    }
+	[ExtensionOf(typeof(BrokerExtensionPoint))]
+	public class ModalityProcedureStepBroker : EntityBroker<ModalityProcedureStep, ModalityProcedureStepSearchCriteria>, IModalityProcedureStepBroker
+	{
+		public IList<ModalityProcedureStep> Find(ModalityProcedureStepSearchCriteria mpsCriteria, ProcedureSearchCriteria procedureCriteria)
+		{
+			var hqlFrom = new HqlFrom(typeof(ModalityProcedureStep).Name, "mps");
+			hqlFrom.Joins.Add(new HqlJoin("mps.Procedure", "rp", HqlJoinMode.Inner, true));
+
+			var query = new HqlProjectionQuery(hqlFrom);
+			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("mps", mpsCriteria));
+			query.Conditions.AddRange(HqlCondition.FromSearchCriteria("rp", procedureCriteria));
+
+			return ExecuteHql<ModalityProcedureStep>(query);
+		}
+	}
 }
