@@ -216,9 +216,10 @@
   <data name="ExceptionNotEnoughStorage" xml:space="preserve">
     <value>Disk usage exceeds maximum configured usage.</value>
   </data>
-    <data name="ImportFailedPartialStudies" xml:space="preserve">
+  <data name="ImportFailedPartialStudies" xml:space="preserve">
     <value>{0}.  There may be incomplete imported studies, see the log file for details.</value>
-<data name="DicomError_QRMoveDestinationUnknown" xml:space="preserve">
+  </data>
+  <data name="DicomError_QRMoveDestinationUnknown" xml:space="preserve">
     <value>Images could not be received because the remote device was having a problem reaching your computer, possibly due to misconfiguration.</value>
   </data>
 </root>
