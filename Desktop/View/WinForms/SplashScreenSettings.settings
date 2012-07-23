@@ -66,7 +66,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="VersionForeColor" Description="Forecolor of the version." Type="System.Drawing.Color" Scope="Application">
-      <Value Profile="(Default)">White</Value>
+      <Value Profile="(Default)">Black</Value>
     </Setting>
     <Setting Name="VersionFontBold" Description="Version bolded." Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
@@ -147,6 +147,48 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="MessageTextAlign" Type="System.Drawing.ContentAlignment" Scope="Application">
+      <Value Profile="(Default)">TopLeft</Value>
+    </Setting>
+    <Setting Name="EvaluationVisible" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="EvaluationLocation" Type="System.Drawing.Point" Scope="Application">
+      <Value Profile="(Default)">617, 9</Value>
+    </Setting>
+    <Setting Name="EvaluationSize" Type="System.Drawing.Size" Scope="Application">
+      <Value Profile="(Default)">44, 13</Value>
+    </Setting>
+    <Setting Name="EvaluationAutoSize" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="EvaluationForeColor" Type="System.Drawing.Color" Scope="Application">
+      <Value Profile="(Default)">Black</Value>
+    </Setting>
+    <Setting Name="EvaluationFontBold" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="EvaluationTextAlign" Type="System.Drawing.ContentAlignment" Scope="Application">
+      <Value Profile="(Default)">TopLeft</Value>
+    </Setting>
+    <Setting Name="NotForDiagnosticUseVisible" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="NotForDiagnosticUseLocation" Type="System.Drawing.Point" Scope="Application">
+      <Value Profile="(Default)">617, 9</Value>
+    </Setting>
+    <Setting Name="NotForDiagnosticUseSize" Type="System.Drawing.Size" Scope="Application">
+      <Value Profile="(Default)">44, 13</Value>
+    </Setting>
+    <Setting Name="NotForDiagnosticUseAutoSize" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="NotForDiagnosticUseForeColor" Type="System.Drawing.Color" Scope="Application">
+      <Value Profile="(Default)">Red</Value>
+    </Setting>
+    <Setting Name="NotForDiagnosticUseFontBold" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="NotForDiagnosticUseTextAlign" Type="System.Drawing.ContentAlignment" Scope="Application">
       <Value Profile="(Default)">TopLeft</Value>
     </Setting>
   </Settings>

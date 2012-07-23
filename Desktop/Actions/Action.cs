@@ -54,6 +54,7 @@ namespace ClearCanvas.Desktop.Actions
 		private bool _persistent;
 
         private ISpecification _permissionSpec;
+        private ISpecification _featureSpec;
 
 		/// <summary>
         /// Constructor.
@@ -116,6 +117,36 @@ namespace ClearCanvas.Desktop.Actions
 			get { return _permissionSpec; }
 			set { _permissionSpec = value; }
     	}
+
+		/// <summary>
+		/// Sets the <see cref="ISpecification"/> that is tested to establish whether the
+		/// current installation is licensed to access the action.
+		/// </summary>
+		/// <param name="featureSpecification">An <see cref="ISpecification"/> used to determine whether or not the application license allows access to the action.</param>
+		public void SetFeatureAuthorization(ISpecification featureSpecification)
+		{
+			_featureSpec = featureSpecification;
+		}
+
+		/// <summary>
+		/// Sets a feature token that is tested to establish whether the
+		/// current installation is licensed to access the action.
+		/// </summary>
+		/// <param name="featureToken">A feature identification token used to determine whether or not the application license allows access to the action.</param>
+		public void SetFeatureAuthorization(string featureToken)
+		{
+			SetFeatureAuthorization(new FeatureAuthorizationSpecification(featureToken));
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="ISpecification"/> that is tested to establish whether the
+		/// current installation is licensed to access the action.
+		/// </summary>
+		internal ISpecification FeatureSpecification
+		{
+			get { return _featureSpec; }
+			set { _featureSpec = value; }
+		}
 
         #region IAction members
 
@@ -365,6 +396,9 @@ namespace ClearCanvas.Desktop.Actions
         {
             get
             {
+                // feature spec takes precendence using AND logic
+                if (_featureSpec != null && _featureSpec.Test(this).Fail) return false;
+
                 // no permission spec, so assume this action is not protected at all
                 if (_permissionSpec == null)
                     return true;

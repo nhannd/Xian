@@ -83,6 +83,7 @@
     <Compile Include="Actions\ActionBuildingContext.cs" />
     <Compile Include="Actions\ActionBuilderException.cs" />
     <Compile Include="Actions\ActionDecoratorAttribute.cs" />
+    <Compile Include="Actions\ActionFeatureAttribute.cs" />
     <Compile Include="Actions\ActionFormerlyAttribute.cs" />
     <Compile Include="Actions\ActionInitiatorAttribute.cs" />
     <Compile Include="Actions\ActionModelNode.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="Actions\ActionSet.cs" />
     <Compile Include="Actions\ActionViewContext.cs" />
     <Compile Include="Actions\ITextBoxAction.cs" />
+    <Compile Include="Actions\LanguagePickerAction.cs" />
     <Compile Include="Actions\Tests\MockActionPermissionAttribute.cs" />
     <Compile Include="Actions\DropDownActionAttribute.cs" />
     <Compile Include="Actions\CrudActionModel.cs" />
@@ -130,7 +132,6 @@
     <Compile Include="AsyncTask.cs" />
     <Compile Include="AlertViewerComponent.cs" />
     <Compile Include="IDesktopAlertContext.cs" />
-    <Compile Include="Actions\LanguagePickerAction.cs" />
     <Compile Include="Tables\ComboBoxCellEditor.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeBranch.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeLeafAction.cs" />
@@ -191,6 +192,7 @@
     <Compile Include="DesktopObjectCollection.cs" />
     <Compile Include="DesktopWindowCollection.cs" />
     <Compile Include="DesktopWindowCreationArgs.cs" />
+    <Compile Include="ProductStateInfo.cs" />
     <Compile Include="DialogBoxCollection.cs" />
     <Compile Include="DialogBoxCreationArgs.cs" />
     <Compile Include="Actions\DropDownAction.cs" />
@@ -211,6 +213,7 @@
     <Compile Include="IWorkspaceDialogBoxView.cs" />
     <Compile Include="IPagingController.cs" />
     <Compile Include="Configuration\IUserUpgradeProgressDialogView.cs" />
+    <Compile Include="FeatureAuthorizationSpecification.cs" />
     <Compile Include="LocalePolicy.cs" />
     <Compile Include="LocalePolicy.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -249,6 +252,7 @@
     <Compile Include="ReorderableGalleryComponent.cs" />
     <Compile Include="Screen.cs" />
     <Compile Include="StackTabPage.cs" />
+    <Compile Include="StockChangeLanguageTool.cs" />
     <Compile Include="StockDesktopTools.cs" />
     <Compile Include="SuggestionProviderBase.cs" />
     <Compile Include="Tables\TableCellEditor.cs" />

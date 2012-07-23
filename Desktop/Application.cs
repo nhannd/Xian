@@ -375,7 +375,10 @@ namespace ClearCanvas.Desktop
         /// <returns>True if initialization was successful, false if the application should terminate immediately.</returns>
         protected virtual bool Initialize(string[] args)
         {
-            // initialize session
+			// initialize the application UI culture from local setting
+			CurrentUICulture = InstalledLocales.Instance.Selected.GetCultureInfo();
+			
+			// initialize session
             if (!InitializeSessionManager())
                 return false;
 
@@ -533,6 +536,7 @@ namespace ClearCanvas.Desktop
     		}
     		set
     		{
+    			value = value ?? CultureInfo.InstalledUICulture;
     			if (_currentUICulture != value)
     			{
     				lock (_currentUICultureSyncLock)

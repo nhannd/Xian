@@ -22,7 +22,7 @@ namespace ClearCanvas.Desktop
 	/// <remarks>
 	/// For internal framework use only.
 	/// </remarks>
-    public class StockDesktopTools
+    public partial class StockDesktopTools
     {
 		/// <summary>
 		/// Closes the <see	cref="IDesktopWindow"/> that owns this tool.

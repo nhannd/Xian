@@ -27,6 +27,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     	private static readonly Bitmap _checkmarkBitmap;
 		static TableView()
 		{
+			// CR (Jun 2012) TODO: load resource per TableView instance - minimal overhead because it's a small bitmap, but allows for application themes
 			var resolver = new ResourceResolver(typeof(TableView).Assembly);
 			using (var s = resolver.OpenResource("checkmark.png"))
 			{
@@ -402,7 +403,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     		IntializeFilter();
     	}
 
-    	/// <summary>
+        /// <summary>
         /// Gets/sets the current selection
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]

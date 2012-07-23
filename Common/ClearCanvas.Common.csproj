@@ -308,6 +308,8 @@
     <Compile Include="Utilities\Tests\CollectionUtilsTests.cs" />
     <Compile Include="Utilities\Tests\CommandLineTests.cs" />
     <Compile Include="Utilities\Tests\DateTimeUtilsTests.cs" />
+    <Compile Include="Utilities\Tests\ExclusiveLockTestApplication.cs" />
+    <Compile Include="Utilities\Tests\ExclusiveLockTests.cs" />
     <Compile Include="Utilities\Tests\ObjectWalkerTests.cs" />
     <Compile Include="Utilities\Tests\StringUtilitiesTests.cs" />
     <Compile Include="Utilities\Tests\ThreadPoolTests.cs" />
@@ -387,7 +389,10 @@
       <DependentUpon>ExtensionSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="FatalExceptionHandler.cs" />
+    <Compile Include="ILicenseProvider.cs" />
+    <Compile Include="ILicenseDetailsProvider.cs" />
     <Compile Include="IUserCredentialsProvider.cs" />
+    <Compile Include="LicenseInformation.cs" />
     <Compile Include="LicenseSettings.cs" />
     <Compile Include="ProductSettings.cs" />
     <Compile Include="ProductSettings.Designer.cs">
@@ -409,6 +414,7 @@
     <Compile Include="UsageTracking\IUsageTracking.cs" />
     <Compile Include="UsageTracking\RegisterRequest.cs" />
     <Compile Include="UsageTracking\RegisterResponse.cs" />
+    <Compile Include="UsageTracking\UsageApplicationDataProvider.cs" />
     <Compile Include="UsageTracking\UsageTrackingSettings.cs" />
     <Compile Include="UsageTracking\UsageTrackingSettings.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -22,7 +22,7 @@ namespace ClearCanvas.Desktop.Help {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class SR {
+    internal class SR {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace ClearCanvas.Desktop.Help {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Desktop.Help.SR", typeof(SR).Assembly);
@@ -51,7 +51,7 @@ namespace ClearCanvas.Desktop.Help {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace ClearCanvas.Desktop.Help {
         /// <summary>
         ///   Looks up a localized string similar to Could not find help file..
         /// </summary>
-        public static string HelpNotFound {
+        internal static string HelpNotFound {
             get {
                 return ResourceManager.GetString("HelpNotFound", resourceCulture);
             }
@@ -72,25 +72,52 @@ namespace ClearCanvas.Desktop.Help {
         /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
-        public static string LabelClose {
+        internal static string LabelClose {
             get {
                 return ResourceManager.GetString("LabelClose", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Not for Clinical Use.
+        /// </summary>
+        internal static string LabelNotForClinicalUse {
+            get {
+                return ResourceManager.GetString("LabelNotForClinicalUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not for Human Diagnosis.
+        /// </summary>
+        internal static string LabelNotForHumanDiagnosticUse {
+            get {
+                return ResourceManager.GetString("LabelNotForHumanDiagnosticUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not find license file..
         /// </summary>
-        public static string LicenseNotFound {
+        internal static string LicenseNotFound {
             get {
                 return ResourceManager.GetString("LicenseNotFound", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Get Support.
+        /// </summary>
+        internal static string MenuGetSupport {
+            get {
+                return ResourceManager.GetString("MenuGetSupport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show License Agreement.
         /// </summary>
-        public static string MenuLicense {
+        internal static string MenuLicense {
             get {
                 return ResourceManager.GetString("MenuLicense", resourceCulture);
             }
@@ -99,7 +126,7 @@ namespace ClearCanvas.Desktop.Help {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Show Logs.
         /// </summary>
-        public static string MenuShowLogs {
+        internal static string MenuShowLogs {
             get {
                 return ResourceManager.GetString("MenuShowLogs", resourceCulture);
             }
@@ -108,7 +135,7 @@ namespace ClearCanvas.Desktop.Help {
         /// <summary>
         ///   Looks up a localized string similar to User&apos;s Guide.
         /// </summary>
-        public static string MenuUsersGuide {
+        internal static string MenuUsersGuide {
             get {
                 return ResourceManager.GetString("MenuUsersGuide", resourceCulture);
             }
@@ -117,7 +144,7 @@ namespace ClearCanvas.Desktop.Help {
         /// <summary>
         ///   Looks up a localized string similar to ClearCanvas.ca.
         /// </summary>
-        public static string MenuWebsite {
+        internal static string MenuWebsite {
             get {
                 return ResourceManager.GetString("MenuWebsite", resourceCulture);
             }
@@ -126,7 +153,7 @@ namespace ClearCanvas.Desktop.Help {
         /// <summary>
         ///   Looks up a localized string similar to Could not reach URL.
         /// </summary>
-        public static string URLNotFound {
+        internal static string URLNotFound {
             get {
                 return ResourceManager.GetString("URLNotFound", resourceCulture);
             }
@@ -135,7 +162,7 @@ namespace ClearCanvas.Desktop.Help {
         /// <summary>
         ///   Looks up a localized string similar to Could not find user&apos;s guide..
         /// </summary>
-        public static string UsersGuideNotFound {
+        internal static string UsersGuideNotFound {
             get {
                 return ResourceManager.GetString("UsersGuideNotFound", resourceCulture);
             }

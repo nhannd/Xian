@@ -43,6 +43,9 @@ namespace Jpeg {
 	String^ DicomJpegProcess1CodecFactory::Name::get()  {
 		return ClearCanvas::Dicom::TransferSyntax::JpegBaselineProcess1->Name;	
 	}
+	bool DicomJpegProcess1CodecFactory::Enabled::get()  {
+		return true;
+	}
 	DicomCodecParameters^ DicomJpegProcess1CodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet) 
 	{
 		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
@@ -88,6 +91,9 @@ namespace Jpeg {
 	String^ DicomJpegProcess24CodecFactory::Name::get()  {
 		return ClearCanvas::Dicom::TransferSyntax::JpegExtendedProcess24->Name;	
 	}
+	bool DicomJpegProcess24CodecFactory::Enabled::get()  {
+		return true;
+	}
 	DicomCodecParameters^ DicomJpegProcess24CodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet) {
 		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
 		codecParms->ConvertPaletteToRGB = true;
@@ -130,6 +136,9 @@ namespace Jpeg {
 	String^ DicomJpegLossless14CodecFactory::Name::get()  {
 		return ClearCanvas::Dicom::TransferSyntax::JpegLosslessNonHierarchicalProcess14->Name;	
 	}
+	bool DicomJpegLossless14CodecFactory::Enabled::get()  {
+		return true;
+	}
 	DicomCodecParameters^ DicomJpegLossless14CodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet)
 	{
 		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
@@ -171,6 +180,9 @@ namespace Jpeg {
 	}
 	String^ DicomJpegLossless14SV1CodecFactory::Name::get()  {
 		return ClearCanvas::Dicom::TransferSyntax::JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1->Name;	
+	}
+	bool DicomJpegLossless14SV1CodecFactory::Enabled::get()  {
+		return true;
 	}
 	DicomCodecParameters^ DicomJpegLossless14SV1CodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet)
 	{

@@ -629,6 +629,15 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer
                     ServerEntityKey key = p.Value;
                     command.Parameters.AddWithValue("@" + sqlParmName, key.Key);
                 }
+                else if (parm is EntityUpdateColumn<DateTime?>)
+                {
+                    var p = parm as EntityUpdateColumn<DateTime?>;
+                    DateTime? value = p.Value;
+                    if (value.HasValue)
+                        command.Parameters.AddWithValue("@" + sqlParmName, value.Value);
+                    else
+                        command.Parameters.AddWithValue("@" + sqlParmName, DBNull.Value);
+                }
                 else
                 {
                     if (parm.Value is ServerEnum)

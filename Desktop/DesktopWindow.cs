@@ -456,6 +456,13 @@ namespace ClearCanvas.Desktop
 			{
 				//TODO (CR February 2011) - Low: Not for diagnostic use is a resource, but modified installation isn't?
 				var tags = new List<string>();
+
+    		    var text = ProductStateInfo.GetTitlebarText();
+                if (!string.IsNullOrEmpty(text))
+                {
+                    tags.Add(text);
+                }
+
 				//TODO (CR February 2011) - High: We should have left this as a property on ProductInformation rather than checking for empty string.
 				if (ProductInformation.Release != string.Empty)
 					tags.Add(SR.LabelNotForDiagnosticUse);

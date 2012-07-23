@@ -12,6 +12,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Management;
 using System.Security.Cryptography;
 using System.Text;
@@ -21,7 +22,7 @@ namespace ClearCanvas.Common.Utilities
 	/// <summary>
 	/// Generic environment utilities.
 	/// </summary>
-	public sealed class EnvironmentUtilities
+	public static class EnvironmentUtilities
 	{
 		private static string _machineIdentifier;
 
@@ -34,10 +35,10 @@ namespace ClearCanvas.Common.Utilities
 			{
 				if (_machineIdentifier == null)
 				{
-					var input = string.Format("CLEARCANVASRTW::{0}::{1}::{2}", GetProcessorId(), GetMotherboardSerial(), GetDiskSignature());
+					var input = string.Format("CLEARCANVASRTW::{0}::{1}::{2}::{3}::{4}", GetProcessorId(), GetMotherboardSerial(), GetDiskSignature(), GetBiosSerial(), GetSystemUuid());
 					using (var sha256 = new SHA256Managed())
 					{
-						_machineIdentifier = Convert.ToBase64String(sha256.ComputeHash(Encoding.Default.GetBytes(input)));
+						_machineIdentifier = Convert.ToBase64String(sha256.ComputeHash(Encoding.UTF8.GetBytes(input)));
 					}
 				}
 				return _machineIdentifier;
@@ -55,9 +56,10 @@ namespace ClearCanvas.Common.Utilities
 					{
 						foreach (var processor in results)
 						{
-							var processorId = ReadString(processor, "ProcessorId");
+							var processorId = processor.GetString("ProcessorId");
+							if (processorId != null) processorId = processorId.Trim();
 							if (!string.IsNullOrEmpty(processorId))
-								return processorId.Trim();
+								return processorId;
 						}
 					}
 				}
@@ -69,13 +71,13 @@ namespace ClearCanvas.Common.Utilities
 					{
 						foreach (var processor in results)
 						{
-							var manufacturer = ReadString(processor, "Manufacturer");
-							var addressWidth = ReadUInt16(processor, "AddressWidth");
-							var architecture = ReadUInt16(processor, "Architecture");
-							var family = ReadUInt16(processor, "Family");
-							var level = ReadUInt16(processor, "Level");
-							var revision = ReadUInt16(processor, "Revision");
-							return string.Format("CPU-{0}-{1}-{2:X2}-{3:X2}-{4}-{5:X4}", manufacturer, addressWidth, architecture, family, level, revision);
+							var manufacturer = processor.GetString("Manufacturer");
+							var addressWidth = processor.GetUInt16("AddressWidth");
+							var architecture = processor.GetUInt16("Architecture");
+							var family = processor.GetUInt16("Family");
+							var level = processor.GetUInt16("Level");
+							var revision = processor.GetUInt16("Revision");
+							return string.Format(CultureInfo.InvariantCulture, "CPU-{0}-{1}-{2:X2}-{3:X2}-{4}-{5:X4}", manufacturer, addressWidth, architecture, family, level, revision);
 						}
 					}
 				}
@@ -83,6 +85,32 @@ namespace ClearCanvas.Common.Utilities
 			catch (Exception ex)
 			{
 				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve processor ID.");
+			}
+			return string.Empty;
+		}
+
+		private static string GetBiosSerial()
+		{
+			try
+			{
+				// read the s/n of BIOS
+				using (var searcher = new ManagementObjectSearcher("SELECT SerialNumber FROM Win32_BIOS"))
+				{
+					using (var results = new ManagementObjectSearcherResults(searcher))
+					{
+						foreach (var bios in results)
+						{
+							var serialNumber = bios.GetString("SerialNumber");
+							if (serialNumber != null) serialNumber = serialNumber.Trim();
+							if (!string.IsNullOrEmpty(serialNumber))
+								return serialNumber;
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve BIOS serial number.");
 			}
 			return string.Empty;
 		}
@@ -98,16 +126,17 @@ namespace ClearCanvas.Common.Utilities
 					{
 						foreach (var motherboard in results)
 						{
-							var serialNumber = ReadString(motherboard, "SerialNumber");
+							var serialNumber = motherboard.GetString("SerialNumber");
+							if (serialNumber != null) serialNumber = serialNumber.Trim();
 							if (!string.IsNullOrEmpty(serialNumber))
-								return serialNumber.Trim();
+								return serialNumber;
 						}
 					}
 				}
 			}
 			catch (Exception ex)
 			{
-				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve baseboard serial.");
+				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve baseboard serial number.");
 			}
 			return string.Empty;
 		}
@@ -124,8 +153,8 @@ namespace ClearCanvas.Common.Utilities
 					{
 						foreach (var diskDrive in results)
 						{
-							var index = ReadUInt32(diskDrive, "Index");
-							var signature = ReadUInt32(diskDrive, "Signature");
+							var index = diskDrive.GetUInt32("Index");
+							var signature = diskDrive.GetUInt32("Signature");
 							if (index.HasValue && signature.HasValue)
 								diskDrives.Add(index.Value, signature.Value);
 						}
@@ -134,7 +163,7 @@ namespace ClearCanvas.Common.Utilities
 
 				// use the signature of the first physical disk drive
 				foreach (var diskDriveId in diskDrives)
-					return diskDriveId.Value.ToString("X8");
+					return diskDriveId.Value.ToString("X8", CultureInfo.InvariantCulture);
 			}
 			catch (Exception ex)
 			{
@@ -143,7 +172,33 @@ namespace ClearCanvas.Common.Utilities
 			return string.Empty;
 		}
 
-		private static string ReadString(ManagementBaseObject wmiObject, string propertyName)
+		private static string GetSystemUuid()
+		{
+			try
+			{
+				// read the UUID of the system
+				using (var searcher = new ManagementObjectSearcher("SELECT UUID FROM Win32_ComputerSystemProduct"))
+				{
+					using (var results = new ManagementObjectSearcherResults(searcher))
+					{
+						foreach (var system in results)
+						{
+							var uuid = system.GetString("UUID");
+							if (uuid != null) uuid = uuid.Trim();
+							if (!string.IsNullOrEmpty(uuid))
+								return uuid;
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Debug, ex, "Failed to retrieve system UUID.");
+			}
+			return string.Empty;
+		}
+
+		private static string GetString(this ManagementBaseObject wmiObject, string propertyName)
 		{
 			try
 			{
@@ -158,7 +213,7 @@ namespace ClearCanvas.Common.Utilities
 			return null;
 		}
 
-		private static ushort? ReadUInt16(ManagementBaseObject wmiObject, string propertyName)
+		private static ushort? GetUInt16(this ManagementBaseObject wmiObject, string propertyName)
 		{
 			try
 			{
@@ -173,7 +228,7 @@ namespace ClearCanvas.Common.Utilities
 			return null;
 		}
 
-		private static uint? ReadUInt32(ManagementBaseObject wmiObject, string propertyName)
+		private static uint? GetUInt32(this ManagementBaseObject wmiObject, string propertyName)
 		{
 			try
 			{

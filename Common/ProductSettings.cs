@@ -32,15 +32,15 @@ namespace ClearCanvas.Common
 		private static void Dump()
 		{
 			var settings = new DecryptedProductSettings();
-            Console.WriteLine(@"Name: {0}", settings.Name);
+			Console.WriteLine(@"Name: {0}", settings.Name);
+			Console.WriteLine(@"Family: {0}", settings.FamilyName);
 			Console.WriteLine(@"Product: {0}", settings.Product);
 			Console.WriteLine(@"Component: {0}", settings.Component);
 			Console.WriteLine(@"Edition: {0}", settings.Edition);
 			Console.WriteLine(@"Version: {0}", settings.Version);
 			Console.WriteLine(@"VersionSuffix: {0}", settings.VersionSuffix);
 			Console.WriteLine(@"Release: {0}", settings.Release);
-            Console.WriteLine(@"Family: {0}", settings.FamilyName);
-            Console.WriteLine(@"Copyright:\n{0}", settings.Copyright);
+			Console.WriteLine(@"Copyright:\n{0}", settings.Copyright);
 			Console.WriteLine(@"\nLicense:\n{0}", settings.License);
 		}
 
@@ -425,6 +425,15 @@ namespace ClearCanvas.Common
 
 			return Concatenate(versionString.ToString(), includeVersionSuffix ? VersionSuffix : string.Empty, includeRelease ? Release : string.Empty);
 		}
+        
+	    public static bool IsEvaluation
+	    {
+            get
+            {
+                TimeSpan? ignore;
+                return LicenseInformation.GetTrialStatus(out ignore);
+            }
+	    }
 
 		/// <summary>
 		/// Concatenates a number of strings with spaces, skipping empty strings.

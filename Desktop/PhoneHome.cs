@@ -16,21 +16,34 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.UsageTracking;
 using ClearCanvas.Utilities.Manifest;
-using Timer = System.Threading.Timer;
 
 namespace ClearCanvas.Desktop
 {
-	static internal class PhoneHome
+	internal static class PhoneHome
 	{
 		#region Private Fields
 
-		private static readonly TimeSpan Repeat24Hours = TimeSpan.FromHours(24);
-		private static readonly TimeSpan StartUpDelay = TimeSpan.FromSeconds(10);
+		/// <summary>
+		/// Interval between periodic calls while application is active.
+		/// </summary>
+		private static readonly TimeSpan _periodicCallInterval = TimeSpan.FromHours(24);
+
+		/// <summary>
+		/// Delay before initial call when application is starting up.
+		/// </summary>
+		private static readonly TimeSpan _startupCallDelay = TimeSpan.FromSeconds(10);
+
+		/// <summary>
+		/// Timeout for final call when application is shutting down.
+		/// </summary>
+		private static readonly TimeSpan _shutdownCallTimeout = TimeSpan.FromSeconds(10);
+
 		private static Timer _phoneHomeTimer;
 		private static readonly object _sync = new object();
 		private static bool _started;
 		private static DateTime _startTimestamp;
 		private static bool _sentStartUpMessage;
+
 		#endregion
 
 		#region Public Methods
@@ -45,17 +58,19 @@ namespace ClearCanvas.Desktop
 				OnStartUp();
 
 				_phoneHomeTimer = new Timer(ignore =>
-												{
-													var msg = CreateUsageMessage(_sentStartUpMessage ? UsageType.Other : UsageType.Startup);
-													UsageUtilities.Register(msg, UsageTrackingThread.Background);
+				                            	{
+				                            		var type = _sentStartUpMessage ? UsageType.Other : UsageType.Startup;
+				                            		var msg = CreateUsageMessage(type);
+				                            		msg.AppData = new List<UsageApplicationData>();
+				                            		msg.AppData.AddRange(UsageUtilities.GetApplicationData(type));
+				                            		UsageUtilities.Register(msg, UsageTrackingThread.Background);
 
-													_sentStartUpMessage = true;
-												},
-											null,
-											StartUpDelay,
-											Repeat24Hours);
+				                            		_sentStartUpMessage = true;
+				                            	},
+				                            null,
+				                            _startupCallDelay,
+				                            _periodicCallInterval);
 			}
-
 		}
 
 		/// <summary>
@@ -73,17 +88,15 @@ namespace ClearCanvas.Desktop
 				{
 					OnShutdown();
 
-					// note: CR Sep 2011: Ummm... I guess the point of this thread spawn is to have a 10 sec time limit???
-
 					// Note: use a thread to send the message because we don't want to block the app
 					var workerThread = new Thread(SendShutdownMessage);
 					workerThread.Start();
 
 					// wait up to 10 seconds, this is a requirement.
-					if (!workerThread.Join(TimeSpan.FromSeconds(10)))
+					if (!workerThread.Join(_shutdownCallTimeout))
 					{
 						Platform.Log(LogLevel.Debug,
-									 "PhoneHome.ShutDown(): web service does not return within 10 seconds. Continue shutting down.");
+						             "PhoneHome.ShutDown(): web service does not return within 10 seconds. Continue shutting down.");
 					}
 				}
 				catch (Exception ex)
@@ -107,7 +120,8 @@ namespace ClearCanvas.Desktop
 
 				var msg = CreateUsageMessage(UsageType.Shutdown);
 				msg.AppData = new List<UsageApplicationData>();
-				msg.AppData.Add(new UsageApplicationData { Key = keyProcessUptime, Value = String.Format(CultureInfo.InvariantCulture, "{0}", uptime.TotalHours) });
+				msg.AppData.AddRange(UsageUtilities.GetApplicationData(UsageType.Shutdown));
+				msg.AppData.Add(new UsageApplicationData {Key = keyProcessUptime, Value = String.Format(CultureInfo.InvariantCulture, "{0}", uptime.TotalHours)});
 
 				// Message must be sent using the current thread instead of threadpool when the app is being shut down
 				UsageUtilities.Register(msg, UsageTrackingThread.Current);
@@ -127,7 +141,6 @@ namespace ClearCanvas.Desktop
 			return msg;
 		}
 
-
 		private static void OnStartUp()
 		{
 			if (!_started)
@@ -136,7 +149,6 @@ namespace ClearCanvas.Desktop
 				_started = true;
 			}
 		}
-
 
 		private static void OnShutdown()
 		{
@@ -147,7 +159,7 @@ namespace ClearCanvas.Desktop
 				_started = false;
 			}
 		}
+
 		#endregion
 	}
-
 }

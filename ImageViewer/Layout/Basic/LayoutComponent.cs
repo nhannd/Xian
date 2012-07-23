@@ -285,8 +285,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			Platform.CheckArgumentRange(rows, 1, LayoutSettings.MaximumTileRows, "rows");
 			Platform.CheckArgumentRange(columns, 1, LayoutSettings.MaximumTileColumns, "columns");
 
-			IImageBox imageBox = imageViewer.PhysicalWorkspace.SelectedImageBox;
-			
+			IImageBox imageBox = imageViewer.PhysicalWorkspace.SelectedImageBox;			
 			if (imageBox == null || imageBox.ParentPhysicalWorkspace.Locked)
 				return;
 

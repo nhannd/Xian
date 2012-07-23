@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			List<Point> pixels = BresenhamLine(pt1, pt2);
 
 			_pixelIndices = new int[pixels.Count];
-            _pixelValues = new double[pixels.Count];
+			_pixelValues = new double[pixels.Count];
 
 			int i = 0;
 
@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			{
 				int rawPixelValue = image.PixelData.GetPixel(pixel.X, pixel.Y);
 				_pixelIndices[i] = i;
-				_pixelValues[i] = image.ModalityLut[rawPixelValue];
+				_pixelValues[i] = (int) image.ModalityLut[rawPixelValue];
 				i++;
 			}
 

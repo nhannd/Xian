@@ -116,12 +116,17 @@
     <PluginDeleteFiles Include="$(PluginsDirectory)\*.*" />
   </ItemGroup>
 
+  <!-- Re-signs the desktop executable's strong name if modified for PE flags after strong name is originally applied -->
+  <Target Name="ReSignExeSN" Condition="'$(StrongNameKeyFile)' != '' and Exists('$(StrongNameKeyFile)')">
+    <!-- Do not strong name plugin launcher executables due to side effect of forcing all same-version launchers to use the same user config regardless of location -->
+  </Target>
+
   <!-- Flags the CIL desktop executable as requiring 32-bit execution even on a 64-bit machine -->
   <Target Name="SetExeX86Flag">
     <GetFrameworkSdkPath>
       <Output TaskParameter="Path" PropertyName="SdkPath" />
     </GetFrameworkSdkPath>
-    <Exec Command="corflags /32BIT+ &quot;$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe&quot;" WorkingDirectory="$(SdkPath)\bin\" />
+    <Exec Command="corflags /Force /32BIT+ &quot;$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe&quot;" WorkingDirectory="$(SdkPath)\bin\" />
   </Target>
 
   <!-- Flags the CIL desktop executable as capable of handling extended process memory space ("large addresses") if the OS is configured to do so -->
@@ -203,6 +208,7 @@
     <!-- Set executable header flags -->
     <CallTarget Condition="$(SetDesktopExecutableX86Flag)" Targets="SetExeX86Flag" />
     <CallTarget Condition="$(SetDesktopExecutableLAAFlag)" Targets="SetExeLAAFlag" />
+    <CallTarget Condition="$(SetDesktopExecutableX86Flag) or $(SetDesktopExecutableLAAFlag)" Targets="ReSignExeSN" />
 
     <!-- Override the value of TargetPlatform for this task. -->
     <CreateProperty Value="$(BuildPlatform)" Condition=" '$(TargetPlatform)' == '' ">
@@ -210,7 +216,7 @@
     </CreateProperty>
 
     <!-- Run the solution specific build file -->
-    <MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(Options);Localizations=$(Localizations);ReleaseType=$(ReleaseType)" />
+    <MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);StrongNameKeyFile=$(StrongNameKeyFile);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(Options);Localizations=$(Localizations);ReleaseType=$(ReleaseType)" />
   </Target>
 
   <Target Name="Default Target">

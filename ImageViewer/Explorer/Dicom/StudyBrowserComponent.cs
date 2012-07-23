@@ -24,9 +24,9 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
-using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -306,7 +306,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			remove { _selectedStudyChangedEvent -= value; }
 		}
 
-        public event EventHandler SelectedServerChanged
+		public event EventHandler SelectedServerChanged
 		{
 			add { _selectedServerChangedEvent += value; }
 			remove { _selectedServerChangedEvent -= value; }

@@ -73,7 +73,8 @@ namespace ClearCanvas.Common
 							extensionPointClass,
 							a.Name,
 							a.Description,
-							ExtensionSettings.Default.IsEnabled(type, a.Enabled)
+							ExtensionSettings.Default.IsEnabled(type, a.Enabled),
+							a.FeatureToken
 						)
 					);
 				}
