@@ -150,7 +150,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			if (!IsProcedureModifiable(procedure))
 				return;
 
-			procedure.Schedule(requisition.ScheduledTime);
+			procedure.Schedule(requisition.ScheduledTime, requisition.ScheduledDuration);
 			procedure.SchedulingCode = EnumUtils.GetEnumValue<SchedulingCodeEnum>(requisition.SchedulingCode, context);
 
 			procedure.PerformingFacility = context.Load<Facility>(requisition.PerformingFacility.FacilityRef, EntityLoadFlags.Proxy);

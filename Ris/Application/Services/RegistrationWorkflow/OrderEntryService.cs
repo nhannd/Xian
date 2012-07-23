@@ -198,7 +198,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.Requisition, "Requisition");
 
-			var order = PlaceOrderHelper(request.Requisition, request.ApplySchedulingRequestTime);
+			var order = PlaceOrderHelper(request.Requisition);
 
 			ValidateVisitsExist(order);
 
@@ -256,7 +256,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			DuplicateAttachmentsForOrderReplace(orderToReplace, request.Requisition);
 
 			// place new order
-			var newOrder = PlaceOrderHelper(request.Requisition, request.ApplySchedulingRequestTime);
+			var newOrder = PlaceOrderHelper(request.Requisition);
 			ValidateVisitsExist(newOrder);
 
 			// cancel existing order
@@ -516,7 +516,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			}
 		}
 
-		private Order PlaceOrderHelper(OrderRequisition requisition, bool applySchedulingRequestTime)
+		private Order PlaceOrderHelper(OrderRequisition requisition)
 		{
 			// get appropriate A# for this order
 			var accNum = GetAccessionNumberForOrder(requisition);
@@ -585,11 +585,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				if(mapProcToReq.ContainsKey(procedure))
 				{
 					orderAssembler.UpdateProcedureFromRequisition(procedure, mapProcToReq[procedure], this.CurrentUserStaff, this.PersistenceContext);
-				}
-				
-				if (applySchedulingRequestTime)
-				{
-					procedure.Schedule(requisition.SchedulingRequestTime);
 				}
 			}
 
@@ -772,11 +767,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				// apply the requisition information to the actual procedure
 				assembler.UpdateProcedureFromRequisition(procedure, req, this.CurrentUserStaff, this.PersistenceContext);
 
-				if(request.ApplySchedulingRequestTime)
-				{
-					procedure.Schedule(request.Requisition.SchedulingRequestTime);
-				}
-
 				CreateLogicalHL7Event(procedure, LogicalHL7EventType.ProcedureCreated);
 			}
 
@@ -796,11 +786,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 				// apply the requisition information to the actual procedure
 				assembler.UpdateProcedureFromRequisition(procedure, req, this.CurrentUserStaff, this.PersistenceContext);
-
-				if (request.ApplySchedulingRequestTime)
-				{
-					procedure.Schedule(request.Requisition.SchedulingRequestTime);
-				}
 
 				CreateLogicalHL7Event(
 					procedure,

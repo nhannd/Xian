@@ -222,19 +222,6 @@ namespace ClearCanvas.Healthcare
 		}
 
 		/// <summary>
-		/// Schedules all procedures in this order for the specified start time.
-		/// </summary>
-		/// <param name="startTime"></param>
-		public virtual void Schedule(DateTime? startTime)
-		{
-			foreach (var procedure in _procedures)
-			{
-				procedure.Schedule(startTime);
-			}
-		}
-
-
-		/// <summary>
 		/// Check to see if merge is possible.
 		/// </summary>
 		/// <param name="mergeInfo"></param>

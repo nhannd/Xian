@@ -80,6 +80,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 		public DateTime? ScheduledTime;
 
 		/// <summary>
+		/// The duration of the block of time which the procedure is expected to take, in minutes.
+		/// </summary>
+		[DataMember]
+		public int ScheduledDuration;
+
+		/// <summary>
 		/// Indicates additional info about procedure scheduling via configurable codes.  Optional.
 		/// </summary>
 		[DataMember]
