@@ -18,7 +18,7 @@ using System.Threading;
 
 namespace ClearCanvas.Common.Utilities
 {
-	internal class NamedMutexLock : ExclusiveLock
+	public class NamedMutexLock : ExclusiveLock
 	{
 		private readonly string _name;
 		private readonly Mutex _mutex;
