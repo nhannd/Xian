@@ -29,9 +29,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
         public EntityRef VisitRef;
 
         [DataMember]
-        public EntityRef Patient;
-
-        [DataMember]
         public VisitDetail VisitDetail;
     }
 }

@@ -121,6 +121,12 @@ namespace ClearCanvas.Desktop.Tables
             get { return _columns; }
         }
 
+		/// <summary>
+		/// Occurs after the table is sorted.
+		/// </summary>
+		public event EventHandler Sorted;
+
+
     	/// <summary>
     	/// Sorts this table according to the cached sort parameters, if any exist.
     	/// </summary>
@@ -132,6 +138,8 @@ namespace ClearCanvas.Desktop.Tables
                     _filteredData.Sort(new TypeSafeComparerWrapper<TItem>(_sortParams.Column.GetComparer(_sortParams.Ascending)));
                 else 
                     _data.Sort(new TypeSafeComparerWrapper<TItem>(_sortParams.Column.GetComparer(_sortParams.Ascending)));
+
+				EventsHelper.Fire(Sorted, this, EventArgs.Empty);
             }
         }
 

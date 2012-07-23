@@ -11,7 +11,7 @@ NHIBERNATE_COLLECTION_TYPES = ['map', 'set', 'idbag', 'bag', 'list']
 DATATYPE_MAPPINGS =
 {
 	'map' => 'IDictionary',
-	'set' => 'ISet',
+	'set' => 'Iesi.Collections.Generic.ISet',
 	'idbag' => 'IList',
 	'String' => 'string',
 	'Boolean' => 'bool',
@@ -29,7 +29,7 @@ CSHARP_PRIMITIVES = ['string', 'bool', 'int', 'DateTime', 'DateTime?']
 CSHARP_INITIALIZERS = 
 {
 	'IDictionary' => 'new Dictionary',
-	'ISet' => 'new HashedSet',
+	'Iesi.Collections.Generic.ISet' => 'new HashedSet',
 	'IList' => 'new List',
 	'DateTime' => 'Platform.Time'
 }

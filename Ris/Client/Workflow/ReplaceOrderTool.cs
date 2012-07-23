@@ -64,8 +64,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 
 			var component = new OrderEditorComponent(
-				item.PatientRef,
-				item.PatientProfileRef,
+				new PatientProfileSummary { PatientRef = item.PatientRef, PatientProfileRef = item.PatientProfileRef },
 				item.OrderRef,
 				OrderEditorComponent.Mode.ReplaceOrder);
 
@@ -101,21 +100,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			DocumentManager.InvalidateFolder(typeof(Folders.Registration.ScheduledFolder));
 			DocumentManager.InvalidateFolder(typeof(Folders.Registration.CancelledFolder));
-		}
-	}
-
-	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-	public class BookingReplaceOrderTool : ReplaceOrderToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
-	{
-		protected override bool Execute(RegistrationWorklistItemSummary item)
-		{
-			return ExecuteCore(item);
-		}
-
-		protected override void InvalidateFolders()
-		{
-			DocumentManager.InvalidateFolder(typeof(Folders.Registration.ToBeScheduledFolder));
-			DocumentManager.InvalidateFolder(typeof(Folders.Registration.PendingProtocolFolder));
 		}
 	}
 

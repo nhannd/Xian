@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
+using System.ServiceModel;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -22,7 +23,7 @@ using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using System.ServiceModel;
+
 
 namespace ClearCanvas.Ris.Client.Workflow
 {

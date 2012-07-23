@@ -9,24 +9,29 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
-    [DataContract]
-    public class GetOrderRequisitionForEditRequest : DataContractBase
-    {
-        public GetOrderRequisitionForEditRequest(EntityRef orderRef)
-        {
-            this.OrderRef = orderRef;
-        }
+	[DataContract]
+	public class GetOrderRequisitionForEditRequest : DataContractBase
+	{
+		public GetOrderRequisitionForEditRequest()
+		{
+		}
 
-        [DataMember]
-        public EntityRef OrderRef;
-    }
+		/// <summary>
+		/// Identifies the order requistion to edit.  Either <see cref="OrderRef"/> or <see cref="ProcedureRef"/> must be specified.
+		/// </summary>
+		[DataMember]
+		public EntityRef OrderRef;
+
+		/// <summary>
+		/// Identifies the order requistion to edit.  Either <see cref="OrderRef"/> or <see cref="ProcedureRef"/> must be specified.
+		/// </summary>
+		[DataMember]
+		public EntityRef ProcedureRef;
+	}
 }

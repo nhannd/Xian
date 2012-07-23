@@ -52,9 +52,6 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow administration of Worklists.")]
 				public const string Worklist = "RIS/Admin/Data/Worklist";
 
-				[AuthorityToken(Description = "Allow administration of Protocol Groups and Codes.")]
-				public const string ProtocolGroups = "RIS/Admin/Data/Protocol Groups";
-
 				[AuthorityToken(Description = "Allow administration of Staff.")]
 				public const string Staff = "RIS/Admin/Data/Staff";
 
@@ -148,30 +145,6 @@ namespace ClearCanvas.Ris.Application.Common
 				public const string SendToFaxQueue = "RIS/Workflow/Report/Send to fax queue";
 			}
 
-			public static class Protocol
-			{
-				[AuthorityToken(Description = "Allow access to the Protocol Editor and creation of procedure protocols.")]
-				public const string Create = "RIS/Workflow/Protocol/Create";
-
-				[AuthorityToken(Description = "Allow verification of procedure protocols.")]
-				public const string Accept = "RIS/Workflow/Protocol/Verify";
-
-				[AuthorityToken(Description = "Allow orders that were rejected by the radiologist to be re-submitted for protocoling.")]
-				public const string Resubmit = "RIS/Workflow/Protocol/Resubmit";
-
-				[AuthorityToken(Description = "Allow procedure protocols to be submitted for review by another radiologist.")]
-				public const string SubmitForReview = "RIS/Workflow/Protocol/Submit for Review";
-
-				[AuthorityToken(Description = "Allow creation of procedure protocols without specifying a supervisor.")]
-				public const string OmitSupervisor = "RIS/Workflow/Protocol/Omit Supervisor";
-
-				[AuthorityToken(Description = "Allow re-assignment of a procedure protocol that is owned by one radiologist to another radiologist.")]
-				public const string Reassign = "RIS/Workflow/Protocol/Reassign";
-
-				[AuthorityToken(Description = "Allow cancellation of a procedure protocol that is currently owned by another radiologist.")]
-				public const string Cancel = "RIS/Workflow/Protocol/Cancel";
-			}
-
 			public static class Transcription
 			{
 				[AuthorityToken(Description = "Allow access to the Transcription Editor and creation of report transcriptions.")]
@@ -256,12 +229,6 @@ namespace ClearCanvas.Ris.Application.Common
 				public const string Accept = "RIS/Workflow/Documentation/Accept";
 			}
 
-			public static class PreliminaryDiagnosis
-			{
-				[AuthorityToken(Description = "Allow creation of Preliminary Diagnosis conversations.")]
-				public const string Create = "RIS/Workflow/Preliminary Diagnosis/Create";
-			}
-
 			public static class Downtime
 			{
 				[AuthorityToken(Description = "Allow printing of downtime forms.")]
@@ -304,9 +271,6 @@ namespace ClearCanvas.Ris.Application.Common
 		/// </summary>
 		public static class FolderSystems
 		{
-			[AuthorityToken(Description = "Allow access to the Booking folder system.")]
-			public const string Booking = "RIS/Folder Systems/Booking";
-
 			[AuthorityToken(Description = "Allow access to the Registration folder system.")]
 			public const string Registration = "RIS/Folder Systems/Registration";
 
@@ -316,23 +280,11 @@ namespace ClearCanvas.Ris.Application.Common
 			[AuthorityToken(Description = "Allow access to the Reporting folder system.")]
 			public const string Reporting = "RIS/Folder Systems/Reporting";
 
-			[AuthorityToken(Description = "Allow access to the Protocolling folder system.")]
-			public const string Protocolling = "RIS/Folder Systems/Protocolling";
-
-			[AuthorityToken(Description = "Allow access to the Order Notes folder system.")]
-			public const string OrderNotes = "RIS/Folder Systems/Order Notes";
-
-			[AuthorityToken(Description = "Allow access to the Emergency folder system.")]
-			public const string Emergency = "RIS/Folder Systems/Emergency";
-
 			[AuthorityToken(Description = "Allow access to the Radiologist Admin folder system.")]
 			public const string RadiologistAdmin = "RIS/Folder Systems/Radiologist Admin";
 
 			[AuthorityToken(Description = "Allow access to the Transcription folder system.")]
 			public const string Transcription = "RIS/Folder Systems/Transcription";
-
-			[AuthorityToken(Description = "Allow access to the External Practitioner folder system.")]
-			public const string ExternalPractitioner = "RIS/Folder Systems/External Practitioner";
 		}
 	}
 }

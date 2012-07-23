@@ -20,10 +20,11 @@ namespace ClearCanvas.Ris.Application.Services
 	{
 		public VisitSummary CreateVisitSummary(Visit visit, IPersistenceContext context)
 		{
+			var patientProfileAssembler = new PatientProfileAssembler();
 			var summary = new VisitSummary
 				{
 					VisitRef = visit.GetRef(),
-					PatientRef = visit.Patient.GetRef(),
+					Patient = patientProfileAssembler.CreatePatientProfileSummary(visit.PatientProfile, context),
 					VisitNumber = CreateVisitNumberDetail(visit.VisitNumber),
 					AdmissionType = EnumUtils.GetEnumValueInfo(visit.AdmissionType),
 					PatientClass = EnumUtils.GetEnumValueInfo(visit.PatientClass),
@@ -46,10 +47,11 @@ namespace ClearCanvas.Ris.Application.Services
 
 		public VisitDetail CreateVisitDetail(Visit visit, IPersistenceContext context)
 		{
+			var patientProfileAssembler = new PatientProfileAssembler();
 			var detail = new VisitDetail
 				{
 					VisitRef = visit.GetRef(),
-					PatientRef = visit.Patient.GetRef(),
+					Patient = patientProfileAssembler.CreatePatientProfileSummary(visit.PatientProfile, context),
 					VisitNumber = CreateVisitNumberDetail(visit.VisitNumber),
 					AdmissionType = EnumUtils.GetEnumValueInfo(visit.AdmissionType),
 					PatientClass = EnumUtils.GetEnumValueInfo(visit.PatientClass),
@@ -95,7 +97,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 		public void UpdateVisit(Visit visit, VisitDetail detail, IPersistenceContext context)
 		{
-			visit.Patient = context.Load<Patient>(detail.PatientRef, EntityLoadFlags.Proxy);
+			visit.Patient = context.Load<Patient>(detail.Patient.PatientRef, EntityLoadFlags.Proxy);
 			visit.VisitNumber.Id = detail.VisitNumber.Id;
 			visit.VisitNumber.AssigningAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.VisitNumber.AssigningAuthority, context);
 

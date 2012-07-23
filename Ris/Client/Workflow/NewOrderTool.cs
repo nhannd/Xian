@@ -16,6 +16,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 
@@ -30,7 +31,6 @@ namespace ClearCanvas.Ris.Client.Workflow
     [ActionPermission("neworder", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Create)]
 
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
     public class NewOrderTool : Tool<IToolContext>
     {
@@ -110,7 +110,7 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             try
             {
-                OrderEditorComponent component = new OrderEditorComponent(patientRef, profileRef);
+				OrderEditorComponent component = new OrderEditorComponent(new PatientProfileSummary { PatientRef = patientRef, PatientProfileRef = profileRef });
                 IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
                     desktopWindow,
                     component,

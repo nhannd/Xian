@@ -42,9 +42,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _dateOfDeath.DataBindings.Add("Value", _component, "TimeOfDeath", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _mrn.DataBindings.Add("Value", _component, "MrnID", true, DataSourceUpdateMode.OnPropertyChanged);
+			_mrn.DataBindings.Add("Enabled", _component, "MrnIDEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _mrnAuthority.DataSource = _component.MrnAuthorityChoices;
             _mrnAuthority.DataBindings.Add("Value", _component, "MrnAuthority", true, DataSourceUpdateMode.OnPropertyChanged);
+			_mrnAuthority.DataBindings.Add("Enabled", _component, "MrnAuthorityEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _healthcard.DataBindings.Add("Value", _component, "HealthcardID", true, DataSourceUpdateMode.OnPropertyChanged);
 

@@ -38,9 +38,16 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         public EnumValueInfo CancelReason;
 
         /// <summary>
-        /// Requisition for replacement order.
+        /// Requisition for replacement order.  The value of <see cref="OrderRequisition.OrderRef"/> should be null.
         /// </summary>
         [DataMember]
         public OrderRequisition Requisition;
-    }
+
+		/// <summary>
+		/// Specifies that procedures will be scheduled for the time specified in <see cref="OrderRequisition.SchedulingRequestTime"/>,
+		/// regardless of what is specified in individual <see cref="ProcedureRequistion"/> items.
+		/// </summary>
+		[DataMember]
+		public bool ApplySchedulingRequestTime;
+	}
 }

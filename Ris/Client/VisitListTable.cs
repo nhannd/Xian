@@ -9,7 +9,6 @@
 
 #endregion
 
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Client.Formatting;
@@ -22,35 +21,36 @@ namespace ClearCanvas.Ris.Client
 		public VisitListTable()
 			: base(2)
 		{
-			this.Columns.Add(new TableColumn<VisitListItem, string>(SR.ColumnVisitNumber,
-				delegate(VisitListItem _visitListItem) { return VisitNumberFormat.Format(_visitListItem.VisitNumber); },
-				1.0f));
+			this.Columns.Add(new TableColumn<VisitListItem, string>(SR.ColumnVisitNumber, visitListItem => VisitNumberFormat.Format(visitListItem.VisitNumber), 1.0f));
 
 			//Visit type description
-			this.Columns.Add(new TableColumn<VisitListItem, string>(SR.ColumnVisitType,
-				delegate(VisitListItem _visitListItem)
-				{
-					return string.Format("{0} - {1} - {2}", 
-						_visitListItem.PatientClass.Value, 
-						_visitListItem.PatientType.Value, 
-						_visitListItem.AdmissionType.Value
-					);
-				},
-				1));
+			this.Columns.Add(new TableColumn<VisitListItem, string>(SR.ColumnVisitType, FormatVisitType, 1));
 
 			//status
-			this.Columns.Add(new TableColumn<VisitListItem, string>(SR.ColumnVisitStatus,
-				delegate(VisitListItem _visitListItem) { return _visitListItem.VisitStatus.Value; },
-				1.0f));
-			
-			//admit date/time
-			this.Columns.Add(new DateTableColumn<VisitListItem>(SR.ColumnAdmitDateTime,
-				delegate(VisitListItem _visitListItem) { return _visitListItem.AdmitTime; },
-				1.0f));
+			this.Columns.Add(new TableColumn<VisitListItem, string>(SR.ColumnVisitStatus, visitListItem => visitListItem.VisitStatus.Value, 1.0f));
 
-			this.Columns.Add(new DateTableColumn<VisitListItem>(SR.ColumnDischargeDateTime,
-				delegate(VisitListItem _visitListItem) { return _visitListItem.DischargeTime; },
-				1.0f));
+			//admit date/time
+			this.Columns.Add(new DateTableColumn<VisitListItem>(SR.ColumnAdmitDateTime, visitListItem => visitListItem.AdmitTime, 1.0f));
+
+			this.Columns.Add(new DateTableColumn<VisitListItem>(SR.ColumnDischargeDateTime, visitListItem => visitListItem.DischargeTime, 1.0f));
+		}
+
+		private static string FormatVisitType(VisitListItem item)
+		{
+			var sb = new StringBuilder();
+			sb.Append(item.PatientClass.Value);
+			if(item.PatientType != null)
+			{
+				sb.Append(" - ");
+				sb.Append(item.PatientType.Value);
+			}
+			if (item.AdmissionType != null)
+			{
+				sb.Append(" - ");
+				sb.Append(item.AdmissionType.Value);
+			}
+
+			return sb.ToString();
 		}
 	}
 }

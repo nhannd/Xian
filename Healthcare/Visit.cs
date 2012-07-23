@@ -12,7 +12,7 @@
 using System;
 using System.Collections;
 using System.Text;
-
+using ClearCanvas.Common.Utilities;
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common;
@@ -34,6 +34,18 @@ namespace ClearCanvas.Healthcare {
         private void CustomInitialize()
         {
         }
+
+		/// <summary>
+		/// Gets the patient profile associated with this visit.
+		/// </summary>
+		public virtual PatientProfile PatientProfile
+		{
+			get
+			{
+				return CollectionUtils.SelectFirst(_patient.Profiles,
+					profile => Equals(profile.Mrn.AssigningAuthority, _visitNumber.AssigningAuthority));
+			}
+		}
 
 		public virtual void CopyFrom(Visit v)
 		{

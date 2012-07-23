@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Application.Common
 		public EntityRef VisitRef;
 
 		[DataMember]
-		public EntityRef PatientRef;
+		public PatientProfileSummary Patient;
 
 		[DataMember]
 		public CompositeIdentifierDetail VisitNumber;
@@ -91,7 +91,7 @@ namespace ClearCanvas.Ris.Application.Common
 
 		public VisitSummary GetSummary()
 		{
-			return new VisitSummary(this.VisitRef, this.PatientRef, this.VisitNumber,
+			return new VisitSummary(this.VisitRef, this.Patient, this.VisitNumber,
 				this.PatientClass, this.PatientType, this.AdmissionType,
 				this.Status, this.AdmitTime, this.DischargeTime, this.Facility, this.CurrentLocation, this.CurrentRoom, this.CurrentBed);
 		}

@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			_mergedOrderViewComponentContainer.Pages.Add(new TabPage(SR.TitleOrder, _orderPreviewComponent = new MergedOrderDetailViewComponent()));
 			_mergedOrderViewComponentContainer.Pages.Add(new TabPage(SR.TitleAdditionalInfo, _orderAdditionalInfoComponent = new OrderAdditionalInfoComponent(true)));
-			_mergedOrderViewComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _attachmentSummaryComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order)));
+			_mergedOrderViewComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _attachmentSummaryComponent = new AttachedDocumentPreviewComponent(true, AttachmentSite.Order)));
 
 			// Load form data
 			Platform.GetService(
@@ -209,14 +209,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_orderPreviewComponent.Context = null;
 				_orderAdditionalInfoComponent.HealthcareContext = null;
 				_orderAdditionalInfoComponent.OrderExtendedProperties = new Dictionary<string, string>();
-				_attachmentSummaryComponent.OrderAttachments = new List<OrderAttachmentSummary>();
+				_attachmentSummaryComponent.Attachments = new List<AttachmentSummary>();
 			}
 			else
 			{
 				_orderPreviewComponent.Context = _dryRunMergedOrder;
 				_orderAdditionalInfoComponent.HealthcareContext = _dryRunMergedOrder;
 				_orderAdditionalInfoComponent.OrderExtendedProperties = _dryRunMergedOrder.ExtendedProperties;
-				_attachmentSummaryComponent.OrderAttachments = _dryRunMergedOrder.Attachments;
+				_attachmentSummaryComponent.Attachments = _dryRunMergedOrder.Attachments;
 			}
 		}
 

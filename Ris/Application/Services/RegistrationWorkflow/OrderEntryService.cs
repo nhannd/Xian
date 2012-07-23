@@ -176,14 +176,19 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		public GetOrderRequisitionForEditResponse GetOrderRequisitionForEdit(GetOrderRequisitionForEditRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
-			Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
+			if (request.ProcedureRef == null)
+				Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
+			if (request.OrderRef == null)
+				Platform.CheckMemberIsSet(request.ProcedureRef, "ProcedureRef");
+
+
+			var order = request.OrderRef != null ?
+				this.PersistenceContext.Load<Order>(request.OrderRef)
+				: this.PersistenceContext.Load<Procedure>(request.ProcedureRef).Order;
 
 			var assembler = new OrderEntryAssembler();
-
-			var order = this.PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
-
 			var requisition = assembler.CreateOrderRequisition(order, this.PersistenceContext);
-			return new GetOrderRequisitionForEditResponse(order.GetRef(), requisition, order.IsTerminated);
+			return new GetOrderRequisitionForEditResponse(requisition, order.IsTerminated);
 		}
 
 		[UpdateOperation]
@@ -193,7 +198,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.Requisition, "Requisition");
 
-			var order = PlaceOrderHelper(request.Requisition);
+			var order = PlaceOrderHelper(request.Requisition, request.ApplySchedulingRequestTime);
 
 			ValidateVisitsExist(order);
 
@@ -212,15 +217,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		public ModifyOrderResponse ModifyOrder(ModifyOrderRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
-			Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
 			Platform.CheckMemberIsSet(request.Requisition, "Requisition");
+			Platform.CheckMemberIsSet(request.Requisition.OrderRef, "OrderRef");
 
-			var order = this.PersistenceContext.Load<Order>(request.OrderRef);
+			var order = this.PersistenceContext.Load<Order>(request.Requisition.OrderRef);
 
 			var assembler = new OrderEntryAssembler();
 			assembler.UpdateOrderFromRequisition(order, request.Requisition, this.CurrentUserStaff, this.PersistenceContext);
 
-			UpdateProceduresHelper(order, request.Requisition.Procedures);
+			UpdateProceduresHelper(order, request.Requisition.Procedures, request);
 			ValidateVisitsExist(order);
 
 			this.PersistenceContext.SynchState();
@@ -251,7 +256,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			DuplicateAttachmentsForOrderReplace(orderToReplace, request.Requisition);
 
 			// place new order
-			var newOrder = PlaceOrderHelper(request.Requisition);
+			var newOrder = PlaceOrderHelper(request.Requisition, request.ApplySchedulingRequestTime);
 			ValidateVisitsExist(newOrder);
 
 			// cancel existing order
@@ -286,7 +291,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 					MergeOrderHelper(destinationOrder, sourceOrders, mergeInfo, request.ValidationOnly);
 
-					if(request.DryRun)
+					if (request.DryRun)
 					{
 						var orderAssembler = new OrderAssembler();
 						var orderDetail = orderAssembler.CreateOrderDetail(destinationOrder,
@@ -306,7 +311,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
 
 			// reason is not required for dry run, but otherwise it is
-			if(!request.DryRun && request.UnmergeReason == null)
+			if (!request.DryRun && request.UnmergeReason == null)
 				throw new ArgumentNullException("UnmergeReason");
 
 			DryRunHelper(request.DryRun,
@@ -511,18 +516,21 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			}
 		}
 
-		private Order PlaceOrderHelper(OrderRequisition requisition)
+		private Order PlaceOrderHelper(OrderRequisition requisition, bool applySchedulingRequestTime)
 		{
-			var patient = this.PersistenceContext.Load<Patient>(requisition.Patient, EntityLoadFlags.Proxy);
-			var visit = this.PersistenceContext.Load<Visit>(requisition.Visit.VisitRef, EntityLoadFlags.Proxy);
+			// get appropriate A# for this order
+			var accNum = GetAccessionNumberForOrder(requisition);
+
+			var patient = this.PersistenceContext.Load<Patient>(requisition.Patient.PatientRef, EntityLoadFlags.Proxy);
+			var orderingFacility = this.PersistenceContext.Load<Facility>(requisition.OrderingFacility.FacilityRef, EntityLoadFlags.Proxy);
+			var visit = FindOrCreateVisit(requisition, patient, orderingFacility, accNum);
 			var orderingPhysician = this.PersistenceContext.Load<ExternalPractitioner>(requisition.OrderingPractitioner.PractitionerRef, EntityLoadFlags.Proxy);
 			var diagnosticService = this.PersistenceContext.Load<DiagnosticService>(requisition.DiagnosticService.DiagnosticServiceRef);
 			var priority = EnumUtils.GetEnumValue<OrderPriority>(requisition.Priority);
 
-			var orderingFacility = this.PersistenceContext.Load<Facility>(requisition.OrderingFacility.FacilityRef, EntityLoadFlags.Proxy);
 
 			var resultRecipients = CollectionUtils.Map(
-				requisition.ResultRecipients,
+				requisition.ResultRecipients ?? new List<ResultRecipientDetail>(),
 				(ResultRecipientDetail s) => new ResultRecipient(
 												this.PersistenceContext.Load<ExternalPractitionerContactPoint>(s.ContactPoint.ContactPointRef, EntityLoadFlags.Proxy),
 												EnumUtils.GetEnumValue<ResultCommunicationMode>(s.PreferredCommunicationMode)));
@@ -533,7 +541,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			var mapProcToReq = new Dictionary<Procedure, ProcedureRequisition>();
 			var procedureNumberBroker = PersistenceContext.GetBroker<IProcedureNumberBroker>();
 			var procedures = CollectionUtils.Map(
-				requisition.Procedures,
+				requisition.Procedures ?? new List<ProcedureRequisition>(),
 				delegate(ProcedureRequisition req)
 				{
 					var rpt = this.PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
@@ -546,8 +554,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					return rp;
 				});
 
-			// get appropriate A# for this order
-			var accNum = GetAccessionNumberForOrder(requisition);
 
 			// generate a new order with the default set of procedures
 			var order = Order.NewOrder(
@@ -576,16 +582,30 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			foreach (var procedure in order.Procedures)
 			{
 				procedure.CreateProcedureSteps();
-				orderAssembler.UpdateProcedureFromRequisition(procedure, mapProcToReq[procedure], this.CurrentUserStaff, this.PersistenceContext);
+				if(mapProcToReq.ContainsKey(procedure))
+				{
+					orderAssembler.UpdateProcedureFromRequisition(procedure, mapProcToReq[procedure], this.CurrentUserStaff, this.PersistenceContext);
+				}
+				
+				if (applySchedulingRequestTime)
+				{
+					procedure.Schedule(requisition.SchedulingRequestTime);
+				}
 			}
 
 			// add order notes
-			var noteAssembler = new OrderNoteAssembler();
-			noteAssembler.SynchronizeOrderNotes(order, requisition.Notes, this.CurrentUserStaff, this.PersistenceContext);
+			if (requisition.Notes != null)
+			{
+				var noteAssembler = new OrderNoteAssembler();
+				noteAssembler.SynchronizeOrderNotes(order, requisition.Notes, this.CurrentUserStaff, this.PersistenceContext);
+			}
 
 			// add attachments
-			var attachmentAssembler = new OrderAttachmentAssembler();
-			attachmentAssembler.Synchronize(order.Attachments, requisition.Attachments, this.CurrentUserStaff, this.PersistenceContext);
+			if(requisition.Attachments != null)
+			{
+				var attachmentAssembler = new OrderAttachmentAssembler();
+				attachmentAssembler.Synchronize(order.Attachments, requisition.Attachments, this.CurrentUserStaff, this.PersistenceContext);
+			}
 
 			if (requisition.ExtendedProperties != null)
 			{
@@ -612,7 +632,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				if (!sourceOrder.CanMerge(mergeInfo, out failureReason))
 					throw new RequestValidationException(failureReason);
 
-				if(validateOnly)
+				if (validateOnly)
 					continue;
 
 				// Merge the source order into the destination order.
@@ -705,7 +725,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			return this.PersistenceContext.GetBroker<IAccessionNumberBroker>().GetNext();
 		}
 
-		private void UpdateProceduresHelper(Order order, IEnumerable<ProcedureRequisition> procedureReqs)
+		private void UpdateProceduresHelper(Order order, IEnumerable<ProcedureRequisition> procedureReqs, ModifyOrderRequest request)
 		{
 			// do not update the procedures if the order is completed
 			if (order.IsTerminated)
@@ -752,6 +772,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				// apply the requisition information to the actual procedure
 				assembler.UpdateProcedureFromRequisition(procedure, req, this.CurrentUserStaff, this.PersistenceContext);
 
+				if(request.ApplySchedulingRequestTime)
+				{
+					procedure.Schedule(request.Requisition.SchedulingRequestTime);
+				}
+
 				CreateLogicalHL7Event(procedure, LogicalHL7EventType.ProcedureCreated);
 			}
 
@@ -771,6 +796,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 				// apply the requisition information to the actual procedure
 				assembler.UpdateProcedureFromRequisition(procedure, req, this.CurrentUserStaff, this.PersistenceContext);
+
+				if (request.ApplySchedulingRequestTime)
+				{
+					procedure.Schedule(request.Requisition.SchedulingRequestTime);
+				}
 
 				CreateLogicalHL7Event(
 					procedure,
@@ -801,5 +831,42 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			}
 		}
 
+		/// <summary>
+		/// Finds the visit specified in the requisition, or if no visit is specified, auto-generates a visit.
+		/// </summary>
+		/// <param name="requisition"></param>
+		/// <param name="patient"></param>
+		/// <param name="orderingFacility"></param>
+		/// <returns></returns>
+		private Visit FindOrCreateVisit(OrderRequisition requisition, Patient patient, Facility orderingFacility, string accessionNumber)
+		{
+			if (requisition.Visit != null && requisition.Visit.VisitRef != null)
+			{
+				return this.PersistenceContext.Load<Visit>(requisition.Visit.VisitRef, EntityLoadFlags.Proxy);
+			}
+
+			// if Visit Workflow is disabled, then we must auto-generate a "dummy" visit in order to keep the system happy
+			// the user will never see this dummy visit
+			if (!new WorkflowConfigurationReader().EnableVisitWorkflow)
+			{
+				var patientClasses = PersistenceContext.GetBroker<IEnumBroker>().Load<PatientClassEnum>(false);
+
+				// create a visit using the minimum possible amount of information
+				var visit = new Visit
+								{
+									Patient = patient,
+									VisitNumber = new VisitNumber(accessionNumber, orderingFacility.InformationAuthority),
+									Status = VisitStatus.AA,
+									AdmitTime = Platform.Time,
+									Facility = orderingFacility,
+									PatientClass = CollectionUtils.FirstElement(patientClasses)
+								};
+
+				this.PersistenceContext.Lock(visit, DirtyState.New);
+				return visit;
+			}
+
+			throw new RequestValidationException("A visit is required.");
+		}
 	}
 }

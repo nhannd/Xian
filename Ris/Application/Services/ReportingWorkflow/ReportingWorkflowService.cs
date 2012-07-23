@@ -482,7 +482,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		[UpdateOperation]
 		[OperationEnablement("CanReassignProcedureStep")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Reassign)]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Reassign)]
 		public ReassignProcedureStepResponse ReassignProcedureStep(ReassignProcedureStepRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
@@ -692,9 +691,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 				return false;
 
 			var procedureStep = this.PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
-
-			if (procedureStep.Is<ProtocolProcedureStep>())
-				return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Reassign);
 
 			if (procedureStep.Is<ReportingProcedureStep>())
 				return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Reassign)

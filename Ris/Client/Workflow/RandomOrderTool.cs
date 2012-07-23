@@ -29,7 +29,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", Application.Common.AuthorityTokens.Development.CreateTestOrder)]
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	public class RandomOrderTool : Tool<IToolContext>
 	{
 		private bool _enabled;
@@ -69,11 +68,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (item == null)
 				{
 					var profile = GetRandomPatient() ?? RandomUtils.CreatePatient();
-					PlaceRandomOrderForPatient(profile.PatientRef, profile.Mrn.AssigningAuthority);
+					PlaceRandomOrderForPatient(profile, profile.Mrn.AssigningAuthority);
 				}
 				else
 				{
-					PlaceRandomOrderForPatient(item.PatientRef, item.Mrn.AssigningAuthority);
+					PlaceRandomOrderForPatient(new PatientProfileSummary {PatientProfileRef = item.PatientProfileRef, PatientRef = item.PatientRef}, item.Mrn.AssigningAuthority);
 				}
 
 				// invalidate the scheduled worklist folders
@@ -85,11 +84,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		private static void PlaceRandomOrderForPatient(EntityRef patientRef, EnumValueInfo informationAuthority)
+		private static void PlaceRandomOrderForPatient(PatientProfileSummary patientProfile, EnumValueInfo informationAuthority)
 		{
 			// find a random active visit, or create one
-			var randomVisit = GetActiveVisitForPatient(patientRef, informationAuthority) ??
-				RandomUtils.CreateVisit(patientRef, informationAuthority, 0);
+			var randomVisit = GetActiveVisitForPatient(patientProfile.PatientRef, informationAuthority) ??
+				RandomUtils.CreateVisit(patientProfile, informationAuthority, 0);
 
 			// create the order
 			RandomUtils.RandomOrder(randomVisit, informationAuthority, null, 0);

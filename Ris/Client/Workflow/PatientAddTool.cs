@@ -18,7 +18,8 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using System.Threading;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using ClearCanvas.Ris.Application.Common;
+using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -31,16 +32,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create)]
 
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
 	public class PatientAddTool : Tool<IToolContext>
-    {
-        /// <summary>
-        /// Called by the framework when the user clicks the "apply" menu item or toolbar button.
-        /// </summary>
-        public void Apply()
-        {
-			if(this.Context is IRegistrationWorkflowItemToolContext)
+	{
+		/// <summary>
+		/// Called by the framework when the user clicks the "apply" menu item or toolbar button.
+		/// </summary>
+		public void Apply()
+		{
+			if (this.Context is IRegistrationWorkflowItemToolContext)
 				Open(((IRegistrationWorkflowItemToolContext)this.Context).DesktopWindow);
 			else if (this.Context is IPatientSearchToolContext)
 				Open(((IPatientSearchToolContext)this.Context).DesktopWindow);
@@ -50,18 +50,20 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				PatientProfileEditorComponent editor = new PatientProfileEditorComponent();
-				ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(
+				var editor = new PatientProfileEditorComponent();
+				var result = ApplicationComponent.LaunchAsDialog(
 					desktopWindow,
 					editor,
 					SR.TitleNewPatient);
 
-				if (result == ApplicationComponentExitCode.Accepted && 
-					Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.PatientBiography.View))
+				if (result == ApplicationComponentExitCode.Accepted && this.Context is IRegistrationWorkflowItemToolContext)
 				{
-					// open the patient overview for the newly created patient
-					Document doc = new PatientBiographyDocument(editor.PatientRef, editor.PatientProfileRef, desktopWindow);
-					doc.Open();
+					// if patient successfully added, invoke a search on the MRN so that the patient appears in the Home page
+					var searchParams = new WorklistSearchParams(new WorklistItemTextQueryRequest.AdvancedSearchFields()
+																	{
+																		Mrn = editor.PatientProfile.Mrn.Id
+																	});
+					((IRegistrationWorkflowItemToolContext)this.Context).ExecuteSearch(searchParams);
 				}
 			}
 			catch (Exception e)
@@ -69,5 +71,5 @@ namespace ClearCanvas.Ris.Client.Workflow
 				ExceptionHandler.Report(e, desktopWindow);
 			}
 		}
-    }
+	}
 }

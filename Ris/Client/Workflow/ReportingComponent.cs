@@ -387,6 +387,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private bool _userCancelled;
 		private event EventHandler _worklistItemChanged;
 
+		private readonly WorkflowConfigurationReader _workflowConfiguration = new WorkflowConfigurationReader();
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -431,7 +433,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_orderComponent = new ReportingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
 				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrder, _orderComponent));
 
-				_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
+				_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachmentSite.Order);
 				_orderAttachmentsComponent.OrderRef = this.WorklistItem.OrderRef;
 				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _orderAttachmentsComponent));
 
@@ -708,9 +710,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return;
 			}
 
-			PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(this.WorklistItem, this.Host.DesktopWindow,
-				delegate
-				{
+			// JR: removed during re-org to Extended Workflow plugin... 
+			// We can put a hook in here if we need to, but for now assume it isn't needed
+
+			//PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(this.WorklistItem, this.Host.DesktopWindow,
+			//    delegate
+			//    {
 					try
 					{
 						CloseImages();
@@ -745,7 +750,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					{
 						ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
 					}
-				});
+				//});
 		}
 
 		public bool VerifyEnabled
@@ -846,12 +851,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool ReturnToInterpreterEnabled
 		{
-			get { return _canReturnToInterpreter; }
+			get { return _canReturnToInterpreter && _workflowConfiguration.EnableInterpretationReviewWorkflow; }
 		}
 
 		public bool ReturnToInterpreterVisible
 		{
-			get { return _canReturnToInterpreter && Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify); }
+			get
+			{ 
+				return _canReturnToInterpreter && _workflowConfiguration.EnableInterpretationReviewWorkflow
+						&& Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Report.Verify);
+			}
 		}
 
 		#endregion
@@ -901,7 +910,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool SendToTranscriptionVisible
 		{
-			get { return ReportingSettings.Default.EnableTranscriptionWorkflow; }
+			get { return _workflowConfiguration.EnableTranscriptionWorkflow; }
 		}
 
 		#endregion
@@ -1023,7 +1032,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get
 			{
 				return _canCompleteInterpretationForTranscription
-					&& ReportingSettings.Default.EnableTranscriptionWorkflow;
+					&& _workflowConfiguration.EnableTranscriptionWorkflow;
 			}
 		}
 

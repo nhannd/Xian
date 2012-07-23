@@ -146,12 +146,17 @@ namespace ClearCanvas.Ris.Client
 			_orderDetailComponent = new BiographyOrderDetailViewComponent();
 			_visitDetailComponent = new BiographyVisitDetailViewComponent();
 			_orderReportsComponent = new BiographyOrderReportsComponent();
-			_orderDocumentComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
+			_orderDocumentComponent = new AttachedDocumentPreviewComponent(true, AttachmentSite.Order);
 			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent(true);
 
 			_rightHandComponentContainer = new TabComponentContainer();
 			_rightHandComponentContainer.Pages.Add(new TabPage("Order Details", _orderDetailComponent));
-			_rightHandComponentContainer.Pages.Add(new TabPage("Visit Details", _visitDetailComponent));
+
+			if (new WorkflowConfigurationReader().EnableVisitWorkflow)
+			{
+				_rightHandComponentContainer.Pages.Add(new TabPage("Visit Details", _visitDetailComponent));
+			}
+
 			_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _orderAdditionalInfoComponent));
 			_rightHandComponentContainer.Pages.Add(new TabPage("Reports", _orderReportsComponent));
 			_rightHandComponentContainer.Pages.Add(new TabPage("Order Attachments", _orderDocumentComponent));
@@ -266,7 +271,7 @@ namespace ClearCanvas.Ris.Client
 				_orderDetailComponent.Context = null;
 				_visitDetailComponent.Context = null;
 				_orderReportsComponent.Context = null;
-				_orderDocumentComponent.OrderAttachments = new List<OrderAttachmentSummary>();
+				_orderDocumentComponent.Attachments = new List<AttachmentSummary>();
 				_orderAdditionalInfoComponent.OrderExtendedProperties = new Dictionary<string, string>();
 				_orderAdditionalInfoComponent.HealthcareContext = null;
 			}
@@ -275,7 +280,7 @@ namespace ClearCanvas.Ris.Client
 				_orderDetailComponent.Context = new OrderDetailViewComponent.OrderContext(_selectedOrder.OrderRef);
 				_visitDetailComponent.Context = new VisitDetailViewComponent.VisitContext(_selectedOrder.VisitRef);
 				_orderReportsComponent.Context = new BiographyOrderReportsComponent.ReportsContext(_selectedOrder.OrderRef, _orderDetail.PatientRef, _orderDetail.AccessionNumber);
-				_orderDocumentComponent.OrderAttachments = _orderDetail == null ? new List<OrderAttachmentSummary>() : _orderDetail.Attachments;
+				_orderDocumentComponent.Attachments = _orderDetail == null ? new List<AttachmentSummary>() : _orderDetail.Attachments;
 				_orderAdditionalInfoComponent.OrderExtendedProperties = _orderDetail == null ? new Dictionary<string, string>() : _orderDetail.ExtendedProperties;
 				_orderAdditionalInfoComponent.HealthcareContext = _selectedOrder;
 			}

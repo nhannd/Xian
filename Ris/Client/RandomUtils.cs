@@ -276,9 +276,9 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="informationAuthority">Information authority to use for the visit number.</param>
 		/// <param name="admitOffsetDays">A positive or negative number of days from today.</param>
 		/// <returns></returns>
-		public static VisitSummary CreateVisit(EntityRef patientRef, EnumValueInfo informationAuthority, int admitOffsetDays)
+		public static VisitSummary CreateVisit(PatientProfileSummary patientProfile, EnumValueInfo informationAuthority, int admitOffsetDays)
 		{
-			return CreateVisit(patientRef, informationAuthority, admitOffsetDays, null);
+			return CreateVisit(patientProfile, informationAuthority, admitOffsetDays, null);
 		}
 
 		/// <summary>
@@ -289,7 +289,7 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="admitOffsetDays">A positive or negative number of days from today.</param>
 		/// <param name="AdmissionType">Emergency or other types</param>
 		/// <returns></returns>
-		public static VisitSummary CreateVisit(EntityRef patientRef, EnumValueInfo informationAuthority, int admitOffsetDays, EnumValueInfo AdmissionType)
+		public static VisitSummary CreateVisit(PatientProfileSummary patientProfile, EnumValueInfo informationAuthority, int admitOffsetDays, EnumValueInfo AdmissionType)
 		{
 			InitReferenceDataCacheOnce();
 
@@ -299,7 +299,7 @@ namespace ClearCanvas.Ris.Client
 			const string activeAdmittedVisitStatus = "AA";
 			var visitDetail = new VisitDetail
 				{
-					PatientRef = patientRef,
+					Patient = patientProfile,
 					VisitNumber = new CompositeIdentifierDetail(GenerateRandomIntegerString(10), informationAuthority),
 					PatientClass = ChooseRandom(_visitEditorFormData.PatientClassChoices),
 					PatientType = ChooseRandom(_visitEditorFormData.PatientTypeChoices),
@@ -325,28 +325,12 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		/// <param name="visit">Visit/patient for which the order is created.</param>
 		/// <param name="informationAuthority">Performing facility will be selected to match this information authority.</param>
-		/// <param name="schedulingOffsetDays">A positive or negative number of days from today.</param>
-		/// <returns></returns>
-		public static OrderSummary RandomOrder(VisitSummary visit, EnumValueInfo informationAuthority, int schedulingOffsetDays)
-		{
-			return RandomOrder(visit, informationAuthority, null, schedulingOffsetDays);
-		}
-
-		/// <summary>
-		/// Create a random order on the specified visit.
-		/// </summary>
-		/// <param name="visit">Visit/patient for which the order is created.</param>
-		/// <param name="informationAuthority">Performing facility will be selected to match this information authority.</param>
 		/// <param name="diagnosticServiceName">Name of the diagnostic service to order.</param>
 		/// <param name="schedulingOffsetDays">A positive or negative number of days from today.</param>
 		/// <returns></returns>
 		public static OrderSummary RandomOrder(VisitSummary visit, EnumValueInfo informationAuthority, string diagnosticServiceName, int schedulingOffsetDays)
 		{
 			return RandomOrder(visit, informationAuthority, diagnosticServiceName, schedulingOffsetDays,"", null, null);
-		}
-		public static OrderSummary RandomOrder(VisitSummary visit, EnumValueInfo informationAuthority, int schedulingOffsetDays, string modality, string facilityCode)
-		{
-			return RandomOrder(visit, informationAuthority, null, schedulingOffsetDays, modality, facilityCode, null);
 		}
 
 		/// <summary>
@@ -405,7 +389,7 @@ namespace ClearCanvas.Ris.Client
 
 					var requisition = new OrderRequisition
 						{
-							Patient = visit.PatientRef,
+							Patient = visit.Patient,
 							Visit = visit,
 							DiagnosticService = diagnosticService,
 							OrderingPractitioner = randomPhysician,
@@ -415,7 +399,7 @@ namespace ClearCanvas.Ris.Client
 							SchedulingRequestTime = scheduledTime,
 							Procedures = new List<ProcedureRequisition>(),
 							ResultRecipients = new List<ResultRecipientDetail>(),
-							Attachments = new List<OrderAttachmentSummary>(),
+							Attachments = new List<AttachmentSummary>(),
 							Notes = new List<OrderNoteDetail>()
 						};
 

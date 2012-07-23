@@ -28,6 +28,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	public class CompleteInterpretationForTranscriptionTool : ReportingWorkflowItemTool
 	{
+		private readonly WorkflowConfigurationReader _workflowConfiguration = new WorkflowConfigurationReader();
+
 		public CompleteInterpretationForTranscriptionTool()
 			: base("CompleteInterpretationForTranscription")
 		{
@@ -42,10 +44,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool Visible
 		{
-			get
-			{
-				return ReportingSettings.Default.EnableTranscriptionWorkflow;
-			}
+			get { return _workflowConfiguration.EnableTranscriptionWorkflow; }
 		}
 
 		public event EventHandler VisibleChanged
@@ -233,11 +232,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			// show PD dialog if required
-			return PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(item, this.Context.DesktopWindow,
-				delegate
-				{
-					try
-					{
+			//return PreliminaryDiagnosis.ShowDialogOnVerifyIfRequired(item, this.Context.DesktopWindow,
+			//	delegate
+			//	{
+					//try
+					//{
 						try
 						{
 							ExecuteHelper(item.ProcedureStepName, item.ProcedureStepRef, null);
@@ -246,14 +245,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 						{
 							ExecuteHelper(item.ProcedureStepName, item.ProcedureStepRef, GetSupervisorRef());
 						}
-					}
-					catch (Exception e)
-					{
-						ExceptionHandler.Report(e, this.Context.DesktopWindow);
-					}
+					//}
+					//catch (Exception e)
+					//{
+					//    ExceptionHandler.Report(e, this.Context.DesktopWindow);
+					//}
 
 					this.Context.InvalidateFolders(typeof(Folders.Reporting.VerifiedFolder));
-				});
+			//	});
+			return true;
 		}
 
 		private void ExecuteHelper(string procedureStepName, EntityRef procedureStepRef, EntityRef supervisorRef)

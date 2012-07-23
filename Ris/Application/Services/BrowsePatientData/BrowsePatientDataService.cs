@@ -106,6 +106,11 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 
 		private ListVisitsResponse ListVisits(ListVisitsRequest request)
 		{
+			// hide visits if "visit workflow" is disabled
+			var workflowConfig = new WorkflowConfigurationReader();
+			if(!workflowConfig.EnableVisitWorkflow)
+				return null;
+
 			var browsePatientDataAssembler = new BrowsePatientDataAssembler();
 
 			var patient = this.PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
@@ -122,6 +127,11 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 
 		private GetVisitDetailResponse GetVisitDetail(GetVisitDetailRequest request)
 		{
+			// hide visits if "visit workflow" is disabled
+			var workflowConfig = new WorkflowConfigurationReader();
+			if (!workflowConfig.EnableVisitWorkflow)
+				return null;
+
 			var visit = this.PersistenceContext.Load<Visit>(request.VisitRef, EntityLoadFlags.Proxy);
 
 			var assembler = new VisitAssembler();
@@ -156,11 +166,9 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 		{
 			var order = this.PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
 
-			var response = new GetOrderDetailResponse();
-			var orderAssembler = new OrderAssembler();
 			var createOrderDetailOptions = new OrderAssembler.CreateOrderDetailOptions
 			{
-				IncludeVisit = request.IncludeVisit,
+				IncludeVisit = request.IncludeVisit && (new WorkflowConfigurationReader()).EnableVisitWorkflow,
 				IncludeProcedures = request.IncludeProcedures,
 				IncludeNotes = request.IncludeNotes,
 				IncludeVirtualNotes = request.IncludeNotes,	// include virtual notes, if including notes at all
@@ -169,6 +177,9 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 				IncludeResultRecipients = request.IncludeResultRecipients,
 				IncludeExtendedProperties = request.IncludeExtendedProperties
 			};
+
+			var response = new GetOrderDetailResponse();
+			var orderAssembler = new OrderAssembler();
 			response.Order = orderAssembler.CreateOrderDetail(order, createOrderDetailOptions, this.PersistenceContext);
 
 			if (request.IncludeAlerts)

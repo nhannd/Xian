@@ -11,6 +11,7 @@
 
 using System;
 using ClearCanvas.Common.Serialization;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;

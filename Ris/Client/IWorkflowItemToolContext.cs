@@ -139,5 +139,11 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="folderClass"></param>
 		/// <param name="dropHandler"></param>
 		void UnregisterDropHandler(Type folderClass, IDropHandler<TItem> dropHandler);
+
+		/// <summary>
+		/// Executes the specified search.
+		/// </summary>
+		/// <param name="searchParams"></param>
+		void ExecuteSearch(SearchParams searchParams);
 	}
 }

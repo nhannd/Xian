@@ -35,7 +35,7 @@ namespace ClearCanvas.Enterprise.Authentication {
         /// <param name="initialPassword"></param>
         /// <param name="authorityGroups"></param>
         /// <returns></returns>
-        public static User CreateNewUser(UserInfo userInfo, Password initialPassword, ISet<AuthorityGroup> authorityGroups)
+        public static User CreateNewUser(UserInfo userInfo, Password initialPassword, Iesi.Collections.Generic.ISet<AuthorityGroup> authorityGroups)
         {
 			Platform.CheckForNullReference(userInfo, "userInfo");
 			Platform.CheckForNullReference(initialPassword, "initialPassword");

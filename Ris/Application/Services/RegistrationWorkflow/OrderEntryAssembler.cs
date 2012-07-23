@@ -22,6 +22,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 	{
 		public OrderRequisition CreateOrderRequisition(Order order, IPersistenceContext context)
 		{
+			var patientProfileAssembler = new PatientProfileAssembler();
 			var visitAssembler = new VisitAssembler();
 			var pracAssembler = new ExternalPractitionerAssembler();
 			var facilityAssembler = new FacilityAssembler();
@@ -32,7 +33,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			var requisition = new OrderRequisition
 				{
-					Patient = order.Patient.GetRef(),
+					OrderRef = order.GetRef(),
+					Patient = patientProfileAssembler.CreatePatientProfileSummary(CollectionUtils.FirstElement(order.Procedures).PatientProfile, context),
 					Visit = visitAssembler.CreateVisitSummary(order.Visit, context),
 					DiagnosticService = dsAssembler.CreateSummary(order.DiagnosticService),
 					SchedulingRequestTime = order.SchedulingRequestTime,
@@ -46,7 +48,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					Procedures = CollectionUtils.Map<Procedure, ProcedureRequisition>(
 						order.Procedures,
 						procedure => CreateProcedureRequisition(procedure, context)),
-					Attachments = CollectionUtils.Map<OrderAttachment, OrderAttachmentSummary>(
+					Attachments = CollectionUtils.Map<OrderAttachment, AttachmentSummary>(
 						order.Attachments,
 						attachment => attachmentAssembler.CreateOrderAttachmentSummary(attachment, context)),
 					Notes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(

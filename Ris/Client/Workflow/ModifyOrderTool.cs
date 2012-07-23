@@ -48,8 +48,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		protected bool ExecuteCore(WorklistItemSummaryBase item)
 		{
 			OrderEditorComponent component = new OrderEditorComponent(
-				item.PatientRef,
-				item.PatientProfileRef,
+				new PatientProfileSummary { PatientRef = item.PatientRef, PatientProfileRef = item.PatientProfileRef },
 				item.OrderRef,
 				OrderEditorComponent.Mode.ModifyOrder);
 
@@ -95,30 +94,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			DocumentManager.InvalidateFolder(typeof(Folders.Registration.ScheduledFolder));
 			DocumentManager.InvalidateFolder(typeof(Folders.Registration.CheckedInFolder));
-		}
-	}
-
-	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-	public class BookingModifyOrderTool : ModifyOrderToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
-	{
-		public override void Initialize()
-		{
-			base.Initialize();
-
-			this.Context.RegisterDoubleClickHandler(
-				(IClickAction)CollectionUtils.SelectFirst(
-					this.Actions,
-					delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("apply"); }));
-		}
-
-		protected override bool Execute(RegistrationWorklistItemSummary item)
-		{
-			return ExecuteCore(item);
-		}
-
-		protected override void InvalidateFolders()
-		{
-			DocumentManager.InvalidateFolder(typeof(Folders.Registration.ToBeScheduledFolder));
 		}
 	}
 
