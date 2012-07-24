@@ -49,7 +49,8 @@ namespace ClearCanvas.Ris.Client
 
 		public override string FormatItem(PatientProfileSummary item)
 		{
-			return string.Format("{0} {1}", item.Mrn.Id,  Formatting.PersonNameFormat.Format(item.Name));
+			return item == null ? null : 
+				string.Format("{0} {1}", item.Mrn.Id, Formatting.PersonNameFormat.Format(item.Name));
 		}
 	}
 }

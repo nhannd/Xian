@@ -167,7 +167,9 @@ namespace ClearCanvas.Ris.Client
 
 		private readonly Mode _mode;
 		private bool _isComplete;
+		private PatientProfileLookupHandler _patientProfileLookupHandler;
 		private PatientProfileSummary _patientProfile;
+		private WorklistItemSummaryBase _worklistItem;
 		private EntityRef _orderRef;
 
 		private List<VisitSummary> _allVisits;
@@ -214,17 +216,14 @@ namespace ClearCanvas.Ris.Client
 
 		private event EventHandler _changeCommitted;
 
+		private readonly OrderNoteSummaryComponent _noteSummaryComponent;
+		private readonly OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 		private readonly AttachedDocumentPreviewComponent _attachmentSummaryComponent;
 		private readonly List<AttachmentSummary> _newAttachments = new List<AttachmentSummary>();
-		private readonly OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 
-		private TabComponentContainer _rightHandComponentContainer;
-		private ChildComponentHost _rightHandComponentContainerHost;
-
-		private readonly OrderNoteSummaryComponent _noteSummaryComponent;
-		private ChildComponentHost _orderNoteSummaryComponentHost;
-
-		private ChildComponentHost _bannerComponentHost;
+		private ChildComponentHost _noteComponentHost;
+		private ChildComponentHost _additionalInfoComponentHost;
+		private ChildComponentHost _attachmentsComponentHost;
 
 		private List<IOrderEditorPage> _extensionPages;
 		private Dictionary<string, string> _extendedProperties = new Dictionary<string, string>();
@@ -243,33 +242,26 @@ namespace ClearCanvas.Ris.Client
 		/// Constructor for creating a new order.
 		/// </summary>
 		public OrderEditorComponent(PatientProfileSummary patientProfile)
-			: this(patientProfile, null, Mode.NewOrder)
+			: this((EntityRef)null, Mode.NewOrder)
 		{
-		}
-
-		/// <summary>
-		/// Constructor for editing a requisition, in any mode.
-		/// </summary>
-		/// <param name="requisition"></param>
-		/// <param name="mode"></param>
-		public OrderEditorComponent(OrderRequisition requisition, Mode mode)
-			:this(requisition.Patient, requisition.OrderRef, mode)
-		{
-			_preLoadedRequisition = requisition;
+			_patientProfile = patientProfile;
 		}
 
 		/// <summary>
 		/// Constructor for modifying or replacing an order.
 		/// </summary>
-		public OrderEditorComponent(PatientProfileSummary patientProfile, EntityRef orderRef, Mode mode)
+		public OrderEditorComponent(WorklistItemSummaryBase worklistItem, Mode mode)
+			:this(worklistItem.OrderRef, mode)
 		{
-			Platform.CheckForNullReference(patientProfile, "patientProfile");
+			_worklistItem = worklistItem;
+		}
+
+		private OrderEditorComponent(EntityRef orderRef, Mode mode)
+		{
 			if (mode == Mode.ModifyOrder || mode == Mode.ReplaceOrder)
-				Platform.CheckForNullReference(orderRef, "orderRef");
+				Platform.CheckForNullReference(orderRef, "OrderRef");
 
 			_mode = mode;
-
-			_patientProfile = patientProfile;
 			_orderRef = orderRef;
 
 			_proceduresTable = new Table<ProcedureRequisition>();
@@ -342,11 +334,9 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			_bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(new HealthcareContext(_patientProfile.PatientRef, _patientProfile.PatientProfileRef, _orderRef)));
-			_bannerComponentHost.StartComponent();
+			_orderAdditionalInfoComponent.HealthcareContext = new HealthcareContext(this.PatientRef, this.PatientProfileRef, _orderRef);
 
-			_orderAdditionalInfoComponent.HealthcareContext = new HealthcareContext(_patientProfile.PatientRef, _patientProfile.PatientProfileRef, _orderRef);
-
+			_patientProfileLookupHandler = new PatientProfileLookupHandler(this.Host.DesktopWindow);
 			_recipientLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
 			_diagnosticServiceLookupHandler = new DiagnosticServiceLookupHandler(this.Host.DesktopWindow);
 			_orderingPractitionerLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
@@ -368,7 +358,7 @@ namespace ClearCanvas.Ris.Client
 			InitializeTabPages();
 
 			Async.Request(this,
-				(IOrderEntryService service) => service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientProfile.PatientRef)),
+				(IOrderEntryService service) => service.ListVisitsForPatient(new ListVisitsForPatientRequest(this.PatientRef)),
 				response =>
 				{
 					_allVisits = response.Visits;
@@ -418,22 +408,22 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Stop()
 		{
-			if (_bannerComponentHost != null)
+			if (_attachmentsComponentHost != null)
 			{
-				_bannerComponentHost.StopComponent();
-				_bannerComponentHost = null;
+				_attachmentsComponentHost.StopComponent();
+				_attachmentsComponentHost = null;
 			}
 
-			if (_orderNoteSummaryComponentHost != null)
+			if (_noteComponentHost != null)
 			{
-				_orderNoteSummaryComponentHost.StopComponent();
-				_orderNoteSummaryComponentHost = null;
+				_noteComponentHost.StopComponent();
+				_noteComponentHost = null;
 			}
 
-			if (_rightHandComponentContainerHost != null)
+			if (_additionalInfoComponentHost != null)
 			{
-				_rightHandComponentContainerHost.StopComponent();
-				_rightHandComponentContainerHost = null;
+				_additionalInfoComponentHost.StopComponent();
+				_additionalInfoComponentHost = null;
 			}
 
 			base.Stop();
@@ -443,29 +433,48 @@ namespace ClearCanvas.Ris.Client
 
 		#region Presentation Model
 
+		public ILookupHandler PatientProfileLookupHandler
+		{
+			get { return _patientProfileLookupHandler; }
+		}
+
+		[ValidateNotNull]
+		public PatientProfileSummary SelectedPatientProfile
+		{
+			get { return _patientProfile; }
+			set
+			{
+				if (value != this.SelectedPatientProfile)
+				{
+					_patientProfile = value;
+					this.Modified = true;
+				}
+			}
+		}
+
+		public bool IsPatientProfileEditable
+		{
+			get { return _mode == Mode.NewOrder; }
+		}
+
 		public bool OrderIsNotCompleted
 		{
 			get { return _mode != Mode.ModifyOrder || _isComplete == false; }
 		}
 
-		public int BannerHeight
+		public ApplicationComponentHost AttachmentsComponentHost
 		{
-			get { return BannerSettings.Default.BannerHeight; }
-		}
-
-		public ApplicationComponentHost RightHandComponentContainerHost
-		{
-			get { return _rightHandComponentContainerHost; }
+			get { return _attachmentsComponentHost; }
 		}
 
 		public ApplicationComponentHost OrderNoteSummaryHost
 		{
-			get { return _orderNoteSummaryComponentHost; }
+			get { return _noteComponentHost; }
 		}
 
-		public ApplicationComponentHost BannerComponentHost
+		public ApplicationComponentHost AdditionalInfoComponentHost
 		{
-			get { return _bannerComponentHost; }
+			get { return _additionalInfoComponentHost; }
 		}
 
 		public EntityRef OrderRef
@@ -591,7 +600,7 @@ namespace ClearCanvas.Ris.Client
 				// condition where selected visit may be overwritten.
 				Platform.GetService<IOrderEntryService>(service =>
 				{
-					var response = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientProfile.PatientRef));
+					var response = service.ListVisitsForPatient(new ListVisitsForPatientRequest(this.PatientRef));
 					_allVisits = response.Visits;
 					UpdateVisits();
 				});
@@ -1282,15 +1291,14 @@ namespace ClearCanvas.Ris.Client
 
 		private void InitializeTabPages()
 		{
-			_orderNoteSummaryComponentHost = new ChildComponentHost(this.Host, _noteSummaryComponent);
-			_orderNoteSummaryComponentHost.StartComponent();
+			_noteComponentHost = new ChildComponentHost(this.Host, _noteSummaryComponent);
+			_noteComponentHost.StartComponent();
 
-			_rightHandComponentContainer = new TabComponentContainer();
-			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
+			_additionalInfoComponentHost = new ChildComponentHost(this.Host, _orderAdditionalInfoComponent);
+			_additionalInfoComponentHost.StartComponent();
 
-			_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _orderAdditionalInfoComponent));
-			var attachmentsTabPage = new TabPage("Order Attachments", _attachmentSummaryComponent);
-			_rightHandComponentContainer.Pages.Add(attachmentsTabPage);
+			_attachmentsComponentHost = new ChildComponentHost(this.Host, _attachmentSummaryComponent);
+			_attachmentsComponentHost.StartComponent();
 
 			// instantiate all extension pages
 			_extensionPages = new List<IOrderEditorPage>();
@@ -1303,16 +1311,7 @@ namespace ClearCanvas.Ris.Client
 			// the navigator will start those components if the user goes to that page
 			foreach (var page in _extensionPages)
 			{
-				_rightHandComponentContainer.Pages.Add(new TabPage(page.Path, page.GetComponent()));
-			}
-
-			_rightHandComponentContainerHost.StartComponent();
-
-			if (_newAttachments.Count > 0)
-			{
-				_rightHandComponentContainer.CurrentPage = attachmentsTabPage;
-				_attachmentSummaryComponent.SetInitialSelection(_newAttachments[0]);
-				this.Modified = true;
+				// todo Yen: how do we show extension tab pages?
 			}
 		}
 
@@ -1389,5 +1388,16 @@ namespace ClearCanvas.Ris.Client
 				callback(new GetExternalPractitionerContactPointsResponse(new List<ExternalPractitionerContactPointDetail>()));
 			}
 		}
+
+		private EntityRef PatientProfileRef
+		{
+			get { return _patientProfile != null ? _patientProfile.PatientProfileRef : _worklistItem.PatientProfileRef; }
+		}
+
+		private EntityRef PatientRef
+		{
+			get { return _patientProfile != null ? _patientProfile.PatientRef : _worklistItem.PatientRef; }
+		}
+
 	}
 }
