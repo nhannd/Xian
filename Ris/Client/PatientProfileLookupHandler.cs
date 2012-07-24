@@ -39,10 +39,10 @@ namespace ClearCanvas.Ris.Client
 			return response;
 		}
 
-		public override bool ResolveNameInteractive(string query, out PatientProfileSummary patientProfile)
+		public override bool ResolveNameInteractive(string query, out PatientProfileSummary result)
 		{
 			_desktopWindow.ShowMessageBox("TODO: implement me!", MessageBoxActions.Ok);
-			patientProfile = null;
+			result = null;
 			return false;
 		}
 

@@ -32,7 +32,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._scheduledTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this._scheduledDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
-			this._procedureType = new ClearCanvas.Desktop.View.WinForms.SuggestComboField();
 			this._performingFacility = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._laterality = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._portable = new System.Windows.Forms.CheckBox();
@@ -42,6 +41,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._modality = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._duration = new System.Windows.Forms.NumericUpDown();
 			this.label1 = new System.Windows.Forms.Label();
+			this._procedureType = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			((System.ComponentModel.ISupportInitialize)(this._duration)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -94,18 +94,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._scheduledDate.Size = new System.Drawing.Size(223, 41);
 			this._scheduledDate.TabIndex = 1;
 			this._scheduledDate.Value = null;
-			// 
-			// _procedureType
-			// 
-			this._procedureType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this._procedureType.LabelText = "Procedure Type";
-			this._procedureType.Location = new System.Drawing.Point(15, 20);
-			this._procedureType.Margin = new System.Windows.Forms.Padding(2);
-			this._procedureType.Name = "_procedureType";
-			this._procedureType.Size = new System.Drawing.Size(485, 41);
-			this._procedureType.TabIndex = 0;
-			this._procedureType.Value = null;
 			// 
 			// _performingFacility
 			// 
@@ -220,12 +208,25 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.label1.TabIndex = 13;
 			this.label1.Text = "Scheduled Duration (min)";
 			// 
+			// _procedureType
+			// 
+			this._procedureType.AutoSize = true;
+			this._procedureType.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._procedureType.LabelText = "Procedure Type";
+			this._procedureType.Location = new System.Drawing.Point(15, 19);
+			this._procedureType.Margin = new System.Windows.Forms.Padding(2);
+			this._procedureType.Name = "_procedureType";
+			this._procedureType.Size = new System.Drawing.Size(485, 43);
+			this._procedureType.TabIndex = 14;
+			this._procedureType.Value = null;
+			// 
 			// ProcedureEditorComponentControl
 			// 
 			this.AcceptButton = this._okButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._cancelButton;
+			this.Controls.Add(this._procedureType);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this._duration);
 			this.Controls.Add(this._modality);
@@ -235,7 +236,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._portable);
 			this.Controls.Add(this._laterality);
 			this.Controls.Add(this._performingFacility);
-			this.Controls.Add(this._procedureType);
 			this.Controls.Add(this._scheduledTime);
 			this.Controls.Add(this._scheduledDate);
 			this.Controls.Add(this._cancelButton);
@@ -254,8 +254,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private System.Windows.Forms.Button _okButton;
         private System.Windows.Forms.Button _cancelButton;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _scheduledTime;
-        private ClearCanvas.Desktop.View.WinForms.DateTimeField _scheduledDate;
-        private ClearCanvas.Desktop.View.WinForms.SuggestComboField _procedureType;
+		private ClearCanvas.Desktop.View.WinForms.DateTimeField _scheduledDate;
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _performingFacility;
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _laterality;
         private System.Windows.Forms.CheckBox _portable;
@@ -265,5 +264,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private Desktop.View.WinForms.ComboBoxField _modality;
 		private System.Windows.Forms.NumericUpDown _duration;
 		private System.Windows.Forms.Label label1;
+		private LookupField _procedureType;
     }
 }

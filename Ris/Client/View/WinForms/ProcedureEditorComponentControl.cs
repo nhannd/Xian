@@ -33,11 +33,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_component = component;
 
-			_procedureType.SuggestionProvider = _component.ProcedureTypeSuggestionProvider;
-			_procedureType.Format += delegate(object sender, ListControlConvertEventArgs e)
-										 {
-											 e.Value = _component.FormatProcedureType(e.ListItem);
-										 };
+			_procedureType.LookupHandler = _component.ProcedureTypeLookupHandler;
 			_procedureType.DataBindings.Add("Enabled", _component, "IsProcedureTypeEditable");
 			_procedureType.DataBindings.Add("Value", _component, "SelectedProcedureType", true, DataSourceUpdateMode.OnPropertyChanged);
 

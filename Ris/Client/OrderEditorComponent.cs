@@ -837,25 +837,14 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
-				var orderableProcedureTypes = new List<ProcedureTypeSummary>();
-				Platform.GetService<IOrderEntryService>(service =>
-				{
-					var response = service.ListOrderableProcedureTypes(
-						new ListOrderableProcedureTypesRequest(
-							CollectionUtils.Map<ProcedureRequisition, EntityRef>(
-								_proceduresTable.Items,
-								req => req.ProcedureType.ProcedureTypeRef)));
-					orderableProcedureTypes = response.OrderableProcedureTypes;
-				});
-
 				var procedureRequisition = new ProcedureRequisition(null, _orderingFacility);
 				var procedureEditor = new ProcedureEditorComponent(
 					procedureRequisition,
+					ProcedureEditorComponent.Mode.Add,
 					_facilityChoices,
 					_departmentChoices,
 					_lateralityChoices,
-					_schedulingCodeChoices,
-					orderableProcedureTypes);
+					_schedulingCodeChoices);
 
 				if (LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Add Procedure")
 					== ApplicationComponentExitCode.Accepted)
@@ -889,6 +878,7 @@ namespace ClearCanvas.Ris.Client
 					title = "Modify Procedure";
 					editor = new ProcedureEditorComponent(
 						_selectedProcedures[0],
+						ProcedureEditorComponent.Mode.Edit,
 						_facilityChoices,
 						_departmentChoices,
 						_lateralityChoices,
