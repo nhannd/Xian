@@ -106,9 +106,19 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				this.PersistenceContext.GetBroker<IDepartmentBroker>().Find(departmentSearchCriteria),
 				(Department d) => departmentAssembler.CreateSummary(d, this.PersistenceContext));
 
+			// Sorted list of department summaries for active departments
+			var modalityAssembler = new ModalityAssembler();
+			var modalitySearchCriteria = new ModalitySearchCriteria();
+			modalitySearchCriteria.Deactivated.EqualTo(false);
+			modalitySearchCriteria.Name.SortAsc(0);
+			var modalities = CollectionUtils.Map(
+				this.PersistenceContext.GetBroker<IModalityBroker>().Find(modalitySearchCriteria),
+				(Modality d) => modalityAssembler.CreateModalitySummary(d));
+
 			return new GetOrderEntryFormDataResponse(
 				facilities,
 				departments,
+				modalities,
 				EnumUtils.GetEnumValueList<OrderPriorityEnum>(this.PersistenceContext),
 				EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(this.PersistenceContext),
 				EnumUtils.GetEnumValueList<LateralityEnum>(this.PersistenceContext),

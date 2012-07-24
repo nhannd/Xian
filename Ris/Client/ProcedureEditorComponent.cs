@@ -50,9 +50,10 @@ namespace ClearCanvas.Ris.Client
 			Mode mode,
 			List<FacilitySummary> facilityChoices,
 			List<DepartmentSummary> departmentChoices,
+			List<ModalitySummary> modalityChoices,
 			List<EnumValueInfo> lateralityChoices,
 			List<EnumValueInfo> schedulingCodeChoices)
-			: base(facilityChoices, departmentChoices, lateralityChoices, schedulingCodeChoices)
+			: base(facilityChoices, departmentChoices, modalityChoices, lateralityChoices, schedulingCodeChoices)
 		{
 			Platform.CheckForNullReference(requisition, "requisition");
 
@@ -87,6 +88,7 @@ namespace ClearCanvas.Ris.Client
 			this.ScheduledDuration = _requisition.ScheduledDuration;
 			this.SelectedFacility = _requisition.PerformingFacility;
 			this.SelectedDepartment = _requisition.PerformingDepartment;
+			this.SelectedModality = _requisition.Modality;
 			this.SelectedLaterality = _requisition.Laterality;
 			this.SelectedSchedulingCode = _requisition.SchedulingCode;
 			this.PortableModality = _requisition.PortableModality;
@@ -102,6 +104,7 @@ namespace ClearCanvas.Ris.Client
 			_requisition.SchedulingCode = this.SelectedSchedulingCode;
 			_requisition.PerformingFacility = this.SelectedFacility;
 			_requisition.PerformingDepartment = this.SelectedDepartment;
+			_requisition.Modality = this.SelectedModality;
 			_requisition.PortableModality = this.PortableModality;
 			_requisition.CheckedIn = this.CheckedIn;
 		}
@@ -129,6 +132,11 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		public override bool IsPerformingDepartmentEditable
+		{
+			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
+		}
+
+		public override bool IsModalityEditable
 		{
 			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
 		}

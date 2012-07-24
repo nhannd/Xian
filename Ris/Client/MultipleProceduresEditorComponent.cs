@@ -44,13 +44,15 @@ namespace ClearCanvas.Ris.Client
 		private bool _isSchedulingCodeEditable;
 		private bool _isPortableEditable;
 		private bool _isCheckedInEditable;
+		private bool _isModalityEditable;
 
 		public MultipleProceduresEditorComponent(List<ProcedureRequisition> requisitions,
 			List<FacilitySummary> facilityChoices,
 			List<DepartmentSummary> departmentChoices,
+			List<ModalitySummary> modalityChoices,
 			List<EnumValueInfo> lateralityChoices,
 			List<EnumValueInfo> schedulingCodeChoices)
-			: base(facilityChoices, departmentChoices, lateralityChoices, schedulingCodeChoices)
+			: base(facilityChoices, departmentChoices, modalityChoices, lateralityChoices, schedulingCodeChoices)
 		{
 			Platform.CheckForNullReference(requisitions, "requisitions");
 
@@ -82,6 +84,7 @@ namespace ClearCanvas.Ris.Client
 			this.ScheduledDuration = GetCommonValue(_requisitions, r => r.ScheduledDuration);
 			this.SelectedFacility = GetCommonValue(_requisitions, r => r.PerformingFacility);
 			this.SelectedDepartment = GetCommonValue(_requisitions, r => r.PerformingDepartment);
+			this.SelectedModality = GetCommonValue(_requisitions, r => r.Modality);
 			this.SelectedLaterality = GetCommonValue(_requisitions, r => r.Laterality);
 			this.SelectedSchedulingCode = GetCommonValue(_requisitions, r => r.SchedulingCode);
 			this.PortableModality = GetCommonValue(_requisitions, r => r.PortableModality);
@@ -103,6 +106,9 @@ namespace ClearCanvas.Ris.Client
 
 				if (_isPerformingDepartmentEditable)
 					requisition.PerformingDepartment = this.SelectedDepartment;
+
+				if (_isModalityEditable)
+					requisition.Modality = this.SelectedModality;
 
 				if (_isLateralityEditable)
 					requisition.Laterality = this.SelectedLaterality;
@@ -142,6 +148,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			get { return _isPerformingDepartmentEditable; }
 			set { _isPerformingDepartmentEditable = value; }
+		}
+
+		public override bool IsModalityEditable
+		{
+			get { return _isModalityEditable; }
+			set { _isModalityEditable = value; }
 		}
 
 		public override bool IsLateralityEditable

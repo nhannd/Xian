@@ -26,6 +26,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 			string procedureNumber,
 			DateTime? scheduledTime,
 			int scheduledDuration,
+			ModalitySummary modality,
 			EnumValueInfo schedulingCode,
 			FacilitySummary performingFacility,
 			DepartmentSummary performingDepartment,
@@ -40,6 +41,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 			this.ProcedureNumber = procedureNumber;
 			this.ScheduledTime = scheduledTime;
 			this.ScheduledDuration = scheduledDuration;
+			this.Modality = modality;
 			this.SchedulingCode = schedulingCode;
 			this.PerformingFacility = performingFacility;
 			this.PerformingDepartment = performingDepartment;
@@ -86,6 +88,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 		/// </summary>
 		[DataMember]
 		public int ScheduledDuration;
+
+		/// <summary>
+		/// The modality on which the procedure is to be performed. Optional.
+		/// If not specified, the procedure will be scheduled for its default modality.
+		/// </summary>
+		[DataMember]
+		public ModalitySummary Modality;
 
 		/// <summary>
 		/// Indicates additional info about procedure scheduling via configurable codes.  Optional.

@@ -181,6 +181,7 @@ namespace ClearCanvas.Ris.Client
 
 		private List<FacilitySummary> _facilityChoices;
 		private List<DepartmentSummary> _departmentChoices;
+		private List<ModalitySummary> _modalityChoices;
 		private List<EnumValueInfo> _priorityChoices;
 		private List<EnumValueInfo> _cancelReasonChoices;
 
@@ -385,6 +386,7 @@ namespace ClearCanvas.Ris.Client
 
 					_facilityChoices = formChoicesResponse.FacilityChoices;
 					_departmentChoices = formChoicesResponse.DepartmentChoices;
+					_modalityChoices = formChoicesResponse.ModalityChoices;
 					_lateralityChoices = formChoicesResponse.LateralityChoices;
 					_schedulingCodeChoices = formChoicesResponse.SchedulingCodeChoices;
 
@@ -843,6 +845,7 @@ namespace ClearCanvas.Ris.Client
 					ProcedureEditorComponent.Mode.Add,
 					_facilityChoices,
 					_departmentChoices,
+					_modalityChoices,
 					_lateralityChoices,
 					_schedulingCodeChoices);
 
@@ -881,6 +884,7 @@ namespace ClearCanvas.Ris.Client
 						ProcedureEditorComponent.Mode.Edit,
 						_facilityChoices,
 						_departmentChoices,
+						_modalityChoices,
 						_lateralityChoices,
 						_schedulingCodeChoices);
 				}
@@ -891,6 +895,7 @@ namespace ClearCanvas.Ris.Client
 						_selectedProcedures,
 						_facilityChoices,
 						_departmentChoices,
+						_modalityChoices,
 						_lateralityChoices,
 						_schedulingCodeChoices);
 				}

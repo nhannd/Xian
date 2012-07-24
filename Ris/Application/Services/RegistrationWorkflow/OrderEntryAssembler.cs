@@ -9,6 +9,7 @@
 
 #endregion
 
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
@@ -106,9 +107,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 		public ProcedureRequisition CreateProcedureRequisition(Procedure procedure, IPersistenceContext context)
 		{
+			var modality = procedure.ModalityProcedureSteps.Select(mps => mps.Modality).FirstOrDefault();
+
 			var procedureTypeAssembler = new ProcedureTypeAssembler();
 			var facilityAssembler = new FacilityAssembler();
 			var departmentAssembler = new DepartmentAssembler();
+			var modalityAssembler = new ModalityAssembler();
 
 			// create requisition
 			return new ProcedureRequisition(
@@ -116,6 +120,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				procedure.Number,
 				procedure.ScheduledStartTime,
 				procedure.ScheduledDuration,
+				modalityAssembler.CreateModalitySummary(modality),
 				EnumUtils.GetEnumValueInfo(procedure.SchedulingCode),
 				procedure.PerformingFacility == null ? null : facilityAssembler.CreateFacilitySummary(procedure.PerformingFacility),
 				procedure.PerformingDepartment == null ? null : departmentAssembler.CreateSummary(procedure.PerformingDepartment, context),
@@ -157,6 +162,17 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			procedure.PerformingFacility = context.Load<Facility>(requisition.PerformingFacility.FacilityRef, EntityLoadFlags.Proxy);
 			procedure.PerformingDepartment = requisition.PerformingDepartment == null ? null
 				: context.Load<Department>(requisition.PerformingDepartment.DepartmentRef, EntityLoadFlags.Proxy);
+
+			// if the requisition explicitly specifies a modality, assign that modality to all MPS
+			// (we ignore the fact that the procedure plan can theoretically contain modality procedures steps spanning multiple 
+			// DICOM modalities, since in the small clinic use-case, each procedure type generally only has a single MPS)
+			if(requisition.Modality != null)
+			{
+				foreach (var mps in procedure.ModalityProcedureSteps)
+				{
+					mps.Modality = context.Load<Modality>(requisition.Modality.ModalityRef, EntityLoadFlags.Proxy);
+				}
+			}
 
 			procedure.Laterality = EnumUtils.GetEnumValue<Laterality>(requisition.Laterality);
 			procedure.Portable = requisition.PortableModality;

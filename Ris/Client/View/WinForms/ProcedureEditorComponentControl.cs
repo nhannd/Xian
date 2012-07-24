@@ -53,6 +53,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 				e.Value = _component.FormatDepartment(e.ListItem);
 			};
 
+			_modality.DataSource = _component.ModalityChoices;
+			_modality.DataBindings.Add("Value", _component, "SelectedModality", true, DataSourceUpdateMode.OnPropertyChanged);
+			_modality.DataBindings.Add("Enabled", _component, "IsModalityEditable");
+			_modality.Format += delegate(object sender, ListControlConvertEventArgs e)
+			{
+				e.Value = _component.FormatModality(e.ListItem);
+			};
+
 			_laterality.DataSource = _component.LateralityChoices;
 			_laterality.DataBindings.Add("Value", _component, "SelectedLaterality", true, DataSourceUpdateMode.OnPropertyChanged);
 

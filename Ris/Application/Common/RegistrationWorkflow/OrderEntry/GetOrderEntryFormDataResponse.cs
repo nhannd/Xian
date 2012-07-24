@@ -21,6 +21,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		public GetOrderEntryFormDataResponse(
 			List<FacilitySummary> facilityChoices,
 			List<DepartmentSummary> departmentChoices,
+			List<ModalitySummary> modalityChoices,
 			List<EnumValueInfo> orderPriorityChoices,
 			List<EnumValueInfo> cancelReasonChoices,
 			List<EnumValueInfo> lateralityChoices,
@@ -28,6 +29,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		{
 			this.FacilityChoices = facilityChoices;
 			this.DepartmentChoices = departmentChoices;
+			this.ModalityChoices = modalityChoices;
 			this.OrderPriorityChoices = orderPriorityChoices;
 			this.CancelReasonChoices = cancelReasonChoices;
 			this.LateralityChoices = lateralityChoices;
@@ -51,5 +53,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 
 		[DataMember]
 		public List<EnumValueInfo> SchedulingCodeChoices;
+
+		[DataMember]
+		public List<ModalitySummary> ModalityChoices;
 	}
 }

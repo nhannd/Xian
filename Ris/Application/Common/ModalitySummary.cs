@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
@@ -16,7 +17,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common
 {
 	[DataContract]
-	public class ModalitySummary : DataContractBase
+	public class ModalitySummary : DataContractBase, IEquatable<ModalitySummary>
 	{
 		public ModalitySummary(EntityRef modalityRef, string id, string name, EnumValueInfo dicomModality, bool deactivated)
 		{
@@ -45,5 +46,25 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public bool Deactivated;
+
+		public bool Equals(ModalitySummary other)
+		{
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return Equals(other.ModalityRef, ModalityRef);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != typeof (ModalitySummary)) return false;
+			return Equals((ModalitySummary) obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return (ModalityRef != null ? ModalityRef.GetHashCode() : 0);
+		}
 	}
 }
