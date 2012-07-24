@@ -115,6 +115,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				procedureTypeAssembler.CreateSummary(procedure.Type),
 				procedure.Number,
 				procedure.ScheduledStartTime,
+				procedure.ScheduledDuration,
 				EnumUtils.GetEnumValueInfo(procedure.SchedulingCode),
 				procedure.PerformingFacility == null ? null : facilityAssembler.CreateFacilitySummary(procedure.PerformingFacility),
 				procedure.PerformingDepartment == null ? null : departmentAssembler.CreateSummary(procedure.PerformingDepartment, context),

@@ -34,6 +34,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly EnumValueInfo _schedulingCodeNone = new EnumValueInfo(null, SR.DummyItemNone);
 
 		private DateTime? _scheduledDateTime;
+		private int _scheduledDuration;
 		private FacilitySummary _selectedFacility;
 		private DepartmentSummary _selectedDepartment;
 		private EnumValueInfo _selectedLaterality;
@@ -78,6 +79,12 @@ namespace ClearCanvas.Ris.Client
 		#region Presentation Model
 
 		public virtual bool IsScheduledDateTimeEditable
+		{
+			get { return true; }
+			set { }
+		}
+
+		public virtual bool IsScheduledDurationEditable
 		{
 			get { return true; }
 			set { }
@@ -233,6 +240,19 @@ namespace ClearCanvas.Ris.Client
 		{
 			get { return this.ScheduledDate; }
 			set { this.ScheduledDate = value; }
+		}
+
+		public int ScheduledDuration
+		{
+			get { return _scheduledDuration; }
+			set
+			{
+				if (value == _scheduledDuration)
+					return;
+
+				_scheduledDuration = value;
+				NotifyPropertyChanged("ScheduledDuration");
+			}
 		}
 
 		public bool PortableModality

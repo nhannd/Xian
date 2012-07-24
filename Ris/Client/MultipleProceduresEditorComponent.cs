@@ -37,6 +37,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly List<ProcedureRequisition> _requisitions;
 
 		private bool _isScheduledTimeEditable;
+		private bool _isScheduledDurationEditable;
 		private bool _isPerformingFacilityEditable;
 		private bool _isPerformingDepartmentEditable;
 		private bool _isLateralityEditable;
@@ -78,6 +79,7 @@ namespace ClearCanvas.Ris.Client
 		protected override void LoadFromRequisition()
 		{
 			this.ScheduledTime = GetCommonValue(_requisitions, r => r.ScheduledTime);
+			this.ScheduledDuration = GetCommonValue(_requisitions, r => r.ScheduledDuration);
 			this.SelectedFacility = GetCommonValue(_requisitions, r => r.PerformingFacility);
 			this.SelectedDepartment = GetCommonValue(_requisitions, r => r.PerformingDepartment);
 			this.SelectedLaterality = GetCommonValue(_requisitions, r => r.Laterality);
@@ -92,6 +94,9 @@ namespace ClearCanvas.Ris.Client
 			{
 				if (_isScheduledTimeEditable)
 					requisition.ScheduledTime = this.ScheduledTime;
+
+				if (_isScheduledDurationEditable)
+					requisition.ScheduledDuration = this.ScheduledDuration;
 
 				if (_isPerformingFacilityEditable)
 					requisition.PerformingFacility = this.SelectedFacility;
@@ -119,6 +124,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			get { return _isScheduledTimeEditable; }
 			set { _isScheduledTimeEditable = value; }
+		}
+
+		public override bool IsScheduledDurationEditable
+		{
+			get { return _isScheduledDurationEditable; }
+			set { _isScheduledDurationEditable = value; }
 		}
 
 		public override bool IsPerformingFacilityEditable

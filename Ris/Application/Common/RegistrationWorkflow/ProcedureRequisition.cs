@@ -25,6 +25,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 			ProcedureTypeSummary procedureType,
 			string procedureNumber,
 			DateTime? scheduledTime,
+			int scheduledDuration,
 			EnumValueInfo schedulingCode,
 			FacilitySummary performingFacility,
 			DepartmentSummary performingDepartment,
@@ -38,6 +39,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 			this.ProcedureType = procedureType;
 			this.ProcedureNumber = procedureNumber;
 			this.ScheduledTime = scheduledTime;
+			this.ScheduledDuration = scheduledDuration;
 			this.SchedulingCode = schedulingCode;
 			this.PerformingFacility = performingFacility;
 			this.PerformingDepartment = performingDepartment;

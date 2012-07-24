@@ -97,6 +97,7 @@ namespace ClearCanvas.Ris.Client
 			_selectedProcedureType = _requisition.ProcedureType;
 
 			this.ScheduledTime = _requisition.ScheduledTime;
+			this.ScheduledDuration = _requisition.ScheduledDuration;
 			this.SelectedFacility = _requisition.PerformingFacility;
 			this.SelectedDepartment = _requisition.PerformingDepartment;
 			this.SelectedLaterality = _requisition.Laterality;
@@ -109,6 +110,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			_requisition.ProcedureType = _selectedProcedureType;
 			_requisition.ScheduledTime = this.ScheduledTime;
+			_requisition.ScheduledDuration = this.ScheduledDuration;
 			_requisition.Laterality = this.SelectedLaterality;
 			_requisition.SchedulingCode = this.SelectedSchedulingCode;
 			_requisition.PerformingFacility = this.SelectedFacility;
@@ -125,6 +127,11 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		public override bool IsScheduledDateTimeEditable
+		{
+			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
+		}
+
+		public override bool IsScheduledDurationEditable
 		{
 			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
 		}
