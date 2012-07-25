@@ -34,6 +34,7 @@ namespace ClearCanvas.Healthcare
 			_procedureCheckIn = new ProcedureCheckIn();
 			_reports = new HashedSet<Report>();
 			_protocols = new HashedSet<Protocol>();
+			_scheduledDuration = type.DefaultDuration;
 		}
 
 		#region Public Properties

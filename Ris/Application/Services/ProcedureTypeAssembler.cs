@@ -9,10 +9,8 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
@@ -21,46 +19,48 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    public class ProcedureTypeAssembler
-    {
+	public class ProcedureTypeAssembler
+	{
 		public ProcedureTypeSummary CreateSummary(ProcedureType rpt)
-        {
-            return new ProcedureTypeSummary(rpt.GetRef(), rpt.Name, rpt.Id, rpt.Deactivated);
-        }
+		{
+			return new ProcedureTypeSummary(rpt.GetRef(), rpt.Name, rpt.Id, rpt.DefaultDuration, rpt.Deactivated);
+		}
 
 		public ProcedureTypeDetail CreateDetail(ProcedureType procedureType)
-        {
+		{
 			// write plan to string
 			string planXml;
-			StringBuilder sb = new StringBuilder();
-			using (XmlTextWriter writer = new XmlTextWriter(new StringWriter(sb)))
+			var sb = new StringBuilder();
+			using (var writer = new XmlTextWriter(new StringWriter(sb)))
 			{
 				writer.Formatting = Formatting.Indented;
 				procedureType.GetPlanXml().Save(writer);
 				planXml = sb.ToString();
 			}
 
-            return new ProcedureTypeDetail(
-                procedureType.GetRef(),
-                procedureType.Id,
-                procedureType.Name,
+			return new ProcedureTypeDetail(
+				procedureType.GetRef(),
+				procedureType.Id,
+				procedureType.Name,
 				procedureType.BaseType == null ? null : CreateSummary(procedureType.BaseType),
 				planXml,
+				procedureType.DefaultDuration,
 				procedureType.Deactivated);
-        }
+		}
 
 		public void UpdateProcedureType(ProcedureType procType, ProcedureTypeDetail detail, IPersistenceContext context)
 		{
 			procType.Id = detail.Id;
 			procType.Name = detail.Name;
 			procType.BaseType = detail.BaseType == null
-			                    	? null
-			                    	: context.Load<ProcedureType>(detail.BaseType.ProcedureTypeRef, EntityLoadFlags.Proxy);
+									? null
+									: context.Load<ProcedureType>(detail.BaseType.ProcedureTypeRef, EntityLoadFlags.Proxy);
+			procType.DefaultDuration = detail.DefaultDuration;
 			procType.Deactivated = detail.Deactivated;
 
 			try
 			{
-				XmlDocument xmlPlan = new XmlDocument();
+				var xmlPlan = new XmlDocument();
 				xmlPlan.LoadXml(detail.PlanXml);
 				procType.SetPlanXml(xmlPlan);
 			}
@@ -69,5 +69,5 @@ namespace ClearCanvas.Ris.Application.Services
 				throw new RequestValidationException(string.Format("Procedure plan XML is invalid: {0}", e.Message));
 			}
 		}
-    }
+	}
 }

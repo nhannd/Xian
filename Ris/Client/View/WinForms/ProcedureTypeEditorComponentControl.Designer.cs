@@ -66,6 +66,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._xmlEditorPanel = new System.Windows.Forms.Panel();
 			this.label1 = new System.Windows.Forms.Label();
+			this._defaultDuration = new System.Windows.Forms.NumericUpDown();
+			this.label2 = new System.Windows.Forms.Label();
+			((System.ComponentModel.ISupportInitialize)(this._defaultDuration)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _acceptButton
@@ -99,7 +102,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._baseType.Location = new System.Drawing.Point(11, 52);
 			this._baseType.Margin = new System.Windows.Forms.Padding(2);
 			this._baseType.Name = "_baseType";
-			this._baseType.Size = new System.Drawing.Size(740, 41);
+			this._baseType.Size = new System.Drawing.Size(601, 41);
 			this._baseType.TabIndex = 10;
 			this._baseType.Value = null;
 			// 
@@ -131,9 +134,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _xmlEditorPanel
 			// 
-			this._xmlEditorPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this._xmlEditorPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this._xmlEditorPanel.Location = new System.Drawing.Point(11, 121);
 			this._xmlEditorPanel.Name = "_xmlEditorPanel";
 			this._xmlEditorPanel.Size = new System.Drawing.Size(740, 265);
@@ -148,10 +151,38 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.label1.TabIndex = 14;
 			this.label1.Text = "Procedure Plan XML";
 			// 
+			// _defaultDuration
+			// 
+			this._defaultDuration.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+			this._defaultDuration.Location = new System.Drawing.Point(643, 71);
+			this._defaultDuration.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+			this._defaultDuration.Name = "_defaultDuration";
+			this._defaultDuration.Size = new System.Drawing.Size(105, 20);
+			this._defaultDuration.TabIndex = 15;
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(640, 53);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(109, 13);
+			this.label2.TabIndex = 16;
+			this.label2.Text = "Default Duration (min)";
+			// 
 			// ProcedureTypeEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.label2);
+			this.Controls.Add(this._defaultDuration);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this._xmlEditorPanel);
 			this.Controls.Add(this._name);
@@ -161,6 +192,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._acceptButton);
 			this.Name = "ProcedureTypeEditorComponentControl";
 			this.Size = new System.Drawing.Size(777, 429);
+			((System.ComponentModel.ISupportInitialize)(this._defaultDuration)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -175,5 +207,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.TextField _name;
 		private System.Windows.Forms.Panel _xmlEditorPanel;
 		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.NumericUpDown _defaultDuration;
+		private System.Windows.Forms.Label label2;
     }
 }

@@ -162,6 +162,12 @@ namespace ClearCanvas.Ris.Client
 
 				_selectedProcedureType = value;
 				NotifyPropertyChanged("SelectedProcedureType");
+
+				if(_selectedProcedureType != null)
+				{
+					this.ScheduledDuration = _selectedProcedureType.DefaultDuration;
+					NotifyPropertyChanged("ScheduledDuration");
+				}
 			}
 		}
 

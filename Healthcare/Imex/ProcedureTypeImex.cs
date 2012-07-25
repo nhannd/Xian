@@ -39,6 +39,9 @@ namespace ClearCanvas.Healthcare.Imex
 
 			[DataMember]
 			public XmlDocument PlanXml;
+
+			[DataMember]
+			public int DefaultDuration;
 		}
 
 
@@ -59,7 +62,8 @@ namespace ClearCanvas.Healthcare.Imex
 						{
 							Deactivated = entity.Deactivated, 
 							Id = entity.Id, 
-							Name = entity.Name
+							Name = entity.Name,
+							DefaultDuration = entity.DefaultDuration
 						};
 
 			if (entity.BaseType != null)
@@ -75,6 +79,7 @@ namespace ClearCanvas.Healthcare.Imex
 		{
 			var pt = LoadOrCreateProcedureType(data.Id, data.Name, context);
 			pt.Deactivated = data.Deactivated;
+			pt.DefaultDuration = data.DefaultDuration;
 			if (!string.IsNullOrEmpty(data.BaseTypeId))
 			{
 				pt.BaseType = LoadOrCreateProcedureType(data.BaseTypeId, data.BaseTypeId, context);

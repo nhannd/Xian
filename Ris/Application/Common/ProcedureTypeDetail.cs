@@ -9,13 +9,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
-using System.Xml;
 
 namespace ClearCanvas.Ris.Application.Common
 {
@@ -26,7 +22,13 @@ namespace ClearCanvas.Ris.Application.Common
 		{
 		}
 
-		public ProcedureTypeDetail(EntityRef entityRef, string id, string name, ProcedureTypeSummary baseType, string planXml,
+		public ProcedureTypeDetail(
+			EntityRef entityRef,
+			string id,
+			string name,
+			ProcedureTypeSummary baseType,
+			string planXml,
+			int defaultDuration,
 			bool deactivated)
         {
             this.ProcedureTypeRef = entityRef;
@@ -34,6 +36,7 @@ namespace ClearCanvas.Ris.Application.Common
             this.Name = name;
         	this.BaseType = baseType;
         	this.PlanXml = planXml;
+			this.DefaultDuration = defaultDuration;
 			this.Deactivated = deactivated;
         }
 
@@ -53,11 +56,14 @@ namespace ClearCanvas.Ris.Application.Common
 		public string PlanXml;
 
 		[DataMember]
+    	public int DefaultDuration;
+
+		[DataMember]
 		public bool Deactivated;
 
 		public ProcedureTypeSummary GetSummary()
         {
-            return new ProcedureTypeSummary(this.ProcedureTypeRef, this.Name, this.Id, this.Deactivated);
+            return new ProcedureTypeSummary(this.ProcedureTypeRef, this.Name, this.Id, this.DefaultDuration, this.Deactivated);
         }
     }
 }

@@ -72,22 +72,23 @@ namespace ClearCanvas.Ris.Client
 		public override void Start()
 		{
 			Platform.GetService<IProcedureTypeAdminService>(
-				delegate(IProcedureTypeAdminService service)
-				{
-					_baseTypeChoices =
-						service.LoadProcedureTypeEditorFormData(new LoadProcedureTypeEditorFormDataRequest()).BaseProcedureTypeChoices;
-					if (_isNew)
+				service =>
 					{
-						_procedureTypeDetail = new ProcedureTypeDetail();
-					}
-					else
-					{
-						LoadProcedureTypeForEditResponse response = service.LoadProcedureTypeForEdit(new LoadProcedureTypeForEditRequest(_procedureTypeRef));
-						_procedureTypeDetail = response.ProcedureType;
-					}
-				});
+						_baseTypeChoices =
+							service.LoadProcedureTypeEditorFormData(new LoadProcedureTypeEditorFormDataRequest()).BaseProcedureTypeChoices;
+						if (_isNew)
+						{
+							_procedureTypeDetail = new ProcedureTypeDetail();
+						}
+						else
+						{
+							LoadProcedureTypeForEditResponse response =
+								service.LoadProcedureTypeForEdit(new LoadProcedureTypeForEditRequest(_procedureTypeRef));
+							_procedureTypeDetail = response.ProcedureType;
+						}
+					});
 
-			ICodeEditor editor = CodeEditorFactory.CreateCodeEditor();
+			var editor = CodeEditorFactory.CreateCodeEditor();
 			editor.Language = "xml";
 			editor.Text = _procedureTypeDetail.PlanXml;
 			editor.Modified = false;
@@ -141,6 +142,17 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		[ValidateGreaterThan(1)]
+		public int DefaultDuration
+		{
+			get { return _procedureTypeDetail.DefaultDuration; }
+			set 
+			{
+				_procedureTypeDetail.DefaultDuration = value;
+				this.Modified = true;
+			}
+		}
+
 		public ProcedureTypeSummary BaseType
 		{
 			get { return _procedureTypeDetail.BaseType; }
@@ -158,7 +170,7 @@ namespace ClearCanvas.Ris.Client
 
 		public string FormatBaseTypeItem(object item)
 		{
-			ProcedureTypeSummary summary = (ProcedureTypeSummary)item;
+			var summary = (ProcedureTypeSummary)item;
 			return string.Format("{0} - {1}", summary.Id, summary.Name);
 		}
 
@@ -182,21 +194,15 @@ namespace ClearCanvas.Ris.Client
 				this.ShowValidation(true);
 				return;
 			}
-			else
+
+			try
 			{
-				try
-				{
-					SaveChanges();
-					this.Exit(ApplicationComponentExitCode.Accepted);
-				}
-				catch (Exception e)
-				{
-					ExceptionHandler.Report(e, SR.ExceptionSaveProcedureType, this.Host.DesktopWindow,
-						delegate
-						{
-							this.Exit(ApplicationComponentExitCode.Error);
-						});
-				}
+				SaveChanges();
+				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, SR.ExceptionSaveProcedureType, this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
 			}
 		}
 
@@ -211,19 +217,20 @@ namespace ClearCanvas.Ris.Client
 		private void SaveChanges()
 		{
 			Platform.GetService<IProcedureTypeAdminService>(
-				delegate(IProcedureTypeAdminService service)
-				{
-					if (_isNew)
+				service =>
 					{
-						AddProcedureTypeResponse response = service.AddProcedureType(new AddProcedureTypeRequest(_procedureTypeDetail));
-						_procedureTypeSummary = response.ProcedureType;
-					}
-					else
-					{
-						UpdateProcedureTypeResponse response = service.UpdateProcedureType(new UpdateProcedureTypeRequest(_procedureTypeDetail));
-						_procedureTypeSummary = response.ProcedureType;
-					}
-				});
+						if (_isNew)
+						{
+							var response = service.AddProcedureType(new AddProcedureTypeRequest(_procedureTypeDetail));
+							_procedureTypeSummary = response.ProcedureType;
+						}
+						else
+						{
+							var response =
+								service.UpdateProcedureType(new UpdateProcedureTypeRequest(_procedureTypeDetail));
+							_procedureTypeSummary = response.ProcedureType;
+						}
+					});
 		}
 
 
