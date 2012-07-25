@@ -129,7 +129,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				var component = new OrderEditorComponent(patientProfile);
+				var component = new OrderEditorComponent(
+					new OrderEditorComponent.NewOrderInitializationContext {PatientProfile = patientProfile});
+
 				var result = ApplicationComponent.LaunchAsDialog(
 					desktopWindow,
 					component,

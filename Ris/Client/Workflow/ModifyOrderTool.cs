@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected bool ExecuteCore(WorklistItemSummaryBase item)
 		{
-			var component = new OrderEditorComponent(item, OrderEditorComponent.Mode.ModifyOrder);
+			var component = new OrderEditorComponent(item.OrderRef, OrderEditorComponent.Mode.ModifyOrder);
 
 			var result = ApplicationComponent.LaunchAsDialog(
 				this.Context.DesktopWindow,
