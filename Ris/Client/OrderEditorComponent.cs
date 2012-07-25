@@ -268,17 +268,9 @@ namespace ClearCanvas.Ris.Client
 			_proceduresTable = new Table<ProcedureRequisition>();
 			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Procedure", ProcedureFormat.Format));
 			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Facility", FormatPerformingFacility));
-			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Scheduled Time", item =>
-				{
-					// if new or scheduled
-					if (item.Status != null && item.Status.Code != "SC")
-						return item.Status.Value;
-
-					if (item.Cancelled)
-						return "Cancel Pending";
-
-					return Format.DateTime(item.ScheduledTime);
-				}));
+			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Scheduled Time", FormatScheduledTime));
+			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Scheduled Duration", FormatScheduledDuration));
+			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Modality", FormatScheduledModality));
 
 			_proceduresActionModel = new CrudActionModel();
 			_proceduresActionModel.Add.SetClickHandler(AddProcedure);
@@ -1067,6 +1059,16 @@ namespace ClearCanvas.Ris.Client
 			return sb.ToString();
 		}
 
+		private string FormatScheduledModality(ProcedureRequisition procedureRequisition)
+		{
+			return procedureRequisition.Modality != null ? procedureRequisition.Modality.Name : null;
+		}
+
+		private string FormatScheduledDuration(ProcedureRequisition procedureRequisition)
+		{
+			return TimeSpan.FromMinutes(procedureRequisition.ScheduledDuration).ToString();
+		}
+
 		private void UpdateDiagnosticService(DiagnosticServiceSummary summary)
 		{
 			_selectedDiagnosticService = summary;
@@ -1382,6 +1384,18 @@ namespace ClearCanvas.Ris.Client
 				// Empty the contact point list
 				callback(new GetExternalPractitionerContactPointsResponse(new List<ExternalPractitionerContactPointDetail>()));
 			}
+		}
+
+		private static string FormatScheduledTime(ProcedureRequisition item)
+		{
+			// if new or scheduled
+			if (item.Status != null && item.Status.Code != "SC")
+				return item.Status.Value;
+
+			if (item.Cancelled)
+				return "Cancel Pending";
+
+			return Format.DateTime(item.ScheduledTime);
 		}
 
 		private EntityRef PatientProfileRef
