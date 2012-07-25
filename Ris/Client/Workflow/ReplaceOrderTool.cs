@@ -63,7 +63,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return false;
 			}
 
-			var component = new OrderEditorComponent(item.OrderRef, OrderEditorComponent.Mode.ReplaceOrder);
+			var component = new OrderEditorComponent(new OrderEditorComponent.ReplaceOrderOperatingContext {OrderRef = item.OrderRef});
 			var result = ApplicationComponent.LaunchAsDialog(
 				this.Context.DesktopWindow,
 				component,

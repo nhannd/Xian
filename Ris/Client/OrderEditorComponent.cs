@@ -93,8 +93,10 @@ namespace ClearCanvas.Ris.Client
 	/// OrderEditorComponent class
 	/// </summary>
 	[AssociateView(typeof(OrderEditorComponentViewExtensionPoint))]
-	public class OrderEditorComponent : ApplicationComponent
+	public partial class OrderEditorComponent : ApplicationComponent
 	{
+
+
 		public enum Mode
 		{
 			NewOrder,
@@ -102,10 +104,6 @@ namespace ClearCanvas.Ris.Client
 			ReplaceOrder
 		}
 
-		public class NewOrderInitializationContext
-		{
-			public PatientProfileSummary PatientProfile { get; set; }
-		}
 
 		#region HealthcareContext
 
@@ -170,8 +168,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region Private fields
 
-		private readonly NewOrderInitializationContext _initializationContext;
-		private readonly Mode _mode;
+		private readonly OperatingContext _operatingContext;
 		private bool _isComplete;
 		private PatientProfileLookupHandler _patientProfileLookupHandler;
 		private PatientProfileSummary _patientProfile;
@@ -241,31 +238,16 @@ namespace ClearCanvas.Ris.Client
 		#region Constructors
 
 		/// <summary>
-		/// Constructor for creating a new order.
+		/// Constructor.
 		/// </summary>
-		public OrderEditorComponent(NewOrderInitializationContext initializationContext)
-			: this(null, Mode.NewOrder, initializationContext)
+		public OrderEditorComponent(OperatingContext operatingContext)
 		{
-		}
+			Platform.CheckForNullReference(operatingContext, "operatingContext");
 
-		/// <summary>
-		/// Constructor for modifying or replacing an order.
-		/// </summary>
-		public OrderEditorComponent(EntityRef orderRef, Mode mode)
-			:this(orderRef, mode, null)
-		{
-		}
+			// immediately validate the operating context - will throw if invalid
+			operatingContext.Validate();
 
-		private OrderEditorComponent(EntityRef orderRef, Mode mode, NewOrderInitializationContext initializationContext)
-		{
-			if(mode == Mode.NewOrder)
-				Platform.CheckForNullReference(initializationContext, "initializationContext");
-			if (mode == Mode.ModifyOrder || mode == Mode.ReplaceOrder)
-				Platform.CheckForNullReference(orderRef, "orderRef");
-
-			_mode = mode;
-			_orderRef = orderRef;
-			_initializationContext = initializationContext;
+			_operatingContext = operatingContext;
 
 			_proceduresTable = new Table<ProcedureRequisition>();
 			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Procedure", ProcedureFormat.Format));
@@ -280,7 +262,7 @@ namespace ClearCanvas.Ris.Client
 			_proceduresActionModel.Delete.SetClickHandler(CancelSelectedProcedure);
 
 			// in "modify" mode, the Delete action is actually a Cancel action
-			if (_mode == Mode.ModifyOrder)
+			if (_operatingContext.Mode == Mode.ModifyOrder)
 				_proceduresActionModel.Delete.Label = _proceduresActionModel.Delete.Tooltip = "Cancel";
 
 
@@ -302,7 +284,7 @@ namespace ClearCanvas.Ris.Client
 			this.Validation.Add(new ValidationRule("SelectedVisit",
 				component => new ValidationResult(_hideVisit || _selectedVisit != null, SR.MessageVisitRequired)));
 			this.Validation.Add(new ValidationRule("SelectedCancelReason",
-				component => new ValidationResult(!(_mode == Mode.ReplaceOrder && _selectedCancelReason == null), SR.MessageCancellationReasonRequired)));
+				component => new ValidationResult(!(_operatingContext.Mode == Mode.ReplaceOrder && _selectedCancelReason == null), SR.MessageCancellationReasonRequired)));
 			this.Validation.Add(new ValidationRule("DowntimeAccessionNumber",
 				component => new ValidationResult(
 					!(this.IsDowntimeAccessionNumberVisible && string.IsNullOrEmpty(_downtimeAccessionNumber)),
@@ -350,7 +332,7 @@ namespace ClearCanvas.Ris.Client
 				_schedulingCodeChoices = formChoicesResponse.SchedulingCodeChoices;
 			});
 
-			if (_mode == Mode.NewOrder)
+			if (_operatingContext.Mode == Mode.NewOrder)
 			{
 				_orderingFacility = LoginSession.Current.WorkingFacility;
 				_schedulingRequestTime = Platform.Time;
@@ -361,24 +343,7 @@ namespace ClearCanvas.Ris.Client
 
 			InitializeTabPages();
 
-			this.Modified = false; // bug 6299: ensure we begin without modifications
-
-			if (_mode == Mode.NewOrder)
-			{
-				// if we already know the patient profile
-				if(_initializationContext.PatientProfile != null)
-				{
-					UpdatePatientProfile(_initializationContext.PatientProfile);
-				}
-			}
-			else
-			{
-				// load the existing order
-				Async.Request(this,
-							  (IOrderEntryService service) =>
-							  service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest { OrderRef = _orderRef }),
-							  response => OnOrderRequisitionLoaded(response.Requisition, response.IsCompleted));
-			}
+			_operatingContext.Initialize(this);
 
 			base.Start();
 		}
@@ -431,12 +396,12 @@ namespace ClearCanvas.Ris.Client
 
 		public bool IsPatientProfileEditable
 		{
-			get { return _mode == Mode.NewOrder; }
+			get { return _operatingContext.CanModifyPatient; }
 		}
 
 		public bool OrderIsNotCompleted
 		{
-			get { return _mode != Mode.ModifyOrder || _isComplete == false; }
+			get { return _operatingContext.Mode != Mode.ModifyOrder || _isComplete == false; }
 		}
 
 		public ApplicationComponentHost AttachmentsComponentHost
@@ -461,17 +426,17 @@ namespace ClearCanvas.Ris.Client
 
 		public bool IsDiagnosticServiceEditable
 		{
-			get { return _mode != Mode.ModifyOrder; }
+			get { return _operatingContext.CanModifyDiagnosticService; }
 		}
 
 		public bool IsCancelReasonVisible
 		{
-			get { return _mode == Mode.ReplaceOrder; }
+			get { return _operatingContext.Mode == Mode.ReplaceOrder; }
 		}
 
 		public bool IsDowntimeAccessionNumberVisible
 		{
-			get { return DowntimeRecovery.InDowntimeRecoveryMode && _mode == Mode.NewOrder; }
+			get { return DowntimeRecovery.InDowntimeRecoveryMode && _operatingContext.Mode == Mode.NewOrder; }
 		}
 
 		public string AccessionNumberMask
@@ -987,15 +952,8 @@ namespace ClearCanvas.Ris.Client
 
 			// update form
 			UpdateFromRequisition(requisition);
-
-			// bug #3506: in replace mode, overwrite the procedures with clean one(s) based on diagnostic service
-			// also for new orders, the pre-loaded requisition won't have any procedures, so these need to be loaded here
-			if (_mode == Mode.ReplaceOrder || _mode == Mode.NewOrder)
-			{
-				UpdateDiagnosticService(_selectedDiagnosticService);
-			}
-
 			UpdateApplicableVisits();
+
 			this.Modified = false; // bug 6299: ensure we begin without modifications
 		}
 
@@ -1210,18 +1168,7 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
-				switch (_mode)
-				{
-					case Mode.NewOrder:
-						SubmitNewOrder(requisition);
-						break;
-					case Mode.ModifyOrder:
-						SubmitModifyOrder(requisition);
-						break;
-					case Mode.ReplaceOrder:
-						SubmitReplaceOrder(requisition);
-						break;
-				}
+				_orderRef = _operatingContext.Submit(requisition, this);
 
 				EventsHelper.Fire(_changeCommitted, this, EventArgs.Empty);
 				return true;
@@ -1231,45 +1178,6 @@ namespace ClearCanvas.Ris.Client
 				ExceptionHandler.Report(e, "", this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
 				return false;
 			}
-		}
-
-		private void SubmitNewOrder(OrderRequisition requisition)
-		{
-			PlaceOrderResponse response = null;
-			Platform.GetService<IOrderEntryService>(
-				service => response = service.PlaceOrder(new PlaceOrderRequest(requisition))
-			);
-
-			_orderRef = response.Order.OrderRef;
-			this.Host.ShowMessageBox(
-				string.Format(
-					"Order {0} placed successfully.",
-					AccessionFormat.Format(response.Order.AccessionNumber)),
-				MessageBoxActions.Ok);
-		}
-
-		private void SubmitModifyOrder(OrderRequisition requisition)
-		{
-			requisition.OrderRef = _orderRef;
-			Platform.GetService<IOrderEntryService>(service =>
-			{
-				var response = service.ModifyOrder(new ModifyOrderRequest(requisition));
-				_orderRef = response.Order.OrderRef;
-			});
-		}
-
-		private void SubmitReplaceOrder(OrderRequisition requisition)
-		{
-			ReplaceOrderResponse response = null;
-			Platform.GetService<IOrderEntryService>(
-				service => response = service.ReplaceOrder(new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition))
-			);
-
-			_orderRef = response.Order.OrderRef;
-			this.Host.ShowMessageBox(
-				string.Format("Order successfully replaced with new order {0}.", AccessionFormat.Format(response.Order.AccessionNumber)),
-				MessageBoxActions.Ok);
-
 		}
 
 		private void InitializeTabPages()
