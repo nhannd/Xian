@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		where TItem : WorklistItemSummaryBase
 		where TContext : IWorkflowItemToolContext<TItem>
 	{
-		public ModifyOrderToolBase()
+		protected ModifyOrderToolBase()
 			: base("ModifyOrder")
 		{
 		}
@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected bool ExecuteCore(WorklistItemSummaryBase item)
 		{
-			var component = new OrderEditorComponent(new OrderEditorComponent.ModifyOrderOperatingContext {OrderRef  = item.OrderRef});
+			var component = new OrderEditorComponent(new OrderEditorComponent.ModifyOrderOperatingContext { OrderRef = item.OrderRef});
 			var result = ApplicationComponent.LaunchAsDialog(
 				this.Context.DesktopWindow,
 				component,

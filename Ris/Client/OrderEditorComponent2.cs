@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
@@ -22,6 +23,13 @@ namespace ClearCanvas.Ris.Client
 {
 	public partial class OrderEditorComponent
 	{
+		public enum Mode
+		{
+			NewOrder,
+			ModifyOrder,
+			ReplaceOrder
+		}
+
 		/// <summary>
 		/// Container for default values passed from caller to the component.
 		/// </summary>
@@ -60,20 +68,67 @@ namespace ClearCanvas.Ris.Client
 			/// </summary>
 			public DefaultValues Defaults { get; set; }
 
+			/// <summary>
+			/// Ensure the operating context is in a valid state prior to using it.
+			/// </summary>
 			internal virtual void Validate()
 			{
 				if(this.Defaults == null)
 					this.Defaults = new DefaultValues();
 			}
 
+			/// <summary>
+			/// Initialize the order editor component.
+			/// </summary>
+			/// <param name="component"></param>
 			internal abstract void Initialize(OrderEditorComponent component);
+
+			/// <summary>
+			/// Applies default values to the specified procedure requisition.
+			/// </summary>
+			/// <param name="procedureRequisition"></param>
+			/// <param name="component"></param>
+			internal virtual void ApplyDefaults(ProcedureRequisition procedureRequisition, OrderEditorComponent component)
+			{
+				if(!procedureRequisition.CanModify)
+					return;
+
+				if(this.Defaults.ScheduledTime.HasValue)
+				{
+					procedureRequisition.ScheduledTime = this.Defaults.ScheduledTime.Value;
+				}
+
+				if(this.Defaults.ScheduledDuration.HasValue)
+				{
+					procedureRequisition.ScheduledDuration = this.Defaults.ScheduledDuration.Value;
+				}
+
+				if(this.Defaults.ModalityRef != null)
+				{
+					var modality = component._modalityChoices.FirstOrDefault(m => m.ModalityRef.Equals(this.Defaults.ModalityRef, true));
+					procedureRequisition.Modality = modality;
+				}
+			}
+
+			/// <summary>
+			/// Submit the specified order requisition to the server.
+			/// </summary>
+			/// <param name="requisition"></param>
+			/// <param name="component"></param>
+			/// <returns></returns>
 			internal abstract EntityRef Submit(OrderRequisition requisition, OrderEditorComponent component);
 
+			/// <summary>
+			/// Gets a value indicating whether the patient can be modified.
+			/// </summary>
 			internal virtual bool CanModifyPatient
 			{
 				get { return false; }
 			}
 
+			/// <summary>
+			/// Gets a value indicating whether the diagnostic service can be modified.
+			/// </summary>
 			internal virtual bool CanModifyDiagnosticService
 			{
 				get { return true; }
@@ -167,6 +222,15 @@ namespace ClearCanvas.Ris.Client
 							  (IOrderEntryService service) =>
 							  service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest { OrderRef = this.OrderRef, ProcedureRef = this.ProcedureRef}),
 							  response => component.OnOrderRequisitionLoaded(response.Requisition, response.IsCompleted));
+			}
+
+			internal override void ApplyDefaults(ProcedureRequisition procedureRequisition, OrderEditorComponent component)
+			{
+				// apply the defaults only if the requisition satisfies the filter
+				if (this.DefaultValueApplicabilityFilter(procedureRequisition))
+				{
+					base.ApplyDefaults(procedureRequisition, component);
+				}
 			}
 
 			internal override EntityRef Submit(OrderRequisition requisition, OrderEditorComponent component)

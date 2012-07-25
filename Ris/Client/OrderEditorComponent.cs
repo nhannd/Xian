@@ -95,16 +95,6 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(OrderEditorComponentViewExtensionPoint))]
 	public partial class OrderEditorComponent : ApplicationComponent
 	{
-
-
-		public enum Mode
-		{
-			NewOrder,
-			ModifyOrder,
-			ReplaceOrder
-		}
-
-
 		#region HealthcareContext
 
 		/// <summary>
@@ -772,7 +762,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
-				var procedureRequisition = new ProcedureRequisition(null, _orderingFacility);
+				var procedureRequisition = NewProcedureRequisition(null);
 				var procedureEditor = new ProcedureEditorComponent(
 					procedureRequisition,
 					ProcedureEditorComponent.Mode.Add,
@@ -1030,7 +1020,7 @@ namespace ClearCanvas.Ris.Client
 					_proceduresTable.Items.AddRange(
 						CollectionUtils.Map<ProcedureTypeSummary, ProcedureRequisition>(
 							response.DiagnosticServiceDetail.ProcedureTypes,
-							rpt => new ProcedureRequisition(rpt, _orderingFacility)));
+							NewProcedureRequisition));
 				});
 			}
 
@@ -1135,7 +1125,15 @@ namespace ClearCanvas.Ris.Client
 			_selectedOrderingPractitioner = existingOrder.OrderingPractitioner;
 
 			_proceduresTable.Items.Clear();
-			_proceduresTable.Items.AddRange(EmptyIfNull(existingOrder.Procedures));
+			foreach (var procedureRequisition in EmptyIfNull(existingOrder.Procedures))
+			{
+				// apply default values to modifiable procedures, prior to adding to table
+				if(procedureRequisition.CanModify)
+				{
+					_operatingContext.ApplyDefaults(procedureRequisition, this);
+				}
+				_proceduresTable.Items.Add(procedureRequisition);
+			}
 
 			var attachments = new List<AttachmentSummary>(EmptyIfNull(existingOrder.Attachments));
 			attachments.AddRange(_newAttachments);
@@ -1278,6 +1276,14 @@ namespace ClearCanvas.Ris.Client
 				// Empty the contact point list
 				callback(new GetExternalPractitionerContactPointsResponse(new List<ExternalPractitionerContactPointDetail>()));
 			}
+		}
+
+		private ProcedureRequisition NewProcedureRequisition(ProcedureTypeSummary procedureType)
+		{
+			var requisition = new ProcedureRequisition(procedureType, _orderingFacility);
+			// apply default values
+			_operatingContext.ApplyDefaults(requisition, this);
+			return requisition;
 		}
 
 		private static string FormatScheduledTime(ProcedureRequisition item)
