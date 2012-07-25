@@ -136,7 +136,12 @@ namespace ClearCanvas.Ris.Client
 
 		private void OnSelectedFolderChanged(object sender, EventArgs e)
 		{
-			_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolderExplorer.SelectedFolder;
+			var selectedFolderExplorer = _folderSystemGroup.SelectedFolderExplorer;
+			var customContentComponent = selectedFolderExplorer.GetContentComponent();
+			if (customContentComponent == null)
+			{
+				_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolderExplorer.SelectedFolder;
+			}
 		}
 	}
 }

@@ -147,11 +147,6 @@ namespace ClearCanvas.Ris.Client
 			/// </summary>
 			public PatientProfileSummary PatientProfile { get; set; }
 
-			internal override void Validate()
-			{
-				// do nothing
-			}
-
 			internal override void Initialize(OrderEditorComponent component)
 			{
 				if(this.PatientProfile != null)
@@ -213,6 +208,8 @@ namespace ClearCanvas.Ris.Client
 					throw new InvalidOperationException("Either OrderRef or ProcedureRef must be specified.");
 				if(this.DefaultValueApplicabilityFilter == null)
 					this.DefaultValueApplicabilityFilter = requisition => true;	// apply to all
+
+				base.Validate();
 			}
 
 			internal override void Initialize(OrderEditorComponent component)
@@ -266,6 +263,8 @@ namespace ClearCanvas.Ris.Client
 			{
 				if(this.OrderRef == null)
 					throw new InvalidOperationException("OrderRef must be specified.");
+
+				base.Validate();
 			}
 
 			internal override void Initialize(OrderEditorComponent component)
