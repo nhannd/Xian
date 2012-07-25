@@ -12,6 +12,7 @@
 using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 {
@@ -22,6 +23,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 		/// Constructor for use by service to return requisition back to client for editing.
 		/// </summary>
 		public ProcedureRequisition(
+			EntityRef procedureRef,
 			ProcedureTypeSummary procedureType,
 			string procedureNumber,
 			DateTime? scheduledTime,
@@ -37,6 +39,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 			bool canModify,
 			bool cancelled)
 		{
+			this.ProcedureRef = procedureRef;
 			this.ProcedureType = procedureType;
 			this.ProcedureNumber = procedureNumber;
 			this.ScheduledTime = scheduledTime;
@@ -63,6 +66,11 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 			this.CanModify = true;  // can modify a new requisition
 		}
 
+		/// <summary>
+		/// Procedure reference.  Will be set by the server. Clients should not set or modify this field.
+		/// </summary>
+		[DataMember]
+		public EntityRef ProcedureRef;
 
 		/// <summary>
 		/// The procedure type. Required.

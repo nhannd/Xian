@@ -223,7 +223,7 @@ namespace ClearCanvas.Ris.Client
 
 			internal override void ApplyDefaults(ProcedureRequisition procedureRequisition, OrderEditorComponent component)
 			{
-				// apply the defaults only if the requisition satisfies the filter
+				// apply the defaults iff the requisition satisfies the filter
 				if (this.DefaultValueApplicabilityFilter(procedureRequisition))
 				{
 					base.ApplyDefaults(procedureRequisition, component);

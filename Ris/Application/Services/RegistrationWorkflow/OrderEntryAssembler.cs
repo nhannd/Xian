@@ -116,6 +116,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			// create requisition
 			return new ProcedureRequisition(
+				procedure.GetRef(),
 				procedureTypeAssembler.CreateSummary(procedure.Type),
 				procedure.Number,
 				procedure.ScheduledStartTime,
