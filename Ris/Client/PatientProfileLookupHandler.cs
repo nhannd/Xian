@@ -39,17 +39,18 @@ namespace ClearCanvas.Ris.Client
 			return response;
 		}
 
-		public override bool ResolveNameInteractive(string query, out PatientProfileSummary patientProfile)
+		public override bool ResolveNameInteractive(string query, out PatientProfileSummary result)
 		{
 			_desktopWindow.ShowMessageBox("TODO: implement me!", MessageBoxActions.Ok);
-			patientProfile = null;
+			result = null;
 			return false;
 		}
 
 
 		public override string FormatItem(PatientProfileSummary item)
 		{
-			return string.Format("{0} {1}", item.Mrn.Id,  Formatting.PersonNameFormat.Format(item.Name));
+			return item == null ? null : 
+				string.Format("{0} {1}", item.Mrn.Id, Formatting.PersonNameFormat.Format(item.Name));
 		}
 	}
 }

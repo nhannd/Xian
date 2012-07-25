@@ -11,9 +11,11 @@
 
 using System;
 using System.Windows.Forms;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using TabPage = System.Windows.Forms.TabPage;
 
-namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
 	/// <summary>
 	/// Provides a Windows Forms user-interface for <see cref="OrderEditorComponent"/>
@@ -31,23 +33,17 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			InitializeComponent();
 			_component = component;
 
-			_overviewLayoutPanel.RowStyles[0].Height = _component.BannerHeight;
-
-			var banner = (Control)_component.BannerComponentHost.ComponentView.GuiElement;
-			banner.Dock = DockStyle.Fill;
-			_bannerPanel.Controls.Add(banner);
-
-			var rightHandTabPages = (Control)_component.RightHandComponentContainerHost.ComponentView.GuiElement;
-			rightHandTabPages.Dock = DockStyle.Fill;
-			_rightHandPanel.Controls.Add(rightHandTabPages);
-
-			var orderNoteSummary = (Control)_component.OrderNoteSummaryHost.ComponentView.GuiElement;
-			orderNoteSummary.Dock = DockStyle.Fill;
-			_orderNotesTab.Controls.Add(orderNoteSummary);
+			AddTabPage(_component.AdditionalInfoComponentHost, _additionalInfoPage);
+			AddTabPage(_component.OrderNoteSummaryHost, _notesPage);
+			AddTabPage(_component.AttachmentsComponentHost, _attachmentsPage);
 
 			// force toolbars to be displayed (VS designer seems to have a bug with this)
 			_proceduresTableView.ShowToolbar = true;
 			_recipientsTableView.ShowToolbar = true;
+
+			_patient.LookupHandler = _component.PatientProfileLookupHandler;
+			_patient.DataBindings.Add("Value", _component, "SelectedPatientProfile", true, DataSourceUpdateMode.OnPropertyChanged);
+			_patient.DataBindings.Add("Enabled", _component, "IsPatientProfileEditable");
 
 			_diagnosticService.LookupHandler = _component.DiagnosticServiceLookupHandler;
 			_diagnosticService.DataBindings.Add("Value", _component, "SelectedDiagnosticService", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -146,7 +142,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private void _placeOrderButton_Click(object sender, EventArgs e)
 		{
 			// bug #7781: switch back to this tab prior to validation
-			_lowerLeftTabControl.SelectedTab = _proceduresTab;
+			_mainTab.SelectedTab = _generalPage;
 
 			using (new CursorManager(Cursors.WaitCursor))
 			{
@@ -177,6 +173,13 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private void OrderEditorComponentControl_Load(object sender, EventArgs e)
 		{
 			_downtimeAccession.Mask = _component.AccessionNumberMask;
+		}
+
+		private static void AddTabPage(ApplicationComponentHost componentHost, TabPage tabPage)
+		{
+			var control = (Control)componentHost.ComponentView.GuiElement;
+			control.Dock = DockStyle.Fill;
+			tabPage.Controls.Add(control);
 		}
 	}
 }

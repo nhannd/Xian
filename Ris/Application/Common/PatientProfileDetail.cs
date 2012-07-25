@@ -99,5 +99,19 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public List<PatientAllergyDetail> Allergies;
+
+		public PatientProfileSummary GetSummary()
+		{
+			return new PatientProfileSummary
+			       	{
+			       		DateOfBirth = this.DateOfBirth,
+			       		Healthcard = this.Healthcard,
+			       		Mrn = this.Mrn,
+			       		Name = this.Name,
+			       		PatientProfileRef = this.PatientProfileRef,
+			       		PatientRef = this.PatientRef,
+			       		Sex = this.Sex
+			       	};
+		}
 	}
 }

@@ -75,6 +75,7 @@
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="BannerSettings.cs" />
     <Compile Include="AttachDocumentComponent.cs" />
+    <Compile Include="OrderEditorComponent2.cs" />
     <Compile Include="PatientProfileLookupHandler.cs" />
     <Compile Include="DocumentAttachTool.cs" />
     <Compile Include="DocumentDetachTool.cs" />

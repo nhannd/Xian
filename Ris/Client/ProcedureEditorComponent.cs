@@ -32,46 +32,38 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(ProcedureEditorComponentViewExtensionPoint))]
 	public class ProcedureEditorComponent : ProcedureEditorComponentBase
 	{
-		private readonly List<ProcedureTypeSummary> _procedureTypeChoices;
-		private DefaultSuggestionProvider<ProcedureTypeSummary> _procedureTypeSuggestionProvider;
-		private ProcedureTypeSummary _selectedProcedureType;
-
-		private readonly ProcedureRequisition _requisition;
-
-		/// <summary>
-		/// Constructor for add mode.
-		/// </summary>
-		public ProcedureEditorComponent(
-			ProcedureRequisition requisition,
-			List<FacilitySummary> facilityChoices,
-			List<DepartmentSummary> departmentChoices,
-			List<EnumValueInfo> lateralityChoices,
-			List<EnumValueInfo> schedulingCodeChoices,
-			List<ProcedureTypeSummary> procedureTypeChoices)
-			: base(facilityChoices, departmentChoices, lateralityChoices, schedulingCodeChoices)
+		public enum Mode
 		{
-			Platform.CheckForNullReference(requisition, "requisition");
-			Platform.CheckForNullReference(procedureTypeChoices, "procedureTypeChoices");
-
-			_requisition = requisition;
-			_procedureTypeChoices = procedureTypeChoices;
+			Add,
+			Edit
 		}
 
-		/// <summary>
-		/// Constructor for edit mode.
-		/// </summary>
+		private readonly ProcedureRequisition _requisition;
+		private readonly Mode _mode;
+
+		private ProcedureTypeLookupHandler _procedureTypeLookupHandler;
+		private ProcedureTypeSummary _selectedProcedureType;
+
+
 		public ProcedureEditorComponent(
 			ProcedureRequisition requisition,
+			Mode mode,
 			List<FacilitySummary> facilityChoices,
 			List<DepartmentSummary> departmentChoices,
+			List<ModalitySummary> modalityChoices,
 			List<EnumValueInfo> lateralityChoices,
 			List<EnumValueInfo> schedulingCodeChoices)
-			: this(requisition, facilityChoices, departmentChoices, lateralityChoices, schedulingCodeChoices, new List<ProcedureTypeSummary>())
+			: base(facilityChoices, departmentChoices, modalityChoices, lateralityChoices, schedulingCodeChoices)
 		{
+			Platform.CheckForNullReference(requisition, "requisition");
+
+			_mode = mode;
+			_requisition = requisition;
 		}
 
 		public override void Start()
 		{
+			_procedureTypeLookupHandler = new ProcedureTypeLookupHandler(this.Host.DesktopWindow);
 			this.Validation.Add(new ValidationRule("CheckedIn",
 				delegate
 				{
@@ -85,10 +77,6 @@ namespace ClearCanvas.Ris.Client
 					return new ValidationResult(success, alertMessage);
 				}));
 
-			_procedureTypeChoices.Sort((x, y) => x.Name.CompareTo(y.Name));
-
-			_procedureTypeSuggestionProvider = new DefaultSuggestionProvider<ProcedureTypeSummary>(_procedureTypeChoices, FormatProcedureType);
-
 			base.Start();
 		}
 
@@ -97,8 +85,10 @@ namespace ClearCanvas.Ris.Client
 			_selectedProcedureType = _requisition.ProcedureType;
 
 			this.ScheduledTime = _requisition.ScheduledTime;
+			this.ScheduledDuration = _requisition.ScheduledDuration;
 			this.SelectedFacility = _requisition.PerformingFacility;
 			this.SelectedDepartment = _requisition.PerformingDepartment;
+			this.SelectedModality = _requisition.Modality;
 			this.SelectedLaterality = _requisition.Laterality;
 			this.SelectedSchedulingCode = _requisition.SchedulingCode;
 			this.PortableModality = _requisition.PortableModality;
@@ -109,10 +99,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			_requisition.ProcedureType = _selectedProcedureType;
 			_requisition.ScheduledTime = this.ScheduledTime;
+			_requisition.ScheduledDuration = this.ScheduledDuration;
 			_requisition.Laterality = this.SelectedLaterality;
 			_requisition.SchedulingCode = this.SelectedSchedulingCode;
 			_requisition.PerformingFacility = this.SelectedFacility;
 			_requisition.PerformingDepartment = this.SelectedDepartment;
+			_requisition.Modality = this.SelectedModality;
 			_requisition.PortableModality = this.PortableModality;
 			_requisition.CheckedIn = this.CheckedIn;
 		}
@@ -121,10 +113,15 @@ namespace ClearCanvas.Ris.Client
 
 		public bool IsProcedureTypeEditable
 		{
-			get { return _procedureTypeChoices.Count > 0; }
+			get { return _mode == Mode.Add; }
 		}
 
 		public override bool IsScheduledDateTimeEditable
+		{
+			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
+		}
+
+		public override bool IsScheduledDurationEditable
 		{
 			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
 		}
@@ -139,20 +136,19 @@ namespace ClearCanvas.Ris.Client
 			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
 		}
 
+		public override bool IsModalityEditable
+		{
+			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
+		}
+
 		public override bool IsCheckedInEditable
 		{
 			get { return _requisition.Status == null || _requisition.Status.Code == "SC"; }
 		}
 
-		public ISuggestionProvider ProcedureTypeSuggestionProvider
+		public ILookupHandler ProcedureTypeLookupHandler
 		{
-			get { return _procedureTypeSuggestionProvider; }
-		}
-
-		public string FormatProcedureType(object item)
-		{
-			var rpt = (ProcedureTypeSummary)item;
-			return string.Format("{0} ({1})", rpt.Name, rpt.Id);
+			get { return _procedureTypeLookupHandler; }
 		}
 
 		[ValidateNotNull]

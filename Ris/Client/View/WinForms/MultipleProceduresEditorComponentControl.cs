@@ -33,6 +33,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			InitializeComponent();
 
 			_enableScheduledDateTime.DataBindings.Add("Checked", _component, "IsScheduledDateTimeEditable", true, DataSourceUpdateMode.OnPropertyChanged);
+			_enableScheduledDuration.DataBindings.Add("Checked", _component, "IsScheduledDurationEditable", true, DataSourceUpdateMode.OnPropertyChanged);
+			_enableModality.DataBindings.Add("Checked", _component, "IsModalityEditable", true, DataSourceUpdateMode.OnPropertyChanged);
 			_enablePerformingFacility.DataBindings.Add("Checked", _component, "IsPerformingFacilityEditable", true, DataSourceUpdateMode.OnPropertyChanged);
 			_enablePerformingDepartment.DataBindings.Add("Checked", _component, "IsPerformingDepartmentEditable", true, DataSourceUpdateMode.OnPropertyChanged);
 			_enableLaterality.DataBindings.Add("Checked", _component, "IsLateralityEditable", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -44,6 +46,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_scheduledDate.DataBindings.Add("Enabled", _component, "IsScheduledDateTimeEditable");
 			_scheduledTime.DataBindings.Add("Value", _component, "ScheduledTime", true, DataSourceUpdateMode.OnPropertyChanged);
 			_scheduledTime.DataBindings.Add("Enabled", _component, "IsScheduledDateTimeEditable");
+
+			_duration.DataBindings.Add("Value", _component, "ScheduledDuration", true, DataSourceUpdateMode.OnPropertyChanged);
+			_duration.DataBindings.Add("Enabled", _component, "IsScheduledDurationEditable");
 
 			_performingFacility.DataSource = _component.FacilityChoices;
 			_performingFacility.DataBindings.Add("Value", _component, "SelectedFacility", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -59,6 +64,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_performingDepartment.Format += delegate(object sender, ListControlConvertEventArgs e)
 			{
 				e.Value = _component.FormatDepartment(e.ListItem);
+			};
+
+			_modality.DataSource = _component.ModalityChoices;
+			_modality.DataBindings.Add("Value", _component, "SelectedModality", true, DataSourceUpdateMode.OnPropertyChanged);
+			_modality.DataBindings.Add("Enabled", _component, "IsModalityEditable");
+			_modality.Format += delegate(object sender, ListControlConvertEventArgs e)
+			{
+				e.Value = _component.FormatModality(e.ListItem);
 			};
 
 			_laterality.DataSource = _component.LateralityChoices;

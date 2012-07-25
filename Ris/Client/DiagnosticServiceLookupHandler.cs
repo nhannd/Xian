@@ -50,15 +50,15 @@ namespace ClearCanvas.Ris.Client
             return response;
         }
 
-        public override bool ResolveNameInteractive(string query, out DiagnosticServiceSummary diagnosticService)
+        public override bool ResolveNameInteractive(string query, out DiagnosticServiceSummary result)
         {
-			diagnosticService = null;
+			result = null;
 
 			try
 			{
 				IDiagnosticServiceInteractiveLookupProvider provider = (IDiagnosticServiceInteractiveLookupProvider)
 					new DiagnosticServiceInteractiveLookupProviderExtensionPoint().CreateExtension();
-				diagnosticService = provider.ResolveDiagnosticService(query, _desktopWindow);
+				result = provider.ResolveDiagnosticService(query, _desktopWindow);
 
 			}
 			catch (NotSupportedException)
@@ -76,11 +76,11 @@ namespace ClearCanvas.Ris.Client
 
 				if (exitCode == ApplicationComponentExitCode.Accepted)
 				{
-					diagnosticService = (DiagnosticServiceSummary)summaryComponent.SummarySelection.Item;
+					result = (DiagnosticServiceSummary)summaryComponent.SummarySelection.Item;
 				}
 			}
 
-			return (diagnosticService != null);
+			return (result != null);
 		}
 
 
