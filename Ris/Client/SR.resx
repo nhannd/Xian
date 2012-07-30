@@ -1146,4 +1146,10 @@
   <data name="MessageAttachmentMustBePdf" xml:space="preserve">
     <value>Attachment must be a PDF file.</value>
   </data>
+  <data name="TitleNewPatient" xml:space="preserve">
+    <value>New Patient</value>
+  </data>
+  <data name="TitleUpdatePatientProfile" xml:space="preserve">
+    <value>Update Patient Profile: {0} {1}</value>
+  </data>
 </root>

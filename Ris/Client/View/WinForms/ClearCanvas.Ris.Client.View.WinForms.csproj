@@ -265,6 +265,13 @@
     <Compile Include="ListBoxWithDragSupport.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="PatientProfileSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PatientProfileSummaryComponentControl.Designer.cs">
+      <DependentUpon>PatientProfileSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PatientProfileSummaryComponentView.cs" />
     <Compile Include="LookupHandlerCellEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -633,6 +640,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>ExternalPractitionerContactPointSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="PatientProfileSummaryComponentControl.resx">
+      <DependentUpon>PatientProfileSummaryComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="MergeComponentBaseControl.resx">
       <DependentUpon>MergeComponentBaseControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -741,6 +752,7 @@
   <ItemGroup>
     <None Include="Resources\FacilityText.png" />
     <None Include="Resources\ClearFilterSmall.png" />
+    <None Include="Resources\ClearFilterMini.png" />
     <Content Include="Resources\LogoLarge.PNG" />
     <None Include="Resources\SwapMedium.png" />
     <None Include="Resources\SwapLarge.png" />

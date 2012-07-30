@@ -60,6 +60,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms {
             }
         }
         
+        internal static System.Drawing.Bitmap ClearFilterMini {
+            get {
+                object obj = ResourceManager.GetObject("ClearFilterMini", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap ClearFilterSmall {
             get {
                 object obj = ResourceManager.GetObject("ClearFilterSmall", resourceCulture);

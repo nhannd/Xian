@@ -2797,6 +2797,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New Patient.
+        /// </summary>
+        internal static string TitleNewPatient {
+            get {
+                return ResourceManager.GetString("TitleNewPatient", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Note Text.
         /// </summary>
         internal static string TitleNoteText {
@@ -3072,6 +3081,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleUpdateExternalPractitioner {
             get {
                 return ResourceManager.GetString("TitleUpdateExternalPractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Patient Profile: {0} {1}.
+        /// </summary>
+        internal static string TitleUpdatePatientProfile {
+            get {
+                return ResourceManager.GetString("TitleUpdatePatientProfile", resourceCulture);
             }
         }
         

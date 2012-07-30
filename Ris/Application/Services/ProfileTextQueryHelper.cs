@@ -37,14 +37,14 @@ namespace ClearCanvas.Ris.Application.Services
             string query = request.TextQuery;
 
             // this will hold all criteria
-            List<PatientProfileSearchCriteria> criteria = new List<PatientProfileSearchCriteria>();
+            var criteria = new List<PatientProfileSearchCriteria>();
 
             // build criteria against names
             PersonName[] names = ParsePersonNames(query);
-            criteria.AddRange(CollectionUtils.Map<PersonName, PatientProfileSearchCriteria>(names,
+            criteria.AddRange(CollectionUtils.Map(names,
                 delegate(PersonName n)
                 {
-                    PatientProfileSearchCriteria sc = new PatientProfileSearchCriteria();
+                    var sc = new PatientProfileSearchCriteria();
                     sc.Name.FamilyName.StartsWith(n.FamilyName);
                     if (n.GivenName != null)
                         sc.Name.GivenName.StartsWith(n.GivenName);
@@ -53,22 +53,28 @@ namespace ClearCanvas.Ris.Application.Services
 
             // build criteria against Mrn identifiers
             string[] ids = ParseIdentifiers(query);
-            criteria.AddRange(CollectionUtils.Map<string, PatientProfileSearchCriteria>(ids,
+            criteria.AddRange(CollectionUtils.Map(ids,
                          delegate(string word)
                          {
-                             PatientProfileSearchCriteria c = new PatientProfileSearchCriteria();
+                             var c = new PatientProfileSearchCriteria();
                              c.Mrn.Id.StartsWith(word);
                              return c;
                          }));
 
             // build criteria against Healthcard identifiers
-            criteria.AddRange(CollectionUtils.Map<string, PatientProfileSearchCriteria>(ids,
+            criteria.AddRange(CollectionUtils.Map(ids,
                          delegate(string word)
                          {
-                             PatientProfileSearchCriteria c = new PatientProfileSearchCriteria();
+                             var c = new PatientProfileSearchCriteria();
                              c.Healthcard.Id.StartsWith(word);
                              return c;
                          }));
+
+			// sort results by patient last name
+        	foreach (var criterion in criteria)
+        	{
+        		criterion.Name.FamilyName.SortAsc(0);
+        	}
 
 
             return criteria.ToArray();

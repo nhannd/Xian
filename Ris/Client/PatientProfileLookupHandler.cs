@@ -21,7 +21,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly DesktopWindow _desktopWindow;
 
 		public PatientProfileLookupHandler(DesktopWindow desktopWindow)
-			: base(2, 50) //todo Yen: externalize to settings
+			: base(PatientProfileLookupSettings.Default.MinQueryStringLength, PatientProfileLookupSettings.Default.QuerySpecificityThreshold)
 		{
 			_desktopWindow = desktopWindow;
 		}
@@ -41,9 +41,21 @@ namespace ClearCanvas.Ris.Client
 
 		public override bool ResolveNameInteractive(string query, out PatientProfileSummary result)
 		{
-			_desktopWindow.ShowMessageBox("TODO: implement me!", MessageBoxActions.Ok);
 			result = null;
-			return false;
+
+			var summaryComponent = new PatientProfileSummaryComponent(true);
+			if (!string.IsNullOrEmpty(query))
+			{
+				summaryComponent.SearchString = query;
+			}
+
+			var exitCode = ApplicationComponent.LaunchAsDialog(_desktopWindow, summaryComponent, "Patients");
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				result = (PatientProfileSummary)summaryComponent.SummarySelection.Item;
+			}
+
+			return (result != null);
 		}
 
 
