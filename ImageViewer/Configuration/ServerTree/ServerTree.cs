@@ -27,6 +27,11 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
         {
         }
 
+        public ServerTree(string legacyXmlFilename)
+            : this(SerializationHelper.LoadFromXml(legacyXmlFilename))
+        {
+        }
+
         internal ServerTree(StoredServerGroup rootGroup, List<ApplicationEntity> directoryServers)
         {
             LocalServer = new ServerTreeLocalServer();
@@ -204,7 +209,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
             var serverDirectoryEntries = directory.GetServers(new GetServersRequest()).ServerEntries.ToList();
 
             //Convert the tree items to data contracts (ApplicationEntity).
-            var treeServers = RootServerGroup.GetAllServers().OfType<IServerTreeDicomServer>().Select(a => a.ToDataContract());
+            var treeServers = RootServerGroup.GetAllServers().OfType<IServerTreeDicomServer>().Select(a => a.ToDataContract()).ToList();
             
             //Figure out which entries have been deleted.
             IEnumerable<ServerDirectoryEntry> deletedEntries = from d in serverDirectoryEntries where !treeServers.Any(t => t.Name == d.Server.Name) select d;
@@ -242,7 +247,9 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
         private void SaveToSettings()
         {
-            ServerTreeSettings.Default.UpdateSharedServers(RootServerGroup.ToStoredServerGroup());
+            var settings = ServerTreeSettings.Default;
+            var newValue = RootServerGroup.ToStoredServerGroup();
+            settings.UpdateSharedServers(newValue);
         }
     }
 }

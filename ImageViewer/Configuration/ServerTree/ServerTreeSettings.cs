@@ -12,9 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
-using ClearCanvas.ImageViewer.Configuration.ServerTree.LegacyXml;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
@@ -57,11 +55,11 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
     
     //For now, this is a local shared setting, just like it used to be in a shared xml file.
     [SettingsProvider(typeof(LocalFileSettingsProvider))]
-    internal sealed partial class ServerTreeSettings : IMigrateSettings
+    internal sealed partial class ServerTreeSettings
     {
         internal void UpdateSharedServers(StoredServerGroup storedServerGroup)
         {
-            ApplicationSettingsExtensions.SetSharedPropertyValue(this, "SharedServers", storedServerGroup);
+            this.SetSharedPropertyValue("SharedServers", storedServerGroup);
         }
 
         internal StoredServerGroup GetSharedServers()
@@ -71,34 +69,5 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
             return SharedServers;
         }
-
-        #region IMigrateSettings Members
-
-        public void MigrateSettingsProperty(SettingsPropertyMigrationValues migrationValues)
-        {
-            if (migrationValues.PropertyName != "SharedServers")
-                return;
-
-            if (migrationValues.PreviousValue != null)
-            {
-                migrationValues.CurrentValue = migrationValues.PreviousValue;
-                return;
-            }
-            
-            try
-            {
-                //TODO (Marmot): Need to test this!
-                var old = SerializationHelper.LoadFromXml();
-                var serverTree = new ServerTree(old);
-                migrationValues.CurrentValue = serverTree.RootServerGroup.ToStoredServerGroup();
-                serverTree.SaveServersToDirectory();
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Warn, e, "Failed to migrate server tree from legacy xml file.");
-            }
-        }
-
-        #endregion
     }
 }

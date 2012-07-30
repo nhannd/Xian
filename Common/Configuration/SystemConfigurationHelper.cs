@@ -49,7 +49,7 @@ namespace ClearCanvas.Common.Configuration
 
 		private static void SetElementValue(SettingElement element, string value)
 		{
-			XmlDocument temp = new XmlDocument();
+			var temp = new XmlDocument();
 			XmlNode valueXml = temp.CreateElement("value");
 
 			if (element.SerializeAs == SettingsSerializeAs.String)
@@ -84,8 +84,9 @@ namespace ClearCanvas.Common.Configuration
 
 		private static ClientSettingsSection CastToClientSection(ConfigurationSection section)
 		{
-			if (section is ClientSettingsSection)
-				return (ClientSettingsSection)section;
+		    var castToClientSection = section as ClientSettingsSection;
+		    if (castToClientSection != null)
+		        return castToClientSection;
 
 			throw new NotSupportedException(String.Format(
 				"The specified ConfigurationSection must be of Type ClientSettingsSection: {0}.", section.GetType().FullName));
@@ -194,7 +195,7 @@ namespace ClearCanvas.Common.Configuration
 		/// <param name="configuration">the configuration where the values will be taken from</param>
 		/// <param name="settingsClass">the settings class for which to get the values</param>
 		/// <param name="settingScope">the scope of the settings for which to get the values</param>
-		public static Dictionary<string, string> GetSettingsValues(SystemConfiguration configuration, Type settingsClass, SettingScope settingScope)
+		public static Dictionary<string, string> GetSettingsValues(this SystemConfiguration configuration, Type settingsClass, SettingScope settingScope)
 		{
 			var properties = GetProperties(settingsClass, settingScope);
 			var sectionPath = new ConfigurationSectionPath(settingsClass, settingScope);
@@ -206,7 +207,7 @@ namespace ClearCanvas.Common.Configuration
         /// </summary>
         /// <param name="configuration">the configuration where the values will be taken from</param>
 		/// <param name="settingsClass">the settings class for which to get the values</param>
-		public static Dictionary<string, string> GetSettingsValues(SystemConfiguration configuration, Type settingsClass)
+        public static Dictionary<string, string> GetSettingsValues(this SystemConfiguration configuration, Type settingsClass)
 		{
 			var applicationScopedValues = GetSettingsValues(configuration, settingsClass, SettingScope.Application);
 			var userScopedValues = GetSettingsValues(configuration, settingsClass, SettingScope.User);
@@ -223,7 +224,7 @@ namespace ClearCanvas.Common.Configuration
         /// <param name="configuration">the configuration where the values will be stored</param>
 		/// <param name="settingsClass">the settings class for which to store the values</param>
 		/// <param name="dirtyValues">contains the values to be stored</param>
-        public static void PutSettingsValues(SystemConfiguration configuration, Type settingsClass, IDictionary<string, string> dirtyValues)
+        public static void PutSettingsValues(this SystemConfiguration configuration, Type settingsClass, IDictionary<string, string> dirtyValues)
 		{
 			var applicationScopedProperties = GetProperties(settingsClass, SettingScope.Application);
 			var userScopedProperties = GetProperties(settingsClass, SettingScope.User);
@@ -245,19 +246,28 @@ namespace ClearCanvas.Common.Configuration
 				configuration.Save(ConfigurationSaveMode.Minimal, true);
 		}
 
-		public static void RemoveSettingsValues(SystemConfiguration configuration, Type settingsClass)
-		{
-			var sectionPath = new ConfigurationSectionPath(settingsClass, SettingScope.Application);
-			ConfigurationSectionGroup group = configuration.GetSectionGroup(sectionPath.GroupPath);
-			if (group != null)
-				group.Sections.Remove(sectionPath.SectionName);
+	    public static void RemoveSettingsValues(this SystemConfiguration configuration, Type settingsClass, SettingScope? scope = null)
+	    {
+	        var removeApplicationSettings = !scope.HasValue || scope.Value == SettingScope.Application;
+            var removeUserSettings = !scope.HasValue || scope.Value == SettingScope.User;
 
-			sectionPath = new ConfigurationSectionPath(settingsClass, SettingScope.User);
-			group = configuration.GetSectionGroup(sectionPath.GroupPath);
-			if (group != null)
-				group.Sections.Remove(sectionPath.SectionName);
+            if (removeApplicationSettings)
+            {
+                var sectionPath = new ConfigurationSectionPath(settingsClass, SettingScope.Application);
+                ConfigurationSectionGroup group = configuration.GetSectionGroup(sectionPath.GroupPath);
+                if (group != null)
+                    group.Sections.Remove(sectionPath.SectionName);
+            }
 
-			configuration.Save(ConfigurationSaveMode.Minimal, true);
+            if (removeUserSettings)
+            {
+                var sectionPath = new ConfigurationSectionPath(settingsClass, SettingScope.User);
+                var group = configuration.GetSectionGroup(sectionPath.GroupPath);
+                if (group != null)
+                    group.Sections.Remove(sectionPath.SectionName);
+            }
+
+	        configuration.Save(ConfigurationSaveMode.Minimal, true);
 		}
 
 		public static SystemConfiguration GetExeConfiguration()
