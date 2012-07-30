@@ -129,7 +129,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.flowLayoutPanel1.Controls.Add(this._cancelButton);
 			this.flowLayoutPanel1.Controls.Add(this._acceptButton);
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(518, 672);
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(517, 588);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.flowLayoutPanel1.Size = new System.Drawing.Size(158, 27);
@@ -399,14 +399,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._proceduresTableView.ColumnHeaderTooltip = null;
 			this.tableLayoutPanel3.SetColumnSpan(this._proceduresTableView, 2);
-			this._proceduresTableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._proceduresTableView.FilterTextBoxWidth = 132;
 			this._proceduresTableView.Location = new System.Drawing.Point(0, 369);
 			this._proceduresTableView.Margin = new System.Windows.Forms.Padding(0);
 			this._proceduresTableView.Name = "_proceduresTableView";
 			this._proceduresTableView.ReadOnly = false;
 			this._proceduresTableView.ShowToolbar = false;
-			this._proceduresTableView.Size = new System.Drawing.Size(646, 266);
+			this._proceduresTableView.Size = new System.Drawing.Size(646, 182);
 			this._proceduresTableView.SortButtonTooltip = null;
 			this._proceduresTableView.TabIndex = 9;
 			this._proceduresTableView.ItemDoubleClicked += new System.EventHandler(this._proceduresTableView_ItemDoubleClicked);
@@ -501,7 +500,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._mainTab.Location = new System.Drawing.Point(3, 3);
 			this._mainTab.Name = "_mainTab";
 			this._mainTab.SelectedIndex = 0;
-			this._mainTab.Size = new System.Drawing.Size(673, 667);
+			this._mainTab.Size = new System.Drawing.Size(673, 583);
 			this._mainTab.TabIndex = 0;
 			// 
 			// _generalPage
@@ -510,7 +509,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._generalPage.Location = new System.Drawing.Point(4, 22);
 			this._generalPage.Name = "_generalPage";
 			this._generalPage.Padding = new System.Windows.Forms.Padding(3);
-			this._generalPage.Size = new System.Drawing.Size(665, 641);
+			this._generalPage.Size = new System.Drawing.Size(665, 557);
 			this._generalPage.TabIndex = 0;
 			this._generalPage.Text = "General";
 			this._generalPage.UseVisualStyleBackColor = true;
@@ -564,7 +563,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._mainTab);
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "OrderEditorComponentControl";
-			this.Size = new System.Drawing.Size(678, 707);
+			this.Size = new System.Drawing.Size(678, 623);
 			this.Load += new System.EventHandler(this.OrderEditorComponentControl_Load);
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel3.ResumeLayout(false);
