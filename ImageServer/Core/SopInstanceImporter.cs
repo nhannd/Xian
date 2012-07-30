@@ -357,6 +357,7 @@ namespace ClearCanvas.ImageServer.Core
             path = Path.Combine(path, sopInstanceUid);
             path += ServerPlatform.DicomFileExtension;
 
+            Platform.Log(LogLevel.Info,"Saving {0} to {1}, FilesystemKey:{2}",sopInstanceUid,path,studyLocation.FilesystemKey.ToString());
             commandProcessor.AddCommand(new SaveDicomFileCommand(path, file, true));
 
             commandProcessor.AddCommand(

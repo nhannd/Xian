@@ -1653,8 +1653,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
                     StudyIntegrityValidator validator = new StudyIntegrityValidator();
                     validator.ValidateStudyState(WorkQueueItem.WorkQueueTypeEnum.ToString(), studyStorage, mode);
-                }
-                Platform.Log(LogLevel.Info, "Study {0} has been verified", studyStorage.StudyInstanceUid);
+                }                
+                Platform.Log(LogLevel.Info, "Study {0} has been verified: FilesystemKey: {1}, Path: {2}", studyStorage.StudyInstanceUid,studyStorage.FilesystemKey.ToString(),studyStorage.GetStudyPath());
             }
             
             

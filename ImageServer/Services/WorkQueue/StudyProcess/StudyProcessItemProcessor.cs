@@ -570,6 +570,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 					PostProcessing(item,
 					               WorkQueueProcessorStatus.Complete,
 					               WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+
+				    StudyStorageLocation location;
+                    if (FilesystemMonitor.Instance.GetWritableStudyStorageLocation(item.StudyStorageKey, out location))
+                        Platform.Log(LogLevel.Info, "Completed WorkItem Study {0}, FilesystemKey: {1}, Path: {2}",location.StudyInstanceUid,location.FilesystemKey.ToString(), location.GetStudyPath());
+     
 				}
 				else if (idle)
 					PostProcessing(item,
