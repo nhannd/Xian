@@ -13,7 +13,7 @@ using System.Configuration;
 
 namespace ClearCanvas.Common.Configuration
 {
-    internal class ExtendedLocalFileSettingsProvider : SettingsProvider, IApplicationSettingsProvider, ISharedApplicationSettingsProvider
+    public class ExtendedLocalFileSettingsProvider : SettingsProvider, IApplicationSettingsProvider, ISharedApplicationSettingsProvider
     {
         private readonly LocalFileSettingsProvider _provider;
 
@@ -21,6 +21,11 @@ namespace ClearCanvas.Common.Configuration
         {
             _provider = provider;
         }
+
+        /// <summary>
+        /// Hack to allow shared settings migration to redirect to a different exe's config file.
+        /// </summary>
+        public static string ExeConfigFileName { get; set; }
 
         public override string ApplicationName
         {
@@ -84,7 +89,7 @@ namespace ClearCanvas.Common.Configuration
 
     	public void UpgradeSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
         {
-            LocalFileSettingsProviderExtensions.UpgradeSharedPropertyValues(_provider, context, properties, previousExeConfigFilename);
+            LocalFileSettingsProviderExtensions.UpgradeSharedPropertyValues(_provider, context, properties, previousExeConfigFilename, ExeConfigFileName);
         }
 
         public SettingsPropertyValueCollection GetPreviousSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
@@ -94,12 +99,12 @@ namespace ClearCanvas.Common.Configuration
 
         public SettingsPropertyValueCollection GetSharedPropertyValues(SettingsContext context, SettingsPropertyCollection properties)
         {
-            return LocalFileSettingsProviderExtensions.GetSharedPropertyValues(_provider, context, properties);
+            return LocalFileSettingsProviderExtensions.GetSharedPropertyValues(_provider, context, properties, ExeConfigFileName);
         }
 
         public void SetSharedPropertyValues(SettingsContext context, SettingsPropertyValueCollection values)
         {
-            LocalFileSettingsProviderExtensions.SetSharedPropertyValues(_provider, context, values);
+            LocalFileSettingsProviderExtensions.SetSharedPropertyValues(_provider, context, values, ExeConfigFileName);
         }
 
         #endregion
