@@ -17,16 +17,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 	[DataContract]
 	public class GetOrderRequisitionForEditResponse : DataContractBase
 	{
-		public GetOrderRequisitionForEditResponse(OrderRequisition requisition, bool isCompleted)
+		public GetOrderRequisitionForEditResponse(OrderRequisition requisition)
 		{
 			this.Requisition = requisition;
-			this.IsCompleted = isCompleted;
 		}
 
 		[DataMember]
 		public OrderRequisition Requisition;
-
-		[DataMember]
-		public bool IsCompleted;
 	}
 }

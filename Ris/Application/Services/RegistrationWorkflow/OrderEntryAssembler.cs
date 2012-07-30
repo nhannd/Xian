@@ -33,30 +33,34 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			var resultRecipientAssembler = new ResultRecipientAssembler();
 
 			var requisition = new OrderRequisition
-				{
-					OrderRef = order.GetRef(),
-					Patient = patientProfileAssembler.CreatePatientProfileSummary(CollectionUtils.FirstElement(order.Procedures).PatientProfile, context),
-					Visit = visitAssembler.CreateVisitSummary(order.Visit, context),
-					DiagnosticService = dsAssembler.CreateSummary(order.DiagnosticService),
-					SchedulingRequestTime = order.SchedulingRequestTime,
-					OrderingPractitioner = pracAssembler.CreateExternalPractitionerSummary(order.OrderingPractitioner, context),
-					OrderingFacility = facilityAssembler.CreateFacilitySummary(order.OrderingFacility),
-					ReasonForStudy = order.ReasonForStudy,
-					Priority = EnumUtils.GetEnumValueInfo(order.Priority, context),
-					ResultRecipients = CollectionUtils.Map<ResultRecipient, ResultRecipientDetail>(
-						order.ResultRecipients,
-						r => resultRecipientAssembler.CreateResultRecipientDetail(r, context)),
-					Procedures = CollectionUtils.Map<Procedure, ProcedureRequisition>(
-						order.Procedures,
-						procedure => CreateProcedureRequisition(procedure, context)),
-					Attachments = CollectionUtils.Map<OrderAttachment, AttachmentSummary>(
-						order.Attachments,
-						attachment => attachmentAssembler.CreateOrderAttachmentSummary(attachment, context)),
-					Notes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(
-						OrderNote.GetNotesForOrder(order),
-						note => noteAssembler.CreateOrderNoteDetail(note, context)),
-					ExtendedProperties = ExtendedPropertyUtils.Copy(order.ExtendedProperties)
-				};
+								{
+									OrderRef = order.GetRef(),
+									Patient =
+										patientProfileAssembler.CreatePatientProfileSummary(
+											CollectionUtils.FirstElement(order.Procedures).PatientProfile, context),
+									Visit = visitAssembler.CreateVisitSummary(order.Visit, context),
+									DiagnosticService = dsAssembler.CreateSummary(order.DiagnosticService),
+									SchedulingRequestTime = order.SchedulingRequestTime,
+									OrderingPractitioner =
+										pracAssembler.CreateExternalPractitionerSummary(order.OrderingPractitioner, context),
+									OrderingFacility = facilityAssembler.CreateFacilitySummary(order.OrderingFacility),
+									ReasonForStudy = order.ReasonForStudy,
+									Priority = EnumUtils.GetEnumValueInfo(order.Priority, context),
+									ResultRecipients = CollectionUtils.Map<ResultRecipient, ResultRecipientDetail>(
+										order.ResultRecipients,
+										r => resultRecipientAssembler.CreateResultRecipientDetail(r, context)),
+									Procedures = CollectionUtils.Map<Procedure, ProcedureRequisition>(
+										order.Procedures,
+										procedure => CreateProcedureRequisition(procedure, context)),
+									Attachments = CollectionUtils.Map<OrderAttachment, AttachmentSummary>(
+										order.Attachments,
+										attachment => attachmentAssembler.CreateOrderAttachmentSummary(attachment, context)),
+									Notes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(
+										OrderNote.GetNotesForOrder(order),
+										note => noteAssembler.CreateOrderNoteDetail(note, context)),
+									ExtendedProperties = ExtendedPropertyUtils.Copy(order.ExtendedProperties),
+									CanModify = !order.IsTerminated
+								};
 
 			return requisition;
 		}
@@ -167,7 +171,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			// if the requisition explicitly specifies a modality, assign that modality to all MPS
 			// (we ignore the fact that the procedure plan can theoretically contain modality procedures steps spanning multiple 
 			// DICOM modalities, since in the small clinic use-case, each procedure type generally only has a single MPS)
-			if(requisition.Modality != null)
+			if (requisition.Modality != null)
 			{
 				foreach (var mps in procedure.ModalityProcedureSteps)
 				{

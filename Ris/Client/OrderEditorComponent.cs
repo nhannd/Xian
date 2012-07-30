@@ -934,11 +934,11 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-		private void OnOrderRequisitionLoaded(OrderRequisition requisition, bool isCompleted)
+		private void OnOrderRequisitionLoaded(OrderRequisition requisition)
 		{
 			// update order ref so we have the latest version
 			_orderRef = requisition.OrderRef;
-			_isComplete = isCompleted;
+			_isComplete = !requisition.CanModify;
 
 			// update form
 			UpdateFromRequisition(requisition);

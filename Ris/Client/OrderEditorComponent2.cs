@@ -245,7 +245,7 @@ namespace ClearCanvas.Ris.Client
 				Async.Request(component,
 							  (IOrderEntryService service) =>
 							  service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest { OrderRef = this.OrderRef, ProcedureRef = this.ProcedureRef}),
-							  response => component.OnOrderRequisitionLoaded(response.Requisition, response.IsCompleted));
+							  response => component.OnOrderRequisitionLoaded(response.Requisition));
 			}
 
 			internal override void ApplyDefaults(ProcedureRequisition procedureRequisition, OrderEditorComponent component)
@@ -302,7 +302,7 @@ namespace ClearCanvas.Ris.Client
 							  service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest { OrderRef = this.OrderRef }),
 							  response =>
 							  	{
-							  		component.OnOrderRequisitionLoaded(response.Requisition, response.IsCompleted);
+							  		component.OnOrderRequisitionLoaded(response.Requisition);
 									// bug #3506: in replace mode, overwrite the procedures with clean one(s) based on diagnostic service
 									component.UpdateDiagnosticService(response.Requisition.DiagnosticService);
 							  		this.OrderRef = component.OrderRef;

@@ -198,7 +198,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			var assembler = new OrderEntryAssembler();
 			var requisition = assembler.CreateOrderRequisition(order, this.PersistenceContext);
-			return new GetOrderRequisitionForEditResponse(requisition, order.IsTerminated);
+			return new GetOrderRequisitionForEditResponse(requisition);
 		}
 
 		[UpdateOperation]
