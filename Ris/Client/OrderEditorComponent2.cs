@@ -41,6 +41,11 @@ namespace ClearCanvas.Ris.Client
 			public DateTime? ScheduledTime { get; set; }
 
 			/// <summary>
+			/// Specifies the default scheduling request time.
+			/// </summary>
+			public DateTime? SchedulingRequestTime { get; set; }
+
+			/// <summary>
 			/// Specifies the default duration.
 			/// </summary>
 			public int? ScheduledDuration { get; set; }
@@ -82,6 +87,22 @@ namespace ClearCanvas.Ris.Client
 			/// </summary>
 			/// <param name="component"></param>
 			internal abstract void Initialize(OrderEditorComponent component);
+
+			/// <summary>
+			/// Applies defaults to the specified order requisition.
+			/// </summary>
+			/// <param name="orderRequisition"></param>
+			/// <param name="component"></param>
+			internal virtual void ApplyDefaults(OrderRequisition orderRequisition, OrderEditorComponent component)
+			{
+				if (!orderRequisition.CanModify)
+					return;
+
+				if (this.Defaults.SchedulingRequestTime.HasValue)
+				{
+					orderRequisition.SchedulingRequestTime = this.Defaults.SchedulingRequestTime;
+				}
+			}
 
 			/// <summary>
 			/// Applies default values to the specified procedure requisition.
@@ -152,6 +173,12 @@ namespace ClearCanvas.Ris.Client
 				if(this.PatientProfile != null)
 				{
 					component.UpdatePatientProfile(this.PatientProfile);
+				}
+
+				// need to apply the defaults here, since there is no "requisition" at this point
+				if (this.Defaults.SchedulingRequestTime.HasValue)
+				{
+					component._schedulingRequestTime = this.Defaults.SchedulingRequestTime;
 				}
 			}
 

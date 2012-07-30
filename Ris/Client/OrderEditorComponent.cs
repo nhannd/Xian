@@ -1114,6 +1114,11 @@ namespace ClearCanvas.Ris.Client
 
 		private void UpdateFromRequisition(OrderRequisition existingOrder)
 		{
+			if (existingOrder.CanModify)
+			{
+				_operatingContext.ApplyDefaults(existingOrder, this);
+			}
+
 			UpdatePatientProfile(existingOrder.Patient);
 
 			_selectedVisit = existingOrder.Visit;

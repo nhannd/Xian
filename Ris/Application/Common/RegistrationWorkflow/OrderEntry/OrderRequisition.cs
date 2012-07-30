@@ -122,5 +122,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		{
 			get { return !string.IsNullOrEmpty(DowntimeAccessionNumber); }
 		}
+
+		/// <summary>
+		/// Set by the server to indicate whether this order can be modified
+		/// (e.g. it cannot be modified if it is already in-progress).
+		/// </summary>
+		[DataMember]
+		public bool CanModify;
+
 	}
 }
