@@ -224,17 +224,10 @@ namespace ClearCanvas.Ris.Client
 			/// </summary>
 			public EntityRef ProcedureRef { get; set; }
 
-			/// <summary>
-			/// Specifies a filter that determines if the defaults should be applied to a given procedure. 
-			/// </summary>
-			public Predicate<ProcedureRequisition> DefaultValueApplicabilityFilter { get; set; }
-
 			internal override void Validate()
 			{
 				if(this.OrderRef == null && this.ProcedureRef == null)
 					throw new InvalidOperationException("Either OrderRef or ProcedureRef must be specified.");
-				if(this.DefaultValueApplicabilityFilter == null)
-					this.DefaultValueApplicabilityFilter = requisition => true;	// apply to all
 
 				base.Validate();
 			}
@@ -250,8 +243,8 @@ namespace ClearCanvas.Ris.Client
 
 			internal override void ApplyDefaults(ProcedureRequisition procedureRequisition, OrderEditorComponent component)
 			{
-				// apply the defaults iff the requisition satisfies the filter
-				if (this.DefaultValueApplicabilityFilter(procedureRequisition))
+				// apply the defaults iff this requisition is specifically the one that was requested to be edited
+				if (EntityRef.Equals(procedureRequisition.ProcedureRef, this.ProcedureRef, true))
 				{
 					base.ApplyDefaults(procedureRequisition, component);
 				}
