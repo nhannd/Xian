@@ -308,6 +308,9 @@ namespace ClearCanvas.Ris.Client
 			_diagnosticServiceLookupHandler = new DiagnosticServiceLookupHandler(this.Host.DesktopWindow);
 			_orderingPractitionerLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
 
+			// until we actually load the visits, use an empty list to avoid null ref issues
+			_allVisits = new List<VisitSummary>();
+
 			Platform.GetService<IOrderEntryService>(service =>
 			{
 				var formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest());
