@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -39,11 +40,6 @@ namespace ClearCanvas.Ris.Client
 			/// Specifies the default scheduled time.
 			/// </summary>
 			public DateTime? ScheduledTime { get; set; }
-
-			/// <summary>
-			/// Specifies the default scheduling request time.
-			/// </summary>
-			public DateTime? SchedulingRequestTime { get; set; }
 
 			/// <summary>
 			/// Specifies the default duration.
@@ -78,7 +74,7 @@ namespace ClearCanvas.Ris.Client
 			/// </summary>
 			internal virtual void Validate()
 			{
-				if(this.Defaults == null)
+				if (this.Defaults == null)
 					this.Defaults = new DefaultValues();
 			}
 
@@ -89,47 +85,11 @@ namespace ClearCanvas.Ris.Client
 			internal abstract void Initialize(OrderEditorComponent component);
 
 			/// <summary>
-			/// Applies defaults to the specified order requisition.
-			/// </summary>
-			/// <param name="orderRequisition"></param>
-			/// <param name="component"></param>
-			internal virtual void ApplyDefaults(OrderRequisition orderRequisition, OrderEditorComponent component)
-			{
-				if (!orderRequisition.CanModify)
-					return;
-
-				if (this.Defaults.SchedulingRequestTime.HasValue)
-				{
-					orderRequisition.SchedulingRequestTime = this.Defaults.SchedulingRequestTime;
-				}
-			}
-
-			/// <summary>
 			/// Applies default values to the specified procedure requisition.
 			/// </summary>
 			/// <param name="procedureRequisition"></param>
 			/// <param name="component"></param>
-			internal virtual void ApplyDefaults(ProcedureRequisition procedureRequisition, OrderEditorComponent component)
-			{
-				if(!procedureRequisition.CanModify)
-					return;
-
-				if(this.Defaults.ScheduledTime.HasValue)
-				{
-					procedureRequisition.ScheduledTime = this.Defaults.ScheduledTime.Value;
-				}
-
-				if(this.Defaults.ScheduledDuration.HasValue)
-				{
-					procedureRequisition.ScheduledDuration = this.Defaults.ScheduledDuration.Value;
-				}
-
-				if(this.Defaults.ModalityRef != null)
-				{
-					var modality = component._modalityChoices.FirstOrDefault(m => m.ModalityRef.Equals(this.Defaults.ModalityRef, true));
-					procedureRequisition.Modality = modality;
-				}
-			}
+			internal abstract void ApplyDefaults(ProcedureRequisition procedureRequisition, OrderEditorComponent component);
 
 			/// <summary>
 			/// Submit the specified order requisition to the server.
@@ -154,12 +114,21 @@ namespace ClearCanvas.Ris.Client
 			{
 				get { return true; }
 			}
+
+			protected DateTime ComputeScheduledTime(DateTime baseTime, IEnumerable<ProcedureRequisition> procedures)
+			{
+				return (from p in procedures
+						where p.ScheduledTime.HasValue
+						select p.ScheduledTime.Value.AddMinutes(p.ScheduledDuration))
+					.Concat(new[] { baseTime })
+					.Max();
+			}
 		}
 
 		public class NewOrderOperatingContext : OperatingContext
 		{
 			public NewOrderOperatingContext()
-				:base(Mode.NewOrder)
+				: base(Mode.NewOrder)
 			{
 			}
 
@@ -170,15 +139,29 @@ namespace ClearCanvas.Ris.Client
 
 			internal override void Initialize(OrderEditorComponent component)
 			{
-				if(this.PatientProfile != null)
+				if (this.PatientProfile != null)
 				{
 					component.UpdatePatientProfile(this.PatientProfile);
 				}
 
 				// need to apply the defaults here, since there is no "requisition" at this point
-				if (this.Defaults.SchedulingRequestTime.HasValue)
+				if (this.Defaults.ScheduledTime.HasValue)
 				{
-					component._schedulingRequestTime = this.Defaults.SchedulingRequestTime;
+					component._schedulingRequestTime = this.Defaults.ScheduledTime;
+				}
+			}
+
+			internal override void ApplyDefaults(ProcedureRequisition procedureRequisition, OrderEditorComponent component)
+			{
+				if (this.Defaults.ScheduledTime.HasValue)
+				{
+					procedureRequisition.ScheduledTime = ComputeScheduledTime(this.Defaults.ScheduledTime.Value, component._proceduresTable.Items);
+				}
+
+				if (this.Defaults.ModalityRef != null)
+				{
+					var modality = component._modalityChoices.FirstOrDefault(m => m.ModalityRef.Equals(this.Defaults.ModalityRef, true));
+					procedureRequisition.Modality = modality;
 				}
 			}
 
@@ -210,7 +193,7 @@ namespace ClearCanvas.Ris.Client
 		public class ModifyOrderOperatingContext : OperatingContext
 		{
 			public ModifyOrderOperatingContext()
-				:base(Mode.ModifyOrder)
+				: base(Mode.ModifyOrder)
 			{
 			}
 
@@ -226,7 +209,7 @@ namespace ClearCanvas.Ris.Client
 
 			internal override void Validate()
 			{
-				if(this.OrderRef == null && this.ProcedureRef == null)
+				if (this.OrderRef == null && this.ProcedureRef == null)
 					throw new InvalidOperationException("Either OrderRef or ProcedureRef must be specified.");
 
 				base.Validate();
@@ -237,16 +220,42 @@ namespace ClearCanvas.Ris.Client
 				// load the existing order
 				Async.Request(component,
 							  (IOrderEntryService service) =>
-							  service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest { OrderRef = this.OrderRef, ProcedureRef = this.ProcedureRef}),
-							  response => component.OnOrderRequisitionLoaded(response.Requisition));
+							  service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest { OrderRef = this.OrderRef, ProcedureRef = this.ProcedureRef }),
+							  response =>
+							  	{
+							  		component.OnOrderRequisitionLoaded(response.Requisition);
+
+									// if launched wrt a specific procedure, select it
+									if(this.ProcedureRef != null)
+									{
+										var x = component._proceduresTable.Items.Where(p => EntityRef.Equals(p.ProcedureRef, this.ProcedureRef, true));
+										component.SelectedProcedures = new Selection(x);
+									}
+							  	});
 			}
 
 			internal override void ApplyDefaults(ProcedureRequisition procedureRequisition, OrderEditorComponent component)
 			{
 				// apply the defaults iff this requisition is specifically the one that was requested to be edited
-				if (EntityRef.Equals(procedureRequisition.ProcedureRef, this.ProcedureRef, true))
+				if (!EntityRef.Equals(procedureRequisition.ProcedureRef, this.ProcedureRef, true))
+					return;
+				if (!procedureRequisition.CanModify)
+					return;
+
+				if (this.Defaults.ScheduledTime.HasValue)
 				{
-					base.ApplyDefaults(procedureRequisition, component);
+					procedureRequisition.ScheduledTime = this.Defaults.ScheduledTime.Value;
+				}
+
+				if (this.Defaults.ScheduledDuration.HasValue)
+				{
+					procedureRequisition.ScheduledDuration = this.Defaults.ScheduledDuration.Value;
+				}
+
+				if (this.Defaults.ModalityRef != null)
+				{
+					var modality = component._modalityChoices.FirstOrDefault(m => m.ModalityRef.Equals(this.Defaults.ModalityRef, true));
+					procedureRequisition.Modality = modality;
 				}
 			}
 
@@ -270,7 +279,7 @@ namespace ClearCanvas.Ris.Client
 		public class ReplaceOrderOperatingContext : OperatingContext
 		{
 			public ReplaceOrderOperatingContext()
-				:base(Mode.ReplaceOrder)
+				: base(Mode.ReplaceOrder)
 			{
 			}
 
@@ -281,7 +290,7 @@ namespace ClearCanvas.Ris.Client
 
 			internal override void Validate()
 			{
-				if(this.OrderRef == null)
+				if (this.OrderRef == null)
 					throw new InvalidOperationException("OrderRef must be specified.");
 
 				base.Validate();
@@ -294,12 +303,27 @@ namespace ClearCanvas.Ris.Client
 							  (IOrderEntryService service) =>
 							  service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest { OrderRef = this.OrderRef }),
 							  response =>
-							  	{
-							  		component.OnOrderRequisitionLoaded(response.Requisition);
-									// bug #3506: in replace mode, overwrite the procedures with clean one(s) based on diagnostic service
-									component.UpdateDiagnosticService(response.Requisition.DiagnosticService);
-							  		this.OrderRef = component.OrderRef;
-							  	});
+							  {
+								  component.OnOrderRequisitionLoaded(response.Requisition);
+								  // bug #3506: in replace mode, overwrite the procedures with clean one(s) based on diagnostic service
+								  component.UpdateDiagnosticService(response.Requisition.DiagnosticService);
+								  this.OrderRef = component.OrderRef;
+							  });
+			}
+
+
+			internal override void ApplyDefaults(ProcedureRequisition procedureRequisition, OrderEditorComponent component)
+			{
+				if (this.Defaults.ScheduledTime.HasValue)
+				{
+					procedureRequisition.ScheduledTime = ComputeScheduledTime(this.Defaults.ScheduledTime.Value, component._proceduresTable.Items);
+				}
+
+				if (this.Defaults.ModalityRef != null)
+				{
+					var modality = component._modalityChoices.FirstOrDefault(m => m.ModalityRef.Equals(this.Defaults.ModalityRef, true));
+					procedureRequisition.Modality = modality;
+				}
 			}
 
 			internal override EntityRef Submit(OrderRequisition requisition, OrderEditorComponent component)

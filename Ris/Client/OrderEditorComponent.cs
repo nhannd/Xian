@@ -583,9 +583,10 @@ namespace ClearCanvas.Ris.Client
 			get { return new Selection(_selectedProcedures); }
 			set
 			{
-				_selectedProcedures = CollectionUtils.Map<object, ProcedureRequisition, List<ProcedureRequisition>>(
-					value.Items, item => (ProcedureRequisition)item);
+				_selectedProcedures = value.Items.Cast<ProcedureRequisition>().ToList();
+
 				UpdateProcedureActionModel();
+				NotifyPropertyChanged("SelectedProcedures");
 			}
 		}
 
@@ -1020,10 +1021,10 @@ namespace ClearCanvas.Ris.Client
 				Platform.GetService<IOrderEntryService>(service =>
 				{
 					var response = service.LoadDiagnosticServiceBreakdown(new LoadDiagnosticServiceBreakdownRequest(summary.DiagnosticServiceRef));
-					_proceduresTable.Items.AddRange(
-						CollectionUtils.Map<ProcedureTypeSummary, ProcedureRequisition>(
-							response.DiagnosticServiceDetail.ProcedureTypes,
-							NewProcedureRequisition));
+					foreach (var procedureType in response.DiagnosticServiceDetail.ProcedureTypes)
+					{
+						_proceduresTable.Items.Add(NewProcedureRequisition(procedureType));
+					}
 				});
 			}
 
@@ -1117,11 +1118,6 @@ namespace ClearCanvas.Ris.Client
 
 		private void UpdateFromRequisition(OrderRequisition existingOrder)
 		{
-			if (existingOrder.CanModify)
-			{
-				_operatingContext.ApplyDefaults(existingOrder, this);
-			}
-
 			UpdatePatientProfile(existingOrder.Patient);
 
 			_selectedVisit = existingOrder.Visit;
