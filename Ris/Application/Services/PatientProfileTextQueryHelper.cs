@@ -10,6 +10,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
@@ -19,13 +20,13 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    public class ProfileTextQueryHelper : TextQueryHelper<PatientProfile, PatientProfileSearchCriteria, PatientProfileSummary>
+    public class PatientProfileTextQueryHelper : TextQueryHelper<PatientProfile, PatientProfileSearchCriteria, PatientProfileSummary>
     {
         private readonly IPersistenceContext _context;
         private readonly IPatientProfileBroker _broker;
         private readonly PatientProfileAssembler _assembler;
 
-        public ProfileTextQueryHelper(IPersistenceContext context)
+        public PatientProfileTextQueryHelper(IPersistenceContext context)
         {
             _context = context;
             _broker = _context.GetBroker<IPatientProfileBroker>();
@@ -70,8 +71,8 @@ namespace ClearCanvas.Ris.Application.Services
                              return c;
                          }));
 
-			// sort results by patient last name
-        	foreach (var criterion in criteria)
+			// sort results by patient last name (add sort directive to first instance only, otherwise we get exceptions)
+        	foreach (var criterion in criteria.Take(1))
         	{
         		criterion.Name.FamilyName.SortAsc(0);
         	}

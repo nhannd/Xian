@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		[ReadOperation]
 		public TextQueryResponse<PatientProfileSummary> PatientProfileTextQuery(TextQueryRequest request)
 		{
-			var helper = new ProfileTextQueryHelper(this.PersistenceContext);
+			var helper = new PatientProfileTextQueryHelper(this.PersistenceContext);
 			return helper.Query(request);
 		}
 

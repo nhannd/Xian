@@ -145,7 +145,7 @@
     <Compile Include="MrnAssembler.cs" />
     <Compile Include="OrderAssembler.cs" />
     <Compile Include="ProcedurePlanAssembler.cs" />
-    <Compile Include="ProfileTextQueryHelper.cs" />
+    <Compile Include="PatientProfileTextQueryHelper.cs" />
     <Compile Include="ProtocolGroupAssembler.cs" />
     <Compile Include="ProtocolProcedureStepAssembler.cs" />
     <Compile Include="ProcedureAssembler.cs" />
