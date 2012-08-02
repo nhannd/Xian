@@ -1309,12 +1309,13 @@ Preview.ImagingServiceSection = function () {
 		'		<td width="120" class="propertyname">Performing Facility/Dept.</td>'+
 		'		<td width="200"><div id="PerformingFacility"/></td>'+
 		'	</tr>'+
-		'	<tr>'+
-		'		<td width="120" class="propertyname">Patient Class</td>'+
-		'		<td width="200"><div id="PatientClass"/></td>'+
-		'		<td width="120" class="propertyname">Location, Room/Bed</td>'+
-		'		<td width="200"><div id="LocationRoomBed"/></td>'+
-		'	</tr>'+
+		// Yen: Removed thess fields, since they aren't needed for the time being.  May need to add them back in future releases. (jr 2012)
+		// '	<tr>'+
+		// '		<td width="120" class="propertyname">Patient Class</td>'+
+		// '		<td width="200"><div id="PatientClass"/></td>'+
+		// '		<td width="120" class="propertyname">Location, Room/Bed</td>'+
+		// '		<td width="200"><div id="LocationRoomBed"/></td>'+
+		// '	</tr>'+
 		'	<tr>'+
 		'		<td width="120" class="propertyname">Indication</td>'+
 		'		<td colspan="4"><div id="ReasonForStudy"/></td>'+
@@ -1382,8 +1383,8 @@ Preview.ImagingServiceSection = function () {
 			// visit information may not exist, depending on whether the Visit Workflow feature is enabled
 			if(orderDetail.Visit && orderDetail.Visit.PatientClass) {
 				Field.setValue($("PatientClass"), orderDetail.Visit.PatientClass.Value);
+				Field.setValue($("LocationRoomBed"), Preview.formatVisitCurrentLocation(orderDetail.Visit));
 			}
-			Field.setValue($("LocationRoomBed"), Preview.formatVisitCurrentLocation(orderDetail.Visit));
 			Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
 			Field.setValue($("EnteredBy"), orderDetail.EnteredBy ? (Ris.formatPersonName(orderDetail.EnteredBy.Name) + ' (' + orderDetail.EnteredBy.StaffType.Value + ')') : "");
 			if (orderDetail.CancelReason)
