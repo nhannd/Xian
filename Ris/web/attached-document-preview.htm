@@ -22,6 +22,7 @@
 					var document = Ris.getHealthcareContext();
 					if(!document) {
 						window.location = "about:blank";
+						return;
 					}
 					
 					var url = Ris.getAttachedDocumentUrl(document);
