@@ -89,7 +89,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._generalPage = new System.Windows.Forms.TabPage();
 			this._notesPage = new System.Windows.Forms.TabPage();
 			this._copiesTo = new System.Windows.Forms.TabPage();
-			this._additionalInfoPage = new System.Windows.Forms.TabPage();
 			this._attachmentsPage = new System.Windows.Forms.TabPage();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
@@ -495,7 +494,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._mainTab.Controls.Add(this._generalPage);
 			this._mainTab.Controls.Add(this._notesPage);
 			this._mainTab.Controls.Add(this._copiesTo);
-			this._mainTab.Controls.Add(this._additionalInfoPage);
 			this._mainTab.Controls.Add(this._attachmentsPage);
 			this._mainTab.Location = new System.Drawing.Point(3, 3);
 			this._mainTab.Name = "_mainTab";
@@ -534,16 +532,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._copiesTo.TabIndex = 2;
 			this._copiesTo.Text = "Copies To";
 			this._copiesTo.UseVisualStyleBackColor = true;
-			// 
-			// _additionalInfoPage
-			// 
-			this._additionalInfoPage.Location = new System.Drawing.Point(4, 22);
-			this._additionalInfoPage.Name = "_additionalInfoPage";
-			this._additionalInfoPage.Padding = new System.Windows.Forms.Padding(3);
-			this._additionalInfoPage.Size = new System.Drawing.Size(665, 557);
-			this._additionalInfoPage.TabIndex = 3;
-			this._additionalInfoPage.Text = "Additional Info";
-			this._additionalInfoPage.UseVisualStyleBackColor = true;
 			// 
 			// _attachmentsPage
 			// 
@@ -610,7 +598,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.TabPage _generalPage;
 		private System.Windows.Forms.TabPage _notesPage;
 		private System.Windows.Forms.TabPage _copiesTo;
-		private System.Windows.Forms.TabPage _additionalInfoPage;
 		private System.Windows.Forms.TabPage _attachmentsPage;
 		private LookupField _patient;
 

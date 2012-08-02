@@ -952,6 +952,9 @@ namespace ClearCanvas.Ris.Client
 			UpdateFromRequisition(requisition);
 			UpdateApplicableVisits();
 
+			// notify extension pages
+			_extensionPageContext.NotifyOrderLoaded();
+
 			this.Modified = false; // bug 6299: ensure we begin without modifications
 		}
 
@@ -1154,8 +1157,7 @@ namespace ClearCanvas.Ris.Client
 			// initialize contact point choices for ordering practitioner
 			UpdateOrderingPractitionerContactPointChoices();
 
-			// notify extension pages
-			_extensionPageContext.NotifyOrderLoaded();
+			_extendedProperties = existingOrder.ExtendedProperties;
 		}
 
 		private IEnumerable<T> EmptyIfNull<T>(IEnumerable<T> collection)
@@ -1195,7 +1197,7 @@ namespace ClearCanvas.Ris.Client
 			// instantiate all extension pages
 			foreach (IOrderEditorPageProvider pageProvider in new OrderEditorPageProviderExtensionPoint().CreateExtensions())
 			{
-				_extensionPages.AddRange(pageProvider.GetPages(new OrderEditorContext(this)));
+				_extensionPages.AddRange(pageProvider.GetPages(_extensionPageContext));
 			}
 
 			// add extension pages to navigator
