@@ -285,6 +285,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 			[AuthorityToken(Description = "Allow access to the Transcription folder system.")]
 			public const string Transcription = "RIS/Folder Systems/Transcription";
+
+			[AuthorityToken(Description = "Allow access to the Scheduling folder system.")]
+			public const string Scheduling = "RIS/Folder Systems/Scheduling";
 		}
 	}
 }
