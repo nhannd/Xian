@@ -185,7 +185,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         {
         	_context = parms;
         }
-        
+
+        public virtual void Cleanup()
+        {
+        }
+
         public virtual bool OnReceiveRequest(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
         {
             throw new Exception("The method or operation is not implemented.  The method must be overriden.");

@@ -365,7 +365,14 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 ScriptManager sm = ScriptManager.GetCurrent(Page);
                 sm.RegisterScriptControl(this);    
             }
-            
+
+            if (!Page.IsPostBack)
+            {
+                if (!IsDataBound)
+                {
+                    DataBind();
+                }
+            }
         }
 
         protected override void Render(HtmlTextWriter writer)
