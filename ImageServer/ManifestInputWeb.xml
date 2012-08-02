@@ -50,7 +50,6 @@
     <File name="Web\bin\ClearCanvas.ImageViewer.Configuration.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageViewer.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageViewer.Layout.Basic.dll" checksum="true" />
-    <File name="Web\bin\ClearCanvas.ImageViewer.Services.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageViewer.StudyLoaders.Streaming.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageViewer.Tools.Measurement.dll" checksum="true" />
