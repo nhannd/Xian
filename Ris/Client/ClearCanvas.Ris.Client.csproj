@@ -76,6 +76,12 @@
     <Compile Include="BannerSettings.cs" />
     <Compile Include="AttachDocumentComponent.cs" />
     <Compile Include="OrderEditorComponent2.cs" />
+    <Compile Include="OrderEditorComponentSettings.cs" />
+    <Compile Include="OrderEditorComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>OrderEditorComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="PatientProfileLookupHandler.cs" />
     <Compile Include="DocumentAttachTool.cs" />
     <Compile Include="DocumentDetachTool.cs" />
@@ -439,6 +445,10 @@
     <None Include="HomePageSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>HomePageSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="OrderEditorComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>OrderEditorComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="PatientProfileLookupSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

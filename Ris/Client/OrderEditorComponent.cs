@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Serialization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -26,7 +25,6 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
-using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -680,6 +678,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			var detail = (ExternalPractitionerContactPointDetail)cp;
 			return ExternalPractitionerContactPointFormat.Format(detail);
+		}
+
+		public bool IsCopiesToRecipientsPageVisible
+		{
+			get { return OrderEditorComponentSettings.Default.EnableCopiesToRecipientsPage; }
 		}
 
 		public ITable Recipients

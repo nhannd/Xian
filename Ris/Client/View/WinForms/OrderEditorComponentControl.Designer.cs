@@ -81,14 +81,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._reorderReason = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._proceduresTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this._consultantContactPoint = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-			this._consultantLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+			this._recipientContactPoint = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._recipientLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._recipientsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._addConsultantButton = new System.Windows.Forms.Button();
 			this._mainTab = new System.Windows.Forms.TabControl();
 			this._generalPage = new System.Windows.Forms.TabPage();
 			this._notesPage = new System.Windows.Forms.TabPage();
-			this._copiesTo = new System.Windows.Forms.TabPage();
+			this._copiesToRecipients = new System.Windows.Forms.TabPage();
 			this._attachmentsPage = new System.Windows.Forms.TabPage();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
@@ -97,7 +97,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tableLayoutPanel1.SuspendLayout();
 			this._mainTab.SuspendLayout();
 			this._generalPage.SuspendLayout();
-			this._copiesTo.SuspendLayout();
+			this._copiesToRecipients.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _cancelButton
@@ -414,8 +414,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tableLayoutPanel1.ColumnCount = 2;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel1.Controls.Add(this._consultantContactPoint, 0, 1);
-			this.tableLayoutPanel1.Controls.Add(this._consultantLookup, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this._recipientContactPoint, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this._recipientLookup, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this._recipientsTableView, 0, 2);
 			this.tableLayoutPanel1.Controls.Add(this._addConsultantButton, 1, 1);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -432,32 +432,32 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _consultantContactPoint
 			// 
-			this._consultantContactPoint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this._consultantContactPoint.AutoSize = true;
-			this._consultantContactPoint.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._consultantContactPoint.DataSource = null;
-			this._consultantContactPoint.DisplayMember = "";
-			this._consultantContactPoint.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._consultantContactPoint.LabelText = "Practitioner Contact Point";
-			this._consultantContactPoint.Location = new System.Drawing.Point(2, 49);
-			this._consultantContactPoint.Margin = new System.Windows.Forms.Padding(2);
-			this._consultantContactPoint.Name = "_consultantContactPoint";
-			this._consultantContactPoint.Size = new System.Drawing.Size(576, 41);
-			this._consultantContactPoint.TabIndex = 6;
-			this._consultantContactPoint.Value = null;
+			this._recipientContactPoint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this._recipientContactPoint.AutoSize = true;
+			this._recipientContactPoint.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._recipientContactPoint.DataSource = null;
+			this._recipientContactPoint.DisplayMember = "";
+			this._recipientContactPoint.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._recipientContactPoint.LabelText = "Practitioner Contact Point";
+			this._recipientContactPoint.Location = new System.Drawing.Point(2, 49);
+			this._recipientContactPoint.Margin = new System.Windows.Forms.Padding(2);
+			this._recipientContactPoint.Name = "_recipientContactPoint";
+			this._recipientContactPoint.Size = new System.Drawing.Size(576, 41);
+			this._recipientContactPoint.TabIndex = 6;
+			this._recipientContactPoint.Value = null;
 			// 
 			// _consultantLookup
 			// 
-			this._consultantLookup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this._consultantLookup.AutoSize = true;
-			this._consultantLookup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._consultantLookup.LabelText = "Find Practitioner";
-			this._consultantLookup.Location = new System.Drawing.Point(2, 2);
-			this._consultantLookup.Margin = new System.Windows.Forms.Padding(2);
-			this._consultantLookup.Name = "_consultantLookup";
-			this._consultantLookup.Size = new System.Drawing.Size(576, 43);
-			this._consultantLookup.TabIndex = 4;
-			this._consultantLookup.Value = null;
+			this._recipientLookup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this._recipientLookup.AutoSize = true;
+			this._recipientLookup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._recipientLookup.LabelText = "Find Practitioner";
+			this._recipientLookup.Location = new System.Drawing.Point(2, 2);
+			this._recipientLookup.Margin = new System.Windows.Forms.Padding(2);
+			this._recipientLookup.Name = "_recipientLookup";
+			this._recipientLookup.Size = new System.Drawing.Size(576, 43);
+			this._recipientLookup.TabIndex = 4;
+			this._recipientLookup.Value = null;
 			// 
 			// _recipientsTableView
 			// 
@@ -493,7 +493,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._mainTab.Controls.Add(this._generalPage);
 			this._mainTab.Controls.Add(this._notesPage);
-			this._mainTab.Controls.Add(this._copiesTo);
+			this._mainTab.Controls.Add(this._copiesToRecipients);
 			this._mainTab.Controls.Add(this._attachmentsPage);
 			this._mainTab.Location = new System.Drawing.Point(3, 3);
 			this._mainTab.Name = "_mainTab";
@@ -522,16 +522,16 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._notesPage.Text = "Notes";
 			this._notesPage.UseVisualStyleBackColor = true;
 			// 
-			// _copiesTo
+			// _copiesToRecipients
 			// 
-			this._copiesTo.Controls.Add(this.tableLayoutPanel1);
-			this._copiesTo.Location = new System.Drawing.Point(4, 22);
-			this._copiesTo.Name = "_copiesTo";
-			this._copiesTo.Padding = new System.Windows.Forms.Padding(3);
-			this._copiesTo.Size = new System.Drawing.Size(665, 557);
-			this._copiesTo.TabIndex = 2;
-			this._copiesTo.Text = "Copies To";
-			this._copiesTo.UseVisualStyleBackColor = true;
+			this._copiesToRecipients.Controls.Add(this.tableLayoutPanel1);
+			this._copiesToRecipients.Location = new System.Drawing.Point(4, 22);
+			this._copiesToRecipients.Name = "_copiesToRecipients";
+			this._copiesToRecipients.Padding = new System.Windows.Forms.Padding(3);
+			this._copiesToRecipients.Size = new System.Drawing.Size(665, 557);
+			this._copiesToRecipients.TabIndex = 2;
+			this._copiesToRecipients.Text = "Copies To";
+			this._copiesToRecipients.UseVisualStyleBackColor = true;
 			// 
 			// _attachmentsPage
 			// 
@@ -562,7 +562,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tableLayoutPanel1.PerformLayout();
 			this._mainTab.ResumeLayout(false);
 			this._generalPage.ResumeLayout(false);
-			this._copiesTo.ResumeLayout(false);
+			this._copiesToRecipients.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -590,14 +590,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private Desktop.View.WinForms.ComboBoxField _reorderReason;
 		private Desktop.View.WinForms.TableView _proceduresTableView;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-		private Desktop.View.WinForms.ComboBoxField _consultantContactPoint;
-		private LookupField _consultantLookup;
+		private Desktop.View.WinForms.ComboBoxField _recipientContactPoint;
+		private LookupField _recipientLookup;
 		private Desktop.View.WinForms.TableView _recipientsTableView;
 		private System.Windows.Forms.Button _addConsultantButton;
 		private System.Windows.Forms.TabControl _mainTab;
 		private System.Windows.Forms.TabPage _generalPage;
 		private System.Windows.Forms.TabPage _notesPage;
-		private System.Windows.Forms.TabPage _copiesTo;
+		private System.Windows.Forms.TabPage _copiesToRecipients;
 		private System.Windows.Forms.TabPage _attachmentsPage;
 		private LookupField _patient;
 

@@ -62,22 +62,30 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_proceduresTableView.ToolbarModel = _component.ProceduresActionModel;
 			_proceduresTableView.DataBindings.Add("Selection", _component, "SelectedProcedures", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_recipientsTableView.Table = _component.Recipients;
-			_recipientsTableView.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
-			_recipientsTableView.MenuModel = _component.RecipientsActionModel;
-			_recipientsTableView.ToolbarModel = _component.RecipientsActionModel;
-			_recipientsTableView.DataBindings.Add("Selection", _component, "SelectedRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
+			if(_component.IsCopiesToRecipientsPageVisible)
+			{
+				_recipientsTableView.Table = _component.Recipients;
+				_recipientsTableView.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
+				_recipientsTableView.MenuModel = _component.RecipientsActionModel;
+				_recipientsTableView.ToolbarModel = _component.RecipientsActionModel;
+				_recipientsTableView.DataBindings.Add("Selection", _component, "SelectedRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_addConsultantButton.DataBindings.Add("Enabled", _component.RecipientsActionModel.Add, "Enabled");
+				_addConsultantButton.DataBindings.Add("Enabled", _component.RecipientsActionModel.Add, "Enabled");
 
-			_consultantLookup.LookupHandler = _component.RecipientsLookupHandler;
-			_consultantLookup.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
-			_consultantLookup.DataBindings.Add("Value", _component, "RecipientToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
+				_recipientLookup.LookupHandler = _component.RecipientsLookupHandler;
+				_recipientLookup.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
+				_recipientLookup.DataBindings.Add("Value", _component, "RecipientToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_consultantContactPoint.DataBindings.Add("DataSource", _component, "RecipientContactPointChoices", true, DataSourceUpdateMode.Never);
-			_consultantContactPoint.DataBindings.Add("Value", _component, "RecipientContactPointToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
-			_consultantContactPoint.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
-			_consultantContactPoint.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatContactPoint(e.ListItem); };
+				_recipientContactPoint.DataBindings.Add("DataSource", _component, "RecipientContactPointChoices", true, DataSourceUpdateMode.Never);
+				_recipientContactPoint.DataBindings.Add("Value", _component, "RecipientContactPointToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
+				_recipientContactPoint.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
+				_recipientContactPoint.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatContactPoint(e.ListItem); };
+			}
+			else
+			{
+				_mainTab.TabPages.Remove(_copiesToRecipients);
+			}
+
 
 			_visit.DataSource = _component.ActiveVisits;
 			_visit.DataBindings.Add("Value", _component, "SelectedVisit", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -139,7 +147,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			}
 			else if (e.PropertyName == "RecipientContactPointChoices")
 			{
-				_consultantContactPoint.DataSource = _component.RecipientContactPointChoices;
+				_recipientContactPoint.DataSource = _component.RecipientContactPointChoices;
 			}
 		}
 
