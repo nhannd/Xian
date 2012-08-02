@@ -1663,6 +1663,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You are canceling all procedures for this order.  Do you want to cancel the order?.
+        /// </summary>
+        internal static string MessageCancelAllProceduresShouldCancelOrder {
+            get {
+                return ResourceManager.GetString("MessageCancelAllProceduresShouldCancelOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A cancellation reason is required to replace an order..
         /// </summary>
         internal static string MessageCancellationReasonRequired {
@@ -2041,7 +2050,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Order must have at least one active procedure. Consider cancelling the order instead..
+        ///   Looks up a localized string similar to Order must have at least one active procedure..
         /// </summary>
         internal static string MessageNoActiveProcedures {
             get {
@@ -2604,6 +2613,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleBiography {
             get {
                 return ResourceManager.GetString("TitleBiography", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel Order for {0}.
+        /// </summary>
+        internal static string TitleCancelOrder {
+            get {
+                return ResourceManager.GetString("TitleCancelOrder", resourceCulture);
             }
         }
         

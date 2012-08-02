@@ -553,7 +553,7 @@
     <value>The canned text name can only contain space and alphabet characters.</value>
   </data>
   <data name="MessageNoActiveProcedures" xml:space="preserve">
-    <value>Order must have at least one active procedure. Consider cancelling the order instead.</value>
+    <value>Order must have at least one active procedure.</value>
   </data>
   <data name="MessageResultsNotFound" xml:space="preserve">
     <value>No results were found using the specified criteria.</value>
@@ -1151,5 +1151,11 @@
   </data>
   <data name="TitleUpdatePatientProfile" xml:space="preserve">
     <value>Update Patient Profile: {0} {1}</value>
+  </data>
+  <data name="MessageCancelAllProceduresShouldCancelOrder" xml:space="preserve">
+    <value>You are canceling all procedures for this order.  Do you want to cancel the order?</value>
+  </data>
+  <data name="TitleCancelOrder" xml:space="preserve">
+    <value>Cancel Order for {0}</value>
   </data>
 </root>

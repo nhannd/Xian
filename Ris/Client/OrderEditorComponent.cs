@@ -281,7 +281,7 @@ namespace ClearCanvas.Ris.Client
 
 			// add validation rule to ensure the table has at least non-cancelled procedure
 			this.Validation.Add(new ValidationRule("SelectedProcedures",
-				component => new ValidationResult(CollectionUtils.Contains(_proceduresTable.Items, p => !p.Cancelled), SR.MessageNoActiveProcedures)));
+				component => new ValidationResult(HasActiveProcedures(), SR.MessageNoActiveProcedures)));
 
 			_noteSummaryComponent = new OrderNoteSummaryComponent(OrderNoteCategory.General);
 			_noteSummaryComponent.ModifiedChanged += ((sender, args) => this.Modified = true);
@@ -354,7 +354,7 @@ namespace ClearCanvas.Ris.Client
 
 			foreach (var kvp in _extensionPageHosts)
 			{
-				if(kvp.Value.IsStarted)
+				if (kvp.Value.IsStarted)
 					kvp.Value.StopComponent();
 			}
 
@@ -877,6 +877,8 @@ namespace ClearCanvas.Ris.Client
 
 			this.SelectedProcedures = Selection.Empty;
 			this.Modified = true;
+
+			CheckIfOrderShouldBeCancelled();
 		}
 
 		public void UpdateProcedureActionModel()
@@ -920,9 +922,10 @@ namespace ClearCanvas.Ris.Client
 
 		public void Accept()
 		{
+			CheckIfOrderShouldBeCancelled();
+
 			if (this.HasValidationErrors)
 			{
-				//DEBUG: this.Host.ShowMessageBox(this.Validation.GetErrorsString(this), MessageBoxActions.Ok);
 				this.ShowValidation(true);
 				return;
 			}
@@ -1141,7 +1144,7 @@ namespace ClearCanvas.Ris.Client
 			foreach (var procedureRequisition in EmptyIfNull(existingOrder.Procedures))
 			{
 				// apply default values to modifiable procedures, prior to adding to table
-				if(procedureRequisition.CanModify)
+				if (procedureRequisition.CanModify)
 				{
 					_operatingContext.ApplyDefaults(procedureRequisition, this);
 				}
@@ -1290,7 +1293,7 @@ namespace ClearCanvas.Ris.Client
 		private ProcedureRequisition NewProcedureRequisition(ProcedureTypeSummary procedureType)
 		{
 			var requisition = new ProcedureRequisition(procedureType, _orderingFacility);
-			if(procedureType != null)
+			if (procedureType != null)
 			{
 				requisition.ScheduledDuration = procedureType.DefaultDuration;
 			}
@@ -1298,6 +1301,27 @@ namespace ClearCanvas.Ris.Client
 			// apply default values
 			_operatingContext.ApplyDefaults(requisition, this);
 			return requisition;
+		}
+
+		private bool HasActiveProcedures()
+		{
+			return _proceduresTable.Items.Any(p => !p.Cancelled);
+		}
+
+		private void CheckIfOrderShouldBeCancelled()
+		{
+			if (_operatingContext.Mode != Mode.NewOrder && !HasActiveProcedures())
+			{
+				var action = this.Host.ShowMessageBox(SR.MessageCancelAllProceduresShouldCancelOrder, MessageBoxActions.YesNo);
+				if (action == DialogBoxAction.Yes)
+				{
+					var cancelled = OrderCancelHelper.CancelOrder(_orderRef, _patientProfile.Name, this.Host.DesktopWindow);
+					if (cancelled)
+					{
+						this.Exit(ApplicationComponentExitCode.Accepted);
+					}
+				}
+			}
 		}
 
 		private static string FormatScheduledTime(ProcedureRequisition item)

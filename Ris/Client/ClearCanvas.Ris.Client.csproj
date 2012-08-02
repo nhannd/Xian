@@ -75,6 +75,8 @@
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="BannerSettings.cs" />
     <Compile Include="AttachDocumentComponent.cs" />
+    <Compile Include="CancelOrderComponent.cs" />
+    <Compile Include="OrderCancelHelper.cs" />
     <Compile Include="OrderEditorComponent2.cs" />
     <Compile Include="OrderEditorComponentSettings.cs" />
     <Compile Include="OrderEditorComponentSettings.Designer.cs">
