@@ -57,6 +57,7 @@
     <Compile Include="Folders\BookingWorkflowFolders.cs" />
     <Compile Include="Folders\ProtocollingWorkflowFolders.cs" />
     <Compile Include="FooTools.cs" />
+    <Compile Include="OrderAdditionalInfoComponent.cs" />
     <Compile Include="OrderNoteboxConfigurationComponent.cs" />
     <Compile Include="OrderNoteboxFolder.cs" />
     <Compile Include="OrderNoteboxFolders.cs" />

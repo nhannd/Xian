@@ -113,7 +113,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 	
 			_additionalInfoComponent = new OrderAdditionalInfoComponent(true);
 			_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
-			_additionalInfoComponent.HealthcareContext = this.WorklistItem;
+			_additionalInfoComponent.Context = new OrderAdditionalInfoComponent.HealthcareContext(this.WorklistItem.OrderRef);
 			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleAdditionalInfo, _additionalInfoComponent));
 
 			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitlePriors, _priorReportsComponent = new PriorReportComponent(this.WorklistItem)));

@@ -380,7 +380,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private ReportingOrderDetailViewComponent _orderComponent;
 		private AttachedDocumentPreviewComponent _orderAttachmentsComponent;
-		private OrderAdditionalInfoComponent _additionalInfoComponent;
 		private PriorReportComponent _priorReportComponent;
 
 		private List<IReportingPage> _extensionPages;
@@ -436,11 +435,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachmentSite.Order);
 				_orderAttachmentsComponent.OrderRef = this.WorklistItem.OrderRef;
 				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _orderAttachmentsComponent));
-
-				_additionalInfoComponent = new OrderAdditionalInfoComponent(true);
-				_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
-				_additionalInfoComponent.HealthcareContext = this.WorklistItem;
-				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleAdditionalInfo, _additionalInfoComponent));
 
 				_priorReportComponent = new PriorReportComponent(this.WorklistItem, _report.ReportRef);
 				_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitlePriors, _priorReportComponent));
@@ -1192,17 +1186,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_priorReportComponent.SetContext(this.WorklistItem, _report != null ? _report.ReportRef : null);
 			_orderComponent.Context = new ReportingOrderDetailViewComponent.PatientOrderContext(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
 			_orderAttachmentsComponent.OrderRef = this.WorklistItem.OrderRef;
-
-			if (orderDetailIsCurrent)
-			{
-				_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
-				_additionalInfoComponent.HealthcareContext = this.WorklistItem;
-			}
-			else
-			{
-				_additionalInfoComponent.OrderExtendedProperties = new Dictionary<string, string>();
-				_additionalInfoComponent.HealthcareContext = null;
-			}
 
 			this.Host.Title = ReportDocument.GetTitle(this.WorklistItem);
 

@@ -43,6 +43,10 @@ namespace ClearCanvas.Ris.Client
 	/// </summary>
 	public interface IOrderEditorContext
 	{
+		event EventHandler PatientLoaded;
+
+		event EventHandler OrderLoaded;
+
 		/// <summary>
 		/// Patient ref.
 		/// </summary>
@@ -52,6 +56,7 @@ namespace ClearCanvas.Ris.Client
 		/// Patient Profile ref.
 		/// </summary>
 		EntityRef PatientProfileRef { get; }
+
 
 		/// <summary>
 		/// Order ref.
@@ -63,6 +68,11 @@ namespace ClearCanvas.Ris.Client
 		/// properties by the editor page will be persisted whenever the order editor is saved.
 		/// </summary>
 		IDictionary<string, string> OrderExtendedProperties { get; }
+
+		/// <summary>
+		/// Allows the extension page to indicate that data has changed.
+		/// </summary>
+		void SetModified();
 	}
 
 	/// <summary>
@@ -95,33 +105,6 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(OrderEditorComponentViewExtensionPoint))]
 	public partial class OrderEditorComponent : ApplicationComponent
 	{
-		#region HealthcareContext
-
-		/// <summary>
-		/// Define a helper class to for DHTML components.
-		/// </summary>
-		[DataContract]
-		class HealthcareContext : DataContractBase
-		{
-			public HealthcareContext(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef)
-			{
-				this.PatientRef = patientRef;
-				this.PatientProfileRef = profileRef;
-				this.OrderRef = orderRef;
-			}
-
-			[DataMember]
-			public EntityRef PatientRef;
-
-			[DataMember]
-			public EntityRef PatientProfileRef;
-
-			[DataMember]
-			public EntityRef OrderRef;
-		}
-
-		#endregion
-
 		#region OrderEditorContext
 
 		class OrderEditorContext : IOrderEditorContext
@@ -132,6 +115,9 @@ namespace ClearCanvas.Ris.Client
 			{
 				_owner = owner;
 			}
+
+			public event EventHandler PatientLoaded;
+			public event EventHandler OrderLoaded;
 
 			public EntityRef PatientRef
 			{
@@ -151,6 +137,21 @@ namespace ClearCanvas.Ris.Client
 			public IDictionary<string, string> OrderExtendedProperties
 			{
 				get { return _owner._extendedProperties; }
+			}
+
+			public void SetModified()
+			{
+				_owner.Modified = true;
+			}
+
+			internal void NotifyPatientLoaded()
+			{
+				EventsHelper.Fire(PatientLoaded, this, EventArgs.Empty);
+			}
+
+			internal void NotifyOrderLoaded()
+			{
+				EventsHelper.Fire(OrderLoaded, this, EventArgs.Empty);
 			}
 		}
 
@@ -210,16 +211,16 @@ namespace ClearCanvas.Ris.Client
 		private event EventHandler _changeCommitted;
 
 		private readonly OrderNoteSummaryComponent _noteSummaryComponent;
-		private readonly OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 		private readonly AttachedDocumentPreviewComponent _attachmentSummaryComponent;
 		private readonly List<AttachmentSummary> _newAttachments = new List<AttachmentSummary>();
+		private Dictionary<string, string> _extendedProperties = new Dictionary<string, string>();
 
 		private ChildComponentHost _noteComponentHost;
-		private ChildComponentHost _additionalInfoComponentHost;
 		private ChildComponentHost _attachmentsComponentHost;
 
-		private List<IOrderEditorPage> _extensionPages;
-		private Dictionary<string, string> _extendedProperties = new Dictionary<string, string>();
+		private readonly List<IOrderEditorPage> _extensionPages = new List<IOrderEditorPage>();
+		private readonly Dictionary<IExtensionPage, ApplicationComponentHost> _extensionPageHosts = new Dictionary<IExtensionPage, ApplicationComponentHost>();
+		private readonly OrderEditorContext _extensionPageContext;
 
 		private string _downtimeAccessionNumber;
 
@@ -291,8 +292,7 @@ namespace ClearCanvas.Ris.Client
 			_attachmentSummaryComponent.ModifiedChanged += ((sender, args) => this.Modified = true);
 			this.ChangeCommitted += ((sender, args) => _attachmentSummaryComponent.SaveChanges());
 
-			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
-			_orderAdditionalInfoComponent.ModifiedChanged += ((sender, args) => this.Modified = true);
+			_extensionPageContext = new OrderEditorContext(this);
 		}
 
 		#endregion
@@ -330,7 +330,6 @@ namespace ClearCanvas.Ris.Client
 				_orderingFacility = LoginSession.Current.WorkingFacility;
 				_schedulingRequestTime = Platform.Time;
 				_selectedPriority = _priorityChoices.Count > 0 ? _priorityChoices[0] : null;
-				_orderAdditionalInfoComponent.OrderExtendedProperties = _extendedProperties;
 				_attachmentSummaryComponent.Attachments = _newAttachments;
 			}
 
@@ -355,10 +354,10 @@ namespace ClearCanvas.Ris.Client
 				_noteComponentHost = null;
 			}
 
-			if (_additionalInfoComponentHost != null)
+			foreach (var kvp in _extensionPageHosts)
 			{
-				_additionalInfoComponentHost.StopComponent();
-				_additionalInfoComponentHost = null;
+				if(kvp.Value.IsStarted)
+					kvp.Value.StopComponent();
 			}
 
 			base.Stop();
@@ -397,19 +396,24 @@ namespace ClearCanvas.Ris.Client
 			get { return _operatingContext.Mode != Mode.ModifyOrder || _isComplete == false; }
 		}
 
-		public ApplicationComponentHost AttachmentsComponentHost
-		{
-			get { return _attachmentsComponentHost; }
-		}
-
 		public ApplicationComponentHost OrderNoteSummaryHost
 		{
 			get { return _noteComponentHost; }
 		}
 
-		public ApplicationComponentHost AdditionalInfoComponentHost
+		public ApplicationComponentHost AttachmentsComponentHost
 		{
-			get { return _additionalInfoComponentHost; }
+			get { return _attachmentsComponentHost; }
+		}
+
+		public IList<IOrderEditorPage> ExtensionPages
+		{
+			get { return _extensionPages.AsReadOnly(); }
+		}
+
+		public ApplicationComponentHost GetExtensionPageHost(IOrderEditorPage page)
+		{
+			return _extensionPageHosts[page];
 		}
 
 		public EntityRef OrderRef
@@ -1000,9 +1004,8 @@ namespace ClearCanvas.Ris.Client
 		{
 			_patientProfile = patientProfile;
 
-			// reset addiional info component's context
-			_orderAdditionalInfoComponent.HealthcareContext
-				= new HealthcareContext(_patientProfile.PatientRef, _patientProfile.PatientProfileRef, _orderRef);
+			// notify extension pages
+			_extensionPageContext.NotifyPatientLoaded();
 
 			// re-load visits
 			LoadVisits();
@@ -1144,13 +1147,15 @@ namespace ClearCanvas.Ris.Client
 			_attachmentSummaryComponent.Attachments = attachments;
 
 			_noteSummaryComponent.Notes = EmptyIfNull(existingOrder.Notes).ToList();
-			_orderAdditionalInfoComponent.OrderExtendedProperties = _extendedProperties = existingOrder.ExtendedProperties;
 
 			_recipientsTable.Items.Clear();
 			_recipientsTable.Items.AddRange(EmptyIfNull(existingOrder.ResultRecipients));
 
 			// initialize contact point choices for ordering practitioner
 			UpdateOrderingPractitionerContactPointChoices();
+
+			// notify extension pages
+			_extensionPageContext.NotifyOrderLoaded();
 		}
 
 		private IEnumerable<T> EmptyIfNull<T>(IEnumerable<T> collection)
@@ -1160,9 +1165,6 @@ namespace ClearCanvas.Ris.Client
 
 		private bool SubmitOrder()
 		{
-			// give additional info page a chance to save data
-			_orderAdditionalInfoComponent.SaveData();
-
 			// give extension pages a chance to save data prior to commit
 			_extensionPages.ForEach(page => page.Save());
 
@@ -1187,14 +1189,10 @@ namespace ClearCanvas.Ris.Client
 			_noteComponentHost = new ChildComponentHost(this.Host, _noteSummaryComponent);
 			_noteComponentHost.StartComponent();
 
-			_additionalInfoComponentHost = new ChildComponentHost(this.Host, _orderAdditionalInfoComponent);
-			_additionalInfoComponentHost.StartComponent();
-
 			_attachmentsComponentHost = new ChildComponentHost(this.Host, _attachmentSummaryComponent);
 			_attachmentsComponentHost.StartComponent();
 
 			// instantiate all extension pages
-			_extensionPages = new List<IOrderEditorPage>();
 			foreach (IOrderEditorPageProvider pageProvider in new OrderEditorPageProviderExtensionPoint().CreateExtensions())
 			{
 				_extensionPages.AddRange(pageProvider.GetPages(new OrderEditorContext(this)));
@@ -1204,7 +1202,9 @@ namespace ClearCanvas.Ris.Client
 			// the navigator will start those components if the user goes to that page
 			foreach (var page in _extensionPages)
 			{
-				// todo Yen: how do we show extension tab pages?
+				var host = new ChildComponentHost(this.Host, page.GetComponent());
+				host.StartComponent(); //todo: defer start until tab selected
+				_extensionPageHosts[page] = host;
 			}
 		}
 

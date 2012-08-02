@@ -24,6 +24,38 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Ris.Client.Workflow
 {
 	/// <summary>
+	/// Defines an interface for providing custom pages to be displayed in the merge orders component.
+	/// </summary>
+	public interface IMergeOrdersPageProvider : IExtensionPageProvider<IMergeOrdersPage, IMergeOrdersContext>
+	{
+	}
+
+	/// <summary>
+	/// Defines an interface to a custom merge orders page.
+	/// </summary>
+	public interface IMergeOrdersPage : IExtensionPage
+	{
+	}
+
+	/// <summary>
+	/// Defines an interface for providing a custom page with access to the merge orders context.
+	/// </summary>
+	public interface IMergeOrdersContext
+	{
+		event EventHandler DryRunMergedOrderChanged;
+
+		OrderDetail DryRunMergedOrder { get; }
+	}
+
+	/// <summary>
+	/// Defines an extension point for adding custom pages to the merge orders component.
+	/// </summary>
+	[ExtensionPoint]
+	public class MergeOrdersPageProviderExtensionPoint : ExtensionPoint<IMergeOrdersPageProvider>
+	{
+	}
+
+	/// <summary>
 	/// Extension point for views onto <see cref="MergeOrdersComponent"/>.
 	/// </summary>
 	[ExtensionPoint]
@@ -49,6 +81,28 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
+		class MergeOrdersContext : IMergeOrdersContext
+		{
+			private readonly MergeOrdersComponent _owner;
+
+			public MergeOrdersContext(MergeOrdersComponent owner)
+			{
+				_owner = owner;
+			}
+
+			public event EventHandler DryRunMergedOrderChanged;
+
+			public OrderDetail DryRunMergedOrder
+			{
+				get { return _owner._dryRunMergedOrder; }
+			}
+
+			internal void NotifyDryRunMergedOrderChanged()
+			{
+				EventsHelper.Fire(DryRunMergedOrderChanged, this, EventArgs.Empty);
+			}
+		}
+
 		private readonly List<EntityRef> _orderRefs;
 		private readonly MergeOrdersTable _ordersTable;
 		private OrderDetail _selectedOrder;
@@ -58,13 +112,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private ChildComponentHost _mergedOrderPreviewComponentHost;
 
 		private MergedOrderDetailViewComponent _orderPreviewComponent;
-		private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 		private AttachedDocumentPreviewComponent _attachmentSummaryComponent;
+
+		private readonly List<IMergeOrdersPage> _extensionPages = new List<IMergeOrdersPage>();
+		private readonly MergeOrdersContext _extensionPageContext;
 
 		public MergeOrdersComponent(List<EntityRef> orderRefs)
 		{
 			_orderRefs = orderRefs;
 			_ordersTable = new MergeOrdersTable();
+			_extensionPageContext = new MergeOrdersContext(this);
 		}
 
 		public override void Start()
@@ -74,8 +131,20 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_mergedOrderPreviewComponentHost.StartComponent();
 
 			_mergedOrderViewComponentContainer.Pages.Add(new TabPage(SR.TitleOrder, _orderPreviewComponent = new MergedOrderDetailViewComponent()));
-			_mergedOrderViewComponentContainer.Pages.Add(new TabPage(SR.TitleAdditionalInfo, _orderAdditionalInfoComponent = new OrderAdditionalInfoComponent(true)));
 			_mergedOrderViewComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _attachmentSummaryComponent = new AttachedDocumentPreviewComponent(true, AttachmentSite.Order)));
+
+			// instantiate all extension pages
+			foreach (IMergeOrdersPageProvider pageProvider in new MergeOrdersPageProviderExtensionPoint().CreateExtensions())
+			{
+				_extensionPages.AddRange(pageProvider.GetPages(_extensionPageContext));
+			}
+
+			// add extension pages to container and set initial context
+			// the container will start those components if the user goes to that page
+			foreach (var page in _extensionPages)
+			{
+				_mergedOrderViewComponentContainer.Pages.Add(new TabPage(page.Path, page.GetComponent()));
+			}
 
 			// Load form data
 			Platform.GetService(
@@ -207,17 +276,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (_dryRunMergedOrder == null)
 			{
 				_orderPreviewComponent.Context = null;
-				_orderAdditionalInfoComponent.HealthcareContext = null;
-				_orderAdditionalInfoComponent.OrderExtendedProperties = new Dictionary<string, string>();
 				_attachmentSummaryComponent.Attachments = new List<AttachmentSummary>();
 			}
 			else
 			{
 				_orderPreviewComponent.Context = _dryRunMergedOrder;
-				_orderAdditionalInfoComponent.HealthcareContext = _dryRunMergedOrder;
-				_orderAdditionalInfoComponent.OrderExtendedProperties = _dryRunMergedOrder.ExtendedProperties;
 				_attachmentSummaryComponent.Attachments = _dryRunMergedOrder.Attachments;
 			}
+
+			_extensionPageContext.NotifyDryRunMergedOrderChanged();
 		}
 
 		private void MergeOrderDryRun(out OrderDetail mergedOrder, out string failureReason)

@@ -33,9 +33,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			InitializeComponent();
 			_component = component;
 
-			AddTabPage(_component.AdditionalInfoComponentHost, _additionalInfoPage);
-			AddTabPage(_component.OrderNoteSummaryHost, _notesPage);
-			AddTabPage(_component.AttachmentsComponentHost, _attachmentsPage);
+			InitTabPage(_component.OrderNoteSummaryHost, _notesPage);
+			InitTabPage(_component.AttachmentsComponentHost, _attachmentsPage);
+
+			foreach (var extensionPage in _component.ExtensionPages)
+			{
+				AddExtensionPage(extensionPage);
+			}
 
 			// force toolbars to be displayed (VS designer seems to have a bug with this)
 			_proceduresTableView.ShowToolbar = true;
@@ -175,11 +179,21 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_downtimeAccession.Mask = _component.AccessionNumberMask;
 		}
 
-		private static void AddTabPage(ApplicationComponentHost componentHost, TabPage tabPage)
+		private void AddExtensionPage(IOrderEditorPage page)
+		{
+			var tabPage = new TabPage(page.Path.LocalizedPath);
+			_mainTab.TabPages.Add(tabPage);
+
+			var componentHost = _component.GetExtensionPageHost(page);
+			InitTabPage(componentHost, tabPage);
+		}
+
+		private static void InitTabPage(ApplicationComponentHost componentHost, TabPage tabPage)
 		{
 			var control = (Control)componentHost.ComponentView.GuiElement;
 			control.Dock = DockStyle.Fill;
 			tabPage.Controls.Add(control);
 		}
+
 	}
 }
