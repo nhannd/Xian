@@ -66,9 +66,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlockingThreadPool.cs" />
+    <Compile Include="DicomServerConfiguration.cs" />
     <Compile Include="IBlockingEnumerator.cs" />
     <Compile Include="ImageBoxFrameSelectionStrategy.cs" />
     <Compile Include="ImageServerPrefetchingStrategy.cs" />
+    <Compile Include="ImageServerServerDirectory.cs" />
     <Compile Include="ImageServerSopDataSource.cs" />
     <Compile Include="ImageServerStudyLoader.cs" />
     <Compile Include="InstanceServerQuery.cs" />

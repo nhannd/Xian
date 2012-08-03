@@ -46,6 +46,7 @@
     <File name="Web\bin\ClearCanvas.ImageServer.Web.Application.Assembly.dll.LOCKED" ignore="true"/>
     <File name="Web\bin\ClearCanvas.ImageServer.Web.Application.Deployment.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageServer.Web.Common.dll" checksum="true" />
+    <File name="Web\bin\ClearCanvas.ImageViewer.Common.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageViewer.AnnotationProviders.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageViewer.Configuration.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageViewer.dll" checksum="true" />

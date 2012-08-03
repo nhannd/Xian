@@ -167,13 +167,23 @@ namespace ClearCanvas.ImageViewer.Web.View
         public void SetAlertContext(IDesktopAlertContext alertContext)
         {
             // TODO (Marmot) - Need to implement for Webstation
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void ShowAlert(AlertNotificationArgs args)
         {
             // TODO (Marmot) - Need to implement for Webstation
-            throw new NotImplementedException();
+
+            LogLevel level;
+            if (args.Level == AlertLevel.Info)
+                level = LogLevel.Info;
+            else if (args.Level == AlertLevel.Warning)
+                level = LogLevel.Warn;
+            else
+            {
+                level = LogLevel.Error;
+            }
+            Platform.Log(level, args.Message);
         }
 
         /// <summary>

@@ -305,7 +305,7 @@ namespace ClearCanvas.ImageViewer.Web
 			{
                 Platform.Log(LogLevel.Info, "Viewer Application is starting...");
                 if (Application.Instance == null)
-					Platform.StartApp();
+					Platform.StartApp("ClearCanvas.Desktop.Application",new string[] {"-r"});
 			}
 
             
