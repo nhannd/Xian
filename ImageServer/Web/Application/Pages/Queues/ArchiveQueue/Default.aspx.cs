@@ -26,20 +26,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-        	ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
-        	                                           	{
-        	                                           		SearchPanel panel =
-        	                                           			LoadControl("SearchPanel.ascx") as SearchPanel;
 
-                                                            if (panel != null)
-                                                            {
-                                                                panel.ServerPartition = partition;
-                                                                panel.ID = "SearchPanel_" + partition.AeTitle;
-                                                                panel.EnclosingPage = this;
-                                                            }
+            SearchPanel.EnclosingPage = this;
 
-        	                                           	    return panel;
-        	                                           	});
+            ServerPartitionSelector.PartitionChanged += delegate(ServerPartition partition)
+            {
+                SearchPanel.ServerPartition = partition;
+                SearchPanel.Reset();
+            };
+
+            ServerPartitionSelector.SetUpdatePanel(PageContent);
 
             SetPageTitle(Titles.ArchiveQueuePageTitle);
         }
@@ -52,5 +48,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 				ResetArchiveQueueDialog.Show();
 			}
     	}
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            SearchPanel.ServerPartition = ServerPartitionSelector.SelectedPartition;
+        }
     }
 }

@@ -1,6 +1,6 @@
 <%-- License
 
-Copyright (c) 2011, ClearCanvas Inc.
+Copyright (c) 2012, ClearCanvas Inc.
 All rights reserved.
 http://www.clearcanvas.ca
 
@@ -19,6 +19,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 <%@ Register Src="Edit/ScheduleWorkQueueDialog.ascx" TagName="ScheduleWorkQueueDialog" TagPrefix="localAsp" %>
 <%@ Register Src="Edit/ResetWorkQueueDialog.ascx" TagName="ResetWorkQueueDialog"    TagPrefix="localAsp" %>        
 <%@ Register Src="Edit/DeleteWorkQueueDialog.ascx" TagName="DeleteWorkQueueDialog"    TagPrefix="localAsp" %>        
+<%@ Register Src="SearchPanel.ascx" TagName="SearchPanel" TagPrefix="localAsp" %>
 
 <asp:Content ID="ContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder" runat="server">
 
@@ -76,32 +77,22 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 </asp:Content>
   
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
-    <table cellpadding="0" cellspacing="0" width="100%">
-        <tr>
-            <td>
-                <asp:Panel runat="server" ID="PageContent">
-                    <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
-                        <ContentTemplate>
-                            <ccAsp:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" />
-                            <asp:Label ID="Label1" runat="server" Style="left: 70px; position: relative;" Text="Label"
+    <asp:UpdatePanel ID="PageContent" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+            <ccAsp:ServerPartitionSelector runat="server" ID="ServerPartitionSelector" Visible="true" />
+            <localAsp:SearchPanel runat="server" id="SearchPanel" visible="true" />
+                      
+            <asp:Label ID="Label1" runat="server" Style="left: 70px; position: relative;" Text="Label"
                                 Visible="False" Width="305px"></asp:Label>
                                 
-                            <ccAsp:MessageBox runat="server" ID="MessageBox"/>
-                            <ccAsp:MessageBox runat="server" ID="ConfirmRescheduleDialog"/>
-                            <ccAsp:MessageBox runat="server" ID="InformationDialog" MessageType="INFORMATION" Title=""/>
-                            <localAsp:ScheduleWorkQueueDialog runat="server" ID="ScheduleWorkQueueDialog"/>
-                            <localAsp:ResetWorkQueueDialog ID="ResetWorkQueueDialog" runat="server" OnError="OnResetWorkQueueError"/>
-                            <localAsp:DeleteWorkQueueDialog ID="DeleteWorkQueueDialog" runat="server" />
-    
-                            <!-- the timer should be inside the update panel so that it doesn't continue running while postback is happening -->
-                            <ccUI:Timer ID="RefreshTimer" runat="server" OnTick="RefreshTimer_Tick" DisableAfter="15"></ccUI:Timer>
-                        </ContentTemplate>
-                    </asp:UpdatePanel>
-                </asp:Panel>
-            </td>
-        </tr>
-    </table>
-    
-    
-    
+            <ccAsp:MessageBox runat="server" ID="MessageBox"/>
+            <ccAsp:MessageBox runat="server" ID="ConfirmRescheduleDialog"/>
+            <ccAsp:MessageBox runat="server" ID="InformationDialog" MessageType="INFORMATION" Title=""/>
+            <localAsp:ScheduleWorkQueueDialog runat="server" ID="ScheduleWorkQueueDialog"/>
+            <localAsp:ResetWorkQueueDialog ID="ResetWorkQueueDialog" runat="server" OnError="OnResetWorkQueueError"/>
+            <localAsp:DeleteWorkQueueDialog ID="DeleteWorkQueueDialog" runat="server" />
+            <!-- the timer should be inside the update panel so that it doesn't continue running while postback is happening -->
+            <ccUI:Timer ID="RefreshTimer" runat="server" OnTick="RefreshTimer_Tick" DisableAfter="15"></ccUI:Timer>
+        </ContentTemplate>
+    </asp:UpdatePanel>  
 </asp:Content>

@@ -1,5 +1,5 @@
 <%-- License
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -12,6 +12,7 @@
     EnableEventValidation="false" CodeBehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.Default" %>
 
 <%@ Register Src="AddEditDeviceDialog.ascx" TagName="AddEditDeviceDialog" TagPrefix="ccAddEdit" %>
+<%@ Register Src="DevicePanel.ascx" TagName="DevicePanel" TagPrefix="localAsp" %>
 
 <asp:Content ID="MainMenuContent" ContentPlaceHolderID="MainMenuPlaceHolder" runat="server">
     <asp:SiteMapDataSource ID="MainMenuSiteMapDataSource" runat="server" ShowStartingNode="False" />
@@ -25,9 +26,10 @@
 </asp:Content>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
-    <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
+    <asp:UpdatePanel ID="PageContent" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <ccAsp:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" />
+            <ccAsp:ServerPartitionSelector runat="server" id="ServerPartitionSelector" visible="true" />
+            <localAsp:DevicePanel runat="server" id="SearchPanel" visible="true" />
         </ContentTemplate>
     </asp:UpdatePanel>
 </asp:Content>

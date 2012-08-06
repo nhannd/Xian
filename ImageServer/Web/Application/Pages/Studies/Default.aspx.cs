@@ -13,88 +13,56 @@ using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 using Resources;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 {
     [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Study.Search)]
     public partial class Default : BasePage
     {
-        private readonly Dictionary<string, SearchPanel> _partitionPanelMap = new Dictionary<string,SearchPanel>();
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-
-            ServerPartitionTabs.SetupLoadPartitionTabs(CreatePartitionTab);
-            DeleteStudyConfirmDialog.StudyDeleted += DeleteStudyConfirmDialog_StudyDeleted;
             
+            DeleteStudyConfirmDialog.StudyDeleted += DeleteStudyConfirmDialogStudyDeleted;
+
+            ServerPartitionSelector.PartitionChanged += delegate(ServerPartition partition)
+                                                            {
+                                                                SearchPanel.ServerPartition = partition;
+                                                                SearchPanel.Reset();
+                                                            };
             SetPageTitle(Titles.StudiesPageTitle);
+
+            ServerPartitionSelector.SetUpdatePanel(PageContent);
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack && !Page.IsAsync)
-            {
-                string aeTitle = Request["AETitle"];
-
-                if (aeTitle != null)
-                {
-                    RefreshPartitionTab(aeTitle);
-                    ServerPartitionTabs.SetActivePartition(aeTitle);
-                }
-            }
+            SearchPanel.ServerPartition = ServerPartitionSelector.SelectedPartition;
+            SearchPanel.DeleteButtonClicked += SearchPanelDeleteButtonClicked;
+            SearchPanel.AssignAuthorityGroupsButtonClicked += SearchPanelAssignAuthorityGroupsButtonClicked;
         }
 
-        private SearchPanel CreatePartitionTab(ServerPartition partition)
+        private void DeleteStudyConfirmDialogStudyDeleted(object sender, DeleteStudyConfirmDialogStudyDeletedEventArgs e)
         {
-            SearchPanel panel = LoadControl("SearchPanel.ascx") as SearchPanel;
-            if (panel != null)
-            {
-                panel.ServerPartition = partition;
-                panel.ID = "SearchPanel_" + partition.AeTitle;
-                panel.DeleteButtonClicked += SearchPanel_DeleteButtonClicked;
-                panel.AssignAuthorityGroupsButtonClicked += SearchPanel_AssignAuthorityGroupsButtonClicked;
-                _partitionPanelMap.Add(partition.AeTitle, panel);
-            }
-            return panel;
+            SearchPanel.Refresh();
         }
 
-        private void DeleteStudyConfirmDialog_StudyDeleted(object sender, DeleteStudyConfirmDialogStudyDeletedEventArgs e)
+        private void SearchPanelDeleteButtonClicked(object sender, SearchPanelButtonClickedEventArgs e)
         {
-            IList<string> changedPartitions = new List<string>();
-
-            foreach (DeleteStudyInfo study in e.DeletedStudies)
-            {
-                if(!changedPartitions.Contains(study.ServerPartitionAE))
-                    changedPartitions.Add(study.ServerPartitionAE);
-            }
-            foreach (string partitionAE in changedPartitions)
-            {
-                RefreshPartitionTab(partitionAE);
-            }
-        }
-
-        private void RefreshPartitionTab(string partitionAE)
-        {
-            if (_partitionPanelMap.ContainsKey(partitionAE))
-                _partitionPanelMap[partitionAE].Refresh();
-        }
-
-        private void SearchPanel_DeleteButtonClicked(object sender, SearchPanelButtonClickedEventArgs e)
-        {
-            List<StudySummary> list = new List<StudySummary>();
+            var list = new List<StudySummary>();
             list.AddRange(e.SelectedStudies);
             ShowDeletedDialog(list);
         }
 
         protected void ShowDeletedDialog(IList<StudySummary> studyList)
         {
-            DeleteStudyConfirmDialog.Initialize(CollectionUtils.Map<StudySummary, DeleteStudyInfo>(
+            DeleteStudyConfirmDialog.Initialize(CollectionUtils.Map(
                 studyList,
                 delegate(StudySummary study)
                 {
@@ -116,9 +84,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             DeleteStudyConfirmDialog.Show();
         }
 
-        private void SearchPanel_AssignAuthorityGroupsButtonClicked(object sender, SearchPanelButtonClickedEventArgs e)
+        private void SearchPanelAssignAuthorityGroupsButtonClicked(object sender, SearchPanelButtonClickedEventArgs e)
         {
-            List<StudySummary> list = new List<StudySummary>();
+            var list = new List<StudySummary>();
             list.AddRange(e.SelectedStudies);
             ShowAddAuthorityGroupDialog(list);
         }

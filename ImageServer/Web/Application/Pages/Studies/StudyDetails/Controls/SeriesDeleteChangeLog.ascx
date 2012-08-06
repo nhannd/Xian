@@ -15,7 +15,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 <%@ Import Namespace="ClearCanvas.ImageServer.Core.Edit" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Core.Data" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities" %>
-<%@ Import Namespace="ClearCanvas.ImageServer.Common.CommandProcessor" %>
+<%@ Import Namespace="ClearCanvas.Dicom.Utilities.Command" %>
 
 <script type="text/javascript">
 

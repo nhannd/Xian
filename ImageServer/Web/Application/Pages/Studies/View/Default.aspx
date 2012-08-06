@@ -31,90 +31,84 @@
 			height: 100%;
 			text-align: center;
 		}
-	</style>
-
-	<script type="text/javascript" src="Silverlight.js"></script>
+	</style>	
+</head>
+<body>
+	<form id="form2" runat="server" style="height: 100%">
+	    <script type="text/javascript" src="Silverlight.js"></script>
     <script type="text/javascript" src="SplashScreen/SplashScreen.js"></script>
     <script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/jquery/jquery-1.3.2.min.js") %>"></script>	
 
 	<script type="text/javascript">
-		function onSilverlightError(sender, args) {
-			var appSource = "";
-			if (sender != null && sender != 0) {
-				appSource = sender.getHost().Source;
-			}
+	    function onSilverlightError(sender, args) {
+	        var appSource = "";
+	        if (sender != null && sender != 0) {
+	            appSource = sender.getHost().Source;
+	        }
 
-			var errorType = args.ErrorType;
-			var iErrorCode = args.ErrorCode;
+	        var errorType = args.ErrorType;
+	        var iErrorCode = args.ErrorCode;
 
-			if (errorType == "ImageError" || errorType == "MediaError") {
-				return;
-			}
+	        if (errorType == "ImageError" || errorType == "MediaError") {
+	            return;
+	        }
 
-			var errMsg = "Unhandled Error in Silverlight Application " + appSource + "\n";
+	        var errMsg = "Unhandled Error in Silverlight Application " + appSource + "\n";
 
-			errMsg += "Code: " + iErrorCode + "    \n";
-			errMsg += "Category: " + errorType + "       \n";
-			errMsg += "Message: " + args.ErrorMessage + "     \n";
+	        errMsg += "Code: " + iErrorCode + "    \n";
+	        errMsg += "Category: " + errorType + "       \n";
+	        errMsg += "Message: " + args.ErrorMessage + "     \n";
 
-			if (errorType == "ParserError") {
-				errMsg += "File: " + args.xamlFile + "     \n";
-				errMsg += "Line: " + args.lineNumber + "     \n";
-				errMsg += "Position: " + args.charPosition + "     \n";
-			}
-			else if (errorType == "RuntimeError") {
-				if (args.lineNumber != 0) {
-					errMsg += "Line: " + args.lineNumber + "     \n";
-					errMsg += "Position: " + args.charPosition + "     \n";
-				}
-				errMsg += "MethodName: " + args.methodName + "     \n";
-			}
+	        if (errorType == "ParserError") {
+	            errMsg += "File: " + args.xamlFile + "     \n";
+	            errMsg += "Line: " + args.lineNumber + "     \n";
+	            errMsg += "Position: " + args.charPosition + "     \n";
+	        }
+	        else if (errorType == "RuntimeError") {
+	            if (args.lineNumber != 0) {
+	                errMsg += "Line: " + args.lineNumber + "     \n";
+	                errMsg += "Position: " + args.charPosition + "     \n";
+	            }
+	            errMsg += "MethodName: " + args.methodName + "     \n";
+	        }
 
-			throw new Error(errMsg);
-        }
+	        throw new Error(errMsg);
+	    }
 
-        function OnSilverlightAppLoaded(sender, args) {
-            var silverlightControlHost = document.getElementById("SilverlightObject");
-            
-            // Attach event handlers
-            silverlightControlHost.Content.ApplicationBridge.ViewerSessionUpdated = ViewerSessionUpdated;
-            
-        }
-        
-        function ViewerSessionUpdated(sender, args) {
-            updateImageServerSession(args.ExpiryTimeUtc);
-        }
-        
-        
-        function updateImageServerSession(expiryTimtUtc) {
-            // by loading the page, we'll update the session and prevent all other
-            // pages from timing-out
-            var url = '<%= Page.ResolveClientUrl("~/KeepSessionAlive.aspx") %>' + "?guid=" + createUUID();
-            $.post(url, function(data) {
-                // throw it away
-            });
+	    function OnSilverlightAppLoaded(sender, args) {
+	        var silverlightControlHost = document.getElementById("SilverlightObject");
 
-        }
+	        // Attach event handlers
+	        silverlightControlHost.Content.ApplicationBridge.ViewerSessionUpdated = ViewerSessionUpdated;
+	    }
 
-        function createUUID() {
-            // http://www.ietf.org/rfc/rfc4122.txt
-            var s = [];
-            var hexDigits = "0123456789ABCDEF";
-            for (var i = 0; i < 32; i++) {
-                s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
-            }
-            s[12] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
-            s[16] = hexDigits.substr((s[16] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
+	    function ViewerSessionUpdated(sender, args) {
+	        updateImageServerSession(args.ExpiryTimeUtc);
+	    }
 
-            var uuid = s.join("");
-            return uuid;
-        }
+	    function updateImageServerSession(expiryTimtUtc) {
+	        // by loading the page, we'll update the session and prevent all other
+	        // pages from timing-out
+	        var url = '<%= Page.ResolveClientUrl("~/KeepSessionAlive.aspx") %>' + "?guid=" + createUUID();
+	        $.post(url, function (data) {
+	            // throw it away
+	        });
+	    }
 
-        
+	    function createUUID() {
+	        // http://www.ietf.org/rfc/rfc4122.txt
+	        var s = [];
+	        var hexDigits = "0123456789ABCDEF";
+	        for (var i = 0; i < 32; i++) {
+	            s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+	        }
+	        s[12] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
+	        s[16] = hexDigits.substr((s[16] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
+
+	        var uuid = s.join("");
+	        return uuid;
+	    }        
 	</script>
-</head>
-<body>
-	<form id="form2" runat="server" style="height: 100%">
 	<div id="silverlightControlHost">
 		<object data="data:application/x-silverlight-2," type="application/x-silverlight-2"
 			width="100%" height="100%"  id="SilverlightObject">

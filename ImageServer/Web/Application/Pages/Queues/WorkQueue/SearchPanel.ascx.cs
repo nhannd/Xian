@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -15,10 +15,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
-using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
@@ -39,7 +37,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         #region Private Members
 
         private ServerPartition _serverPartition;
-        private Default _enclosingPage;
+
         #endregion Private Members
 
         #region Events
@@ -79,11 +77,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             set { _serverPartition = value; }
         }
 
-        public Default EnclosingPage
-        {
-            get { return _enclosingPage; }
-            set { _enclosingPage = value; }
-        }
+        public Default EnclosingPage { get; set; }
 
         [ExtenderControlProperty]
         [ClientPropertyName("ViewItemDetailsUrl")]
@@ -138,6 +132,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         #region Protected Methods
 
+        internal void Reset()
+        {
+            Clear();
+            workQueueItemList.Reset();
+        }
+
         protected override void OnInit(EventArgs e)
         {
 
@@ -146,7 +146,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleCalendarExtender.ClientID);
 
             // setup child controls
-            GridPagerTop.InitializeGridPager(SR.GridPagerWorkQueueSingleItem, SR.GridPagerWorkQueueMultipleItems, workQueueItemList.WorkQueueItemGridView, delegate { return workQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(SR.GridPagerWorkQueueSingleItem, SR.GridPagerWorkQueueMultipleItems, workQueueItemList.WorkQueueItemGridView,
+                                             () => workQueueItemList.ResultCount, ImageServerConstants.GridViewPagerPosition.Top);
             workQueueItemList.Pager = GridPagerTop;
 
             workQueueItemList.ServerPartition = _serverPartition;
@@ -164,19 +165,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                                                                 if (!String.IsNullOrEmpty(ProcessingServer.Text))
                                                                     source.ProcessingServer = SearchHelper.TrailingWildCard(ProcessingServer.Text);
 
-                                                                if(!string.IsNullOrEmpty(ScheduleDate.Text))
-                                                                {
-                                                                    source.ScheduledDate = ScheduleDate.Text;                                                                    
-                                                                } else
-                                                                {
-                                                                    source.ScheduledDate = string.Empty;
-                                                                }                                   
+                                                                source.ScheduledDate = !string.IsNullOrEmpty(ScheduleDate.Text) ? ScheduleDate.Text : string.Empty;                                   
 
                                                                 source.DateFormats = ScheduleCalendarExtender.Format;
 
                                                                 if (TypeListBox.SelectedIndex > -1)
                                                                 {
-                                                                    List<WorkQueueTypeEnum> types = new List<WorkQueueTypeEnum>();
+                                                                    var types = new List<WorkQueueTypeEnum>();
                                                                     foreach (ListItem item in TypeListBox.Items)
                                                                     {
                                                                         if (item.Selected)
@@ -189,7 +184,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
                                                                 if (StatusListBox.SelectedIndex > -1)
                                                                 {
-                                                                    List<WorkQueueStatusEnum> statuses = new List<WorkQueueStatusEnum>();
+                                                                    var statuses = new List<WorkQueueStatusEnum>();
                                                                     foreach (ListItem item in StatusListBox.Items)
                                                                     {
                                                                         if (item.Selected)
@@ -204,9 +199,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                                                                     source.PriorityEnum = WorkQueuePriorityEnum.GetEnum(PriorityDropDownList.SelectedValue);
                                                             };
 
-            MessageBox.Confirmed += delegate {
-                                workQueueItemList.RefreshCurrentPage();
-                            };
+            MessageBox.Confirmed += delegate
+                                        {
+                                            workQueueItemList.RefreshCurrentPage();
+                                        };
 
             if(!string.IsNullOrEmpty(PatientNameFromUrl) || !string.IsNullOrEmpty(PatientIDFromUrl)  || !string.IsNullOrEmpty(ProcessingServerFromUrl))
             {
@@ -329,6 +325,33 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             }
 
             return true;
+        }
+
+        private void Clear()
+        {
+            PatientName.Text = string.Empty;
+            PatientId.Text = string.Empty;
+            PatientName.Text = string.Empty;
+            ScheduleDate.Text = string.Empty;
+
+            foreach (ListItem item in TypeListBox.Items)
+            {
+                if (item.Selected)
+                {
+                    item.Selected = false;
+                }
+            }
+
+            foreach (ListItem item in StatusListBox.Items)
+            {
+                if (item.Selected)
+                {
+                    item.Selected = false;
+                }
+            }
+
+            PriorityDropDownList.SelectedIndex = 0;
+            ProcessingServer.Text = string.Empty;
         }
     }
 }
