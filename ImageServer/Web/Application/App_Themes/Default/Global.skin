@@ -15,7 +15,7 @@
 <asp:Image runat="server" SkinID="MainContentBottomLeftCorner" ImageUrl="images/MainContent/MainContentBottomLeftCorner.png" Height="10" Width="7"/>
 <asp:Image runat="server" SkinID="MainContentBottomRightCorner" ImageUrl="images/MainContent/MainContentBottomRightCorner.png" Height="10" Width="7" /> 
 
-<asp:Menu runat="server" SkinID="MainMenu" CssClass="MainMenuContent" Orientation="Horizontal"
+<asp:Menu runat="server" SkinID="MainMenu" CssClass="MainMenuContent" Orientation="Horizontal" RenderingMode="Table"
           StaticSubMenuIndent="1" DynamicVerticalOffset="0" DynamicHorizontalOffset="0" StaticEnableDefaultPopOutImage="false" DynamicPopOutImageURL="images/Indicators/MenuArrow.gif">
     <DynamicMenuStyle CssClass="DynamicMenu" BackColor="#3482b2"/>
     <DynamicHoverStyle CssClass="DynamicHover" />
