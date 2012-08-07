@@ -124,6 +124,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _workflowConfiguration.EnableTranscriptionReviewWorkflow; }
 		}
 
+		public event EventHandler VisibleChanged;
+
 		protected override bool Execute(ReportingWorklistItemSummary item)
 		{
 			Platform.GetService<ITranscriptionWorkflowService>(
