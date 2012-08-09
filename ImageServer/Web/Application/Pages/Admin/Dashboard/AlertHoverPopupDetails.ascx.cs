@@ -9,8 +9,11 @@
 
 #endregion
 
+using System.Web.UI;
 using ClearCanvas.ImageServer.Core.Validation;
+using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.WorkQueue;
+using ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
@@ -33,11 +36,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
         {
             if (Alert!=null && Alert.ContextData!=null)
             {
+                IAlertPopupView popupView = null;
+                
                 if (Alert.ContextData is WorkQueueAlertContextData)
                 {
-                    WorkQueueAlertContextDataView view = Page.LoadControl("WorkQueueAlertContextDataView.ascx") as WorkQueueAlertContextDataView;
-                    view.Alert = this.Alert;
-                    DetailsPlaceHolder.Controls.Add(view);
+                    popupView = Page.LoadControl("~/Pages/Admin/Alerts/WorkQueueAlertContextDataView.ascx") as IAlertPopupView;
+                }
+                if (Alert.ContextData is StudyAlertContextInfo)
+                {
+                    popupView = Page.LoadControl("~/Pages/Admin/Alerts/StudyAlertContextInfoView.ascx") as IAlertPopupView;
+                }
+
+                if (popupView != null)
+                {
+                    popupView.SetAlert(Alert);
+                    DetailsPlaceHolder.Controls.Add(popupView as UserControl);
                 }
             }
             base.DataBind();
