@@ -220,5 +220,9 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
         CompleteDowntimeProcedureResponse CompleteDowntimeProcedure(CompleteDowntimeProcedureRequest request);
+
+		[OperationContract]
+		[FaultContract(typeof(RequestValidationException))]
+		PrintReportResponse PrintReport(PrintReportRequest request);
     }
 }

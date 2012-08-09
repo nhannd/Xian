@@ -11,8 +11,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Security.Permissions;
 using System.Threading;
+using System.Xml.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -21,6 +24,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Printing;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Workflow;
 using Iesi.Collections.Generic;
@@ -546,6 +550,29 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			procedure.DowntimeRecoveryMode = false;
 
 			return new CompleteDowntimeProcedureResponse();
+		}
+
+		[ReadOperation]
+		public PrintReportResponse PrintReport(PrintReportRequest request)
+		{
+			var procedure = PersistenceContext.Load<Procedure>(request.ProcedureRef);
+			var report = procedure.ActiveReport;
+			var mainPart = report.Parts.First();
+			var xmlBody = XDocument.Parse(mainPart.ExtendedProperties["ReportContent"]);
+			var q = from n in xmlBody.Root.Elements("ReportText")
+			        select n.Value;
+
+			var data = new Dictionary<string, object>
+			           	{
+			           		{"PATIENT_NAME", procedure.PatientProfile.Name.ToString()},
+			           		{"REPORT_BODY", q.FirstOrDefault()}
+			           	};
+
+			using(var printResult = PrintJob.Run("http://localhost/ris/print_templates/report.htm", data))
+			{
+				var contents = File.ReadAllBytes(printResult.OutputFilePath);
+				return new PrintReportResponse(contents);
+			}
 		}
 
 		#endregion
