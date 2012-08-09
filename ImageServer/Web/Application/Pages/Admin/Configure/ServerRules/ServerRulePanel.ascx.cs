@@ -214,6 +214,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             }
 
             base.OnPreRender(e);
+            Refresh();
         }
 
         protected void AddServerRuleButton_Click(object sender, ImageClickEventArgs e)

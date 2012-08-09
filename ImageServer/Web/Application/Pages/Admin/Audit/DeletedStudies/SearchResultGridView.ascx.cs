@@ -35,7 +35,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
 
         public int ResultCount
         {
-            get { return _dataSource.SelectCount(); }
+            get
+            {
+                if (_dataSource == null)
+                {
+                    _dataSource = new DeletedStudyDataSource();
+                }
+                return _dataSource.SelectCount();
+            }
         }
 
         public DeletedStudyInfo SelectedItem

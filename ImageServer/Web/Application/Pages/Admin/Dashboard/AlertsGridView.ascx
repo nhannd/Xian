@@ -53,7 +53,7 @@
 						HeaderStyle-HorizontalAlign="Left" />
 				</Columns>
 				<EmptyDataTemplate>
-					<ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="<%$Resources: SR,NoAlertsFound %>" />
+					<ccAsp:EmptySearchResultsMessage runat="server" Message="<%$Resources: SR,NoAlertsFound %>" />
 				</EmptyDataTemplate>
 				<RowStyle CssClass="GlobalGridViewRow" />
 				<AlternatingRowStyle CssClass="GlobalGridViewRow" />

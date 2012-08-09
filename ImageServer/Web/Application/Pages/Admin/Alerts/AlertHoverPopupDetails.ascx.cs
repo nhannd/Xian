@@ -48,8 +48,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                 {
                     popupView.SetAlert(Alert);
                     DetailsPlaceHolder.Controls.Add(popupView as UserControl);
-                }
-                
+                }                
             }
             base.DataBind();
         }

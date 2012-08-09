@@ -11,8 +11,6 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true"
     EnableEventValidation="false" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Default"
     Title="Work Queue | ClearCanvas ImageServer" %>
- 
-
   
 <%@ MasterType  virtualPath="~/GlobalMasterPage.master"%>    
 
@@ -33,9 +31,6 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
     function Blur() {
         __doPostBack('<%=RefreshRateTextBox.ClientID %>','<%=RefreshRateTextBox.Text %>');     
     }
-    
-    
-    
 </script>
 
 <asp:UpdatePanel runat="server">
@@ -65,8 +60,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
                                 </td>
                             </tr>
                         </table>
-                        
-                </div> 
+                    </div> 
                 </td>
             </tr>
         </table>
