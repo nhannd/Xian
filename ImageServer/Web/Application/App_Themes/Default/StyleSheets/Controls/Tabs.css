@@ -22,18 +22,20 @@
 {
     background: #dddddd url(../../../../PersistantImage.ashx?key=TabHeaderBackgroundTop) repeat-x top;
 	padding-bottom: 0px;
+	white-space: normal!important;
 }
 .TabControl .ajax__tab_outer
 {
     margin-left: 2px;
-    margin-right: 2px;
+    margin-right: 4px;
     background:  url(../../images/Controls/Tabs/TabInactiveLeft.png) no-repeat;
     height: 24px;
 }
 .TabControl .ajax__tab_inner
 {
-    padding-left: 2px;
-    background: url(../../images/Controls/Tabs/TabInactiveRight.png) no-repeat right;
+  padding-left: 3px;
+  padding-right: 3px;
+  background: url(../../images/Controls/Tabs/TabInactiveRight.png) no-repeat right;
 }
 .TabControl .ajax__tab_tab
 {
@@ -46,25 +48,22 @@
 }
 .TabControl .ajax__tab_hover .ajax__tab_outer
 {
-
 }
 .TabControl .ajax__tab_hover .ajax__tab_inner
-{
-    
+{  
 }
 .TabControl .ajax__tab_hover .ajax__tab_tab
 {
     color: #618FAD;
     font-family: Sans-Serif;
 }
-
 .TabControl .ajax__tab_active .ajax__tab_outer
 {
-	background: url(../../images/Controls/Tabs/TabActiveRight.png) no-repeat right;
+    background: url(../../images/Controls/Tabs/TabActiveLeft.png) no-repeat;
 }
 .TabControl .ajax__tab_active .ajax__tab_inner
 {
-	background:  url(../../images/Controls/Tabs/TabActiveLeft.png) no-repeat;
+	background: url(../../images/Controls/Tabs/TabActiveRight.png) no-repeat right;
 }
 .TabControl .ajax__tab_active .ajax__tab_tab
 {

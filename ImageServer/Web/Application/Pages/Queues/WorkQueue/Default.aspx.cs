@@ -30,11 +30,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
     [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.WorkQueue.Search)]
     public partial class Default : BasePage
     {
-
-        #region Private members
-        private readonly Dictionary<string, SearchPanel> _partitionPanelMap = new Dictionary<string, SearchPanel>();
-        #endregion
-
         /// <summary>
         /// Sets/Gets a value which indicates whether auto refresh is on
         /// </summary>
@@ -86,11 +81,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             ConfirmRescheduleDialog.Confirmed += ConfirmationContinueDialog_Confirmed;
             ScheduleWorkQueueDialog.WorkQueueUpdated += ScheduleWorkQueueDialog_OnWorkQueueUpdated;
             ScheduleWorkQueueDialog.OnShow += DisableRefresh;
-            ScheduleWorkQueueDialog.OnHide += delegate
-                                                  {
-                                                      RefreshTimer.Reset(AutoRefresh);
-                                                      SearchPanel.Refresh();                                                      
-                                                  };
+            ScheduleWorkQueueDialog.OnHide += () => RefreshTimer.Reset(AutoRefresh);
             ScheduleWorkQueueDialog.SchedulePanel.OnNoWorkQueueItems += () =>
                                                                             {
                                                                                 ScheduleWorkQueueDialog.Hide();
@@ -313,31 +304,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         private void ScheduleWorkQueueDialog_OnWorkQueueUpdated(List<Model.WorkQueue> workqueueItems)
         {
-            var updatedPartitions = new List<ServerEntityKey>();
-            foreach (Model.WorkQueue item in workqueueItems)
-            {
-                ServerEntityKey partitionKey = item.ServerPartitionKey;
-                if (!updatedPartitions.Contains(partitionKey))
-                {
-                    updatedPartitions.Add(partitionKey);
-
-                    SearchPanel.Refresh();
-                }
-            }
+            SearchPanel.Refresh();
         }
 
         void ResetWorkQueueDialog_WorkQueueItemReseted(Model.WorkQueue item)
         {
-            ServerEntityKey partitionKey = item.ServerPartitionKey;
-            SearchPanel.Refresh();
             SearchPanel.Refresh();
         }
 
         void DeleteWorkQueueDialog_WorkQueueItemDeleted(Model.WorkQueue item)
         {
-            ServerEntityKey partitionKey = item.ServerPartitionKey;
-            if (_partitionPanelMap.ContainsKey(partitionKey.ToString()))
-                _partitionPanelMap[partitionKey.ToString()].Refresh();
+            SearchPanel.Refresh();
         }
 
         void ConfirmationContinueDialog_Confirmed(object data)

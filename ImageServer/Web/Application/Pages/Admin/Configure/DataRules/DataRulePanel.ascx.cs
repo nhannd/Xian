@@ -185,6 +185,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
             }
 
             base.OnPreRender(e);
+            Refresh();
         }
 
         protected void AddDataRuleButton_Click(object sender, ImageClickEventArgs e)

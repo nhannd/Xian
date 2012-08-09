@@ -12,9 +12,6 @@
 
 <%@ Import namespace="Microsoft.JScript"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
-
-
-
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.Helpers" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="DeleteSeriesConfirmDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteSeriesConfirmDialog" %>
@@ -89,7 +86,7 @@
                                                 <td>
                                                     <%# Eval("Description") %>&nbsp;
                                                 </td>
-                                                <td align="Center">
+                                                <td align="center">
                                                     <%# Eval("NumberOfSeriesRelatedInstances") %>
                                                 </td>
                                                 <td>

@@ -129,8 +129,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                                                                    else source.SearchKeys = WorkQueueKeys;
                                                                };
 
-            SelectedWorkQueueItemList.TheGrid = SelectedWorkQueueItemList.WorkQueueItemGridView;
-            SelectedWorkQueueItemList.Refresh();
+            SelectedWorkQueueItemList.TheGrid = SelectedWorkQueueItemList.WorkQueueItemGridView;            
         }
 
         protected void WorkQueueListControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -150,6 +149,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         protected void OnApplyButtonClicked(object sender, EventArgs arg)
         {
+            SelectedWorkQueueItemList.Refresh();
             Hide();
 
             foreach (Model.WorkQueue wq in WorkQueues)
@@ -302,6 +302,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
             SelectedWorkQueueItemList.Refresh();
 
+            if (WorkQueues == null)
+                return;
+
+            if (SelectedWorkQueueItemList.WorkQueueItems.Count != WorkQueueKeys.Count)
+            {
+                MessageDialog.Message = HttpContext.GetGlobalResourceObject("SR", "WorkQueueNoLongerAvailable") as string;
+                MessageDialog.MessageType =
+                    MessageBox.MessageTypeEnum.INFORMATION;
+                MessageDialog.Show();
+            }
+
             ModalDialog.Show();
         }
 
@@ -334,19 +345,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         public void Show()
         {
             IsShown = true;
-
-            DataBind();
-
-            if (WorkQueues == null)
-                return;
-
-            if (SelectedWorkQueueItemList.WorkQueueItems.Count != WorkQueueKeys.Count)
-            {
-                MessageDialog.Message = HttpContext.GetGlobalResourceObject("SR", "WorkQueueNoLongerAvailable") as string;
-                MessageDialog.MessageType =
-                    MessageBox.MessageTypeEnum.INFORMATION;
-                MessageDialog.Show();
-            }
 
             WorkQueueSettingsPanel.ScheduleNow = false;
 

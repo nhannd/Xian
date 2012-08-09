@@ -272,6 +272,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         public void Refresh()
         {
             workQueueItemList.RefreshCurrentPage();
+            SearchUpdatePanel.Update();
         }
 
         protected void ViewItemButton_Click(object sender, ImageClickEventArgs e)
