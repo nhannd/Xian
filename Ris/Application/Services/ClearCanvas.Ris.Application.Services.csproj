@@ -85,6 +85,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.ServiceModel.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -112,6 +113,7 @@
       <DependentUpon>LogicalHL7EventSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="PersistentWorkflow.cs" />
+    <Compile Include="ReportingWorkflow\ReportPrintModel.cs" />
     <Compile Include="ReportingWorklistItemKey.cs" />
     <Compile Include="TranscriptionWorkflow\TranscriptionWorkflowService.cs" />
     <Compile Include="ModalityWorklistItemKey.cs" />

@@ -15,7 +15,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Permissions;
 using System.Threading;
-using System.Xml.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -556,19 +555,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		public PrintReportResponse PrintReport(PrintReportRequest request)
 		{
 			var procedure = PersistenceContext.Load<Procedure>(request.ProcedureRef);
-			var report = procedure.ActiveReport;
-			var mainPart = report.Parts.First();
-			var xmlBody = XDocument.Parse(mainPart.ExtendedProperties["ReportContent"]);
-			var q = from n in xmlBody.Root.Elements("ReportText")
-			        select n.Value;
+			var printModel = new ReportPrintModel(procedure, procedure.Order.OrderingPractitioner.ContactPoints.First());
 
-			var data = new Dictionary<string, object>
-			           	{
-			           		{"PATIENT_NAME", procedure.PatientProfile.Name.ToString()},
-			           		{"REPORT_BODY", q.FirstOrDefault()}
-			           	};
-
-			using(var printResult = PrintJob.Run("http://localhost/ris/print_templates/report.htm", data))
+			using(var printResult = PrintJob.Run("http://localhost/ris/print_templates/report.htm", printModel.GetVariables()))
 			{
 				var contents = File.ReadAllBytes(printResult.OutputFilePath);
 				return new PrintReportResponse(contents);

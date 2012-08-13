@@ -1,15 +1,25 @@
-﻿using System;
+﻿#region License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Scripting;
 
 namespace ClearCanvas.Ris.Application.Common.Printing
 {
@@ -148,7 +158,7 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 		}
 
 
-		public static Result Run(string url, IDictionary<string, object> data)
+		public static Result Run(string url, Dictionary<string, object> data)
 		{
 			var uri = new Uri(url);
 			if(!uri.IsLoopback)
@@ -163,9 +173,9 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 
 		private readonly Guid _id;
 		private readonly Uri _url;
-		private readonly IDictionary<string, object> _data;
+		private readonly Dictionary<string, object> _data;
 
-		private PrintJob(Guid id, Uri url, IDictionary<string, object> data)
+		private PrintJob(Guid id, Uri url, Dictionary<string, object> data)
 		{
 			_id = id;
 			_url = url;
@@ -208,9 +218,8 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 			{
 				using (var reader = new StreamReader(s))
 				{
-					var html = reader.ReadToEnd();
-					html = _data.Aggregate(html, (current, kvp) => current.Replace(kvp.Key, kvp.Value.ToString()));
-
+					var template = new ActiveTemplate(reader);
+					var html = template.Evaluate(_data);
 					writer.Write(html);
 				}
 			}

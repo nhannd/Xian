@@ -1,0 +1,110 @@
+<%
+	function formatReportPartStatus(part, isAddendum)
+	{
+		var statusText = part.StatusAndTime;
+		var warningText = " *** THIS " + (isAddendum ? "ADDENDUM" : "REPORT") + " HAS NOT BEEN VERIFIED ***";
+		if (part.Status.Code != 'F')
+			statusText = "<font color='red'>" + statusText + warningText + "</font>";
+
+		return " (" + statusText + ")";
+	}
+%>
+<html>
+<head>
+	<title>Report Template</title>
+	<link href="report.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<form id="myForm">
+		<div id="letterhead" style="{height:2.8in; margin-bottom:0px; padding-bottom:0px;}">
+			<div id="letterheadLogo">
+				<img src="GenericHospitalLogo.png"/>
+			</div>
+			<div id="letterheadFacility">
+				<div id="letterheadFacilityName">ACME</div>
+				<div id="letterheadFacilityDescription">ACME Radiology Clinic</div>
+			</div>
+			<div id="letterheadAddress">
+				<div id="letterheadAddress1">123 Buttondown St. Unit 4050</div>
+				<div id="letterheadAddress2">Metropolis, ON Canada</div>
+				<div id="letterheadPhone">(777) 555-5555</div>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div id="recipient" style="{height:1.3in; position:absolute; top:1.5in;}">
+			<div id="recipientName"><%= Recipient.Name %></div>
+			<div id="recipientAddress1"><%= (Recipient.Address.Unit ? Recipient.Address.Unit + "-" : "") + Recipient.Address.Street %></div>
+			<div id="recipientAddress2"><%= [Recipient.Address.City, Recipient.Address.Province, Recipient.Address.Country, Recipient.Address.PostalCode].join(" ") %></div>
+		</div>
+		<div id="ordersummary" style="{margin-top:0px; padding-top:0px;}">
+			<div class="leftcolumn">
+				<table>
+					<tbody valign="top">
+						<tr>
+							<td class="propertyname">Patient:</td>
+							<td><%= Patient.Name %></td>
+						</tr>
+						<tr>
+							<td class="propertyname">A#:</td>
+							<td><%= AccessionNumber %></td>
+						</tr>
+						<tr>
+							<td class="propertyname">Ordering Practitioner:</td>
+							<td><%= OrderingPractitioner.Name %></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="rightcolumn">
+				<table>
+					<tbody valign="top">
+						<tr>
+							<td class="propertyname">MRN:</td>
+							<td><%= Patient.Mrn %></td>
+						</tr>
+						<tr>
+							<td class="propertyname">Birth Date:</td>
+							<td><%= Patient.DateOfBirth %></td>
+						</tr>
+					</tbody>
+				</table>
+				<table>
+					<tbody valign="top">
+						<tr>
+							<td class="propertyname">Procedures:</td>
+							<td><%= Procedures %></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div id="reportSection">
+		<% for (var i = ReportParts.Count - 1; i >= 0; i--) {
+			var part = ReportParts[i]; %>
+			<div class="reportPreview">
+				<b><%= i > 0 ? "Addendum" : "Report" %> <%= formatReportPartStatus(part, i > 0) %></b>
+				<br><br>
+				<%= part.Body %>
+				<br>
+				<% if(part.InterpretedBy) { %>
+				<br> Interpreted By: <%= part.InterpretedBy %>
+				<% } %>
+				<% if(part.TranscribedBy) { %>
+				<br> Transcribed By: <%= part.TranscribedBy %>
+				<% } %>
+				<% if(part.VerifiedBy) { %>
+				<br> Verified By: <%= part.VerifiedBy %>
+				<% } %>
+				<% if(part.SupervisedBy) { %>
+				<br> Supervised By: <%= part.SupervisedBy %>
+				<% } %>
+				<br><br>
+			</div>
+		<% } %>
+		</div>
+		<div id="endofreport">***** END OF REPORT *****</div>
+		<div id="footer">(Medical Imaging Report for Patient: <span id="patientFooter"><%= Patient.Name %></span>; MRN: <span id="mrnFooter"><%= Patient.Mrn %></span>)</div>
+	</form>
+</body>
+</html>

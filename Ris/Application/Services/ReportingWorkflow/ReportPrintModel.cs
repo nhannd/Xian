@@ -1,0 +1,352 @@
+﻿#region License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Xml.Linq;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
+
+namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
+{
+	/// <summary>
+	/// Defines a small document object model for use in printing of radiology reports.
+	/// </summary>
+	public class ReportPrintModel
+	{
+		/// <summary>
+		/// Patient information.
+		/// </summary>
+		public class PatientFacade
+		{
+			private readonly PatientProfile _patientProfile;
+
+			internal PatientFacade(PatientProfile patientProfile)
+			{
+				_patientProfile = patientProfile;
+			}
+
+			public PersonName Name
+			{
+				get { return _patientProfile.Name; }
+			}
+
+			public PatientIdentifier Mrn
+			{
+				get { return _patientProfile.Mrn; }
+			}
+
+			public string DateOfBirth
+			{
+				get { return FormatDateOfBirth(_patientProfile.DateOfBirth); }
+			}
+
+			public override string ToString()
+			{
+				return string.Format("{0} ({1})", this.Name, this.Mrn);
+			}
+
+			private string FormatDateOfBirth(DateTime? dateOfBirth)
+			{
+				//todo: can we centralize formatting somewhere
+				return dateOfBirth == null ? "" : dateOfBirth.Value.ToString("yyyy-MM-dd");
+			}
+		}
+
+		/// <summary>
+		/// Practitioner information.
+		/// </summary>
+		public class PractitionerFacade
+		{
+			private readonly ExternalPractitioner _practitioner;
+			private readonly ExternalPractitionerContactPoint _contactPoint;
+
+			internal PractitionerFacade(ExternalPractitioner practitioner, ExternalPractitionerContactPoint contactPoint)
+			{
+				_practitioner = practitioner;
+				_contactPoint = contactPoint;
+			}
+
+			public PersonName Name
+			{
+				get { return _practitioner.Name; }
+			}
+
+			public Address Address
+			{
+				get { return _contactPoint == null  ? new Address() : _contactPoint.CurrentAddress; }
+			}
+
+			public override string ToString()
+			{
+				return this.Name.ToString();
+			}
+		}
+
+		/// <summary>
+		/// Procedure information.
+		/// </summary>
+		public class ProcedureFacade
+		{
+			private readonly Procedure _procedure;
+
+			internal ProcedureFacade(Procedure procedure)
+			{
+				_procedure = procedure;
+			}
+
+			public string Name
+			{
+				get { return _procedure.Type.Name; }
+			}
+
+			public string Code
+			{
+				get { return _procedure.Type.Id; }
+			}
+
+			public override string ToString()
+			{
+				return this.Name;
+			}
+		}
+
+		/// <summary>
+		/// Procedures information.
+		/// </summary>
+		public class ProceduresFacade
+		{
+			private readonly IList<ProcedureFacade> _procedures;
+
+			internal ProceduresFacade(IEnumerable<Procedure> procedures)
+			{
+				_procedures = procedures.Select(p => new ProcedureFacade(p)).ToList();
+			}
+
+			public int Count
+			{
+				get { return _procedures.Count; }
+			}
+
+			public ProcedureFacade this[int i]
+			{
+				get { return _procedures[i]; }
+			}
+
+			public override string ToString()
+			{
+				return string.Join(", ", _procedures.Select(rp => rp.Name));
+			}
+		}
+
+		/// <summary>
+		/// Report Part information.
+		/// </summary>
+		public class ReportPartFacade
+		{
+			private static readonly Dictionary<ReportPartStatus, Func<ReportPart, DateTime?>> _timePropertyMap
+				= new Dictionary<ReportPartStatus, Func<ReportPart, DateTime?>> 
+				  	{
+						{ReportPartStatus.X, part => part.CancelledTime},
+						{ReportPartStatus.D, part => part.CreationTime},
+						{ReportPartStatus.P, part => part.PreliminaryTime},
+						{ReportPartStatus.F, part => part.CompletedTime},
+				  	};
+
+			private readonly ReportPart _part;
+			private readonly ReportPartStatusEnum _status;
+
+			internal ReportPartFacade(ReportPart part)
+			{
+				_part = part;
+				_status = PersistenceScope.CurrentContext.GetBroker<IEnumBroker>().Find<ReportPartStatusEnum>(_part.Status.ToString());
+			}
+
+			public int Index
+			{
+				get { return _part.Index; }
+			}
+
+			public ReportPartStatusEnum Status
+			{
+				get { return _status; }
+			}
+
+			public string StatusAndTime
+			{
+				get
+				{
+					var time = _timePropertyMap[_part.Status](_part);
+					return string.Format("{0} - {1}", this.Status.Value, FormatTime(time));
+				}
+			}
+
+			public string Body
+			{
+				get { return GetBody(); }
+			}
+
+			public PersonName InterpretedBy
+			{
+				get { return _part.Interpreter == null ? null : _part.Interpreter.Name ; }
+			}
+
+			public PersonName VerifiedBy
+			{
+				get { return _part.Verifier == null ? null : _part.Verifier.Name; }
+			}
+
+			public PersonName TranscribedBy
+			{
+				get { return _part.Transcriber == null ? null : _part.Transcriber.Name; }
+			}
+
+			public PersonName SupervisedBy
+			{
+				get { return _part.Supervisor == null ? null : _part.Supervisor.Name; }
+			}
+
+			public string CreationTime
+			{
+				get { return FormatTime(_part.CreationTime); }
+			}
+
+			public string PreliminaryTime
+			{
+				get { return FormatTime(_part.PreliminaryTime); }
+			}
+
+			public string CompletedTime
+			{
+				get { return FormatTime(_part.CompletedTime); }
+			}
+
+			public string CancelledTime
+			{
+				get { return FormatTime(_part.CancelledTime); }
+			}
+
+			public override string ToString()
+			{
+				return string.Format("Report Part {0}, {1}", this.Index, this.StatusAndTime);
+			}
+
+			private string FormatTime(DateTime? time)
+			{
+				//todo: can we centralize formatting somewhere
+				return time == null ? null : time.Value.ToString("yyyy-MM-dd HH:mm:ss");
+			}
+
+			private string GetBody()
+			{
+				//todo: can we centralize this logic somewhere
+				var content = _part.ExtendedProperties["ReportContent"];
+				if(string.IsNullOrEmpty(content))
+					return null;
+
+				var xmlBody = XDocument.Parse(content);
+				if(xmlBody.Root == null)
+					return null;
+
+				var body = xmlBody.Root.Elements("ReportText").Select(n => n.Value).FirstOrDefault();
+				return FormatHtml(body);
+			}
+
+			private string FormatHtml(string text)
+			{
+				if(string.IsNullOrEmpty(text))
+					return string.Empty;
+
+				return HttpUtility.HtmlEncode(text);
+				//.Replace("\r\n", "<br>")
+				//.Replace("\r", "<br>")
+				//.Replace("\n", "<br>");
+			}
+		}
+
+		/// <summary>
+		/// Report Parts information.
+		/// </summary>
+		public class ReportPartsFacade
+		{
+			private readonly IList<ReportPartFacade> _reportParts;
+
+			internal ReportPartsFacade(IEnumerable<ReportPart> reportParts)
+			{
+				_reportParts = reportParts.Select(p => new ReportPartFacade(p)).ToList();
+			}
+
+			public int Count
+			{
+				get { return _reportParts.Count; }
+			}
+
+			public ReportPartFacade this[int i]
+			{
+				get { return _reportParts[i]; }
+			}
+
+			public override string ToString()
+			{
+				return string.Format("ReportParts ({0})", this.Count);
+			}
+		}
+
+
+		private readonly Procedure _procedure;
+		private readonly ExternalPractitionerContactPoint _recipient;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="procedure"></param>
+		/// <param name="recipient"></param>
+		internal ReportPrintModel(Procedure procedure, ExternalPractitionerContactPoint recipient)
+		{
+			_procedure = procedure;
+			_recipient = recipient;
+		}
+
+		/// <summary>
+		/// Gets the variables available to the print template.
+		/// </summary>
+		/// <returns></returns>
+		internal Dictionary<string, object> GetVariables()
+		{
+			var variables = new Dictionary<string, object>();
+
+			var patientProfile = _procedure.PatientProfile;
+			var report = _procedure.ActiveReport;
+
+
+			// patient
+			variables["Patient"] = new PatientFacade(patientProfile);
+
+			// recipient
+			variables["Recipient"] = new PractitionerFacade(_recipient.Practitioner, _recipient);
+
+			// order
+			variables["AccessionNumber"] = _procedure.Order.AccessionNumber;
+			variables["OrderingPractitioner"] = new PractitionerFacade(_procedure.Order.OrderingPractitioner, null);
+
+			// procedures
+			variables["Procedures"] = new ProceduresFacade(report.Procedures);
+
+			// report
+			variables["ReportParts"] = new ReportPartsFacade(report.Parts);
+
+			return variables;
+		}
+
+	}
+}
