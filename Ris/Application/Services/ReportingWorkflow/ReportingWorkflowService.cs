@@ -559,6 +559,10 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 			using(var printResult = PrintJob.Run("http://localhost/ris/print_templates/report.htm", printModel.GetVariables()))
 			{
+				if(printResult.Error)
+				{
+					throw new WorkflowException(printResult.ErrorMessage);
+				}
 				var contents = File.ReadAllBytes(printResult.OutputFilePath);
 				return new PrintReportResponse(contents);
 			}

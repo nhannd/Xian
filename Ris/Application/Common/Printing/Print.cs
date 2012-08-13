@@ -125,16 +125,28 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 
 		public class Result : IDisposable
 		{
-			internal Result(string outputFilePath)
+			public static Result OnSuccess(string outputFilePath)
 			{
-				OutputFilePath = outputFilePath;
+				return new Result {OutputFilePath = outputFilePath};
+			}
+
+			public static Result OnError(string errorMessage)
+			{
+				return new Result {Error = true, ErrorMessage = errorMessage};
 			}
 
 			public string OutputFilePath { get; private set; }
 
+			public bool Error { get; private set; }
+
+			public string ErrorMessage { get; private set; }
+
 			public void Dispose()
 			{
-				File.Delete(this.OutputFilePath);
+				if(!string.IsNullOrEmpty(this.OutputFilePath))
+				{
+					File.Delete(this.OutputFilePath);
+				}
 			}
 		}
 
@@ -174,6 +186,8 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 		private readonly Guid _id;
 		private readonly Uri _url;
 		private readonly Dictionary<string, object> _data;
+		private bool _error;
+		private string _errorMessage;
 
 		private PrintJob(Guid id, Uri url, Dictionary<string, object> data)
 		{
@@ -207,21 +221,31 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 					_runningJobs.Remove(_id);
 				}
 			}
-			return new Result(outputFilePath);
+			return _error ? Result.OnError(_errorMessage) : Result.OnSuccess(outputFilePath);
 		}
 
 		private void WriteHtml(TextWriter writer)
 		{
-			var request = WebRequest.Create(_url);
-			var response = request.GetResponse();
-			using (var s = response.GetResponseStream())
+			try
 			{
-				using (var reader = new StreamReader(s))
+				var request = WebRequest.Create(_url);
+				var response = request.GetResponse();
+				using (var s = response.GetResponseStream())
 				{
-					var template = new ActiveTemplate(reader);
-					var html = template.Evaluate(_data);
-					writer.Write(html);
+					using (var reader = new StreamReader(s))
+					{
+						var template = new ActiveTemplate(reader);
+						var html = template.Evaluate(_data);
+						writer.Write(html);
+					}
 				}
+			}
+			catch (Exception e)
+			{
+				_error = true;
+				_errorMessage = e.Message;
+
+				throw;
 			}
 		}
 
