@@ -340,10 +340,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			var op = new Operations.PublishReport();
 			op.Execute(publication, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
-			foreach (var logicalEvent in LogicalHL7EventWorkQueueItem.CreateReportLogicalEvents(LogicalHL7EventType.ReportPublished, publication.Report))
-			{
-				this.PersistenceContext.Lock(logicalEvent.Item, DirtyState.New);
-			}
+			LogicalHL7Event.ReportPublished.EnqueueEvents(publication.Report);
 
 			this.PersistenceContext.SynchState();
 			return new PublishReportResponse(publication.GetRef());

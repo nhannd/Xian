@@ -106,12 +106,6 @@
     <Compile Include="Admin\StaffGroupAdmin\StaffGroupAdminService.cs" />
     <Compile Include="Admin\WorkQueueAdmin\WorkQueueAdminService.cs" />
     <Compile Include="DicomSeriesAssembler.cs" />
-    <Compile Include="LogicalHL7EventSettings.cs" />
-    <Compile Include="LogicalHL7EventSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>LogicalHL7EventSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="PersistentWorkflow.cs" />
     <Compile Include="ReportingWorkflow\ReportPrintModel.cs" />
     <Compile Include="ReportingWorklistItemKey.cs" />
@@ -252,10 +246,6 @@
       <LastGenOutput>PatientAdminSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
-    <None Include="LogicalHL7EventSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>LogicalHL7EventSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="WorklistSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorklistSettings.Designer.cs</LastGenOutput>

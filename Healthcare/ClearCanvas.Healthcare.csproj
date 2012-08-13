@@ -123,6 +123,12 @@
     <Compile Include="IAttachedDocumentStore.cs" />
     <Compile Include="Imex\DepartmentImex.cs" />
     <Compile Include="IOrderNoteProvider.cs" />
+    <Compile Include="LogicalHL7EventSettings.cs" />
+    <Compile Include="LogicalHL7EventSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>LogicalHL7EventSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="OrderMergeHistoryVirtualOrderNoteProvider.cs" />
     <Compile Include="OrderMergeInfo.cs" />
     <Compile Include="OrderRules.cs" />
@@ -140,8 +146,8 @@
     <Compile Include="Imex\CannedTextImex.cs" />
     <Compile Include="Imex\LocationImex.cs" />
     <Compile Include="Imex\PatientNoteCategoryImex.cs" />
-    <Compile Include="LogicalHL7EventType.cs" />
-    <Compile Include="LogicalHL7EventWorkQueueItem.cs" />
+    <Compile Include="LogicalHL7Event.cs" />
+    <Compile Include="LogicalHL7EventArgs.cs" />
     <Compile Include="ModalityPerformedProcedureStepSearchCriteria.cs" />
     <Compile Include="NoteboxFactory.cs" />
     <Compile Include="Imex\ExternalPractitionerImex.cs" />
@@ -400,6 +406,10 @@
     <None Include="EntityValidationRulesSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>EntityValidationRulesSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="LogicalHL7EventSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>LogicalHL7EventSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ProcedureStepHierarchy.cd" />
     <None Include="Workflow\Reporting\ReportingWorkflowSettings.settings">

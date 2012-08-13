@@ -215,7 +215,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			// ensure the new order is assigned an OID before using it in the return value
 			this.PersistenceContext.SynchState();
 
-			CreateLogicalHL7Event(order, LogicalHL7EventType.OrderCreated);
+			LogicalHL7Event.OrderCreated.EnqueueEvents(order);
 
 			var orderAssembler = new OrderAssembler();
 			return new PlaceOrderResponse(orderAssembler.CreateOrderSummary(order, this.PersistenceContext));
@@ -274,8 +274,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			this.PersistenceContext.SynchState();
 
-			CreateLogicalHL7Event(newOrder, LogicalHL7EventType.OrderCreated);
-			CreateLogicalHL7Event(orderToReplace, LogicalHL7EventType.OrderCancelled);
+			LogicalHL7Event.OrderCreated.EnqueueEvents(newOrder);
+			LogicalHL7Event.OrderCancelled.EnqueueEvents(orderToReplace);
 
 			var orderAssembler = new OrderAssembler();
 			return new ReplaceOrderResponse(orderAssembler.CreateOrderSummary(newOrder, this.PersistenceContext));
@@ -357,7 +357,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			CancelOrderHelper(order, new OrderCancelInfo(reason, this.CurrentUserStaff));
 
-			CreateLogicalHL7Event(order, LogicalHL7EventType.OrderCancelled);
+			LogicalHL7Event.OrderCancelled.EnqueueEvents(order);
 
 			return new CancelOrderResponse();
 		}
@@ -400,7 +400,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			this.PersistenceContext.SynchState();
 
-			CreateLogicalHL7Event(order, LogicalHL7EventType.OrderModified);
+			LogicalHL7Event.OrderModified.EnqueueEvents(order);
 
 			var orderAssembler = new OrderAssembler();
 			return new TimeShiftOrderResponse(orderAssembler.CreateOrderSummary(order, this.PersistenceContext));
@@ -649,10 +649,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				// create all necessary HL7 events
 				foreach (var ghostProcedure in result.GhostProcedures)
 				{
-					CreateLogicalHL7Event(ghostProcedure, LogicalHL7EventType.ProcedureCancelled);
-					CreateLogicalHL7Event(ghostProcedure.GhostOf, LogicalHL7EventType.ProcedureCreated);
+					LogicalHL7Event.ProcedureCancelled.EnqueueEvents(ghostProcedure);
+					LogicalHL7Event.ProcedureCreated.EnqueueEvents(ghostProcedure.GhostOf);
 				}
-				CreateLogicalHL7Event(destinationOrder, LogicalHL7EventType.OrderModified);
+				LogicalHL7Event.OrderModified.EnqueueEvents(destinationOrder);
 			}
 		}
 
@@ -674,15 +674,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				// notify HL7 of cancelled procedures (now existing as ghosts on dest order)
 				foreach (var procedure in result.GhostProcedures)
 				{
-					CreateLogicalHL7Event(procedure, LogicalHL7EventType.ProcedureCancelled);
+					LogicalHL7Event.ProcedureCancelled.EnqueueEvents(procedure);
 				}
 
 				// if the replacement order is not terminated
 				if (!replacementOrder.IsTerminated)
 				{
 					// notify HL7 of replacement
-					CreateLogicalHL7Event(replacementOrder, LogicalHL7EventType.OrderCreated);
-
+					LogicalHL7Event.OrderCreated.EnqueueEvents(replacementOrder);
 
 					// recur on items that were merged into this order
 					UnmergeHelper(replacementOrder.MergeSourceOrders, cancelInfo, accBroker);
@@ -777,7 +776,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				// apply the requisition information to the actual procedure
 				assembler.UpdateProcedureFromRequisition(procedure, req, this.CurrentUserStaff, this.PersistenceContext);
 
-				CreateLogicalHL7Event(procedure, LogicalHL7EventType.ProcedureCreated);
+				LogicalHL7Event.ProcedureCreated.EnqueueEvents(procedure);
 			}
 
 			// process updates
@@ -797,9 +796,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				// apply the requisition information to the actual procedure
 				assembler.UpdateProcedureFromRequisition(procedure, req, this.CurrentUserStaff, this.PersistenceContext);
 
-				CreateLogicalHL7Event(
-					procedure,
-					req.Cancelled ? LogicalHL7EventType.ProcedureCancelled : LogicalHL7EventType.ProcedureModified);
+				(req.Cancelled ? LogicalHL7Event.ProcedureCancelled : LogicalHL7Event.ProcedureModified).EnqueueEvents(procedure);
 			}
 		}
 

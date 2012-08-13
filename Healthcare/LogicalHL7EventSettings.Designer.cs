@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Ris.Application.Services {
+namespace ClearCanvas.Healthcare {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -30,9 +30,9 @@ namespace ClearCanvas.Ris.Application.Services {
         [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether the creation of logical HL7 outbound events is enabled.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool LogicalHL7EventsEnabled {
+        public bool EnableEvents {
             get {
-                return ((bool)(this["LogicalHL7EventsEnabled"]));
+                return ((bool)(this["EnableEvents"]));
             }
         }
     }

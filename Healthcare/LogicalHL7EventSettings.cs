@@ -11,7 +11,7 @@
 
 using System.Configuration;
 
-namespace ClearCanvas.Ris.Application.Services
+namespace ClearCanvas.Healthcare
 {
 
 	[SettingsGroupDescription("Settings that configure Logical HL7 outbound events.")]

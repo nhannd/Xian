@@ -63,6 +63,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HL7\LogicalHL7EventShred.cs" />
+    <Compile Include="HL7\LogicalHL7EventShredSettings.cs" />
+    <Compile Include="HL7\LogicalHL7EventShredSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>LogicalHL7EventShredSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ImageAvailability\DefaultImageAvailabilityStrategy.cs" />
     <Compile Include="ImageAvailability\IImageAvailabilityStrategy.cs" />
     <Compile Include="ImageAvailability\ImageAvailabilityProcedureProcessor.cs" />
@@ -89,6 +96,7 @@
     </Compile>
     <Compile Include="Merge\MigrationPriority.cs" />
     <Compile Include="Publication\CreateLogicalHL7EventAction.cs" />
+    <Compile Include="HL7\LogicalHL7EventProcessor.cs" />
     <Compile Include="Publication\PublicationProcessor.cs" />
     <Compile Include="Publication\PublicationShred.cs" />
     <Compile Include="Publication\PublicationShredSettings.cs" />
@@ -140,6 +148,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="HL7\LogicalHL7EventShredSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>LogicalHL7EventShredSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ImageAvailability\ImageAvailabilityShredSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ImageAvailabilityShredSettings.Designer.cs</LastGenOutput>
@@ -170,6 +182,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

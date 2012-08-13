@@ -86,7 +86,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				var procedure = broker.Load(procedureRef, EntityLoadFlags.CheckVersion);
 				op.Execute(procedure, this.CurrentUserStaff, request.CheckInTime, new PersistentWorkflow(this.PersistenceContext));
 
-				CreateLogicalHL7Event(procedure, LogicalHL7EventType.ProcedureModified);
+				LogicalHL7Event.ProcedureModified.EnqueueEvents(procedure);
 			}
 
 			return new CheckInProcedureResponse();

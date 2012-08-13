@@ -165,7 +165,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 				// If discontinuing the procedure step caused the parent procedure to be discontinued,
 				// create an HL7 event.
 				if (step.Procedure.IsTerminated)
-					CreateLogicalHL7Event(step.Procedure, LogicalHL7EventType.ProcedureCancelled);
+					LogicalHL7Event.ProcedureCancelled.EnqueueEvents(step.Procedure);
 			}
 
 			this.PersistenceContext.SynchState();
@@ -233,7 +233,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 			{
 				var procedure = activity.As<ProcedureStep>().Procedure;
 				if(procedure.IsTerminated)
-					CreateLogicalHL7Event(procedure, LogicalHL7EventType.ProcedureCancelled);
+					LogicalHL7Event.ProcedureCancelled.EnqueueEvents(procedure);
 			}
 	
 			// Drill back to order so we can refresh procedure plan

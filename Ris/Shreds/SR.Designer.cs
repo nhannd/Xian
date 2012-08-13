@@ -97,6 +97,24 @@ namespace ClearCanvas.Ris.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This shred hosts the Logical HL7 Event Processor which is responsible for processing Logical HL7 Event work items..
+        /// </summary>
+        internal static string LogicalHL7EventShredDescription {
+            get {
+                return ResourceManager.GetString("LogicalHL7EventShredDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logical HL7 Event Processor.
+        /// </summary>
+        internal static string LogicalHL7EventShredName {
+            get {
+                return ResourceManager.GetString("LogicalHL7EventShredName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Performs asynchronous merge operations as long-running background tasks..
         /// </summary>
         internal static string MergeShredDescription {
