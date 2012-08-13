@@ -64,6 +64,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.ServiceModel.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -193,12 +194,15 @@
     <Compile Include="ModalityProcedureStepSummary.cs" />
     <Compile Include="ModalityWorkflow\DicomSeriesDetail.cs" />
     <Compile Include="PatientAllergyDetail.cs" />
+    <Compile Include="Printing\Print.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\MergeOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\MergeOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\QueryCancelOrderWarningsRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\QueryCancelOrderWarningsResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\UnmergeOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\UnmergeOrderResponse.cs" />
+    <Compile Include="ReportingWorkflow\PrintReportRequest.cs" />
+    <Compile Include="ReportingWorkflow\PrintReportResponse.cs" />
     <Compile Include="ReportingWorkflow\GetDocumentationStatusResponse.cs" />
     <Compile Include="ReportingWorkflow\GetDocumentationStatusRequest.cs" />
     <Compile Include="ReportingWorkflow\ReturnToInterpreterRequest.cs" />
@@ -678,6 +682,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

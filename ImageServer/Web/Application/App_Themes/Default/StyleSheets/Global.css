@@ -315,6 +315,22 @@ Global.css - Defines the global styles for the entire web application relating
  * Search Styles
  *================================*/
 
+.PartitionLink
+{   
+  	padding: 2px 5px 2px 5px;
+	font-family: Sans-Serif;
+	color: #618FAD;
+	font-size: 11px;
+	font-weight: bold;
+	border: 1px solid #618FAD;
+	background: #ffffff url(../../../../PersistantImage.ashx?key=SearchTextBoxBackground) repeat-x;
+    margin-left: 2px;
+    margin-right: 1px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    line-height: 24px;
+}
+
 .SearchPanelContainer
 {
     margin: 5px 0px 5px 5px;

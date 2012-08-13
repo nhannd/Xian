@@ -1,6 +1,6 @@
 <%--  License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -14,18 +14,23 @@
     ValidateRequest="false" %>
 
 <%@ Register Src="AddEditServerRuleDialog.ascx" TagName="AddEditServerRuleDialog" TagPrefix="localAsp" %>
+<%@ Register Src="ServerRulePanel.ascx" TagName="ServerRulePanel" TagPrefix="localAsp" %>
 
 <asp:Content ID="ContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder" runat="server"><asp:Literal ID="Literal1" runat="server" Text="<%$Resources:Titles,ServerRules%>" /></asp:Content>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
-    <asp:Panel runat="server" ID="PageContent">
-        <asp:UpdatePanel ID="ServerRulePageUpdatePanel" runat="server" UpdateMode="Conditional">
-            <ContentTemplate>
-                <ccAsp:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" />
-            </ContentTemplate>
-        </asp:UpdatePanel>
-    </asp:Panel>
+
+    <asp:UpdatePanel ID="PageContent" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+            <ccAsp:ServerPartitionSelector runat="server" id="ServerPartitionSelector" visible="true" />
+            <localAsp:ServerRulePanel runat="server" id="SearchPanel" visible="true" />
+        </ContentTemplate>
+    </asp:UpdatePanel>
     
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="DialogsPlaceHolder" runat="server">
     <ccAsp:MessageBox ID="ConfirmDialog" runat="server" />
     <localAsp:AddEditServerRuleDialog ID="AddEditServerRuleControl" runat="server" />
 </asp:Content>
+

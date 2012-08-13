@@ -15,16 +15,16 @@
     <File name="common\Castle.Core.dll" checksum="true" />
     <File name="common\Castle.DynamicProxy2.dll" checksum="true" />
     <File name="common\ClearCanvas.Common.dll" checksum="true" />
-    <File name="common\ClearCanvas.Dicom.Codec.Jpeg.dll" checksum="true" />
-    <File name="common\ClearCanvas.Dicom.Codec.Rle.dll" checksum="true" />
-    <File name="common\ClearCanvas.Dicom.dll" checksum="true" />
     <File name="common\ClearCanvas.Server.ShredHost.dll" checksum="true" />
     <File name="common\Iesi.Collections.dll" checksum="true" />
     <File name="common\Ionic.Zip.dll" checksum="true" />
     <File name="common\log4net.dll" checksum="true" />
     <File name="common\nunit.framework.dll" checksum="true" />
-	<File name="plugins\ClearCanvas.ImageServer.Model.dll" checksum="true" />
-	<File name="plugins\ClearCanvas.Dicom.Codec.Jpeg.dll" checksum="true" />
+    <File name="plugins\ClearCanvas.Dicom.Codec.Jpeg.dll" checksum="true" />
+    <File name="plugins\ClearCanvas.Dicom.Codec.Rle.dll" checksum="true" />
+    <File name="plugins\ClearCanvas.Dicom.dll" checksum="true" />
+    <File name="plugins\ClearCanvas.ImageServer.Model.dll" checksum="true" />
+ 	  <File name="plugins\ClearCanvas.Dicom.Codec.Jpeg.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Dicom.Codec.Rle.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Enterprise.Common.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Enterprise.Core.dll" checksum="true" />

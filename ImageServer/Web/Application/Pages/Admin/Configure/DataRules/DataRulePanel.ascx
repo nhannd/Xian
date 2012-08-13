@@ -30,14 +30,12 @@
                                 <td align="left" valign="bottom">
                                     <asp:Label ID="Label3" runat="server" Text="<%$Resources: SearchFieldLabels, ServerRuleStatus %>"
                                         CssClass="SearchTextBoxLabel"></asp:Label><br />
-                                    <asp:DropDownList ID="StatusFilter" runat="server" CssClass="SearchDropDownList">
-                                    </asp:DropDownList>
+                                    <asp:DropDownList ID="StatusFilter" runat="server" CssClass="SearchDropDownList"/>                                    
                                 </td>
                                 <td align="left" valign="bottom">
                                     <asp:Label ID="Label4" runat="server" Text="<%$Resources: SearchFieldLabels, ServerRuleDefault %>"
                                         CssClass="SearchTextBoxLabel"></asp:Label><br />
-                                    <asp:DropDownList ID="DefaultFilter" runat="server" CssClass="SearchDropDownList">
-                                    </asp:DropDownList>
+                                    <asp:DropDownList ID="DefaultFilter" runat="server" CssClass="SearchDropDownList"/>                                    
                                 </td>
                                 <td align="right" valign="bottom">
                                     <asp:Panel ID="Panel2" runat="server" CssClass="SearchButtonPanel">

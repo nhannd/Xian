@@ -56,26 +56,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     PatientAge.Text = SR.Unknown;
 				else
                 {
-                    string patientAge = _patientSummary.PatientsAge.Substring(0, 3).TrimStart('0');
-                    switch (_patientSummary.PatientsAge.Substring(3))
+                    string patientAge = _patientSummary.PatientsAge.Substring(0, Math.Min(3,_patientSummary.PatientsAge.Length)).TrimStart('0');
+                    if (_patientSummary.PatientsAge.Length > 3)
                     {
-                        case "Y":
-                            patientAge += " " + SR.Years;
-                            break;
-                        case "M":
-                            patientAge += " " + SR.Months;
-                            break;
-                        case "W":
-                            patientAge += " " + SR.Weeks;
-                            break;
-                        default:
-                            patientAge += " " + SR.Days;
-                            break;
+                        switch (_patientSummary.PatientsAge.Substring(3))
+                        {
+                            case "Y":
+                                patientAge += " " + SR.Years;
+                                break;
+                            case "M":
+                                patientAge += " " + SR.Months;
+                                break;
+                            case "W":
+                                patientAge += " " + SR.Weeks;
+                                break;
+                            default:
+                                patientAge += " " + SR.Days;
+                                break;
+                        }
+
+                        if (_patientSummary.PatientsAge.Substring(0, Math.Min(3, _patientSummary.PatientsAge.Length)).
+                                Equals("001"))
+                            patientAge = patientAge.TrimEnd('s');
                     }
-
-                    if (_patientSummary.PatientsAge.Substring(0, 3).Equals("001"))
-                        patientAge = patientAge.TrimEnd('s');
-
                     PatientAge.Text = patientAge;
 				}
 

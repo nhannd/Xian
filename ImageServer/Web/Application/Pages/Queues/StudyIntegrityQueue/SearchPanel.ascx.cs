@@ -81,10 +81,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             ToDate.Text = string.Empty;
         }
 
-        public void UpdateUI()
+        public void Refresh()
         {
             SearchUpdatePanel.Update();
             StudyIntegrityQueueItemList.RefreshCurrentPage();
+        }
+
+        internal void Reset()
+        {
+            Clear();
+            StudyIntegrityQueueItemList.Reset();
         }
 
         #endregion Public Methods

@@ -28,20 +28,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             base.OnInit(e);
 
-            string patientID = string.Empty;
-            string patientName = string.Empty;
-            string partitionKey;
-            string reason = string.Empty;
-            string databind = string.Empty;
             ServerPartition activePartition = null;
 
             if (!IsPostBack && !Page.IsAsync)
             {
-                patientID = Request["PatientID"];
-                patientName = Request["PatientName"];
-                partitionKey = Request["PartitionKey"];
-                reason = Request["Reason"];
-                databind = Request["Databind"];
+                string patientID = Request["PatientID"];
+                string patientName = Request["PatientName"];
+                string partitionKey = Request["PartitionKey"];
+                string reason = Request["Reason"];
 
                 if (!string.IsNullOrEmpty(patientID) && !string.IsNullOrEmpty(patientName) &&
                     !string.IsNullOrEmpty(partitionKey))
@@ -62,35 +56,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 }
             }
 
-            ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
-                                                           {
-                                                               var panel =
-                                                                   LoadControl("SearchPanel.ascx") as SearchPanel;
-                                                               if (panel != null)
-                                                               {
-                                                                   panel.ServerPartition = partition;
-                                                                   panel.ID = "SearchPanel_" + partition.AeTitle;
+            ServerPartitionSelector.PartitionChanged += delegate(ServerPartition partition)
+            {
+                SearchPanel.ServerPartition = partition;
+                SearchPanel.Reset();
+            };
 
-                                                                   if (!string.IsNullOrEmpty(patientName) ||
-                                                                       !string.IsNullOrEmpty(patientID) ||
-                                                                       !string.IsNullOrEmpty(reason))
-                                                                   {
-                                                                       panel.PatientNameFromUrl = patientName;
-                                                                       panel.PatientIdFromUrl = patientID;
-                                                                       panel.ReasonFromUrl = reason;
-                                                                   }
-
-                                                                   if (!string.IsNullOrEmpty(databind))
-                                                                   {
-                                                                       panel.DataBindFromUrl = true;
-                                                                   }
-                                                               }
-                                                               return panel;
-                                                           });
+            ServerPartitionSelector.SetUpdatePanel(PageContent);
 
             if (activePartition != null)
             {
-                ServerPartitionTabs.SetActivePartition(activePartition.AeTitle);
+                ServerPartitionSelector.SelectedPartition = activePartition;
             }
 
             SetPageTitle(Titles.StudyIntegrityQueuePageTitle);
@@ -114,16 +90,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             }
         }
 
-        public void UpdateUI()
+        protected void Page_Load(object sender, EventArgs e)
         {
-            foreach (ServerPartition partition in ServerPartitionTabs.ServerPartitionList)
-            {
-                var panel =
-                    ServerPartitionTabs.GetUserControlForPartition(partition.GetKey()).FindControl("SearchPanel_" +
-                                                                                                   partition.AeTitle) as
-                    SearchPanel;
-                if (panel != null) panel.UpdateUI();
-            }
+            SearchPanel.ServerPartition = ServerPartitionSelector.SelectedPartition;
         }
     }
 }

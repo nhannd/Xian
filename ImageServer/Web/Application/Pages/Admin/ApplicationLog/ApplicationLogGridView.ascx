@@ -9,11 +9,10 @@
 
 --%>
 
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ApplicationLogGridView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog.ApplicationLogGridView" %>
 <%@ Import Namespace="Resources" %>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ApplicationLogGridView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog.ApplicationLogGridView" %>
 
-<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
 
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
     Width="100%">

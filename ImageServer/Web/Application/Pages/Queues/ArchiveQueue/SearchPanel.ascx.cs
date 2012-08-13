@@ -34,10 +34,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         #region Private members
 
         private readonly ArchiveQueueController _controller = new ArchiveQueueController();
-    	private ServerPartition _serverPartition;
-    	private Default _enclosingPage;
 
-    	#endregion Private members
+        #endregion Private members
 
         #region Public Properties
 
@@ -76,20 +74,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 			get { return Page.ResolveClientUrl(ImageServerConstants.PageURLs.StudyDetailsPage); }
 		}
 
-		public Default EnclosingPage
-		{
-			get { return _enclosingPage; }
-			set { _enclosingPage = value; }
-		}
+        public Default EnclosingPage { get; set; }
 
-		/// <summary>
-		/// Gets the <see cref="Model.ServerPartition"/> associated with this search panel.
-		/// </summary>
-		public ServerPartition ServerPartition
-		{
-			get { return _serverPartition; }
-			set { _serverPartition = value; }
-		}
+        /// <summary>
+        /// Gets the <see cref="Model.ServerPartition"/> associated with this search panel.
+        /// </summary>
+        public ServerPartition ServerPartition { get; set; }
+
         #endregion Public Properties  
 
         #region Public Methods
@@ -105,6 +96,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             StatusFilter.SelectedIndex = 0;
         }
 
+        public void Refresh()
+        {
+            
+        }
+
+        internal void Reset()
+        {
+            Clear();
+            ArchiveQueueItemList.Reset();
+        }
+
         #endregion Public Methods
 
         #region Protected Methods
@@ -116,14 +118,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleDateCalendarExtender.ClientID);
                            
             // setup child controls
-            GridPagerTop.InitializeGridPager(Labels.GridPagerQueueSingleItem, Labels.GridPagerQueueMultipleItems, ArchiveQueueItemList.ArchiveQueueGrid, delegate { return ArchiveQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(Labels.GridPagerQueueSingleItem, Labels.GridPagerQueueMultipleItems, ArchiveQueueItemList.ArchiveQueueGrid,
+                                             () => ArchiveQueueItemList.ResultCount, ImageServerConstants.GridViewPagerPosition.Top);
             ArchiveQueueItemList.Pager = GridPagerTop;
 
             MessageBox.Confirmed += delegate(object data)
                             {
                                 if (data is IList<Model.ArchiveQueue>)
                                 {
-                                    IList<Model.ArchiveQueue> items = data as IList<Model.ArchiveQueue>;
+                                    var items = data as IList<Model.ArchiveQueue>;
                                     foreach (Model.ArchiveQueue item in items)
                                     {
                                         _controller.DeleteArchiveQueueItem(item);
@@ -131,7 +134,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
                                 }
                                 else if (data is Model.ArchiveQueue)
                                 {
-                                    Model.ArchiveQueue item = data as Model.ArchiveQueue;
+                                    var item = data as Model.ArchiveQueue;
                                     _controller.DeleteArchiveQueueItem(item);
                                 }
 

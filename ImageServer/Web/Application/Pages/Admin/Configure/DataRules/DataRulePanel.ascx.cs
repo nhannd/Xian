@@ -105,13 +105,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// This method should only be called when necessary as the information in the list window needs to be transmitted back to the client.
         /// If the list is not changed, call <seealso cref="LoadRules()"/> instead.
         /// </remarks>
-        public void UpdateUI()
+        public void Refresh()
         {
             LoadRules();
 
             // UpdatePanel UpdateMode must be set to "conditional"
             // Calling UpdatePanel.Update() will force the client to refresh the screen
             SearchUpdatePanel.Update();
+        }
+
+        internal void Reset()
+        {
+            Clear();
+            DataRuleGridViewControl.Reset();
         }
 
         public override void DataBind()
@@ -179,6 +185,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
             }
 
             base.OnPreRender(e);
+            Refresh();
         }
 
         protected void AddDataRuleButton_Click(object sender, ImageClickEventArgs e)
@@ -215,6 +222,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             DataBind();
+        }
+
+        private void Clear()
+        {
+            StatusFilter.SelectedIndex = 0;
+            DefaultFilter.SelectedIndex = 0;
         }
 
         #endregion Protected Methods

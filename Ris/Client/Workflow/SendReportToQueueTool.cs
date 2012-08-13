@@ -10,6 +10,8 @@
 #endregion
 
 using System;
+using System.Diagnostics;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -49,18 +51,31 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				PublishReportComponent component = new PublishReportComponent(
-						item.PatientProfileRef,
-						item.OrderRef,
-						item.ProcedureRef,
-						item.ReportRef);
+				//PublishReportComponent component = new PublishReportComponent(
+				//        item.PatientProfileRef,
+				//        item.OrderRef,
+				//        item.ProcedureRef,
+				//        item.ReportRef);
 
-				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-					this.Context.DesktopWindow,
-					component,
-					SR.TitlePrintFaxReport);
+				//ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				//    this.Context.DesktopWindow,
+				//    component,
+				//    SR.TitlePrintFaxReport);
 
-				return exitCode == ApplicationComponentExitCode.Accepted;
+				//return exitCode == ApplicationComponentExitCode.Accepted;
+
+				Platform.GetService<IReportingWorkflowService>(
+					service =>
+						{
+							var data = service.PrintReport(new PrintReportRequest(item.ProcedureRef)).ReportPdfData;
+							var id = Guid.NewGuid().ToString("N");
+							var path = id + ".pdf";
+							File.WriteAllBytes(path, data);
+							Process.Start(path);
+						});
+				
+				
+				return false;
 			}
 			catch (Exception e)
 			{

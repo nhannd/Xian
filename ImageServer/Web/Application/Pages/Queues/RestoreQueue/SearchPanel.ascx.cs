@@ -91,6 +91,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             StatusFilter.SelectedIndex = 0;
         }
 
+        public void Refresh()
+        {
+            
+        }
+
+        internal void Reset()
+        {
+            Clear();
+            RestoreQueueItemList.Reset();
+        }
+
         #endregion Public Methods
 
         #region Protected Methods
@@ -102,14 +113,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleDateCalendarExtender.ClientID);
                           
             // setup child controls
-            GridPagerTop.InitializeGridPager(Labels.GridPagerQueueSingleItem, Labels.GridPagerQueueMultipleItems, RestoreQueueItemList.RestoreQueueGrid, delegate { return RestoreQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(Labels.GridPagerQueueSingleItem, Labels.GridPagerQueueMultipleItems, RestoreQueueItemList.RestoreQueueGrid,
+                                             () => RestoreQueueItemList.ResultCount, ImageServerConstants.GridViewPagerPosition.Top);
             RestoreQueueItemList.Pager = GridPagerTop;
 
             MessageBox.Confirmed += delegate(object data)
                             {
                                 if (data is IList<Model.RestoreQueue>)
                                 {
-                                    IList<Model.RestoreQueue> items = data as IList<Model.RestoreQueue>;
+                                    var items = data as IList<Model.RestoreQueue>;
                                     foreach (Model.RestoreQueue item in items)
                                     {
                                         _controller.DeleteRestoreQueueItem(item);
@@ -117,7 +129,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
                                 }
                                 else if (data is Model.RestoreQueue)
                                 {
-                                    Model.RestoreQueue item = data as Model.RestoreQueue;
+                                    var item = data as Model.RestoreQueue;
                                     _controller.DeleteRestoreQueueItem(item);
                                 }
 

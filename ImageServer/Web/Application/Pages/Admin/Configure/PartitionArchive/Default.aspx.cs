@@ -41,11 +41,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
 
         public void UpdateUI()
         {
-			foreach (ServerPartition partition in ServerPartitionTabs.ServerPartitionList)
-			{
-				ServerPartitionTabs.Update(partition.Key);
-			}
-            UpdatePanel.Update();
+			SearchPanel.Refresh();
+            PageContent.Update();
         }
 
         protected override void OnInit(EventArgs e)
@@ -54,24 +51,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
 
             SetupEventHandlers();
 
-            ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
-                                                           {
-                                                               PartitionArchivePanel panel =
-                                                                   LoadControl("PartitionArchivePanel.ascx") as PartitionArchivePanel;
+            ServerPartitionSelector.PartitionChanged += delegate(ServerPartition partition)
+            {
+                SearchPanel.ServerPartition = partition;
+                SearchPanel.Reset();
+            };
 
-                                                               if (panel != null)
-                                                               {
-                                                                   panel.ID = "PartitionArchivePanel_" +
-                                                                              partition.AeTitle;
-                                                                   panel.ServerPartition = partition;
-                                                               }
-                                                               return panel;
-                                                           });
+            ServerPartitionSelector.SetUpdatePanel(PageContent);
 
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            SearchPanel.ServerPartition = ServerPartitionSelector.SelectedPartition;
+
             UpdateUI();
 
             SetPageTitle(Titles.PartitionArchivesPageTitle);
@@ -103,13 +96,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
 
         private void DeleteConfirmDialog_Confirmed(object data)
         {
-            ServerEntityKey key = data as ServerEntityKey;
+            var key = data as ServerEntityKey;
 
             Model.PartitionArchive pa = Model.PartitionArchive.Load(key);
 
             _controller.Delete(pa);
 
-            ServerPartitionTabs.Update(pa.ServerPartitionKey);
+            SearchPanel.Refresh();
         }
 
         #endregion
