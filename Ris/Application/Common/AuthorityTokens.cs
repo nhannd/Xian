@@ -66,6 +66,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 				[AuthorityToken(Description = "Allow administration of Patient Note Categories.")]
 				public const string PatientNoteCategory = "RIS/Admin/Data/Patient Note Category";
+
+                [AuthorityToken(Description = "Allow administration of Scheduling.")]
+                public const string Scheduling = "RIS/Admin/Data/Scheduling";
 			}
 		}
 
