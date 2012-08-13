@@ -77,7 +77,12 @@ namespace ClearCanvas.Common.Utilities
 						ftpRequestStream.Write(buffer, 0, localFileContentLength);
 						localFileContentLength = localFileStream.Read(buffer, 0, bufferLength);
 					}
+					ftpRequestStream.Flush();
 				}
+
+				// wait for response to make sure upload finished
+				var response = ftpRequest.GetResponse();
+				response.Close();
 			}
 			catch (Exception e)
 			{
@@ -123,6 +128,7 @@ namespace ClearCanvas.Common.Utilities
 						localFileStream.Write(buffer, 0, readCount);
 						readCount = ftpResponseStream.Read(buffer, 0, bufferSize);
 					}
+					localFileStream.Flush(true);
 				}
 			}
 			catch (Exception e)
