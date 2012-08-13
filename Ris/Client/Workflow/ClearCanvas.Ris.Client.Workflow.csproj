@@ -188,9 +188,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>WorklistItemManagerSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="WorklistPrintComponent.cs" />
-    <Compile Include="WorklistPrintTool.cs" />
-    <Compile Include="WorklistPrintViewComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

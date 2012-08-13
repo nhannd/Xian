@@ -421,6 +421,15 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You are about to print out information that contains confidential patient data.  Do you want to continue?.
+        /// </summary>
+        internal static string MessagePrintWorklist {
+            get {
+                return ResourceManager.GetString("MessagePrintWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You are currently editing the protocol for {0}.
         ///Do you want to save it to your Drafts folder and open the protocol for {1}?.
         /// </summary>

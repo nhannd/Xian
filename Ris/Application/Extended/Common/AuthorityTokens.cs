@@ -64,6 +64,12 @@ namespace ClearCanvas.Ris.Application.Extended.Common
 				[AuthorityToken(Description = "Allow creation of Preliminary Diagnosis conversations.")]
 				public const string Create = "RIS/Workflow/Preliminary Diagnosis/Create";
 			}
+
+			public static class Worklist
+			{
+				[AuthorityToken(Description = "Allow printing of a worklist.")]
+				public const string Print = "RIS/Workflow/Worklist/Print";
+			}
 		}
 
 		/// <summary>

@@ -245,9 +245,6 @@ namespace ClearCanvas.Ris.Application.Common
 
 				[AuthorityToken(Description = "Allow creation, modification and deletion of group worklists.")]
 				public const string Group = "RIS/Workflow/Worklist/Group";
-
-				[AuthorityToken(Description = "Allow printing of a worklist.")]
-				public const string Print = "RIS/Workflow/Worklist/Print";
 			}
 
 			public static class StaffProfile

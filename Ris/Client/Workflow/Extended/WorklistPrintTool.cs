@@ -16,7 +16,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Print Worklist", "Print")]
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Print Worklist", "Print")]
@@ -28,7 +28,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(TranscriptionWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(RadiologistAdminWorkflowItemToolExtensionPoint))]
-	[ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Worklist.Print)]
+	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
+	[ActionPermission("apply", Application.Extended.Common.AuthorityTokens.Workflow.Worklist.Print)]
 	public class WorklistPrintTool : Tool<IWorkflowItemToolContext>
 	{
 		public bool Enabled

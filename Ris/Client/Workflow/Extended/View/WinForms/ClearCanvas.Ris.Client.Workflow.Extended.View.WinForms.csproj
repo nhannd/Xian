@@ -99,6 +99,13 @@
       <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ReconciliationConfirmComponentView.cs" />
+    <Compile Include="WorklistPrintComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorklistPrintComponentControl.Designer.cs">
+      <DependentUpon>WorklistPrintComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorklistPrintComponentView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Common\ClearCanvas.Common.csproj">
@@ -150,6 +157,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ReconciliationConfirmComponentControl.resx">
       <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorklistPrintComponentControl.resx">
+      <DependentUpon>WorklistPrintComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

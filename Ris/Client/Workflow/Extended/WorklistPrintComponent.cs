@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	/// <summary>
 	/// Extension point for views onto <see cref="WorklistPrintComponent"/>.

@@ -13,7 +13,7 @@ using System;
 using ClearCanvas.Desktop.View.WinForms;
 using System.Windows.Forms;
 
-namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
+namespace ClearCanvas.Ris.Client.Workflow.Extended.View.WinForms
 {
 	/// <summary>
 	/// Provides a Windows Forms user-interface for <see cref="WorklistPrintComponent"/>.

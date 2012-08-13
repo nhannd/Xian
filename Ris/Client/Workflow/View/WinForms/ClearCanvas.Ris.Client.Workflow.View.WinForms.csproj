@@ -208,13 +208,6 @@
       <DependentUpon>VisitPractitionersSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="VisitPractitionersSummaryComponentView.cs" />
-    <Compile Include="WorklistPrintComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="WorklistPrintComponentControl.Designer.cs">
-      <DependentUpon>WorklistPrintComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="WorklistPrintComponentView.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -337,9 +330,6 @@
     <EmbeddedResource Include="RichTextReportEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>RichTextReportEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WorklistPrintComponentControl.resx">
-      <DependentUpon>WorklistPrintComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

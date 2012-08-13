@@ -17,7 +17,7 @@ using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	public class WorklistPrintViewComponent : DHtmlComponent
 	{

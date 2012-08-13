@@ -57,7 +57,7 @@
     <Compile Include="ExternalPractitionerTool.cs" />
     <Compile Include="Folders\BookingWorkflowFolders.cs" />
     <Compile Include="Folders\ProtocollingWorkflowFolders.cs" />
-    <Compile Include="FooTools.cs" />
+    <Compile Include="WorkflowTools.cs" />
     <Compile Include="OrderAdditionalInfoComponent.cs" />
     <Compile Include="OrderNoteboxConfigurationComponent.cs" />
     <Compile Include="OrderNoteboxFolder.cs" />
@@ -126,6 +126,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="WorklistPrintComponent.cs" />
+    <Compile Include="WorklistPrintTool.cs" />
+    <Compile Include="WorklistPrintViewComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Common\ClearCanvas.Common.csproj">
