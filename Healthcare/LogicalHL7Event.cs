@@ -22,10 +22,29 @@ namespace ClearCanvas.Healthcare
 	/// </summary>
 	public class LogicalHL7Event
 	{
+		public class PatientEvent : LogicalHL7Event
+		{
+			public PatientEvent(string eventType)
+				: base(eventType)
+			{
+			}
+
+			public void EnqueueEvents(PatientProfile patientProfile)
+			{
+				var queueItem = new WorkQueueItem(WorkQueueItemType);
+				queueItem.ExtendedProperties.Add("EventType", this.EventType);
+				queueItem.ExtendedProperties.Add("PatientOID", patientProfile.Patient.OID.ToString());
+				queueItem.ExtendedProperties.Add("PatientProfileOID", patientProfile.OID.ToString());
+				queueItem.ExtendedProperties.Add("Mrn", patientProfile.Mrn.ToString());
+
+				EnqueueWorkItem(queueItem);
+			}
+		}
+
 		public class OrderEvent : LogicalHL7Event
 		{
-			public OrderEvent(string id)
-				: base(id)
+			public OrderEvent(string eventType)
+				: base(eventType)
 			{
 			}
 
@@ -42,8 +61,8 @@ namespace ClearCanvas.Healthcare
 
 		public class ProcedureEvent : LogicalHL7Event
 		{
-			public ProcedureEvent(string id)
-				: base(id)
+			public ProcedureEvent(string eventType)
+				: base(eventType)
 			{
 			}
 
@@ -64,8 +83,8 @@ namespace ClearCanvas.Healthcare
 
 		public class ReportEvent : LogicalHL7Event
 		{
-			public ReportEvent(string id)
-				: base(id)
+			public ReportEvent(string eventType)
+				: base(eventType)
 			{
 			}
 
@@ -86,6 +105,9 @@ namespace ClearCanvas.Healthcare
 				EnqueueWorkItems(workItems);
 			}
 		}
+
+		public static readonly PatientEvent PatientCreated = new PatientEvent("PatientCreated");
+		public static readonly PatientEvent PatientProfileModified = new PatientEvent("PatientProfileModified");
 
 		public static readonly OrderEvent OrderCreated = new OrderEvent("OrderCreated");
 		public static readonly OrderEvent OrderModified = new OrderEvent("OrderModified");

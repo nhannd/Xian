@@ -88,6 +88,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 
 			UpdateHelper(profile, request.PatientDetail, updatePatient, updateProfile, false);
 
+			LogicalHL7Event.PatientProfileModified.EnqueueEvents(profile);
+
 			this.PersistenceContext.SynchState();
 
 			var assembler = new PatientProfileAssembler();
@@ -118,6 +120,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 			UpdateHelper(profile, request.PatientDetail, true, true, !settings.AutoGenerateMrn);
 
 			PersistenceContext.Lock(patient, DirtyState.New);
+
+			LogicalHL7Event.PatientCreated.EnqueueEvents(profile);
+
 			PersistenceContext.SynchState();
 
 			var assembler = new PatientProfileAssembler();
