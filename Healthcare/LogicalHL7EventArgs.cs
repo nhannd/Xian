@@ -57,6 +57,16 @@ namespace ClearCanvas.Healthcare
 			get { return _item.ExtendedProperties["EventType"]; }
 		}
 
+		public Guid PatientOID
+		{
+			get { return GetGuidProperty("PatientOID"); }
+		}
+
+		public Guid PatientProfileOID
+		{
+			get { return GetGuidProperty("PatientProfileOID"); }
+		}
+
 		public Guid OrderOID
 		{
 			get { return GetGuidProperty("OrderOID"); }
