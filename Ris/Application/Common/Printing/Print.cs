@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Web;
 using ClearCanvas.Common;
@@ -64,7 +65,6 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 			private void ProcessRequest(object state)
 			{
 				var httpContext = (HttpListenerContext)state;
-
 				try
 				{
 					if(!HandleRequest(httpContext))
@@ -97,6 +97,12 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 				if (httpContext.Request.Url.AbsolutePath != job.TemplateUrl.AbsolutePath)
 					return false;
 
+				Platform.Log(LogLevel.Info, "Received print request: {0}", httpContext.Request.Url);
+
+				// tell the browser that our response will be UTF-8
+				httpContext.Response.Headers[HttpResponseHeader.ContentType] = "text/html;charset=UTF-8";
+
+				// write response
 				using(var writer = new StreamWriter(httpContext.Response.OutputStream))
 				{
 					job.WriteHtml(writer);
@@ -212,7 +218,7 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 
 			try
 			{
-				RunWkHtml(outputFilePath);
+				RunConverter(outputFilePath);
 			}
 			finally
 			{
@@ -229,10 +235,18 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 			try
 			{
 				var request = WebRequest.Create(_url);
-				var response = request.GetResponse();
+				var response = (HttpWebResponse)request.GetResponse();
 				using (var s = response.GetResponseStream())
 				{
-					using (var reader = new StreamReader(s))
+					// doubt that GetResponseStream ever returns null, but just in case
+					if(s == null)
+					{
+						_error = true;
+						_errorMessage = "No response stream available.";
+						return;
+					}
+
+					using (var reader = new StreamReader(s, GetEncoding(response.CharacterSet)))
 					{
 						var template = new ActiveTemplate(reader);
 						var html = template.Evaluate(_data);
@@ -249,7 +263,19 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 			}
 		}
 
-		private void RunWkHtml(string outputFilePath)
+		private Encoding GetEncoding(string enc)
+		{
+			try
+			{
+				return Encoding.GetEncoding(enc);
+			} 
+			catch(Exception)
+			{
+				return Encoding.Default;
+			}
+		}
+
+		private void RunConverter(string outputFilePath)
 		{
 			var sourcePath = string.Format("{0}?id={1}", _url.AbsolutePath, _id.ToString("N"));
 			var sourceUrl = new Uri(new Uri(_proxyHost), sourcePath);
@@ -258,6 +284,10 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 			startInfo.UseShellExecute = false;
 			var process = Process.Start(startInfo);
 			process.WaitForExit();	//todo: include a time-out
+			
+			//var startInfo = new ProcessStartInfo(sourceUrl.ToString());
+			//var process = Process.Start(startInfo);
+			//Thread.Sleep(10000);
 		}
 	}
 }
