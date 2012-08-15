@@ -79,6 +79,7 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Admin.Data.Staff,
                         AuthorityTokens.Admin.Data.StaffGroup,
                         AuthorityTokens.Admin.Data.Worklist,
+                        AuthorityTokens.Admin.Data.Scheduling,
 
 						AuthorityTokens.FolderSystems.Registration,
 						AuthorityTokens.FolderSystems.Performing,
