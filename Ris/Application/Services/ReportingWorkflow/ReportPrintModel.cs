@@ -335,17 +335,17 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		}
 
 
-		private readonly Procedure _procedure;
+		private readonly Report _report;
 		private readonly ExternalPractitionerContactPoint _recipient;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="procedure"></param>
+		/// <param name="report"></param>
 		/// <param name="recipient"></param>
-		internal ReportPrintModel(Procedure procedure, ExternalPractitionerContactPoint recipient)
+		internal ReportPrintModel(Report report, ExternalPractitionerContactPoint recipient)
 		{
-			_procedure = procedure;
+			_report = report;
 			_recipient = recipient;
 		}
 
@@ -357,9 +357,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		{
 			var variables = new Dictionary<string, object>();
 
-			var patientProfile = _procedure.PatientProfile;
-			var report = _procedure.ActiveReport;
-
+			var procedure = _report.Procedures.First();
+			var order = procedure.Order;
+			var patientProfile = procedure.PatientProfile;
 
 			// patient
 			variables["Patient"] = new PatientFacade(patientProfile);
@@ -368,14 +368,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			variables["Recipient"] = new PractitionerFacade(_recipient.Practitioner, _recipient);
 
 			// order
-			variables["AccessionNumber"] = _procedure.Order.AccessionNumber;
-			variables["OrderingPractitioner"] = new PractitionerFacade(_procedure.Order.OrderingPractitioner, null);
+			variables["AccessionNumber"] = order.AccessionNumber;
+			variables["OrderingPractitioner"] = new PractitionerFacade(order.OrderingPractitioner, null);
 
 			// procedures
-			variables["Procedures"] = new ProceduresFacade(report.Procedures);
+			variables["Procedures"] = new ProceduresFacade(_report.Procedures);
 
 			// report
-			variables["ReportParts"] = new ReportPartsFacade(report.Parts);
+			variables["ReportParts"] = new ReportPartsFacade(_report.Parts);
 
 			return variables;
 		}

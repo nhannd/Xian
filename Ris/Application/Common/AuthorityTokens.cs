@@ -140,9 +140,6 @@ namespace ClearCanvas.Ris.Application.Common
 
 				[AuthorityToken(Description = "Allow cancellation of a radiology report that is owned by another radiologist.")]
 				public const string Cancel = "RIS/Workflow/Report/Cancel";
-
-				[AuthorityToken(Description = "Allow radiology reports to be sent to a fax queue.")]
-				public const string SendToFaxQueue = "RIS/Workflow/Report/Send to fax queue";
 			}
 
 			public static class Transcription

@@ -76,6 +76,7 @@
     <Compile Include="BannerSettings.cs" />
     <Compile Include="AttachDocumentComponent.cs" />
     <Compile Include="CancelOrderComponent.cs" />
+    <Compile Include="PrintReportComponent.cs" />
     <Compile Include="OrderCancelHelper.cs" />
     <Compile Include="OrderEditorComponent2.cs" />
     <Compile Include="OrderEditorComponentSettings.cs" />
@@ -94,7 +95,7 @@
     <Compile Include="PatientAllergiesComponent.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
     <Compile Include="BiographyOrderReportsComponent.cs" />
-    <Compile Include="BiographyPublishReportTools.cs" />
+    <Compile Include="BiographyPrintReportTool.cs" />
     <Compile Include="BiographyVisitDetailViewComponent.cs" />
     <Compile Include="BiographyVisitHistoryComponent.cs" />
     <Compile Include="BiographyOrderDetailViewComponent.cs" />
@@ -208,12 +209,11 @@
     </Compile>
     <Compile Include="ProcedureTypeSummaryComponent.cs" />
     <Compile Include="ProcedureTypeSummaryTable.cs" />
-    <Compile Include="PublishReportComponent.cs" />
-    <Compile Include="PublishReportComponentSettings.cs" />
-    <Compile Include="PublishReportComponentSettings.Designer.cs">
+    <Compile Include="PrintReportComponentSettings.cs" />
+    <Compile Include="PrintReportComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>PublishReportComponentSettings.settings</DependentUpon>
+      <DependentUpon>PrintReportComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="RelativeTime.cs" />
     <Compile Include="SearchComponentBase.cs" />
@@ -464,9 +464,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ProcedureTypeLookupSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="PublishReportComponentSettings.settings">
+    <None Include="PrintReportComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>PublishReportComponentSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>PrintReportComponentSettings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </None>
     <None Include="RandomUtilsSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

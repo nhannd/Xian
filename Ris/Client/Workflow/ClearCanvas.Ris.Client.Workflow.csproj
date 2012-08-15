@@ -67,6 +67,7 @@
     <Compile Include="CancelOrdersTool.cs" />
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
+    <Compile Include="PrintReportTool.cs" />
     <Compile Include="OrderMergeSettings.cs" />
     <Compile Include="OrderMergeSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -133,7 +134,6 @@
     <Compile Include="PatientBiographyTool.cs" />
     <Compile Include="PatientEditTool.cs" />
     <Compile Include="PerformedProcedureComponent.cs" />
-    <Compile Include="SendReportToQueueTool.cs" />
     <Compile Include="PriorReportComponent.cs" />
     <Compile Include="PriorSummaryTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
