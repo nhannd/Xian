@@ -204,9 +204,8 @@ namespace ClearCanvas.Ris.Client
 
 		private void DoPrintRequest()
 		{
-			// todo: temp file management
-			var id = Guid.NewGuid().ToString("N");
-			var path = id + ".pdf";
+			string path = null;
+
 			var task = new BackgroundTask(
 				delegate(IBackgroundTaskContext taskContext)
 					{
@@ -219,7 +218,9 @@ namespace ClearCanvas.Ris.Client
 								{
 									var request = new PrintReportRequest(_reportRef) { RecipientContactPointRef = _selectedContactPoint.ContactPointRef };
 									var data = service.PrintReport(request).ReportPdfData;
-									File.WriteAllBytes(path, data);
+
+									// we don't really care about the "key" here, or the time-to-live, since we won't be accesing this file ever again
+									path = TempFileManager.Instance.CreateFile(new object(), "pdf", data, TimeSpan.FromMinutes(1));
 								});
 
 							taskContext.Complete();
@@ -232,7 +233,10 @@ namespace ClearCanvas.Ris.Client
 
 			ProgressDialog.Show(task, this.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
 
-			Process.Start(path);
+			if(path != null)
+			{
+				Process.Start(path);
+			}
 		}
 
 
