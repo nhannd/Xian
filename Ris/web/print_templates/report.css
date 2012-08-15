@@ -41,9 +41,9 @@ table td {
 }
 
 #ordersummary {
-	border:thin solid black;
 	padding: 0.5em 1em 0.5em 1em;
 	margin-bottom: 2em;
+	background: #f1f4f8;
 }
 
 #ordersummary table {
