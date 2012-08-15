@@ -11,6 +11,8 @@ table td {
 
 #letterhead {
 	margin-bottom: 2em;
+	height:2.8in;
+	padding-bottom:0px;
 }
 
 #letterheadFacility {
@@ -41,6 +43,7 @@ table td {
 #ordersummary {
 	border:thin solid black;
 	padding: 0.5em 1em 0.5em 1em;
+	margin-bottom: 2em;
 }
 
 #ordersummary table {
