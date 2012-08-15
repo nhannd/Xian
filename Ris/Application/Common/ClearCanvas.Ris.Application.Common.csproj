@@ -194,7 +194,6 @@
     <Compile Include="ModalityProcedureStepSummary.cs" />
     <Compile Include="ModalityWorkflow\DicomSeriesDetail.cs" />
     <Compile Include="PatientAllergyDetail.cs" />
-    <Compile Include="Printing\Print.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\MergeOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\MergeOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\QueryCancelOrderWarningsRequest.cs" />

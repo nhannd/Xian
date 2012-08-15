@@ -22,19 +22,21 @@ using System.Web;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Scripting;
 
-namespace ClearCanvas.Ris.Application.Common.Printing
+namespace ClearCanvas.Ris.Application.Services.Printing
 {
 	public class PrintJob
 	{
 		class HttpServer
 		{
+			private readonly string _host;
 			private readonly HttpListener _httpListener;
 			private Thread _listenerThread;
 
-			public HttpServer()
+			public HttpServer(string host)
 			{
+				_host = host;
 				_httpListener = new HttpListener();
-				_httpListener.Prefixes.Add(_proxyHost);
+				_httpListener.Prefixes.Add(host);
 			}
 
 			public void Start()
@@ -51,6 +53,16 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 			public void Stop()
 			{
 				_httpListener.Stop();
+			}
+
+			public bool IsStarted
+			{
+				get { return _httpListener.IsListening; }
+			}
+
+			public string Host
+			{
+				get { return _host; }
 			}
 
 			private void Listen(object state)
@@ -91,7 +103,11 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 				if (string.IsNullOrEmpty(id))
 					return false;
 
-				var job = _runningJobs[new Guid(id)];
+				PrintJob job;
+				lock(_runningJobs)
+				{
+					job = _runningJobs[new Guid(id)];
+				}
 
 				// we only handle request to our original url
 				if (httpContext.Request.Url.AbsolutePath != job.TemplateUrl.AbsolutePath)
@@ -113,7 +129,7 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 			private static void Redirect(HttpListenerContext httpListenerContext)
 			{
 				var url = httpListenerContext.Request.Url;
-				var redirectUrl = new Uri(new Uri(_mainHost), url.AbsolutePath);
+				var redirectUrl = new Uri(new Uri(LocalHost), url.AbsolutePath);
 				httpListenerContext.Response.Redirect(redirectUrl.ToString());
 			}
 
@@ -131,21 +147,12 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 
 		public class Result : IDisposable
 		{
-			public static Result OnSuccess(string outputFilePath)
+			public Result(string outputFilePath)
 			{
-				return new Result {OutputFilePath = outputFilePath};
-			}
-
-			public static Result OnError(string errorMessage)
-			{
-				return new Result {Error = true, ErrorMessage = errorMessage};
+				OutputFilePath = outputFilePath;
 			}
 
 			public string OutputFilePath { get; private set; }
-
-			public bool Error { get; private set; }
-
-			public string ErrorMessage { get; private set; }
 
 			public void Dispose()
 			{
@@ -156,16 +163,16 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 			}
 		}
 
-		private static string _mainHost = "http://localhost";
-		private static string _proxyHost = "http://localhost:55355/";
+		private const string LocalHost = "http://localhost";
 		private static readonly Dictionary<Guid, PrintJob> _runningJobs = new Dictionary<Guid, PrintJob>();
-		private static readonly HttpServer _httpServer = new HttpServer();
+		private static readonly HttpServer _httpServer;
 
 		static PrintJob()
 		{
 			try
 			{
 				Platform.Log(LogLevel.Info, "Starting print server...");
+				_httpServer = new HttpServer(string.Format("{0}:{1}/", LocalHost, new PrintSettings().HttpProxyServerPort));
 				_httpServer.Start();
 				Platform.Log(LogLevel.Info, "Print server started.");
 			}
@@ -209,6 +216,9 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 
 		private Result Run()
 		{
+			if(_httpServer == null || !_httpServer.IsStarted)
+				throw new PrintException("The print HTTP server could not be started.");
+
 			var outputFilePath = Path.GetTempFileName();
 
 			lock (_runningJobs)
@@ -226,8 +236,16 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 				{
 					_runningJobs.Remove(_id);
 				}
+				if(_error)
+				{
+					File.Delete(outputFilePath);
+				}
 			}
-			return _error ? Result.OnError(_errorMessage) : Result.OnSuccess(outputFilePath);
+
+			if(_error)
+				throw new PrintException(_errorMessage);
+
+			return new Result(outputFilePath);
 		}
 
 		private void WriteHtml(TextWriter writer)
@@ -256,9 +274,7 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 			}
 			catch (Exception e)
 			{
-				_error = true;
-				_errorMessage = e.Message;
-
+				SetError(e.Message);
 				throw;
 			}
 		}
@@ -278,16 +294,33 @@ namespace ClearCanvas.Ris.Application.Common.Printing
 		private void RunConverter(string outputFilePath)
 		{
 			var sourcePath = string.Format("{0}?id={1}", _url.AbsolutePath, _id.ToString("N"));
-			var sourceUrl = new Uri(new Uri(_proxyHost), sourcePath);
+			var sourceUrl = new Uri(new Uri(_httpServer.Host), sourcePath);
 
-			var startInfo = new ProcessStartInfo("wkhtmltopdf", string.Format("{0} {1}", sourceUrl, outputFilePath));
+			var settings = new PrintSettings();
+			var startInfo = new ProcessStartInfo(settings.ConverterProgram, string.Format("{0} {1} {2}", settings.ConverterOptions, sourceUrl, outputFilePath));
 			startInfo.UseShellExecute = false;
 			var process = Process.Start(startInfo);
-			process.WaitForExit();	//todo: include a time-out
-			
+			var exited = process.WaitForExit(settings.ConverterTimeout * 1000);
+
+			if(!exited)
+			{
+				SetError(string.Format("The converter program ({0}) timed out after {1} ms - printing aborted.",
+					settings.ConverterProgram, settings.ConverterTimeout));
+			}
+
+
+			//var exitCode = process.ExitCode;
+			//Console.WriteLine("EXITCODE = " + exitCode);
+
 			//var startInfo = new ProcessStartInfo(sourceUrl.ToString());
 			//var process = Process.Start(startInfo);
 			//Thread.Sleep(10000);
+		}
+
+		private void SetError(string message)
+		{
+			_error = true;
+			_errorMessage = message;
 		}
 	}
 }

@@ -1,9 +1,9 @@
 <%
 	function formatReportPartStatus(part, isAddendum)
 	{
-		var statusText = part.StatusAndTime;
+		var statusText = part.Status + " as of " + part.StatusDateTime;
 		var warningText = " *** THIS " + (isAddendum ? "ADDENDUM" : "REPORT") + " HAS NOT BEEN VERIFIED ***";
-		if (part.Status.Code != 'F')
+		if (part.Status.toUpperCase() !== 'FINAL')
 			statusText = "<font color='red'>" + statusText + warningText + "</font>";
 
 		return " (" + statusText + ")";
@@ -18,11 +18,11 @@
 	<form id="myForm">
 		<div id="letterhead" style="{height:2.8in; margin-bottom:0px; padding-bottom:0px;}">
 			<div id="letterheadLogo">
-				<img src="GenericHospitalLogo.png"/>
+				<img src="totallyrad.jpg"/>
 			</div>
 			<div id="letterheadFacility">
-				<div id="letterheadFacilityName">ACME</div>
-				<div id="letterheadFacilityDescription">ACME Radiology Clinic</div>
+				<div id="letterheadFacilityName">TotallyRAD</div>
+				<div id="letterheadFacilityDescription">Radiology Clinic</div>
 			</div>
 			<div id="letterheadAddress">
 				<div id="letterheadAddress1">123 Buttondown St. Unit 4050</div>
@@ -82,7 +82,7 @@
 		<div id="reportSection">
 		<% for (var i = ReportParts.Count - 1; i >= 0; i--) {
 			var part = ReportParts[i]; %>
-			<div class="reportPreview">
+			<div class="reportPart">
 				<b><%= i > 0 ? "Addendum" : "Report" %> <%= formatReportPartStatus(part, i > 0) %></b>
 				<br><br>
 				<%= part.Body %>

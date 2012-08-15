@@ -177,18 +177,19 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 				get { return _part.Index; }
 			}
 
-			public ReportPartStatusEnum Status
+			public string Status
 			{
-				get { return _status; }
+				get { return _status.Value; }
 			}
 
-			public string StatusAndTime
+			public string StatusDate
 			{
-				get
-				{
-					var time = _timePropertyMap[_part.Status](_part);
-					return string.Format("{0} - {1}", this.Status.Value, FormatTime(time));
-				}
+				get { return FormatDate(_timePropertyMap[_part.Status](_part)); }
+			}
+
+			public string StatusDateTime
+			{
+				get { return FormatTime(_timePropertyMap[_part.Status](_part)); }
 			}
 
 			public string Body
@@ -216,41 +217,70 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 				get { return _part.Supervisor == null ? null : _part.Supervisor.Name; }
 			}
 
-			public string CreationTime
+			public string CreationDateTime
 			{
 				get { return FormatTime(_part.CreationTime); }
 			}
 
-			public string PreliminaryTime
+			public string PreliminaryDateTime
 			{
 				get { return FormatTime(_part.PreliminaryTime); }
 			}
 
-			public string CompletedTime
+			public string CompletedDateTime
 			{
 				get { return FormatTime(_part.CompletedTime); }
 			}
 
-			public string CancelledTime
+			public string CancelledDateTime
 			{
 				get { return FormatTime(_part.CancelledTime); }
 			}
 
+			public string CreationDate
+			{
+				get { return FormatDate(_part.CreationTime); }
+			}
+
+			public string PreliminaryDate
+			{
+				get { return FormatDate(_part.PreliminaryTime); }
+			}
+
+			public string CompletedDate
+			{
+				get { return FormatDate(_part.CompletedTime); }
+			}
+
+			public string CancelledDate
+			{
+				get { return FormatDate(_part.CancelledTime); }
+			}
+
 			public override string ToString()
 			{
-				return string.Format("Report Part {0}, {1}", this.Index, this.StatusAndTime);
+				return string.Format("Report Part {0}, {1} - {2}", this.Index, this.Status, this.StatusDateTime);
 			}
 
 			private string FormatTime(DateTime? time)
 			{
 				//todo: can we centralize formatting somewhere
-				return time == null ? null : time.Value.ToString("yyyy-MM-dd HH:mm:ss");
+				return time == null ? null : time.Value.ToString("yyyy-MM-dd HH:mm");
+			}
+
+			private string FormatDate(DateTime? time)
+			{
+				//todo: can we centralize formatting somewhere
+				return time == null ? null : time.Value.ToString("yyyy-MM-dd");
 			}
 
 			private string GetBody()
 			{
 				//todo: can we centralize this logic somewhere
-				var content = _part.ExtendedProperties["ReportContent"];
+				string content;
+				if (!_part.ExtendedProperties.TryGetValue("ReportContent", out content))
+					return null;
+
 				if(string.IsNullOrEmpty(content))
 					return null;
 
@@ -267,10 +297,10 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 				if(string.IsNullOrEmpty(text))
 					return string.Empty;
 
-				return HttpUtility.HtmlEncode(text);
-				//.Replace("\r\n", "<br>")
-				//.Replace("\r", "<br>")
-				//.Replace("\n", "<br>");
+				return HttpUtility.HtmlEncode(text)
+						.Replace("\r\n", "<br>")
+						.Replace("\r", "<br>")
+						.Replace("\n", "<br>");
 			}
 		}
 
@@ -283,7 +313,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 			internal ReportPartsFacade(IEnumerable<ReportPart> reportParts)
 			{
-				_reportParts = reportParts.Select(p => new ReportPartFacade(p)).ToList();
+				_reportParts = reportParts
+					.Where(p => p.Status != ReportPartStatus.X)
+					.Select(p => new ReportPartFacade(p)).ToList();
 			}
 
 			public int Count

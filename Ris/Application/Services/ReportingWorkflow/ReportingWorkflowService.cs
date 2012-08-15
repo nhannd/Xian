@@ -23,8 +23,8 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Printing;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Application.Services.Printing;
 using ClearCanvas.Workflow;
 using Iesi.Collections.Generic;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
@@ -556,10 +556,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 			using(var printResult = PrintJob.Run("http://localhost/ris/print_templates/report.htm", printModel.GetVariables()))
 			{
-				if(printResult.Error)
-				{
-					throw new WorkflowException(printResult.ErrorMessage);
-				}
 				var contents = File.ReadAllBytes(printResult.OutputFilePath);
 				return new PrintReportResponse(contents);
 			}
