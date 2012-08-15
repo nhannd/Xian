@@ -167,6 +167,13 @@
     </Compile>
     <Compile Include="ChangePasswordDialog.cs" />
     <Compile Include="AttachDocumentComponentView.cs" />
+    <Compile Include="PrintReportComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PrintReportComponentControl.Designer.cs">
+      <DependentUpon>PrintReportComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PrintReportComponentView.cs" />
     <Compile Include="DateTimeEntryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -445,13 +452,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="PublishReportComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PublishReportComponentControl.Designer.cs">
-      <DependentUpon>PublishReportComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PublishReportComponentView.cs" />
     <Compile Include="SearchComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -643,6 +643,10 @@
       <DependentUpon>ChangePasswordForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="PrintReportComponentControl.resx">
+      <DependentUpon>PrintReportComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="ExternalPractitionerContactPointDetailsEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ExternalPractitionerContactPointDetailsEditorComponentControl.cs</DependentUpon>
@@ -731,10 +735,6 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PublishReportComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>PublishReportComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SearchComponentControl.resx">
       <DependentUpon>SearchComponentControl.cs</DependentUpon>

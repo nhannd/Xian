@@ -18,12 +18,21 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 	[DataContract]
 	public class PrintReportRequest : DataContractBase
 	{
-		public PrintReportRequest(EntityRef procedureRef)
+		public PrintReportRequest(EntityRef reportRef)
 		{
-			this.ProcedureRef = procedureRef;
+			this.ReportRef = reportRef;
 		}
 
+		/// <summary>
+		/// Specify the report to be printed.
+		/// </summary>
 		[DataMember]
-		public EntityRef ProcedureRef;
+		public EntityRef ReportRef;
+
+		/// <summary>
+		/// Optionally specify a recipient contact point.  If not specified, the ordering practitioner will be used.
+		/// </summary>
+		[DataMember]
+		public EntityRef RecipientContactPointRef;
 	}
 }

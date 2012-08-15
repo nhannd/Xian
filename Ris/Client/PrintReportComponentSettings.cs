@@ -14,11 +14,11 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client
 {
-	[SettingsGroupDescription("Settings the configure the behaviour of the Publish Report application component.")]
+	[SettingsGroupDescription("Settings the configure the behaviour of the Print Report application component.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-	internal sealed partial class PublishReportComponentSettings
+	internal sealed partial class PrintReportComponentSettings
 	{
-		private PublishReportComponentSettings()
+		private PrintReportComponentSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
