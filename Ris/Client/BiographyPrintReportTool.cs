@@ -22,7 +22,7 @@ namespace ClearCanvas.Ris.Client
 	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof(BiographyOrderReportsToolExtensionPoint))]
-	public class BiographyPublishReportTool : Tool<IBiographyOrderReportsToolContext>
+	public class BiographyPrintReportTool : Tool<IBiographyOrderReportsToolContext>
 	{
 		private bool _enabled;
 		private event EventHandler _enabledChanged;
@@ -38,16 +38,14 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
-				var component = new PublishReportComponent(
-					this.Context.PatientProfileRef,
-					this.Context.OrderRef,
-					this.Context.ProcedureRef,
-					this.Context.ReportRef);
+				//todo: loc
+				var title = string.Format("Print Report {0}", Formatting.AccessionFormat.Format(this.Context.AccessionNumber));
 
+				var component = new PrintReportComponent(this.Context.OrderRef, this.Context.ReportRef);
 				ApplicationComponent.LaunchAsDialog(
 					this.Context.DesktopWindow,
 					component,
-					SR.TitlePrintFaxReport);
+					title);
 			}
 			catch (Exception e)
 			{

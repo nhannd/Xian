@@ -12,10 +12,11 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Common.Utilities;
-using Timer=System.Threading.Timer;
+using Path = System.IO.Path;
+using Timer = System.Threading.Timer;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -27,7 +28,7 @@ namespace ClearCanvas.Ris.Client
 	/// Expired temporary files will be periodically cleaned up.  All temporary files, regardless of whether expired,
 	/// will be deleted when the application shuts down, except in the case of a crash.
 	/// </remarks>
-    public class TempFileManager
+	public class TempFileManager
 	{
 		#region Entry class
 
@@ -65,21 +66,22 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
+		private const uint SweepInterval = 15000; // 15 seconds
+
 		private static readonly TempFileManager _instance = new TempFileManager();
 
-		private readonly Dictionary<EntityRef, Entry> _entryMap = new Dictionary<EntityRef, Entry>();
-    	private readonly Timer _timer;
-    	private readonly uint _sweepInterval = 15000;	// 15 seconds
+		private readonly Dictionary<object, Entry> _entryMap = new Dictionary<object, Entry>();
+		private readonly Timer _timer;
 		private readonly object _syncObj = new object();
 
 
 		/// <summary>
 		/// Gets the singleton instance of this class.
 		/// </summary>
-    	public static TempFileManager Instance
-        {
-            get { return _instance; }
-        }
+		public static TempFileManager Instance
+		{
+			get { return _instance; }
+		}
 
 		#region Public API
 
@@ -90,22 +92,9 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="fileExtension"></param>
 		/// <param name="timeToLive"></param>
 		/// <returns>The path of the file.</returns>
-		public string CreateFile(EntityRef key, string fileExtension, TimeSpan timeToLive)
+		public string CreateFile(object key, string fileExtension, TimeSpan timeToLive)
 		{
-			// create a temp file on disk to store the data
-			// the OS always returns a file with the .tmp extension, so we rename it to the specified extension
-			string tmpFile = System.IO.Path.GetTempFileName();
-			string file = tmpFile.Replace(".tmp", "." + fileExtension);
-			File.Move(tmpFile, file);
-
-			// lock while we update the map
-			lock (_syncObj)
-			{
-				// add entry for this file
-				_entryMap.Add(key, new Entry(file, timeToLive));
-				Platform.Log(LogLevel.Debug, "TempFileManager: created file {0}", file);
-				return file;
-			}
+			return CreateTempFile(key, fileExtension, timeToLive);
 		}
 
 		/// <summary>
@@ -116,25 +105,14 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="data"></param>
 		/// <param name="timeToLive"></param>
 		/// <returns>The path of the file.</returns>
-		public string CreateFile(EntityRef key, string fileExtension, byte[] data, TimeSpan timeToLive)
+		public string CreateFile(object key, string fileExtension, byte[] data, TimeSpan timeToLive)
 		{
-            // create a temp file on disk to store the data
-            // the OS always returns a file with the .tmp extension, so we rename it to the specified extension
-            string tmpFile = System.IO.Path.GetTempFileName();
-            string file = tmpFile.Replace(".tmp", "." + fileExtension);
-            File.Move(tmpFile, file);
+			var file = CreateTempFile(key, fileExtension, timeToLive);
+	
+			// write data to the temp file
+			File.WriteAllBytes(file, data);
 
-            // write data to the temp file
-            File.WriteAllBytes(file, data);
-
-			// lock while we update the map
-			lock (_syncObj)
-			{
-				// add entry for this file
-                _entryMap.Add(key, new Entry(file, timeToLive));
-                Platform.Log(LogLevel.Debug, "TempFileManager: created file {0}", file);
-                return file;
-			}
+			return file;
 		}
 
 		/// <summary>
@@ -167,22 +145,41 @@ namespace ClearCanvas.Ris.Client
 		private TempFileManager()
 		{
 			// set up timer to periodically remove expired entries
-			_timer = new Timer(TimerCallback, null, _sweepInterval, _sweepInterval);
+			_timer = new Timer(TimerCallback, null, SweepInterval, SweepInterval);
 
 			// also remove all entries when the desktop is shutdown
 			// (it isn't nice to have this dependency here, but seems to be no other easy way to do this)
 			Desktop.Application.Quitting +=
-				delegate
-				{
-					_timer.Dispose();
-					Clean(delegate { return true; });
-				};
+				(sender, args) =>
+					{
+						_timer.Dispose();
+						Clean(obj => true);
+					};
+		}
+
+		private string CreateTempFile(object key, string fileExtension, TimeSpan timeToLive)
+		{
+			// create a temp file on disk to store the data
+			// the OS always returns a file with the .tmp extension, so we rename it to the specified extension
+			var tmpFile = Path.GetTempFileName();
+			var file = tmpFile.Replace(".tmp", "." + fileExtension);
+			File.Move(tmpFile, file);
+
+			// lock while we update the map
+			lock (_syncObj)
+			{
+				// add entry for this file
+				_entryMap.Add(key, new Entry(file, timeToLive));
+			}
+
+			Platform.Log(LogLevel.Debug, "TempFileManager: created file {0}", file);
+			return file;
 		}
 
 		private void TimerCallback(object state)
 		{
 			// clean expired entries
-			Clean(delegate(Entry entry) { return entry.IsExpired; });
+			Clean(entry => entry.IsExpired);
 		}
 
 		/// <summary>
@@ -191,38 +188,49 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="condition"></param>
 		private void Clean(Predicate<Entry> condition)
 		{
-			List<KeyValuePair<EntityRef, Entry>> kvps;
+			List<KeyValuePair<object, Entry>> deletionCandidates;
 
-			// lock here, so that this operation is atomic
 			lock (_syncObj)
 			{
-				// select list of entries that match the condition
-				kvps = CollectionUtils.Select(
-					_entryMap,
-					delegate(KeyValuePair<EntityRef, Entry> kvp) { return condition(kvp.Value); });
+				deletionCandidates = _entryMap.Where(kvp => condition(kvp.Value)).ToList();
+			}
 
-				// remove all selected entries from map
-				foreach (KeyValuePair<EntityRef, Entry> kvp in kvps)
+			var deletions = new List<KeyValuePair<object, Entry>>();
+			foreach (var entry in deletionCandidates)
+			{
+				if(TryDeleteFile(entry.Value.File))
+				{
+					deletions.Add(entry);
+					Platform.Log(LogLevel.Debug, "TempFileManager: deleted file {0}", entry.Value.File);
+				}
+			}
+
+			lock (_syncObj)
+			{
+				// remove successful deletions from map
+				foreach (var kvp in deletions)
 				{
 					_entryMap.Remove(kvp.Key);
 				}
 			}
+		}
 
-			// do the more expensive operation of deleting the files outside of the lock
-			// this is fine because we are not modifying the map anymore
-			foreach (KeyValuePair<EntityRef, Entry> kvp in kvps)
+		private bool TryDeleteFile(string file)
+		{
+			try
 			{
-				try
-				{
-					File.Delete(kvp.Value.File);	// this is a nop if the file does not exist
-                    Platform.Log(LogLevel.Debug, "TempFileManager: deleted file {0}", kvp.Value.File);
-				}
-				catch (Exception e)
-				{
-					Platform.Log(LogLevel.Warn, e, SR.ExceptioinFailedToDeleteTemporaryFiles);
-				}
+				// this is a nop if the file does not exist
+				File.Delete(file);	
+
+				// return true if the file no longer exists
+				return !File.Exists(file);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e, SR.ExceptioinFailedToDeleteTemporaryFiles);
+				return false;
 			}
 		}
 
-    }
+	}
 }
