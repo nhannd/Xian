@@ -405,7 +405,12 @@ namespace ClearCanvas.Ris.Client
 
 					requisition.Procedures.AddRange(
 						CollectionUtils.Map(dsResponse.DiagnosticServiceDetail.ProcedureTypes,
-							(ProcedureTypeSummary rpt) => new ProcedureRequisition(rpt, performingFacility) { ScheduledTime = scheduledTime, Laterality = laterality }));
+							(ProcedureTypeSummary rpt) => new ProcedureRequisition(rpt, performingFacility)
+															{
+																ScheduledTime = scheduledTime, 
+																Laterality = laterality,
+																ScheduledDuration = 30 // default to a non-zero scheduled duration
+															}));
 
 					var response = service.PlaceOrder(new PlaceOrderRequest(requisition));
 
