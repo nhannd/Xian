@@ -1199,6 +1199,28 @@ namespace ClearCanvas.Dicom.Network
                                       ushort numberOfCompletedSubOperations, ushort numberOfRemainingSubOperations,
                                       ushort numberOfFailedSubOperations, ushort numberOfWarningSubOperations)
         {
+            SendCMoveResponse(presentationID, messageID, message, status, numberOfCompletedSubOperations,
+                              numberOfRemainingSubOperations, numberOfFailedSubOperations, numberOfWarningSubOperations,
+                              string.Empty);
+        }
+
+        /// <summary>
+        /// Method to send a DICOM C-MOVE-RSP message.
+        /// </summary>
+        /// <param name="presentationID"></param>
+        /// <param name="messageID"></param>
+        /// <param name="message"></param>
+        /// <param name="status"></param>
+        /// <param name="numberOfCompletedSubOperations"></param>
+        /// <param name="numberOfRemainingSubOperations"></param>
+        /// <param name="numberOfFailedSubOperations"></param>
+        /// <param name="numberOfWarningSubOperations"></param>
+        /// <param name="errorComment">An extended textual error comment. The comment will be truncated to 64 characters. </param>
+        public void SendCMoveResponse(byte presentationID, ushort messageID, DicomMessage message, DicomStatus status,
+                                      ushort numberOfCompletedSubOperations, ushort numberOfRemainingSubOperations,
+                                      ushort numberOfFailedSubOperations, ushort numberOfWarningSubOperations,
+                                      string errorComment)
+        {
             message.CommandField = DicomCommandField.CMoveResponse;
             message.Status = status;
             message.MessageIdBeingRespondedTo = messageID;
@@ -1207,7 +1229,9 @@ namespace ClearCanvas.Dicom.Network
             message.NumberOfRemainingSubOperations = numberOfRemainingSubOperations;
             message.NumberOfFailedSubOperations = numberOfFailedSubOperations;
             message.NumberOfWarningSubOperations = numberOfWarningSubOperations;
-            message.DataSetType = message.DataSet.IsEmpty() ? (ushort) 0x0101 : (ushort) 0x0202;
+            message.DataSetType = message.DataSet.IsEmpty() ? (ushort)0x0101 : (ushort)0x0202;
+            if (!string.IsNullOrEmpty(errorComment))
+                message.ErrorComment = errorComment.Substring(0, (int)Math.Min(DicomVr.LOvr.MaximumLength, errorComment.Length));
 
             SendDimse(presentationID, message.CommandSet, message.DataSet);
         }
