@@ -24,18 +24,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
     public partial class TableView : UserControl
     {
-    	private static readonly Bitmap _checkmarkBitmap;
-		static TableView()
-		{
-			// CR (Jun 2012) TODO: load resource per TableView instance - minimal overhead because it's a small bitmap, but allows for application themes
-			var resolver = new ResourceResolver(typeof(TableView).Assembly);
-			using (var s = resolver.OpenResource("checkmark.png"))
-			{
-				_checkmarkBitmap = new Bitmap(s);
-			}
-		}
-
-
         private event EventHandler _itemDoubleClicked;
         private event EventHandler _selectionChanged;
         private readonly DelayedEventPublisher _delayedSelectionChangedPublisher;
@@ -62,6 +50,8 @@ namespace ClearCanvas.Desktop.View.WinForms
     	private string _sortButtonTooltipBase;
     	private string _columnHeaderTooltipBase;
 
+		private Bitmap _checkmarkBitmap;
+
 		public TableView()
         {
 			SuppressSelectionChangedEvent = false;
@@ -78,10 +68,35 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.DataGridView.RowPostPaint += OutlineCell;
             this.DataGridView.RowPostPaint += SetLinkColor;
 
-            // Use a DelayedEventPublisher to make fixes for bugs 386 and 8032 a little clearer.  Previously used a Timer directly
-            // to delay the events
-            _delayedSelectionChangedPublisher = new DelayedEventPublisher((sender, args) => NotifySelectionChanged(), 50);
+			if (!DesignMode)
+			{
+				// Use a DelayedEventPublisher to make fixes for bugs 386 and 8032 a little clearer.  Previously used a Timer directly
+				// to delay the events
+				_delayedSelectionChangedPublisher = new DelayedEventPublisher((sender, args) => NotifySelectionChanged(), 50);
+			}
+
+			try
+			{
+				var resolver = new ResourceResolver(typeof (TableView), false);
+				using (var s = resolver.OpenResource("checkmark.png"))
+				{
+					_checkmarkBitmap = new Bitmap(s);
+				}
+			}
+			catch (Exception) {}
         }
+
+    	private void PerformDispose(bool disposing)
+    	{
+    		if (disposing)
+    		{
+    			if (_checkmarkBitmap != null)
+    			{
+    				_checkmarkBitmap.Dispose();
+    				_checkmarkBitmap = null;
+    			}
+    		}
+    	}
 
         #region Design Time properties and Events
 
