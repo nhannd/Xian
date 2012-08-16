@@ -229,7 +229,14 @@ namespace ClearCanvas.Enterprise.Core.Printing
 
 			try
 			{
-				RunConverter(outputFilePath);
+				// try this up to five times
+				for (var i = 0; i < 5; i++)
+				{
+					_error = false;
+					RunConverter(outputFilePath);
+					if (!_error)
+						break;
+				}
 			}
 			finally
 			{
