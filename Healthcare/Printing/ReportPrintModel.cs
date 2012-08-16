@@ -14,15 +14,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Xml.Linq;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise.Core.Printing;
 
-namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
+namespace ClearCanvas.Healthcare.Printing
 {
 	/// <summary>
-	/// Defines a small document object model for use in printing of radiology reports.
+	/// Defines a small object model for use in printing of radiology reports.
 	/// </summary>
-	public class ReportPrintModel
+	public class ReportPrintModel : IPrintModel
 	{
 		/// <summary>
 		/// Patient information.
@@ -342,18 +343,40 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		/// Constructor.
 		/// </summary>
 		/// <param name="report"></param>
-		/// <param name="recipient"></param>
-		internal ReportPrintModel(Report report, ExternalPractitionerContactPoint recipient)
+		public ReportPrintModel(Report report)
+			:this(report, GetDefaultRecipient(report))
 		{
+		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="report"></param>
+		/// <param name="recipient"></param>
+		public ReportPrintModel(Report report, ExternalPractitionerContactPoint recipient)
+		{
+			Platform.CheckForNullReference(report, "report");
+			Platform.CheckForNullReference(recipient, "recipient");
+
 			_report = report;
 			_recipient = recipient;
+		}
+
+		public Uri TemplateUrl
+		{
+			get { return new Uri("http://localhost/ris/print_templates/report.htm"); }
+		}
+
+		public Dictionary<string, object> Variables
+		{
+			get { return GetVariables(); }
 		}
 
 		/// <summary>
 		/// Gets the variables available to the print template.
 		/// </summary>
 		/// <returns></returns>
-		internal Dictionary<string, object> GetVariables()
+		private Dictionary<string, object> GetVariables()
 		{
 			var variables = new Dictionary<string, object>();
 
@@ -380,5 +403,13 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return variables;
 		}
 
+		private static ExternalPractitionerContactPoint GetDefaultRecipient(Report report)
+		{
+			var order = report.Procedures.First().Order;
+
+			// determine default contact point
+			return order.ResultRecipients.Select(rr => rr.PractitionerContactPoint).FirstOrDefault(cp => Equals(cp.Practitioner, order.OrderingPractitioner))
+					?? order.OrderingPractitioner.ContactPoints.First();
+		}
 	}
 }

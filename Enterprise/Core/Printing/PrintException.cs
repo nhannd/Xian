@@ -12,7 +12,7 @@
 using System;
 
 
-namespace ClearCanvas.Ris.Application.Services.Printing
+namespace ClearCanvas.Enterprise.Core.Printing
 {
 	public class PrintException : Exception
 	{

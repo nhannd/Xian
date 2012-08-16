@@ -22,7 +22,7 @@ using System.Web;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Scripting;
 
-namespace ClearCanvas.Ris.Application.Services.Printing
+namespace ClearCanvas.Enterprise.Core.Printing
 {
 	public class PrintJob
 	{
@@ -183,16 +183,17 @@ namespace ClearCanvas.Ris.Application.Services.Printing
 		}
 
 
-		public static Result Run(string url, Dictionary<string, object> data)
+		public static Result Run(IPrintModel printModel)
 		{
-			var uri = new Uri(url);
-			if(!uri.IsLoopback)
+			if (!printModel.TemplateUrl.IsLoopback)
 				throw new ArgumentException("Must be a local address");
+
+			var url = printModel.TemplateUrl.ToString();
 			if(!url.EndsWith(".html", StringComparison.InvariantCultureIgnoreCase) && !url.EndsWith(".htm", StringComparison.InvariantCultureIgnoreCase))
 				throw new ArgumentException("Must be an html file");
 
 			var guid = Guid.NewGuid();
-			var job = new PrintJob(guid, uri, data);
+			var job = new PrintJob(guid, printModel.TemplateUrl, printModel.Variables);
 			return job.Run();
 		}
 

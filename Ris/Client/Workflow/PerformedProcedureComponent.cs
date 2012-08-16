@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Serialization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -20,7 +19,6 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -29,7 +27,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 	/// </summary>
 	public interface IPerformedStepEditorPageProvider : IExtensionPageProvider<IPerformedStepEditorPage, IPerformedStepEditorContext>
 	{
-		IPerformedStepEditorPage[] GetEditorPages(IPerformedStepEditorContext context);
 	}
 
 	/// <summary>
@@ -146,99 +143,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
-		#region MPPS Details Component
-
-		class MppsDetailsComponent : DHtmlComponent, IPerformedStepEditorPage
-		{
-			#region HealthcareContext
-
-			[DataContract]
-			class HealthcareContext : DataContractBase
-			{
-				private readonly MppsDetailsComponent _owner;
-
-				public HealthcareContext(MppsDetailsComponent owner)
-				{
-					_owner = owner;
-				}
-
-				[DataMember]
-				public EntityRef OrderRef
-				{
-					get { return _owner._context.OrderRef; }
-				}
-
-				[DataMember]
-				public EntityRef PatientRef
-				{
-					get { return _owner._context.PatientRef; }
-				}
-
-				[DataMember]
-				public EntityRef PatientProfileRef
-				{
-					get { return _owner._context.PatientProfileRef; }
-				}
-
-				[DataMember]
-				public ModalityPerformedProcedureStepDetail ModalityPerformedProcedureStep
-				{
-					get { return _owner._context.SelectedPerformedStep; }
-				}
-			}
-
-			#endregion
-
-			private readonly IPerformedStepEditorContext _context;
-
-			public MppsDetailsComponent(IPerformedStepEditorContext context)
-			{
-				_context = context;
-			}
-
-			public override void Start()
-			{
-				// when the selected step changes, refresh the browser
-				_context.SelectedPerformedStepChanged += delegate
-				{
-					SetUrl(WebResourcesSettings.Default.DetailsPageUrl);
-				};
-
-				base.Start();
-			}
-
-			protected override DataContractBase GetHealthcareContext()
-			{
-				return new HealthcareContext(this);
-			}
-
-			protected override IDictionary<string, string> TagData
-			{
-				get { return _context.SelectedPerformedStepExtendedProperties; }
-			}
-
-			#region IPerformedStepEditorPage Members
-
-			Path IExtensionPage.Path
-			{
-				get { return new Path("Details", new ResourceResolver(this.GetType().Assembly)); }
-			}
-
-			IApplicationComponent IExtensionPage.GetComponent()
-			{
-				return this;
-			}
-
-			void IPerformedStepEditorPage.Save()
-			{
-				SaveData();
-			}
-
-			#endregion
-		}
-
-		#endregion
-
 		private EntityRef _orderRef;
 		private readonly WorklistItemSummaryBase _worklistItem;
 
@@ -324,13 +228,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 			// create extension editor pages, if any exist
 			foreach (IPerformedStepEditorPageProvider provider in (new PerformedStepEditorPageProviderExtensionPoint().CreateExtensions()))
 			{
-				_editorPages.AddRange(provider.GetEditorPages(new EditorContext(this)));
+				_editorPages.AddRange(provider.GetPages(new EditorContext(this)));
 			}
 
 			// if no editor pages are available via extensions, create the default editor
 			if (_editorPages.Count == 0)
 			{
-				_editorPages.Add(new MppsDetailsComponent(new EditorContext(this)));
+				_editorPages.Add(new MppsDocumentationComponent(new EditorContext(this)));
 
 				if (PerformingDocumentationComponentSettings.Default.ShowDicomSeriesTab)
 				{
