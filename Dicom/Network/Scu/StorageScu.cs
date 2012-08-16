@@ -622,9 +622,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 
                     LogError(fileToSend, msg, DicomStatuses.SOPClassNotSupported);
 
-                    OnImageStoreCompleted(fileToSend);
                     _failureSubOperations++;
                     _remainingSubOperations--;
+                    OnImageStoreCompleted(fileToSend);
                     return false;
                 }
 
@@ -658,9 +658,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 
                 fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
                 fileToSend.ExtendedFailureDescription = string.Format("Error decompressing or compressing file before send: {0}", e.Message);
-                OnImageStoreCompleted(fileToSend);
                 _failureSubOperations++;
                 _remainingSubOperations--;
+                OnImageStoreCompleted(fileToSend);
                 return false;
 
             }
@@ -670,9 +670,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 
                 fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
                 fileToSend.ExtendedFailureDescription = string.Format("Unexpected exception while sending file: {0}", e.Message);
-                OnImageStoreCompleted(fileToSend);
                 _failureSubOperations++;
                 _remainingSubOperations--;
+                OnImageStoreCompleted(fileToSend);
                 return false;
             }
 
