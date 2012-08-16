@@ -19,12 +19,13 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Printing;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.Printing;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Application.Services.Printing;
 using ClearCanvas.Workflow;
 using Iesi.Collections.Generic;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
@@ -555,16 +556,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			Platform.CheckMemberIsSet(request.ReportRef, "ReportRef");
 
 			var report = PersistenceContext.Load<Report>(request.ReportRef);
-			var order = report.Procedures.First().Order;
 
-			// determine recipient contact point
-			var recipientContactPoint = request.RecipientContactPointRef != null ?
-				PersistenceContext.Load<ExternalPractitionerContactPoint>(request.RecipientContactPointRef)
-				: order.ResultRecipients.Select(rr => rr.PractitionerContactPoint).FirstOrDefault(cp => Equals(cp.Practitioner, order.OrderingPractitioner))
-					?? order.OrderingPractitioner.ContactPoints.First();
+			var printModel = request.RecipientContactPointRef != null ?
+				 new ReportPrintModel(report, PersistenceContext.Load<ExternalPractitionerContactPoint>(request.RecipientContactPointRef))
+				: new ReportPrintModel(report);
 
-			var printModel = new ReportPrintModel(report, recipientContactPoint);
-			using(var printResult = PrintJob.Run("http://localhost/ris/print_templates/report.htm", printModel.GetVariables()))
+			using(var printResult = PrintJob.Run(printModel))
 			{
 				var contents = File.ReadAllBytes(printResult.OutputFilePath);
 				return new PrintReportResponse(contents);

@@ -65,7 +65,9 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="*.gen.cs" />
@@ -132,6 +134,7 @@
     <Compile Include="OrderMergeHistoryVirtualOrderNoteProvider.cs" />
     <Compile Include="OrderMergeInfo.cs" />
     <Compile Include="OrderRules.cs" />
+    <Compile Include="Printing\ReportPrintModel.cs" />
     <Compile Include="ProtocolingWorklistItemSearchCriteria.cs" />
     <Compile Include="DicomSeries.cs" />
     <Compile Include="EmergencyWorklists.cs" />

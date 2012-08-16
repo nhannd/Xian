@@ -120,6 +120,15 @@
     <Compile Include="Modelling\ValidationAttribute.cs" />
     <Compile Include="Modelling\XmlValidationRuleSetSource.cs" />
     <Compile Include="Ping\PingService.cs" />
+    <Compile Include="Printing\IPrintModel.cs" />
+    <Compile Include="Printing\Print.cs" />
+    <Compile Include="Printing\PrintException.cs" />
+    <Compile Include="Printing\PrintSettings.cs" />
+    <Compile Include="Printing\PrintSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PrintSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ResponseCachingServerSideAdvice.cs" />
     <Compile Include="ResponseCachingAttribute.cs" />
     <Compile Include="CoreServiceExtensionPoint.cs" />
@@ -274,6 +283,11 @@
       <LastGenOutput>EntityValidationSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="persistence.cd" />
+    <None Include="Printing\PrintSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PrintSettings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
