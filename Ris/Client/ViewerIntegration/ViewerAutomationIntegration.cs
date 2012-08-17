@@ -13,7 +13,7 @@ using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.Services.Automation;
+using ClearCanvas.ImageViewer.Common.Automation;
 using ClearCanvas.Desktop;
 using System;
 
