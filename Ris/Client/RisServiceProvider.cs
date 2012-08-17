@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Client
 
 		protected override string Password
 		{
-			get { return LoginSession.Current.SessionToken.Id; }
+			get { return LoginSession.Current.SessionToken; }
 		}
 
 		private static RemoteServiceProviderArgs GetSettings()

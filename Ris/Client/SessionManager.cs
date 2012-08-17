@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Client
 			public static readonly LoginResult None = new LoginResult(false, null, null);
 
 			public LoginResult(string userName, SessionToken sessionToken)
-				:this(true, userName, sessionToken)
+				: this(true, userName, sessionToken)
 			{
 			}
 
@@ -64,6 +64,7 @@ namespace ClearCanvas.Ris.Client
 
 		private static SessionManager _current;
 		private LoginResult _loginResult = LoginResult.None;
+		private string _facilityCode;
 
 		#region ISessionManager Members
 
@@ -72,9 +73,9 @@ namespace ClearCanvas.Ris.Client
 			try
 			{
 				_current = this;
-				return Login();
+				return Login(ref _facilityCode);
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				// can't use ExceptionHandler here because no desktopWindow exists yet
 				Desktop.Application.ShowMessageBox(e.Message, MessageBoxActions.Ok);
@@ -111,6 +112,11 @@ namespace ClearCanvas.Ris.Client
 
 		#region Internal methods
 
+		internal static string FacilityCode
+		{
+			get { return _current._facilityCode; }
+		}
+
 		internal static bool RenewLogin()
 		{
 			if (_current == null)
@@ -118,7 +124,7 @@ namespace ClearCanvas.Ris.Client
 			if (!_current._loginResult.LoggedIn)
 				return false;
 
-			_current._loginResult = Login(LoginDialogMode.RenewLogin, _current._loginResult.UserName, LoginSession.Current.WorkingFacility.Code);
+			_current._loginResult = Login(LoginDialogMode.RenewLogin, _current._loginResult.UserName, ref _current._facilityCode);
 			return _current._loginResult.LoggedIn;
 		}
 
@@ -135,13 +141,13 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-		private bool Login()
+		private bool Login(ref string facility)
 		{
-			_loginResult = Login(LoginDialogMode.InitialLogin, null, null);
+			_loginResult = Login(LoginDialogMode.InitialLogin, null, ref facility);
 			return _loginResult.LoggedIn;
 		}
 
-		private static LoginResult Login(LoginDialogMode mode, string userName, string facility)
+		private static LoginResult Login(LoginDialogMode mode, string userName, ref string facility)
 		{
 			var needLoginDialog = true;
 			string password = null;
@@ -172,21 +178,13 @@ namespace ClearCanvas.Ris.Client
 
 				try
 				{
-					var selectedFacility = CollectionUtils.SelectFirst(facilities, fs => fs.Code == facility);
-
 					// try to create the session
-					var result = DoLogin(userName, password, selectedFacility);
-
-					// set the current session before attempting to access other services, as these will require authentication
-					LoginSession.Create(userName, result.SessionToken, selectedFacility);
-
-					// successfully logged in
-					return result;
+					return DoLogin(userName, password);
 				}
 				catch (PasswordExpiredException)
 				{
 					string newPassword;
-					if(!ChangePassword(userName, password, out newPassword))
+					if (!ChangePassword(userName, password, out newPassword))
 					{
 						// user cancelled password change, so just abort everything
 						return LoginResult.None;
@@ -212,7 +210,7 @@ namespace ClearCanvas.Ris.Client
 
 				var initialFacilityCode = LoginDialogSettings.Default.SelectedFacility;
 				var location = LoginDialogSettings.Default.DialogScreenLocation;
-				
+
 
 				// if no saved facility, just choose the first one
 				if (string.IsNullOrEmpty(initialFacilityCode) && facilityCodes.Length > 0)
@@ -247,7 +245,7 @@ namespace ClearCanvas.Ris.Client
 			return false;
 		}
 
-		private static LoginResult DoLogin(string userName, string password, FacilitySummary facility)
+		private static LoginResult DoLogin(string userName, string password)
 		{
 			try
 			{
@@ -366,7 +364,7 @@ namespace ClearCanvas.Ris.Client
 
 		private static void ReportException(Exception e)
 		{
-			if(e is RequestValidationException)
+			if (e is RequestValidationException)
 			{
 				Desktop.Application.ShowMessageBox(e.Message, MessageBoxActions.Ok);
 			}

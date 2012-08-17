@@ -52,7 +52,9 @@ namespace ClearCanvas.Ris.Client
         protected internal RisDesktopWindow(DesktopWindowCreationArgs args, Desktop.Application application)
             :base(args, application)
         {
-        }
+			// set the current session before attempting to access other services, as these will require authentication
+			LoginSession.Create(SessionManager.FacilityCode);
+		}
 
         /// <summary>
         /// Creates the title that is displayed in the title bar.  Overridden to display user name. 
