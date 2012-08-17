@@ -22,15 +22,15 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public ServerPartitionDataAccessUpdateColumns()
        : base("ServerPartitionDataAccess")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartitionDataAccess", ColumnName="DataAccessGroupGUID")]
-        public ServerEntityKey DataAccessGroupKey
-        {
-            set { SubParameters["DataAccessGroupKey"] = new EntityUpdateColumn<ServerEntityKey>("DataAccessGroupKey", value); }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartitionDataAccess", ColumnName="ServerPartitionGUID")]
         public ServerEntityKey ServerPartitionKey
         {
             set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartitionDataAccess", ColumnName="DataAccessGroupGUID")]
+        public ServerEntityKey DataAccessGroupKey
+        {
+            set { SubParameters["DataAccessGroupKey"] = new EntityUpdateColumn<ServerEntityKey>("DataAccessGroupKey", value); }
         }
     }
 }

@@ -181,6 +181,7 @@
     <Compile Include="UpgradeScripts\UpgradeFrom_3_5_16130_48592.cs" />
     <Compile Include="UpgradeScripts\UpgradeFrom_5_0_5655_9770.cs" />
     <Compile Include="UpgradeScripts\UpgradeFrom_6_0_6778_10140.cs" />
+    <Compile Include="UpgradeScripts\UpgradeFrom_6_1_7081_10268.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
@@ -240,6 +241,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="UpgradeScripts\UpgradeFrom_6_1_7081_10268.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

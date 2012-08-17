@@ -26,41 +26,41 @@ namespace ClearCanvas.ImageServer.Model
         public ServerPartitionDataAccess():base("ServerPartitionDataAccess")
         {}
         public ServerPartitionDataAccess(
-             ServerEntityKey _dataAccessGroupKey_
-            ,ServerEntityKey _serverPartitionKey_
+             ServerEntityKey _serverPartitionKey_
+            ,ServerEntityKey _dataAccessGroupKey_
             ):base("ServerPartitionDataAccess")
         {
-            DataAccessGroupKey = _dataAccessGroupKey_;
             ServerPartitionKey = _serverPartitionKey_;
+            DataAccessGroupKey = _dataAccessGroupKey_;
         }
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartitionDataAccess", ColumnName="DataAccessGroupGUID")]
-        public ServerEntityKey DataAccessGroupKey
-        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartitionDataAccess", ColumnName="ServerPartitionGUID")]
         public ServerEntityKey ServerPartitionKey
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartitionDataAccess", ColumnName="DataAccessGroupGUID")]
+        public ServerEntityKey DataAccessGroupKey
         { get; set; }
         #endregion
 
         #region Static Methods
         static public ServerPartitionDataAccess Load(ServerEntityKey key)
         {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            using (var read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
         static public ServerPartitionDataAccess Load(IPersistenceContext read, ServerEntityKey key)
         {
-            IServerPartitionDataAccessEntityBroker broker = read.GetBroker<IServerPartitionDataAccessEntityBroker>();
+            var broker = read.GetBroker<IServerPartitionDataAccessEntityBroker>();
             ServerPartitionDataAccess theObject = broker.Load(key);
             return theObject;
         }
         static public ServerPartitionDataAccess Insert(ServerPartitionDataAccess entity)
         {
-            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (var update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 ServerPartitionDataAccess newEntity = Insert(update, entity);
                 update.Commit();
@@ -69,10 +69,10 @@ namespace ClearCanvas.ImageServer.Model
         }
         static public ServerPartitionDataAccess Insert(IUpdateContext update, ServerPartitionDataAccess entity)
         {
-            IServerPartitionDataAccessEntityBroker broker = update.GetBroker<IServerPartitionDataAccessEntityBroker>();
-            ServerPartitionDataAccessUpdateColumns updateColumns = new ServerPartitionDataAccessUpdateColumns();
-            updateColumns.DataAccessGroupKey = entity.DataAccessGroupKey;
+            var broker = update.GetBroker<IServerPartitionDataAccessEntityBroker>();
+            var updateColumns = new ServerPartitionDataAccessUpdateColumns();
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.DataAccessGroupKey = entity.DataAccessGroupKey;
             ServerPartitionDataAccess newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

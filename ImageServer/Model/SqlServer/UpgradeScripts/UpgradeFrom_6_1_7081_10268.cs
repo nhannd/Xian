@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -15,14 +15,12 @@ using ClearCanvas.Enterprise.Core.Upgrade;
 
 namespace ClearCanvas.ImageServer.Model.SqlServer.UpgradeScripts
 {
-
     [ExtensionOf(typeof(PersistentStoreUpgradeScriptExtensionPoint))]
-    class UpgradeFrom_6_0_6778_10140 : BaseUpgradeScript
+    class UpgradeFrom_6_1_7081_10268 : BaseUpgradeScript
     {
-        public UpgradeFrom_6_0_6778_10140()
-            : base(new Version(6, 0, 6778, 10140), new Version(6, 1, 7081, 10268), "UpgradeFrom_NoOp.sql")
+        public UpgradeFrom_6_1_7081_10268()
+            : base(new Version(6, 1, 7081, 10268), null, "UpgradeFrom_NoOp.sql")
         {
         }
     }
 }
-

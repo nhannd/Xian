@@ -234,5 +234,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<Boolean>)SubCriteria["MatchPatientsSex"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AcceptLatestReport")]
+        public ISearchCondition<Boolean> AcceptLatestReport
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("AcceptLatestReport"))
+              {
+                 SubCriteria["AcceptLatestReport"] = new SearchCondition<Boolean>("AcceptLatestReport");
+              }
+              return (ISearchCondition<Boolean>)SubCriteria["AcceptLatestReport"];
+            } 
+        }
     }
 }

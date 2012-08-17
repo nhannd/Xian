@@ -107,5 +107,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["MatchPatientsSex"] = new EntityUpdateColumn<Boolean>("MatchPatientsSex", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AcceptLatestReport")]
+        public Boolean AcceptLatestReport
+        {
+            set { SubParameters["AcceptLatestReport"] = new EntityUpdateColumn<Boolean>("AcceptLatestReport", value); }
+        }
     }
 }
