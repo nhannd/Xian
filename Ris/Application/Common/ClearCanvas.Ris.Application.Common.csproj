@@ -299,11 +299,6 @@
     <Compile Include="BrowsePatientData\ListReportsRequest.cs" />
     <Compile Include="ExternalPractitionerContactPointDetail.cs" />
     <Compile Include="ExternalPractitionerContactPointSummary.cs" />
-    <Compile Include="Login\ChangePasswordRequest.cs" />
-    <Compile Include="Login\ChangePasswordResponse.cs" />
-    <Compile Include="Login\LoginServiceRequestBase.cs" />
-    <Compile Include="Login\LogoutRequest.cs" />
-    <Compile Include="Login\LogoutResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetExternalPractitionerContactPointsResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetExternalPractitionerContactPointsRequest.cs" />
     <Compile Include="ResultRecipientDetail.cs" />
@@ -521,8 +516,6 @@
     <Compile Include="HealthcardDetail.cs" />
     <Compile Include="ImportException.cs" />
     <Compile Include="Login\ILoginService.cs" />
-    <Compile Include="Login\LoginRequest.cs" />
-    <Compile Include="Login\LoginResponse.cs" />
     <Compile Include="ModalityWorkflow\SuspendProcedureRequest.cs" />
     <Compile Include="ModalityWorkflow\SuspendProcedureResponse.cs" />
     <Compile Include="ModalityWorkflow\CompleteProcedureRequest.cs" />
