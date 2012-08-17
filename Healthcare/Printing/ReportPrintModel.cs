@@ -364,7 +364,7 @@ namespace ClearCanvas.Healthcare.Printing
 
 		public Uri TemplateUrl
 		{
-			get { return new Uri("http://localhost/ris/print_templates/report.htm"); }
+			get { return new Uri( new PrintTemplateSettings().ReportTemplateUrl); }
 		}
 
 		public Dictionary<string, object> Variables

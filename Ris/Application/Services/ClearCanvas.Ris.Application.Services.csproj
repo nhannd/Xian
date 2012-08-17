@@ -117,7 +117,6 @@
     <Compile Include="ResultRecipientAssembler.cs" />
     <Compile Include="StaffGroupAssembler.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\ExternalPractitionerAdminService.cs" />
-    <Compile Include="Login\LoginServiceRecorder.cs" />
     <Compile Include="OrderAttachmentAssembler.cs" />
     <Compile Include="OrderNoteAssembler.cs" />
     <Compile Include="PatientAttachmentAssembler.cs" />
