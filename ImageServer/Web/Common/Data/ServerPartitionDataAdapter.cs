@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
@@ -38,10 +37,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// Gets a server partition entity with the specified AE Title
         /// </summary>
         /// <returns></returns>
-        public ServerPartition GetServerPartition(string AETitle)
+        public ServerPartition GetServerPartition(string aeTitle)
         {
             var criteria = new ServerPartitionSelectCriteria();
-            criteria.AeTitle.EqualTo(AETitle);
+            criteria.AeTitle.EqualTo(aeTitle);
             return GetFirst(criteria);
         }
 
@@ -68,30 +67,34 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// Creats a new server parition.
         /// </summary>
         /// <param name="partition"></param>
+        /// <param name="groupsWithAccess"> </param>
         public bool AddServerPartition(ServerPartition partition, List<string> groupsWithAccess)
         {
             bool ok;
 
             using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                IInsertServerPartition insert = ctx.GetBroker<IInsertServerPartition>();
-                ServerPartitionInsertParameters parms = new ServerPartitionInsertParameters();
-                parms.AeTitle = partition.AeTitle;
-                parms.Description = partition.Description;
-                parms.Enabled = partition.Enabled;
-                parms.PartitionFolder = partition.PartitionFolder;
-                parms.Port = partition.Port;
-                parms.DefaultRemotePort = partition.DefaultRemotePort;
-                parms.AutoInsertDevice = partition.AutoInsertDevice;
-                parms.AcceptAnyDevice = partition.AcceptAnyDevice;
-                parms.DuplicateSopPolicyEnum = partition.DuplicateSopPolicyEnum;
-                parms.MatchPatientsName = partition.MatchPatientsName;
-                parms.MatchPatientId = partition.MatchPatientId;
-                parms.MatchPatientsBirthDate = partition.MatchPatientsBirthDate;
-                parms.MatchAccessionNumber = partition.MatchAccessionNumber;
-                parms.MatchIssuerOfPatientId = partition.MatchIssuerOfPatientId;
-                parms.MatchPatientsSex = partition.MatchPatientsSex;
-                parms.AuditDeleteStudy = partition.AuditDeleteStudy;
+                var insert = ctx.GetBroker<IInsertServerPartition>();
+                var parms = new ServerPartitionInsertParameters
+                                {
+                                    AeTitle = partition.AeTitle,
+                                    Description = partition.Description,
+                                    Enabled = partition.Enabled,
+                                    PartitionFolder = partition.PartitionFolder,
+                                    Port = partition.Port,
+                                    DefaultRemotePort = partition.DefaultRemotePort,
+                                    AutoInsertDevice = partition.AutoInsertDevice,
+                                    AcceptAnyDevice = partition.AcceptAnyDevice,
+                                    DuplicateSopPolicyEnum = partition.DuplicateSopPolicyEnum,
+                                    MatchPatientsName = partition.MatchPatientsName,
+                                    MatchPatientId = partition.MatchPatientId,
+                                    MatchPatientsBirthDate = partition.MatchPatientsBirthDate,
+                                    MatchAccessionNumber = partition.MatchAccessionNumber,
+                                    MatchIssuerOfPatientId = partition.MatchIssuerOfPatientId,
+                                    MatchPatientsSex = partition.MatchPatientsSex,
+                                    AuditDeleteStudy = partition.AuditDeleteStudy,
+                                    AcceptLatestReport = partition.AcceptLatestReport
+                                };
                 try
                 {
                     ServerPartition insertPartition = insert.FindOne(parms);
@@ -114,9 +117,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public DataAccessGroup FindDataAccessGroup(string oid)
         {
-            DataAccessGroupSelectCriteria select = new DataAccessGroupSelectCriteria();
+            var select = new DataAccessGroupSelectCriteria();
             select.AuthorityGroupOID.EqualTo(new ServerEntityKey("AuthorityGroupOID", new Guid(oid)));
-            IDataAccessGroupEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IDataAccessGroupEntityBroker>();
+            var broker = HttpContextData.Current.ReadContext.GetBroker<IDataAccessGroupEntityBroker>();
             return broker.FindOne(select);
         
         }
@@ -128,14 +131,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             {
                 using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                 {
-                    DataAccessGroupUpdateColumns insert = new DataAccessGroupUpdateColumns
+                    var insert = new DataAccessGroupUpdateColumns
                     {
                         AuthorityGroupOID =
                             new ServerEntityKey("AuthorityGroupOID",
                                                 new Guid(oid)),
                         Deleted = false
                     };
-                    IDataAccessGroupEntityBroker broker = update.GetBroker<IDataAccessGroupEntityBroker>();
+                    var broker = update.GetBroker<IDataAccessGroupEntityBroker>();
                     theGroup = broker.Insert(insert);
                     update.Commit();
                 }
@@ -145,31 +148,34 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool Update(ServerPartition partition)
         {
-            ServerPartitionUpdateColumns parms = new ServerPartitionUpdateColumns();
-            parms.AeTitle = partition.AeTitle;
-            parms.Description = partition.Description;
-            parms.Enabled = partition.Enabled;
-            parms.PartitionFolder = partition.PartitionFolder;
-            parms.Port = partition.Port;
-            parms.AcceptAnyDevice = partition.AcceptAnyDevice;
-            parms.AutoInsertDevice = partition.AutoInsertDevice;
-            parms.DefaultRemotePort = partition.DefaultRemotePort;
-            parms.DuplicateSopPolicyEnum = partition.DuplicateSopPolicyEnum;
-            parms.MatchPatientsName = partition.MatchPatientsName;
-            parms.MatchPatientId = partition.MatchPatientId;
-            parms.MatchPatientsBirthDate = partition.MatchPatientsBirthDate;
-            parms.MatchAccessionNumber = partition.MatchAccessionNumber;
-            parms.MatchIssuerOfPatientId = partition.MatchIssuerOfPatientId;
-            parms.MatchPatientsSex = partition.MatchPatientsSex;
-            parms.AuditDeleteStudy = partition.AuditDeleteStudy;
+            var parms = new ServerPartitionUpdateColumns
+                            {
+                                AeTitle = partition.AeTitle,
+                                Description = partition.Description,
+                                Enabled = partition.Enabled,
+                                PartitionFolder = partition.PartitionFolder,
+                                Port = partition.Port,
+                                AcceptAnyDevice = partition.AcceptAnyDevice,
+                                AutoInsertDevice = partition.AutoInsertDevice,
+                                DefaultRemotePort = partition.DefaultRemotePort,
+                                DuplicateSopPolicyEnum = partition.DuplicateSopPolicyEnum,
+                                MatchPatientsName = partition.MatchPatientsName,
+                                MatchPatientId = partition.MatchPatientId,
+                                MatchPatientsBirthDate = partition.MatchPatientsBirthDate,
+                                MatchAccessionNumber = partition.MatchAccessionNumber,
+                                MatchIssuerOfPatientId = partition.MatchIssuerOfPatientId,
+                                MatchPatientsSex = partition.MatchPatientsSex,
+                                AuditDeleteStudy = partition.AuditDeleteStudy,
+                                AcceptLatestReport = partition.AcceptLatestReport,
+                            };
 
             return Update(partition.Key, parms);
         }
 
         public IEnumerable<ServerPartitionDataAccess> GetServerPartitionDataAccessGroups(ServerPartition partition)
        {
-           IServerPartitionDataAccessEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IServerPartitionDataAccessEntityBroker>();
-           ServerPartitionDataAccessSelectCriteria criteria = new ServerPartitionDataAccessSelectCriteria();
+           var broker = HttpContextData.Current.ReadContext.GetBroker<IServerPartitionDataAccessEntityBroker>();
+           var criteria = new ServerPartitionDataAccessSelectCriteria();
            criteria.ServerPartitionKey.EqualTo(partition.Key);
            return broker.Find(criteria);
        }
@@ -177,8 +183,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
        private void UpdateDataAccess(IUpdateContext ctx, ServerPartition partition, List<string> groupsWithAccess)
        {
-           IServerPartitionDataAccessEntityBroker broker = ctx.GetBroker<IServerPartitionDataAccessEntityBroker>();
-           ServerPartitionDataAccessSelectCriteria criteria = new ServerPartitionDataAccessSelectCriteria();
+           var broker = ctx.GetBroker<IServerPartitionDataAccessEntityBroker>();
+           var criteria = new ServerPartitionDataAccessSelectCriteria();
            criteria.ServerPartitionKey.EqualTo(partition.Key);
            
            var existingGroups = broker.Find(criteria);
@@ -197,8 +203,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
            {
                foreach (var g in groupsWithAccess)
                {
-                   
-                   if (!CollectionUtils.Contains(existingGroups, group => group.Key.ToString().Equals(g)))
+                   string g1 = g;
+                   if (!CollectionUtils.Contains(existingGroups, group => group.Key.ToString().Equals(g1)))
                    {
                        var dataAccessGroup= AddDataAccessIfNotExists(g);
                        
@@ -218,41 +224,37 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
        public bool Update(ServerPartition partition, List<string> groupsWithAccess)
        {
-           try
+           using (IUpdateContext context = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
            {
-               using (IUpdateContext context = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
-               {
-                   ServerPartitionUpdateColumns parms = new ServerPartitionUpdateColumns();
-                   parms.AeTitle = partition.AeTitle;
-                   parms.Description = partition.Description;
-                   parms.Enabled = partition.Enabled;
-                   parms.PartitionFolder = partition.PartitionFolder;
-                   parms.Port = partition.Port;
-                   parms.AcceptAnyDevice = partition.AcceptAnyDevice;
-                   parms.AutoInsertDevice = partition.AutoInsertDevice;
-                   parms.DefaultRemotePort = partition.DefaultRemotePort;
-                   parms.DuplicateSopPolicyEnum = partition.DuplicateSopPolicyEnum;
-                   parms.MatchPatientsName = partition.MatchPatientsName;
-                   parms.MatchPatientId = partition.MatchPatientId;
-                   parms.MatchPatientsBirthDate = partition.MatchPatientsBirthDate;
-                   parms.MatchAccessionNumber = partition.MatchAccessionNumber;
-                   parms.MatchIssuerOfPatientId = partition.MatchIssuerOfPatientId;
-                   parms.MatchPatientsSex = partition.MatchPatientsSex;
-                   parms.AuditDeleteStudy = partition.AuditDeleteStudy;
+               var parms = new ServerPartitionUpdateColumns
+                               {
+                                   AeTitle = partition.AeTitle,
+                                   Description = partition.Description,
+                                   Enabled = partition.Enabled,
+                                   PartitionFolder = partition.PartitionFolder,
+                                   Port = partition.Port,
+                                   AcceptAnyDevice = partition.AcceptAnyDevice,
+                                   AutoInsertDevice = partition.AutoInsertDevice,
+                                   DefaultRemotePort = partition.DefaultRemotePort,
+                                   DuplicateSopPolicyEnum = partition.DuplicateSopPolicyEnum,
+                                   MatchPatientsName = partition.MatchPatientsName,
+                                   MatchPatientId = partition.MatchPatientId,
+                                   MatchPatientsBirthDate = partition.MatchPatientsBirthDate,
+                                   MatchAccessionNumber = partition.MatchAccessionNumber,
+                                   MatchIssuerOfPatientId = partition.MatchIssuerOfPatientId,
+                                   MatchPatientsSex = partition.MatchPatientsSex,
+                                   AuditDeleteStudy = partition.AuditDeleteStudy,
+                                   AcceptLatestReport = partition.AcceptLatestReport
+                               };
 
-                   IServerPartitionEntityBroker broker = context.GetBroker<IServerPartitionEntityBroker>();
-                   if (!broker.Update(partition.Key, parms))
-                       return false;
+               var broker = context.GetBroker<IServerPartitionEntityBroker>();
+               if (!broker.Update(partition.Key, parms))
+                   return false;
 
-                   UpdateDataAccess(context, partition, groupsWithAccess);
+               UpdateDataAccess(context, partition, groupsWithAccess);
 
-                   context.Commit();
-                   return true;
-               }
-           }
-           catch (Exception ex)
-           {
-               throw;
+               context.Commit();
+               return true;
            }
        }
 
