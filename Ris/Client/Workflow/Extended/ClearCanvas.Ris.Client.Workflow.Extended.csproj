@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="BookingWorkflowFolderSystem.cs" />
     <Compile Include="BookingWorkflowTools.cs" />
+    <Compile Include="MppsStructuredDocumentationComponent.cs" />
     <Compile Include="OrderAdditionalInfoComponentPageProviders.cs" />
     <Compile Include="EditProtocolTool.cs" />
     <Compile Include="EmergencyWorkflowFolder.cs" />

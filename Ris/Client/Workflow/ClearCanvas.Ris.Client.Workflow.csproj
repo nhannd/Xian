@@ -64,6 +64,7 @@
     <Compile Include="CancelOrdersTool.cs" />
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
+    <Compile Include="MppsDocumentationComponent.cs" />
     <Compile Include="PrintReportTool.cs" />
     <Compile Include="OrderMergeSettings.cs" />
     <Compile Include="OrderMergeSettings.Designer.cs">

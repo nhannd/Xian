@@ -11,7 +11,7 @@
 
 using System.Configuration;
 
-namespace ClearCanvas.Ris.Application.Services.Printing
+namespace ClearCanvas.Enterprise.Core.Printing
 {
 
 	[SettingsGroupDescription("Configures the behaviour of the printing functionality.")]

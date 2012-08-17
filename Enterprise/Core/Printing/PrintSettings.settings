@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Application.Services.Printing" GeneratedClassName="PrintSettings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Enterprise.Core.Printing" GeneratedClassName="PrintSettings">
   <Profiles />
   <Settings>
     <Setting Name="ConverterProgram" Description="Specifies the HTML to PDF converter program.  This can be a fully qualified path, or just the name of the executable if the OS can locate it on the PATH." Type="System.String" Scope="Application">

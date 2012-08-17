@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Ris.Application.Services.Printing {
+namespace ClearCanvas.Enterprise.Core.Printing {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

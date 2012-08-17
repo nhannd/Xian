@@ -67,6 +67,13 @@
       <DependentUpon>CheckInOrderComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CheckInOrderComponentView.cs" />
+    <Compile Include="MppsDocumentationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MppsDocumentationComponentControl.Designer.cs">
+      <DependentUpon>MppsDocumentationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MppsDocumentationComponentView.cs" />
     <Compile Include="DicomSeriesEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -243,6 +250,10 @@
   <ItemGroup>
     <EmbeddedResource Include="CheckInOrderComponentControl.resx">
       <DependentUpon>CheckInOrderComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MppsDocumentationComponentControl.resx">
+      <DependentUpon>MppsDocumentationComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Folders\FolderOptionComponentControl.resx">

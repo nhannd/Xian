@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -11,14 +11,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common.Serialization;
-using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Application.Common.Login
+namespace ClearCanvas.Enterprise.Core.Printing
 {
-    [DataContract]
-    public class ChangePasswordResponse : DataContractBase
-    {
-    }
+	public interface IPrintModel
+	{
+		Uri TemplateUrl { get; }
+		Dictionary<string, object> Variables { get; } 
+	}
 }

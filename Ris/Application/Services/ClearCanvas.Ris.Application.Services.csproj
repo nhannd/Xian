@@ -107,15 +107,6 @@
     <Compile Include="Admin\WorkQueueAdmin\WorkQueueAdminService.cs" />
     <Compile Include="DicomSeriesAssembler.cs" />
     <Compile Include="PersistentWorkflow.cs" />
-    <Compile Include="Printing\Print.cs" />
-    <Compile Include="Printing\PrintException.cs" />
-    <Compile Include="Printing\PrintSettings.cs" />
-    <Compile Include="Printing\PrintSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>PrintSettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="ReportingWorkflow\ReportPrintModel.cs" />
     <Compile Include="ReportingWorklistItemKey.cs" />
     <Compile Include="TranscriptionWorkflow\TranscriptionWorkflowService.cs" />
     <Compile Include="ModalityWorklistItemKey.cs" />
@@ -126,7 +117,6 @@
     <Compile Include="ResultRecipientAssembler.cs" />
     <Compile Include="StaffGroupAssembler.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\ExternalPractitionerAdminService.cs" />
-    <Compile Include="Login\LoginServiceRecorder.cs" />
     <Compile Include="OrderAttachmentAssembler.cs" />
     <Compile Include="OrderNoteAssembler.cs" />
     <Compile Include="PatientAttachmentAssembler.cs" />
@@ -254,11 +244,6 @@
       <LastGenOutput>PatientAdminSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
-    <None Include="Printing\PrintSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>PrintSettings.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
     <None Include="WorklistSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorklistSettings.Designer.cs</LastGenOutput>
