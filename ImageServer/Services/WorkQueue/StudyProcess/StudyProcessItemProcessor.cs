@@ -30,6 +30,7 @@ using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
+using DeleteDirectoryCommand = ClearCanvas.ImageServer.Core.Command.DeleteDirectoryCommand;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
@@ -83,20 +84,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         #region Private Methods
 
-        void SaveDuplicateReport(WorkQueueUid uid, string sourceFile, string destinationFile)
+        void SaveDuplicateReport(WorkQueueUid uid, string sourceFile, string destinationFile, DicomFile dupFile, StudyXml studyXml)
         {
             using (var processor = new ServerCommandProcessor("Save duplicate report"))
             {
                 processor.AddCommand(new RenameFileCommand(sourceFile, destinationFile, false));
 
+                // Update the StudyStream object
+                processor.AddCommand( new InsertStudyXmlCommand(dupFile, studyXml, Context.StorageLocation));
+
                 processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
 
                 processor.Execute();
             }
-
         }
 
-        private ProcessDuplicateResult ProcessDuplicateReport(DicomFile dupFile, DicomFile baseFile, WorkQueueUid uid)
+        private ProcessDuplicateResult ProcessDuplicateReport(DicomFile dupFile, DicomFile baseFile, WorkQueueUid uid, StudyXml studyXml)
         {
             var result = new ProcessDuplicateResult();
 
@@ -108,19 +111,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             if (dupTime.HasValue && baseTime.HasValue)
             {
-                if (dupTime.Value < baseTime.Value)
+                if (dupTime.Value <= baseTime.Value)
                 {
+                    RemoveWorkQueueUid(uid, dupFile.Filename);
                     result.ActionTaken = DuplicateProcessResultAction.Delete;
                     return result;
                 }
             }
 
             result.ActionTaken = DuplicateProcessResultAction.Accept;
-            SaveDuplicateReport(uid, dupFile.Filename, baseFile.Filename);
+            SaveDuplicateReport(uid, dupFile.Filename, baseFile.Filename, dupFile, studyXml);
             return result;
         }
 
-        private ProcessDuplicateResult ProcessDuplicate(DicomFile dupFile, WorkQueueUid uid)
+        private ProcessDuplicateResult ProcessDuplicate(DicomFile dupFile, WorkQueueUid uid, StudyXml studyXml)
         {
             var result = new ProcessDuplicateResult();
 
@@ -142,7 +146,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                 if (DuplicateSopProcessorHelper.SopClassIsReport(dupFile.SopClass.Uid) && ServerPartition.AcceptLatestReport)
                 {
-                    return ProcessDuplicateReport(dupFile, baseFile, uid);
+                    return ProcessDuplicateReport(dupFile, baseFile, uid, studyXml);
                 }
 
 				if (!dupFile.TransferSyntax.Equals(baseFile.TransferSyntax))
@@ -331,8 +335,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     }
                     else 
                     {
-                    	var duplicateResult = ProcessDuplicate(file, sop);
-                        if (duplicateResult.ActionTaken == DuplicateProcessResultAction.Delete)
+                    	var duplicateResult = ProcessDuplicate(file, sop, studyXml);
+                        if (duplicateResult.ActionTaken == DuplicateProcessResultAction.Delete || duplicateResult.ActionTaken == DuplicateProcessResultAction.Accept)
                         {
                             // make sure the folder is also deleted if it's empty
                             string folder = Path.GetDirectoryName(path);
