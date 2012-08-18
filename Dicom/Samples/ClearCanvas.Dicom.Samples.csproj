@@ -59,6 +59,7 @@
       <DependentUpon>DicomdirDisplay.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomdirReader.cs" />
+    <Compile Include="EditSop.cs" />
     <Compile Include="SamplesForm.cs">
       <SubType>Form</SubType>
     </Compile>

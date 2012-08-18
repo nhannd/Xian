@@ -10,16 +10,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -36,8 +31,8 @@ namespace ClearCanvas.ImageServer.TestApp
 
         private void TestEditStudyForm_Load(object sender, EventArgs e)
         {
-            this.studyStorageTableAdapter.Fill(this.imageServerDataSet.StudyStorage);
-            this.studyTableAdapter.Fill(this.imageServerDataSet.Study);
+            studyStorageTableAdapter.Fill(this.imageServerDataSet.StudyStorage);
+            studyTableAdapter.Fill(this.imageServerDataSet.Study);
 
             dataGridView1.DataSource = this.imageServerDataSet;
             dataGridView1.DataMember = "Study";
@@ -47,39 +42,41 @@ namespace ClearCanvas.ImageServer.TestApp
 
         private void Apply_Click(object sender, EventArgs e)
         {
-            DataRowView view = dataGridView1.SelectedRows[0].DataBoundItem as DataRowView;
+            var view = dataGridView1.SelectedRows[0].DataBoundItem as DataRowView;
             if (view != null)
             {
-                Guid guid = (Guid) view.Row["GUID"];
+                var guid = (Guid) view.Row["GUID"];
 
                 IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
 
                 using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
                 {
-                    IStudyEntityBroker studyBroker = ctx.GetBroker<IStudyEntityBroker>();
-                    ServerEntityKey key = new ServerEntityKey("Study", guid);
+                    var studyBroker = ctx.GetBroker<IStudyEntityBroker>();
+                    var key = new ServerEntityKey("Study", guid);
                     Model.Study study = studyBroker.Load(key);
 
-                    IStudyStorageEntityBroker storageBroker = ctx.GetBroker<IStudyStorageEntityBroker>();
-                    StudyStorageSelectCriteria parms = new StudyStorageSelectCriteria();
+                    var storageBroker = ctx.GetBroker<IStudyStorageEntityBroker>();
+                    var parms = new StudyStorageSelectCriteria();
                     parms.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
                     parms.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
 
                     Model.StudyStorage storage = storageBroker.Find(parms)[0];
 
 
-                    IWorkQueueEntityBroker workQueueBroker = ctx.GetBroker<IWorkQueueEntityBroker>();
-                    WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
-                    columns.ServerPartitionKey = study.ServerPartitionKey;
-                    columns.StudyStorageKey = storage.GetKey();
-                    columns.ExpirationTime = DateTime.Now.AddHours(1);
-                    columns.ScheduledTime = DateTime.Now;
-                    columns.InsertTime = DateTime.Now;
-                    columns.WorkQueuePriorityEnum = Model.WorkQueuePriorityEnum.Medium;
-                    columns.WorkQueueStatusEnum = Model.WorkQueueStatusEnum.Pending;
-                    columns.WorkQueueTypeEnum = Model.WorkQueueTypeEnum.WebEditStudy;
+                    var workQueueBroker = ctx.GetBroker<IWorkQueueEntityBroker>();
+                    var columns = new WorkQueueUpdateColumns
+                                      {
+                                          ServerPartitionKey = study.ServerPartitionKey,
+                                          StudyStorageKey = storage.GetKey(),
+                                          ExpirationTime = DateTime.Now.AddHours(1),
+                                          ScheduledTime = DateTime.Now,
+                                          InsertTime = DateTime.Now,
+                                          WorkQueuePriorityEnum = Model.WorkQueuePriorityEnum.Medium,
+                                          WorkQueueStatusEnum = Model.WorkQueueStatusEnum.Pending,
+                                          WorkQueueTypeEnum = Model.WorkQueueTypeEnum.WebEditStudy
+                                      };
 
-                    XmlDocument doc = new XmlDocument();
+                    var doc = new XmlDocument();
                     doc.Load(new StringReader(textBox1.Text));
 
                     columns.Data = doc;
@@ -94,28 +91,26 @@ namespace ClearCanvas.ImageServer.TestApp
         private void RefreshTimer_Tick(object sender, EventArgs e)
         {
             Guid guid = Guid.Empty;
-            if (dataGridView1.SelectedRows != null)
+            if (dataGridView1.SelectedRows.Count > 0)
             {
-                DataRowView view = dataGridView1.SelectedRows[0].DataBoundItem as DataRowView;
+                var view = dataGridView1.SelectedRows[0].DataBoundItem as DataRowView;
                 if (view!=null)
                 {
                     guid = (Guid) view["GUID"];
                     Trace.WriteLine(guid);
-                }
-                
+                }                
             }
-            this.studyStorageTableAdapter.Fill(this.imageServerDataSet.StudyStorage);
-            this.studyTableAdapter.Fill(this.imageServerDataSet.Study);
+
+            studyStorageTableAdapter.Fill(imageServerDataSet.StudyStorage);
+            studyTableAdapter.Fill(imageServerDataSet.Study);
 
             if (guid!=Guid.Empty)
             {
                 int index = studyBindingSource.Find("GUID", guid);
                 Trace.WriteLine(index);
-                this.studyBindingSource.Position = index;
+                studyBindingSource.Position = index;
                 dataGridView1.Rows[index].Selected = true;
             }
-            
         }
-
     }
 }
