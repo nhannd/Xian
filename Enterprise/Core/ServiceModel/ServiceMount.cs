@@ -217,7 +217,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
                 }
                 catch (Exception)
                 {
-                    Platform.Log(LogLevel.Error, "Error mounting service: {0}", host.Description);
+                    Platform.Log(LogLevel.Error, "Error mounting service: {0}", host.Description.Endpoints[0].Address);
                     throw;
                 }
 			}
