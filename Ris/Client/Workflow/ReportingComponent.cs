@@ -669,7 +669,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool SupervisorVisible
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview); }
+			get
+			{
+				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview)
+				       && _workflowConfiguration.EnableInterpretationReviewWorkflow;
+			}
 		}
 
 		public bool RememberSupervisor

@@ -313,6 +313,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private event EventHandler _worklistItemChanged;
 
+		private readonly WorkflowConfigurationReader _workflowConfiguration = new WorkflowConfigurationReader();
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -747,7 +749,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool SupervisorVisible
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview); }
+			get
+			{ 
+				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview)
+							&& _workflowConfiguration.EnableTranscriptionReviewWorkflow;
+			}
 		}
 
 		#endregion
