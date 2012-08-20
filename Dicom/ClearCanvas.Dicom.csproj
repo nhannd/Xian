@@ -169,6 +169,7 @@
     </Compile>
     <Compile Include="Tests\DateTimeTests.cs" />
     <Compile Include="Iod\Tests\ImageOrientationPatientTests.cs" />
+    <Compile Include="Utilities\SopInstanceFactory.cs" />
     <Compile Include="Utilities\TimeParser.cs" />
     <Compile Include="TransferSyntax.cs" />
     <Compile Include="Iod\Window.cs" />

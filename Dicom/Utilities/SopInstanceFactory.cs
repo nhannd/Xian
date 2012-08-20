@@ -10,11 +10,10 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Modules;
 
-namespace ClearCanvas.ImageViewer.StudyManagement
+namespace ClearCanvas.Dicom.Utilities
 {
 	/// <summary>
 	/// Base implementation for a factory of composite SOP instances.
