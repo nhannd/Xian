@@ -239,7 +239,6 @@
     <Compile Include="StudyManagement\PatientOrientationHelper.cs" />
     <Compile Include="StudyManagement\ProgressBarIconSet.cs" />
     <Compile Include="StudyManagement\RescaleUnits.cs" />
-    <Compile Include="StudyManagement\SopInstanceFactory.cs" />
     <Compile Include="StudyManagement\SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
