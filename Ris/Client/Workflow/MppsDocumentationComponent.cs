@@ -9,6 +9,7 @@
 
 #endregion
 
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -45,12 +46,28 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_context.SelectedPerformedStepChanged += delegate
 			{
 				NotifyPropertyChanged("Comments");
+				NotifyPropertyChanged("CommentsEnabled");
 			};
 
 			base.Start();
 		}
 
 		#region Presentation Model
+
+		public string CommentsLabel
+		{
+			get
+			{ 
+				return _context.SelectedPerformedStep == null ? "" 
+				: string.Format("Comments for {0}", 
+					string.Join("/",_context.SelectedPerformedStep.ModalityProcedureSteps.Select(mps => mps.Description).ToArray()));
+			}
+		}
+
+		public bool CommentsEnabled
+		{
+			get { return _context.SelectedPerformedStep != null; }
+		}
 
 		public string Comments
 		{
