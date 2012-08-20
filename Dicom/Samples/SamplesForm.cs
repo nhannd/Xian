@@ -42,7 +42,8 @@ namespace ClearCanvas.Dicom.Samples
         private readonly MemoryAppender _appender = new MemoryAppender();
         private FindScuBase _findScu;
         private MoveScuBase _moveScu;
-        
+        private EditSop _editSop;
+
         public SamplesForm()
         {
 			InitializeComponent();
@@ -756,6 +757,40 @@ namespace ClearCanvas.Dicom.Samples
 
             textBoxMoveMessage.Text = sw.ToString();
 		
+        }
+
+        private void _editSopSaveFileButton_Click(object sender, EventArgs e)
+        {
+            if (_editSop != null)
+            {
+                _editSop.UpdateTags(_editSopTextBox.Text);
+
+                saveFileDialog.Filter = "DICOM|*.dcm";
+                if (DialogResult.OK == saveFileDialog.ShowDialog())
+                {
+                    _destinationPathTextBox.Text = saveFileDialog.FileName;
+                    _editSop.Save(saveFileDialog.FileName);
+                }
+            }
+        }
+
+        private void _editSopOpenFileButton_Click(object sender, EventArgs e)
+        {
+            openFileDialogStorageScu.Multiselect = false;
+            openFileDialogStorageScu.Filter = "DICOM files|*.dcm|All files|*.*";
+            if (DialogResult.OK == openFileDialogStorageScu.ShowDialog())
+            {
+                _editSopSourcePathTextBox.Text = openFileDialogStorageScu.FileName;
+                _editSopDestinationPathTextBox.Text = string.Empty;
+
+                _editSop = new EditSop(openFileDialogStorageScu.FileName);
+                _editSop.Load();
+
+                _editSopTextBox.Text = _editSop.GetXmlRepresentation();
+
+                string dump = _editSop.DicomFile.Dump();
+                Platform.Log(LogLevel.Info, dump);
+            }
         }
     }
 }
