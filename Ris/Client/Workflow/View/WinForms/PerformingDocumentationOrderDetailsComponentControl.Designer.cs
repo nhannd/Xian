@@ -34,9 +34,11 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._orderNotesGroupBox = new System.Windows.Forms.GroupBox();
 			this._rightHandPanel = new System.Windows.Forms.Panel();
 			this._borderPanel = new System.Windows.Forms.Panel();
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
 			this.splitContainer2.Panel1.SuspendLayout();
 			this.splitContainer2.Panel2.SuspendLayout();
 			this.splitContainer2.SuspendLayout();
@@ -57,8 +59,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.Controls.Add(this._rightHandPanel);
-			this.splitContainer1.Size = new System.Drawing.Size(495, 361);
-			this.splitContainer1.SplitterDistance = 237;
+			this.splitContainer1.Size = new System.Drawing.Size(813, 525);
+			this.splitContainer1.SplitterDistance = 389;
 			this.splitContainer1.TabIndex = 0;
 			// 
 			// splitContainer2
@@ -75,18 +77,17 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// splitContainer2.Panel2
 			// 
 			this.splitContainer2.Panel2.Controls.Add(this._orderNotesGroupBox);
-			this.splitContainer2.Size = new System.Drawing.Size(237, 353);
-			this.splitContainer2.SplitterDistance = 170;
+			this.splitContainer2.Size = new System.Drawing.Size(389, 517);
+			this.splitContainer2.SplitterDistance = 248;
 			this.splitContainer2.TabIndex = 0;
 			// 
 			// _protocolsPanel
 			// 
-			this._protocolsPanel.BackColor = System.Drawing.SystemColors.ControlDark;
 			this._protocolsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._protocolsPanel.Location = new System.Drawing.Point(0, 0);
 			this._protocolsPanel.Name = "_protocolsPanel";
-			this._protocolsPanel.Padding = new System.Windows.Forms.Padding(1);
-			this._protocolsPanel.Size = new System.Drawing.Size(237, 170);
+			this._protocolsPanel.Padding = new System.Windows.Forms.Padding(3);
+			this._protocolsPanel.Size = new System.Drawing.Size(389, 248);
 			this._protocolsPanel.TabIndex = 0;
 			// 
 			// _orderNotesGroupBox
@@ -94,7 +95,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._orderNotesGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._orderNotesGroupBox.Location = new System.Drawing.Point(0, 0);
 			this._orderNotesGroupBox.Name = "_orderNotesGroupBox";
-			this._orderNotesGroupBox.Size = new System.Drawing.Size(237, 179);
+			this._orderNotesGroupBox.Size = new System.Drawing.Size(389, 265);
 			this._orderNotesGroupBox.TabIndex = 0;
 			this._orderNotesGroupBox.TabStop = false;
 			this._orderNotesGroupBox.Text = "Order Notes";
@@ -104,34 +105,32 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._rightHandPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._rightHandPanel.Location = new System.Drawing.Point(0, 0);
 			this._rightHandPanel.Name = "_rightHandPanel";
-			this._rightHandPanel.Size = new System.Drawing.Size(254, 361);
+			this._rightHandPanel.Size = new System.Drawing.Size(420, 525);
 			this._rightHandPanel.TabIndex = 0;
 			// 
 			// _borderPanel
 			// 
-			this._borderPanel.BackColor = System.Drawing.SystemColors.Control;
 			this._borderPanel.Controls.Add(this.splitContainer1);
 			this._borderPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._borderPanel.Location = new System.Drawing.Point(1, 1);
 			this._borderPanel.Name = "_borderPanel";
-			this._borderPanel.Padding = new System.Windows.Forms.Padding(4, 0, 4, 4);
-			this._borderPanel.Size = new System.Drawing.Size(503, 365);
+			this._borderPanel.Size = new System.Drawing.Size(821, 529);
 			this._borderPanel.TabIndex = 1;
 			// 
 			// PerformingDocumentationOrderDetailsComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.BackColor = System.Drawing.SystemColors.ControlDark;
 			this.Controls.Add(this._borderPanel);
 			this.Name = "PerformingDocumentationOrderDetailsComponentControl";
-			this.Padding = new System.Windows.Forms.Padding(1);
-			this.Size = new System.Drawing.Size(505, 367);
+			this.Size = new System.Drawing.Size(823, 531);
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
 			this.splitContainer1.ResumeLayout(false);
 			this.splitContainer2.Panel1.ResumeLayout(false);
 			this.splitContainer2.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
 			this.splitContainer2.ResumeLayout(false);
 			this._borderPanel.ResumeLayout(false);
 			this.ResumeLayout(false);

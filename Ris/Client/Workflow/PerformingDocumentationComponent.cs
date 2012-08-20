@@ -552,6 +552,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_ppsComponent.ProcedurePlanChanged += ((sender, e) => RefreshProcedurePlanSummary(e.ProcedurePlanDetail));
 			_documentationTabContainer.Pages.Add(new TabPage("Exam", _ppsComponent));
 
+
 			// create extension pages
 			foreach (IPerformingDocumentationPageProvider pageProvider in (new PerformingDocumentationPageProviderExtensionPoint()).CreateExtensions())
 			{

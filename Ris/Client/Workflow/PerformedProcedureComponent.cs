@@ -332,12 +332,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _detailsPagesHost; }
 		}
 
-		private void RefreshProcedurePlanTree(ProcedurePlanDetail procedurePlanDetail)
-		{
-			_orderRef = procedurePlanDetail.OrderRef;
-			EventsHelper.Fire(_procedurePlanChanged, this, new ProcedurePlanChangedEventArgs(procedurePlanDetail));
-		}
-
 		#endregion
 
 		#region Tool Click Handlers
@@ -482,6 +476,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				_stopAction.Enabled = _discontinueAction.Enabled = false;
 			}
+		}
+
+		private void RefreshProcedurePlanTree(ProcedurePlanDetail procedurePlanDetail)
+		{
+			_orderRef = procedurePlanDetail.OrderRef;
+			EventsHelper.Fire(_procedurePlanChanged, this, new ProcedurePlanChangedEventArgs(procedurePlanDetail));
 		}
 
 		#endregion

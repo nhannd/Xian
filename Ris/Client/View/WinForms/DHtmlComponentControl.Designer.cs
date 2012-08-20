@@ -66,10 +66,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._webBrowser.Location = new System.Drawing.Point(0, 0);
-			this._webBrowser.Margin = new System.Windows.Forms.Padding(2);
 			this._webBrowser.MinimumSize = new System.Drawing.Size(15, 16);
 			this._webBrowser.Name = "_webBrowser";
-			this._webBrowser.Size = new System.Drawing.Size(691, 673);
+			this._webBrowser.Size = new System.Drawing.Size(504, 326);
 			this._webBrowser.TabIndex = 0;
 			// 
 			// DHtmlComponentControl
@@ -77,9 +76,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._webBrowser);
-			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "DHtmlComponentControl";
-			this.Size = new System.Drawing.Size(691, 673);
+			this.Size = new System.Drawing.Size(504, 326);
 			this.ResumeLayout(false);
 
         }

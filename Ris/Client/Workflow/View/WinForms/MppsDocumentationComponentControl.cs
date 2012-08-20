@@ -34,9 +34,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			InitializeComponent();
 			_component = component;
 
-			_richText.DataBindings.Add("Text", _component, "Comments", true, DataSourceUpdateMode.OnPropertyChanged);
+			_comments.DataBindings.Add("Text", _component, "Comments", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_cannedTextSupport = new CannedTextSupport(_richText, _component.CannedTextLookupHandler);
+			_cannedTextSupport = new CannedTextSupport(_comments, _component.CannedTextLookupHandler);
 		}
 	}
 }
