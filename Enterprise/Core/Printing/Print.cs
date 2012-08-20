@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -280,6 +281,19 @@ namespace ClearCanvas.Enterprise.Core.Printing
 					}
 				}
 			}
+			catch (WebException e)
+			{
+				// explicitly handle 404 to provide a helpful error message
+				if(e.Status == WebExceptionStatus.ProtocolError && ((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.NotFound)
+				{
+					SetError(string.Format("The template {0} was not found (404).", _url));
+				}
+				else
+				{
+					SetError(e.Message);
+				}
+				throw;
+			}
 			catch (Exception e)
 			{
 				SetError(e.Message);
@@ -301,21 +315,32 @@ namespace ClearCanvas.Enterprise.Core.Printing
 
 		private void RunConverter(string outputFilePath)
 		{
-			var sourcePath = string.Format("{0}?id={1}", _url.AbsolutePath, _id.ToString("N"));
-			var sourceUrl = new Uri(new Uri(_httpServer.Host), sourcePath);
-
 			var settings = new PrintSettings();
-			var startInfo = new ProcessStartInfo(settings.ConverterProgram, string.Format("{0} {1} {2}", settings.ConverterOptions, sourceUrl, outputFilePath));
-			startInfo.UseShellExecute = false;
-			var process = Process.Start(startInfo);
-			var exited = process.WaitForExit(settings.ConverterTimeout * 1000);
-
-			if(!exited)
+			try
 			{
-				SetError(string.Format("The converter program ({0}) timed out after {1} ms - printing aborted.",
-					settings.ConverterProgram, settings.ConverterTimeout));
-			}
+				var sourcePath = string.Format("{0}?id={1}", _url.AbsolutePath, _id.ToString("N"));
+				var sourceUrl = new Uri(new Uri(_httpServer.Host), sourcePath);
 
+				var startInfo = new ProcessStartInfo(settings.ConverterProgram, string.Format("{0} {1} {2}", settings.ConverterOptions, sourceUrl, outputFilePath));
+				startInfo.UseShellExecute = false;
+				var process = Process.Start(startInfo);
+				var exited = process.WaitForExit(settings.ConverterTimeout * 1000);
+
+				if (!exited)
+				{
+					SetError(string.Format("The converter program ({0}) timed out after {1} ms - printing aborted.",
+						settings.ConverterProgram, settings.ConverterTimeout));
+				}
+
+			}
+			catch (Win32Exception e)
+			{
+				SetError(
+					string.Format("{0}. Usually this means the converter program is not installed, or its location ({1}) is incorrectly configured.",
+					e.Message,
+					settings.ConverterProgram)
+				);
+			}
 
 			//var exitCode = process.ExitCode;
 			//Console.WriteLine("EXITCODE = " + exitCode);
