@@ -211,7 +211,15 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 		{
 			foreach (var host in _serviceHosts)
 			{
-				host.Open();
+                try
+                {
+                    host.Open();                    
+                }
+                catch (Exception)
+                {
+                    Platform.Log(LogLevel.Error, "Error mounting service: {0}", host.Description);
+                    throw;
+                }
 			}
 		}
 
