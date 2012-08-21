@@ -26,12 +26,12 @@ namespace ClearCanvas.Ris.Shreds.Publication
 			_enabled = settings.HL7PublicationEnabled;
 		}
 
-		public void Execute(PublicationStep step, IPersistenceContext context)
+		public void Execute(ReportPart reportPart, IPersistenceContext context)
 		{
 			if (_enabled == false)
 				return;
 
-			LogicalHL7Event.ReportPublished.EnqueueEvents(step.Report);
+			LogicalHL7Event.ReportPublished.EnqueueEvents(reportPart.Report);
 		}
 	}
 }

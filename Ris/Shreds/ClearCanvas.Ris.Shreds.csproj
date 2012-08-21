@@ -97,7 +97,8 @@
     <Compile Include="Merge\MigrationPriority.cs" />
     <Compile Include="Publication\CreateLogicalHL7EventAction.cs" />
     <Compile Include="HL7\LogicalHL7EventProcessor.cs" />
-    <Compile Include="Publication\PublicationProcessor.cs" />
+    <Compile Include="Publication\PublicationActionProcessor.cs" />
+    <Compile Include="Publication\PublicationStepProcessor.cs" />
     <Compile Include="Publication\PublicationShred.cs" />
     <Compile Include="Publication\PublicationShredSettings.cs" />
     <Compile Include="Publication\PublicationShredSettings.Designer.cs">

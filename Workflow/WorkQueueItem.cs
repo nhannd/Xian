@@ -11,9 +11,7 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Workflow {
 
@@ -101,42 +99,6 @@ namespace ClearCanvas.Workflow {
 
 			_expirationTime = _expirationTime.HasValue ? _expirationTime.Value.AddMinutes(minutes) : _expirationTime;
 			_processedTime = _processedTime.HasValue ? _processedTime.Value.AddMinutes(minutes) : _processedTime;
-		}
-	}
-
-	public static class MailFaxWorkQueueItem
-	{
-		public static WorkQueueItem Create(
-			string accessionNumber,
-			EntityRef reportRef,
-			EntityRef practitionerRef,
-			EntityRef contactPointRef)
-		{
-			var workQueueItem = new WorkQueueItem("Mail/Fax Report");
-			workQueueItem.ExtendedProperties.Add("AccessionNumber", accessionNumber);
-			workQueueItem.ExtendedProperties.Add("ReportOID", reportRef.ToString(false, false));
-			workQueueItem.ExtendedProperties.Add("ExternalPractitionerOID", practitionerRef.ToString(false, false));
-			workQueueItem.ExtendedProperties.Add("ExternalPractitionerContactPointOID", contactPointRef.ToString(false, false));
-
-			return workQueueItem;
-		}
-	}
-
-	public static class MergeWorkQueueItem
-	{
-		public const string Tag = "Merge";
-
-
-		public static WorkQueueItem Create(EntityRef targetRef)
-		{
-			var workQueueItem = new WorkQueueItem(Tag);
-			workQueueItem.ExtendedProperties.Add("Target", targetRef.Serialize());
-			return workQueueItem;
-		}
-
-		public static EntityRef GetTargetRef(WorkQueueItem item)
-		{
-			return new EntityRef(item.ExtendedProperties["Target"]);
 		}
 	}
 }

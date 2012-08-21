@@ -131,6 +131,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>LogicalHL7EventSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="MergeWorkQueueItem.cs" />
     <Compile Include="OrderMergeHistoryVirtualOrderNoteProvider.cs" />
     <Compile Include="OrderMergeInfo.cs" />
     <Compile Include="OrderRules.cs" />

@@ -22,11 +22,11 @@ namespace ClearCanvas.Ris.Shreds.Publication
 {
 	/// <summary>
 	/// Defines the interface for a publication action, that is, an action to be taken
-    /// upon publication of a radiololgy report.
+	/// upon publication of a radiololgy report.
 	/// </summary>
 	public interface IPublicationAction
 	{
-		void Execute(PublicationStep step, IPersistenceContext context);
+		void Execute(ReportPart reportPart, IPersistenceContext context);
 	}
 
 	[ExtensionPoint]
@@ -34,28 +34,25 @@ namespace ClearCanvas.Ris.Shreds.Publication
 	{
 	}
 
-    /// <summary>
-    /// Processes <see cref="PublicationStep"/>s, performing all <see cref="IPublicationAction"/>s
-    /// on each step.
-    /// </summary>
-    internal class PublicationProcessor : EntityQueueProcessor<PublicationStep>
+	/// <summary>
+	/// Processes <see cref="PublicationStep"/>s, queueing a work item for each <see cref="IPublicationAction"/>
+	/// on each step.
+	/// </summary>
+	internal class PublicationStepProcessor : EntityQueueProcessor<PublicationStep>
 	{
-		private readonly object[] _publicationActions;
+		private readonly ExtensionInfo[] _publicationActions;
 		private readonly PublicationShredSettings _settings;
 
-        public PublicationProcessor(PublicationShredSettings settings)
+		public PublicationStepProcessor(PublicationShredSettings settings)
 			: base(settings.BatchSize, TimeSpan.FromSeconds(settings.EmptyQueueSleepTime))
-        {
-        	_settings = settings;
-            _publicationActions = new PublicationActionExtensionPoint().CreateExtensions();
-        }
+		{
+			_settings = settings;
+			_publicationActions = new PublicationActionExtensionPoint().ListExtensions();
+		}
 
 		public override string Name
 		{
-			get
-			{
-				return SR.PublicationShredName;
-			}
+			get { return this.GetType().Name; }
 		}
 
 		protected override IList<PublicationStep> GetNextEntityBatch(int batchSize)
@@ -74,10 +71,11 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
 		protected override void ActOnItem(PublicationStep item)
 		{
-			// execute each publication action
-			foreach (IPublicationAction action in _publicationActions)
+			Platform.Log(LogLevel.Info, "Processing publication step {0}", item.OID);
+			// enqueue work item for each publication action
+			foreach (var action in _publicationActions)
 			{
-				action.Execute(item, PersistenceScope.CurrentContext);
+				EnqueueWorkItem(item.ReportPart, action);
 			}
 		}
 
@@ -91,6 +89,14 @@ namespace ClearCanvas.Ris.Shreds.Publication
 		{
 			// all actions succeeded, so mark the publication item as being completed
 			item.Complete(item.AssignedStaff);
+		}
+
+		private static void EnqueueWorkItem(ReportPart reportPart, ExtensionInfo publicationAction)
+		{
+			var workQueueItem = new WorkQueueItem("Publication Action");
+			workQueueItem.ExtendedProperties.Add("ReportPartRef", reportPart.GetRef().Serialize());
+			workQueueItem.ExtendedProperties.Add("ActionType", publicationAction.ExtensionClass.FullName);
+			PersistenceScope.CurrentContext.Lock(workQueueItem, DirtyState.New);
 		}
 	}
 }

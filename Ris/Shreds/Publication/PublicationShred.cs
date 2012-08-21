@@ -35,10 +35,10 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
 		protected override IList<QueueProcessor> GetProcessors()
 		{
-			PublicationProcessor p = new PublicationProcessor(new PublicationShredSettings());
-			return new QueueProcessor[] { p };
-        }
-
+			var p1 = new PublicationStepProcessor(new PublicationShredSettings());
+			var p2 = new PublicationActionProcessor(new PublicationShredSettings());
+			return new QueueProcessor[] { p1, p2 };
+		}
 
 		#region IApplicationRoot Members
 

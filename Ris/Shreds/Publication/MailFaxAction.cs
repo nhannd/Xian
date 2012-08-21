@@ -9,28 +9,32 @@
 
 #endregion
 
+using System.Linq;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Shreds.Publication
 {
-    /// <summary>
+	/// <summary>
     /// This publication action sends the report to the outbound fax/mail queue.
     /// </summary>
-	[ExtensionOf(typeof(PublicationActionExtensionPoint))]
+	// JR: Disabled as of Yen - this action is not used
+	//[ExtensionOf(typeof(PublicationActionExtensionPoint))]
 	public class MailFaxAction : IPublicationAction
 	{
 		#region IPublicationAction Members
 
-		public void Execute(PublicationStep step, IPersistenceContext context)
+		public void Execute(ReportPart reportPart, IPersistenceContext context)
 		{
-			foreach (ResultRecipient recipient in step.Procedure.Order.ResultRecipients)
+			var order = reportPart.Report.Procedures.First().Order;
+			foreach (var recipient in order.ResultRecipients)
 			{
-				WorkQueueItem item = MailFaxWorkQueueItem.Create(
-					step.Procedure.Order.AccessionNumber,
-					step.ReportPart.Report.GetRef(),
+				var item = Create(
+					order.AccessionNumber,
+					reportPart.Report.GetRef(),
 					recipient.PractitionerContactPoint.Practitioner.GetRef(),
 					recipient.PractitionerContactPoint.GetRef());
 
@@ -39,5 +43,20 @@ namespace ClearCanvas.Ris.Shreds.Publication
 		}
 
 		#endregion
+
+		private static WorkQueueItem Create(
+			string accessionNumber,
+			EntityRef reportRef,
+			EntityRef practitionerRef,
+			EntityRef contactPointRef)
+		{
+			var workQueueItem = new WorkQueueItem("Mail/Fax Report");
+			workQueueItem.ExtendedProperties.Add("AccessionNumber", accessionNumber);
+			workQueueItem.ExtendedProperties.Add("ReportOID", reportRef.ToString(false, false));
+			workQueueItem.ExtendedProperties.Add("ExternalPractitionerOID", practitionerRef.ToString(false, false));
+			workQueueItem.ExtendedProperties.Add("ExternalPractitionerContactPointOID", contactPointRef.ToString(false, false));
+
+			return workQueueItem;
+		}
 	}
 }
