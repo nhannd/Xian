@@ -434,7 +434,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         
         }
         
-        public void SelectRow(int rowIndex)
+        public new void SelectRow(int rowIndex)
         {
             Rows[rowIndex].RowState = DataControlRowState.Selected;
             Rows[rowIndex].Attributes["selected"] = "true";
