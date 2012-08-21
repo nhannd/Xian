@@ -9,6 +9,8 @@
 
 #endregion
 
+#if DEBUG	// This tool is only used during development
+
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -22,6 +24,8 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
+
+
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Random Order", "RandomOrder")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Random Order", "RandomOrder")]
 	[Tooltip("apply", "Random Order")]
@@ -132,3 +136,4 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 	}
 }
+#endif

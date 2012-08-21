@@ -319,6 +319,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 	}
 
+#if DEBUG	// only available in debug builds (only used for testing)
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Publish", "Apply")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Development.TestPublishReport)]
@@ -341,5 +342,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return true;
 		}
 	}
+#endif
 }
 

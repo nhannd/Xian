@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow administration of Procedure Type Groups (such as Performing, Reading, and Relevance Groups.")]
 				public const string ProcedureTypeGroup = "RIS/Admin/Data/Procedure Type Group";
 
-				[AuthorityToken(Description = "Allow administration of Imaging Services and the Imaging Service Tree.")]
+				[AuthorityToken(Description = "Allow administration of Imaging Services.")]
 				public const string DiagnosticService = "RIS/Admin/Data/Imaging Service";
 
 				[AuthorityToken(Description = "Allow administration of Enumerations.")]
@@ -81,6 +81,7 @@ namespace ClearCanvas.Ris.Application.Common
 			public const string WorkQueue = "RIS/Management/Work Queue";
 		}
 
+#if DEBUG	// these tokens should not be available in production builds
 		/// <summary>
 		/// Tokens that allow access to development tools and functionality.
 		/// </summary>
@@ -95,6 +96,7 @@ namespace ClearCanvas.Ris.Application.Common
 			[AuthorityToken(Description = "Allow usage of the tool for manual publication of radiology reports.")]
 			public const string TestPublishReport = "RIS/Development/Test Publish";
 		}
+#endif
 
 		/// <summary>
 		/// Tokens that permit workflow actions.
