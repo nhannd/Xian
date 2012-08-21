@@ -65,16 +65,16 @@ namespace ClearCanvas.Enterprise.Core.Printing {
         }
         
         /// <summary>
-        /// The port that the embedded HTTP proxy server will listen on.   Change this value if there is a port conflict.
+        /// Specifies a range of at least 2 ports that the embedded HTTP proxy server can listen on.  Change this value if there is a port conflict.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("The port that the embedded HTTP proxy server will listen on.   Change this value " +
-            "if there is a port conflict.")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies a range of at least 2 ports that the embedded HTTP proxy server can lis" +
+            "ten on.  Change this value if there is a port conflict.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("55355")]
-        public string HttpProxyServerPort {
+        [global::System.Configuration.DefaultSettingValueAttribute("55355-55356")]
+        public string HttpProxyServerPortRange {
             get {
-                return ((string)(this["HttpProxyServerPort"]));
+                return ((string)(this["HttpProxyServerPortRange"]));
             }
         }
     }

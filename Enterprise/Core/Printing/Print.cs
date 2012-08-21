@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 using ClearCanvas.Common;
@@ -172,17 +173,25 @@ namespace ClearCanvas.Enterprise.Core.Printing
 		{
 			try
 			{
+				var settings = new PrintSettings();
+				var portRange = GetPortRange(settings.HttpProxyServerPortRange);
 				Platform.Log(LogLevel.Info, "Starting print server...");
-				_httpServer = new HttpServer(string.Format("{0}:{1}/", LocalHost, new PrintSettings().HttpProxyServerPort));
-				_httpServer.Start();
-				Platform.Log(LogLevel.Info, "Print server started.");
+
+				foreach (var port in portRange)
+				{
+					if(TryStartHttpServer(port, out _httpServer))
+					{
+						Platform.Log(LogLevel.Info, "Print server started on port {0}.", port);
+						return;
+					}
+				}
+				Platform.Log(LogLevel.Error, "Unable to start print server on any port in range {0}.", portRange);
 			}
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e);
 			}
 		}
-
 
 		public static Result Run(IPrintModel printModel)
 		{
@@ -354,6 +363,39 @@ namespace ClearCanvas.Enterprise.Core.Printing
 		{
 			_error = true;
 			_errorMessage = message;
+		}
+
+		private static bool TryStartHttpServer(int port, out HttpServer server)
+		{
+			try
+			{
+				server = new HttpServer(string.Format("{0}:{1}/", LocalHost, port));
+				server.Start();
+				return true;
+			}
+			catch (HttpListenerException)
+			{
+				server = null;
+				return false;
+			}
+		}
+
+		private static IEnumerable<int> GetPortRange(string portRangeString)
+		{
+			if (!string.IsNullOrEmpty(portRangeString))
+			{
+				var match = Regex.Match(portRangeString, @"^\s*(\d+)\s*\-\s*(\d+)\s*$");
+				if (match.Success)
+				{
+					var lower = int.Parse(match.Groups[1].Value);
+					var upper = int.Parse(match.Groups[2].Value);
+					if (upper > lower)
+					{
+						return Enumerable.Range(lower, upper - lower + 1);
+					}
+				}
+			}
+			throw new PrintException("PrintSettings.HttpProxyServerPortRange must specify a valid port range in the form e.g. 10000-10005.");
 		}
 	}
 }
