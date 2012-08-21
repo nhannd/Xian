@@ -31,16 +31,7 @@ namespace ClearCanvas.Dicom.Utilities.Command
         private EventHandler _executingEventHandlers;
 
         #endregion
-
-        #region Public property
-
-        /// <summary>
-        /// Gets the <see cref="CommandStatistics"/> of the command.
-        /// </summary>
-        public CommandStatistics Statistics { get; private set; }
-
-        #endregion
-
+        
         #region Constructor
         /// <summary>
         /// Constructor for a ServerCommand.
@@ -56,6 +47,12 @@ namespace ClearCanvas.Dicom.Utilities.Command
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets the <see cref="CommandStatistics"/> of the command.
+        /// </summary>
+        [XmlIgnore]
+        public CommandStatistics Statistics { get; private set; }
 
         /// <summary>
         /// Gets and sets a value describing what the command is doing.
