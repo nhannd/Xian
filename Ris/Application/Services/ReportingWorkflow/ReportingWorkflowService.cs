@@ -694,10 +694,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 		public bool CanPublishReport(ReportingWorklistItemKey itemKey)
 		{
+#if DEBUG
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.TestPublishReport))
 				return false;
 
 			return CanExecuteOperation(new Operations.PublishReport(), itemKey);
+#else
+			return false;
+#endif
 		}
 
 		public bool CanSaveReport(ReportingWorklistItemKey itemKey)
