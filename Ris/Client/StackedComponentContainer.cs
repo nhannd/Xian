@@ -29,6 +29,8 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(StackedComponentContainerViewExtensionPoint))]
 	public class StackedComponentContainer : PagedComponentContainer<StackedComponentContainer.StackedComponentContainerPage>
 	{
+		private StackedComponentContainerPage _initialPage;
+
 		public class StackedComponentContainerPage : ContainerPage
 		{
 			public StackedComponentContainerPage(IApplicationComponent component)
@@ -46,10 +48,24 @@ namespace ClearCanvas.Ris.Client
 				this.Pages.Add(page);
 			}
 
-			// work around an issue with the PagedComponentContainer, where setting CurrentPage 
-			// when the component is not started causes problems
-			if(this.IsStarted)
+			if (this.IsStarted)
+			{
 				this.CurrentPage = page;
+			}
+			else
+			{
+				// work around an issue with the PagedComponentContainer, where setting CurrentPage 
+				// when the component is not started causes problems
+				_initialPage = page;
+			}
+		}
+
+		public override void Start()
+		{
+			base.Start();
+
+			// set the correct initial page
+			this.CurrentPage = _initialPage;
 		}
 	}
 }
