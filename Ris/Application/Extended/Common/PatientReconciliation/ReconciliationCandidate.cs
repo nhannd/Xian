@@ -10,12 +10,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Serialization;
 using System.Runtime.Serialization;
+using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
+namespace ClearCanvas.Ris.Application.Extended.Common.PatientReconciliation
 {
     [DataContract]
     public class ReconciliationCandidate : DataContractBase

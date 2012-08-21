@@ -9,22 +9,25 @@
 
 #endregion
 
-using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
+using System.Collections.Generic;
 
-namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
+namespace ClearCanvas.Ris.Application.Extended.Common.PatientReconciliation
 {
     [DataContract]
-    public class ListPatientReconciliationMatchesRequest : DataContractBase
+    public class ReconcilePatientsRequest : DataContractBase
     {
-        public ListPatientReconciliationMatchesRequest(EntityRef patientProfileRef)
+        public ReconcilePatientsRequest(List<EntityRef> patientRefs)
         {
-            this.PatientProfileRef = patientProfileRef;
+            this.PatientRefs = patientRefs;
         }
 
+        /// <summary>
+        /// The set of patients to reconcile
+        /// </summary>
         [DataMember]
-        public EntityRef PatientProfileRef;
+        public List<EntityRef> PatientRefs;
     }
 }

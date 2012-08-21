@@ -9,22 +9,19 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.PatientReconciliation;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.PatientReconciliation;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Extended.Common.PatientReconciliation;
 
-namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
+namespace ClearCanvas.Ris.Application.Extended.Services.PatientReconciliation
 {
     public class PatientProfileDiffAssembler
     {
         public PatientProfileDiff CreatePatientProfileDiff(PatientProfile left, PatientProfile right, IList<DiscrepancyTestResult> results)
         {
-            PatientProfileDiff diff = new PatientProfileDiff();
+            var diff = new PatientProfileDiff();
             diff.LeftProfileAssigningAuthority = left.Mrn.AssigningAuthority.Code;
             diff.RightProfileAssigningAuthority = right.Mrn.AssigningAuthority.Code;
 
@@ -44,12 +41,11 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
 
         private PropertyDiff CreatePropertyDiff(PatientProfileDiscrepancy discrepancy, IList<DiscrepancyTestResult> results)
         {
-            DiscrepancyTestResult result = CollectionUtils.SelectFirst<DiscrepancyTestResult>(results,
-                delegate(DiscrepancyTestResult r) { return r.Discrepancy == discrepancy; });
+            var result = CollectionUtils.SelectFirst<DiscrepancyTestResult>(results, r => r.Discrepancy == discrepancy);
 
             if (result != null)
             {
-                PropertyDiff propDiff = new PropertyDiff();
+                var propDiff = new PropertyDiff();
                 propDiff.IsDiscrepant = result.IsDiscrepant;
                 propDiff.AlignedLeftValue = result.Diff.AlignedLeft;
                 propDiff.AlignedRightValue = result.Diff.AlignedRight;

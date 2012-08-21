@@ -9,11 +9,11 @@
 
 #endregion
 
-using System;
 using System.ServiceModel;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
+namespace ClearCanvas.Ris.Application.Extended.Common.PatientReconciliation
 {
     /// <summary>
     /// Provides patient reconcilliation services

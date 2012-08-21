@@ -9,22 +9,20 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Ris.Application.Common.PatientReconciliation;
 using ClearCanvas.Healthcare.PatientReconciliation;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Ris.Application.Extended.Common.PatientReconciliation;
+using ClearCanvas.Ris.Application.Services;
 
-namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
+namespace ClearCanvas.Ris.Application.Extended.Services.PatientReconciliation
 {
     public class ReconciliationCandidateAssembler
     {
         public ReconciliationCandidate CreateReconciliationCandidate(PatientProfileMatch profileMatch, IPersistenceContext context)
         {
-            ReconciliationCandidate rc = new ReconciliationCandidate();
+            var rc = new ReconciliationCandidate();
 
-            PatientProfileAssembler profileAssembler = new PatientProfileAssembler();
+            var profileAssembler = new PatientProfileAssembler();
             rc.PatientProfile = profileAssembler.CreatePatientProfileSummary(profileMatch.PatientProfile, context);
             switch (profileMatch.Score)
             {

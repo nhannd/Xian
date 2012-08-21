@@ -9,13 +9,10 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
 
-namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
+namespace ClearCanvas.Ris.Application.Extended.Common.PatientReconciliation
 {
     [DataContract]
     public class PatientProfileDiff : DataContractBase

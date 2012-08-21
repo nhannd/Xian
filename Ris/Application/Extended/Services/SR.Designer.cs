@@ -68,5 +68,14 @@ namespace ClearCanvas.Ris.Application.Extended.Services {
                 return ResourceManager.GetString("ExceptionFailedToDelete", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to At least 2 patients must be specified for reconciliation.
+        /// </summary>
+        internal static string ExceptionReconciliationRequiresAtLeast2Patients {
+            get {
+                return ResourceManager.GetString("ExceptionReconciliationRequiresAtLeast2Patients", resourceCulture);
+            }
+        }
     }
 }

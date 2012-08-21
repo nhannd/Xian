@@ -15,7 +15,7 @@ using System.Text;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.PatientReconciliation;
+using ClearCanvas.Ris.Application.Extended.Common.PatientReconciliation;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
@@ -99,7 +99,6 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 
 				_values.Add(new Value(leftSegments));
 				_values.Add(new Value(rightSegments));
-				return;
 			}
 
 			[DataMember]

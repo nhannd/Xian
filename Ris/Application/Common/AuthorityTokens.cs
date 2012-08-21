@@ -163,9 +163,6 @@ namespace ClearCanvas.Ris.Application.Common
 
 				[AuthorityToken(Description = "Allow updating of Patient records (excluding Patient Profile information).")]
 				public const string Update = "RIS/Workflow/Patient/Update";
-
-				[AuthorityToken(Description = "Allow reconciliation of existing Patient records.")]
-				public const string Reconcile = "RIS/Workflow/Patient/Reconcile";
 			}
 
 			public static class PatientProfile

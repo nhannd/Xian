@@ -9,26 +9,25 @@
 
 #endregion
 
-using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
-using System.Collections.Generic;
 
-namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
+namespace ClearCanvas.Ris.Application.Extended.Common.PatientReconciliation
 {
     [DataContract]
-    public class ListProfilesForPatientsRequest : DataContractBase
+    public class LoadPatientProfileDiffRequest : DataContractBase
     {
-        public ListProfilesForPatientsRequest(List<EntityRef> patientRefs)
+        public LoadPatientProfileDiffRequest(EntityRef leftProfile, EntityRef rightProfile)
         {
-            this.PatientRefs = patientRefs;
+            this.LeftProfileRef = leftProfile;
+            this.RightProfileRef = rightProfile;
         }
 
-        /// <summary>
-        /// The set of patients that will be reconciled
-        /// </summary>
         [DataMember]
-        public List<EntityRef> PatientRefs;
+        public EntityRef LeftProfileRef;
+
+        [DataMember]
+        public EntityRef RightProfileRef;
     }
 }

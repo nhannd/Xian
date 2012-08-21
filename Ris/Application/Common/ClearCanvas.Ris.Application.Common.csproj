@@ -538,17 +538,6 @@
     <Compile Include="BrowsePatientData\LoadPatientProfileFormDataResponse.cs" />
     <Compile Include="PatientProfileDetail.cs" />
     <Compile Include="PatientProfileSummary.cs" />
-    <Compile Include="PatientReconciliation\IPatientReconciliationService.cs" />
-    <Compile Include="PatientReconciliation\ListPatientReconciliationMatchesRequest.cs" />
-    <Compile Include="PatientReconciliation\ListPatientReconciliationMatchesResponse.cs" />
-    <Compile Include="PatientReconciliation\LoadPatientProfileDiffRequest.cs" />
-    <Compile Include="PatientReconciliation\LoadPatientProfileDiffResponse.cs" />
-    <Compile Include="PatientReconciliation\PatientProfileDiff.cs" />
-    <Compile Include="PatientReconciliation\ReconciliationCandidate.cs" />
-    <Compile Include="PatientReconciliation\ReconcilePatientsRequest.cs" />
-    <Compile Include="PatientReconciliation\ReconcilePatientsResponse.cs" />
-    <Compile Include="PatientReconciliation\ListProfilesForPatientsRequest.cs" />
-    <Compile Include="PatientReconciliation\ListProfilesForPatientsResponse.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="PersonNameDetail.cs" />
     <Compile Include="BrowsePatientData\GetReportDetailRequest.cs" />

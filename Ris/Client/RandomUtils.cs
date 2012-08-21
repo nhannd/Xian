@@ -24,7 +24,6 @@ using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
-using ClearCanvas.Ris.Application.Common.PatientReconciliation;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -129,78 +128,79 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		/// <summary>
-		/// Creates a new patient with multiple profiles.
-		/// </summary>
-		/// <returns></returns>
-		public static PatientProfileSummary CreatePatient(String[] InfoAuth)
-		{
-			var result=new List<PatientProfileSummary>();
+		// JR: this method won't compile anymore since the reconciliation service was moved to the Extended plugins... do we really need it?
+		///// <summary>
+		///// Creates a new patient with multiple profiles.
+		///// </summary>
+		///// <returns></returns>
+		//public static PatientProfileSummary CreatePatient(String[] InfoAuth)
+		//{
+		//    var result=new List<PatientProfileSummary>();
 
-			if (InfoAuth.Length==0)
-				result.Add(CreatePatient());
-			else
-			{
-				var timespan = new TimeSpan(GetRandomInteger(0,100 * 365 * 24), 0, 0);
-				InitReferenceDataCacheOnce();
-				var birthDate = Platform.Time - timespan;
+		//    if (InfoAuth.Length==0)
+		//        result.Add(CreatePatient());
+		//    else
+		//    {
+		//        var timespan = new TimeSpan(GetRandomInteger(0,100 * 365 * 24), 0, 0);
+		//        InitReferenceDataCacheOnce();
+		//        var birthDate = Platform.Time - timespan;
 
-				var profile = new PatientProfileDetail
-					{
-						Healthcard = new HealthcardDetail(
-							GenerateRandomIntegerString(10),
-							ChooseRandom(_patientEditorFormData.HealthcardAssigningAuthorityChoices),
-							"", null),
-						DateOfBirth = birthDate,
-						Sex = ChooseRandom(_patientEditorFormData.SexChoices),
-						PrimaryLanguage = ChooseRandom(_patientEditorFormData.PrimaryLanguageChoices),
-						Religion = ChooseRandom(_patientEditorFormData.ReligionChoices),
-						DeathIndicator = false,
-						TimeOfDeath = null
-					};
+		//        var profile = new PatientProfileDetail
+		//            {
+		//                Healthcard = new HealthcardDetail(
+		//                    GenerateRandomIntegerString(10),
+		//                    ChooseRandom(_patientEditorFormData.HealthcardAssigningAuthorityChoices),
+		//                    "", null),
+		//                DateOfBirth = birthDate,
+		//                Sex = ChooseRandom(_patientEditorFormData.SexChoices),
+		//                PrimaryLanguage = ChooseRandom(_patientEditorFormData.PrimaryLanguageChoices),
+		//                Religion = ChooseRandom(_patientEditorFormData.ReligionChoices),
+		//                DeathIndicator = false,
+		//                TimeOfDeath = null
+		//            };
 
-				profile.Name = new PersonNameDetail
-					{
-						FamilyName = GetRandomNameFromFile(RandomUtilsSettings.Default.FamilyNameDictionary),
-						GivenName = profile.Sex.Code == "F"
-							? GetRandomNameFromFile(RandomUtilsSettings.Default.FemaleNameDictionary) + " Anonymous"
-							: GetRandomNameFromFile(RandomUtilsSettings.Default.MaleNameDictionary) + " Anonymous"
-					};
+		//        profile.Name = new PersonNameDetail
+		//            {
+		//                FamilyName = GetRandomNameFromFile(RandomUtilsSettings.Default.FamilyNameDictionary),
+		//                GivenName = profile.Sex.Code == "F"
+		//                    ? GetRandomNameFromFile(RandomUtilsSettings.Default.FemaleNameDictionary) + " Anonymous"
+		//                    : GetRandomNameFromFile(RandomUtilsSettings.Default.MaleNameDictionary) + " Anonymous"
+		//            };
 
-				AddPatientResponse addResponse = null;
+		//        AddPatientResponse addResponse = null;
 
-				for(var i=0; i<InfoAuth.Length; i++)
-				{
-					profile.Mrn = new CompositeIdentifierDetail(
-						GenerateRandomIntegerString(10),
-						CollectionUtils.SelectFirst(_patientEditorFormData.MrnAssigningAuthorityChoices, MAAC => MAAC.Code == InfoAuth[i]));
+		//        for(var i=0; i<InfoAuth.Length; i++)
+		//        {
+		//            profile.Mrn = new CompositeIdentifierDetail(
+		//                GenerateRandomIntegerString(10),
+		//                CollectionUtils.SelectFirst(_patientEditorFormData.MrnAssigningAuthorityChoices, MAAC => MAAC.Code == InfoAuth[i]));
 
-					Platform.GetService(
-						delegate(IPatientAdminService service)
-						{
-							addResponse = service.AddPatient(new AddPatientRequest(profile));
-						});
+		//            Platform.GetService(
+		//                delegate(IPatientAdminService service)
+		//                {
+		//                    addResponse = service.AddPatient(new AddPatientRequest(profile));
+		//                });
 
-					result.Add(addResponse.PatientProfile);
-				}
+		//            result.Add(addResponse.PatientProfile);
+		//        }
 
-				if (InfoAuth.Length > 1)
-				{
-					//reconcile patients
-					var checkedPatients = new List<EntityRef>();
-					foreach (var pps in result)
-					{
-						checkedPatients.Add(pps.PatientRef);
-					}
+		//        if (InfoAuth.Length > 1)
+		//        {
+		//            //reconcile patients
+		//            var checkedPatients = new List<EntityRef>();
+		//            foreach (var pps in result)
+		//            {
+		//                checkedPatients.Add(pps.PatientRef);
+		//            }
 
-					// reconcile
-					Platform.GetService<IPatientReconciliationService>(
-						service => service.ReconcilePatients(new ReconcilePatientsRequest(checkedPatients)));
-				}
-			}
+		//            // reconcile
+		//            Platform.GetService<IPatientReconciliationService>(
+		//                service => service.ReconcilePatients(new ReconcilePatientsRequest(checkedPatients)));
+		//        }
+		//    }
 
-			return result[0];
-		}
+		//    return result[0];
+		//}
 
 		/// <summary>
 		/// Creates a new patient with a single profile.

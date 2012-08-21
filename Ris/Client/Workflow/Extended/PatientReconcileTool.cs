@@ -10,16 +10,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended
@@ -29,7 +25,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
     [Tooltip("apply", "Reconcile patient profiles")]
 	[IconSet("apply", IconScheme.Colour, "Icons.ReconcilePatientToolSmall.png", "Icons.ReconcilePatientToolMedium.png", "Icons.ReconcilePatientToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Reconcile)]
+    [ActionPermission("apply", ClearCanvas.Ris.Application.Extended.Common.AuthorityTokens.Workflow.Patient.Reconcile)]
 
     [ExtensionOf(typeof(PatientBiographyToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]

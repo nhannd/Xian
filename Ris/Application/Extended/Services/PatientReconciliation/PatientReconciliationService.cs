@@ -20,10 +20,11 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.PatientReconciliation;
 using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.PatientReconciliation;
+using ClearCanvas.Ris.Application.Extended.Common.PatientReconciliation;
+using ClearCanvas.Ris.Application.Services;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
-namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
+namespace ClearCanvas.Ris.Application.Extended.Services.PatientReconciliation
 {
 	[ServiceImplementsContract(typeof(IPatientReconciliationService))]
 	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
@@ -93,7 +94,7 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
 		}
 
 		[UpdateOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Patient.Reconcile)]
+		[PrincipalPermission(SecurityAction.Demand, Role = Common.AuthorityTokens.Workflow.Patient.Reconcile)]
 		public ReconcilePatientsResponse ReconcilePatients(ReconcilePatientsRequest request)
 		{
 			var patients = CollectionUtils.Map<EntityRef, Patient, List<Patient>>(

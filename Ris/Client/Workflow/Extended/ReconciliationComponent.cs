@@ -17,7 +17,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.PatientReconciliation;
+using ClearCanvas.Ris.Application.Extended.Common.PatientReconciliation;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended
 {

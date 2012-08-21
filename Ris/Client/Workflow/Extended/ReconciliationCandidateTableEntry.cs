@@ -10,16 +10,14 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Application.Common.PatientReconciliation;
+using ClearCanvas.Ris.Application.Extended.Common.PatientReconciliation;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
     class ReconciliationCandidateTableEntry
     {
-        private ReconciliationCandidate _profileMatch;
+        private readonly ReconciliationCandidate _profileMatch;
         private bool _checked;
         private event EventHandler _checkedChanged;
 

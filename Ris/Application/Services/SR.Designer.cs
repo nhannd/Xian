@@ -296,15 +296,6 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to At least 2 patients must be specified for reconciliation.
-        /// </summary>
-        internal static string ExceptionReconciliationRequiresAtLeast2Patients {
-            get {
-                return ResourceManager.GetString("ExceptionReconciliationRequiresAtLeast2Patients", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to A staff with the name {0}, {1} already exists.
         /// </summary>
         internal static string ExceptionStaffAlreadyExist {

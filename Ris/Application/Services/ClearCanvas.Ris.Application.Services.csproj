@@ -170,9 +170,6 @@
     <Compile Include="ModalityWorkflow\ModalityWorkflowService.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorkflowAssembler.cs" />
     <Compile Include="PatientProfileAssembler.cs" />
-    <Compile Include="PatientReconciliation\PatientProfileDiffAssembler.cs" />
-    <Compile Include="PatientReconciliation\PatientReconciliationService.cs" />
-    <Compile Include="PatientReconciliation\ReconciliationCandidateAssembler.cs" />
     <Compile Include="PersonNameAssembler.cs" />
     <Compile Include="BrowsePatientData\BrowsePatientDataService.cs" />
     <Compile Include="BrowsePatientData\BrowsePatientDataAssembler.cs" />

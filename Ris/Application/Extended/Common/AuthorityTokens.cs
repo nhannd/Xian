@@ -35,6 +35,12 @@ namespace ClearCanvas.Ris.Application.Extended.Common
 		/// </summary>
 		public static class Workflow
 		{
+			public static class Patient
+			{
+				[AuthorityToken(Description = "Allow reconciliation of existing Patient records.")]
+				public const string Reconcile = "RIS/Workflow/Patient/Reconcile";
+			}
+
 			public static class Protocol
 			{
 				[AuthorityToken(Description = "Allow access to the Protocol Editor and creation of procedure protocols.")]

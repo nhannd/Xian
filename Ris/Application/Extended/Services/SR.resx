@@ -120,4 +120,7 @@
   <data name="ExceptionFailedToDelete" xml:space="preserve">
     <value>Unable to delete {0}.  The most likely reason is that the item is referenced by another item in the system.</value>
   </data>
+  <data name="ExceptionReconciliationRequiresAtLeast2Patients" xml:space="preserve">
+    <value>At least 2 patients must be specified for reconciliation</value>
+  </data>
 </root>

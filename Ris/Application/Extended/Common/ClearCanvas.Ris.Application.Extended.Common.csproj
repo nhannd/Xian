@@ -81,6 +81,17 @@
     <Compile Include="OrderNotes\OrderNoteboxItemSummary.cs" />
     <Compile Include="OrderNotes\QueryNoteboxRequest.cs" />
     <Compile Include="OrderNotes\QueryNoteboxResponse.cs" />
+    <Compile Include="PatientReconciliation\IPatientReconciliationService.cs" />
+    <Compile Include="PatientReconciliation\ListPatientReconciliationMatchesRequest.cs" />
+    <Compile Include="PatientReconciliation\ListPatientReconciliationMatchesResponse.cs" />
+    <Compile Include="PatientReconciliation\ListProfilesForPatientsRequest.cs" />
+    <Compile Include="PatientReconciliation\ListProfilesForPatientsResponse.cs" />
+    <Compile Include="PatientReconciliation\LoadPatientProfileDiffRequest.cs" />
+    <Compile Include="PatientReconciliation\LoadPatientProfileDiffResponse.cs" />
+    <Compile Include="PatientReconciliation\PatientProfileDiff.cs" />
+    <Compile Include="PatientReconciliation\ReconcilePatientsRequest.cs" />
+    <Compile Include="PatientReconciliation\ReconcilePatientsResponse.cs" />
+    <Compile Include="PatientReconciliation\ReconciliationCandidate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtocollingWorkflow\AcceptProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\AcceptProtocolResponse.cs" />

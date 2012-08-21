@@ -9,16 +9,11 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common.PatientReconciliation;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
