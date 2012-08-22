@@ -18,6 +18,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
@@ -332,10 +333,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _detailsPagesHost; }
 		}
 
-		#endregion
-
-		#region Tool Click Handlers
-
 		private void StopPerformedProcedureStep()
 		{
 			// bail if no selected step (this shouldn't ever happen)
@@ -385,6 +382,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				// notify pages that selection has been updated
 				EventsHelper.Fire(_selectedMppsChanged, this, EventArgs.Empty);
+
+				NotifyPerformedProcedureStepComplete();
 			}
 			catch (Exception e)
 			{
@@ -439,6 +438,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				// notify pages that selection has been updated
 				EventsHelper.Fire(_selectedMppsChanged, this, EventArgs.Empty);
+
+				NotifyPerformedProcedureStepComplete();
 			}
 			catch (Exception e)
 			{
@@ -449,6 +450,35 @@ namespace ClearCanvas.Ris.Client.Workflow
 		#endregion
 
 		#region Private Methods
+
+		private void NotifyPerformedProcedureStepComplete()
+		{
+			var args = new WorkflowEventListener.PerformedProcedureStepCompletedArgs
+			{
+				AccessionNumber = _worklistItem.AccessionNumber,
+				CompletedTime = (DateTime)_selectedMpps.EndTime,
+				ProcedureType = _worklistItem.ProcedureName,
+				PatientProfile = new WorkflowEventListener.PatientProfileInfo
+				{
+					FamilyName = _worklistItem.PatientName.FamilyName,
+					GivenName = _worklistItem.PatientName.GivenName,
+					Id = _worklistItem.Mrn.Id,
+				}
+			};
+
+			// need to contact the server to populate the DateOfBirth and Sex fields
+			Platform.GetService<IBrowsePatientDataService>(service =>
+			{
+				var profileRequest = new GetPatientProfileDetailRequest { PatientProfileRef = _worklistItem.PatientProfileRef };
+				var profile = service.GetData(new GetDataRequest { GetPatientProfileDetailRequest = profileRequest })
+					.GetPatientProfileDetailResponse.PatientProfile;
+
+				args.PatientProfile.Sex = profile.Sex.Value;
+				args.PatientProfile.BirthDate = profile.DateOfBirth;
+			});
+
+			WorkflowEventPublisher.Instance.PerformedProcedureStepCompleted(args);
+		}
 
 		private void OnSelectedMppsChanged(ModalityPerformedProcedureStepDetail newSelection)
 		{

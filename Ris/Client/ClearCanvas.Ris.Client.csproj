@@ -251,6 +251,7 @@
     <Compile Include="VisitSummaryComponent.cs" />
     <Compile Include="VisitSummaryTable.cs" />
     <Compile Include="WeakSearchCriteriaException.cs" />
+    <Compile Include="WorkflowEventPublisher.cs" />
     <Compile Include="WorkflowHistoryComponent.cs" />
     <Compile Include="WorklistDetailEditorComponent.cs" />
     <Compile Include="WorklistDetailEditorComponentBase.cs" />
