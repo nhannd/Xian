@@ -89,12 +89,12 @@ namespace ClearCanvas.ImageServer.Core.Edit.Test
                 cmd.Apply(file);
                 Assert.Fail("DicomCharacterSetException is expected");
             }
-            catch(DicomCharacterSetException ex)
+            catch(DicomCharacterSetException)
             {
                 // good
                 return;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 Assert.Fail("DicomCharacterSetException is expected");
             }
@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageServer.Core.Edit.Test
             {
                 File.Delete(file);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //ignore
             }
