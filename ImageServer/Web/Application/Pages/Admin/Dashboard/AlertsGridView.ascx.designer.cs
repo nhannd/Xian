@@ -22,6 +22,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard {
         protected global::System.Web.UI.WebControls.Table ContainerTable;
         
         /// <summary>
+        /// GridPagerTop control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerTop;
+        
+        /// <summary>
         /// AlertDataSourceObject control.
         /// </summary>
         /// <remarks>
