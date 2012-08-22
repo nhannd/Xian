@@ -86,7 +86,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 
 			Assert.AreEqual(1, ruleSet.Rules.Count);
 			object rule = ruleSet.Rules[0];
-			Assert.IsInstanceOfType(typeof(LengthSpecification), rule);
+			Assert.IsInstanceOf<LengthSpecification>(rule);
 			var property = CollectionUtils.FirstElement((rule as IPropertyBoundRule).Properties);
 			Assert.AreEqual(typeof(FooA).GetProperty("Name"), property);
 
@@ -107,7 +107,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling.Tests
 
 			Assert.AreEqual(1, ruleSet.Rules.Count);
 			object rule = ruleSet.Rules[0];
-			Assert.IsInstanceOfType(typeof(RequiredSpecification), rule);
+			Assert.IsInstanceOf<RequiredSpecification>(rule);
 			var property = CollectionUtils.FirstElement((rule as IPropertyBoundRule).Properties);
 			Assert.AreEqual(typeof(FooB).GetProperty("Name"), property);
 

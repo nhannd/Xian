@@ -908,7 +908,7 @@ namespace ClearCanvas.Dicom.Iod.Modules.Tests
             DicomUncompressedPixelData pd = new DicomUncompressedPixelData(dataset);
 
             OverlayPlane overlayPlane = new OverlayPlane(overlayIndex, dataset);
-            Assert.IsTrue(overlayPlane.ConvertEmbeddedOverlay(pd),"Failed to convert to Non-Embedded overlay plane.");
+            Assert.IsTrue(overlayPlane.ExtractEmbeddedOverlay(pd), "Failed to convert to Non-Embedded overlay plane.");
 
             
             int actualOverlayFrame;
