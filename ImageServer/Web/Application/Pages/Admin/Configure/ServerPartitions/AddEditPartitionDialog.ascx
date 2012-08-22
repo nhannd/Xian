@@ -135,6 +135,11 @@
                                             </tr>
                                         </table>
                                     </td>
+                                    <td>
+                                          <asp:CheckBox ID="AcceptLatestReportCheckBox" runat="server" Text="<%$Resources: InputLabels, AcceptLatestReport %>" CssClass="DialogCheckBox"
+                                                        ToolTip="<%$Resources:Tooltips, AdminPartition_AddEditDialog_AcceptLatestReport %>" />
+
+                                    </td>
                                 </tr>
                             </table>
                         </asp:Panel>
