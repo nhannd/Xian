@@ -259,9 +259,6 @@ namespace ClearCanvas.Ris.Client
 						_profileRef = response.PatientProfile.PatientProfileRef;
 					}
 				});
-
-			if (_documentSummary != null)
-				_documentSummary.SaveChanges();
 		}
 
 		private void SynchronizeAttachedDocumentChanges()

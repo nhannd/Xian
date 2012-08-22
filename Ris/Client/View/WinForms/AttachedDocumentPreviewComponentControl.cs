@@ -27,21 +27,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			InitializeComponent();
 			_component = component;
 
-			_attachments.ShowToolbar = !_component.Readonly;
+			_attachments.ShowToolbar = true;
 
 			_attachments.Table = _component.AttachmentTable;
+			_attachments.MenuModel = _component.AttachmentActionModel;
+			_attachments.ToolbarModel = _component.AttachmentActionModel;
 
-			if (!_component.Readonly)
-			{
-				_attachments.MenuModel = _component.AttachmentActionModel;
-				_attachments.ToolbarModel = _component.AttachmentActionModel;
-
-			}
 			_attachments.DataBindings.Add("Selection", _component, "Selection", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			var preview = (Control)_component.PreviewHost.ComponentView.GuiElement;
-			preview.Dock = DockStyle.Fill;
-			_splitContainer.Panel2.Controls.Add(preview);
 		}
 
 		private void AttachedDocumentPreviewComponentControl_Load(object sender, System.EventArgs e)

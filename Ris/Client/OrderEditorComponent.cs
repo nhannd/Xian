@@ -206,8 +206,6 @@ namespace ClearCanvas.Ris.Client
 		private List<EnumValueInfo> _lateralityChoices;
 		private List<EnumValueInfo> _schedulingCodeChoices;
 
-		private event EventHandler _changeCommitted;
-
 		private readonly OrderNoteSummaryComponent _noteSummaryComponent;
 		private readonly AttachedDocumentPreviewComponent _attachmentSummaryComponent;
 		private readonly List<AttachmentSummary> _newAttachments = new List<AttachmentSummary>();
@@ -288,7 +286,6 @@ namespace ClearCanvas.Ris.Client
 
 			_attachmentSummaryComponent = new AttachedDocumentPreviewComponent(false, AttachmentSite.Order);
 			_attachmentSummaryComponent.ModifiedChanged += ((sender, args) => this.Modified = true);
-			this.ChangeCommitted += ((sender, args) => _attachmentSummaryComponent.SaveChanges());
 
 			_extensionPageContext = new OrderEditorContext(this);
 		}
@@ -914,12 +911,6 @@ namespace ClearCanvas.Ris.Client
 			_recipientsActionModel.Delete.Enabled = (_selectedRecipient != null);
 		}
 
-		public event EventHandler ChangeCommitted
-		{
-			add { _changeCommitted += value; }
-			remove { _changeCommitted -= value; }
-		}
-
 		public void Accept()
 		{
 			CheckIfOrderShouldBeCancelled();
@@ -1181,8 +1172,6 @@ namespace ClearCanvas.Ris.Client
 			try
 			{
 				_orderRef = _operatingContext.Submit(requisition, this);
-
-				EventsHelper.Fire(_changeCommitted, this, EventArgs.Empty);
 				return true;
 			}
 			catch (Exception e)

@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Serialization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -47,7 +46,7 @@ namespace ClearCanvas.Ris.Client
 
 		void AddAttachment(AttachedDocumentSummary document, EnumValueInfo category);
 		void RemoveSelectedAttachment();
-		event EventHandler ChangeCommitted;
+		void OpenSelectedAttachment();
 		bool IsReadonly { get; }
 
 		IDesktopWindow DesktopWindow { get; }
@@ -108,10 +107,9 @@ namespace ClearCanvas.Ris.Client
 				_component.RemoveSelectedAttachment();
 			}
 
-			public event EventHandler ChangeCommitted
+			public void OpenSelectedAttachment()
 			{
-				add { _component.ChangeCommited += value; }
-				remove { _component.ChangeCommited -= value; }
+				_component.OpenAttachment();
 			}
 
 			public IDesktopWindow DesktopWindow
@@ -127,43 +125,13 @@ namespace ClearCanvas.Ris.Client
 			#endregion
 		}
 
-		class AttachedDocumentDHtmlPreviewComponent : DHtmlComponent
-		{
-			private readonly AttachedDocumentPreviewComponent _component;
-
-			public AttachedDocumentDHtmlPreviewComponent(AttachedDocumentPreviewComponent component)
-			{
-				_component = component;
-				this.SetUrl(this.PreviewUrl);
-			}
-
-			protected override DataContractBase GetHealthcareContext()
-			{
-				return _component.SelectedDocument;
-			}
-
-			public string PreviewUrl
-			{
-				get { return WebResourcesSettings.Default.AttachedDocumentPreviewUrl; }
-			}
-
-			public void Refresh()
-			{
-				this.SetUrl(this.PreviewUrl);
-			}
-		}
-
 		// Summary component members
 		private AttachmentSite _site;
 		private AttachmentSummary _selectedAttachment;
 		private AttachmentSummary _initialSelection;
-		private event EventHandler _changeCommitted;
 		private event EventHandler _selectedDocumentChanged;
 
 		private readonly AttachmentSummaryTable _patientAttachmentTable;
-
-		private AttachedDocumentDHtmlPreviewComponent _previewComponent;
-		private ChildComponentHost _previewComponentHost;
 
 		private ToolSet _toolSet;
 		private readonly bool _readonly;
@@ -188,10 +156,6 @@ namespace ClearCanvas.Ris.Client
 		{
 			_toolSet = new ToolSet(new AttachedDocumentToolExtensionPoint(), new AttachedDocumentToolContext(this));
 
-			_previewComponent = new AttachedDocumentDHtmlPreviewComponent(this);
-			_previewComponentHost = new ChildComponentHost(this.Host, _previewComponent);
-			_previewComponentHost.StartComponent();
-
 			if (_site == AttachmentSite.Patient)
 				LoadPatientAttachments();
 			else
@@ -202,29 +166,12 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Stop()
 		{
-			if (_previewComponentHost != null)
-			{
-				_previewComponentHost.StopComponent();
-				_previewComponentHost = null;
-			}
-
 			_toolSet.Dispose();
 
 			base.Stop();
 		}
 
-		public void SaveChanges()
-		{
-			EventsHelper.Fire(_changeCommitted, this, EventArgs.Empty);
-		}
-
 		#region Events
-
-		public event EventHandler ChangeCommited
-		{
-			add { _changeCommitted += value; }
-			remove { _changeCommitted -= value; }
-		}
 
 		public event EventHandler SelectedDocumentChanged
 		{
@@ -235,11 +182,6 @@ namespace ClearCanvas.Ris.Client
 		#endregion
 
 		#region Presentation Models
-
-		public ApplicationComponentHost PreviewHost
-		{
-			get { return _previewComponentHost; }
-		}
 
 		public bool Readonly
 		{
@@ -318,24 +260,13 @@ namespace ClearCanvas.Ris.Client
 					_selectedAttachment = newSelection;
 					NotifyPropertyChanged("Selection");
 					EventsHelper.Fire(_selectedDocumentChanged, this, EventArgs.Empty);
-					_previewComponent.Refresh();
 				}
 			}
 		}
 
 		public void DoubleClickedSelectedAttachment()
 		{
-			var document = this.SelectedDocument;
-			if (document == null)
-				return;
-
-			// open the document in external viewer
-			BlockingOperation.Run(delegate
-				{
-					var localUri = AttachedDocument.DownloadFile(document);
-					Process.Start(localUri);
-				});
-
+			OpenAttachment();
 		}
 
 		public void OnControlLoad()
@@ -375,6 +306,19 @@ namespace ClearCanvas.Ris.Client
 
 			this.AttachmentTable.Items.Remove(_selectedAttachment);
 			this.Modified = true;
+		}
+
+		private void OpenAttachment()
+		{
+			var document = this.SelectedDocument;
+			if (document == null)
+				return;
+
+			BlockingOperation.Run(() =>
+			{
+				var localUri = AttachedDocument.DownloadFile(document);
+				Process.Start(localUri);
+			});
 		}
 
 		private void LoadPatientAttachments()
