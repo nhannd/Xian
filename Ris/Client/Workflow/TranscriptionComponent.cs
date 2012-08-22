@@ -633,12 +633,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool SubmitForReviewEnabled
 		{
-			get { return CanSubmitForReview; }
+			get { return _workflowConfiguration.EnableTranscriptionReviewWorkflow && CanSubmitForReview; }
 		}
 
 		public bool SubmitForReviewVisible
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview); }
+			get
+			{
+				return _workflowConfiguration.EnableTranscriptionReviewWorkflow &&
+					Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview);
+			}
 		}
 
 		#endregion
