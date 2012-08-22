@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
                 return lowestQuality;
             }
-            else if (highBit <= 12)
+            if (highBit <= 12)
             {
                 foreach (long k in _12bitImageSizeToQMap.Keys)
                 {
@@ -96,20 +96,15 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
                 return lowestQuality;
             }
-            else
+            foreach (long k in _16bitImageSizeToQMap.Keys)
             {
-                foreach (long k in _16bitImageSizeToQMap.Keys)
-                {
-                    if (k > imageWidth * imageHeight)
-                        return _16bitImageSizeToQMap[k];
+                if (k > imageWidth * imageHeight)
+                    return _16bitImageSizeToQMap[k];
 
-                    lowestQuality = _16bitImageSizeToQMap[k];
-                }
-
-                return lowestQuality;
+                lowestQuality = _16bitImageSizeToQMap[k];
             }
 
-            return 80L; // default
+            return lowestQuality;
         }
     }
 }
