@@ -38,15 +38,15 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client
 {
-	[MenuAction("apply", "attached-document-items/Remove", "Apply")]
-	[ButtonAction("apply", "attached-document-items/Remove", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
+	[MenuAction("apply", "attached-document-items/View", "Apply")]
+	[ButtonAction("apply", "attached-document-items/View", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "Icons.AttachmentsToolSmall.png", "Icons.AttachmentsToolSmall.png", "Icons.AttachmentsToolSmall.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
 	[ExtensionOf(typeof(AttachedDocumentToolExtensionPoint))]
-	public class DocumentDetachTool : Tool<IAttachedDocumentToolContext>
+	public class DocumentViewTool : Tool<IAttachedDocumentToolContext>
 	{
 		private bool _enabled;
+		private event EventHandler _enabledChanged;
 
 		public override void Initialize()
 		{
@@ -55,33 +55,28 @@ namespace ClearCanvas.Ris.Client
 			this.Context.SelectedAttachmentChanged += delegate { this.Enabled = this.Context.SelectedAttachment != null; };
 		}
 
-		public bool Visible
-		{
-			get { return !this.Context.IsReadonly; }
-		}
-
-		public event EventHandler VisibleChanged;
-
 		public bool Enabled
 		{
-			get { return !this.Context.IsReadonly && _enabled; }
+			get { return _enabled; }
 			protected set
 			{
 				if (_enabled != value)
 				{
 					_enabled = value;
-					EventsHelper.Fire(EnabledChanged, this, EventArgs.Empty);
+					EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
 				}
 			}
 		}
 
-		public event EventHandler EnabledChanged;
-
+		public event EventHandler EnabledChanged
+		{
+			add { _enabledChanged += value; }
+			remove { _enabledChanged -= value; }
+		}
 
 		public void Apply()
 		{
-			if (this.Context.DesktopWindow.ShowMessageBox(SR.ConfirmDetachDocument, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
-				this.Context.RemoveSelectedAttachment();
+			this.Context.OpenSelectedAttachment();
 		}
 	}
 }

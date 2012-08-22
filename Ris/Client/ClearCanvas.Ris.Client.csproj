@@ -76,6 +76,7 @@
     <Compile Include="BannerSettings.cs" />
     <Compile Include="AttachDocumentComponent.cs" />
     <Compile Include="CancelOrderComponent.cs" />
+    <Compile Include="DocumentViewTool.cs" />
     <Compile Include="PrintReportComponent.cs" />
     <Compile Include="OrderCancelHelper.cs" />
     <Compile Include="OrderEditorComponent2.cs" />
@@ -757,6 +758,11 @@
     <EmbeddedResource Include="Icons\SwapLarge.png" />
     <EmbeddedResource Include="Icons\SwapMedium.png" />
     <EmbeddedResource Include="Icons\SwapSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AttachmentsToolLarge.png" />
+    <EmbeddedResource Include="Icons\AttachmentsToolMedium.png" />
+    <EmbeddedResource Include="Icons\AttachmentsToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
