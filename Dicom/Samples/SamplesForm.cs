@@ -557,13 +557,17 @@ namespace ClearCanvas.Dicom.Samples
             {
                 if (_moveScu.Status == ScuOperationStatus.Running)
                 {
+                    _moveScu.Cancel();
                     return;
                 }
+                buttonMoveScuMove.Text = "Move";
                 _moveScu.Dispose();
                 _moveScu = null;
             }
 
             var theDoc = new XmlDocument();
+
+            buttonMoveScuMove.Text = "Cancel";
 
             try
             {
@@ -635,15 +639,15 @@ namespace ClearCanvas.Dicom.Samples
                                                                         eventScu.FailureDescription);
                                                        }
                                                    };
-                _moveScu.BeginMove(delegate(IAsyncResult ar)
-                                       {
-                                           
+                _moveScu.BeginMove(delegate {
+                                           Invoke(new Action<string>(delegate { buttonMoveScuMove.Text = "Move"; }), new object[]{"Move"});                                           
                                        }, this );
 
             }
             catch (Exception x)
             {
                 Platform.Log(LogLevel.Error, x, "Unable to perform move");
+                buttonMoveScuMove.Text = "Move";
             }		
         }
 
