@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.ServiceModel;
 using System.Text;
 using ClearCanvas.Common;
@@ -225,7 +226,8 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 IList<Device> list = broker.Find(criteria);
                 foreach (Device theDevice in list)
                 {
-                    return theDevice;
+                    if (string.Compare(theDevice.AeTitle, retrieveAeTitle, false, CultureInfo.InvariantCulture) == 0)
+                        return theDevice;
                 }
             }
 

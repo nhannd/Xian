@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Enterprise.Core;
@@ -32,20 +33,28 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     	{
     		isNew = false;
 
-    		Device device;
+    		Device device = null;
 
     		using (
     			IUpdateContext updateContext =
     				PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
     		{
-    			IDeviceEntityBroker queryDevice = updateContext.GetBroker<IDeviceEntityBroker>();
+    			var queryDevice = updateContext.GetBroker<IDeviceEntityBroker>();
 
     			// Setup the select parameters.
-    			DeviceSelectCriteria queryParameters = new DeviceSelectCriteria();
+    			var queryParameters = new DeviceSelectCriteria();
     			queryParameters.AeTitle.EqualTo(association.CallingAE);
     			queryParameters.ServerPartitionKey.EqualTo(partition.GetKey());
+                var devices = queryDevice.Find(queryParameters);
+                foreach (var d in devices)
+                {                    
+                    if (string.Compare(d.AeTitle,association.CallingAE,false,CultureInfo.InvariantCulture) == 0)
+                    {
+                        device = d;
+                        break;
+                    }
+                }
 
-    			device = queryDevice.FindOne(queryParameters);
     			if (device == null)
     			{
     				if (!partition.AcceptAnyDevice)
@@ -56,21 +65,23 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     				if (partition.AutoInsertDevice)
     				{
     					// Auto-insert a new entry in the table.
-    					DeviceUpdateColumns updateColumns = new DeviceUpdateColumns();
+    				    var updateColumns = new DeviceUpdateColumns
+    				                            {
+    				                                AeTitle = association.CallingAE,
+    				                                Enabled = true,
+    				                                Description = String.Format("AE: {0}", association.CallingAE),
+    				                                Dhcp = false,
+    				                                IpAddress = association.RemoteEndPoint.Address.ToString(),
+    				                                ServerPartitionKey = partition.GetKey(),
+    				                                Port = partition.DefaultRemotePort,
+    				                                AllowQuery = true,
+    				                                AllowRetrieve = true,
+    				                                AllowStorage = true,
+    				                                ThrottleMaxConnections = ImageServerCommonConfiguration.Device.MaxConnections,
+    				                                DeviceTypeEnum = DeviceTypeEnum.Workstation
+    				                            };
 
-    					updateColumns.AeTitle = association.CallingAE;
-    					updateColumns.Enabled = true;
-    					updateColumns.Description = String.Format("AE: {0}", association.CallingAE);
-    					updateColumns.Dhcp = false;
-    					updateColumns.IpAddress = association.RemoteEndPoint.Address.ToString();
-    					updateColumns.ServerPartitionKey = partition.GetKey();
-    					updateColumns.Port = partition.DefaultRemotePort;
-    					updateColumns.AllowQuery = true;
-    					updateColumns.AllowRetrieve = true;
-    					updateColumns.AllowStorage = true;
-    					updateColumns.ThrottleMaxConnections = ImageServerCommonConfiguration.Device.MaxConnections;
-    				    updateColumns.DeviceTypeEnum = DeviceTypeEnum.Workstation;
-    					IDeviceEntityBroker insert = updateContext.GetBroker<IDeviceEntityBroker>();
+    				    var insert = updateContext.GetBroker<IDeviceEntityBroker>();
 
     					device = insert.Insert(updateColumns);
 
@@ -85,12 +96,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     				// For DHCP devices, we always update the remote ip address, if its changed from what is in the DB.
     				if (device.Dhcp && !association.RemoteEndPoint.Address.ToString().Equals(device.IpAddress))
     				{
-    					DeviceUpdateColumns updateColumns = new DeviceUpdateColumns();
+    				    var updateColumns = new DeviceUpdateColumns
+    				                            {
+    				                                IpAddress = association.RemoteEndPoint.Address.ToString(),
+    				                                LastAccessedTime = Platform.Time
+    				                            };
 
-    					updateColumns.IpAddress = association.RemoteEndPoint.Address.ToString();
-    					updateColumns.LastAccessedTime = Platform.Time;
-
-    					IDeviceEntityBroker update = updateContext.GetBroker<IDeviceEntityBroker>();
+    				    var update = updateContext.GetBroker<IDeviceEntityBroker>();
 
     					if (!update.Update(device.GetKey(), updateColumns))
     						Platform.Log(LogLevel.Error,
@@ -101,11 +113,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     				}
     				else if (!isNew)
     				{
-    					DeviceUpdateColumns updateColumns = new DeviceUpdateColumns();
+    				    var updateColumns = new DeviceUpdateColumns {LastAccessedTime = Platform.Time};
 
-    					updateColumns.LastAccessedTime = Platform.Time;
-
-    					IDeviceEntityBroker update = updateContext.GetBroker<IDeviceEntityBroker>();
+    				    var update = updateContext.GetBroker<IDeviceEntityBroker>();
 
     					if (!update.Update(device.GetKey(), updateColumns))
     						Platform.Log(LogLevel.Error,

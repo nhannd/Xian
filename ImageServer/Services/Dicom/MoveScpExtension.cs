@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -273,8 +274,15 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             var selectParms = new DeviceSelectCriteria();
             selectParms.AeTitle.EqualTo(remoteAe);
             selectParms.ServerPartitionKey.EqualTo(partition.GetKey());
-
-            return select.FindOne(selectParms);
+            var devices = select.Find(selectParms);
+            foreach (var d in devices)
+            {
+                if (string.Compare(d.AeTitle, remoteAe, false, CultureInfo.InvariantCulture) == 0)
+                {
+                    return d;
+                }
+            }
+            return null;
         }
         #endregion
 
