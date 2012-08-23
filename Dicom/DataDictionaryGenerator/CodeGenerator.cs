@@ -38,7 +38,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         {
             writer.WriteLine("#region License");
             writer.WriteLine("");
-            writer.WriteLine("// Copyright (c) 2010, ClearCanvas Inc.");
+            writer.WriteLine("// Copyright (c) 2012, ClearCanvas Inc.");
             writer.WriteLine("// All rights reserved.");
             writer.WriteLine("// http://www.clearcanvas.ca");
             writer.WriteLine("//");
@@ -67,7 +67,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         /// <param name="tagFile"></param>
         public void WriteTags(String tagFile)
         {
-            StreamWriter writer = new StreamWriter(tagFile);
+            var writer = new StreamWriter(tagFile);
 
             WriterHeader(writer);
 
@@ -84,7 +84,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                 Tag tag = iter.Current;
 
                 writer.WriteLine("        /// <summary>");
-                writer.WriteLine("        /// <para>" + tag.tag + " " + tag.name + "</para>");
+                writer.WriteLine("        /// <para>" + tag.tag + " " + tag.unEscapedName + "</para>");
                 writer.WriteLine("        /// <para> VR: " + tag.vr + " VM:" + tag.vm + "</para>");
                 if (tag.retired != null && tag.retired.Equals("RET"))
                     writer.WriteLine("        /// <para>This tag has been retired.</para>");
@@ -96,180 +96,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             WriterFooter(writer);
 
             writer.Close();
-        }
-
-        /// <summary>
-        /// Create the DicomTagDictionary.cs file.
-        /// </summary>
-        /// <param name="tagFile"></param>
-        public void WriteTagDictionary(String tagFile)
-        {
-            StreamWriter writer = new StreamWriter(tagFile);
-
-            WriterHeader(writer);
-
-            writer.WriteLine("    /// <summary>");
-            writer.WriteLine("    /// This class contains a dictionary of all DICOM tags.");
-            writer.WriteLine("    /// </summary>");
-            writer.WriteLine("    /// <remarks>");
-            writer.WriteLine("    /// <para>This class is the Flyweight Factor for the DicomTag Flyweight class as defined in the Flyweight pattern.</para>");
-            writer.WriteLine("    /// </remarks>");
-            writer.WriteLine("    public class DicomTagDictionary");
-            writer.WriteLine("    {");
-            writer.WriteLine("        // Internal members");
-            writer.WriteLine("        private static Dictionary<uint,DicomTag> _tags = new Dictionary<uint,DicomTag>();");
-            writer.WriteLine("        private static Dictionary<string,DicomTag> _tagNames = new Dictionary<string,DicomTag>();");
-            writer.WriteLine("");
-            writer.WriteLine("        // Static constructor");
-            writer.WriteLine("        static DicomTagDictionary()");
-            writer.WriteLine("        {");
-            writer.WriteLine("            InitStandardTags();");
-            writer.WriteLine("        }");
-            writer.WriteLine("");
-            writer.WriteLine("        /// <summary>");
-            writer.WriteLine("        /// Retrieve a strongly typed list containing all DICOM tags.");
-            writer.WriteLine("        /// </summary>");
-            writer.WriteLine("        /// <returns>A <see cref=\"System.Collections.Generic.List\"/>.</returns>");
-            writer.WriteLine("        public static IList<DicomTag> GetDicomTagList()");
-            writer.WriteLine("        {");
-            writer.WriteLine("            return new List<DicomTag>(_tags.Values);");
-            writer.WriteLine("        }");
-            writer.WriteLine("");
-            writer.WriteLine("        /// <summary>");
-            writer.WriteLine("        /// Method used to retrieve DicomTag instances for specific DICOM attributes.");
-            writer.WriteLine("        /// </summary>");
-            writer.WriteLine("        /// <param name=\"group\"></param>");
-            writer.WriteLine("        /// <param name=\"element\"></param>");
-            writer.WriteLine("        /// <returns>A DicomTag instance, if the tag exists, or null if it doesn't.</returns>");
-            writer.WriteLine("        public static DicomTag GetDicomTag(ushort group, ushort element)");
-            writer.WriteLine("        {");
-            writer.WriteLine("            return GetDicomTag((uint)group << 16 | (uint)element);");
-            writer.WriteLine("        }");
-            writer.WriteLine("");
-            writer.WriteLine("        /// <summary>");
-            writer.WriteLine("        /// Method used to retrieve DicomTag instances for specific DICOM attributes.");
-            writer.WriteLine("        /// </summary>");
-            writer.WriteLine("        /// <param name=\"tag\">The DICOM tag to retrieve.</param>");
-            writer.WriteLine("        /// <returns>A DicomTag instance, if the tag exists, or null if it doesn't.</returns>");
-            writer.WriteLine("        public static DicomTag GetDicomTag(uint tag)");
-            writer.WriteLine("        {");
-			writer.WriteLine("            DicomTag theTag;");
-			writer.WriteLine("            if (!_tags.TryGetValue(tag, out theTag))");
-			writer.WriteLine("            {");
-			writer.WriteLine("            	if (((tag & 0xFFE10000) == 0x60000000) && ((tag & 0xFFFF0000) != 0x60000000))");
-			writer.WriteLine("            	{");
-			writer.WriteLine("            		theTag = GetDicomTag(tag & 0xFF00FFFF);");
-			writer.WriteLine("            		if (theTag == null) return null;");
-			writer.WriteLine("");
-			writer.WriteLine("            		return new DicomTag(tag, theTag.Name, theTag.VariableName, theTag.VR, theTag.MultiVR, theTag.VMLow, theTag.VMHigh, theTag.Retired);");
-			writer.WriteLine("            	}");
-			writer.WriteLine("            	return null;");
-			writer.WriteLine("            }");
-            writer.WriteLine("");
-			writer.WriteLine("            return theTag; ");
-			writer.WriteLine("        }");
-            writer.WriteLine("");
-            writer.WriteLine("        /// <summary>");
-            writer.WriteLine("        /// Method used to retrieve DicomTag instances for specific DICOM attributes.");
-            writer.WriteLine("        /// </summary>");
-            writer.WriteLine("        /// <param name=\"name\">The name of the DICOM tag to retrieve.</param>");
-            writer.WriteLine("        /// <returns>A DicomTag instance, if the tag exists, or null if it doesn't.</returns>");
-            writer.WriteLine("        public static DicomTag GetDicomTag(string name)");
-            writer.WriteLine("        {");
-			writer.WriteLine("            DicomTag theTag;");
-			writer.WriteLine("            if (!_tagNames.TryGetValue(name, out theTag))");
-            writer.WriteLine("                return null;");
-			writer.WriteLine("            return theTag; ");
-            writer.WriteLine("        }");
-            writer.WriteLine("");
-            writer.WriteLine("        /// <summary>");
-            writer.WriteLine("        /// Initialize dictionary with standard tags.");
-            writer.WriteLine("        /// </summary>");
-            writer.WriteLine("        public static void InitStandardTags()");
-            writer.WriteLine("        {");
-
-            IEnumerator<Tag> iter = _tagList.Values.GetEnumerator();
-
-            while (iter.MoveNext())
-            {
-                Tag tag = iter.Current;
-                uint vmLow = 0;
-                uint vmHigh = 0;
-                char[] charSeparators = new char[] { '�', '-' };
-                
-                String[] nodes = tag.vm.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries);
-                if (nodes.Length == 1)
-                {
-                    vmLow = uint.Parse(nodes[0]);
-                    vmHigh = vmLow;
-                }
-                else if (nodes.Length == 2)
-                {
-                    if (nodes[0].Contains("N") || nodes[0].Contains("n"))
-                    {
-                        vmLow = 1;
-                    }
-                    else
-                    {
-                        vmLow = uint.Parse(nodes[0]);
-                    }
-                    if (nodes[1].Contains("N") || nodes[1].Contains("n"))
-                    {
-                        vmHigh = UInt32.MaxValue;
-                    }
-                    else
-                    {
-                        vmHigh = uint.Parse(nodes[1]);
-                    }
-
-
-                }
-
-                //public Tag(uint tag, String name, DicomVr vr, uint vmLow, uint vmHigh, bool isRetired)
-                writer.WriteLine("            _tags.Add(DicomTags." + tag.varName + ",");
-                writer.WriteLine("                      new DicomTag(");
-                writer.WriteLine("                          DicomTags." + tag.varName + ",");
-                writer.WriteLine("                          \"" + tag.unEscapedName + "\",");
-                writer.WriteLine("                          \"" + tag.varName + "\",");
-                if (tag.vr.Contains("or"))
-                {
-                    if (tag.varName.Equals("PixelData"))
-                    {
-                        writer.WriteLine("                          DicomVr.OWvr,");
-                        writer.WriteLine("                          true, //isMultiVrTag");
-                    }
-                    else
-                    {
-
-                        // Just take the first VR listed
-                        writer.WriteLine("                          DicomVr." + tag.vr.Substring(0, 2) + "vr,");
-                        writer.WriteLine("                          true, //isMultiVrTag");
-                    }
-                }
-                else
-                {
-                    writer.WriteLine("                          DicomVr." + tag.vr + "vr,");
-                    writer.WriteLine("                          false, //isMultiVrTag");
-                }
-                writer.WriteLine("                          " + vmLow + ", // vmLow");
-                writer.WriteLine("                          " + vmHigh + ", // vmHigh");
-                if (tag.retired != null && tag.retired.Equals("RET"))
-                    writer.WriteLine("                          true // isRetired");
-                else
-                    writer.WriteLine("                          false // isRetired");
-                writer.WriteLine("                          ));");
-
-                writer.WriteLine("            _tagNames.Add(\"" + tag.varName + "\",");
-                writer.WriteLine("                      _tags[DicomTags." + tag.varName + "]);");
-            }
-            writer.WriteLine("        }");
-
-            writer.WriteLine("    }"); // end of class
-
-            WriterFooter(writer);
-
-            writer.Close();
-        }
+        }        
 
         /// <summary>
         /// Get transfer syntax details from the TransferSyntax.xml file for a specific transfer syntax.
@@ -317,7 +144,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         /// <param name="syntaxFile"></param>
         public void WriteTransferSyntaxes(String syntaxFile)
         {
-            StreamWriter writer = new StreamWriter(syntaxFile);
+            var writer = new StreamWriter(syntaxFile);
 
             WriterHeader(writer);
             writer.WriteLine("    /// <summary>");
@@ -340,13 +167,13 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
 
             while (iter.MoveNext())
             {
-                SopClass tSyntax = (SopClass)((DictionaryEntry)iter.Current).Value;
+                var tSyntax = (SopClass)((DictionaryEntry)iter.Current).Value;
 
                 writer.WriteLine("        /// <summary>String representing");
-                writer.WriteLine("        /// <para>" + tSyntax.name + "</para>");
-                writer.WriteLine("        /// <para>UID: " + tSyntax.uid + "</para>");
+                writer.WriteLine("        /// <para>" + tSyntax.Name + "</para>");
+                writer.WriteLine("        /// <para>UID: " + tSyntax.Uid + "</para>");
                 writer.WriteLine("        /// </summary>");
-                writer.WriteLine("        public static readonly String " + tSyntax.varName + "Uid = \"" + tSyntax.uid + "\";");
+                writer.WriteLine("        public static readonly String " + tSyntax.VarName + "Uid = \"" + tSyntax.Uid + "\";");
                 writer.WriteLine("");
 
                 String littleEndian = "";
@@ -356,15 +183,15 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             	String lossless = "";
             	string lossy = "";
 
-                GetTransferSyntaxDetails(tSyntax.uid, ref littleEndian, ref encapsulated, ref explicitVR, ref deflated, ref lossy, ref lossless);
+                GetTransferSyntaxDetails(tSyntax.Uid, ref littleEndian, ref encapsulated, ref explicitVR, ref deflated, ref lossy, ref lossless);
 
                 writer.WriteLine("        /// <summary>TransferSyntax object representing");
-                writer.WriteLine("        /// <para>" + tSyntax.name + "</para>");
-                writer.WriteLine("        /// <para>UID: " + tSyntax.uid + "</para>");
+                writer.WriteLine("        /// <para>" + tSyntax.Name + "</para>");
+                writer.WriteLine("        /// <para>UID: " + tSyntax.Uid + "</para>");
                 writer.WriteLine("        /// </summary>");
-                writer.WriteLine("        public static readonly TransferSyntax " + tSyntax.varName + " =");
-                writer.WriteLine("                    new TransferSyntax(\"" + tSyntax.name + "\",");
-                writer.WriteLine("                                 " + tSyntax.varName + "Uid,");
+                writer.WriteLine("        public static readonly TransferSyntax " + tSyntax.VarName + " =");
+                writer.WriteLine("                    new TransferSyntax(\"" + tSyntax.Name + "\",");
+                writer.WriteLine("                                 " + tSyntax.VarName + "Uid,");
                 writer.WriteLine("                                 " + littleEndian + ", // Little Endian?");
                 writer.WriteLine("                                 " + encapsulated + ", // Encapsulated?");
                 writer.WriteLine("                                 " + explicitVR + ", // Explicit VR?");
@@ -496,10 +323,10 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
 
             while (iter.MoveNext())
             {
-                SopClass tSyntax = (SopClass)((DictionaryEntry)iter.Current).Value;
+                var tSyntax = (SopClass)((DictionaryEntry)iter.Current).Value;
 
-                writer.WriteLine("            _transferSyntaxes.Add(" + tSyntax.varName + "Uid,");
-                writer.WriteLine("                                  " + tSyntax.varName + ");");
+                writer.WriteLine("            _transferSyntaxes.Add(" + tSyntax.VarName + "Uid,");
+                writer.WriteLine("                                  " + tSyntax.VarName + ");");
                 writer.WriteLine("");
             }
 
@@ -517,7 +344,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         /// <param name="sopsFile"></param>
         public void WriteSqlInsert(String sopsFile)
         {
-            StreamWriter writer = new StreamWriter(sopsFile);
+            var writer = new StreamWriter(sopsFile);
 
             WriterHeader(writer);
 
@@ -525,14 +352,13 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
 
             while (iter.MoveNext())
             {
-                SopClass sopClass = (SopClass)((DictionaryEntry)iter.Current).Value;
-                
+                var sopClass = (SopClass)((DictionaryEntry)iter.Current).Value;                
                 
                 writer.WriteLine("INSERT INTO [ImageServer].[dbo].[SopClass] ([GUID],[SopClassUid],[Description],[NonImage])");
-                if (sopClass.name.ToLower().Contains("image"))
-                    writer.WriteLine("VALUES (newid(), '" + sopClass.uid + "', '" + sopClass.name + "', 0);");
+                if (sopClass.Name.ToLower().Contains("image"))
+                    writer.WriteLine("VALUES (newid(), '" + sopClass.Uid + "', '" + sopClass.Name + "', 0);");
                 else
-                    writer.WriteLine("VALUES (newid(), '" + sopClass.uid + "', '" + sopClass.name + "', 1);");
+                    writer.WriteLine("VALUES (newid(), '" + sopClass.Uid + "', '" + sopClass.Name + "', 1);");
                 writer.WriteLine("");
                 
             }
@@ -547,9 +373,16 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         /// <param name="tagsFile"></param>
         public void WriteTagsText(String tagsFile)
         {
-            StreamWriter writer = new StreamWriter(tagsFile);
+            var writer = new StreamWriter(tagsFile);
 
-
+            writer.WriteLine("# Copyright (c) 2012, ClearCanvas Inc.");
+            writer.WriteLine("# All rights reserved.");
+            writer.WriteLine("# http://www.clearcanvas.ca");
+            writer.WriteLine("#");
+            writer.WriteLine("# generated from DICOM standard");
+            writer.WriteLine("# columns are in the same order as parameters to the DicomTag constructor");
+            writer.WriteLine("# eg. tag;name;varName;vr;isMultiVrTag;vmLow;vmHigh;isRetired");
+            writer.WriteLine("#");
 
             IEnumerator<Tag> iter = _tagList.Values.GetEnumerator();
 
@@ -558,7 +391,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                 Tag tag = iter.Current;
                 uint vmLow = 0;
                 uint vmHigh = 0;
-                char[] charSeparators = new char[] {'�', '-'};
+                var charSeparators = new[] {'�', '-'};
 
                 String[] nodes = tag.vm.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries);
                 if (nodes.Length == 1)
@@ -607,7 +440,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                     isMultiVrTag = false;
                 }
                 writer.WriteLine("{0};{1};{2};{3};{4};{5};{6};{7}",
-                    tag.nTag, tag.name, tag.varName, vr, isMultiVrTag, vmLow, vmHigh, string.IsNullOrEmpty(tag.retired) ? false : true);
+                    tag.nTag, tag.unEscapedName, tag.varName, vr, isMultiVrTag, vmLow, vmHigh, !string.IsNullOrEmpty(tag.retired));
             }
 
             writer.Close();
@@ -619,7 +452,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         /// <param name="sopsFile"></param>
         public void WriteSopClasses(String sopsFile)
         {
-            StreamWriter writer = new StreamWriter(sopsFile);
+            var writer = new StreamWriter(sopsFile);
 
             WriterHeader(writer);
 
@@ -633,21 +466,21 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
 
             while (iter.MoveNext())
             {
-                SopClass sopClass = (SopClass)((DictionaryEntry)iter.Current).Value;
+                var sopClass = (SopClass)((DictionaryEntry)iter.Current).Value;
 
                 writer.WriteLine("        /// <summary>");
-                writer.WriteLine("        /// <para>" + sopClass.name + "</para>");
-                writer.WriteLine("        /// <para>UID: " + sopClass.uid + "</para>");
+                writer.WriteLine("        /// <para>" + sopClass.Name + "</para>");
+                writer.WriteLine("        /// <para>UID: " + sopClass.Uid + "</para>");
                 writer.WriteLine("        /// </summary>");
-                writer.WriteLine("        public static readonly String " + sopClass.varName + "Uid = \"" + sopClass.uid + "\";");
+                writer.WriteLine("        public static readonly String " + sopClass.VarName + "Uid = \"" + sopClass.Uid + "\";");
                 writer.WriteLine("");
                 writer.WriteLine("        /// <summary>SopClass for");
-                writer.WriteLine("        /// <para>" + sopClass.name + "</para>");
-                writer.WriteLine("        /// <para>UID: " + sopClass.uid + "</para>");
+                writer.WriteLine("        /// <para>" + sopClass.Name + "</para>");
+                writer.WriteLine("        /// <para>UID: " + sopClass.Uid + "</para>");
                 writer.WriteLine("        /// </summary>");
-                writer.WriteLine("        public static readonly SopClass " + sopClass.varName + " =");
-                writer.WriteLine("                             new SopClass(\"" + sopClass.name + "\", ");
-                writer.WriteLine("                                          " + sopClass.varName + "Uid, ");
+                writer.WriteLine("        public static readonly SopClass " + sopClass.VarName + " =");
+                writer.WriteLine("                             new SopClass(\"" + sopClass.Name + "\", ");
+                writer.WriteLine("                                          " + sopClass.VarName + "Uid, ");
                 writer.WriteLine("                                          false);");
                 writer.WriteLine("");
 
@@ -657,21 +490,21 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
 
             while (iter.MoveNext())
             {
-                SopClass sopClass = (SopClass)((DictionaryEntry)iter.Current).Value;
+                var sopClass = (SopClass)((DictionaryEntry)iter.Current).Value;
 
                 writer.WriteLine("        /// <summary>String UID for");
-                writer.WriteLine("        /// <para>" + sopClass.name + "</para>");
-                writer.WriteLine("        /// <para>UID: " + sopClass.uid + "</para>");
+                writer.WriteLine("        /// <para>" + sopClass.Name + "</para>");
+                writer.WriteLine("        /// <para>UID: " + sopClass.Uid + "</para>");
                 writer.WriteLine("        /// </summary>");
-                writer.WriteLine("        public static readonly String " + sopClass.varName + "Uid = \"" + sopClass.uid + "\";");
+                writer.WriteLine("        public static readonly String " + sopClass.VarName + "Uid = \"" + sopClass.Uid + "\";");
                 writer.WriteLine("");
                 writer.WriteLine("        /// <summary>SopClass for");
-                writer.WriteLine("        /// <para>" + sopClass.name + "</para>");
-                writer.WriteLine("        /// <para>UID: " + sopClass.uid + "</para>");
+                writer.WriteLine("        /// <para>" + sopClass.Name + "</para>");
+                writer.WriteLine("        /// <para>UID: " + sopClass.Uid + "</para>");
                 writer.WriteLine("        /// </summary>");
-                writer.WriteLine("        public static readonly SopClass " + sopClass.varName + " =");
-                writer.WriteLine("                             new SopClass(\"" + sopClass.name + "\", ");
-                writer.WriteLine("                                          " + sopClass.varName + "Uid, ");
+                writer.WriteLine("        public static readonly SopClass " + sopClass.VarName + " =");
+                writer.WriteLine("                             new SopClass(\"" + sopClass.Name + "\", ");
+                writer.WriteLine("                                          " + sopClass.VarName + "Uid, ");
                 writer.WriteLine("                                          true);");
             }
 
@@ -727,8 +560,10 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             writer.WriteLine("        {");
 			writer.WriteLine("            SopClass theSop;");
 			writer.WriteLine("            if (!_sopList.TryGetValue(uid, out theSop))");
-			writer.WriteLine("                return null;");
-            writer.WriteLine("");
+            writer.WriteLine("            {");
+            writer.WriteLine("                theSop = new SopClass(string.Format(\"Generated: '{0}'\", uid), uid, false); ");
+            writer.WriteLine("                _sopList.Add(uid, theSop);  ");
+            writer.WriteLine("            }");
             writer.WriteLine("            return theSop;");
             writer.WriteLine("        }");
 
@@ -740,10 +575,10 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
 
             while (iter.MoveNext())
             {
-                SopClass sopClass = (SopClass)((DictionaryEntry)iter.Current).Value;
+                var sopClass = (SopClass)((DictionaryEntry)iter.Current).Value;
 
-                writer.WriteLine("            _sopList.Add(" + sopClass.varName + "Uid, ");
-                writer.WriteLine("                         " + sopClass.varName + ");");
+                writer.WriteLine("            _sopList.Add(" + sopClass.VarName + "Uid, ");
+                writer.WriteLine("                         " + sopClass.VarName + ");");
                 writer.WriteLine("");
             }
 
@@ -752,10 +587,10 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
 
             while (iter.MoveNext())
             {
-                SopClass sopClass = (SopClass)((DictionaryEntry)iter.Current).Value;
+                var sopClass = (SopClass)((DictionaryEntry)iter.Current).Value;
 
-                writer.WriteLine("            _sopList.Add(" + sopClass.varName + "Uid, ");
-                writer.WriteLine("                         " + sopClass.varName + ");");
+                writer.WriteLine("            _sopList.Add(" + sopClass.VarName + "Uid, ");
+                writer.WriteLine("                         " + sopClass.VarName + ");");
                 writer.WriteLine("");
             }
             writer.WriteLine("        }");
