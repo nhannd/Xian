@@ -233,11 +233,6 @@ namespace ClearCanvas.Healthcare.Printing
 				get { return FormatTime(_part.CompletedTime); }
 			}
 
-			public string CancelledDateTime
-			{
-				get { return FormatTime(_part.CancelledTime); }
-			}
-
 			public string CreationDate
 			{
 				get { return FormatDate(_part.CreationTime); }
@@ -251,11 +246,6 @@ namespace ClearCanvas.Healthcare.Printing
 			public string CompletedDate
 			{
 				get { return FormatDate(_part.CompletedTime); }
-			}
-
-			public string CancelledDate
-			{
-				get { return FormatDate(_part.CancelledTime); }
 			}
 
 			public override string ToString()
