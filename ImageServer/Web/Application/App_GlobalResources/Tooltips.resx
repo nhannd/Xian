@@ -237,6 +237,6 @@ Low Watermark  : {2}%</value>
     <value>Search the list by owner (Responsible Person)</value>
   </data>
   <data name="AdminPartition_AddEditDialog_AcceptLatestReport" xml:space="preserve">
-    <value>Enable/Disable always replacing duplicate reports with the latest received.</value>
+    <value>Enable/Disable always replacing duplicate reports with the latest received.  When enabled, the duplicate SOP policy is overridden. </value>
   </data>
 </root>

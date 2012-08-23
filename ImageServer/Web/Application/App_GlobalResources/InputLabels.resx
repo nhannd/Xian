@@ -300,4 +300,7 @@
   <data name="AcceptLatestReport" xml:space="preserve">
     <value>Replace Duplicate Reports</value>
   </data>
+  <data name="AcceptLatestReportLabel" xml:space="preserve">
+    <value>Override Duplicate Object Policy for Reports</value>
+  </data>
 </root>

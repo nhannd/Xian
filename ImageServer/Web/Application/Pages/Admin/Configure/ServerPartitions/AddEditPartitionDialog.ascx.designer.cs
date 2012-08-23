@@ -337,6 +337,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         protected global::System.Web.UI.WebControls.DropDownList DuplicateSopDropDownList;
         
         /// <summary>
+        /// AcceptLatestReportLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label AcceptLatestReportLabel;
+        
+        /// <summary>
         /// AcceptLatestReportCheckBox control.
         /// </summary>
         /// <remarks>
