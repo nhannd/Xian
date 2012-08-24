@@ -555,12 +555,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				if (this.HasValidationErrors)
-				{
-					this.ShowValidation(true);
-					return;
-				}
-
 				EnumValueInfo rejectReason;
 				string additionalComments;
 
