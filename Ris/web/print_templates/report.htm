@@ -1,3 +1,88 @@
+<!--
+	***************************************** WARNING *****************************************************
+	Use caution when modifying this template.  Incorrect modifications may result in an unprintable template.
+	It is strongly recommended that you make a backup copy of this file prior to making any modifications.
+	*******************************************************************************************************
+	
+	This file defines the HTML template that is used to determine the format of printed radiology reports.
+	The template can include dynamic variables, like so:
+	
+	<%= AccessionNumber %>
+	
+	The following set of dynamic variables can be used in the template:
+	
+	Variable Name								Variable Description									Example
+	--------------------------------------------------------------------------------------------------------------------------------------------------
+	Patient										Name and MRN of the patient.							Smith, John Edward (BG 13288779)
+	Patient.Mrn									MRN of the patient, including authority.				BG 13288779
+	Patient.Mrn.Id								MRN of the patient, number only.						13288779
+	Patient.Name								Name of the patient.									Smith, John Edward
+	Patient.Name.FamilyName						Family name of the patient.								Smith
+	Patient.Name.GivenName						Given name of the patient.								John
+	Patient.Name.MiddleName						Middle name of the patient.								Edward
+	Patient.DateOfBirth							Date of birth of the patient.							1970-02-25
+	
+	Recipient									Name of the report recipient.							Good, Doctor
+	Recipient.Name								Name of the report recipient.							Good, Doctor
+	Recipient.Name.FamilyName					Family name of the report recipient.					Good
+	Recipient.Name.GivenName					Given name of the report recipient.						Doctor
+	Recipient.Address							Full address of report recipient.						12-122 Forrest Street, Toronto ON M5H 6U6
+	Recipient.Address.Street					Address of report recipient - street.					122 Forrest Street
+	Recipient.Address.Unit						Address of report recipient - unit/apt.					12
+	Recipient.Address.City						Address of report recipient - city.						Toronto
+	Recipient.Address.Province					Address of report recipient - province/state.			ON	
+	Recipient.Address.PostalCode				Address of report recipient - postal code/zip.			M5H 6U6	
+	Recipient.Address.Country					Address of report recipient - country.					Canada
+	
+	AccessionNumber								Accession number assigned to the order.					7654321
+	
+	OrderingPractitioner						Name of the ordering practitioner.						Good, Doctor
+	OrderingPractitioner.Name					Name of the ordering practitioner.						Good, Doctor
+	OrderingPractitioner.Name.FamilyName		Family name of the ordering practitioner.				Good
+	OrderingPractitioner.Name.GivenName			Given name of the ordering practitioner.				Doctor
+	OrderingPractitioner.Address				Full address of ordering practitioner.					12-122 Forrest Street, Toronto ON M5H 6U6
+	OrderingPractitioner.Address.Street			Address of ordering practitioner - street.				122 Forrest Street
+	OrderingPractitioner.Address.Unit			Address of ordering practitioner - unit/apt.			12
+	OrderingPractitioner.Address.City			Address of ordering practitioner - city.				Toronto
+	OrderingPractitioner.Address.Province		Address of ordering practitioner - province/state.		ON	
+	OrderingPractitioner.Address.PostalCode		Address of ordering practitioner - postal code/zip.		M5H 6U6	
+	OrderingPractitioner.Address.Country		Address of ordering practitioner - country.				Canada
+	
+	Procedures									Procedures covered by the report.						CT Chest, CT Abdomen/Pelvis
+	Procedures.Count							Number of procedures covered by the report.				2
+	Procedures[n]								Name of the nth procedure.							 	n=0 -> CT Chest, n=1 -> CT Abdomen/Pelvis
+	Procedures[n].Name							Name of the nth procedure.							 	n=0 -> CT Chest, n=1 -> CT Abdomen/Pelvis
+	Procedures[n].Code							Code of the nth procedure.							 	n=0 -> 3045, n=1 -> 3046
+	
+	ReportParts									n/a
+	ReportParts.Count							Number of report parts (1 + # of addenda).				1 (for a report with no addenda); 2 (for a report with 1 addendum)
+	ReportParts[n].Index						Index of the nth report part.							n=0 -> 0 (original report); n=1 -> 1 (addendum)
+	ReportParts[n].Status						Status of the nth report part.							Draft, Preliminary, or Final
+	ReportParts[n].StatusDate					Date when status was assumed.							2012-06-04
+	ReportParts[n].StatusDateTime				Date/time when status was assumed.						2012-06-04 10:25
+	ReportParts[n].Body							Body of the nth report part.							The body of the report or addendum
+	ReportParts[n].InterpretedBy				Name of interpreter for nth report part.				Radman, Rocky
+	ReportParts[n].InterpretedBy.FamilyName		Family name of interpreting rad for nth report part.	Radman
+	ReportParts[n].InterpretedBy.GivenName		Given name of interpreting rad for nth report part.		Rocky
+	ReportParts[n].VerifiedBy					Name of verifying rad for nth report part.				Radman, Rocky
+	ReportParts[n].VerifiedBy.FamilyName		Family name of verifying rad for nth report part.		Radman
+	ReportParts[n].VerifiedBy.GivenName			Given name of verifying rad for nth report part.		Rocky
+	ReportParts[n].TranscribedBy				Name of transcriptionist for nth report part.			Tran, Tess
+	ReportParts[n].TranscribedBy.FamilyName		Family name of transcriptionist for nth report part.	Tran	
+	ReportParts[n].TranscribedBy.GivenName		Given name of transcriptionist for nth report part.		Tess	
+	ReportParts[n].CreationDate					Creation (draft) date of the nth report part.			2012-06-04
+	ReportParts[n].CreationDateTime				Creation (draft) date/time of the nth report part.		2012-06-04 10:25
+	ReportParts[n].PreliminaryDate				Preliminary date of the nth report part.				2012-06-04
+	ReportParts[n].PreliminaryDateTime			Preliminary date/time of the nth report part.			2012-06-04 10:25
+	ReportParts[n].CompletedDate				Completed (Final) date of the nth report part.			2012-06-04	
+	ReportParts[n].CompletedDateTime			Completed (Final) date/time of the nth report part.		2012-06-04 10:25
+	
+	Note that the variables Procedures and ReportParts are actually collections that can be iterated using javascript code.	
+	More generally, javascript code can be used to manipulate the variables, and must be placed between <% %> tags.
+	
+	See examples in the default template that is provided below.
+
+-->
 <%
 	function formatReportPartStatus(part, isAddendum)
 	{

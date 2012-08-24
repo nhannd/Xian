@@ -24,9 +24,9 @@ namespace ClearCanvas.Ris.Client
 {
 	public class PatientProfileEditorComponent : NavigatorComponentContainer
 	{
-		private EntityRef _patientRef;
 		private EntityRef _profileRef;
 		private PatientProfileDetail _profile;
+		private PatientProfileSummary _result;
 		private readonly bool _isNew;
 		private readonly List<AttachmentSummary> _newAttachments;
 
@@ -82,19 +82,9 @@ namespace ClearCanvas.Ris.Client
 			_newAttachments = attachments;
 		}
 
-		public EntityRef PatientRef
+		public PatientProfileSummary PatientProfile
 		{
-			get { return _patientRef; }
-		}
-
-		public EntityRef PatientProfileRef
-		{
-			get { return _profileRef; }
-		}
-
-		public PatientProfileDetail PatientProfile
-		{
-			get { return _profile; }
+			get { return _result; }
 		}
 
 		public override void Start()
@@ -246,17 +236,12 @@ namespace ClearCanvas.Ris.Client
 					if (_isNew)
 					{
 						var response = service.AddPatient(new AddPatientRequest(_profile));
-
-						_patientRef = response.PatientProfile.PatientRef;
-						_profileRef = response.PatientProfile.PatientProfileRef;
-						_profile.Mrn = response.PatientProfile.Mrn;	// in case of auto-generated MRN
+						_result = response.PatientProfile;
 					}
 					else
 					{
 						var response = service.UpdatePatientProfile(new UpdatePatientProfileRequest(_profileRef, _profile));
-
-						_patientRef = response.PatientProfile.PatientRef;
-						_profileRef = response.PatientProfile.PatientProfileRef;
+						_result = response.PatientProfile;
 					}
 				});
 		}

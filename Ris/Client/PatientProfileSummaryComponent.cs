@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Client
 			var exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNewPatient);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
-				addedItems.Add(editor.PatientProfile.GetSummary());
+				addedItems.Add(editor.PatientProfile);
 				return true;
 			}
 			return false;
@@ -123,7 +123,7 @@ namespace ClearCanvas.Ris.Client
 
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
-				editedItems.Add(editor.PatientProfile.GetSummary());
+				editedItems.Add(editor.PatientProfile);
 				return true;
 			}
 			return false;
