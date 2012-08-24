@@ -94,10 +94,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
             try
             {
 
-                XmlDocument doc = RetrieveHeaderXml(studyLoaderArgs);
-                StudyXml studyXml = new StudyXml();
-                studyXml.SetMemento(doc);
-
+                StudyXml studyXml = RetrieveStudyXml(studyLoaderArgs);
                 _instances = GetInstances(studyXml).GetEnumerator();
 
                 loadedInstances.AddInstance(studyXml.PatientId, studyXml.PatientsName, studyXml.StudyInstanceUid);
@@ -132,7 +129,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                             _serverAe.StreamingParameters.WadoServicePort);
         }
 
-        private XmlDocument RetrieveHeaderXml(StudyLoaderArgs studyLoaderArgs)
+        private StudyXml RetrieveStudyXml(StudyLoaderArgs studyLoaderArgs)
         {
             var headerParams = new HeaderStreamingParameters
                                    {
@@ -145,23 +142,14 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
             try
             {
 
-                string uri = String.Format(StreamingSettings.Default.FormatHeaderServiceUri, 
+                string uri = String.Format(StreamingSettings.Default.FormatHeaderServiceUri,
                                             _serverAe.ScpParameters.HostName, _serverAe.StreamingParameters.HeaderServicePort);
-                var endpoint = new EndpointAddress(uri);
 
-                client = new HeaderStreamingServiceClient();
-                client.Endpoint.Address = endpoint;
-
+                client = new HeaderStreamingServiceClient(new Uri(uri));
                 client.Open();
-                XmlDocument headerXmlDocument;
-
-                using (Stream stream = client.GetStudyHeader(ServerDirectory.GetLocalServer().AETitle, headerParams))
-                {
-                    headerXmlDocument = DecompressHeaderStreamToXml(stream);
-                    stream.Close();
-                }
+                var studyXml = client.GetStudyXml(ServerDirectory.GetLocalServer().AETitle, headerParams);
                 client.Close();
-                return headerXmlDocument;
+                return studyXml;
             }
             catch (FaultException<StudyIsInUseFault> e)
             {
@@ -194,21 +182,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
                 throw new LoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
             }
-        }
-
-        private static XmlDocument DecompressHeaderStreamToXml(Stream stream)
-        {
-            XmlDocument doc;
-            using (GZipStream gzStream = new GZipStream(stream, CompressionMode.Decompress))
-            {
-                doc = new XmlDocument();
-                doc.Load(gzStream);
-                Platform.Log(LogLevel.Debug, "Unzipped gzip header stream");
-
-                gzStream.Close();
-            }
-
-            return doc;
         }
     }
 }
