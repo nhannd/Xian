@@ -19,11 +19,12 @@ namespace ClearCanvas.Ris.Application.Common
 	[DataContract]
 	public class ModalitySummary : DataContractBase, IEquatable<ModalitySummary>
 	{
-		public ModalitySummary(EntityRef modalityRef, string id, string name, EnumValueInfo dicomModality, bool deactivated)
+		public ModalitySummary(EntityRef modalityRef, string id, string name, string aeTitle, EnumValueInfo dicomModality, bool deactivated)
 		{
 			this.ModalityRef = modalityRef;
 			this.Id = id;
 			this.Name = name;
+			this.AETitle = aeTitle;
 			this.DicomModality = dicomModality;
 			this.Deactivated = deactivated;
 		}
@@ -40,6 +41,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public string Name;
+
+		[DataMember]
+		public string AETitle;
 
 		[DataMember]
 		public EnumValueInfo DicomModality;

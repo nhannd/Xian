@@ -33,6 +33,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
 			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
 			_id.DataBindings.Add("Value", _component, "ID", true, DataSourceUpdateMode.OnPropertyChanged);
+			_aeTitle.DataBindings.Add("Value", _component, "AETitle", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_dicomModality.DataSource = _component.DicomModalityChoices;
 			_dicomModality.DataBindings.Add("Value", _component, "DicomModality", true, DataSourceUpdateMode.OnPropertyChanged);

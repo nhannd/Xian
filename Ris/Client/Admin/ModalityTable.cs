@@ -24,6 +24,9 @@ namespace ClearCanvas.Ris.Client.Admin
 			this.Columns.Add(new TableColumn<ModalitySummary, string>(SR.ColumnName,
 				modality => modality.Name, 1.0f));
 
+			this.Columns.Add(new TableColumn<ModalitySummary, string>(SR.ColumnAETitle,
+				modality => modality.AETitle, 1.0f));
+
 			this.Columns.Add(new TableColumn<ModalitySummary, string>(SR.ColumnDicomModality,
 				FormatDicomModality, 1.0f));
 		}

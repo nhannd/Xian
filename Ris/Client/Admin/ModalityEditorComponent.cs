@@ -112,6 +112,18 @@ namespace ClearCanvas.Ris.Client.Admin
 			}
 		}
 
+		[ValidateLength(0, 16, Message = "ValidationAETitleLengthIncorrect")]
+		[ValidateRegex(@"[\r\n\e\f\\]+", SuccessOnMatch = false, Message = "ValidationAETitleInvalidCharacters")]
+		public string AETitle
+		{
+			get { return _modalityDetail.AETitle; }
+			set
+			{
+				_modalityDetail.AETitle = value;
+				this.Modified = true;
+			}
+		}
+
 		public EnumValueInfo DicomModality
 		{
 			get { return _modalityDetail.DicomModality ?? _dummyModalityNone; }

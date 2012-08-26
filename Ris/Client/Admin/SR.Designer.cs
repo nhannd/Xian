@@ -61,6 +61,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AE Title.
+        /// </summary>
+        internal static string ColumnAETitle {
+            get {
+                return ResourceManager.GetString("ColumnAETitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Building.
         /// </summary>
         internal static string ColumnBuilding {
@@ -583,6 +592,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string String1 {
+            get {
+                return ResourceManager.GetString("String1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Department.
         /// </summary>
         internal static string TitleAddDepartment {
@@ -651,6 +669,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleAddWorklist {
             get {
                 return ResourceManager.GetString("TitleAddWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to AE Title.
+        /// </summary>
+        internal static string TitleAETitle {
+            get {
+                return ResourceManager.GetString("TitleAETitle", resourceCulture);
             }
         }
         
@@ -903,6 +930,24 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleWorkQueue {
             get {
                 return ResourceManager.GetString("TitleWorkQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The AE Title contains invalid characters..
+        /// </summary>
+        internal static string ValidationAETitleInvalidCharacters {
+            get {
+                return ResourceManager.GetString("ValidationAETitleInvalidCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The AE Title must be 16 characters or less..
+        /// </summary>
+        internal static string ValidationAETitleLengthIncorrect {
+            get {
+                return ResourceManager.GetString("ValidationAETitleLengthIncorrect", resourceCulture);
             }
         }
     }

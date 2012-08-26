@@ -59,7 +59,7 @@ namespace ClearCanvas.Healthcare.Imex
                     // if not, create a new instance
                     if (modality == null)
                     {
-                        modality = new Modality(id, name, null);
+                        modality = new Modality(id, name, null, null);
                         context.Lock(modality, DirtyState.New);
                     }
 
