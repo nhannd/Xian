@@ -23,7 +23,11 @@ namespace ClearCanvas.Healthcare.Printing {
             }
         }
         
+        /// <summary>
+        /// Name of the Imaging Facility.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Name of the Imaging Facility.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("TotallyRAD")]
         public string LetterheadFacilityTitle {
@@ -32,7 +36,11 @@ namespace ClearCanvas.Healthcare.Printing {
             }
         }
         
+        /// <summary>
+        /// Description of the Imaging Facility.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Description of the Imaging Facility.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Medical Imaging Centre")]
         public string LetterheadFacilitySubtitle {
@@ -41,7 +49,12 @@ namespace ClearCanvas.Healthcare.Printing {
             }
         }
         
+        /// <summary>
+        /// Name of the file containing the Imaging Facility logo. This file must be located in the same directory as the template file.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Name of the file containing the Imaging Facility logo. This file must be located " +
+            "in the same directory as the template file.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("logo.jpg")]
         public string LetterheadLogoFile {
@@ -50,7 +63,11 @@ namespace ClearCanvas.Healthcare.Printing {
             }
         }
         
+        /// <summary>
+        /// Phone number for the Imaging Facility.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Phone number for the Imaging Facility.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Phone: (555) 555-5555")]
         public string LetterheadPhone {
@@ -59,7 +76,11 @@ namespace ClearCanvas.Healthcare.Printing {
             }
         }
         
+        /// <summary>
+        /// Fax number for the Imaging Facility.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Fax number for the Imaging Facility.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Fax: (555) 555-5555")]
         public string LetterheadFax {
@@ -68,7 +89,11 @@ namespace ClearCanvas.Healthcare.Printing {
             }
         }
         
+        /// <summary>
+        /// Email address for the Imaging Facility.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Email address for the Imaging Facility.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Email: info@totallyrad.ca")]
         public string LetterheadEmail {
@@ -77,7 +102,11 @@ namespace ClearCanvas.Healthcare.Printing {
             }
         }
         
+        /// <summary>
+        /// Street name and number of the Imaging Facility.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Street name and number of the Imaging Facility.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("123 Any St.")]
         public string LetterheadAddressStreet {
@@ -86,7 +115,11 @@ namespace ClearCanvas.Healthcare.Printing {
             }
         }
         
+        /// <summary>
+        /// Unit, Suite, or Apartment number, if applicable.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Unit, Suite, or Apartment number, if applicable.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
         public string LetterheadAddressUnit {
@@ -95,7 +128,11 @@ namespace ClearCanvas.Healthcare.Printing {
             }
         }
         
+        /// <summary>
+        /// City in which the Imaging Facility is located.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("City in which the Imaging Facility is located.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Anywhere")]
         public string LetterheadAddressCity {
@@ -104,7 +141,11 @@ namespace ClearCanvas.Healthcare.Printing {
             }
         }
         
+        /// <summary>
+        /// Province in which the Imaging Facility is located.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Province in which the Imaging Facility is located.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("ON")]
         public string LetterheadAddressProvince {
@@ -113,7 +154,11 @@ namespace ClearCanvas.Healthcare.Printing {
             }
         }
         
+        /// <summary>
+        /// Postal code of the Imaging Facility.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Postal code of the Imaging Facility.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("A1B 2C3")]
         public string LetterheadAddressPostalCode {
