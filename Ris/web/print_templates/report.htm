@@ -1,8 +1,13 @@
 <!--
-	***************************************** WARNING *****************************************************
-	Use caution when modifying this template.  Incorrect modifications may result in an unprintable template.
-	It is strongly recommended that you make a backup copy of this file prior to making any modifications.
-	*******************************************************************************************************
+	***************************************** WARNING ************************************************************************************************
+	Modifying this template incorrectly may cause the report printing functionality to fail.
+	It is recommended that:
+	
+	1. This template only be modified by qualified personnel.
+	2. A backup copy of the original template is made, prior to making any modifications.
+	3. This template is modified only during scheduled system downtime.
+	4. After modifying the template, report printing functionality is thoroughly tested.
+	**************************************************************************************************************************************************
 	
 	This file defines the HTML template that is used to determine the format of printed radiology reports.
 	The template can include dynamic variables, like so:
@@ -13,6 +18,21 @@
 	
 	Variable Name								Variable Description									Example
 	--------------------------------------------------------------------------------------------------------------------------------------------------
+	Letterhead.FacilityTitle					Name of the Imaging Facility.							ACME
+	Letterhead.FacilitySubtitle					Description of the Imaging Facility.					Medical Imaging Centre
+	Letterhead.LogoFile							Image file for the Imaging Facility logo.				logo.jpg
+	Letterhead.Address							Full address of report recipient.						100-123 Any St., Anywhere ON A1B 2C3
+	Letterhead.Address.Line1					First line of address of report recipient.				100-123 Any St.
+	Letterhead.Address.Line2					Second line of address of report recipient.				Anywhere ON A1B 2C3
+	Letterhead.Address.Street					Address of report recipient - street.					123 Any St.
+	Letterhead.Address.Unit						Address of report recipient - unit/apt.					100
+	Letterhead.Address.City						Address of report recipient - city.						Anywhere
+	Letterhead.Address.Province					Address of report recipient - province/state.			ON	
+	Letterhead.Address.PostalCode				Address of report recipient - postal code/zip.			A1B 2C3
+	Letterhead.Phone							Phone number for the Imaging Facility.					(555) - 555-5555
+	Letterhead.Fax								Fax number for the Imaging Facility.					(555) - 555-5555
+	Letterhead.Email							Email address for the Imaging Facility.					info@acme-imaging.ca
+
 	Patient										Name and MRN of the patient.							Smith, John Edward (BG 13288779)
 	Patient.Mrn									MRN of the patient, including authority.				BG 13288779
 	Patient.Mrn.Id								MRN of the patient, number only.						13288779
@@ -27,6 +47,8 @@
 	Recipient.Name.FamilyName					Family name of the report recipient.					Good
 	Recipient.Name.GivenName					Given name of the report recipient.						Doctor
 	Recipient.Address							Full address of report recipient.						12-122 Forrest Street, Toronto ON M5H 6U6
+	Recipient.Address.Line1						First line of address of report recipient.				12-122 Forrest Street
+	Recipient.Address.Line2						Second line of address of report recipient.				Toronto ON M5H 6U6
 	Recipient.Address.Street					Address of report recipient - street.					122 Forrest Street
 	Recipient.Address.Unit						Address of report recipient - unit/apt.					12
 	Recipient.Address.City						Address of report recipient - city.						Toronto
@@ -41,6 +63,8 @@
 	OrderingPractitioner.Name.FamilyName		Family name of the ordering practitioner.				Good
 	OrderingPractitioner.Name.GivenName			Given name of the ordering practitioner.				Doctor
 	OrderingPractitioner.Address				Full address of ordering practitioner.					12-122 Forrest Street, Toronto ON M5H 6U6
+	OrderingPractitioner.Address.Line1			First line of address of ordering practitioner.			12-122 Forrest Street
+	OrderingPractitioner.Address.Line2			Second line of address of ordering practitioner.		Toronto ON M5H 6U6
 	OrderingPractitioner.Address.Street			Address of ordering practitioner - street.				122 Forrest Street
 	OrderingPractitioner.Address.Unit			Address of ordering practitioner - unit/apt.			12
 	OrderingPractitioner.Address.City			Address of ordering practitioner - city.				Toronto
@@ -103,24 +127,32 @@
 	<form id="myForm">
 		<div id="letterhead">
 			<div id="letterheadLogo">
-				<img src="totallyrad.jpg"/>
+				<img src="<%= Letterhead.LogoFile %>"/>
 			</div>
 			<div id="letterheadFacility">
-				<div id="letterheadFacilityName">TotallyRAD</div>
-				<div id="letterheadFacilityDescription">Medical Imaging</div>
+				<div id="letterheadFacilityName"><%= Letterhead.FacilityTitle %></div>
+				<div id="letterheadFacilityDescription"><%= Letterhead.FacilitySubtitle %></div>
 			</div>
 			<div id="letterheadAddress">
-				<div id="letterheadAddress1">123 Buttondown St. Unit 4050</div>
-				<div id="letterheadAddress2">Metropolis, ON Canada</div>
-				<div id="letterheadPhone">(777) 555-5555</div>
+				<div id="letterheadAddress1"><%= Letterhead.Address.Line1 %></div>
+				<div id="letterheadAddress2"><%= Letterhead.Address.Line2 %></div>
+				<div id="letterheadPhone"><%= Letterhead.Phone %></div>
+				<% if(Letterhead.Fax) { %>
+				<div id="letterheadFax"><%= Letterhead.Fax %></div>
+				<% } %>
+				<% if(Letterhead.Email) { %>
+				<div id="letterheadEmail"><%= Letterhead.Email %></div>
+				<% } %>
 			</div>
 			<div class="clear"></div>
 		</div>
 		<div id="recipient">
 			<div id="recipientName"><%= Recipient.Name %></div>
-			<div id="recipientAddress1"><%= (Recipient.Address.Unit ? Recipient.Address.Unit + "-" : "") + Recipient.Address.Street %></div>
-			<div id="recipientAddress2"><%= [Recipient.Address.City, Recipient.Address.Province, Recipient.Address.PostalCode].join(" ") %></div>
+			<div id="recipientAddress1"><%= Recipient.Address.Line1 %></div>
+			<div id="recipientAddress2"><%= Recipient.Address.Line2 %></div>
+			<% if(Recipient.Address.Country) { %>
 			<div id="recipientAddress3"><%= Recipient.Address.Country %></div>
+			<% } %>
 		</div>
 		<div id="ordersummary">
 			<div class="leftcolumn">
@@ -189,8 +221,6 @@
 			</div>
 		<% } %>
 		</div>
-		<div id="endofreport">***** END OF REPORT *****</div>
-		<div id="footer">(Medical Imaging Report for Patient: <span id="patientFooter"><%= Patient.Name %></span>; MRN: <span id="mrnFooter"><%= Patient.Mrn %></span>)</div>
 	</form>
 </body>
 </html>

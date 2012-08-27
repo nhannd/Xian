@@ -14,9 +14,19 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Enterprise.Core.Printing
 {
+	/// <summary>
+	/// Defines a template and corresponding variables for use in generating print outs.
+	/// </summary>
 	public interface IPrintModel
 	{
+		/// <summary>
+		/// Gets the URL of the template.
+		/// </summary>
 		Uri TemplateUrl { get; }
+
+		/// <summary>
+		/// Gets the set of variables accessible to the template.
+		/// </summary>
 		Dictionary<string, object> Variables { get; } 
 	}
 }

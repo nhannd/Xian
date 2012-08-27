@@ -1,0 +1,39 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Healthcare.Printing" GeneratedClassName="PrintTemplateSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="LetterheadFacilityTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">TotallyRAD</Value>
+    </Setting>
+    <Setting Name="LetterheadFacilitySubtitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Medical Imaging Centre</Value>
+    </Setting>
+    <Setting Name="LetterheadLogoFile" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">logo.jpg</Value>
+    </Setting>
+    <Setting Name="LetterheadPhone" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Phone: (555) 555-5555</Value>
+    </Setting>
+    <Setting Name="LetterheadFax" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Fax: (555) 555-5555</Value>
+    </Setting>
+    <Setting Name="LetterheadEmail" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Email: info@totallyrad.ca</Value>
+    </Setting>
+    <Setting Name="LetterheadAddressStreet" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">123 Any St.</Value>
+    </Setting>
+    <Setting Name="LetterheadAddressUnit" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="LetterheadAddressCity" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Anywhere</Value>
+    </Setting>
+    <Setting Name="LetterheadAddressProvince" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">ON</Value>
+    </Setting>
+    <Setting Name="LetterheadAddressPostalCode" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">A1B 2C3</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

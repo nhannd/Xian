@@ -16,56 +16,16 @@ using System.Web;
 using System.Xml.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Core.Printing;
 
 namespace ClearCanvas.Healthcare.Printing
 {
 	/// <summary>
-	/// Defines a small object model for use in printing of radiology reports.
+	/// Print model for radiology reports.
 	/// </summary>
-	public class ReportPrintModel : IPrintModel
+	public class ReportPrintModel : PrintModel
 	{
 		/// <summary>
-		/// Patient information.
-		/// </summary>
-		public class PatientFacade
-		{
-			private readonly PatientProfile _patientProfile;
-
-			internal PatientFacade(PatientProfile patientProfile)
-			{
-				_patientProfile = patientProfile;
-			}
-
-			public PersonName Name
-			{
-				get { return _patientProfile.Name; }
-			}
-
-			public PatientIdentifier Mrn
-			{
-				get { return _patientProfile.Mrn; }
-			}
-
-			public string DateOfBirth
-			{
-				get { return FormatDateOfBirth(_patientProfile.DateOfBirth); }
-			}
-
-			public override string ToString()
-			{
-				return string.Format("{0} ({1})", this.Name, this.Mrn);
-			}
-
-			private string FormatDateOfBirth(DateTime? dateOfBirth)
-			{
-				//todo: can we centralize formatting somewhere
-				return dateOfBirth == null ? "" : dateOfBirth.Value.ToString("yyyy-MM-dd");
-			}
-		}
-
-		/// <summary>
-		/// Practitioner information.
+		/// Practitioner facade.
 		/// </summary>
 		public class PractitionerFacade
 		{
@@ -78,14 +38,18 @@ namespace ClearCanvas.Healthcare.Printing
 				_contactPoint = contactPoint;
 			}
 
-			public PersonName Name
+			public NameFacade Name
 			{
-				get { return _practitioner.Name; }
+				get { return new NameFacade(_practitioner.Name); }
 			}
 
-			public Address Address
+			public AddressFacade Address
 			{
-				get { return _contactPoint == null  ? new Address() : _contactPoint.CurrentAddress; }
+				get
+				{
+					var address = _contactPoint == null ? new Address() : _contactPoint.CurrentAddress;
+					return new AddressFacade(address);
+				}
 			}
 
 			public override string ToString()
@@ -95,7 +59,7 @@ namespace ClearCanvas.Healthcare.Printing
 		}
 
 		/// <summary>
-		/// Procedure information.
+		/// Procedure facade.
 		/// </summary>
 		public class ProcedureFacade
 		{
@@ -123,7 +87,7 @@ namespace ClearCanvas.Healthcare.Printing
 		}
 
 		/// <summary>
-		/// Procedures information.
+		/// Procedures facade.
 		/// </summary>
 		public class ProceduresFacade
 		{
@@ -151,7 +115,7 @@ namespace ClearCanvas.Healthcare.Printing
 		}
 
 		/// <summary>
-		/// Report Part information.
+		/// Report Part facade.
 		/// </summary>
 		public class ReportPartFacade
 		{
@@ -198,24 +162,24 @@ namespace ClearCanvas.Healthcare.Printing
 				get { return GetBody(); }
 			}
 
-			public PersonName InterpretedBy
+			public NameFacade InterpretedBy
 			{
-				get { return _part.Interpreter == null ? null : _part.Interpreter.Name ; }
+				get { return _part.Interpreter == null ? null : new NameFacade(_part.Interpreter.Name) ; }
 			}
 
-			public PersonName VerifiedBy
+			public NameFacade VerifiedBy
 			{
-				get { return _part.Verifier == null ? null : _part.Verifier.Name; }
+				get { return _part.Verifier == null ? null : new NameFacade(_part.Verifier.Name); }
 			}
 
-			public PersonName TranscribedBy
+			public NameFacade TranscribedBy
 			{
-				get { return _part.Transcriber == null ? null : _part.Transcriber.Name; }
+				get { return _part.Transcriber == null ? null : new NameFacade(_part.Transcriber.Name); }
 			}
 
-			public PersonName SupervisedBy
+			public NameFacade SupervisedBy
 			{
-				get { return _part.Supervisor == null ? null : _part.Supervisor.Name; }
+				get { return _part.Supervisor == null ? null : new NameFacade(_part.Supervisor.Name); }
 			}
 
 			public string CreationDateTime
@@ -296,7 +260,7 @@ namespace ClearCanvas.Healthcare.Printing
 		}
 
 		/// <summary>
-		/// Report Parts information.
+		/// Report Parts facade.
 		/// </summary>
 		public class ReportPartsFacade
 		{
@@ -352,12 +316,12 @@ namespace ClearCanvas.Healthcare.Printing
 			_recipient = recipient;
 		}
 
-		public Uri TemplateUrl
+		public override Uri TemplateUrl
 		{
 			get { return new Uri( new PrintTemplateSettings().ReportTemplateUrl); }
 		}
 
-		public Dictionary<string, object> Variables
+		public override Dictionary<string, object> Variables
 		{
 			get { return GetVariables(); }
 		}
@@ -373,6 +337,9 @@ namespace ClearCanvas.Healthcare.Printing
 			var procedure = _report.Procedures.First();
 			var order = procedure.Order;
 			var patientProfile = procedure.PatientProfile;
+
+			// letterhead
+			variables["Letterhead"] = new LetterheadFacade();
 
 			// patient
 			variables["Patient"] = new PatientFacade(patientProfile);
