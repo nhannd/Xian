@@ -1158,4 +1158,10 @@
   <data name="TitleCancelOrder" xml:space="preserve">
     <value>Cancel Order for {0}</value>
   </data>
+  <data name="MessageConfirmLogout" xml:space="preserve">
+    <value>Are you sure you want to log out now?</value>
+  </data>
+  <data name="MenuLogout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
 </root>
