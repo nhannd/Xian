@@ -19,10 +19,11 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
+	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	public class FolderExplorerConfigurationPageProvider : IConfigurationPageProvider
 	{
 		#region IConfigurationPageProvider Members

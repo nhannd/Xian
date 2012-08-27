@@ -14,10 +14,11 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
+	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	public class ConfigurationPageProvider : IConfigurationPageProvider
 	{
 		#region IConfigurationPageProvider Members

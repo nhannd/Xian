@@ -11,6 +11,7 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Authorization;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Extended.Common
 {
@@ -18,7 +19,7 @@ namespace ClearCanvas.Ris.Application.Extended.Common
 	/// Defines a default set of authority groups to be imported at deployment time.  This class
 	/// is not used post-deployment.
 	/// </summary>
-	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
+	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	public class DefaultAuthorityGroups : IDefineAuthorityGroups
 	{
 		// note: we do not define the sys admin ("Administrators") group here because it is defined 

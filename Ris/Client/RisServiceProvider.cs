@@ -23,7 +23,7 @@ namespace ClearCanvas.Ris.Client
     /// Extension of the <see cref="ServiceProviderExtensionPoint"/> that allows the client to obtain RIS application
     /// services.
     /// </summary>
-    [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
+	[ExtensionOf(typeof(ServiceProviderExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
     internal class RisServiceProvider : RemoteServiceProviderBase<RisApplicationServiceAttribute>
     {
 		public RisServiceProvider()

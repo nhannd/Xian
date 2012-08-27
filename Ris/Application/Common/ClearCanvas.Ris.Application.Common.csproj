@@ -190,6 +190,7 @@
     <Compile Include="CannedTextService\EditCannedTextCategoriesResponse.cs" />
     <Compile Include="Documents\UploadResponse.cs" />
     <Compile Include="Documents\UploadRequest.cs" />
+    <Compile Include="FeatureTokens.cs" />
     <Compile Include="Jsml\ShimUtil.cs" />
     <Compile Include="ModalityProcedureStepSummary.cs" />
     <Compile Include="ModalityWorkflow\DicomSeriesDetail.cs" />
