@@ -57,10 +57,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public string CommentsLabel
 		{
 			get
-			{ 
-				return _context.SelectedPerformedStep == null ? "" 
-				: string.Format("Comments for {0}", 
-					string.Join("/",_context.SelectedPerformedStep.ModalityProcedureSteps.Select(mps => mps.Description).ToArray()));
+			{
+				return _context.SelectedPerformedStep == null ? ""
+				: string.Format("Comments for {0}",
+					string.Join("/", _context.SelectedPerformedStep.ModalityProcedureSteps.Select(mps => mps.Description).ToArray()));
 			}
 		}
 
@@ -73,7 +73,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return _context.SelectedPerformedStepExtendedProperties == null ? null : _context.SelectedPerformedStepExtendedProperties["Comments"];
+				string comments;
+				return _context.SelectedPerformedStepExtendedProperties != null
+					   && _context.SelectedPerformedStepExtendedProperties.TryGetValue("Comments", out comments)
+						? comments
+						: null;
 			}
 			set
 			{
