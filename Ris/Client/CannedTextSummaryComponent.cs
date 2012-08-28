@@ -34,11 +34,6 @@ namespace ClearCanvas.Ris.Client
 	{
 		private IShelf _shelf;
 
-		public CannedTextTool()
-		{
-			LicenseChecker.
-		}
-
 		public void Launch()
 		{
 			try
