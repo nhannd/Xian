@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -311,38 +312,68 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void RefreshWorklistItemLocalQueue()
 		{
+			// refresh the count of available items
+			_allAvailableItemsCount = GetAvailableItemCount();
+
+			// populate the queue
 			_worklistLocalItemQueue.Clear();
-
-			Platform.GetService<TWorkflowService>(service =>
+			foreach (var item in GetAvailableItemStream())
+			{
+				if (WorklistItemWasPreviouslyVisited(item) == false)
 				{
-					var workingFacilityRef = LoginSession.Current.WorkingFacility.FacilityRef;
-					var request = _worklistRef != null
-						? new QueryWorklistRequest(_worklistRef, true, true, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef)
-						: new QueryWorklistRequest(_worklistClassName, true, true, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef);
+					_worklistLocalItemQueue.Enqueue(item);
+				}
+				else
+				{
+					// If any excluded items are still in the worklist, don't include them in the available items count
+					_allAvailableItemsCount--;
+				}
 
-					request.Page = new SearchResultPage(0, _worklistItemLocalQueueSize);
+				// stop when we've reached the desired amount
+				if (_worklistLocalItemQueue.Count == _worklistItemLocalQueueSize)
+					break;
+			}
+		}
 
-					var response = service.QueryWorklist(request);
+		private IEnumerable<TWorklistItem> GetAvailableItemStream()
+		{
+			var workingFacilityRef = LoginSession.Current.WorkingFacility.FacilityRef;
+			var request = _worklistRef != null
+				? new QueryWorklistRequest(_worklistRef, true, false, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef)
+				: new QueryWorklistRequest(_worklistClassName, true, false, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef);
 
-					_allAvailableItemsCount = response.ItemCount;
-					foreach (var item in response.WorklistItems)
-					{
-						if (WorklistItemWasPreviouslyVisited(item) == false)
-						{
-							_worklistLocalItemQueue.Enqueue(item);
-						}
-						else
-						{
-							// If any excluded items are still in the worklist, don't include them in the available items count
-							_allAvailableItemsCount--;
-						}
-					}
-				});
+			const int pageSize = 25;
+			var more = true;
+			QueryWorklistResponse<TWorklistItem> response = null;
+			for (var p = 0; more; p += pageSize)
+			{
+				request.Page = new SearchResultPage(p, p + pageSize);
+				Platform.GetService<TWorkflowService>(service => response = service.QueryWorklist(request));
+
+				more = response.WorklistItems.Count > 0;
+
+				foreach (var item in response.WorklistItems)
+				{
+					yield return item;
+				}
+			}
+		}
+
+		private int GetAvailableItemCount()
+		{
+			var workingFacilityRef = LoginSession.Current.WorkingFacility.FacilityRef;
+			var request = _worklistRef != null
+				? new QueryWorklistRequest(_worklistRef, false, true, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef)
+				: new QueryWorklistRequest(_worklistClassName, false, true, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef);
+
+			QueryWorklistResponse<TWorklistItem> response = null;
+			Platform.GetService<TWorkflowService>(service => response = service.QueryWorklist(request));
+			return response.ItemCount;
 		}
 
 		private bool WorklistItemWasPreviouslyVisited(TWorklistItem item)
 		{
-			return CollectionUtils.Contains(_visitedItems, skippedItem => skippedItem.AccessionNumber == item.AccessionNumber);
+			return CollectionUtils.Contains(_visitedItems, skippedItem => skippedItem.ProcedureRef.Equals(item.ProcedureRef, true));
 		}
 
 		#endregion
