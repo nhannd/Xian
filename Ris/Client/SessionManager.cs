@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Client
 	}
 
 
-	[ExtensionOf(typeof(SessionManagerExtensionPoint))]
+	[ExtensionOf(typeof(SessionManagerExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	class SessionManager : ISessionManager
 	{
 		struct LoginResult

@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
 	[MenuAction("launch", "global-menus/Admin/Protocol/Codes", "Launch")]
 	[ActionPermission("launch", Application.Extended.Common.AuthorityTokens.Admin.Data.ProtocolGroups)]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	public class ProtocolCodeAdminTool : Tool<IDesktopToolContext>
 	{
 		private IWorkspace _workspace;

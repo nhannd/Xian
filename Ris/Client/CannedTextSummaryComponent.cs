@@ -20,6 +20,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Desktop;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.CannedTextService;
 using Action = ClearCanvas.Desktop.Actions.Action;
 
@@ -28,7 +29,7 @@ namespace ClearCanvas.Ris.Client
 	[MenuAction("launch", "global-menus/MenuTools/Canned Text", "Launch")]
 	[ActionPermission("launch", Application.Common.AuthorityTokens.Workflow.CannedText.Personal)]
 	[ActionPermission("launch", Application.Common.AuthorityTokens.Workflow.CannedText.Group)]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	public class CannedTextTool : Tool<IDesktopToolContext>
 	{
 		private IShelf _shelf;

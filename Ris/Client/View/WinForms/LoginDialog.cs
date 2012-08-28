@@ -12,10 +12,11 @@
 using System.Drawing;
 using ClearCanvas.Common;
 using System.Windows.Forms;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-	[ExtensionOf(typeof(LoginDialogExtensionPoint))]
+	[ExtensionOf(typeof(LoginDialogExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	public class LoginDialog : ILoginDialog
 	{
 		private readonly LoginForm _form;

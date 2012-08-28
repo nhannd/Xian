@@ -24,7 +24,7 @@ namespace ClearCanvas.Ris.Client
 {
 	[MenuAction("launch", "global-menus/Admin/Procedure Types", "Launch")]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProcedureType)]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	public class ProcedureTypeAdminTool : Tool<IDesktopToolContext>
 	{
 		private IWorkspace _workspace;

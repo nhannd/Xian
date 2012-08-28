@@ -24,7 +24,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 {
     [MenuAction("launch", "global-menus/Admin/Protocol/Groups", "Launch")]
 	[ActionPermission("launch", Application.Extended.Common.AuthorityTokens.Admin.Data.ProtocolGroups)]
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
     public class ProtocolGroupSummaryTool : Tool<IDesktopToolContext>
     {
         private IWorkspace _workspace;

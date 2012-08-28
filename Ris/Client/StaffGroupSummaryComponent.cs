@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Client
 {
     [MenuAction("launch", "global-menus/Admin/Staff Groups", "Launch")]
 	[ActionPermission("launch", Application.Common.AuthorityTokens.Admin.Data.StaffGroup)]
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
     public class StaffGroupAdminTool : Tool<IDesktopToolContext>
     {
         private IWorkspace _workspace;
