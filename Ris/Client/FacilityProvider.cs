@@ -19,14 +19,14 @@ using ClearCanvas.Ris.Application.Common.Login;
 
 namespace ClearCanvas.Ris.Client
 {
-	[ExtensionOf(typeof (FacilityProviderExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
-	internal sealed class FacilityProvider : IFacilityProvider
+	[ExtensionOf(typeof (LoginFacilityProviderExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
+	internal sealed class FacilityProvider : ILoginFacilityProvider
 	{
-		public IList<Facility> GetAvailableFacilities()
+		public IList<FacilityInfo> GetAvailableFacilities()
 		{
 			try
 			{
-				IList<Facility> choices = null;
+				IList<FacilityInfo> choices = null;
 				Platform.Log(LogLevel.Debug, "Contacting server to obtain facility choices for login dialog...");
 				Platform.GetService<ILoginService>(service => { choices = RetrieveFacilityChoices(service); });
 				Platform.Log(LogLevel.Debug, "Got facility choices for login dialog.");
@@ -36,19 +36,19 @@ namespace ClearCanvas.Ris.Client
 			{
 				Desktop.Application.ShowMessageBox("Unable to connect to RIS server.  The workstation may be configured incorrectly, or the server may be unreachable.", MessageBoxActions.Ok);
 				Platform.Log(LogLevel.Error, ex);
-				return new Facility[0];
+				return new FacilityInfo[0];
 			}
 		}
 
-		private static IList<Facility> RetrieveFacilityChoices(ILoginService service)
+		private static IList<FacilityInfo> RetrieveFacilityChoices(ILoginService service)
 		{
 			var choices = service.GetWorkingFacilityChoices(new GetWorkingFacilityChoicesRequest()).FacilityChoices;
-			return choices != null ? choices.Select(fs => new Facility(fs.Code)).ToArray() : new Facility[0];
+			return choices != null ? choices.Select(fs => new FacilityInfo(fs.Code)).ToArray() : new FacilityInfo[0];
 		}
 
-		public Facility CurrentFacility
+		public FacilityInfo CurrentFacility
 		{
-			get { return LoginSession.Current != null ? new Facility(LoginSession.Current.WorkingFacility.Code) : null; }
+			get { return LoginSession.Current != null ? new FacilityInfo(LoginSession.Current.WorkingFacility.Code) : null; }
 			set
 			{
 				if (LoginSession.Current == null) throw new InvalidOperationException("Current working facility cannot be changed while a user is logged in.");

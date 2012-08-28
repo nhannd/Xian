@@ -17,47 +17,47 @@ using ClearCanvas.Common.Serialization;
 
 namespace ClearCanvas.Enterprise.Common
 {
-	public interface IFacilityProvider
+	public interface ILoginFacilityProvider
 	{
-		IList<Facility> GetAvailableFacilities();
+		IList<FacilityInfo> GetAvailableFacilities();
 
-		Facility CurrentFacility { get; set; }
+		FacilityInfo CurrentFacility { get; set; }
 	}
 
 	[ExtensionPoint]
-	public sealed class FacilityProviderExtensionPoint : ExtensionPoint<IFacilityProvider>
+	public sealed class LoginFacilityProviderExtensionPoint : ExtensionPoint<ILoginFacilityProvider>
 	{
-		private static IFacilityProvider _provider;
+		private static ILoginFacilityProvider _provider;
 
-		public static IFacilityProvider GetProvider()
+		public static ILoginFacilityProvider GetProvider()
 		{
 			return _provider ?? (_provider = CreateProvider());
 		}
 
-		private static IFacilityProvider CreateProvider()
+		private static ILoginFacilityProvider CreateProvider()
 		{
 			try
 			{
-				var provider = (IFacilityProvider) new FacilityProviderExtensionPoint().CreateExtension();
+				var provider = (ILoginFacilityProvider) new LoginFacilityProviderExtensionPoint().CreateExtension();
 				if (provider != null) return provider;
 			}
 			catch (NotSupportedException ex)
 			{
 				Platform.Log(LogLevel.Debug, ex, "No facilities provider defined.");
 			}
-			return new DefaultFacilityProvider();
+			return new DefaultLoginFacilityProvider();
 		}
 
-		private class DefaultFacilityProvider : IFacilityProvider
+		private class DefaultLoginFacilityProvider : ILoginFacilityProvider
 		{
-			private static readonly Facility[] _emptyList = new Facility[0];
+			private static readonly FacilityInfo[] _emptyList = new FacilityInfo[0];
 
-			public IList<Facility> GetAvailableFacilities()
+			public IList<FacilityInfo> GetAvailableFacilities()
 			{
 				return _emptyList;
 			}
 
-			public Facility CurrentFacility
+			public FacilityInfo CurrentFacility
 			{
 				get { return null; }
 				set { }
@@ -66,11 +66,11 @@ namespace ClearCanvas.Enterprise.Common
 	}
 
 	[DataContract]
-	public class Facility : DataContractBase, IEquatable<Facility>
+	public class FacilityInfo : DataContractBase, IEquatable<FacilityInfo>
 	{
-		public Facility() {}
+		public FacilityInfo() {}
 
-		public Facility(string code)
+		public FacilityInfo(string code)
 		{
 			Code = code;
 		}
@@ -78,14 +78,14 @@ namespace ClearCanvas.Enterprise.Common
 		[DataMember]
 		public string Code { get; set; }
 
-		public bool Equals(Facility facilitySummary)
+		public bool Equals(FacilityInfo facilitySummary)
 		{
 			return facilitySummary != null && Equals(Code, facilitySummary.Code);
 		}
 
 		public override bool Equals(object obj)
 		{
-			return ReferenceEquals(this, obj) || Equals(obj as Facility);
+			return ReferenceEquals(this, obj) || Equals(obj as FacilityInfo);
 		}
 
 		public override int GetHashCode()
