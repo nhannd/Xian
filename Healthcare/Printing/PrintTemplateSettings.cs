@@ -23,7 +23,7 @@ namespace ClearCanvas.Healthcare.Printing
 	/// </remarks>
 	[SettingsGroupDescription("Configures print template URLs.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-	public sealed class PrintTemplateSettings : global::System.Configuration.ApplicationSettingsBase
+	internal partial class PrintTemplateSettings
 	{
 		internal PrintTemplateSettings()
 		{

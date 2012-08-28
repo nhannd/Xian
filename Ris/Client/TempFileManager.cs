@@ -227,7 +227,9 @@ namespace ClearCanvas.Ris.Client
 			}
 			catch (Exception e)
 			{
-				Platform.Log(LogLevel.Warn, e, SR.ExceptioinFailedToDeleteTemporaryFiles);
+				// this will likely happen a lot, so it isn't really an exceptional condition
+				// therefore, just log at debug level
+				Platform.Log(LogLevel.Debug, e, SR.ExceptioinFailedToDeleteTemporaryFiles);
 				return false;
 			}
 		}

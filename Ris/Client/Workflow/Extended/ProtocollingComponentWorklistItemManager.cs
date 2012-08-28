@@ -18,11 +18,11 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 	public class ProtocollingComponentWorklistItemManager : WorklistItemManager<ReportingWorklistItemSummary, IReportingWorkflowService>
 	{
 		public ProtocollingComponentWorklistItemManager(string folderName, EntityRef worklistRef, string worklistClassName)
-			: base(folderName, worklistRef, worklistClassName)
+			: base(folderName, worklistRef, worklistClassName, ProtocollingSettings.Default.NextItemQueueCacheSize)
 		{
 		}
 
-		protected override IContinuousWorkflowComponentMode GetMode<TWorklistITem>(ReportingWorklistItemSummary worklistItem)
+		protected override IContinuousWorkflowComponentMode GetMode(ReportingWorklistItemSummary worklistItem)
 		{
 			throw new NotSupportedException("Protocolling component mode should be initialized externally.  ReportingWorklistItemSummary does not have enough context.");
 		}

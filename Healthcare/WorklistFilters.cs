@@ -364,10 +364,16 @@ namespace ClearCanvas.Healthcare
 			var condition = subCriteria as ISearchCondition;
 
 			// apply ordering
-			if (timeDirective.Ordering == Worklist.WorklistOrdering.PrioritizeOldestItems)
-				condition.SortAsc(0);
+			if(timeDirective.HonourOrderPriority)
+			{
+				criteria.Order.PriorityRank.SortDesc(0);
+				ApplyOrdering(timeDirective.Ordering, condition, 1);
+			}
 			else
-				condition.SortDesc(0);
+			{
+				ApplyOrdering(timeDirective.Ordering, condition, 0);
+			}
+
 
 			// apply range filtering, if supported by the worklist class, and not downtime recovery mode
 			if (!wqc.DowntimeRecoveryMode)
@@ -376,6 +382,14 @@ namespace ClearCanvas.Healthcare
 				if (range != null)
 					range.Apply(condition, Platform.Time);
 			}
+		}
+
+		private static void ApplyOrdering(Worklist.WorklistOrdering ordering, ISearchCondition condition, int index)
+		{
+			if (ordering == Worklist.WorklistOrdering.PrioritizeOldestItems)
+				condition.SortAsc(index);
+			else
+				condition.SortDesc(index);
 		}
 	}
 

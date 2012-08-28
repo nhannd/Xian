@@ -135,6 +135,12 @@
     <Compile Include="OrderMergeHistoryVirtualOrderNoteProvider.cs" />
     <Compile Include="OrderMergeInfo.cs" />
     <Compile Include="OrderRules.cs" />
+    <Compile Include="Printing\PrintModel.cs" />
+    <Compile Include="Printing\PrintTemplateSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PrintTemplateSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Printing\PrintTemplateSettings.cs" />
     <Compile Include="Printing\ReportPrintModel.cs" />
     <Compile Include="ProtocolingWorklistItemSearchCriteria.cs" />
@@ -415,6 +421,10 @@
     <None Include="LogicalHL7EventSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>LogicalHL7EventSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Printing\PrintTemplateSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PrintTemplateSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ProcedureStepHierarchy.cd" />
     <None Include="Workflow\Reporting\ReportingWorkflowSettings.settings">

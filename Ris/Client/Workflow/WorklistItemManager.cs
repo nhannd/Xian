@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -134,21 +135,22 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private readonly string _folderName;
 		private readonly EntityRef _worklistRef;
 		private readonly string _worklistClassName;
-		private int _allAvailableItemsCount = 0;
-		private int _completedItemsCount = 0;
-		private int _skippedItemsCount = 0;
+		private int _allAvailableItemsCount;
+		private int _completedItemsCount;
+		private int _skippedItemsCount;
 		private bool _isInitialItem = true;
 
 		private readonly List<TWorklistItem> _visitedItems;
-		private readonly Queue<TWorklistItem> _worklistCache;
+		private readonly Queue<TWorklistItem> _worklistLocalItemQueue;
+		private readonly int _worklistItemLocalQueueSize;
 
 		private bool _reportNextItem;
 
-		private bool _isInitialized = false;
+		private bool _isInitialized;
 
 		#endregion
 
-		protected abstract IContinuousWorkflowComponentMode GetMode<TWorklistITem>(TWorklistItem worklistItem);
+		protected abstract IContinuousWorkflowComponentMode GetMode(TWorklistItem worklistItem);
 		protected abstract string TaskName { get; }
 
 		/// <summary>
@@ -160,19 +162,25 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <param name="folderName">Folder system name, displayed in status text</param>
 		/// <param name="worklistRef">An <see cref="EntityRef"/> for the folder from which additional worklist items should be loaded.</param>
 		/// <param name="worklistClassName">A name for the folder class from which additional worklist items should be loaded.</param>
-		protected WorklistItemManager(string folderName, EntityRef worklistRef, string worklistClassName)
+		/// <param name="worklistItemLocalQueueSize">
+		/// Number of worklist items to queue locally.  The higher this number is, the fewer trips
+		/// to the server will need to be made.  The tradeoff however is that the client will not be aware of higher priority items that may
+		/// have appeared on the server since the local queue was populated, until the local queue is refreshed.
+		/// </param>
+		protected WorklistItemManager(string folderName, EntityRef worklistRef, string worklistClassName, int worklistItemLocalQueueSize)
 		{
 			_folderName = folderName;
 			_worklistRef = worklistRef;
 			_worklistClassName = worklistClassName;
 
 			_visitedItems = new List<TWorklistItem>();
-			_worklistCache = new Queue<TWorklistItem>();
+			_worklistLocalItemQueue = new Queue<TWorklistItem>();
+			_worklistItemLocalQueueSize = worklistItemLocalQueueSize;
 		}
 
 		public void Initialize(TWorklistItem worklistItem)
 		{
-			this.Initialize(worklistItem, GetMode<TWorklistItem>(worklistItem));
+			this.Initialize(worklistItem, GetMode(worklistItem));
 		}
 
 		public void Initialize(TWorklistItem worklistItem, IContinuousWorkflowComponentMode mode)
@@ -218,12 +226,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			if (_reportNextItem && _componentMode.CanContinue && overrideDoNotPerformNextItem == false)
 			{
-				if (_worklistCache.Count == 0)
+				if (_worklistLocalItemQueue.Count == 0)
 				{
-					RefreshWorklistItemCache();
+					RefreshWorklistItemLocalQueue();
 				}
 
-				_worklistItem = _worklistCache.Count > 0 ? _worklistCache.Dequeue() : null;
+				_worklistItem = _worklistLocalItemQueue.Count > 0 ? _worklistLocalItemQueue.Dequeue() : null;
 				_allAvailableItemsCount--;
 			}
 			else
@@ -237,7 +245,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public void IgnoreWorklistItems(List<TWorklistItem> interpretations)
 		{
 			_visitedItems.AddRange(interpretations);
-			RefreshWorklistItemCache();
+			RefreshWorklistItemLocalQueue();
 		}
 
 		public event EventHandler WorklistItemChanged
@@ -257,8 +265,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				string status = string.Format(SR.FormatContinuousWorkflowDescription, this.TaskName, _folderName);
-
+				var status = string.Format(SR.FormatContinuousWorkflowDescription, this.TaskName, _folderName);
 				if (!_isInitialItem)
 				{
 					status = status + string.Format(SR.FormatReportingStatusText, _allAvailableItemsCount, _completedItemsCount, _skippedItemsCount);
@@ -303,42 +310,70 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _worklistRef != null || _worklistClassName != null; }
 		}
 
-		private void RefreshWorklistItemCache()
+		private void RefreshWorklistItemLocalQueue()
 		{
-			_worklistCache.Clear();
+			// refresh the count of available items
+			_allAvailableItemsCount = GetAvailableItemCount();
 
-			Platform.GetService<TWorkflowService>(service =>
+			// populate the queue
+			_worklistLocalItemQueue.Clear();
+			foreach (var item in GetAvailableItemStream())
+			{
+				if (WorklistItemWasPreviouslyVisited(item) == false)
 				{
-					var workingFacilityRef = LoginSession.Current.WorkingFacility.FacilityRef;
-					var request = _worklistRef != null
-						? new QueryWorklistRequest(_worklistRef, true, true, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef)
-						: new QueryWorklistRequest(_worklistClassName, true, true, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef);
+					_worklistLocalItemQueue.Enqueue(item);
+				}
+				else
+				{
+					// If any excluded items are still in the worklist, don't include them in the available items count
+					_allAvailableItemsCount--;
+				}
 
-					// Only cache the first 50 items instead of the whole worklist; querying for the whole worklist faults the connection when the
-					// result set is ~1100 items or more.
-					request.Page = new SearchResultPage(0, 50);
+				// stop when we've reached the desired amount
+				if (_worklistLocalItemQueue.Count == _worklistItemLocalQueueSize)
+					break;
+			}
+		}
 
-					var response = service.QueryWorklist(request);
+		private IEnumerable<TWorklistItem> GetAvailableItemStream()
+		{
+			var workingFacilityRef = LoginSession.Current.WorkingFacility.FacilityRef;
+			var request = _worklistRef != null
+				? new QueryWorklistRequest(_worklistRef, true, false, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef)
+				: new QueryWorklistRequest(_worklistClassName, true, false, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef);
 
-					_allAvailableItemsCount = response.ItemCount;
-					foreach (var item in response.WorklistItems)
-					{
-						if (WorklistItemWasPreviouslyVisited(item) == false)
-						{
-							_worklistCache.Enqueue(item);
-						}
-						else
-						{
-							// If any excluded items are still in the worklist, don't include them in the available items count
-							_allAvailableItemsCount--;
-						}
-					}
-				});
+			const int pageSize = 25;
+			var more = true;
+			QueryWorklistResponse<TWorklistItem> response = null;
+			for (var p = 0; more; p += pageSize)
+			{
+				request.Page = new SearchResultPage(p, p + pageSize);
+				Platform.GetService<TWorkflowService>(service => response = service.QueryWorklist(request));
+
+				more = response.WorklistItems.Count > 0;
+
+				foreach (var item in response.WorklistItems)
+				{
+					yield return item;
+				}
+			}
+		}
+
+		private int GetAvailableItemCount()
+		{
+			var workingFacilityRef = LoginSession.Current.WorkingFacility.FacilityRef;
+			var request = _worklistRef != null
+				? new QueryWorklistRequest(_worklistRef, false, true, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef)
+				: new QueryWorklistRequest(_worklistClassName, false, true, DowntimeRecovery.InDowntimeRecoveryMode, workingFacilityRef);
+
+			QueryWorklistResponse<TWorklistItem> response = null;
+			Platform.GetService<TWorkflowService>(service => response = service.QueryWorklist(request));
+			return response.ItemCount;
 		}
 
 		private bool WorklistItemWasPreviouslyVisited(TWorklistItem item)
 		{
-			return CollectionUtils.Contains(_visitedItems, skippedItem => skippedItem.AccessionNumber == item.AccessionNumber);
+			return CollectionUtils.Contains(_visitedItems, skippedItem => skippedItem.ProcedureRef.Equals(item.ProcedureRef, true));
 		}
 
 		#endregion

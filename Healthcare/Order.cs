@@ -141,6 +141,19 @@ namespace ClearCanvas.Healthcare
 		#region Public properties
 
 		/// <summary>
+		/// Priority
+		/// </summary>
+		public OrderPriority Priority
+		{
+			get { return _priority; }
+			set
+			{
+				_priority = value;
+				_priorityRank = (int) value;
+			}
+		}
+
+		/// <summary>
 		/// Gets a value indicating whether this order is in a terminal state.
 		/// </summary>
 		public virtual bool IsTerminated
@@ -383,6 +396,7 @@ namespace ClearCanvas.Healthcare
 					new List<OrderAttachment>(),
 					_reasonForStudy,
 					_priority,
+					(int)_priority,
 					OrderStatus.SC,
 					null,
 					null,

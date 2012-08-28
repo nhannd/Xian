@@ -45,7 +45,8 @@ namespace ClearCanvas.Healthcare
 			return new TimeDirective(
 				WorklistItemField.ProcedureStepCreationTime,
 				null,
-				WorklistOrdering.PrioritizeOldestItems);
+				WorklistOrdering.PrioritizeOldestItems,
+				true);
 		}
 	}
 
@@ -89,7 +90,8 @@ namespace ClearCanvas.Healthcare
 			return new TimeDirective(
 				WorklistItemField.ProcedureStepStartTime,
 				null,
-				WorklistOrdering.PrioritizeOldestItems);
+				WorklistOrdering.PrioritizeOldestItems,
+				true);
 		}
 	}
 
