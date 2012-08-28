@@ -20,5 +20,8 @@
     <Setting Name="SupervisorStaffTypeFilters" Type="System.String" Scope="Application">
       <Value Profile="(Default)">PRAD</Value>
     </Setting>
+    <Setting Name="NextItemQueueCacheSize" Description="The number of items to keep in the &quot;Next Item&quot; queue.  A higher value means fewer trips to the server, but also the possibility that higher priority items will not be seen by the user as quickly." Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

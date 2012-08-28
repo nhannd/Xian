@@ -117,5 +117,20 @@ namespace ClearCanvas.Ris.Client.Workflow {
                 this["InitiallySelectedTabPageName"] = value;
             }
         }
+        
+        /// <summary>
+        /// The number of items to keep in the &quot;Next Item&quot; queue.  A higher value means fewer trips to the server, but also the possibility that higher priority items will not be seen by the user as quickly.
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("The number of items to keep in the \"Next Item\" queue.  A higher value means fewer" +
+            " trips to the server, but also the possibility that higher priority items will n" +
+            "ot be seen by the user as quickly.")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int NextItemQueueCacheSize {
+            get {
+                return ((int)(this["NextItemQueueCacheSize"]));
+            }
+        }
     }
 }
