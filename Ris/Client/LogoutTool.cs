@@ -29,13 +29,12 @@ namespace ClearCanvas.Ris.Client
     {
         public void Logout()
         {
-            if (base.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmLogout, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+            if (ClearCanvas.Desktop.Application.Quit())
             {
-                Platform.Log(LogLevel.Debug, @"Logging out and restarting the application");                
+                Platform.Log(LogLevel.Info, @"User has logged out");
+                Platform.Log(LogLevel.Info, "Restarting the application");
                 Process.Start(Assembly.GetEntryAssembly().Location);
-                ClearCanvas.Desktop.Application.Shutdown();
             }
-            
         }
     }
 }
