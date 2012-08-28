@@ -151,6 +151,7 @@
     <Compile Include="Configuration\ListConfigurationDocumentsResponse.cs" />
     <Compile Include="DefaultPrincipal.cs" />
     <Compile Include="EntityRefJsmlSerializerHook.cs" />
+    <Compile Include="Facility.cs" />
     <Compile Include="FailoverClientAdvice.cs" />
     <Compile Include="IChannelProvider.cs" />
     <Compile Include="IOfflineCache.cs" />

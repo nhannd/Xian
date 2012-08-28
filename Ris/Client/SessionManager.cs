@@ -256,7 +256,7 @@ namespace ClearCanvas.Ris.Client
 				Platform.GetService(
 					delegate(IAuthenticationService service)
 					{
-						var request = new InitiateSessionRequest(userName, GetMachineID(), Dns.GetHostName(), password) { GetAuthorizations = true };
+						var request = new InitiateSessionRequest(userName, ProductInformation.Component, Dns.GetHostName(), password) { GetAuthorizations = true };
 						var response = service.InitiateSession(request);
 
 						if (response.SessionToken == null)
@@ -396,30 +396,6 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<ILoginService>(
 				service => choices = service.GetWorkingFacilityChoices(new GetWorkingFacilityChoicesRequest()).FacilityChoices);
 			return choices;
-		}
-
-		private static string GetMachineID()
-		{
-			try
-			{
-				// Use the serial number of the mother board
-				string id = null;
-				var mc = new ManagementClass("Win32_Baseboard");
-				var moc = mc.GetInstances();
-				foreach (ManagementObject mo in moc)
-				{
-					id = mo.Properties["SerialNumber"].Value.ToString().Trim();
-					if (!string.IsNullOrEmpty(id))
-						break;
-				}
-
-				return id;
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Warn, e);
-				return null;
-			}
 		}
 	}
 }
