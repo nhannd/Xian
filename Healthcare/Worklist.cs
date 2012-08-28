@@ -55,10 +55,23 @@ namespace ClearCanvas.Healthcare
 			/// <param name="defaultRange"></param>
 			/// <param name="ordering"></param>
 			public TimeDirective(WorklistItemField timeField, WorklistTimeRange defaultRange, WorklistOrdering ordering)
+				:this(timeField, defaultRange, ordering, false)
+			{
+			}
+
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/// <param name="timeField"></param>
+			/// <param name="defaultRange"></param>
+			/// <param name="ordering"></param>
+			/// <param name="honourOrderPriority"> </param>
+			public TimeDirective(WorklistItemField timeField, WorklistTimeRange defaultRange, WorklistOrdering ordering, bool honourOrderPriority)
 			{
 				this.TimeField = timeField;
 				this.Ordering = ordering;
 				this.DefaultRange = defaultRange;
+				this.HonourOrderPriority = honourOrderPriority;
 			}
 
 			/// <summary>
@@ -75,6 +88,12 @@ namespace ClearCanvas.Healthcare
 			/// Gets a value indicating whether oldest or newest items are prioritized in result sets.
 			/// </summary>
 			public WorklistOrdering Ordering { get; private set; }
+
+			/// <summary>
+			/// Gets a value indicating whether the priority of the Order is honoured. If true, items corresponding
+			/// to orders with higher priority will take precedence.
+			/// </summary>
+			public bool HonourOrderPriority { get; private set; }
 		}
 
 
