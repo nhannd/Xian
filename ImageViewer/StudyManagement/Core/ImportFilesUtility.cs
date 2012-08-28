@@ -29,6 +29,9 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Command;
 using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 using ClearCanvas.ImageViewer.StudyManagement.Core.WorkItemProcessor;
+using AuditedInstances = ClearCanvas.Dicom.Audit.AuditedInstances;
+using EventResult = ClearCanvas.Dicom.Audit.EventResult;
+using EventSource = ClearCanvas.Dicom.Audit.EventSource;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Core
 {

@@ -9,10 +9,7 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.IO;
-using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Audit;
+using DicomAuditedInstances = ClearCanvas.Dicom.Audit.AuditedInstances;
 
 namespace ClearCanvas.ImageViewer.Common.Auditing
 {
@@ -21,12 +18,13 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 	/// </summary>
 	public sealed class AuditedInstances
 	{
-		private readonly Dictionary<Patient, Dictionary<Study, List<string>>> _studies = new Dictionary<Patient, Dictionary<Study, List<string>>>();
+		private readonly DicomAuditedInstances _instances;
 
 		/// <summary>
 		/// Constructs a new, empty collection.
 		/// </summary>
-		public AuditedInstances() {}
+		public AuditedInstances()
+			: this(new DicomAuditedInstances()) {}
 
 		/// <summary>
 		/// Constructs a new collection and adds files on the indicated paths, automatically parsing for patient and study instance information.
@@ -34,12 +32,11 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 		/// <param name="recursive">True if the paths should be processed recursively; False otherwise.</param>
 		/// <param name="paths">The file paths on which to search for files.</param>
 		public AuditedInstances(bool recursive, params string[] paths)
+			: this(new DicomAuditedInstances(recursive, paths)) {}
+
+		private AuditedInstances(DicomAuditedInstances instances)
 		{
-			if (paths != null)
-			{
-				foreach (string path in paths)
-					this.AddPath(path, recursive);
-			}
+			_instances = instances;
 		}
 
 		/// <summary>
@@ -48,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 		/// <param name="path">The file path on which to search for files.</param>
 		public void AddPath(string path)
 		{
-			this.AddPath(path, true);
+			_instances.AddPath(path);
 		}
 
 		/// <summary>
@@ -58,23 +55,7 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 		/// <param name="recursive">True if the paths should be processed recursively; False otherwise.</param>
 		public void AddPath(string path, bool recursive)
 		{
-			if (File.Exists(path))
-			{
-				try
-				{
-					DicomFile dcf = new DicomFile(path);
-					dcf.Load(DicomReadOptions.Default | DicomReadOptions.DoNotStorePixelDataInDataSet);
-
-					List<string> s = InternalAddStudy(dcf.DataSet[DicomTags.PatientId].ToString(), dcf.DataSet[DicomTags.PatientsName].ToString(), dcf.DataSet[DicomTags.StudyInstanceUid].ToString());
-					s.Add(path);
-				}
-				catch (DicomException) {}
-			}
-			else if (recursive && Directory.Exists(path))
-			{
-				foreach (string subpaths in Directory.GetFileSystemEntries(path))
-					this.AddPath(subpaths);
-			}
+			_instances.AddPath(path, recursive);
 		}
 
 		/// <summary>
@@ -90,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 		/// <param name="studyInstanceUid">The study instance UID of the instance.</param>
 		public void AddInstance(string studyInstanceUid)
 		{
-			InternalAddStudy(string.Empty, string.Empty, studyInstanceUid);
+			_instances.AddInstance(studyInstanceUid);
 		}
 
 		/// <summary>
@@ -106,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 		/// <param name="studyInstanceUid">The study instance UID of the instance.</param>
 		public void AddInstance(string patientId, string patientName, string studyInstanceUid)
 		{
-			InternalAddStudy(patientId, patientName, studyInstanceUid);
+			_instances.AddInstance(patientId, patientName, studyInstanceUid);
 		}
 
 		/// <summary>
@@ -124,170 +105,17 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 		/// <param name="filename">The filename or path associated with the specified instance.</param>
 		public void AddInstance(string patientId, string patientName, string studyInstanceUid, string filename)
 		{
-			List<string> s = InternalAddStudy(patientId, patientName, studyInstanceUid);
-			if (!string.IsNullOrEmpty(filename))
-				s.Add(filename);
+			_instances.AddInstance(patientId, patientName, studyInstanceUid, filename);
 		}
 
-		private List<string> InternalAddStudy(string patientId, string patientName, string studyInstanceUid)
+		public static implicit operator DicomAuditedInstances(AuditedInstances instances)
 		{
-			Patient p = new Patient(patientId, patientName);
-			if (!_studies.ContainsKey(p))
-			{
-				_studies.Add(p, new Dictionary<Study, List<string>>());
-			}
-
-			Dictionary<Study, List<string>> studies = _studies[p];
-			Study s = new Study(studyInstanceUid);
-			if (!studies.ContainsKey(s))
-				studies.Add(s, new List<string>());
-			return studies[s];
+			return instances._instances;
 		}
 
-		/// <summary>
-		/// Enumerates the unique patients in the collection.
-		/// </summary>
-		internal IEnumerable<AuditPatientParticipantObject> EnumeratePatients()
+		public static implicit operator AuditedInstances(DicomAuditedInstances instances)
 		{
-			foreach (Patient patient in _studies.Keys)
-				yield return patient;
-		}
-
-		/// <summary>
-		/// Enumerates the unique studies in the collection.
-		/// </summary>
-		internal IEnumerable<AuditStudyParticipantObject> EnumerateStudies()
-		{
-			foreach (Patient patient in _studies.Keys)
-				foreach (Study study in _studies[patient].Keys)
-					yield return study;
-		}
-
-		/// <summary>
-		/// Enumerates the unique studies for a particular <paramref name="patient"/> in the collection.
-		/// </summary>
-		internal IEnumerable<AuditStudyParticipantObject> EnumerateStudies(AuditPatientParticipantObject patient)
-		{
-			return EnumerateStudies(patient.PatientId, patient.PatientsName);
-		}
-
-		/// <summary>
-		/// Enumerates the unique studies for a particular patient in the collection.
-		/// </summary>
-		/// <param name="patientId">The patient ID of the patient.</param>
-		/// <param name="patientName">The patient's name of the patient.</param>
-		internal IEnumerable<AuditStudyParticipantObject> EnumerateStudies(string patientId, string patientName)
-		{
-			Patient patient = new Patient(patientId, patientName);
-			if (_studies.ContainsKey(patient))
-				foreach (Study study in _studies[patient].Keys)
-					yield return study;
-		}
-
-		/// <summary>
-		/// Enumerates all the file paths in the collection.
-		/// </summary>
-		/// <remarks>
-		/// If the audited instances are not files on the file system, then this method returns an empty enumeration.
-		/// </remarks>
-		internal IEnumerable<string> EnumerateFiles()
-		{
-			foreach (Patient patient in _studies.Keys)
-				foreach (Study study in _studies[patient].Keys)
-					foreach (string file in _studies[patient][study])
-						yield return file;
-		}
-
-		/// <summary>
-		/// Enumerates the unique file system volumes in the collection.
-		/// </summary>
-		/// <remarks>
-		/// <para>
-		/// This enumeration returns the volume labels of each device; If the label is empty,
-		/// then the name of the device is returned instead.
-		/// </para>
-		/// <para>
-		/// If the audited instances are not files on the file system, then this method returns an empty enumeration.
-		/// </para>
-		/// </remarks>
-		internal IEnumerable<string> EnumerateFileVolumes()
-		{
-			Dictionary<string, string> drives = new Dictionary<string, string>();
-			foreach (string s in this.EnumerateFiles())
-			{
-				string root = Path.GetPathRoot(s).ToUpperInvariant();
-				if (root.Length > 0 && root[0] >= 'A' && root[0] <= 'Z')
-				{
-					DriveInfo drive = new DriveInfo(root[0].ToString());
-					if (!drives.ContainsKey(drive.Name))
-						drives.Add(drive.Name, !drive.IsReady || string.IsNullOrEmpty(drive.VolumeLabel) ? drive.Name : drive.VolumeLabel);
-				}
-			}
-			return drives.Values;
-		}
-
-		private class Study
-		{
-		    private readonly string _instanceUid;
-
-			public Study(string instanceUid)
-			{
-				this._instanceUid = instanceUid ?? string.Empty;
-			}
-
-			public override bool Equals(object obj)
-			{
-				if (obj is Study)
-				{
-					Study s = (Study) obj;
-					return this._instanceUid == s._instanceUid;
-				}
-				return base.Equals(obj);
-			}
-
-			public override int GetHashCode()
-			{
-			    return 0x471A0695 ^ _instanceUid.GetHashCode();
-			}
-
-			public static implicit operator AuditStudyParticipantObject(Study study)
-			{
-				var auditObject = new AuditStudyParticipantObject(study._instanceUid);
-				return auditObject;
-			}
-		}
-
-		private class Patient
-		{
-		    private readonly string _patientId;
-		    private readonly string _patientName;
-
-			public Patient(string patientId, string patientName)
-			{
-				this._patientId = patientId ?? string.Empty;
-                this._patientName = patientName ?? string.Empty;
-			}
-
-			public override bool Equals(object obj)
-			{
-				if (obj is Patient)
-				{
-					Patient p = (Patient) obj;
-					return this._patientId == p._patientId && this._patientName == p._patientName;
-				}
-				return base.Equals(obj);
-			}
-
-			public override int GetHashCode()
-			{
-			    return 0x517F0000 ^ _patientId.GetHashCode() ^ _patientName.GetHashCode();
-			}
-
-			public static implicit operator AuditPatientParticipantObject(Patient patient)
-			{
-				var auditObject = new AuditPatientParticipantObject(patient._patientName, patient._patientId);
-				return auditObject;
-			}
+			return new AuditedInstances(instances);
 		}
 	}
 }

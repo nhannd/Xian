@@ -9,68 +9,48 @@
 
 #endregion
 
-using ClearCanvas.Dicom.Audit;
-using DicomEventReceiptAction = ClearCanvas.Dicom.Audit.EventReceiptAction;
-
-namespace ClearCanvas.ImageViewer.Common.Auditing
+namespace ClearCanvas.Dicom.Audit
 {
 	/// <summary>
 	/// Represents the action taken by the application entity upon receiving a transfer of DICOM instances.
 	/// </summary>
 	/// <remarks>
 	/// In actuality, each <see cref="EventReceiptAction"/> has a 1-to-1 mapping with a <see cref="EventIdentificationContentsEventActionCode"/>,
-	/// but <see cref="EventReceiptAction"/> uses <see cref="AuditHelper"/> to abstract away any requirement for knowledge of the
+	/// but <see cref="EventReceiptAction"/> uses <see cref="DicomAuditHelper"/> to abstract away any requirement for knowledge of the
 	/// underlying audit types defined in the DICOM toolkit.
 	/// </remarks>
-	public class EventReceiptAction
+	public sealed class EventReceiptAction
 	{
 		/// <summary>
 		/// The device does not already have these instances, and hence created new ones.
 		/// </summary>
-		public static DicomEventReceiptAction CreateNew
-		{
-			get { return DicomEventReceiptAction.CreateNew; }
-		}
+		public static readonly EventReceiptAction CreateNew = new EventReceiptAction(EventIdentificationContentsEventActionCode.C);
 
 		/// <summary>
 		/// The device already has these instances, has determined them to be no different from the arriving ones, and hence did not perform any action.
 		/// </summary>
-		public static DicomEventReceiptAction KeepExisting
-		{
-			get { return DicomEventReceiptAction.KeepExisting; }
-		}
+		public static readonly EventReceiptAction KeepExisting = new EventReceiptAction(EventIdentificationContentsEventActionCode.R);
 
 		/// <summary>
 		/// The device already has these instances, has determined them to be different from the arriving ones, and hence updated the existing ones.
 		/// </summary>
-		public static DicomEventReceiptAction UpdateExisting
-		{
-			get { return DicomEventReceiptAction.UpdateExisting; }
-		}
+		public static readonly EventReceiptAction UpdateExisting = new EventReceiptAction(EventIdentificationContentsEventActionCode.U);
 
 		/// <summary>
 		/// The action that the receiving device took is unknown.
 		/// </summary>
-		public static DicomEventReceiptAction ActionUnknown
-		{
-			get { return DicomEventReceiptAction.ActionUnknown; }
-		}
+		public static readonly EventReceiptAction ActionUnknown = new EventReceiptAction(EventIdentificationContentsEventActionCode.E);
 
-		private readonly DicomEventReceiptAction _action;
+		private readonly EventIdentificationContentsEventActionCode _action;
 
-		private EventReceiptAction(DicomEventReceiptAction action)
+		private EventReceiptAction(EventIdentificationContentsEventActionCode action)
 		{
 			_action = action;
 		}
 
-		public static implicit operator DicomEventReceiptAction(EventReceiptAction action)
+		public static implicit operator EventIdentificationContentsEventActionCode(EventReceiptAction operand)
 		{
-			return action._action;
-		}
-
-		public static implicit operator EventReceiptAction(DicomEventReceiptAction action)
-		{
-			return new EventReceiptAction(action);
+			return operand._action;
 		}
 	}
 }
