@@ -20,7 +20,7 @@ using ClearCanvas.Ris.Application.Common.Login;
 namespace ClearCanvas.Ris.Client
 {
 	[ExtensionOf(typeof (LoginFacilityProviderExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
-	internal sealed class FacilityProvider : ILoginFacilityProvider
+	internal sealed class LoginFacilityProvider : ILoginFacilityProvider
 	{
 		public IList<FacilityInfo> GetAvailableFacilities()
 		{
@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client
 			get { return LoginSession.Current != null ? new FacilityInfo(LoginSession.Current.WorkingFacility.Code) : null; }
 			set
 			{
-				if (LoginSession.Current == null) throw new InvalidOperationException("Current working facility cannot be changed while a user is logged in.");
+				if (LoginSession.Current != null) throw new InvalidOperationException("Current working facility cannot be changed while a user is logged in.");
 				if (value != null && !string.IsNullOrEmpty(value.Code))
 				{
 					LoginSession.Create(value.Code);
