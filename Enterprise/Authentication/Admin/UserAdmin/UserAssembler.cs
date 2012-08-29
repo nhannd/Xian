@@ -15,6 +15,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
 {
@@ -23,7 +24,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
         internal UserSummary GetUserSummary(User user)
         {
             return new UserSummary(user.UserName, user.DisplayName, user.EmailAddress, user.CreationTime, user.ValidFrom, user.ValidUntil,
-                                   user.LastLoginTime, user.Password.ExpiryTime, user.Enabled);
+                                   user.LastLoginTime, user.Password.ExpiryTime, user.Enabled, user.Sessions.Count);
         }
 
         internal UserDetail GetUserDetail(User user)
@@ -56,6 +57,29 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
 
             user.AuthorityGroups.Clear();
 			user.AuthorityGroups.AddAll(authGroups);
+        }
+
+        internal List<UserSessionSummary> GetUserSessionSummaries(User user)
+        {
+            Platform.CheckForNullReference(user, "user");
+
+            if (user.Sessions == null || user.Sessions.Count == 0)
+                return null; // data contract
+
+            var list = new List<UserSessionSummary>();
+            foreach (var session in user.Sessions)
+            {
+                list.Add(new UserSessionSummary()
+                {
+                    Application = session.Application,
+                    CreationTime = session.CreationTime,
+                    ExpiryTime = session.ExpiryTime,
+                    HostName = session.HostName,
+                    SessionID = session.SessionId             
+                });
+            }
+
+            return list;
         }
     }
 }

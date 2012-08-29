@@ -50,6 +50,10 @@ namespace ClearCanvas.Enterprise.Desktop
                                                              user => user.PasswordExpiry,
                                                              0.75f));
 
+            Columns.Add(new TableColumn<UserSummary,int>(SR.ColumnSessionCount,
+                                                             user => user.SessionCount,
+                                                             0.3f));
+
             Columns.Add(new DateTimeTableColumn<UserSummary>(SR.ColumnLastLoginTime,
                                                              user => user.LastLoginTime,
                                                              0.75f));
