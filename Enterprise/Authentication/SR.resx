@@ -130,6 +130,6 @@
     <value>You cannot delete your own user account.</value>
   </data>
   <data name="MessageCannotDeleteOwnUserCurrentSession" xml:space="preserve">
-    <value>Cannot terminate your current session. Please log out instead.</value>
+    <value>You cannot terminate your current session. Please log out instead.</value>
   </data>
 </root>

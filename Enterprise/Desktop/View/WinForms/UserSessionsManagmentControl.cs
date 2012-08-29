@@ -42,9 +42,10 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 
             _sessionsTable.Table = component.SummaryTable;
             _sessionsTable.MenuModel = component.SummaryTableActionModel;
-            
             _sessionsTable.DataBindings.Add("Selection", _component, "SummarySelection", true, DataSourceUpdateMode.OnPropertyChanged);
 
+            _terminateSelectedButton.Enabled = _component.SummarySelection.Items != null && _component.SummarySelection.Items.Count() > 0;
+            
             _component.SummarySelectionChanged += OnSessionsSelectionChanged;
         }
 

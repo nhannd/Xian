@@ -97,7 +97,7 @@ namespace ClearCanvas.Enterprise.Authentication {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot terminate your current session. Please log out instead..
+        ///   Looks up a localized string similar to You cannot terminate your current session. Please log out instead..
         /// </summary>
         internal static string MessageCannotDeleteOwnUserCurrentSession {
             get {
