@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Query;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions;
@@ -46,31 +47,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		private StudyDeleteRecordSelectCriteria GetSelectCriteria()
 		{
-			StudyDeleteRecordSelectCriteria criteria = new StudyDeleteRecordSelectCriteria();
-			if (!String.IsNullOrEmpty(AccessionNumber))
-			{
-				string key = AccessionNumber.Replace("*", "%");
-				key = key.Replace("?", "_");
-				criteria.AccessionNumber.Like(key);
-			}
-			if (!String.IsNullOrEmpty(PatientId))
-			{
-				string key = PatientId.Replace("*", "%");
-				key = key.Replace("?", "_");
-				criteria.PatientId.Like(key);
-			}
-			if (!String.IsNullOrEmpty(PatientsName))
-			{
-				string key = PatientsName.Replace("*", "%");
-				key = key.Replace("?", "_");
-				criteria.PatientsName.Like(key);
-			}
-			if (!String.IsNullOrEmpty(StudyDescription))
-			{
-				string key = StudyDescription.Replace("*", "%");
-				key = key.Replace("?", "_");
-				criteria.StudyDescription.Like(key);
-			}
+			var criteria = new StudyDeleteRecordSelectCriteria();
+
+            QueryHelper.SetGuiStringCondition(criteria.AccessionNumber, AccessionNumber);
+            QueryHelper.SetGuiStringCondition(criteria.PatientId, PatientId);
+            QueryHelper.SetGuiStringCondition(criteria.PatientsName, PatientsName);
+            QueryHelper.SetGuiStringCondition(criteria.StudyDescription, StudyDescription);
+            
 			if (StudyDate != null)
 				criteria.StudyDate.Like("%" + DateParser.ToDicomString(StudyDate.Value) + "%");
 

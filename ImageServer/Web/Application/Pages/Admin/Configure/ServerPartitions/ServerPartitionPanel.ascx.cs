@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
+using ClearCanvas.ImageServer.Core.Query;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
@@ -142,27 +143,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
 
         protected void LoadData()
         {
-            ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
+            var criteria = new ServerPartitionSelectCriteria();
 
             if (String.IsNullOrEmpty(AETitleFilter.Text) == false)
             {
-                string key =SearchHelper.TrailingWildCard(AETitleFilter.Text);
-                key = key.Replace("*", "%");
-                criteria.AeTitle.Like(key);
+                QueryHelper.SetGuiStringCondition(criteria.AeTitle,
+                                   SearchHelper.TrailingWildCard(AETitleFilter.Text));
             }
 
             if (String.IsNullOrEmpty(DescriptionFilter.Text) == false)
             {
-                string key = SearchHelper.TrailingWildCard(DescriptionFilter.Text);
-                key = key.Replace("*", "%");
-                criteria.Description.Like(key);
+                QueryHelper.SetGuiStringCondition(criteria.Description,
+                                   SearchHelper.TrailingWildCard(DescriptionFilter.Text));
             }
 
             if (String.IsNullOrEmpty(FolderFilter.Text) == false)
             {
-                string key = SearchHelper.TrailingWildCard(FolderFilter.Text);
-                key = key.Replace("*", "%");
-                criteria.PartitionFolder.Like(key);
+                QueryHelper.SetGuiStringCondition(criteria.PartitionFolder,
+                                   SearchHelper.TrailingWildCard(FolderFilter.Text));
             }
 
             if (StatusFilter.SelectedIndex != 0)

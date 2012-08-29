@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
+using ClearCanvas.ImageServer.Core.Query;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
@@ -142,9 +143,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
 
             if (String.IsNullOrEmpty(DescriptionFilter.Text) == false)
             {
-                string key = SearchHelper.TrailingWildCard(DescriptionFilter.Text);
-                key = key.Replace("*", "%");
-                criteria.Description.Like(key);
+                QueryHelper.SetGuiStringCondition(criteria.Description,
+                                      SearchHelper.TrailingWildCard(DescriptionFilter.Text));
             }
 
             if (TiersDropDownList.SelectedIndex >= 1) /* 0 = "All" */
