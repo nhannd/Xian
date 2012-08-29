@@ -135,14 +135,22 @@
     <Compile Include="OrderMergeHistoryVirtualOrderNoteProvider.cs" />
     <Compile Include="OrderMergeInfo.cs" />
     <Compile Include="OrderRules.cs" />
-    <Compile Include="Printing\PrintModel.cs" />
+    <Compile Include="Printing\DowntimeFormPageModel.cs" />
+    <Compile Include="Printing\PageModel.cs" />
     <Compile Include="Printing\PrintTemplateSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PrintTemplateSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Printing\PrintTemplateSettings.cs" />
-    <Compile Include="Printing\ReportPrintModel.cs" />
+    <Compile Include="Printing\ReportPageModel.cs" />
+    <Compile Include="ProcedureBuilderSettings.cs" />
+    <Compile Include="ProcedureBuilderSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ProcedureBuilderSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ProcedurePlan.cs" />
     <Compile Include="ProtocolingWorklistItemSearchCriteria.cs" />
     <Compile Include="DicomSeries.cs" />
     <Compile Include="EmergencyWorklists.cs" />
@@ -426,6 +434,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>PrintTemplateSettings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="ProcedureBuilderSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ProcedureBuilderSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ProcedureStepHierarchy.cd" />
     <None Include="Workflow\Reporting\ReportingWorkflowSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -515,6 +527,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ProcedureBuilderRootProcedurePlan.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

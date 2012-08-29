@@ -48,6 +48,17 @@ namespace ClearCanvas.Healthcare.Printing
 			}
 		}
 
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
+		[global::System.Configuration.DefaultSettingValueAttribute("downtime-form-template.htm")]
+		[global::System.Configuration.SettingsDescription("Specifies template for downtime forms.")]
+		public string DowntimeFormTemplateUrl
+		{
+			get
+			{
+				return Combine(this.BaseUrl, (string)this["DowntimeFormTemplateUrl"]);
+			}
+		}
+
 		private static string Combine(string baseUrl, string relativeUrl)
 		{
 			return new Uri(new Uri(baseUrl), relativeUrl).ToString();

@@ -10,8 +10,11 @@
 #endregion
 
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Permissions;
 using System.Threading;
+using ClearCanvas.Enterprise.Core.Printing;
+using ClearCanvas.Healthcare.Printing;
 using ClearCanvas.Healthcare.Workflow.OrderEntry;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -22,8 +25,10 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
+using ClearCanvas.Workflow;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 using System;
+using System.Linq;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -407,13 +412,20 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		}
 
 		[UpdateOperation]
-		public ReserveAccessionNumberResponse ReserveAccessionNumber(ReserveAccessionNumberRequest request)
+		public PrintDowntimeFormsResponse PrintDowntimeForms(PrintDowntimeFormsRequest request)
 		{
-			// obtain a new acc number
-			var broker = this.PersistenceContext.GetBroker<IAccessionNumberBroker>();
-			var accNum = broker.GetNext();
+			Platform.CheckArgumentRange(request.NumberOfForms, 1, 50, "NumberOfForms");
 
-			return new ReserveAccessionNumberResponse(accNum);
+			var broker = this.PersistenceContext.GetBroker<IAccessionNumberBroker>();
+
+			var q = from i in Enumerable.Range(0, request.NumberOfForms)
+			        select new DowntimeFormPageModel(broker.GetNext());
+
+			using (var printResult = PrintJob.Run(q.ToArray()))
+			{
+				var contents = File.ReadAllBytes(printResult.OutputFilePath);
+				return new PrintDowntimeFormsResponse(contents);
+			}
 		}
 
 		#endregion

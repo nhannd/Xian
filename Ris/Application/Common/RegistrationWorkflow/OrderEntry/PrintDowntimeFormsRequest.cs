@@ -9,20 +9,15 @@
 
 #endregion
 
-using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
 	[DataContract]
-	public class ReserveAccessionNumberResponse : DataContractBase
+	public class PrintDowntimeFormsRequest : DataContractBase
 	{
-		public ReserveAccessionNumberResponse(string accessionNumber)
-		{
-			this.AccessionNumber = accessionNumber;
-		}
-
 		[DataMember]
-		public string AccessionNumber;
+		public int NumberOfForms;
 	}
 }

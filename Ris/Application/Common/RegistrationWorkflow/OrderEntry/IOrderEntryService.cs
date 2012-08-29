@@ -174,11 +174,11 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		TimeShiftOrderResponse TimeShiftOrder(TimeShiftOrderRequest request);
 
 		/// <summary>
-		/// Reserve an accession number.
+		/// Print downtime forms.
 		/// </summary>
-		/// <param name="request"><see cref="ReserveAccessionNumberRequest"/></param>
-		/// <returns><see cref="ReserveAccessionNumberResponse"/></returns>
+		/// <param name="request"><see cref="PrintDowntimeFormsRequest"/></param>
+		/// <returns><see cref="PrintDowntimeFormsResponse"/></returns>
 		[OperationContract]
-		ReserveAccessionNumberResponse ReserveAccessionNumber(ReserveAccessionNumberRequest request);
+		PrintDowntimeFormsResponse PrintDowntimeForms(PrintDowntimeFormsRequest request);
 	}
 }
