@@ -73,7 +73,8 @@ namespace ClearCanvas.Ris.Application.Services
 					CurrentHomeAddress = addressAssembler.CreateAddressDetail(profile.CurrentHomeAddress, context),
 					CurrentWorkAddress = addressAssembler.CreateAddressDetail(profile.CurrentWorkAddress, context),
 					CurrentHomePhone = telephoneAssembler.CreateTelephoneDetail(profile.CurrentHomePhone, context),
-					CurrentWorkPhone = telephoneAssembler.CreateTelephoneDetail(profile.CurrentWorkPhone, context)
+					CurrentWorkPhone = telephoneAssembler.CreateTelephoneDetail(profile.CurrentWorkPhone, context),
+					BillingInformation = profile.BillingInformation
 				};
 
 			if (includeTelephoneNumbers)
@@ -169,6 +170,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 			profile.PrimaryLanguage = EnumUtils.GetEnumValue<SpokenLanguageEnum>(detail.PrimaryLanguage, context);
 			profile.Religion = EnumUtils.GetEnumValue<ReligionEnum>(detail.Religion, context);
+			profile.BillingInformation = detail.BillingInformation;
 
 			var telephoneAssembler = new TelephoneNumberAssembler();
 			profile.TelephoneNumbers.Clear();

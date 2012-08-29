@@ -279,6 +279,19 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+    	public string BillingInformation
+    	{
+			get { return _profile.BillingInformation; }
+			set
+			{
+				if(value != _profile.BillingInformation)
+				{
+					_profile.BillingInformation = value;
+					this.Modified = true;
+				}
+			}
+    	}
+
         #endregion
     }
 }

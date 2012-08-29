@@ -10,11 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
@@ -55,7 +50,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             _healthcardVersionCode.DataBindings.Add("Value", _component, "HealthcardVersionCode", true, DataSourceUpdateMode.OnPropertyChanged);
             _healthcardExpiry.DataBindings.Add("Value", _component, "HealthcardExpiryDate", true, DataSourceUpdateMode.OnPropertyChanged);
-        }
+
+			_billingInformation.DataBindings.Add("Value", _component, "BillingInformation", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
 
         private void PatientEditorControl_Load(object sender, EventArgs e)
         {
