@@ -149,6 +149,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ProcedureBuilderSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ProcedurePlan.cs" />
     <Compile Include="ProtocolingWorklistItemSearchCriteria.cs" />
     <Compile Include="DicomSeries.cs" />
     <Compile Include="EmergencyWorklists.cs" />

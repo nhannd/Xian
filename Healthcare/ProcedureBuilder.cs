@@ -209,7 +209,7 @@ namespace ClearCanvas.Healthcare
 
 		#endregion
 
-		private void BuildProcedureFromPlan(Procedure procedure, ProcedureType type)
+		private static void BuildProcedureFromPlan(Procedure procedure, ProcedureType type)
 		{
 			// if the type specifies a base type, apply it first
 			if (type.BaseType != null)
@@ -219,24 +219,15 @@ namespace ClearCanvas.Healthcare
 			else
 			{
 				// otherwise use the root plan as the base plan
-				BuildProcedureFromPlanXml(procedure, new ProcedureBuilderSettings().RootProcedurePlan);
+				BuildProcedureFromPlan(procedure, ProcedurePlan.GetRootPlan());
 			}
 
-			// plan may not exist
-			var planXml = type.GetPlanXml();
-			if (planXml == null || planXml.DocumentElement == null)
-				return;
-
-			BuildProcedureFromPlanXml(procedure, planXml);
+			BuildProcedureFromPlan(procedure, type.Plan);
 		}
 
-		private static void BuildProcedureFromPlanXml(Procedure procedure, XmlDocument planXml)
+		private static void BuildProcedureFromPlan(Procedure procedure, ProcedurePlan plan)
 		{
-			var stepNodes = planXml.SelectNodes("procedure-plan/procedure-steps/procedure-step");
-			if (stepNodes == null)
-				return;
-
-			foreach (XmlElement stepNode in stepNodes)
+			foreach (var stepNode in plan.ProcedureStepNodes)
 			{
 				var className = stepNode.GetAttribute("class");
 				if (string.IsNullOrEmpty(className))
