@@ -172,11 +172,6 @@ namespace ClearCanvas.Ris.Client
 					service => response = service.PlaceOrder(new PlaceOrderRequest(requisition))
 				);
 
-				component.Host.ShowMessageBox(
-					string.Format(
-						"Order {0} placed successfully.",
-						AccessionFormat.Format(response.Order.AccessionNumber)),
-					MessageBoxActions.Ok);
 				return response.Order.OrderRef;
 			}
 

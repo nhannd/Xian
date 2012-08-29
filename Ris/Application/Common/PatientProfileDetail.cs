@@ -80,6 +80,9 @@ namespace ClearCanvas.Ris.Application.Common
 		public TelephoneDetail CurrentWorkPhone;
 
 		[DataMember]
+		public string BillingInformation;
+
+		[DataMember]
 		public List<AddressDetail> Addresses;
 
 		[DataMember]
