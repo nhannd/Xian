@@ -20,12 +20,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeAdmin
 	[DataContract]
 	public class LoadProcedureTypeEditorFormDataResponse : DataContractBase
 	{
-		public LoadProcedureTypeEditorFormDataResponse(List<ProcedureTypeSummary> baseProcedureTypeChoices)
+		public LoadProcedureTypeEditorFormDataResponse(List<ModalitySummary> modalityChoices)
 		{
-			this.BaseProcedureTypeChoices = baseProcedureTypeChoices;
+			this.ModalityChoices = modalityChoices;
 		}
 
 		[DataMember]
-		public List<ProcedureTypeSummary> BaseProcedureTypeChoices;
+		public List<ModalitySummary> ModalityChoices;
 	}
 }

@@ -40,9 +40,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly bool _isNew;
 
 		private ProcedureTypeSummary _procedureTypeSummary;
-		private List<ProcedureTypeSummary> _baseTypeChoices;
-
-		private ChildComponentHost _xmlEditorHost;
+		private List<ModalitySummary> _modalityChoices;
 
 		/// <summary>
 		/// Constructor.
@@ -74,51 +72,24 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IProcedureTypeAdminService>(
 				service =>
 					{
-						_baseTypeChoices =
-							service.LoadProcedureTypeEditorFormData(new LoadProcedureTypeEditorFormDataRequest()).BaseProcedureTypeChoices;
+						var formDataResponse = service.LoadProcedureTypeEditorFormData(new LoadProcedureTypeEditorFormDataRequest());
+						_modalityChoices = formDataResponse.ModalityChoices;
+
 						if (_isNew)
 						{
 							_procedureTypeDetail = new ProcedureTypeDetail();
 						}
 						else
 						{
-							LoadProcedureTypeForEditResponse response =
-								service.LoadProcedureTypeForEdit(new LoadProcedureTypeForEditRequest(_procedureTypeRef));
+							var response = service.LoadProcedureTypeForEdit(new LoadProcedureTypeForEditRequest(_procedureTypeRef));
 							_procedureTypeDetail = response.ProcedureType;
 						}
 					});
 
-			var editor = CodeEditorFactory.CreateCodeEditor();
-			editor.Language = "xml";
-			editor.Text = _procedureTypeDetail.PlanXml;
-			editor.Modified = false;
-			editor.ModifiedChanged += delegate { this.Modified = this.Modified || editor.Modified; };
-			_xmlEditorHost = new ChildComponentHost(this.Host, editor.GetComponent());
-			_xmlEditorHost.StartComponent();
-
 			base.Start();
 		}
 
-		/// <summary>
-		/// Called by the host when the application component is being terminated.
-		/// </summary>
-		public override void Stop()
-		{
-			if(_xmlEditorHost != null)
-			{
-				_xmlEditorHost.StopComponent();
-				_xmlEditorHost = null;
-			}
-
-			base.Stop();
-		}
-
 		#region Presentation Model
-
-		public ApplicationComponentHost XmlEditorHost
-		{
-			get { return _xmlEditorHost; }
-		}
 
 		[ValidateNotNull]
 		public string ID
@@ -153,6 +124,27 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public ModalitySummary DefaultModality
+		{
+			get { return _procedureTypeDetail.DefaultModality; }
+			set
+			{
+				_procedureTypeDetail.DefaultModality = value;
+				this.Modified = true;
+			}
+		}
+
+		public IList DefaultModalityChoices
+		{
+			get { return _modalityChoices; }
+		}
+
+		public string FormatModalityItem(object item)
+		{
+			var summary = (ModalitySummary)item;
+			return string.Format("{0} - {1}", summary.Id, summary.Name);
+		}
+
 		public ProcedureTypeSummary BaseType
 		{
 			get { return _procedureTypeDetail.BaseType; }
@@ -161,11 +153,6 @@ namespace ClearCanvas.Ris.Client
 				_procedureTypeDetail.BaseType = value;
 				this.Modified = true;
 			}
-		}
-
-		public IList BaseTypeChoices
-		{
-			get { return _baseTypeChoices; }
 		}
 
 		public string FormatBaseTypeItem(object item)
@@ -187,7 +174,8 @@ namespace ClearCanvas.Ris.Client
 
 		public void Accept()
 		{
-			_procedureTypeDetail.PlanXml = ((ICodeEditor)_xmlEditorHost.Component).Text; 
+			// editor does not support custom plans right now
+			_procedureTypeDetail.CustomProcedurePlan = false;
 
 			if (this.HasValidationErrors)
 			{

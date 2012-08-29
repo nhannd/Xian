@@ -36,13 +36,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_defaultDuration.DataBindings.Add("Value", _component, "DefaultDuration", true, DataSourceUpdateMode.OnPropertyChanged);
 			_acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_baseType.DataSource = _component.BaseTypeChoices;
-			_baseType.DataBindings.Add("Value", _component, "BaseType", true, DataSourceUpdateMode.OnPropertyChanged);
-			_baseType.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatBaseTypeItem(e.ListItem); };
-
-			var xmlEditor = (Control) _component.XmlEditorHost.ComponentView.GuiElement;
-			xmlEditor.Dock = DockStyle.Fill;
-			_xmlEditorPanel.Controls.Add(xmlEditor);
+			_defaultModality.DataSource = _component.DefaultModalityChoices;
+			_defaultModality.DataBindings.Add("Value", _component, "DefaultModality", true, DataSourceUpdateMode.OnPropertyChanged);
+			_defaultModality.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatModalityItem(e.ListItem); };
 		}
 
 		private void _acceptButton_Click(object sender, EventArgs e)
