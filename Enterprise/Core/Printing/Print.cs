@@ -28,6 +28,8 @@ namespace ClearCanvas.Enterprise.Core.Printing
 {
 	public class PrintJob
 	{
+		#region HttpServer class
+
 		class HttpServer
 		{
 			private readonly string _host;
@@ -105,14 +107,14 @@ namespace ClearCanvas.Enterprise.Core.Printing
 				if (string.IsNullOrEmpty(id))
 					return false;
 
-				PrintJob job;
+				Page page;
 				lock(_runningJobs)
 				{
-					job = _runningJobs[new Guid(id)];
+					page = _runningJobs[new Guid(id)];
 				}
 
 				// we only handle request to our original url
-				if (httpContext.Request.Url.AbsolutePath != job.TemplateUrl.AbsolutePath)
+				if (httpContext.Request.Url.AbsolutePath != page.TemplateUrl.AbsolutePath)
 					return false;
 
 				Platform.Log(LogLevel.Info, "Received print request: {0}", httpContext.Request.Url);
@@ -123,7 +125,7 @@ namespace ClearCanvas.Enterprise.Core.Printing
 				// write response
 				using(var writer = new StreamWriter(httpContext.Response.OutputStream))
 				{
-					job.WriteHtml(writer);
+					page.WriteHtml(writer);
 				}
 				return true;
 			}
@@ -147,6 +149,10 @@ namespace ClearCanvas.Enterprise.Core.Printing
 			}
 		}
 
+		#endregion
+
+		#region Result class
+
 		public class Result : IDisposable
 		{
 			public Result(string outputFilePath)
@@ -165,8 +171,105 @@ namespace ClearCanvas.Enterprise.Core.Printing
 			}
 		}
 
+		#endregion
+
+		#region Page class
+
+		class Page
+		{
+			private readonly PrintJob _job;
+			private readonly Guid _id;
+			private readonly Uri _templateUri;
+			private readonly Dictionary<string, object> _variables; 
+
+			internal Page(PrintJob job, Guid id, IPageModel pageModel)
+			{
+				_job = job;
+				_id = id;
+				_templateUri = pageModel.TemplateUrl;
+				_variables = pageModel.Variables;
+			}
+
+			public Guid Id
+			{
+				get { return _id; }
+			}
+
+			public Uri TemplateUrl
+			{
+				get { return _templateUri; }
+			}
+
+			public Uri ConverterUrl
+			{
+				get
+				{
+					var sourcePath = string.Format("{0}?id={1}", TemplateUrl.AbsolutePath, _id.ToString("N"));
+					return new Uri(new Uri(_httpServer.Host), sourcePath);
+				}
+			}
+
+			public void WriteHtml(TextWriter writer)
+			{
+				try
+				{
+					var request = WebRequest.Create(TemplateUrl);
+					var response = (HttpWebResponse)request.GetResponse();
+					using (var s = response.GetResponseStream())
+					{
+						// doubt that GetResponseStream ever returns null, but just in case
+						if (s == null)
+						{
+							_job.SetError("No response stream available.");
+							return;
+						}
+
+						using (var reader = new StreamReader(s, GetEncoding(response.CharacterSet)))
+						{
+							var template = new ActiveTemplate(reader);
+							var html = template.Evaluate(_variables);
+							writer.Write(html);
+						}
+					}
+				}
+				catch (WebException e)
+				{
+					// explicitly handle 404 to provide a helpful error message
+					if (e.Status == WebExceptionStatus.ProtocolError && ((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.NotFound)
+					{
+						_job.SetError(string.Format("The template {0} was not found (404).", TemplateUrl));
+					}
+					else
+					{
+						_job.SetError(e.Message);
+					}
+					throw;
+				}
+				catch (Exception e)
+				{
+					_job.SetError(e.Message);
+					throw;
+				}
+			}
+
+			private Encoding GetEncoding(string enc)
+			{
+				try
+				{
+					return Encoding.GetEncoding(enc);
+				}
+				catch (Exception)
+				{
+					return Encoding.Default;
+				}
+			}
+
+		}
+
+		#endregion
+
 		private const string LocalHost = "http://localhost";
-		private static readonly Dictionary<Guid, PrintJob> _runningJobs = new Dictionary<Guid, PrintJob>();
+		private static readonly Dictionary<Guid, Page> _runningJobs = new Dictionary<Guid, Page>();
 		private static readonly HttpServer _httpServer;
 
 		static PrintJob()
@@ -193,36 +296,46 @@ namespace ClearCanvas.Enterprise.Core.Printing
 			}
 		}
 
-		public static Result Run(IPrintModel printModel)
+		/// <summary>
+		/// Creates and executes a single-page print job.
+		/// </summary>
+		/// <param name="pageModel"></param>
+		/// <returns></returns>
+		public static Result Run(IPageModel pageModel)
 		{
-			if (!printModel.TemplateUrl.IsLoopback)
-				throw new ArgumentException("Must be a local address");
+			return Run(new[] {pageModel});
+		}
 
-			var url = printModel.TemplateUrl.ToString();
-			if(!url.EndsWith(".html", StringComparison.InvariantCultureIgnoreCase) && !url.EndsWith(".htm", StringComparison.InvariantCultureIgnoreCase))
-				throw new ArgumentException("Must be an html file");
+		/// <summary>
+		/// Creates and executes a multi-page print job.
+		/// </summary>
+		/// <param name="pageModels"></param>
+		/// <returns></returns>
+		public static Result Run(IList<IPageModel> pageModels)
+		{
+			// validate input
+			foreach (var pageModel in pageModels)
+			{
+				if (!pageModel.TemplateUrl.IsLoopback)
+					throw new ArgumentException("Must be a local address");
 
-			var guid = Guid.NewGuid();
-			var job = new PrintJob(guid, printModel.TemplateUrl, printModel.Variables);
+				var url = pageModel.TemplateUrl.ToString();
+				if (!url.EndsWith(".html", StringComparison.InvariantCultureIgnoreCase) &&
+					!url.EndsWith(".htm", StringComparison.InvariantCultureIgnoreCase))
+					throw new ArgumentException("Must be an html file");
+			}
+
+			var job = new PrintJob(pageModels);
 			return job.Run();
 		}
 
-		private readonly Guid _id;
-		private readonly Uri _url;
-		private readonly Dictionary<string, object> _data;
+		private readonly IList<Page> _pages; 
 		private bool _error;
 		private string _errorMessage;
 
-		private PrintJob(Guid id, Uri url, Dictionary<string, object> data)
+		private PrintJob(IEnumerable<IPageModel> pageModels)
 		{
-			_id = id;
-			_url = url;
-			_data = data;
-		}
-
-		private Uri TemplateUrl
-		{
-			get { return _url; }
+			_pages = pageModels.Select(m => new Page(this, Guid.NewGuid(), m)).ToList();
 		}
 
 		private Result Run()
@@ -234,7 +347,8 @@ namespace ClearCanvas.Enterprise.Core.Printing
 
 			lock (_runningJobs)
 			{
-				_runningJobs.Add(_id, this);
+				foreach (var page in _pages)
+					_runningJobs.Add(page.Id, page);
 			}
 
 			try
@@ -252,7 +366,8 @@ namespace ClearCanvas.Enterprise.Core.Printing
 			{
 				lock (_runningJobs)
 				{
-					_runningJobs.Remove(_id);
+					foreach (var page in _pages)
+						_runningJobs.Remove(page.Id);
 				}
 				if(_error)
 				{
@@ -266,72 +381,15 @@ namespace ClearCanvas.Enterprise.Core.Printing
 			return new Result(outputFilePath);
 		}
 
-		private void WriteHtml(TextWriter writer)
-		{
-			try
-			{
-				var request = WebRequest.Create(_url);
-				var response = (HttpWebResponse)request.GetResponse();
-				using (var s = response.GetResponseStream())
-				{
-					// doubt that GetResponseStream ever returns null, but just in case
-					if(s == null)
-					{
-						_error = true;
-						_errorMessage = "No response stream available.";
-						return;
-					}
-
-					using (var reader = new StreamReader(s, GetEncoding(response.CharacterSet)))
-					{
-						var template = new ActiveTemplate(reader);
-						var html = template.Evaluate(_data);
-						writer.Write(html);
-					}
-				}
-			}
-			catch (WebException e)
-			{
-				// explicitly handle 404 to provide a helpful error message
-				if(e.Status == WebExceptionStatus.ProtocolError && ((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.NotFound)
-				{
-					SetError(string.Format("The template {0} was not found (404).", _url));
-				}
-				else
-				{
-					SetError(e.Message);
-				}
-				throw;
-			}
-			catch (Exception e)
-			{
-				SetError(e.Message);
-				throw;
-			}
-		}
-
-		private Encoding GetEncoding(string enc)
-		{
-			try
-			{
-				return Encoding.GetEncoding(enc);
-			} 
-			catch(Exception)
-			{
-				return Encoding.Default;
-			}
-		}
 
 		private void RunConverter(string outputFilePath)
 		{
 			var settings = new PrintSettings();
 			try
 			{
-				var sourcePath = string.Format("{0}?id={1}", _url.AbsolutePath, _id.ToString("N"));
-				var sourceUrl = new Uri(new Uri(_httpServer.Host), sourcePath);
-
-				var startInfo = new ProcessStartInfo(settings.ConverterProgram, string.Format("{0} {1} {2}", settings.ConverterOptions, sourceUrl, outputFilePath));
-				startInfo.UseShellExecute = false;
+				var sourceUrls = string.Join(" ", _pages.Select(p => p.ConverterUrl.ToString()));
+				var arguments = string.Format("{0} {1} {2}", settings.ConverterOptions, sourceUrls, outputFilePath);
+				var startInfo = new ProcessStartInfo(settings.ConverterProgram, arguments) {UseShellExecute = false};
 				var process = Process.Start(startInfo);
 				var exited = process.WaitForExit(settings.ConverterTimeout * 1000);
 

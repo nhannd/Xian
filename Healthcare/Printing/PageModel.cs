@@ -15,7 +15,7 @@ using ClearCanvas.Enterprise.Core.Printing;
 
 namespace ClearCanvas.Healthcare.Printing
 {
-	public abstract class PrintModel : IPrintModel
+	public abstract class PageModel : IPageModel
 	{
 		#region Facade classes
 

@@ -20,9 +20,9 @@ using ClearCanvas.Enterprise.Core;
 namespace ClearCanvas.Healthcare.Printing
 {
 	/// <summary>
-	/// Print model for radiology reports.
+	/// Page model for radiology reports.
 	/// </summary>
-	public class ReportPrintModel : PrintModel
+	public class ReportPageModel : PageModel
 	{
 		/// <summary>
 		/// Practitioner facade.
@@ -297,7 +297,7 @@ namespace ClearCanvas.Healthcare.Printing
 		/// Constructor.
 		/// </summary>
 		/// <param name="report"></param>
-		public ReportPrintModel(Report report)
+		public ReportPageModel(Report report)
 			:this(report, GetDefaultRecipient(report))
 		{
 		}
@@ -307,7 +307,7 @@ namespace ClearCanvas.Healthcare.Printing
 		/// </summary>
 		/// <param name="report"></param>
 		/// <param name="recipient"></param>
-		public ReportPrintModel(Report report, ExternalPractitionerContactPoint recipient)
+		public ReportPageModel(Report report, ExternalPractitionerContactPoint recipient)
 		{
 			Platform.CheckForNullReference(report, "report");
 			Platform.CheckForNullReference(recipient, "recipient");

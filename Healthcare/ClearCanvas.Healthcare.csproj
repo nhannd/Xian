@@ -135,14 +135,14 @@
     <Compile Include="OrderMergeHistoryVirtualOrderNoteProvider.cs" />
     <Compile Include="OrderMergeInfo.cs" />
     <Compile Include="OrderRules.cs" />
-    <Compile Include="Printing\PrintModel.cs" />
+    <Compile Include="Printing\PageModel.cs" />
     <Compile Include="Printing\PrintTemplateSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PrintTemplateSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Printing\PrintTemplateSettings.cs" />
-    <Compile Include="Printing\ReportPrintModel.cs" />
+    <Compile Include="Printing\ReportPageModel.cs" />
     <Compile Include="ProcedureBuilderSettings.cs" />
     <Compile Include="ProcedureBuilderSettings.Designer.cs">
       <AutoGen>True</AutoGen>
