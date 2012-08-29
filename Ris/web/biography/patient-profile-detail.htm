@@ -68,9 +68,10 @@
 					Field.setValue($("sex"), patientProfile.Sex.Value);	
 					Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
 					Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
+					Field.setValue($("billingInformation"), patientProfile.BillingInformation);
 					Field.setValue($("currentHomePhone"), Ris.formatTelephone(patientProfile.CurrentHomePhone));
 					Field.setValue($("currentHomeAddress"), Ris.formatAddress(patientProfile.CurrentHomeAddress));
-					Preview.SectionContainer.create($("PrimaryDemographicsSection"), "Primary Demographic");
+					Preview.SectionContainer.create($("PrimaryDemographicsSection"), "Primary Demographics");
 
 					Preview.SectionContainer.create($("CultureSection"), "Culture");
 					if(patientProfile.PrimaryLanguage)
@@ -217,10 +218,14 @@
 							<td width="229"><div id="age"/></td>
 						</tr>
 						<tr>
-							<td class="propertyname">Healthcard # </td>
-							<td><div id="healthcard"/></td>
 							<td width="63" class="propertyname">Sex</td>
 							<td width="229"><div id="sex"/></td>
+							<td class="propertyname">Healthcard # </td>
+							<td><div id="healthcard"/></td>
+						</tr>
+						<tr>
+							<td width="63" class="propertyname">Billing Information</td>
+							<td><div id="billingInformation"/></td>
 						</tr>
 						<tr>
 							<td>&nbsp;</td>
