@@ -78,6 +78,7 @@ namespace ClearCanvas.Enterprise.Desktop
     public class UserSummaryComponent : SummaryComponentBase<UserSummary, UserTable>
     {
         private Action _resetPasswordAction;
+        private Action _viewSessionsAction;
 		private string _id;
 		private string _name;
 
@@ -92,6 +93,23 @@ namespace ClearCanvas.Enterprise.Desktop
 		}
 
         #region Presentation Model
+
+        public void ViewUserSessions()
+        {
+            try
+            {
+                UserSummary selectedUser = CollectionUtils.FirstElement(this.SelectedItems);
+                if (selectedUser == null) return;
+
+                var component = new UserSessionManagmentComponent(selectedUser);
+                LaunchAsDialog(this.Host.DesktopWindow, component, "User Sessions");
+            }
+            catch (Exception e)
+            {
+                // failed
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+        }
 
         public void ResetUserPassword()
         {
@@ -144,6 +162,9 @@ namespace ClearCanvas.Enterprise.Desktop
 
 			_resetPasswordAction = model.AddAction("resetPassword", SR.TitleResetPassword, "Icons.ResetToolSmall.png",
 				SR.TitleResetPassword, ResetUserPassword, ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.User);
+
+            _viewSessionsAction = model.AddAction("viewSessions", "View Sessions", "Icons.ViewUserSessionsSmall.png",
+               SR.TitleViewUserSessions, ViewUserSessions, ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.User);
 
 			model.Add.SetPermissibility(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.User);
 			model.Edit.SetPermissibility(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.User);

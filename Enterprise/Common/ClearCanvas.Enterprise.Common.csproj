@@ -109,6 +109,7 @@
     <Compile Include="Admin\AuthorityGroupAdmin\ListAuthorityGroupsResponse.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\ListAuthorityTokensRequest.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\ListAuthorityTokensResponse.cs" />
+    <Compile Include="Admin\UserAdmin\IUserSessionAdminService.cs" />
     <Compile Include="Admin\UserAdmin\ListUsersRequest.cs" />
     <Compile Include="Admin\UserAdmin\ListUsersResponse.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\LoadAuthorityGroupForEditRequest.cs" />
