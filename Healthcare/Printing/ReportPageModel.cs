@@ -308,17 +308,13 @@ namespace ClearCanvas.Healthcare.Printing
 		/// <param name="report"></param>
 		/// <param name="recipient"></param>
 		public ReportPageModel(Report report, ExternalPractitionerContactPoint recipient)
+			: base(new PrintTemplateSettings().ReportTemplateUrl)
 		{
 			Platform.CheckForNullReference(report, "report");
 			Platform.CheckForNullReference(recipient, "recipient");
 
 			_report = report;
 			_recipient = recipient;
-		}
-
-		public override Uri TemplateUrl
-		{
-			get { return new Uri( new PrintTemplateSettings().ReportTemplateUrl); }
 		}
 
 		public override Dictionary<string, object> Variables

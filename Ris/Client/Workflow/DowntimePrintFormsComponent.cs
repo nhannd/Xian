@@ -10,14 +10,13 @@
 #endregion
 
 using System;
-using System.Threading;
-using System.Runtime.Serialization;
+using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Serialization;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 
@@ -33,7 +32,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				DowntimePrintFormsComponent component = new DowntimePrintFormsComponent();
+				var component = new DowntimePrintFormsComponent();
 
 				ApplicationComponent.LaunchAsDialog(
 					this.Context.DesktopWindow,
@@ -62,140 +61,29 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[AssociateView(typeof(DowntimePrintFormsComponentViewExtensionPoint))]
 	public class DowntimePrintFormsComponent : ApplicationComponent
 	{
-		public class DowntimeFormViewComponent : DHtmlComponent
-		{
-			// Internal data contract used for jscript deserialization
-			[DataContract]
-			public class DowntimeFormContext : DataContractBase
-			{
-				public DowntimeFormContext(string accessionNumber)
-				{
-					this.AccessionNumber = accessionNumber;
-				}
-
-				[DataMember]
-				public string AccessionNumber;
-			}
-
-			private DowntimeFormContext _context;
-
-			public override void Start()
-			{
-				SetUrl(this.PageUrl);
-				base.Start();
-			}
-
-			public void Refresh()
-			{
-				NotifyAllPropertiesChanged();
-			}
-
-			protected virtual string PageUrl
-			{
-				get { return WebResourcesSettings.Default.DowntimeFormTemplatePageUrl; }
-			}
-
-			protected override DataContractBase GetHealthcareContext()
-			{
-				return _context;
-			}
-
-			public DowntimeFormContext Context
-			{
-				get { return _context; }
-				set
-				{
-					_context = value;
-					Refresh();
-				}
-			}
-		}
-
-		private readonly DowntimeFormViewComponent _formPreviewComponent;
-		private ChildComponentHost _formPreviewComponentHost;
-
-		private string _statusText;
-		private int _numberOfFormsToPrint;
-		private int _numberOfFormsPrinted;
-
-		private bool _isPrinting;
-		private bool _printCancelRequested;
-
-		private IEHeaderFooterSettings _headerFooterSettings;
-		private IEPrintBackgroundSettings _printBackgroundSettings;
-
 		public DowntimePrintFormsComponent()
 		{
-			_formPreviewComponent = new DowntimeFormViewComponent();
-			_numberOfFormsToPrint = 1;
-		}
-
-		public override void Start()
-		{
-			_formPreviewComponentHost = new ChildComponentHost(this.Host, _formPreviewComponent);
-			_formPreviewComponentHost.StartComponent();
-
-			// subscribe to event so that we print form when document rendered
-			_formPreviewComponent.ScriptCompleted += OnDocumentRendered;
-
-
-			_headerFooterSettings = new IEHeaderFooterSettings();
-			_printBackgroundSettings = new IEPrintBackgroundSettings();
-
-			base.Start();
-		}
-
-		public override void Stop()
-		{
-            if (_formPreviewComponentHost != null)
-            {
-                _formPreviewComponentHost.StopComponent();
-                _formPreviewComponentHost = null;    
-            }
-
-			base.Stop();
+			NumberOfFormsToPrint = 1;
 		}
 
 		#region Presentation Model
 
-		public ApplicationComponentHost FormPreviewComponentHost
-		{
-			get { return _formPreviewComponentHost; }
-		}
+		[ValidateGreaterThan(0)]
+		[ValidateLessThan(50, Inclusive = true)]
+		public int NumberOfFormsToPrint { get; set; }
 
-		public string StatusText
+		public void Print()
 		{
-			get { return _statusText; }
-		}
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+				return;
+			}
 
-		public int NumberOfFormsPrinted
-		{
-			get { return _numberOfFormsPrinted; }
-		}
-
-		public int NumberOfFormsToPrint
-		{
-			get { return _numberOfFormsToPrint; }
-			set { _numberOfFormsToPrint = value; }
-		}
-
-		public bool IsPrinting
-		{
-			get { return _isPrinting; }
-		}
-
-		public void StartPrinting()
-		{
 			try
 			{
-				_numberOfFormsPrinted = 0;
-				_printCancelRequested = false;
-				_isPrinting = true;
-
-				UpdateStatus("");
-
-				// print the first form
-				PrintNextForm();
+				DoPrintRequest();
+				this.Exit(ApplicationComponentExitCode.None);
 			}
 			catch (Exception e)
 			{
@@ -203,62 +91,48 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		public void CancelPrinting()
+		public void Close()
 		{
-			_printCancelRequested = true;
+			this.Exit(ApplicationComponentExitCode.None);
 		}
 
 		#endregion
 
-		private void PrintNextForm()
+		private void DoPrintRequest()
 		{
-			// if printing was cancelled, or completed
-			if (_printCancelRequested || (_numberOfFormsPrinted >= _numberOfFormsToPrint))
-			{
-				_isPrinting = false;
+			string path = null;
 
-				string text = _printCancelRequested ?
-					string.Format(SR.MessagePrintDowntimeFormCancelled, _numberOfFormsPrinted + 1, _numberOfFormsToPrint) :
-					string.Format(SR.MessagePrintDowntimeFormCompleted, _numberOfFormsToPrint);
-
-				UpdateStatus(text);
-				return;
-			}
-
-			// still in progress
-			UpdateStatus(string.Format(SR.MessagePrintDowntimeFormProgress, _numberOfFormsPrinted + 1, _numberOfFormsToPrint));
-
-			// get next A#
-			string accessionNumber = null;
-			Platform.GetService<IOrderEntryService>(
-				delegate(IOrderEntryService service)
+			var task = new BackgroundTask(
+				delegate(IBackgroundTaskContext taskContext)
 				{
-					ReserveAccessionNumberResponse response = service.ReserveAccessionNumber(new ReserveAccessionNumberRequest());
-					accessionNumber = response.AccessionNumber;
-				});
+					try
+					{
+						// todo: loc
+						taskContext.ReportProgress(new BackgroundTaskProgress(0, "Generating PDF..."));
+						Platform.GetService<IOrderEntryService>(
+							service =>
+							{
+								var data = service.PrintDowntimeForms(new PrintDowntimeFormsRequest{NumberOfForms = this.NumberOfFormsToPrint}).DowntimeFormPdfData;
 
-			_formPreviewComponent.Context = new DowntimeFormViewComponent.DowntimeFormContext(accessionNumber);
-		}
+								// we don't really care about the "key" here, or the time-to-live, since we won't be accesing this file ever again
+								path = TempFileManager.Instance.CreateFile(new object(), "pdf", data, TimeSpan.FromMinutes(1));
+							});
 
-		private void OnDocumentRendered(object sender, EventArgs e)
-		{
-			if(_isPrinting)
+						taskContext.Complete();
+					}
+					catch (Exception e)
+					{
+						taskContext.Error(e);
+					}
+				}, false);
+
+			ProgressDialog.Show(task, this.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
+
+			if (path != null)
 			{
-				_formPreviewComponent.PrintDocument();
-				_numberOfFormsPrinted++;
-
-				// TODO why is this here????
-				// perhaps just a hokey way of ensuring that the browser actually finishes printing before we render next document?
-				Thread.Sleep(1000);
-
-				PrintNextForm();
+				Process.Start(path);
 			}
 		}
 
-		private void UpdateStatus(string text)
-		{
-			_statusText = text;
-			NotifyAllPropertiesChanged();
-		}
 	}
 }
