@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ColumnActive" xml:space="preserve">
     <value>Active</value>
@@ -152,6 +152,9 @@
   </data>
   <data name="ColumnPasswordExpiry" xml:space="preserve">
     <value>Password Expiry</value>
+  </data>
+  <data name="ColumnSessionCount" xml:space="preserve">
+    <value>Sessions</value>
   </data>
   <data name="ColumnUser" xml:space="preserve">
     <value>User</value>
@@ -232,6 +235,9 @@ Note: This change may not take effect immediately.</value>
   </data>
   <data name="TitleUser" xml:space="preserve">
     <value>User Admin</value>
+  </data>
+  <data name="TitleViewUserSessions" xml:space="preserve">
+    <value>View User's Sessions</value>
   </data>
   <data name="TooltipDuplicateAuthorityGroup" xml:space="preserve">
     <value>Duplicate the selected authority group</value>

@@ -1627,11 +1627,15 @@ Preview.PatientDemographicsSection = function () {
 	var _html = 
 		'<table border="0" cellspacing="0" cellpadding="0" class="PatientDemographicsTable">'+
 		'	<tr>'+
-		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Healthcard #: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="healthcard"/></td>'+
 		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Date of Birth:</td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="dateOfBirth"/></td>'+
-		'   </tr><tr>' +
 		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Age:</td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="age"/></td>'+
+		'   </tr><tr>' +
 		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Sex:</td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="sex"/></td>'+
+		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Healthcard #: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="healthcard"/></td>'+
+		'	</tr>'+
+		'	<tr id="BillingInformationRow">'+
+		'		<td class="DemographicsLabel" nowrap="nowrap">Billing Information:</td>'+
+		'		<td colspan="3" class="DemographicsCell"><div id="billingInformation"/></td>'+
 		'	</tr>'+
 		'	<tr id="HomePhoneRow">'+
 		'		<td class="ContactInfoDemographicsLabel" nowrap="nowrap">Home Phone:</td>'+
@@ -1656,6 +1660,12 @@ Preview.PatientDemographicsSection = function () {
 			Field.setValue($("sex"), patientProfile.Sex.Value);
 			Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
 			Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
+			
+			if (patientProfile.BillingInformation)
+				Field.setValue($("billingInformation"), patientProfile.BillingInformation);
+			else
+				Field.show($("BillingInformationRow"), false);
+				
 			if (patientProfile.CurrentHomePhone)
 				Field.setValue($("currentHomePhone"), Ris.formatTelephone(patientProfile.CurrentHomePhone));
 			else

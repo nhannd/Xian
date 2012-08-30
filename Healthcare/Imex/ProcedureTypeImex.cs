@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Imex;
@@ -33,6 +32,9 @@ namespace ClearCanvas.Healthcare.Imex
 
 			[DataMember]
 			public string Name;
+
+			[DataMember]
+			public string DefaultModality;
 
 			[DataMember]
 			public string BaseTypeId;
@@ -66,11 +68,18 @@ namespace ClearCanvas.Healthcare.Imex
 							DefaultDuration = entity.DefaultDuration
 						};
 
-			if (entity.BaseType != null)
+			if(entity.Plan.IsDefault)
 			{
-				data.BaseTypeId = entity.BaseType.Id;
+				data.DefaultModality = entity.Plan.DefaultModality.Id;
 			}
-			data.PlanXml = entity.GetPlanXml();
+			else
+			{
+				data.PlanXml = entity.Plan.AsXml();
+				if (entity.BaseType != null)
+				{
+					data.BaseTypeId = entity.BaseType.Id;
+				}
+			}
 
 			return data;
 		}
@@ -80,14 +89,17 @@ namespace ClearCanvas.Healthcare.Imex
 			var pt = LoadOrCreateProcedureType(data.Id, data.Name, context);
 			pt.Deactivated = data.Deactivated;
 			pt.DefaultDuration = data.DefaultDuration;
-			if (!string.IsNullOrEmpty(data.BaseTypeId))
+			if (!string.IsNullOrEmpty(data.DefaultModality))
 			{
-				pt.BaseType = LoadOrCreateProcedureType(data.BaseTypeId, data.BaseTypeId, context);
+				pt.Plan = ProcedurePlan.CreateDefaultPlan(data.Name, GetModality(data.DefaultModality, context));
 			}
-
-			if (data.PlanXml != null)
+			else
 			{
-				pt.SetPlanXml(data.PlanXml);
+				pt.Plan = new ProcedurePlan(data.PlanXml);
+				if (!string.IsNullOrEmpty(data.BaseTypeId))
+				{
+					pt.BaseType = LoadOrCreateProcedureType(data.BaseTypeId, data.BaseTypeId, context);
+				}
 			}
 		}
 
@@ -111,6 +123,13 @@ namespace ClearCanvas.Healthcare.Imex
 			}
 
 			return pt;
+		}
+
+		private static Modality GetModality(string id, IPersistenceContext context)
+		{
+			var where = new ModalitySearchCriteria();
+			where.Id.EqualTo(id);
+			return context.GetBroker<IModalityBroker>().FindOne(where);
 		}
 	}
 }

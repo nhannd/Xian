@@ -38,13 +38,24 @@ namespace ClearCanvas.Healthcare.Printing
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute]
-		[global::System.Configuration.DefaultSettingValueAttribute("report.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("report/report.htm")]
 		[global::System.Configuration.SettingsDescription("Specifies template for radiology reports.")]
 		public string ReportTemplateUrl
 		{
 			get
 			{
 				return Combine(this.BaseUrl, (string)this["ReportTemplateUrl"]);
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
+		[global::System.Configuration.DefaultSettingValueAttribute("downtime/downtime.htm")]
+		[global::System.Configuration.SettingsDescription("Specifies template for downtime forms.")]
+		public string DowntimeFormTemplateUrl
+		{
+			get
+			{
+				return Combine(this.BaseUrl, (string)this["DowntimeFormTemplateUrl"]);
 			}
 		}
 

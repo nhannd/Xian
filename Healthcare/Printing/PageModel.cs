@@ -15,7 +15,7 @@ using ClearCanvas.Enterprise.Core.Printing;
 
 namespace ClearCanvas.Healthcare.Printing
 {
-	public abstract class PrintModel : IPrintModel
+	public abstract class PageModel : IPageModel
 	{
 		#region Facade classes
 
@@ -233,10 +233,20 @@ namespace ClearCanvas.Healthcare.Printing
 
 		#endregion
 
+		private readonly Uri _templateUrl;
+
+		protected PageModel(string templateUrl)
+		{
+			_templateUrl = new Uri(templateUrl);
+		}
+
 		/// <summary>
 		/// Gets the URL of the template.
 		/// </summary>
-		public abstract Uri TemplateUrl { get; }
+		public Uri TemplateUrl
+		{
+			get { return _templateUrl; }
+		}
 
 		/// <summary>
 		/// Gets the set of variables accessible to the template.

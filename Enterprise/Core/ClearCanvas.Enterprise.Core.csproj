@@ -120,7 +120,7 @@
     <Compile Include="Modelling\ValidationAttribute.cs" />
     <Compile Include="Modelling\XmlValidationRuleSetSource.cs" />
     <Compile Include="Ping\PingService.cs" />
-    <Compile Include="Printing\IPrintModel.cs" />
+    <Compile Include="Printing\IPageModel.cs" />
     <Compile Include="Printing\Print.cs" />
     <Compile Include="Printing\PrintException.cs" />
     <Compile Include="Printing\PrintSettings.cs" />

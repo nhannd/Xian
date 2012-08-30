@@ -9,12 +9,10 @@
 
 #endregion
 
-using System.IO;
-using System.Text;
+using System.Xml;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
-using System.Xml;
 using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Ris.Application.Services
@@ -26,16 +24,18 @@ namespace ClearCanvas.Ris.Application.Services
 			return new ProcedureTypeSummary(rpt.GetRef(), rpt.Name, rpt.Id, rpt.DefaultDuration, rpt.Deactivated);
 		}
 
-		public ProcedureTypeDetail CreateDetail(ProcedureType procedureType)
+		public ProcedureTypeDetail CreateDetail(ProcedureType procedureType, IPersistenceContext context)
 		{
-			// write plan to string
-			string planXml;
-			var sb = new StringBuilder();
-			using (var writer = new XmlTextWriter(new StringWriter(sb)))
+			if(procedureType.Plan.IsDefault)
 			{
-				writer.Formatting = Formatting.Indented;
-				procedureType.GetPlanXml().Save(writer);
-				planXml = sb.ToString();
+				var modalityAssembler = new ModalityAssembler();
+				return new ProcedureTypeDetail(
+					procedureType.GetRef(),
+					procedureType.Id,
+					procedureType.Name,
+					procedureType.Plan.DefaultModality == null ? null : modalityAssembler.CreateModalitySummary(procedureType.Plan.DefaultModality),
+					procedureType.DefaultDuration,
+					procedureType.Deactivated);
 			}
 
 			return new ProcedureTypeDetail(
@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Application.Services
 				procedureType.Id,
 				procedureType.Name,
 				procedureType.BaseType == null ? null : CreateSummary(procedureType.BaseType),
-				planXml,
+				procedureType.Plan.ToString(),
 				procedureType.DefaultDuration,
 				procedureType.Deactivated);
 		}
@@ -52,17 +52,23 @@ namespace ClearCanvas.Ris.Application.Services
 		{
 			procType.Id = detail.Id;
 			procType.Name = detail.Name;
-			procType.BaseType = detail.BaseType == null
-									? null
-									: context.Load<ProcedureType>(detail.BaseType.ProcedureTypeRef, EntityLoadFlags.Proxy);
+			procType.BaseType = detail.CustomProcedurePlan && detail.BaseType != null
+									? context.Load<ProcedureType>(detail.BaseType.ProcedureTypeRef, EntityLoadFlags.Proxy)
+									: null;
 			procType.DefaultDuration = detail.DefaultDuration;
 			procType.Deactivated = detail.Deactivated;
 
 			try
 			{
-				var xmlPlan = new XmlDocument();
-				xmlPlan.LoadXml(detail.PlanXml);
-				procType.SetPlanXml(xmlPlan);
+				if(detail.CustomProcedurePlan)
+				{
+					procType.Plan = new ProcedurePlan(detail.PlanXml);
+				}
+				else
+				{
+					var modality = context.Load<Modality>(detail.DefaultModality.ModalityRef);
+					procType.Plan = ProcedurePlan.CreateDefaultPlan(detail.Name, modality);
+				}
 			}
 			catch (XmlException e)
 			{

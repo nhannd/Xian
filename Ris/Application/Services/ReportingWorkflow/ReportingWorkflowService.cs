@@ -558,8 +558,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			var report = PersistenceContext.Load<Report>(request.ReportRef);
 
 			var printModel = request.RecipientContactPointRef != null ?
-				 new ReportPrintModel(report, PersistenceContext.Load<ExternalPractitionerContactPoint>(request.RecipientContactPointRef))
-				: new ReportPrintModel(report);
+				 new ReportPageModel(report, PersistenceContext.Load<ExternalPractitionerContactPoint>(request.RecipientContactPointRef))
+				: new ReportPageModel(report);
 
 			using(var printResult = PrintJob.Run(printModel))
 			{
