@@ -70,13 +70,17 @@ namespace ClearCanvas.Enterprise.Common
 	{
 		public FacilityInfo() {}
 
-		public FacilityInfo(string code)
+		public FacilityInfo(string code, string name)
 		{
 			Code = code;
+			Name = name;
 		}
 
 		[DataMember]
 		public string Code { get; set; }
+
+		[DataMember]
+		public string Name { get; set; }
 
 		public bool Equals(FacilityInfo facilitySummary)
 		{
