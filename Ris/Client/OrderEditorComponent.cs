@@ -1169,15 +1169,56 @@ namespace ClearCanvas.Ris.Client
 
 			var requisition = BuildOrderRequisition();
 
+			if (!NotifyOrderSubmitting(requisition))
+				return false;
+
 			try
 			{
 				_orderRef = _operatingContext.Submit(requisition, this);
+
+				NotifyOrderSubmitted(requisition);
 				return true;
 			}
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, "", this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
 				return false;
+			}
+		}
+
+		private bool NotifyOrderSubmitting(OrderRequisition requisition)
+		{
+			var submittingArgs = new WorkflowEventListener.OrderSubmittingArgs(
+				this.Host.DesktopWindow,
+				_patientProfile,
+				requisition,
+				GetSubmitType());
+			WorkflowEventPublisher.Instance.OrderSubmitting(submittingArgs);
+			return !submittingArgs.Cancel;
+		}
+
+		private void NotifyOrderSubmitted(OrderRequisition requisition)
+		{
+			var submittingArgs = new WorkflowEventListener.OrderSubmittedArgs(
+				this.Host.DesktopWindow,
+				_patientProfile,
+				requisition,
+				GetSubmitType());
+			WorkflowEventPublisher.Instance.OrderSubmitted(submittingArgs);
+		}
+
+		private WorkflowEventListener.OrderSubmitType GetSubmitType()
+		{
+			switch (_operatingContext.Mode)
+			{
+				case Mode.NewOrder:
+					return WorkflowEventListener.OrderSubmitType.New;
+				case Mode.ModifyOrder:
+					return WorkflowEventListener.OrderSubmitType.Modify;
+				case Mode.ReplaceOrder:
+					return WorkflowEventListener.OrderSubmitType.Replace;
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
 		}
 

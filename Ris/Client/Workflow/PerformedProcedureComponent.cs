@@ -453,18 +453,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void NotifyPerformedProcedureStepComplete()
 		{
-			var args = new WorkflowEventListener.PerformedProcedureStepCompletedArgs
-			{
-				AccessionNumber = _worklistItem.AccessionNumber,
-				CompletedTime = (DateTime)_selectedMpps.EndTime,
-				ProcedureType = _worklistItem.ProcedureName,
-				PatientProfile = new WorkflowEventListener.PatientProfileInfo
-				{
-					FamilyName = _worklistItem.PatientName.FamilyName,
-					GivenName = _worklistItem.PatientName.GivenName,
-					Id = _worklistItem.Mrn.Id,
-				}
-			};
+			var args = new WorkflowEventListener.PerformedProcedureStepCompletedArgs(
+				this.Host.DesktopWindow,
+				new WorkflowEventListener.PatientProfileInfo
+					{
+						FamilyName = _worklistItem.PatientName.FamilyName,
+						GivenName = _worklistItem.PatientName.GivenName,
+						Id = _worklistItem.Mrn.Id,
+					},
+				_worklistItem.AccessionNumber,
+				_worklistItem.ProcedureName,
+				(DateTime) _selectedMpps.EndTime);
 
 			// need to contact the server to populate the DateOfBirth and Sex fields
 			Platform.GetService<IBrowsePatientDataService>(service =>
