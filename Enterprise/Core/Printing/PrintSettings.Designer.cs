@@ -43,7 +43,7 @@ namespace ClearCanvas.Enterprise.Core.Printing {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Specifies the options flags to be passed to the converter program.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("--disable-smart-shrinking -s Letter -R 25 -L 25")]
+        [global::System.Configuration.DefaultSettingValueAttribute("--disable-smart-shrinking -s Letter -R 25 -L 25 --outline-depth 0")]
         public string ConverterOptions {
             get {
                 return ((string)(this["ConverterOptions"]));
