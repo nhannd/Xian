@@ -380,6 +380,7 @@
     <Compile Include="Validation\AllComponentsValidationStrategy.cs" />
     <Compile Include="Validation\IValidationRuleSet.cs" />
     <Compile Include="Validation\IValidationRule.cs" />
+    <Compile Include="Validation\IValidationRuleSource.cs" />
     <Compile Include="Validation\NoComponentsValidationStrategy.cs" />
     <Compile Include="Validation\ValidateCompareAttribute.cs" />
     <Compile Include="Validation\ValidateGreaterThanAttribute.cs" />
