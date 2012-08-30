@@ -195,6 +195,7 @@
     <Compile Include="ModalityProcedureStepSummary.cs" />
     <Compile Include="ModalityWorkflow\DicomSeriesDetail.cs" />
     <Compile Include="PatientAllergyDetail.cs" />
+    <Compile Include="DiagnosticServicePlanDetail.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\MergeOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\MergeOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\QueryCancelOrderWarningsRequest.cs" />
@@ -572,8 +573,8 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderEntryFormDataRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderEntryFormDataResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\IOrderEntryService.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\LoadDiagnosticServiceBreakdownRequest.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\LoadDiagnosticServiceBreakdownResponse.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\LoadDiagnosticServicePlanRequest.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\LoadDiagnosticServicePlanResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\PlaceOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\PlaceOrderResponse.cs" />
     <Compile Include="ReportingWorkflow\CancelReportingStepRequest.cs" />

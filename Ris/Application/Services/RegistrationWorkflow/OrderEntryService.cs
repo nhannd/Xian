@@ -132,28 +132,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		}
 
 		[ReadOperation]
-		public LoadDiagnosticServiceBreakdownResponse LoadDiagnosticServiceBreakdown(LoadDiagnosticServiceBreakdownRequest request)
+		public LoadDiagnosticServicePlanResponse LoadDiagnosticServicePlan(LoadDiagnosticServicePlanRequest request)
 		{
 			var dsBroker = this.PersistenceContext.GetBroker<IDiagnosticServiceBroker>();
 
 			var diagnosticService = dsBroker.Load(request.DiagnosticServiceRef);
 
 			var assembler = new DiagnosticServiceAssembler();
-			return new LoadDiagnosticServiceBreakdownResponse(assembler.CreateDetail(diagnosticService));
-		}
-
-		[ReadOperation]
-		public ListOrderableProcedureTypesResponse ListOrderableProcedureTypes(ListOrderableProcedureTypesRequest request)
-		{
-			// TODO: we need to build a list of orderable procedure types, based on what has already been ordered
-			// for now, just return everything
-			var broker = this.PersistenceContext.GetBroker<IProcedureTypeBroker>();
-			var rpTypes = broker.FindAll(false);
-
-			var rptAssembler = new ProcedureTypeAssembler();
-			var summaries = CollectionUtils.Map(rpTypes, (ProcedureType rpt) => rptAssembler.CreateSummary(rpt));
-
-			return new ListOrderableProcedureTypesResponse(summaries);
+			return new LoadDiagnosticServicePlanResponse(assembler.CreatePlanDetail(diagnosticService, PersistenceContext));
 		}
 
 		[ReadOperation]

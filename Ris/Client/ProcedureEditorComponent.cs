@@ -14,6 +14,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client
@@ -167,10 +168,22 @@ namespace ClearCanvas.Ris.Client
 				{
 					this.ScheduledDuration = _selectedProcedureType.DefaultDuration;
 					NotifyPropertyChanged("ScheduledDuration");
+
+					ResetModalityToDefault();
 				}
 			}
 		}
 
 		#endregion
+
+		private void ResetModalityToDefault()
+		{
+			Platform.GetService<IProcedureTypeAdminService>(
+				service =>
+					{
+						var response = service.LoadProcedureTypeForEdit(new LoadProcedureTypeForEditRequest(_selectedProcedureType.ProcedureTypeRef));
+						this.SelectedModality = response.ProcedureType.DefaultModality;
+					});
+		}
 	}
 }

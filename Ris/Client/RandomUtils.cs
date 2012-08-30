@@ -349,7 +349,7 @@ namespace ClearCanvas.Ris.Client
 			InitReferenceDataCacheOnce();
 
 			var scheduledTime = Platform.Time + TimeSpan.FromDays(schedulingOffsetDays);
-			LoadDiagnosticServiceBreakdownResponse dsResponse=null;
+			LoadDiagnosticServicePlanResponse dsResponse=null;
 			OrderSummary orderSummary = null;
 			Platform.GetService(
 				delegate(IOrderEntryService service)
@@ -358,16 +358,16 @@ namespace ClearCanvas.Ris.Client
 					if (String.IsNullOrEmpty(diagnosticServiceName) && String.IsNullOrEmpty(modalityName))
 					{
 						diagnosticService = ChooseRandom(_diagnosticServices);
-						dsResponse = service.LoadDiagnosticServiceBreakdown(new LoadDiagnosticServiceBreakdownRequest(diagnosticService.DiagnosticServiceRef));
+						dsResponse = service.LoadDiagnosticServicePlan(new LoadDiagnosticServicePlanRequest(diagnosticService.DiagnosticServiceRef));
 					}
 					else
 					{
 						diagnosticService = CollectionUtils.SelectFirst(_diagnosticServices,
 							delegate(DiagnosticServiceSummary ds)
 							{
-								dsResponse = service.LoadDiagnosticServiceBreakdown(new LoadDiagnosticServiceBreakdownRequest(ds.DiagnosticServiceRef));
+								dsResponse = service.LoadDiagnosticServicePlan(new LoadDiagnosticServicePlanRequest(ds.DiagnosticServiceRef));
 								return (ds.Name == diagnosticServiceName) ||
-									(!String.IsNullOrEmpty(modalityName) && (CollectionUtils.SelectFirst(dsResponse.DiagnosticServiceDetail.ProcedureTypes, 
+									(!String.IsNullOrEmpty(modalityName) && (CollectionUtils.SelectFirst(dsResponse.DiagnosticServicePlan.ProcedureTypes, 
 																				ptd => ptd.Name.IndexOf(modalityName) == 0) != null));
 							});
 
@@ -404,7 +404,7 @@ namespace ClearCanvas.Ris.Client
 						};
 
 					requisition.Procedures.AddRange(
-						CollectionUtils.Map(dsResponse.DiagnosticServiceDetail.ProcedureTypes,
+						CollectionUtils.Map(dsResponse.DiagnosticServicePlan.ProcedureTypes,
 							(ProcedureTypeSummary rpt) => new ProcedureRequisition(rpt, performingFacility)
 															{
 																ScheduledTime = scheduledTime, 

@@ -12,18 +12,19 @@
 using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
-    [DataContract]
-    public class LoadDiagnosticServiceBreakdownResponse : DataContractBase
-    {
-        public LoadDiagnosticServiceBreakdownResponse(DiagnosticServiceDetail detail)
-        {
-            this.DiagnosticServiceDetail = detail;
-        }
+	[DataContract]
+	public class LoadDiagnosticServicePlanRequest : DataContractBase
+	{
+		public LoadDiagnosticServicePlanRequest(EntityRef diagnosticServiceRef)
+		{
+			this.DiagnosticServiceRef = diagnosticServiceRef;
+		}
 
-        [DataMember]
-        public DiagnosticServiceDetail DiagnosticServiceDetail;
-    }
+		[DataMember]
+		public EntityRef DiagnosticServiceRef;
+	}
 }

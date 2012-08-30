@@ -69,19 +69,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		/// <summary>
 		/// Gets the details of a diagnostic service plan.
 		/// </summary>
-		/// <param name="request"><see cref="LoadDiagnosticServiceBreakdownRequest"/></param>
-		/// <returns><see cref="LoadDiagnosticServiceBreakdownRequest"/></returns>
+		/// <param name="request"><see cref="LoadDiagnosticServicePlanRequest"/></param>
+		/// <returns><see cref="LoadDiagnosticServicePlanRequest"/></returns>
 		[OperationContract]
-		LoadDiagnosticServiceBreakdownResponse LoadDiagnosticServiceBreakdown(LoadDiagnosticServiceBreakdownRequest request);
-
-		/// <summary>
-		/// List procedure types that can be ordered based on the procedure types that have already been added to
-		/// an order.
-		/// </summary>
-		/// <param name="request"><see cref="ListOrderableProcedureTypesRequest"/></param>
-		/// <returns><see cref="ListOrderableProcedureTypesResponse"/></returns>
-		[OperationContract]
-		ListOrderableProcedureTypesResponse ListOrderableProcedureTypes(ListOrderableProcedureTypesRequest request);
+		LoadDiagnosticServicePlanResponse LoadDiagnosticServicePlan(LoadDiagnosticServicePlanRequest request);
 
 		/// <summary>
 		/// Gets detailed information about all of the contact points associated with a specified external practitioner.

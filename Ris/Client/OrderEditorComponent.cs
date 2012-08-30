@@ -1023,8 +1023,8 @@ namespace ClearCanvas.Ris.Client
 			{
 				Platform.GetService<IOrderEntryService>(service =>
 				{
-					var response = service.LoadDiagnosticServiceBreakdown(new LoadDiagnosticServiceBreakdownRequest(summary.DiagnosticServiceRef));
-					foreach (var procedureType in response.DiagnosticServiceDetail.ProcedureTypes)
+					var response = service.LoadDiagnosticServicePlan(new LoadDiagnosticServicePlanRequest(summary.DiagnosticServiceRef));
+					foreach (var procedureType in response.DiagnosticServicePlan.ProcedureTypes)
 					{
 						_proceduresTable.Items.Add(NewProcedureRequisition(procedureType));
 					}
@@ -1320,12 +1320,13 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		private ProcedureRequisition NewProcedureRequisition(ProcedureTypeSummary procedureType)
+		private ProcedureRequisition NewProcedureRequisition(ProcedureTypeDetail procedureType)
 		{
-			var requisition = new ProcedureRequisition(procedureType, _orderingFacility);
+			var requisition = new ProcedureRequisition(procedureType != null ? procedureType.GetSummary() : null, _orderingFacility);
 			if (procedureType != null)
 			{
 				requisition.ScheduledDuration = procedureType.DefaultDuration;
+				requisition.Modality = procedureType.DefaultModality;
 			}
 
 			// apply default values
