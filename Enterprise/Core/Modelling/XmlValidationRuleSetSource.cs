@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Xml;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
@@ -29,9 +30,18 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
 		#region Implementation of IXmlValidationRuleSetSource
 
-		public ValidationRuleSet GetRuleSet(string @class)
+		public bool IsStatic
 		{
-			var ruleSetNodes = FindRulesetNodes(@class);
+			get
+			{
+				// XML rules are not static - they can be modified at runtime
+				return false;
+			}
+		}
+
+		public ValidationRuleSet GetRuleSet(Type domainClass)
+		{
+			var ruleSetNodes = FindRulesetNodes(domainClass.FullName);
 
 			// return a single rule set that combines all rule sets
 			return ValidationRuleSet.Add(CollectionUtils.Map<XmlElement, ValidationRuleSet>(ruleSetNodes, CompileRuleset));
