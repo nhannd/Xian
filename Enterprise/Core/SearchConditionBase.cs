@@ -285,8 +285,9 @@ namespace ClearCanvas.Enterprise.Core
 
 		internal static bool Between(object variable, object lower, object upper)
 		{
-			// note: this is asymmetrical by design (because that is how SQL does it)
-			return MoreThanOrEqual(variable, lower) && LessThan(variable, upper);
+			// note: this is symmetrical and inclusive so as to match MS-SQL server's implementation
+			// other databases may do it differently...
+			return MoreThanOrEqual(variable, lower) && LessThanOrEqual(variable, upper);
 		}
 
 		internal static bool In(object variable, object[] values)
