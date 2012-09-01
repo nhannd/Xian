@@ -120,6 +120,7 @@
     <Compile Include="Alerts\NoteAlert.cs" />
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
     <Compile Include="CannedText.cs" />
+    <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="Department.cs" />
     <Compile Include="FtpAttachedDocumentStore.cs" />
     <Compile Include="IAttachedDocumentStore.cs" />

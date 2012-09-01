@@ -301,15 +301,21 @@ namespace ClearCanvas.Healthcare
 				else
 				{
 					// Schedule the step using its offset
-					var stepStartTime = startTime;
-					if (stepStartTime != null)
-						stepStartTime = stepStartTime.Value.Add(ps.SchedulingOffset);
-
-					ps.Schedule(stepStartTime);
+					if (startTime != null)
+					{
+						// truncate to minute, and add ps offset
+						var t = startTime.Value.Truncate(DateTimePrecision.Minute).Add(ps.SchedulingOffset);
+						ps.Schedule(t);
+					}
+					else
+					{
+						ps.Schedule(null);
+					}
 				}
 			}
 
 			_scheduledDuration = duration > 0 ? duration : ComputeDefaultDuration();
+			_scheduledEndTime = _scheduledStartTime + TimeSpan.FromMinutes(_scheduledDuration);
 		}
 
 		/// <summary>
@@ -418,6 +424,7 @@ namespace ClearCanvas.Healthcare
 				new HashedSet<ProcedureStep>(),
 				_scheduledStartTime,
 				_scheduledDuration,
+				_scheduledEndTime,
 				_schedulingCode,
 				_startTime,
 				_endTime,
