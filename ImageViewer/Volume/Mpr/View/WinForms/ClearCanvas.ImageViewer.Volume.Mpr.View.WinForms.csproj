@@ -42,7 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MprConfigurationComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MprConfigurationComponentControl.Designer.cs">
       <DependentUpon>MprConfigurationComponentControl.cs</DependentUpon>
