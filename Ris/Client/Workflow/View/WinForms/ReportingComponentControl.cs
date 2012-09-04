@@ -72,6 +72,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_supervisor.Visible = _component.SupervisorVisible;
 			_rememberSupervisorCheckbox.Visible = _component.RememberSupervisorVisible;
 
+			_priority.DataSource = _component.PriorityChoices;
+			_priority.DataBindings.Add("Value", _component, "Priority", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_verifyButton.Visible = _component.VerifyReportVisible;
 			_submitForReviewButton.Visible = _component.SubmitForReviewVisible;
 			_returnToInterpreterButton.Visible = _component.ReturnToInterpreterVisible;

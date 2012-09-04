@@ -15,19 +15,19 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
-    [DataContract]
-    public abstract class CompleteInterpretationRequestBase : SaveReportRequest
-    {
-        public CompleteInterpretationRequestBase(EntityRef reportingStepRef)
-            : base(reportingStepRef, null, null)
-        {
-        }
+	[DataContract]
+	public abstract class CompleteInterpretationRequestBase : SaveReportRequest
+	{
+		protected CompleteInterpretationRequestBase(EntityRef reportingStepRef)
+			: base(reportingStepRef, null, null)
+		{
+		}
 
-        public CompleteInterpretationRequestBase(EntityRef reportingStepRef
-            , Dictionary<string, string> reportPartExtendedProperties
-            , EntityRef supervisorRef)
-            : base(reportingStepRef, reportPartExtendedProperties, supervisorRef)
-        {
-        }
-    }
+		protected CompleteInterpretationRequestBase(EntityRef reportingStepRef
+			, Dictionary<string, string> reportPartExtendedProperties
+			, EntityRef supervisorRef)
+			: base(reportingStepRef, reportPartExtendedProperties, supervisorRef)
+		{
+		}
+	}
 }

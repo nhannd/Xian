@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Security.Permissions;
 using System.ServiceModel;
 using System.Text;
@@ -167,6 +168,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// Gets the supervisor for the active report part.
 		/// </summary>
 		StaffSummary Supervisor { get; }
+
+		/// <summary>
+		/// Raises or lowers the order priority by the specified amount.
+		/// </summary>
+		/// <param name="delta"></param>
+		/// <remarks>
+		/// Attempting to raise the priority above the maximum value, or lower it below the minimum value, has no effect.
+		/// </remarks>
+		void ChangePriority(int delta);
+
 	}
 
 	/// <summary>
@@ -336,6 +347,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 				this.Owner.SetReportPartExtendedProperty(key, value);
 			}
 
+			public void ChangePriority(int delta)
+			{
+				this.Owner.ChangePriority(delta);
+			}
+
 			public StaffSummary Supervisor
 			{
 				get { return Owner._supervisor; }
@@ -377,6 +393,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private StaffSummary _supervisor;
 		private bool _rememberSupervisor;
 		private Dictionary<string, string> _reportPartExtendedProperties;
+		private List<EnumValueInfo> _priorityChoices; 
 
 		private ReportingOrderDetailViewComponent _orderComponent;
 		private AttachedDocumentPreviewComponent _orderAttachmentsComponent;
@@ -647,6 +664,25 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
+		public IList PriorityChoices
+		{
+			get { return _priorityChoices; }
+		}
+
+		public EnumValueInfo Priority
+		{
+			get { return _orderDetail.OrderPriority; }
+			set
+			{
+				if(!Equals(value, _orderDetail.OrderPriority))
+				{
+					_orderDetail.OrderPriority = value;
+					this.Modified = true;
+					NotifyPropertyChanged("Priority");
+				}
+			}
+		}
+
 		#region Supervisor
 
 		public StaffSummary Supervisor
@@ -728,13 +764,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 									new CompleteInterpretationAndVerifyRequest(
 										this.WorklistItem.ProcedureStepRef,
 										_reportPartExtendedProperties,
-										_supervisor == null ? null : _supervisor.StaffRef)));
+										_supervisor == null ? null : _supervisor.StaffRef) { Priority = _orderDetail.OrderPriority }));
 						}
 						else if (_canCompleteVerification)
 						{
 							Platform.GetService<IReportingWorkflowService>(service =>
 								service.CompleteVerification(
-									new CompleteVerificationRequest(this.WorklistItem.ProcedureStepRef, _reportPartExtendedProperties)));
+									new CompleteVerificationRequest(this.WorklistItem.ProcedureStepRef, _reportPartExtendedProperties) { Priority = _orderDetail.OrderPriority }));
 						}
 
 						// Source Folders
@@ -785,7 +821,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 						new CompleteInterpretationForVerificationRequest(
 							_worklistItemManager.WorklistItem.ProcedureStepRef,
 							_reportPartExtendedProperties,
-							_supervisor == null ? null : _supervisor.StaffRef)));
+							_supervisor == null ? null : _supervisor.StaffRef) { Priority = _orderDetail.OrderPriority }));
 
 				// Source Folders
 				//DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
@@ -838,7 +874,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					service.ReturnToInterpreter(new ReturnToInterpreterRequest(
 							this.WorklistItem.ProcedureStepRef,
 							_reportPartExtendedProperties,
-							_supervisor == null ? null : _supervisor.StaffRef)));
+							_supervisor == null ? null : _supervisor.StaffRef) { Priority = _orderDetail.OrderPriority }));
 
 				// Source Folders, no destination folder
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeReviewedFolder));
@@ -889,7 +925,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 						new CompleteInterpretationForTranscriptionRequest(
 							this.WorklistItem.ProcedureStepRef,
 							_reportPartExtendedProperties,
-							_supervisor == null ? null : _supervisor.StaffRef)));
+							_supervisor == null ? null : _supervisor.StaffRef) { Priority = _orderDetail.OrderPriority }));
 
 				// Source Folders
 				//DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeReportedFolder));
@@ -938,7 +974,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 						new SaveReportRequest(
 							this.WorklistItem.ProcedureStepRef,
 							_reportPartExtendedProperties,
-							_supervisor == null ? null : _supervisor.StaffRef)));
+							_supervisor == null ? null : _supervisor.StaffRef) { Priority = _orderDetail.OrderPriority }));
 
 				// Source Folders
 				//DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeReportedFolder));
@@ -1146,6 +1182,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_report = response.Report;
 				_activeReportPartIndex = response.ReportPartIndex;
 				_orderDetail = response.Order;
+				_priorityChoices = response.PriorityChoices;
 
 				var sb = new StringBuilder();
 				foreach (var procedureDetail in _report.Procedures)
@@ -1326,6 +1363,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				linkedItems.AddRange(component.SelectedItems);
 			}
+		}
+
+		private void ChangePriority(int delta)
+		{
+			var currentPriority = _priorityChoices.IndexOf(_orderDetail.OrderPriority);
+			var newPriority = Math.Min(Math.Max(currentPriority + delta, 0), _priorityChoices.Count - 1);
+			_orderDetail.OrderPriority = _priorityChoices[newPriority];
 		}
 
 		private void ResetChildComponents()
