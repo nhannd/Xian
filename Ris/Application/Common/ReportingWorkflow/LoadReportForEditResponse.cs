@@ -18,16 +18,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class LoadReportForEditResponse : DataContractBase
     {
-		public LoadReportForEditResponse()
-		{
-
-		}
-
-    	public LoadReportForEditResponse(ReportDetail report, int reportPartIndex, OrderDetail order)
+		public LoadReportForEditResponse(ReportDetail report, int reportPartIndex, OrderDetail order, List<EnumValueInfo> priorityChoices)
     	{
     		Report = report;
     		ReportPartIndex = reportPartIndex;
     		Order = order;
+			PriorityChoices = priorityChoices;
     	}
 
     	/// <summary>
@@ -47,5 +43,11 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 		/// </summary>
 		[DataMember]
 		public OrderDetail Order;
+
+		/// <summary>
+		/// Gets the priority choices, for setting the priority.
+		/// </summary>
+		[DataMember]
+    	public List<EnumValueInfo> PriorityChoices;
     }
 }

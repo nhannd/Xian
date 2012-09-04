@@ -16,23 +16,29 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
-    [DataContract]
-    public class SaveReportRequest : DataContractBase
-    {
-        public SaveReportRequest(EntityRef reportingStepRef, Dictionary<string, string> reportPartExtendedProperties, EntityRef supervisorRef)
-        {
-            this.ReportingStepRef = reportingStepRef;
-            this.ReportPartExtendedProperties = reportPartExtendedProperties;
-            this.SupervisorRef = supervisorRef;
-        }
+	[DataContract]
+	public class SaveReportRequest : DataContractBase
+	{
+		public SaveReportRequest(EntityRef reportingStepRef, Dictionary<string, string> reportPartExtendedProperties, EntityRef supervisorRef)
+		{
+			this.ReportingStepRef = reportingStepRef;
+			this.ReportPartExtendedProperties = reportPartExtendedProperties;
+			this.SupervisorRef = supervisorRef;
+		}
 
-        [DataMember]
-        public EntityRef ReportingStepRef;
+		[DataMember]
+		public EntityRef ReportingStepRef;
 
-        [DataMember]
-        public Dictionary<string, string> ReportPartExtendedProperties;
+		[DataMember]
+		public Dictionary<string, string> ReportPartExtendedProperties;
 
-        [DataMember]
-        public EntityRef SupervisorRef;
-    }
+		[DataMember]
+		public EntityRef SupervisorRef;
+
+		/// <summary>
+		/// Sets the priority of the associated order.  Optional - if null, priority is unchanged.
+		/// </summary>
+		[DataMember]
+		public EnumValueInfo Priority;
+	}
 }

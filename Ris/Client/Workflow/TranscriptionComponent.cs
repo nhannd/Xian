@@ -271,15 +271,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 				this.Owner.SetReportPartExtendedProperty(key, value);
 			}
 
-			//public StaffSummary Supervisor
-			//{
-			//    get { return Owner._supervisor; }
-			//    set
-			//    {
-			//        Owner.SetSupervisor(value);
-			//    }
-			//}
-
 			public void RequestClose(TranscriptionEditorCloseReason reason)
 			{
 				this.Owner.RequestClose(reason);

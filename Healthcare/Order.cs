@@ -143,7 +143,7 @@ namespace ClearCanvas.Healthcare
 		/// <summary>
 		/// Priority
 		/// </summary>
-		public OrderPriority Priority
+		public virtual OrderPriority Priority
 		{
 			get { return _priority; }
 			set

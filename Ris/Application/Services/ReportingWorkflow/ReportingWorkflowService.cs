@@ -142,6 +142,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			var supervisor = ResolveSupervisor(interpretation, request.SupervisorRef);
 
 			SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor, true);
+			UpdatePriority(interpretation, request.Priority);
 
 			ValidateReportTextExists(interpretation);
 
@@ -165,6 +166,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			var supervisor = ResolveSupervisor(interpretation, request.SupervisorRef);
 
 			SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor, true);
+			UpdatePriority(interpretation, request.Priority);
 
 			ValidateReportTextExists(interpretation);
 
@@ -188,6 +190,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			var supervisor = ResolveSupervisor(interpretation, request.SupervisorRef);
 
 			SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor, true);
+			UpdatePriority(interpretation, request.Priority);
 
 			ValidateReportTextExists(interpretation);
 
@@ -252,6 +255,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			var supervisor = ResolveSupervisor(step, request.SupervisorRef);
 
 			SaveReportHelper(request.ReportPartExtendedProperties, step, supervisor, true);
+			UpdatePriority(step, request.Priority);
 
 			ValidateReportTextExists(step);
 
@@ -285,6 +289,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			var supervisor = ResolveSupervisor(verification, request.SupervisorRef);
 
 			SaveReportHelper(request.ReportPartExtendedProperties, verification, supervisor, true);
+			UpdatePriority(verification, request.Priority);
 
 			ValidateReportTextExists(verification);
 
@@ -363,7 +368,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return new LoadReportForEditResponse(
 				reportDetail,
 				step.ReportPart.Index,
-				orderDetail);
+				orderDetail,
+				EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext));
 		}
 
 		[UpdateOperation]
@@ -376,6 +382,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 			// saving a draft does not require supervisor validation
 			SaveReportHelper(request.ReportPartExtendedProperties, step, supervisor, false);
+			UpdatePriority(step, request.Priority);
 
 			this.PersistenceContext.SynchState();
 
@@ -822,6 +829,15 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 			var saveReportOp = new Operations.SaveReport();
 			saveReportOp.Execute(step, reportPartExtendedProperties, supervisor);
+		}
+
+		private void UpdatePriority(ReportingProcedureStep step, EnumValueInfo priority)
+		{
+			if (priority == null)
+				return;
+
+			// update the priority of the associated order
+			step.Procedure.Order.Priority = EnumUtils.GetEnumValue<OrderPriority>(priority);
 		}
 
 		private void ValidateReportTextExists(ReportingProcedureStep step)
