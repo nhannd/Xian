@@ -9,19 +9,9 @@
 
 #endregion
 
-using System;
-using System.Reflection;
-using System.Text;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Xml;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {

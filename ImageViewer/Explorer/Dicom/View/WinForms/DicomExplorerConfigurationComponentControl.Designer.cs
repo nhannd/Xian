@@ -59,61 +59,61 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DicomExplorerConfigurationComponentControl));
-			this._showPhoneticIdeographicNames = new System.Windows.Forms.CheckBox();
-			this._showNumberOfImages = new System.Windows.Forms.CheckBox();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this._selectDefaultServerOnStartup = new System.Windows.Forms.CheckBox();
-			this.groupBox1.SuspendLayout();
-			this.groupBox2.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// _showPhoneticIdeographicNames
-			// 
-			resources.ApplyResources(this._showPhoneticIdeographicNames, "_showPhoneticIdeographicNames");
-			this._showPhoneticIdeographicNames.Name = "_showPhoneticIdeographicNames";
-			this._showPhoneticIdeographicNames.UseVisualStyleBackColor = true;
-			// 
-			// _showNumberOfImages
-			// 
-			resources.ApplyResources(this._showNumberOfImages, "_showNumberOfImages");
-			this._showNumberOfImages.Name = "_showNumberOfImages";
-			this._showNumberOfImages.UseVisualStyleBackColor = true;
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this._showNumberOfImages);
-			this.groupBox1.Controls.Add(this._showPhoneticIdeographicNames);
-			resources.ApplyResources(this.groupBox1, "groupBox1");
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.TabStop = false;
-			// 
-			// groupBox2
-			// 
-			this.groupBox2.Controls.Add(this._selectDefaultServerOnStartup);
-			resources.ApplyResources(this.groupBox2, "groupBox2");
-			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.TabStop = false;
-			// 
-			// _selectDefaultServerOnStartup
-			// 
-			resources.ApplyResources(this._selectDefaultServerOnStartup, "_selectDefaultServerOnStartup");
-			this._selectDefaultServerOnStartup.Name = "_selectDefaultServerOnStartup";
-			this._selectDefaultServerOnStartup.UseVisualStyleBackColor = true;
-			// 
-			// DicomExplorerConfigurationComponentControl
-			// 
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.groupBox2);
-			this.Controls.Add(this.groupBox1);
-			this.Name = "DicomExplorerConfigurationComponentControl";
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox1.PerformLayout();
-			this.groupBox2.ResumeLayout(false);
-			this.groupBox2.PerformLayout();
-			this.ResumeLayout(false);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DicomExplorerConfigurationComponentControl));
+            this._showPhoneticIdeographicNames = new System.Windows.Forms.CheckBox();
+            this._showNumberOfImages = new System.Windows.Forms.CheckBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this._selectDefaultServerOnStartup = new System.Windows.Forms.CheckBox();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // _showPhoneticIdeographicNames
+            // 
+            resources.ApplyResources(this._showPhoneticIdeographicNames, "_showPhoneticIdeographicNames");
+            this._showPhoneticIdeographicNames.Name = "_showPhoneticIdeographicNames";
+            this._showPhoneticIdeographicNames.UseVisualStyleBackColor = true;
+            // 
+            // _showNumberOfImages
+            // 
+            resources.ApplyResources(this._showNumberOfImages, "_showNumberOfImages");
+            this._showNumberOfImages.Name = "_showNumberOfImages";
+            this._showNumberOfImages.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this._showNumberOfImages);
+            this.groupBox1.Controls.Add(this._showPhoneticIdeographicNames);
+            resources.ApplyResources(this.groupBox1, "groupBox1");
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.TabStop = false;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this._selectDefaultServerOnStartup);
+            resources.ApplyResources(this.groupBox2, "groupBox2");
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.TabStop = false;
+            // 
+            // _selectDefaultServerOnStartup
+            // 
+            resources.ApplyResources(this._selectDefaultServerOnStartup, "_selectDefaultServerOnStartup");
+            this._selectDefaultServerOnStartup.Name = "_selectDefaultServerOnStartup";
+            this._selectDefaultServerOnStartup.UseVisualStyleBackColor = true;
+            // 
+            // DicomExplorerConfigurationComponentControl
+            // 
+            resources.ApplyResources(this, "$this");
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBox1);
+            this.Name = "DicomExplorerConfigurationComponentControl";
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.ResumeLayout(false);
 
         }
 

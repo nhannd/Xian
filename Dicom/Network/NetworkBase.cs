@@ -136,7 +136,8 @@ namespace ClearCanvas.Dicom.Network
         private readonly BlockingQueue<RawPDU> _pduQueue = new BlockingQueue<RawPDU>();
         private readonly BlockingQueue<NetworkProcessor> _processingQueue = new BlockingQueue<NetworkProcessor>(); 
         private readonly object _syncLock = new object();
-        private bool _multiThreaded ;
+        private readonly object _writeSyncLock = new object();
+        private bool _multiThreaded;
         #endregion
 
         #region Public members
@@ -1016,6 +1017,34 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
+        /// Method to send a DICOM C-STORE-RSP message.
+        /// </summary>
+        /// <param name="presentationID"></param>
+        /// <param name="messageID"></param>
+        /// <param name="affectedInstance"></param>
+        /// <param name="status"></param>
+        /// <param name="errorComment">An extended textual error comment on failure. The comment will be truncated to 64 characters.</param>
+        public void SendCStoreResponse(byte presentationID, ushort messageID, string affectedInstance, DicomStatus status, string errorComment)
+        {
+            var msg = new DicomMessage
+            {
+                MessageIdBeingRespondedTo = messageID,
+                CommandField = DicomCommandField.CStoreResponse,
+                AffectedSopClassUid = _assoc.GetAbstractSyntax(presentationID).UID,
+                AffectedSopInstanceUid = affectedInstance,
+                DataSetType = 0x0101,
+                Status = status,
+            };
+
+            if (!string.IsNullOrEmpty(errorComment))
+            {
+                msg.ErrorComment = errorComment.Substring(0, (int)Math.Min(DicomVr.LOvr.MaximumLength, errorComment.Length));
+            }
+
+            SendDimse(presentationID, msg.CommandSet, null);
+        }
+
+        /// <summary>
         /// Method to send a DICOM C-FIND-RQ message.
         /// </summary>
         /// <param name="presentationID"></param>
@@ -1129,6 +1158,28 @@ namespace ClearCanvas.Dicom.Network
             message.MessageIdBeingRespondedTo = messageID;
             message.AffectedSopClassUid = affectedClass.UID;
             message.DataSetType = message.DataSet.IsEmpty() ? (ushort) 0x0101 : (ushort) 0x0202;
+
+            SendDimse(presentationID, message.CommandSet, message.DataSet);
+        }
+
+        /// <summary>
+        /// Method to send a DICOM C-MOVE-RSP message.
+        /// </summary>
+        /// <param name="presentationID"></param>
+        /// <param name="messageID"></param>
+        /// <param name="message"></param>
+        /// <param name="status"></param>
+        /// <param name="errorComment">An extended textual error comment. The comment will be truncated to 64 characters. </param>
+        public void SendCMoveResponse(byte presentationID, ushort messageID, DicomMessage message, DicomStatus status, string errorComment)
+        {
+            DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
+            message.CommandField = DicomCommandField.CMoveResponse;
+            message.Status = status;
+            message.MessageIdBeingRespondedTo = messageID;
+            message.AffectedSopClassUid = affectedClass.UID;
+            message.DataSetType = message.DataSet.IsEmpty() ? (ushort)0x0101 : (ushort)0x0202;
+            if (!string.IsNullOrEmpty(errorComment))
+                message.ErrorComment = errorComment.Substring(0, (int)Math.Min(DicomVr.LOvr.MaximumLength, errorComment.Length));
 
             SendDimse(presentationID, message.CommandSet, message.DataSet);
         }
@@ -1829,23 +1880,29 @@ namespace ClearCanvas.Dicom.Network
                                                 DimseMessageSending(_assoc, pcid, command, dataset);
                                         };
 
-                LogSendReceive(false, command, dataset);
-
-                OnSendDimseBegin(pcid, command, dataset);
-
-
-                var dsw = new DicomStreamWriter(pdustream);
-                dsw.Write(TransferSyntax.ImplicitVrLittleEndian,
-                          command, DicomWriteOptions.Default | DicomWriteOptions.CalculateGroupLengths);
-
-                if ((dataset != null) && !dataset.IsEmpty())
+                // Introduced lock as risk mitigation for ticket #10147.  Note that a more thorough locking
+                // mechanism should be developed to work across PDU types, and also should take into account
+                // if we do end up using _multiThreaded = true
+                lock (_writeSyncLock)
                 {
-                    pdustream.IsCommand = false;
-                    dsw.Write(ts, dataset, DicomWriteOptions.Default);
-                }
+                    LogSendReceive(false, command, dataset);
 
-                // flush last pdu
-                pdustream.Flush(true);
+                    OnSendDimseBegin(pcid, command, dataset);
+
+
+                    var dsw = new DicomStreamWriter(pdustream);
+                    dsw.Write(TransferSyntax.ImplicitVrLittleEndian,
+                              command, DicomWriteOptions.Default | DicomWriteOptions.CalculateGroupLengths);
+
+                    if ((dataset != null) && !dataset.IsEmpty())
+                    {
+                        pdustream.IsCommand = false;
+                        dsw.Write(ts, dataset, DicomWriteOptions.Default);
+                    }
+
+                    // flush last pdu
+                    pdustream.Flush(true);
+                }
 
                 _assoc.TotalBytesSent += total;
 

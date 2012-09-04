@@ -29,6 +29,7 @@ namespace ClearCanvas.Dicom.Network.Scp
     	private readonly DicomScp<TContext>.AssociationComplete _complete;
     	private readonly List<StorageInstance> _instances = new List<StorageInstance>();
         private AssociationStatisticsRecorder _statsRecorder ;
+        private bool _cleanedUp = false;
         #endregion
 
         #region Contructor
@@ -96,6 +97,27 @@ namespace ClearCanvas.Dicom.Network.Scp
             _statsRecorder = new AssociationStatisticsRecorder(server); 
 
         }
+        #endregion
+
+        #region Private Methods
+
+        public void Cleanup()
+        {
+            if (_cleanedUp) return;
+
+            _cleanedUp = true;
+
+            foreach (IDicomScp<TContext> scp in _extensionList.Values)
+            {
+                try
+                {
+                    scp.Cleanup();
+                }
+                catch (Exception)
+                {}
+            }
+        }
+
         #endregion
 
         #region IDicomServerHandler Members
@@ -182,6 +204,7 @@ namespace ClearCanvas.Dicom.Network.Scp
             Platform.Log(LogLevel.Info, "Received association release request from {0} to {1}.", association.CallingAE, association.CalledAE);
 			if (_complete != null)
 				_complete(_context, association, _instances);
+            Cleanup();
         }
 
         void IDicomServerHandler.OnReceiveAbort(DicomServer server, ServerAssociationParameters association, DicomAbortSource source, DicomAbortReason reason)
@@ -189,6 +212,7 @@ namespace ClearCanvas.Dicom.Network.Scp
             Platform.Log(LogLevel.Error, "Received association abort from {0} to {1}", association.CallingAE, association.CalledAE);
 			if (_complete != null)
 				_complete(_context, association, _instances);
+            Cleanup();
 		}
 
         void IDicomServerHandler.OnNetworkError(DicomServer server, ServerAssociationParameters association, Exception e)
@@ -196,6 +220,7 @@ namespace ClearCanvas.Dicom.Network.Scp
             Platform.Log(LogLevel.Error, "Unexpectedly received OnNetworkError callback from {0} to {1}.  Aborting association.", association.CallingAE, association.CalledAE);
 			if (_complete != null)
 				_complete(_context, association, _instances);
+            Cleanup();
         }
 
         void IDicomServerHandler.OnDimseTimeout(DicomServer server, ServerAssociationParameters association)

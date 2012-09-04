@@ -9,7 +9,7 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Serialization;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow

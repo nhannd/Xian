@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -12,6 +12,7 @@
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using ClearCanvas.Common.Caching;
+using ClearCanvas.Common.Serialization;
 
 namespace ClearCanvas.Enterprise.Common.Ping
 {

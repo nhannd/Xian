@@ -245,7 +245,7 @@ namespace ClearCanvas.Controls.WinForms
 					if (_folderListView.SelectedItems != null)
 					{
 						foreach (FolderListViewItem item in _folderListView.SelectedItems)
-							selection.Add(new FolderViewItem(item.Pidl.Path, baseName + item.DisplayName, item.DisplayName, item.IsFolder, item.IsShortcut));
+							selection.Add(new FolderViewItem(item.Pidl.Path, baseName + item.DisplayName, item.DisplayName, item.IsFolder, false));
 					}
 					_selectedItems = selection.AsReadOnly();
 				}
@@ -417,29 +417,33 @@ namespace ClearCanvas.Controls.WinForms
 			public readonly byte ItemClass;
 			public readonly long FileSize;
 			public readonly bool IsFolder;
-			public readonly bool IsShortcut;
 			public readonly DateTime LastModified;
 
-			public FolderListViewItem(Pidl absolutePidl, Pidl myDocumentsReferencePidl, FileSizeFormat fileSizeFormat) : base()
+			public FolderListViewItem(Pidl absolutePidl, Pidl myDocumentsReferencePidl, FileSizeFormat fileSizeFormat)
 			{
 				_pidl = absolutePidl;
 				_fullPath = absolutePidl.Path;
 
 				// request shell item info now - it's faster than binding to ShellItem directly, and we need it for sorting purposes anyway
-				const SFGAO REQUEST_ATTRIBUTES = SFGAO.SFGAO_FILESYSTEM | SFGAO.SFGAO_FOLDER | SFGAO.SFGAO_HASSUBFOLDER | SFGAO.SFGAO_LINK;
-				IntPtr pidl = (IntPtr) _pidl;
-				SHFILEINFO shInfo = new SHFILEINFO();
-				Shell32.SHGetFileInfo(pidl, (uint) REQUEST_ATTRIBUTES, out shInfo, (uint) Marshal.SizeOf(shInfo),
-				                      SHGFI.SHGFI_PIDL | SHGFI.SHGFI_ATTRIBUTES | SHGFI.SHGFI_TYPENAME | SHGFI.SHGFI_DISPLAYNAME | SHGFI.SHGFI_SYSICONINDEX);
+				var uFlags = SHGFI.SHGFI_PIDL | SHGFI.SHGFI_TYPENAME | SHGFI.SHGFI_DISPLAYNAME | SHGFI.SHGFI_SYSICONINDEX;
+
+				// bug #9975: asking for SHGFI_ATTRIBUTES can be a very slow operation, so we don't want to ask for them unless we really need them.
+				// if we're dealing with a regular file or directory, then getting the attributes gives us no additional information, so we can avoid it
+				var isFile = !string.IsNullOrEmpty(_fullPath) && File.Exists(_fullPath);
+				var isDirectory = !string.IsNullOrEmpty(_fullPath) && Directory.Exists(_fullPath);
+				if (!isFile && !isDirectory)
+				{
+					uFlags = uFlags | SHGFI.SHGFI_ATTRIBUTES;
+				}
+
+				var shInfo = new SHFILEINFO();
+				Shell32.SHGetFileInfo((IntPtr) _pidl, 0, out shInfo, (uint)Marshal.SizeOf(shInfo), uFlags);
 
 				// check if item is purely virtual or is a physical file system object
-				bool isPureVirtual = !(((SFGAO) shInfo.dwAttributes & SFGAO.SFGAO_FILESYSTEM) != 0);
-
-				// check if item is a shortcut
-				bool isShortcut = (((SFGAO) shInfo.dwAttributes & SFGAO.SFGAO_LINK) != 0) && File.Exists(_fullPath);
+				var isPureVirtual = !isFile && !isDirectory && ((SFGAO)shInfo.dwAttributes & SFGAO.SFGAO_FILESYSTEM) == 0;
 
 				// check if item is actually a folder or potentially has subfolders; exclude real files that provide subfolders via shell namespace extensions (e.g. ZIP files in WinXP)
-				bool isFolder = (((SFGAO) shInfo.dwAttributes & (SFGAO.SFGAO_FOLDER | SFGAO.SFGAO_HASSUBFOLDER)) != 0) && !File.Exists(_fullPath);
+				var isFolder = isDirectory || (((SFGAO) shInfo.dwAttributes & (SFGAO.SFGAO_FOLDER | SFGAO.SFGAO_HASSUBFOLDER)) != 0 && !isFile);
 
 				byte itemClass;
 				if (_pidl == myDocumentsReferencePidl)
@@ -458,7 +462,6 @@ namespace ClearCanvas.Controls.WinForms
 				this.ItemClass = itemClass;
 				this.LastModified = DateTime.MinValue;
 				this.IsFolder = isFolder;
-				this.IsShortcut = isShortcut;
 				this.FileSize = -1;
 
 				if (File.Exists(_fullPath))

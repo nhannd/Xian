@@ -9,7 +9,6 @@
   <PropertyGroup>
     <TrunkDirectory>$(MSBuildProjectDirectory)\..\</TrunkDirectory>
     <JscriptDirectory>$(TrunkDirectory)\Jscript\bin\$(Configuration)</JscriptDirectory>
-    <EmptyViewerDatabaseFile>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\$(PlatformSubFolder)\empty_viewer.sdf</EmptyViewerDatabaseFile>
     <DesktopBuild>false</DesktopBuild>
     <ShredHostBuild>false</ShredHostBuild>
     <ConsoleBuild>false</ConsoleBuild>
@@ -25,19 +24,11 @@
     <When Condition=" '$(ProjectOutDir)' != '$(DistributionDirectory)' ">
       <PropertyGroup>
         <IsDistributionBuild>true</IsDistributionBuild>
-        <DatabaseDirectory>$(DistributionDirectory)\dicom_datastore</DatabaseDirectory>
-        <FileStoreDirectory>.\filestore</FileStoreDirectory>
-        <DatabaseFile>$(DatabaseDirectory)\viewer.sdf</DatabaseFile>
-        <HibernateConfigurationFileDataSource>dicom_datastore\viewer.sdf</HibernateConfigurationFileDataSource>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
         <IsDistributionBuild>false</IsDistributionBuild>
-        <DatabaseDirectory>$(TrunkDirectory)\dicom_datastore</DatabaseDirectory>
-        <FileStoreDirectory>$(TrunkDirectory)\dicom_datastore\filestore</FileStoreDirectory>
-        <DatabaseFile>$(DatabaseDirectory)\viewer.sdf</DatabaseFile>
-        <HibernateConfigurationFileDataSource>$(DatabaseFile)</HibernateConfigurationFileDataSource>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -59,9 +50,9 @@
   <Choose>
     <When Condition="'$(Options)' == ''">
       <PropertyGroup>
-        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
-        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
-        <!--<OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
+        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr</OptionsFlags>-->
+        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr</OptionsFlags>-->
+        <!--<OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr</OptionsFlags>-->
         <OptionsFlags>ExcludeStudyComposer</OptionsFlags>
       </PropertyGroup>
     </When>
@@ -71,14 +62,6 @@
       </PropertyGroup>
     </Otherwise>
   </Choose>
-
-  <PropertyGroup>
-
-    <!--Hibernate Configuration-->
-    <HibernateConfigurationFileName>ClearCanvas.Dicom.DataStore.cfg.xml</HibernateConfigurationFileName>
-    <HibernateConfigurationFileSource>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\$(HibernateConfigurationFileName)</HibernateConfigurationFileSource>
-
-  </PropertyGroup>
 
   <!--What files get copied depends on which project we are building.  The only other
   way to do this would be to have ImageViewerDesktop_dist.config and ImageViewerShredHost_dist.config, but they would be
@@ -120,19 +103,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <SqlCEFiles Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\$(PlatformSubFolder)\sqlce*.dll" />
-    <SqlCEFiles Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\$(PlatformSubFolder)\System.Data.SqlServerCe.dll" />
+    <DatabaseLibraries Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\v4.0\$(PlatformSubFolder)\sqlce*.dll" />
+    <DatabaseLibraries Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\v4.0\$(PlatformSubFolder)\System.Data.SqlServerCe.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DatabasePlugins Include="$(TrunkDirectory)\ImageViewer\StudyManagement\Core\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyManagement.Core.dll" />
   </ItemGroup>
   
-  <ItemGroup>
-    <HibernateFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Iesi.Collections.dll" />
-    <HibernateFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Nhibernate.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <DicomDataStoreFiles Include="$(TrunkDirectory)\Dicom\DataStore\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.dll" />
-  </ItemGroup>
-
   <ItemGroup>
     <DicomToolkitFiles Include="$(TrunkDirectory)\Dicom\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
   </ItemGroup>
@@ -147,21 +125,12 @@
     <ShredHostAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_Shreds_dist.config" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="$(DesktopBuild)">
     <CriticalConfigFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_critical.config" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ImageViewerServicesFiles Include="$(TrunkDirectory)\ImageViewer\Services\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <LicenseFiles Include="$(TrunkDirectory)\..\Docs\Workstation\EULA.rtf" />
-    <LicenseFiles Include="$(TrunkDirectory)\Docs\PrivacyNotice.rtf" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <HelpFiles Include="$(TrunkDirectory)\..\Docs\Workstation\UsersGuide\CCWorkstationCommunityUsersGuide.chm" />
+  <ItemGroup Condition="$(ShredHostBuild)">
+    <CriticalConfigFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_Shreds_critical.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -170,7 +139,7 @@
   </ItemGroup>
 
 
-<ItemGroup>
+  <ItemGroup>
     <StudyBrowserFiles Include="$(TrunkDirectory)\Controls\WinForms\bin\$(Configuration)\ClearCanvas.Controls.WinForms.dll" />
     <StudyBrowserFiles Include="$(TrunkDirectory)\Desktop\Explorer\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.dll" />
     <StudyBrowserFiles Include="$(TrunkDirectory)\Desktop\Explorer\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.View.WinForms.dll" />
@@ -178,11 +147,6 @@
     <StudyBrowserFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Local\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.dll" />
     <StudyBrowserFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Dicom\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.dll" />
     <StudyBrowserFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Dicom\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ServiceToolsFiles Include="$(TrunkDirectory)\ImageViewer\Services\Tools\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.dll" />
-    <ServiceToolsFiles Include="$(TrunkDirectory)\ImageViewer\Services\Tools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.View.WinForms.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -206,11 +170,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <SeriesDetailsFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Dicom\SeriesDetails\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails.dll" />
-    <SeriesDetailsFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Dicom\SeriesDetails\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails.View.WinForms.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ReportingFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Reporting\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Reporting.dll" />
     <ReportingFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Reporting\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms.dll" />
   </ItemGroup>
@@ -225,8 +184,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <LocalDataStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyFinders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" />
-    <LocalDataStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" />
+    <LocalStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyFinders\Local\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.Local.dll" />
+    <LocalStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\Local\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.Local.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -287,7 +246,13 @@
     <ExternalsPluginFiles Include="$(TrunkDirectory)\ImageViewer\Externals\bin\$(Configuration)\ClearCanvas.ImageViewer.Externals.dll" />
     <ExternalsPluginFiles Include="$(TrunkDirectory)\ImageViewer\Externals\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Externals.View.WinForms.dll" />
   </ItemGroup>
-  
+
+  <!--Plugins common to all-->
+  <ItemGroup>
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Common\bin\$(Configuration)\ClearCanvas.ImageViewer.Common.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyManagement\Core\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyManagement.Core.dll" />
+  </ItemGroup>
+
   <ItemGroup Condition="$(DesktopBuild)">
     <!-- Core Viewer -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\bin\$(Configuration)\ClearCanvas.ImageViewer.dll" />
@@ -319,6 +284,7 @@
 
     <!-- Manifest -->
     <PluginFiles Include="$(TrunkDirectory)\Utilities\Manifest\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll" />
+
   </ItemGroup>
 
   <ItemGroup Condition="$(ShredHostBuild)">
@@ -333,14 +299,6 @@
     <ExecutableBootstrapFiles Include="$(TrunkDirectory)\Executable\bin\$(Configuration)\ClearCanvas.Executable.exe" />
   </ItemGroup>
 
-  <Target Name="Copy License Files">
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
-  </Target>
-
-  <Target Name="Copy Help Files">
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(HelpFiles)" DestinationFiles="$(DistributionDirectory)\CCWorkstationCommunityUsersGuide.chm" ContinueOnError="true"/>
-  </Target>
-
   <Target Name="Copy ImageViewer App Config">
     <CombineAppConfigs SourceFiles="@(ImageViewerAppConfigCreatorSourceFiles)" OutputFile="$(DistributionDesktopConfig)" />
     <Copy SourceFiles="@(CriticalConfigFiles)" DestinationFiles="$(DistributionDesktopCriticalConfig)" />
@@ -354,27 +312,14 @@
   
   <Target Name="Copy ShredHost App Config">
     <CombineAppConfigs SourceFiles="@(ShredHostAppConfigCreatorSourceFiles)" OutputFile="$(DistributionShredHostConfig)" />
-    <FileReplaceText FilePath="$(DistributionShredHostConfig)" TextToReplace="!filestore!" ReplacementText="$(FileStoreDirectory)"/>
+    <Copy SourceFiles="@(CriticalConfigFiles)" DestinationFiles="$(DistributionShredHostCriticalConfig)" />
     <Copy SourceFiles="@(CriticalConfigFiles)" DestinationFiles="$(DistributionShredHostCriticalConfig)" />
   </Target>
 
   <Target Name="Copy Database Files">
-
     <!-- Copy Hibernate and sql ce files -->
-    <Copy SourceFiles="@(SqlCEFiles)" DestinationFolder="$(CommonDirectory)" />
-    <Copy SourceFiles="@(HibernateFiles)" DestinationFolder="$(CommonDirectory)" />
-    <Copy SourceFiles="@(DicomDataStoreFiles)" DestinationFolder="$(CommonDirectory)" />
-    
-    <!-- Copy Hibernate configuration file -->
-    <Copy SourceFiles="$(HibernateConfigurationFileSource)" DestinationFolder="$(DistributionDirectory)" />
-    <!-- Run the replace text task-->
-    <FileReplaceText FilePath="$(DistributionDirectory)\$(HibernateConfigurationFileName)" TextToReplace="!datasource!" ReplacementText="$(HibernateConfigurationFileDataSource)"/>
-
-    <!-- Copy database file -->
-    <MakeDir Condition="!Exists('$(DatabaseDirectory)')" Directories="$(DatabaseDirectory)" />
-    <Copy SkipUnchangedFiles="true" SourceFiles="$(EmptyViewerDatabaseFile)" DestinationFolder="$(DatabaseDirectory)" />
-    <Copy Condition="!Exists('$(DatabaseFile)')" SourceFiles="$(EmptyViewerDatabaseFile)" DestinationFiles="$(DatabaseFile)" />
-  
+    <Copy SourceFiles="@(DatabaseLibraries)" DestinationFolder="$(CommonDirectory)" />
+    <Copy SourceFiles="@(DatabasePlugins)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
 
   <Target Name="Copy Study Browser">
@@ -382,11 +327,6 @@
     <CombineAppConfigs SourceFiles="$(TrunkDirectory)\ImageViewer\ImageViewer.DicomExplorer_dist.config;$(DistributionDesktopConfig)" OutputFile="$(DistributionDesktopConfig)" />
   </Target>
 
-  <Target Name="Copy Service Tools">
-    <Copy SourceFiles="@(ServiceToolsFiles)" DestinationFolder="$(PluginsDirectory)" />
-    <CombineAppConfigs SourceFiles="$(TrunkDirectory)\ImageViewer\ImageViewer.Services.Tools_dist.config;$(DistributionDesktopConfig)" OutputFile="$(DistributionDesktopConfig)" />
-  </Target>
-  
   <Target Name="Copy Desktop Services">
     <Copy SourceFiles="@(DesktopServiceFiles)" DestinationFolder="$(PluginsDirectory)" />
     <CombineAppConfigs SourceFiles="$(TrunkDirectory)\ImageViewer\ImageViewer.DesktopServices_dist.config;$(DistributionDesktopConfig)" OutputFile="$(DistributionDesktopConfig)" />
@@ -396,9 +336,6 @@
   </Target>
   <Target Name="Copy Study Filters">
     <Copy SourceFiles="@(StudyFiltersFiles)" DestinationFolder="$(PluginsDirectory)" />
-  </Target>
-  <Target Name="Copy Series Details">
-    <Copy SourceFiles="@(SeriesDetailsFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
   <Target Name="Copy Reporting">
     <Copy SourceFiles="@(ReportingFiles)" DestinationFolder="$(PluginsDirectory)" />
@@ -416,8 +353,8 @@
     <Copy SourceFiles="@(HelpUpdateFiles)" DestinationFolder="$(PluginsDirectory)" />
     <CombineAppConfigs SourceFiles="$(TrunkDirectory)\ImageViewer\Desktop.HelpUpdate_dist.config;$(DistributionDesktopConfig)" OutputFile="$(DistributionDesktopConfig)" />
   </Target>
-  <Target Name="Copy Local DataStore Client Files">
-    <Copy SourceFiles="@(LocalDataStoreClientFiles)" DestinationFolder="$(PluginsDirectory)" />
+  <Target Name="Copy Local Store Client Files">
+    <Copy SourceFiles="@(LocalStoreClientFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
   
   <Target Name="Copy Dicom Remote Client Files">
@@ -439,14 +376,8 @@
 
   <Target Name="Copy Optional Viewer Plugins" Condition="$(DesktopBuild)">
 
-    <RegexIsMatch Pattern="ExcludeHelpFiles" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="ExcludeHelpFiles" />
-    </RegexIsMatch>
     <RegexIsMatch Pattern="ExcludeStudyBrowser" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeStudyBrowser" />
-    </RegexIsMatch>
-    <RegexIsMatch Pattern="ExcludeServiceTools" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="ExcludeServiceTools" />
     </RegexIsMatch>
     <RegexIsMatch Pattern="ExcludeDesktopServices" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeDesktopServices" />
@@ -462,9 +393,6 @@
     </RegexIsMatch>
     <RegexIsMatch Pattern="ExcludeExternals" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeExternals" />
-    </RegexIsMatch>
-    <RegexIsMatch Pattern="ExcludeSeriesDetails" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="ExcludeSeriesDetails" />
     </RegexIsMatch>
     <RegexIsMatch Pattern="ExcludeReporting" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeReporting" />
@@ -494,22 +422,19 @@
       <Output TaskParameter="IsMatch" PropertyName="IncludeTestTools" />
     </RegexIsMatch>
 
-    <CallTarget Condition="!$(ExcludeHelpFiles)" Targets="Copy Help Files" />
     <CallTarget Condition="!$(ExcludeStudyBrowser)" Targets="Copy Study Browser" />
-    <CallTarget Condition="!$(ExcludeServiceTools)" Targets="Copy Service Tools" />
     <CallTarget Condition="!$(ExcludeDesktopServices)" Targets="Copy Desktop Services" />
     <CallTarget Condition="!$(ExcludeStudyComposer)" Targets="Copy Study Composer" />
     <CallTarget Condition="!$(ExcludeDicomEditor)" Targets="Copy Dicom Editor" />
     <CallTarget Condition="!$(ExcludeStudyFilters)" Targets="Copy Study Filters" />
     <CallTarget Condition="!$(ExcludeExternals)" Targets="Copy Externals Plugin" />
-    <CallTarget Condition="!$(ExcludeSeriesDetails)" Targets="Copy Series Details" />
     <CallTarget Condition="!$(ExcludeReporting)" Targets="Copy Reporting" />
     <CallTarget Condition="!$(ExcludeHelpUpdate)" Targets="Copy Help Update" />
     <CallTarget Condition="!$(ExcludeDicomRemote)" Targets="Copy Dicom Remote Client Files" />
     <CallTarget Condition="!$(ExcludeStreaming)" Targets="Copy Streaming Client Files" />
     <CallTarget Condition="!$(ExcludeMpr)" Targets="Copy Mpr Files" />
     <CallTarget Condition="!$(ExcludeFusion)" Targets="Copy Fusion Files" />
-    <CallTarget Condition="!$(ExcludeDatabase)" Targets="Copy Local DataStore Client Files" />
+    <CallTarget Condition="!$(ExcludeDatabase)" Targets="Copy Local Store Client Files" />
     <CallTarget Condition="!$(ExcludeSynchronizationTools)" Targets="Copy Synchronization Plugin" />
     <CallTarget Condition="$(IncludeTestTools)" Targets="Copy Test Tool Files" />
 
@@ -519,8 +444,6 @@
 
     <!-- Copy plugins -->
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginsDirectory)" />
-    <Copy SourceFiles="@(ImageViewerServicesFiles)" DestinationFolder="$(PluginsDirectory)" />
-
     <Copy SourceFiles="@(CodecFiles)" DestinationFolder="$(PluginsDirectory)" />
 
   </Target>
@@ -528,6 +451,7 @@
   <Target Name="Copy Project Files" DependsOnTargets="Copy Plugin Files">
 
     <Copy SourceFiles="@(DicomToolkitFiles)" DestinationFolder="$(CommonDirectory)" />
+    <Copy SourceFiles="@(CommonFiles)" DestinationFolder="$(CommonDirectory)" />
 
     <RegexIsMatch Pattern="ExcludeDatabase" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeDatabase" />
@@ -561,10 +485,10 @@
   <Target Name="Copy Executable Bootstrap for ShredHost">
     <CallTarget Targets="Copy Executable Bootstrap" />
     <Copy SourceFiles="$(DistributionShredHostConfig)" DestinationFiles="$(DistributionConsoleConfig)" />
-    <!--<Copy SourceFiles="$(DistributionShredHostCriticalConfig)" DestinationFiles="$(DistributionConsoleCriticalConfig)" />-->
+    <Copy SourceFiles="$(DistributionShredHostCriticalConfig)" DestinationFiles="$(DistributionConsoleCriticalConfig)" />
   </Target>
 
-  <Target Name="Copy Desktop Files" DependsOnTargets="Copy ImageViewer App Config;Copy JScript Files;Copy License Files">
+  <Target Name="Copy Desktop Files" DependsOnTargets="Copy ImageViewer App Config;Copy JScript Files">
     <CallTarget Targets="Copy Project Files" />
 
     <RegexIsMatch Pattern="ExcludeHttpDesktopServices" Input="$(OptionsFlags)" >
@@ -577,7 +501,7 @@
 
   </Target>
 
-  <Target Name="Copy ShredHost Files" DependsOnTargets="Copy ShredHost App Config;Copy License Files">
+  <Target Name="Copy ShredHost Files" DependsOnTargets="Copy ShredHost App Config">
     <CallTarget Targets="Copy Project Files" />
 
     <!--Only copy console executable to ShredHost folder if not doing distribution build-->

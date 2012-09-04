@@ -392,7 +392,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                 {
 
                     //construct this object before the lock so there's no chance of deadlocking
-                    //with the parent data source (because we are accessing it's tags at the 
+                    //with the parent data source (because we are accessing its tags at the 
                     //same time as it's trying to get the pixel data).
                     FramePixelDataRetriever retriever = new FramePixelDataRetriever(this);
 

@@ -13,7 +13,6 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Common;
 
 #pragma warning disable 0419,1574,1587,1591
 

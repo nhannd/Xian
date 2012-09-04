@@ -15,6 +15,7 @@ using System.Configuration;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
+    // TODO (CR Mar 2012): We should get rid of this.
     /// <summary>
     /// Special settings provider to retrieve settings from local configuration file 
     /// or the default values if it is not supported.

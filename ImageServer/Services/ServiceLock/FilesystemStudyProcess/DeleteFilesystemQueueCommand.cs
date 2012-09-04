@@ -11,8 +11,9 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -26,27 +27,27 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
     public class DeleteFilesystemQueueCommand : ServerDatabaseCommand
     {
         private readonly ServerEntityKey _storageLocationKey;
-    	private readonly ServerRuleApplyTimeEnum _applyTime = null;
+    	private readonly ServerRuleApplyTimeEnum _applyTime;
 
 		public DeleteFilesystemQueueCommand(ServerEntityKey storageLocationKey, ServerRuleApplyTimeEnum applyTime)
-			: base("Delete FilesystemQueue", false)
+			: base("Delete FilesystemQueue")
 		{
 			_storageLocationKey = storageLocationKey;
 			_applyTime = applyTime;
 		}
 
-        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+        protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
         {
-            IFilesystemQueueEntityBroker filesystemQueueBroker= updateContext.GetBroker<IFilesystemQueueEntityBroker>();
-            FilesystemQueueSelectCriteria criteria = new FilesystemQueueSelectCriteria();
+            var filesystemQueueBroker= updateContext.GetBroker<IFilesystemQueueEntityBroker>();
+            var criteria = new FilesystemQueueSelectCriteria();
             criteria.StudyStorageKey.EqualTo(_storageLocationKey);
             IList<FilesystemQueue> filesystemQueueItems = filesystemQueueBroker.Find(criteria);
 
-            IWorkQueueEntityBroker workQueueBroker = updateContext.GetBroker<IWorkQueueEntityBroker>();
-            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
+            var workQueueBroker = updateContext.GetBroker<IWorkQueueEntityBroker>();
+            var workQueueCriteria = new WorkQueueSelectCriteria();
             workQueueCriteria.StudyStorageKey.EqualTo(_storageLocationKey);
-			workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.PurgeStudy, WorkQueueTypeEnum.DeleteStudy, WorkQueueTypeEnum.CompressStudy, WorkQueueTypeEnum.MigrateStudy });
-            IList<Model.WorkQueue> workQueueItems = workQueueBroker.Find(workQueueCriteria);
+			workQueueCriteria.WorkQueueTypeEnum.In(new[] { WorkQueueTypeEnum.PurgeStudy, WorkQueueTypeEnum.DeleteStudy, WorkQueueTypeEnum.CompressStudy, WorkQueueTypeEnum.MigrateStudy });
+            IList<WorkQueue> workQueueItems = workQueueBroker.Find(workQueueCriteria);
 
             foreach (FilesystemQueue queue in filesystemQueueItems)
             {

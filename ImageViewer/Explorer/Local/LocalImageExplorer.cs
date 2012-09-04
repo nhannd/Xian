@@ -16,7 +16,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Authorization;
 using ClearCanvas.Desktop.Explorer;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local
 {

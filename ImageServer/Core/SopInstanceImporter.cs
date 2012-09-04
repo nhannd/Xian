@@ -12,16 +12,21 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Command;
+using ClearCanvas.ImageServer.Core.Diagnostics;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using SaveDicomFileCommand = ClearCanvas.ImageServer.Core.Command.SaveDicomFileCommand;
 
 namespace ClearCanvas.ImageServer.Core
 {
@@ -150,7 +155,7 @@ namespace ClearCanvas.ImageServer.Core
             if (!newName.Equals(patientsName))
                 message.DataSet[DicomTags.PatientsName].SetStringValue(newName);
 
-			DicomProcessingResult result = new DicomProcessingResult
+			var result = new DicomProcessingResult
 			                               	{
 			                               		Successful = true,
 			                               		StudyInstanceUid = studyInstanceUid,
@@ -170,8 +175,7 @@ namespace ClearCanvas.ImageServer.Core
 			}
 
             // Use the command processor for rollback capabilities.
-            using (ServerCommandProcessor commandProcessor =
-                new ServerCommandProcessor(String.Format("Processing Sop Instance {0}", sopInstanceUid)))
+            using (var commandProcessor = new ServerCommandProcessor(String.Format("Processing Sop Instance {0}", sopInstanceUid)))
             {
                 try
                 {
@@ -363,7 +367,7 @@ namespace ClearCanvas.ImageServer.Core
                 new UpdateWorkQueueCommand(file, studyLocation, dupImage, extension));
 
             #region SPECIAL CODE FOR TESTING
-            if (Common.Diagnostics.Settings.SimulateFileCorruption)
+            if (Diagnostics.Settings.SimulateFileCorruption)
             {
                 commandProcessor.AddCommand(new CorruptDicomFileCommand(path));
             }
@@ -393,7 +397,7 @@ namespace ClearCanvas.ImageServer.Core
     	private DicomProcessingResult HandleDuplicate(string sopInstanceUid, StudyStorageLocation studyLocation, ServerCommandProcessor commandProcessor, DicomFile file)
         {
         	Study study = studyLocation.Study ??
-                          studyLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);
+                          studyLocation.LoadStudy(ServerExecutionContext.Current.PersistenceContext);
             if (study != null)
                 Platform.Log(LogLevel.Info, "Received duplicate SOP {0} (A#:{1} StudyUid:{2}  Patient: {3}  ID:{4})",
                              sopInstanceUid,
@@ -456,7 +460,7 @@ namespace ClearCanvas.ImageServer.Core
     /// <summary>
 	/// Class used for testing purposes to simulate a corrupted file.
 	/// </summary>
-    internal class CorruptDicomFileCommand : ServerCommand
+    internal class CorruptDicomFileCommand : CommandBase
     {
         private readonly string _path;
 
@@ -465,13 +469,13 @@ namespace ClearCanvas.ImageServer.Core
             _path = path;
         }
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
 		{
-			Random rand = new Random();
+			var rand = new Random();
 
-			if (Common.Diagnostics.Settings.SimulateFileCorruption)
+			if (Diagnostics.Settings.SimulateFileCorruption)
 			{
-				Common.Diagnostics.RandomError.Generate(
+				RandomError.Generate(
 					rand.Next()%2 == 0,
 					String.Format("Corrupting the file {0}", _path),
 					delegate

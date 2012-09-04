@@ -11,19 +11,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.Automation;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Configuration;
-using ClearCanvas.ImageViewer.Services.Automation;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ApplicationEntity=ClearCanvas.ImageViewer.StudyManagement.ApplicationEntity;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 
 namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 {
@@ -154,7 +156,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
                 if (!request.ReportFaultToUser.HasValue || request.ReportFaultToUser.Value)
                 {
                     SynchronizationContext.Current.Post(
-                        ignore => ExceptionHandler.Report(e, ImageViewer.SR.MessageFailedToOpenImages, Application.ActiveDesktopWindow), null);
+                        ignore => ExceptionHandler.Report(e, ImageViewer.StudyManagement.SR.MessageFailedToOpenImages, Application.ActiveDesktopWindow), null);
                 }
 
                 const string message = "There was a problem opening the files/directories specified in the viewer.";
@@ -319,17 +321,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 
 		private static void CompleteOpenStudyInfo(List<OpenStudyInfo> openStudyInfo)
 		{
-			List<OpenStudyInfo> incomplete = CollectionUtils.Select(openStudyInfo,
-						delegate(OpenStudyInfo info) { return String.IsNullOrEmpty(info.SourceAETitle); });
+		    var incomplete = openStudyInfo.Where(info => String.IsNullOrEmpty(info.SourceAETitle)).ToList();
 			
 			//only go looking for studies if the source ae title is unspecified.
 			if (incomplete.Count == 0)
 				return;
 
-			List<string> incompleteStudyUids = CollectionUtils.Map<OpenStudyInfo, string>(incomplete,
-				delegate(OpenStudyInfo info) { return info.StudyInstanceUid; });
+			List<string> incompleteStudyUids = incomplete.Select(info => info.StudyInstanceUid).ToList();
 
-			using (StudyRootQueryBridge bridge = new StudyRootQueryBridge(GetStudyRootQuery()))
+			using (var bridge = new StudyRootQueryBridge(GetStudyRootQuery()))
 			{
 				IList<StudyRootStudyIdentifier> foundStudies = bridge.QueryByStudyInstanceUid(incompleteStudyUids);
 				foreach (StudyRootStudyIdentifier study in foundStudies)
@@ -349,34 +349,18 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		private static IImageViewer LaunchViewer(OpenStudiesRequest request, string primaryStudyInstanceUid)
 		{
 			CompleteOpenStudyInfo(request.StudiesToOpen);
-			IDictionary<string, ApplicationEntity> serverMap = GetServerMap(request.StudiesToOpen);
-
-		    ImageViewerComponent viewer;
+		    
+            ImageViewerComponent viewer;
             if (!request.LoadPriors.HasValue || request.LoadPriors.Value)
                 viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
             else
                 viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended, PriorStudyFinder.Null);
 
-			var loadStudyArgs = new List<LoadStudyArgs>();
+			var loadStudyArgs = (from info in request.StudiesToOpen 
+                                 let server = ServerDirectory.GetRemoteServersByAETitle(info.SourceAETitle).FirstOrDefault() ?? ServerDirectory.GetLocalServer()
+                                 select new LoadStudyArgs(info.StudyInstanceUid, server)).ToList();
 
-			foreach (OpenStudyInfo info in request.StudiesToOpen)
-			{
-				//None of the servers should be empty now, but if they are, assume local.
-				//The worst that will happen is it will fail to load when it doesn't exist.
-				ApplicationEntity server = null;
-				string loader = "DICOM_LOCAL";
-
-				if (!String.IsNullOrEmpty(info.SourceAETitle) && serverMap.ContainsKey(info.SourceAETitle))
-				{
-					server = serverMap[info.SourceAETitle];
-					if (server != null)
-						loader = "CC_STREAMING";
-				}
-
-				loadStudyArgs.Add(new LoadStudyArgs(info.StudyInstanceUid, server, loader));
-			}
-
-			try
+		    try
 			{
 				viewer.LoadStudies(loadStudyArgs);
 			}
@@ -429,38 +413,6 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			}
 
 			throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(), "The primary study could not be loaded.");
-		}
-
-		private static IDictionary<string, ApplicationEntity> GetServerMap(IEnumerable<OpenStudyInfo> openStudies)
-		{
-			Dictionary<string, ApplicationEntity> serverMap = new Dictionary<string, ApplicationEntity>();
-
-			string localAE = ServerTree.GetClientAETitle();
-			serverMap[localAE] = null;
-
-			ServerTree serverTree = new ServerTree();
-			List<IServerTreeNode> servers = serverTree.FindChildServers(serverTree.RootNode.ServerGroupNode);
-
-			foreach (OpenStudyInfo info in openStudies)
-			{
-				if (!String.IsNullOrEmpty(info.SourceAETitle) && !serverMap.ContainsKey(info.SourceAETitle))
-				{
-					Server server = servers.Find(delegate(IServerTreeNode node)
-								{
-									return ((Server)node).AETitle == info.SourceAETitle;
-								}) as Server;
-
-					//only add streaming servers.
-					if (server != null && server.IsStreaming)
-					{
-						serverMap[info.SourceAETitle] =
-							new ApplicationEntity(server.Host, server.AETitle, server.Name, server.Port, 
-							server.IsStreaming, server.HeaderServicePort, server.WadoServicePort);
-					}
-				}
-			}
-
-			return serverMap;
 		}
 
 		private static void ReportLoadFailures(object loadFailures)

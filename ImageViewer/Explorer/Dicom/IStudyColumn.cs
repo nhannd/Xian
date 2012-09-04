@@ -10,12 +10,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -30,8 +27,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         float WidthFactor { get; }
 
-        object GetValue(StudyItem item);
+        object GetValue(StudyTableItem item);
 
-        event EventHandler<ItemEventArgs<StudyItem>> ColumnValueChanged;
+        event EventHandler<ItemEventArgs<StudyTableItem>> ColumnValueChanged;
     }
 }

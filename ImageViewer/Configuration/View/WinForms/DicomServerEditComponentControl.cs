@@ -50,8 +50,11 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			portBinding.Parse += new ConvertEventHandler(OnPortBindingParse);
         	_port.DataBindings.Add(portBinding);
 
-            this._serverName.DataBindings.Add("Readonly", _component, "FieldReadonly", true, DataSourceUpdateMode.OnPropertyChanged);
-            this._host.DataBindings.Add("Readonly", _component, "FieldReadonly", true, DataSourceUpdateMode.OnPropertyChanged);
+            if (_component.ServerNameReadOnly)
+            {
+                _serverName.ReadOnly = true;
+                _serverName.TabStop = false;
+            }
 
         	this._isStreaming.DataBindings.Add("Checked", _component, "IsStreaming", true, DataSourceUpdateMode.OnPropertyChanged);
         	this._headerServicePort.DataBindings.Add("Text", _component, "HeaderServicePort", true, DataSourceUpdateMode.OnPropertyChanged);

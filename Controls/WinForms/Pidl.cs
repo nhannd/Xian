@@ -282,10 +282,9 @@ namespace ClearCanvas.Controls.WinForms
 		/// </summary>
 		private void GetShellFileInfo()
 		{
-			const SFGAO REQUEST_ATTRIBUTES = SFGAO.SFGAO_LINK | SFGAO.SFGAO_FOLDER;
 			var pidl = GetPidl();
 			var shInfo = new SHFILEINFO();
-			Shell32.SHGetFileInfo(pidl, (uint) REQUEST_ATTRIBUTES, out shInfo, (uint) Marshal.SizeOf(shInfo), SHGFI.SHGFI_PIDL | SHGFI.SHGFI_ATTRIBUTES | SHGFI.SHGFI_DISPLAYNAME);
+			Shell32.SHGetFileInfo(pidl, 0, out shInfo, (uint) Marshal.SizeOf(shInfo), SHGFI.SHGFI_PIDL | SHGFI.SHGFI_ATTRIBUTES | SHGFI.SHGFI_DISPLAYNAME);
 
 			_displayName = shInfo.szDisplayName;
 			_isFolder = (((SFGAO) shInfo.dwAttributes) & SFGAO.SFGAO_FOLDER) != 0;

@@ -11,15 +11,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Clipboard;
+using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
+using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
-using ClearCanvas.ImageViewer.Services.DicomServer;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
@@ -71,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 							        		ps.PresentationSeriesNumber = seriesInfo.PresentationSeriesNumber;
 							        		ps.PresentationSeriesDateTime = seriesInfo.PresentationSeriesDateTime;
 							        		ps.PresentationInstanceNumber = seriesInfo.GetNextPresentationInstanceNumber();
-							        		ps.SourceAETitle = DicomServerConfigurationHelper.GetOfflineAETitle(false);
+							        	    ps.SourceAETitle = DicomServer.AETitle;
 							        	});
 
 						_framePresentationStates.Add(new KeyValuePair<Frame, DicomSoftcopyPresentationState>(provider.Frame, presentationState));
@@ -99,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			serializer.Description = _sourceInformation.Description;
 			serializer.DocumentTitle = _sourceInformation.DocumentTitle;
 			serializer.SeriesDescription = _sourceInformation.SeriesDescription;
-			serializer.SourceAETitle = DicomServerConfigurationHelper.GetOfflineAETitle(false);
+		    serializer.SourceAETitle = DicomServer.AETitle;
 
 			foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> presentationFrame in SourceFrames)
 				serializer.AddImage(presentationFrame.Key, presentationFrame.Value);
@@ -123,7 +126,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			if (_sourceInformation.ClipboardItems.Count == 0)
 				return;
 
-			while (!LocalDataStoreActivityMonitor.IsConnected)
+            while (!WorkItemActivityMonitor.IsRunning)
 			{
 				DialogBoxAction result = Application.ActiveDesktopWindow.ShowMessageBox(
 					SR.MessageCannotPublishKeyImagesServersNotRunning, MessageBoxActions.OkCancel);
@@ -155,10 +158,9 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
                     if (presentationFrame.Value != null)
                         publisher.Files.Add(presentationFrame.Value.DicomFile);
 
-                    // try to determine the origin and source AE from the image frame's SOP data source (should be the same for all frames from a given study)
                     var sopDataSource = sourceFrame.ParentImageSop.DataSource;
-                    publisher.OriginServerAE = sopDataSource[DicomTags.SourceApplicationEntityTitle].ToString();
-                    publisher.SourceServerAE = sopDataSource.Server is ApplicationEntity ? ((ApplicationEntity)sopDataSource.Server).AETitle : string.Empty;
+                    publisher.OriginServer = ServerDirectory.GetRemoteServersByAETitle(sopDataSource[DicomTags.SourceApplicationEntityTitle].ToString()).FirstOrDefault();
+                    publisher.SourceServer = sopDataSource.Server;
                 }
 
                 // publish all files now

@@ -93,12 +93,12 @@ namespace ClearCanvas.Ris.Client
 
 			private ClickAction Previous
 			{
-				get { return this["Previous"]; }
+				get { return (ClickAction)this["Previous"]; }
 			}
 
 			private ClickAction Next
 			{
-				get { return this["Next"]; }
+				get { return (ClickAction)this["Next"]; }
 			}
 		}
 

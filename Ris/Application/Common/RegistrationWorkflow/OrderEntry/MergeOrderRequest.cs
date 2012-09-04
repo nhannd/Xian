@@ -11,6 +11,7 @@
 
 using System.Runtime.Serialization;
 using System.Collections.Generic;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry

@@ -17,6 +17,8 @@ namespace ClearCanvas.Dicom
     [Serializable]
     public class DicomException : Exception
     {
+        public DicomException(){}
+
         public DicomException(String desc)
             : base(desc)
         {

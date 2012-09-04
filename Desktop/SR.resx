@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DescriptionExceptionHandlerSettings" xml:space="preserve">
     <value>Configures global exception handling behaviour.</value>
@@ -256,7 +256,7 @@
     <value>Close Workspace</value>
   </data>
   <data name="MenuConfigureSettings" xml:space="preserve">
-    <value>Configure Settings</value>
+    <value>Settings Editor</value>
   </data>
   <data name="MenuContents" xml:space="preserve">
     <value>Contents</value>
@@ -292,7 +292,7 @@
     <value>Insert Separator Before</value>
   </data>
   <data name="MenuOptions" xml:space="preserve">
-    <value>Options</value>
+    <value>Preferences</value>
   </data>
   <data name="MenuRemove" xml:space="preserve">
     <value>Remove</value>
@@ -379,7 +379,7 @@
     <value>Group</value>
   </data>
   <data name="TitleMenuOptions" xml:space="preserve">
-    <value>Options</value>
+    <value>Preferences</value>
   </data>
   <data name="TitleNext" xml:space="preserve">
     <value>Next Page</value>
@@ -396,8 +396,8 @@
   <data name="TitleScope" xml:space="preserve">
     <value>Scope</value>
   </data>
-  <data name="TitleSettingsManagement" xml:space="preserve">
-    <value>Settings Management</value>
+  <data name="TitleSettingsEditor" xml:space="preserve">
+    <value>Settings Editor</value>
   </data>
   <data name="TitleToolbar" xml:space="preserve">
     <value>Toolbar</value>
@@ -471,6 +471,33 @@ You can configure this item, but you do not have permission to use it.</value>
   </data>
   <data name="TooltipImportSettingsMetaData" xml:space="preserve">
     <value>Import settings meta-data from local plugins</value>
+  </data>
+  <data name="AlertFilterAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="AlertFilterErrorsAndWarnings" xml:space="preserve">
+    <value>Errors and Warnings</value>
+  </data>
+  <data name="AlertFilterErrorsOnly" xml:space="preserve">
+    <value>Errors only</value>
+  </data>
+  <data name="ColumnLevel" xml:space="preserve">
+    <value>Level</value>
+  </data>
+  <data name="ColumnMessage" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="ColumnTime" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="MenuAlertViewer" xml:space="preserve">
+    <value>Alerts</value>
+  </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="TitleAlertViewer" xml:space="preserve">
+    <value>Alerts</value>
   </data>
   <data name="LabelEvaluation" xml:space="preserve">
     <value>Evaluation</value>

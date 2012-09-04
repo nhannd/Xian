@@ -12,9 +12,10 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -38,7 +39,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
         /// <param name="context">A contentxt in which to apply the AutoRoute request.</param>
         /// <param name="device">The AE Title of the device to AutoRoute to.</param>
         public InsertAutoRouteCommand(ServerActionContext context, string device)
-            : base("Update/Insert an AutoRoute WorkQueue Entry", false)
+            : base("Update/Insert an AutoRoute WorkQueue Entry")
         {
             Platform.CheckForNullReference(context, "ServerActionContext");
 
@@ -53,7 +54,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 		/// <param name="device">The AE Title of the device to AutoRoute to.</param>
 		/// <param name="scheduledTime">The scheduled time for the AutoRoute.</param>
 		public InsertAutoRouteCommand(ServerActionContext context, string device, DateTime scheduledTime)
-			: base("Update/Insert an AutoRoute WorkQueue Entry", false)
+			: base("Update/Insert an AutoRoute WorkQueue Entry")
 		{
 			Platform.CheckForNullReference(context, "ServerActionContext");
 
@@ -65,7 +66,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
         /// <summary>
         /// Do the insertion of the AutoRoute.
         /// </summary>
-        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+        protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
         {
             DeviceSelectCriteria deviceSelectCriteria = new DeviceSelectCriteria();
             deviceSelectCriteria.AeTitle.EqualTo(_deviceAe);

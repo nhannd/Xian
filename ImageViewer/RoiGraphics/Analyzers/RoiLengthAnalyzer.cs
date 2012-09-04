@@ -82,9 +82,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 
             IRoiLengthProvider lengthProvider = (IRoiLengthProvider)roi;
 
-            string text;
-
-            Units oldUnits = lengthProvider.Units;
+		    Units oldUnits = lengthProvider.Units;
             lengthProvider.Units = lengthProvider.IsCalibrated ? _units : Units.Pixels;
 
 		    IRoiAnalyzerResult result;

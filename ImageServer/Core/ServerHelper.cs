@@ -16,13 +16,13 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.Web.Enterprise.Authentication;
-using ExecutionContext=ClearCanvas.ImageServer.Common.CommandProcessor.ExecutionContext;
 
 namespace ClearCanvas.ImageServer.Core
 {
@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageServer.Core
         /// <returns>A list of  <see cref="StudyIntegrityQueue"/></returns>
         static public IList<StudyIntegrityQueue> FindSIQEntries(ServerEntityKey studyStorageKey, Predicate<StudyIntegrityQueue> filter)
         {
-            using (ExecutionContext scope = new ExecutionContext())
+            using (ServerExecutionContext scope = new ServerExecutionContext())
             {
                 IStudyIntegrityQueueEntityBroker broker = scope.PersistenceContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
                 StudyIntegrityQueueSelectCriteria criteria = new StudyIntegrityQueueSelectCriteria();
@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageServer.Core
 		{
 			Platform.CheckForNullReference(studyStorageKey, "studyStorageKey");
 
-			using (ExecutionContext scope = new ExecutionContext())
+			using (ServerExecutionContext scope = new ServerExecutionContext())
 			{
 				IStudyIntegrityQueueEntityBroker broker = scope.PersistenceContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
 				StudyIntegrityQueueUidSelectCriteria uidSelectCriteria = new StudyIntegrityQueueUidSelectCriteria();
@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageServer.Core
         {
 			Platform.CheckForNullReference(studyStorageKey, "studyStorageKey");
 
-            using (ExecutionContext scope = new ExecutionContext())
+            using (ServerExecutionContext scope = new ServerExecutionContext())
             {
                 IWorkQueueEntityBroker broker = scope.PersistenceContext.GetBroker<IWorkQueueEntityBroker>();
                 WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
@@ -160,7 +160,7 @@ namespace ClearCanvas.ImageServer.Core
 		{
 			Platform.CheckForNullReference(studyStorageKey, "studyStorageKey");
 
-			using (ExecutionContext scope = new ExecutionContext())
+			using (ServerExecutionContext scope = new ServerExecutionContext())
 			{
 				IWorkQueueEntityBroker broker = scope.PersistenceContext.GetBroker<IWorkQueueEntityBroker>();
 				WorkQueueUidSelectCriteria uidSelectCriteria = new WorkQueueUidSelectCriteria();
@@ -185,7 +185,7 @@ namespace ClearCanvas.ImageServer.Core
         static public IList<StudyHistory> FindStudyHistories(StudyStorage studyStorage, IEnumerable<StudyHistoryTypeEnum> types)
         {
             // Use of ExecutionContext to re-use db connection if possible
-            using (ExecutionContext scope = new ExecutionContext())
+            using (ServerExecutionContext scope = new ServerExecutionContext())
             {
                 IStudyHistoryEntityBroker broker = scope.PersistenceContext.GetBroker<IStudyHistoryEntityBroker>();
                 StudyHistorySelectCriteria criteria = new StudyHistorySelectCriteria();

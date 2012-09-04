@@ -17,6 +17,7 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Common;
 using System.Text;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
@@ -33,7 +34,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		IStudyRootStudyIdentifier SourceStudy { get; }
         
-        object Server { get; }
+        IDicomServiceNode Server { get; }
 
         Exception LoadStudyError { get; }
         bool IsOffline { get; }
@@ -62,11 +63,12 @@ namespace ClearCanvas.ImageViewer
 	    /// <summary>
         /// Constructor.
         /// </summary>
-        public DicomImageSetDescriptor(IStudyRootStudyIdentifier sourceStudy, object server, Exception loadStudyError)
+        public DicomImageSetDescriptor(IStudyRootStudyIdentifier sourceStudy, IDicomServiceNode server, Exception loadStudyError)
 		{
             Platform.CheckForNullReference(sourceStudy, "sourceStudy");
             SourceStudy = sourceStudy;
-	        Server = server;
+            Server = server ?? sourceStudy.FindServer(true);
+
 	        LoadStudyError = loadStudyError;
             IsOffline = loadStudyError is OfflineLoadStudyException;
             IsNearline = loadStudyError is NearlineLoadStudyException;
@@ -81,7 +83,7 @@ namespace ClearCanvas.ImageViewer
 		/// the <see cref="IImageSet"/> was created.
 		/// </summary>
 		public IStudyRootStudyIdentifier SourceStudy { get; private set; }
-	    public object Server { get; private set; }
+	    public IDicomServiceNode Server { get; private set; }
 	    public Exception LoadStudyError { get; private set; }
 
         public bool IsOffline { get; private set; }
@@ -145,7 +147,7 @@ namespace ClearCanvas.ImageViewer
 
             string modalitiesInStudy = StringUtilities.Combine(SourceStudy.ModalitiesInStudy, ", ");
 
-			StringBuilder nameBuilder = new StringBuilder();
+			var nameBuilder = new StringBuilder();
 			nameBuilder.AppendFormat("{0} {1}", studyDate.ToString(Format.DateFormat), 
 												studyTime.ToString(Format.TimeFormat));
 
@@ -160,7 +162,7 @@ namespace ClearCanvas.ImageViewer
                 if (Server == null)
                     serverName = SR.LabelUnknownServer;
                 else
-                    serverName = Server.ToString();
+                    serverName = Server.Name;
 
                 nameBuilder.Insert(0, String.Format("({0}) ", serverName));
             }

@@ -139,8 +139,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 				out pixelSpacingWidth,
 				out pixelSpacingHeight);
 
-			Assert.AreEqual(1, pixelSpacingWidth);
-			Assert.AreEqual(2, pixelSpacingHeight);
+			Assert.AreEqual(1, pixelSpacingWidth, 1e-10);
+            Assert.AreEqual(2, pixelSpacingHeight, 1e-10);
 		}
 
 		[Test]
@@ -165,8 +165,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.Tests
 				out pixelSpacingWidth,
 				out pixelSpacingHeight);
 
-			Assert.AreEqual(1, pixelSpacingWidth);
-			Assert.AreEqual(1, pixelSpacingHeight);
+            Assert.AreEqual(1, pixelSpacingWidth, 1e-10);
+            Assert.AreEqual(1, pixelSpacingHeight, 1e-10);
 		}
 	}
 }

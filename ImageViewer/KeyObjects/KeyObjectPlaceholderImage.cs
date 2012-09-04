@@ -10,6 +10,7 @@
 #endregion
 
 using System.Drawing;
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 
@@ -42,7 +43,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			// upon drawing, re-centre the text
 			RectangleF bounds = base.ClientRectangle;
 			PointF anchor = new PointF(bounds.Left + bounds.Width/2, bounds.Top + bounds.Height/2);
-			InvariantTextPrimitive textGraphic = (InvariantTextPrimitive) CollectionUtils.SelectFirst(base.ApplicationGraphics, IsType<InvariantTextPrimitive>);
+			InvariantTextPrimitive textGraphic = (InvariantTextPrimitive) base.ApplicationGraphics.FirstOrDefault(IsType<InvariantTextPrimitive>);
 			textGraphic.CoordinateSystem = CoordinateSystem.Destination;
 			textGraphic.Location = anchor;
 			textGraphic.ResetCoordinateSystem();

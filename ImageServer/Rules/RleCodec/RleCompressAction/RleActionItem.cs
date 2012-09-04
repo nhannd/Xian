@@ -14,15 +14,15 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Rules;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Rules.RleCodec.RleCompressAction
 {
 	/// <summary>
 	/// RLE compression action item for <see cref="ServerRulesEngine"/>
 	/// </summary>
-	public class RleActionItem : ServerActionItemBase
+	public class RleActionItem : ActionItemBase<ServerActionContext>
 	{
 		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.LosslessCompress;
 		private readonly Expression _exprScheduledTime;

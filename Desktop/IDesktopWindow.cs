@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
@@ -53,6 +54,29 @@ namespace ClearCanvas.Desktop
 		/// <param name="buttons">The buttons to display in the message box.</param>
 		/// <returns>The result of the user dismissing the message box.</returns>
 		DialogBoxAction ShowMessageBox(string message, string title, MessageBoxActions buttons);
+
+		/// <summary>
+		/// Shows a desktop alert.
+		/// </summary>
+		/// <param name="level">The alert level.</param>
+		/// <param name="message">The message to display.</param>
+    	void ShowAlert(AlertLevel level, string message);
+
+    	/// <summary>
+    	/// Shows a desktop alert.
+    	/// </summary>
+    	/// <param name="level">The alert level.</param>
+    	/// <param name="message">The message to display.</param>
+    	/// <param name="linkText">The link text to display.</param>
+    	/// <param name="linkAction">The link action to display.</param>
+    	/// <param name="dismissOnLinkClicked"> </param>
+    	void ShowAlert(AlertLevel level, string message, string linkText, Action<DesktopWindow> linkAction, bool dismissOnLinkClicked);
+
+		/// <summary>
+		/// Shows a desktop alert.
+		/// </summary>
+		/// <param name="args"></param>
+    	void ShowAlert(AlertNotificationArgs args);
 
         /// <summary>
         /// Shows a dialog box in front of this window.

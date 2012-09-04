@@ -42,9 +42,6 @@ namespace ClearCanvas.Desktop.Tables
         private ColorSelector<TItem> _backgroundColorSelector;
         private ColorSelector<TItem> _outlineColorSelector;
 
-    	private EventHandler _beforeSortEvent;
-        private EventHandler _sortedEvent;
-
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -131,14 +128,10 @@ namespace ClearCanvas.Desktop.Tables
         {
             if (_sortParams != null)
             {
-				EventsHelper.Fire(_beforeSortEvent, this, EventArgs.Empty);
-				
 				if (_isFiltered)
                     _filteredData.Sort(new TypeSafeComparerWrapper<TItem>(_sortParams.Column.GetComparer(_sortParams.Ascending)));
                 else 
                     _data.Sort(new TypeSafeComparerWrapper<TItem>(_sortParams.Column.GetComparer(_sortParams.Ascending)));
-
-                EventsHelper.Fire(_sortedEvent, this, EventArgs.Empty);
             }
         }
 
@@ -149,24 +142,6 @@ namespace ClearCanvas.Desktop.Tables
         {
             _sortParams = sortParams;
             Sort();
-        }
-
-		/// <summary>
-		/// Raised after the table is sorted.
-		/// </summary>
-		public event EventHandler BeforeSorted
-		{
-			add { _beforeSortEvent += value; }
-			remove { _beforeSortEvent -= value; }
-		}
-
-		/// <summary>
-		/// Raised after the table is sorted.
-    	/// </summary>
-    	public event EventHandler Sorted
-        {
-            add { _sortedEvent += value; }
-            remove { _sortedEvent -= value; }
         }
 
     	/// <summary>

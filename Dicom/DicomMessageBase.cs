@@ -145,12 +145,13 @@ namespace ClearCanvas.Dicom
 					if (pixelData.IsNull)
 						throw new DicomCodecException("Sop pixel data has no valid value and cannot be decompressed.");
 
-					DicomCompressedPixelData fragments = new DicomCompressedPixelData(DataSet);
-                    DicomUncompressedPixelData pd = new DicomUncompressedPixelData(fragments);
+					var fragments = new DicomCompressedPixelData(DataSet);
+                    var pd = new DicomUncompressedPixelData(fragments);
 
                     codec.Decode(fragments, pd, parameters);
 
                     pd.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+                    TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
 
                     pd.UpdateMessage(this);
 
@@ -208,7 +209,7 @@ namespace ClearCanvas.Dicom
         /// <returns>The dump of the message.</returns>
         public string Dump(string prefix, DicomDumpOptions options)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             Dump(sb, prefix, options);
             return sb.ToString();
         }
@@ -253,7 +254,7 @@ namespace ClearCanvas.Dicom
 
 		public override bool Equals(object obj)
 		{
-		    List<DicomAttributeComparisonResult> failureReasons = new List<DicomAttributeComparisonResult>();
+		    var failureReasons = new List<DicomAttributeComparisonResult>();
 		    return Equals(obj, ref failureReasons);
 		}
 
@@ -271,16 +272,16 @@ namespace ClearCanvas.Dicom
 		/// <returns>true if the collections are equal.</returns>
 		public bool Equals(object obj, ref List<DicomAttributeComparisonResult> comparisonResults)
 		{
-			DicomFile a = obj as DicomFile;
+			var a = obj as DicomFile;
 			if (a == null)
 			{
-			    DicomAttributeComparisonResult result = new DicomAttributeComparisonResult
-			                                                {
-			                                                    ResultType = ComparisonResultType.InvalidType,
-			                                                    Details =
-			                                                        String.Format("Comparison object is invalid type: {0}",
-			                                                                      obj.GetType())
-			                                                };
+			    var result = new DicomAttributeComparisonResult
+			                     {
+			                         ResultType = ComparisonResultType.InvalidType,
+			                         Details =
+			                             String.Format("Comparison object is invalid type: {0}",
+			                                           obj.GetType())
+			                     };
 			    comparisonResults.Add(result);
 
 				return false;

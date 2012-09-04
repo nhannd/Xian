@@ -11,7 +11,7 @@
 
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Edit

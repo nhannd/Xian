@@ -9,6 +9,7 @@
 
 #endregion
 
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 using System.Runtime.Serialization;

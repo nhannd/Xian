@@ -10,15 +10,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Configuration.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Desktop.Configuration.Tools
@@ -29,48 +22,11 @@ namespace ClearCanvas.Desktop.Configuration.Tools
 	[MenuAction("show", "global-menus/MenuTools/MenuOptions", "Show", KeyStroke = XKeys.Control | XKeys.O)]
 	[Tooltip("show", "MenuOptions")]
 	[IconSet("show", "Icons.OptionsToolSmall.png", "Icons.OptionsToolMedium.png", "Icons.OptionsToolLarge.png")]
-	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
 	[GroupHint("show", "Application.Options")]
 
-	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-	public class OptionsTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
+	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	public class OptionsTool : Tool<IDesktopToolContext>
 	{
-		private bool _enabled;
-		private event EventHandler _enabledChanged;
-
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		public OptionsTool()
-		{
-			_enabled = true;
-		}
-
-		/// <summary>
-		/// Called to determine whether this tool is enabled/disabled in the UI.
-		/// </summary>
-		public bool Enabled
-		{
-			get { return _enabled; }
-			protected set
-			{
-				if (_enabled != value)
-				{
-					_enabled = value;
-					EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Notifies that the Enabled state of this tool has changed.
-		/// </summary>
-		public event EventHandler EnabledChanged
-		{
-			add { _enabledChanged += value; }
-			remove { _enabledChanged -= value; }
-		}
-
 		/// <summary>
 		/// Called by the framework when the user clicks the "Options" menu item.
 		/// </summary>

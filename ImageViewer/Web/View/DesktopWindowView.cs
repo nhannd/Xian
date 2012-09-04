@@ -164,6 +164,18 @@ namespace ClearCanvas.ImageViewer.Web.View
             return DialogBoxAction.Ok;
         }
 
+        public void SetAlertContext(IDesktopAlertContext alertContext)
+        {
+            // TODO (Marmot) - Need to implement for Webstation
+            throw new NotImplementedException();
+        }
+
+        public void ShowAlert(AlertNotificationArgs args)
+        {
+            // TODO (Marmot) - Need to implement for Webstation
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Called to dismiss the dialog
         /// </summary>

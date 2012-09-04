@@ -12,6 +12,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 
@@ -22,7 +23,7 @@ namespace ClearCanvas.Desktop.Tools
     /// </summary>
     public class ToolSet : IToolSet
     {
-        private List<ITool> _tools;
+        private readonly List<ITool> _tools;
 
         /// <summary>
         /// This contructs a tool set containing the specified tools.  The <see cref="IToolContext"/>
@@ -118,13 +119,23 @@ namespace ClearCanvas.Desktop.Tools
         }
 
     	/// <summary>
+    	/// Finds the tool of the specified type.
+    	/// </summary>
+    	/// <typeparam name="TTool"></typeparam>
+    	/// <returns>The instance of the tool of the specified type, or null if no such exists.</returns>
+    	public TTool Find<TTool>() where TTool : ITool
+    	{
+    		return (TTool)_tools.FirstOrDefault(t => t is TTool);
+    	}
+
+    	/// <summary>
     	/// Returns the union of all actions defined by all tools in this tool set.
     	/// </summary>
     	public IActionSet Actions
         {
             get
             {
-                List<IAction> actionList = new List<IAction>();
+                var actionList = new List<IAction>();
                 foreach (ITool tool in _tools)
                 {
                     actionList.AddRange(tool.Actions);

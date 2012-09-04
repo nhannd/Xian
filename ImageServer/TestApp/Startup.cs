@@ -24,51 +24,57 @@ namespace ClearCanvas.ImageServer.TestApp
 
         private void TestRule_Click(object sender, EventArgs e)
         {
-            TestDicomFileForm test = new TestDicomFileForm();
+            var test = new TestDicomFileForm();
             test.Show();
         }
 
         private void TestHeaderStreamButton_Click(object sender, EventArgs e)
         {
-            TestHeaderStreamingForm test = new TestHeaderStreamingForm();
+            var test = new TestHeaderStreamingForm();
             test.Show();
         }
 
         private void buttonCompression_Click(object sender, EventArgs e)
         {
-            TestCompressionForm test = new TestCompressionForm();
+            var test = new TestCompressionForm();
             test.Show();
         }
 
         private void buttonEditStudy_Click(object sender, EventArgs e)
         {
-            TestEditStudyForm test = new TestEditStudyForm();
+            var test = new TestEditStudyForm();
             test.Show();
         }
 
         private void RandomImageSender_Click(object sender, EventArgs e)
         {
-            TestSendImagesForm test = new TestSendImagesForm();
+            var test = new TestSendImagesForm();
             test.Show();
         }
 
         private void ExtremeStreaming_Click(object sender, EventArgs e)
         {
-            ImageStreamingStressTest test = new ImageStreamingStressTest();
+            var test = new ImageStreamingStressTest();
             test.Show();
         }
 
 
         private void UsageTracking_Click(object sender, EventArgs e)
         {
-            UsageTrackingForm form = new UsageTrackingForm();
+            var form = new UsageTrackingForm();
             form.Show();
         }
 
         private void ProductVerify_Click(object sender, EventArgs e)
         {
-            ProductVerificationTest test = new ProductVerificationTest();
+            var test = new ProductVerificationTest();
             test.Show();
+        }
+
+        private void DatabaseGenerator_Click(object sender, EventArgs e)
+        {
+            var form = new GenerateDatabase();
+            form.Show();
         }
     }
 }

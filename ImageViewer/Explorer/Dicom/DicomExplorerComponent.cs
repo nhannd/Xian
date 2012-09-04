@@ -11,15 +11,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Policy;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Configuration.ServerTree;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Services.ServerTree;
-using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
+using ClearCanvas.ImageViewer.Configuration.ServerTree;
+using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Configuration;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -67,12 +68,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_studyBrowserComponent.SearchEnded += OnStudyBrowserComponentSearchCompleted;
 
 			// if initially selected server is local, begin an initial dicom query
-			if (_serverTreeComponent.ShowLocalDataStoreNode && _serverTreeComponent.SelectedServers.IsLocalDatastore)
+			if (_serverTreeComponent.ShowLocalServerNode && _serverTreeComponent.SelectedServers.IsLocalServer)
 			{
 				try
 				{
-					var queryParamList = new List<QueryParameters> {_studyBrowserComponent.CreateOpenSearchQueryParams()};
-					_studyBrowserComponent.Search(queryParamList);
+					_studyBrowserComponent.Search(new StudyRootStudyIdentifier());
 				}
 				catch (PolicyException)
 				{
@@ -110,39 +110,42 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public static DicomExplorerComponent Create()
 		{
-			ServerTreeComponent serverTreeComponent = new ServerTreeComponent();
-			serverTreeComponent.ShowLocalDataStoreNode = HasLocalDatastoreSupport();
+		    var serverTreeComponent = new ServerTreeComponent {ShowLocalServerNode = StudyStore.IsSupported};
 
-			bool hasEditPermission = PermissionsHelper.IsInRole(AuthorityTokens.Configuration.MyServers);
+		    bool hasEditPermission = PermissionsHelper.IsInRole(AuthorityTokens.Configuration.MyServers);
 			serverTreeComponent.IsReadOnly = !hasEditPermission;
 
-			var studyBrowserComponent = CreateComponentFromExtensionPoint<StudyBrowserComponentExtensionPoint, IStudyBrowserComponent>()
-				?? new StudyBrowserComponent();
+			var studyBrowserComponent 
+                = CreateComponentFromExtensionPoint<StudyBrowserComponentExtensionPoint, IStudyBrowserComponent>() 
+                ?? new StudyBrowserComponent();
 
 			serverTreeComponent.SelectedServerChanged +=
-				delegate { studyBrowserComponent.SelectedServerGroup = serverTreeComponent.SelectedServers; };
+				delegate { studyBrowserComponent.SelectedServers = serverTreeComponent.SelectedServers; };
 
-			var searchPanelComponent = CreateComponentFromExtensionPoint<SearchPanelComponentExtensionPoint, ISearchPanelComponent>()
+			var searchPanelComponent 
+                = CreateComponentFromExtensionPoint<SearchPanelComponentExtensionPoint, ISearchPanelComponent>()
 				?? new SearchPanelComponent();
-			SelectDefaultServerNode(serverTreeComponent);
+			SelectPriorsServerNode(serverTreeComponent);
 
-			SplitPane leftPane = new SplitPane(SR.TitleServerTreePane, serverTreeComponent, 0.25f);
-			SplitPane rightPane = new SplitPane(SR.TitleStudyBrowserPane, studyBrowserComponent, 0.75f);
+			var leftPane = new SplitPane(SR.TitleServerTreePane, serverTreeComponent, 0.25f);
+			var rightPane = new SplitPane(SR.TitleStudyBrowserPane, studyBrowserComponent, 0.75f);
 
-			SplitComponentContainer bottomContainer =
+			var bottomContainer =
 				new SplitComponentContainer(
 				leftPane,
 				rightPane,
 				SplitOrientation.Vertical);
 
-			SplitPane topPane = new SplitPane(SR.TitleSearchPanelPane, searchPanelComponent, true);
-			SplitPane bottomPane = new SplitPane(SR.TitleStudyNavigatorPane, bottomContainer, false);
+			var topPane = new SplitPane(SR.TitleSearchPanelPane, searchPanelComponent, true);
+			var bottomPane = new SplitPane(SR.TitleStudyNavigatorPane, bottomContainer, false);
 
-			DicomExplorerComponent component = new DicomExplorerComponent(topPane, bottomPane);
-			component._studyBrowserComponent = studyBrowserComponent;
-			component._searchPanelComponent = searchPanelComponent;
-			component._serverTreeComponent = serverTreeComponent;
-			return component;
+		    var component = new DicomExplorerComponent(topPane, bottomPane)
+		                        {
+		                            _studyBrowserComponent = studyBrowserComponent,
+		                            _searchPanelComponent = searchPanelComponent,
+		                            _serverTreeComponent = serverTreeComponent
+		                        };
+		    return component;
 		}
 
 		private void OnStudyBrowserComponentSearchStarted(object sender, EventArgs e)
@@ -161,7 +164,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			try
 			{
-				_studyBrowserComponent.Search(new List<QueryParameters>(e.QueryParametersList));
+				_studyBrowserComponent.Search(e.QueryCriteria);
 			}
 			catch (Exception ex)
 			{
@@ -181,102 +184,87 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		internal void SelectDefaultServers()
+		internal void SelectPriorsServers()
 		{
-			SelectDefaultServers(_serverTreeComponent);
+			SelectPriorsServers(_serverTreeComponent);
 		}
 
-		private static void SelectDefaultServerNode(ServerTreeComponent serverTreeComponent)
+		private static void SelectPriorsServerNode(ServerTreeComponent serverTreeComponent)
 		{
-			if (serverTreeComponent.ShowLocalDataStoreNode &&
-				!DicomExplorerConfigurationSettings.Default.SelectDefaultServerOnStartup)
+			if (serverTreeComponent.ShowLocalServerNode && !DicomExplorerConfigurationSettings.Default.SelectDefaultServerOnStartup)
 			{
-				serverTreeComponent.SetSelection(serverTreeComponent.ServerTree.RootNode.LocalDataStoreNode);
+				serverTreeComponent.SetSelection(serverTreeComponent.ServerTree.LocalServer);
 			}
 			else
 			{
-				SelectDefaultServers(serverTreeComponent);
+				SelectPriorsServers(serverTreeComponent);
 			}
 		}
 
-		private static void SelectDefaultServers(ServerTreeComponent serverTreeComponent)
+        private static void SelectPriorsServers(ServerTreeComponent serverTreeComponent)
 		{
-			ServerTree serverTree = serverTreeComponent.ServerTree;
+            ServerTree serverTree = serverTreeComponent.ServerTree;
 
-			List<Server> defaultServers = DefaultServers.SelectFrom(serverTree);
-			CheckDefaultServers(serverTree, defaultServers);
-			IServerTreeNode initialSelection = GetFirstDefaultServerOrGroup(serverTree.RootNode.ServerGroupNode);
-			UncheckAllServers(serverTree);
+            var priorsServers = ServerDirectory.GetPriorsServers(false);
+            CheckPriorsServers(serverTree, priorsServers);
+            IServerTreeNode initialSelection = GetFirstPriorsServerOrGroup(serverTree.RootServerGroup);
+            UncheckAllServers(serverTree);
 
-			if (initialSelection == null)
-			{
-				if (serverTreeComponent.ShowLocalDataStoreNode)
-					initialSelection = serverTreeComponent.ServerTree.RootNode.LocalDataStoreNode;
-				else
-					initialSelection = serverTreeComponent.ServerTree.RootNode.ServerGroupNode;
-			}
+            if (initialSelection == null)
+            {
+                if (serverTreeComponent.ShowLocalServerNode)
+                    initialSelection = serverTreeComponent.ServerTree.LocalServer;
+                else
+                    initialSelection = serverTreeComponent.ServerTree.RootServerGroup;
+            }
 
-			serverTreeComponent.SetSelection(initialSelection);
+            serverTreeComponent.SetSelection(initialSelection);
 		}
 
-		private static IServerTreeNode GetFirstDefaultServerOrGroup(ServerGroup serverGroup)
-		{
-			if (serverGroup.IsEntireGroupChecked())
-				return serverGroup;
+        private static IServerTreeNode GetFirstPriorsServerOrGroup(IServerTreeGroup serverGroup)
+        {
+            if (serverGroup.IsEntireGroupChecked())
+                return serverGroup;
 
-			//consider groups and servers at this level
-			foreach (ServerGroup group in serverGroup.ChildGroups)
-			{
-				if (group.IsEntireGroupChecked())
-					return group;
-			}
+            //consider groups and servers at this level
+            foreach (IServerTreeGroup group in serverGroup.ChildGroups)
+            {
+                if (group.IsEntireGroupChecked())
+                    return group;
+            }
 
-			foreach (Server server in serverGroup.ChildServers)
-			{
-				if (server.IsChecked)
-					return server;
-			}
+            foreach (IServerTreeDicomServer server in serverGroup.Servers)
+            {
+                if (server.IsChecked)
+                    return server;
+            }
 
-			//repeat for children of the groups at this level
-			foreach (ServerGroup group in serverGroup.ChildGroups)
-			{
-				IServerTreeNode defaultServerOrGroup = GetFirstDefaultServerOrGroup(group);
-				if (defaultServerOrGroup != null)
-					return defaultServerOrGroup;
-			}
+            //repeat for children of the groups at this level
+            foreach (IServerTreeGroup group in serverGroup.ChildGroups)
+            {
+                IServerTreeNode priorsServerOrGroup = GetFirstPriorsServerOrGroup(group);
+                if (priorsServerOrGroup != null)
+                    return priorsServerOrGroup;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		private static void CheckDefaultServers(ServerTree serverTree, List<Server> defaultServers)
-		{
-			foreach (Server server in serverTree.FindChildServers())
-			{
-				if (defaultServers.Contains(server))
-					server.IsChecked = true;
-			}
-		}
+        private static void CheckPriorsServers(ServerTree serverTree, IList<IDicomServiceNode> priorsServers)
+        {
+            foreach (var server in serverTree.RootServerGroup.GetAllServers())
+            {
+                var treeServer = server;
+                if (priorsServers.Any(s => s.Name == treeServer.Name))
+                    server.IsChecked = true;
+            }
+        }
 
-		private static void UncheckAllServers(ServerTree serverTree)
-		{
-			foreach (Server server in serverTree.FindChildServers())
-				server.IsChecked = false;
-		}
-
-		internal static bool HasLocalDatastoreSupport()
-		{
-			try
-			{
-				StudyFinderExtensionPoint finders = new StudyFinderExtensionPoint();
-				return null != CollectionUtils.SelectFirst(finders.CreateExtensions(),
-								delegate(object extension) { return ((IStudyFinder)extension).Name == "DICOM_LOCAL"; });
-			}
-			catch (NotSupportedException)
-			{
-				Platform.Log(LogLevel.Warn, "Local data store study finder not found.");
-				return false;
-			}
-		}
+        private static void UncheckAllServers(ServerTree serverTree)
+        {
+            foreach (IServerTreeDicomServer server in serverTree.RootServerGroup.GetAllServers())
+                server.IsChecked = false;
+        }
 
 		private static TComponent CreateComponentFromExtensionPoint<TExtensionPoint, TComponent>()
 			where TExtensionPoint : IExtensionPoint, new()

@@ -11,14 +11,15 @@
 
 using System.Xml;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.Dicom.Utilities.Command;
+using ClearCanvas.Dicom.Utilities.Rules;
 
 namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegLosslessAction
 {
 	/// <summary>
 	/// JPEG Lossless SOP Compress action item for <see cref="ServerRulesEngine"/>
 	/// </summary>
-	public class JpegLosslessSopActionItem : ServerActionItemBase
+	public class JpegLosslessSopActionItem : ActionItemBase<ServerActionContext>
 	{
 		private readonly bool _convertFromPalette;
 

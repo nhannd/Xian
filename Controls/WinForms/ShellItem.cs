@@ -51,9 +51,8 @@ namespace ClearCanvas.Controls.WinForms
 				// create a PIDL for the Desktop shell item.
 				_pidl = new Pidl(Environment.SpecialFolder.Desktop);
 
-				const Native.SHGFI FLAGS = Native.SHGFI.SHGFI_PIDL | Native.SHGFI.SHGFI_DISPLAYNAME | Native.SHGFI.SHGFI_SYSICONINDEX;
-				Native.SHFILEINFO shInfo = new Native.SHFILEINFO();
-				Native.Shell32.SHGetFileInfo((IntPtr) _pidl, 0, out shInfo, (uint) Marshal.SizeOf(shInfo), FLAGS);
+				var shInfo = new Native.SHFILEINFO();
+				Native.Shell32.SHGetFileInfo((IntPtr) _pidl, 0, out shInfo, (uint) Marshal.SizeOf(shInfo), SHGFI.SHGFI_PIDL | SHGFI.SHGFI_DISPLAYNAME | SHGFI.SHGFI_SYSICONINDEX);
 
 				// get the root IShellFolder interface
 				int hResult = Native.Shell32.SHGetDesktopFolder(ref _shellFolder);
@@ -101,14 +100,13 @@ namespace ClearCanvas.Controls.WinForms
 					tempPidl = (IntPtr) _pidl; // use the absolute one that we constructed just now
 				}
 
-				const Native.SHGFI FLAGS = Native.SHGFI.SHGFI_PIDL // indicates that we're specifying the item by PIDL
+				const Native.SHGFI flags = Native.SHGFI.SHGFI_PIDL // indicates that we're specifying the item by PIDL
 				                           | Native.SHGFI.SHGFI_DISPLAYNAME // indicates that we want the item's display name
 				                           | Native.SHGFI.SHGFI_SYSICONINDEX // indicates that we want the item's icon's index in the system image list
 				                           | Native.SHGFI.SHGFI_ATTRIBUTES // indicates that we want the item's attributes
 				                           | Native.SHGFI.SHGFI_TYPENAME; // indicates that we want the item's type name
-				const Native.SFGAO REQUEST_ATTRIBUTES = Native.SFGAO.SFGAO_FOLDER | Native.SFGAO.SFGAO_HASSUBFOLDER | Native.SFGAO.SFGAO_FILESYSTEM;
 				Native.SHFILEINFO shInfo = new Native.SHFILEINFO();
-				Native.Shell32.SHGetFileInfo((IntPtr) _pidl, (uint) REQUEST_ATTRIBUTES, out shInfo, (uint) Marshal.SizeOf(shInfo), FLAGS);
+				Native.Shell32.SHGetFileInfo((IntPtr) _pidl, 0, out shInfo, (uint) Marshal.SizeOf(shInfo), flags);
 
 				// read item attributes
 				Native.SFGAO attributeFlags = (Native.SFGAO) shInfo.dwAttributes;

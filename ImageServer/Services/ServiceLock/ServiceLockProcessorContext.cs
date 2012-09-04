@@ -13,14 +13,14 @@ using System;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock
 {
     /// <summary>
     /// Represents the execution context of a <see cref="ServiceLock"/> item.
     /// </summary>
-    public class ServiceLockProcessorContext : ExecutionContext
+    public class ServiceLockProcessorContext : ServerExecutionContext
     {
         #region Private fields
         private readonly Model.ServiceLock _item;

@@ -12,7 +12,7 @@
 namespace ClearCanvas.Dicom.Iod
 {
 	//internal for now b/c the patient root query stuff is
-	internal interface IPatientRootData : IPatientData
+    public interface IPatientRootData : IPatientData
 	{
 		[DicomField(DicomTags.NumberOfPatientRelatedStudies)]
 		int? NumberOfPatientRelatedStudies { get; }

@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExceptionNullReference" xml:space="preserve">
     <value>{0} is null</value>
@@ -349,9 +349,6 @@
   </data>
   <data name="ExceptionNotSupportedImageDisplayFormat" xml:space="preserve">
     <value>Image display format {0} is not supported.</value>
-  </data>
-  <data name="MessagePrinterError" xml:space="preserve">
-    <value>Unexpected failure reported by the printer.</value>
   </data>
   <data name="LabelFilmDensityBlack" xml:space="preserve">
     <value>Black</value>

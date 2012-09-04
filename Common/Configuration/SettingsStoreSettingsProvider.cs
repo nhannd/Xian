@@ -25,12 +25,12 @@ namespace ClearCanvas.Common.Configuration
 	/// Supports the framework and is not intended for use by application code.  Use 
 	/// <see cref="StandardSettingsProvider"/> instead.
 	/// </remarks>
-    internal class SettingsStoreSettingsProvider : SettingsProvider, IApplicationSettingsProvider, ISharedApplicationSettingsProvider
+    public class SettingsStoreSettingsProvider : SettingsProvider, IApplicationSettingsProvider, ISharedApplicationSettingsProvider
     {
         private string _appName;
         private readonly ISettingsStore _store;
 
-        internal SettingsStoreSettingsProvider(ISettingsStore store)
+        public SettingsStoreSettingsProvider(ISettingsStore store)
         {
             _store = store;
         }

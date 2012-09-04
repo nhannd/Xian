@@ -11,6 +11,7 @@
 
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using ClearCanvas.Common.Serialization;
 
 namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 {

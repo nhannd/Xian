@@ -19,7 +19,6 @@ using ClearCanvas.Common.Utilities;
 using System.IO;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local
 {

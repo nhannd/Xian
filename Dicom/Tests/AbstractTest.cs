@@ -79,7 +79,9 @@ namespace ClearCanvas.Dicom.Tests
 					instanceCollection[DicomTags.SeriesInstanceUid].SetStringValue(seriesInstanceUid);
 
 					instanceCollection[DicomTags.SeriesNumber].SetStringValue((i + 1).ToString());
-					instanceCollection[DicomTags.AcquisitionNumber].SetStringValue(acquisitionNumber++.ToString());
+                    instanceCollection[DicomTags.SeriesDescription].SetStringValue("Series" + (i + 1).ToString());
+					
+                    instanceCollection[DicomTags.AcquisitionNumber].SetStringValue(acquisitionNumber++.ToString());
 					instanceCollection[DicomTags.InstanceNumber].SetStringValue(instanceNumber++.ToString());
 
 					instanceCollection[DicomTags.ImagePositionPatient].SetFloat32(0, positionX);

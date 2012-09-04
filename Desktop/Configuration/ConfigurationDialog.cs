@@ -9,17 +9,25 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using ClearCanvas.Common;
+
 namespace ClearCanvas.Desktop.Configuration
 {
-	public sealed class ConfigurationDialog
+    /// <summary>
+    /// An extension point for <see cref="IConfigurationPageProvider"/>s.
+    /// </summary>
+    [ExtensionPoint]
+    public sealed class ConfigurationPageProviderExtensionPoint : ExtensionPoint<IConfigurationPageProvider>
+    {
+    }
+
+	public static class ConfigurationDialog
 	{
-
-		private ConfigurationDialog()
-		{
-		}
-
-		/// <summary>
-		/// Shows all <see cref="IConfigurationPage"/>s returned by extensions of <see cref="IConfigurationPageProvider"/>
+	    /// <summary>
+        /// Shows all <see cref="IConfigurationPage"/>s returned by extensions of <see cref="ConfigurationPageProviderExtensionPoint"/>
 		/// in a dialog, with a navigable tree to select the pages.
 		/// </summary>
 		public static ApplicationComponentExitCode Show(IDesktopWindow desktopWindow)
@@ -28,15 +36,28 @@ namespace ClearCanvas.Desktop.Configuration
 		}
 
 		/// <summary>
-		/// Shows all <see cref="IConfigurationPage"/>s returned by extensions of <see cref="IConfigurationPageProvider"/>
+        /// Shows all <see cref="IConfigurationPage"/>s returned by extensions of <see cref="ConfigurationPageProviderExtensionPoint"/>
 		/// in a dialog, with a navigable tree to select the pages.
 		/// </summary>
 		public static ApplicationComponentExitCode Show(IDesktopWindow desktopWindow, string initialPageIdentifier)
 		{
-			ConfigurationDialogComponent container = new ConfigurationDialogComponent(initialPageIdentifier);
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(desktopWindow, container, SR.TitleMenuOptions);
+            var container = new ConfigurationDialogComponent(GetPages(), initialPageIdentifier);
+			var exitCode = ApplicationComponent.LaunchAsDialog(desktopWindow, container, SR.TitleMenuOptions);
 
 			return exitCode;
 		}
+
+        private static IEnumerable<IConfigurationPage> GetPages()
+        {
+            try
+            {
+                return new ConfigurationPageProviderExtensionPoint().CreateExtensions()
+                    .Cast<IConfigurationPageProvider>().SelectMany(p => p.GetPages()).ToList();
+            }
+            catch (NotSupportedException)
+            {
+                return new IConfigurationPage[0];
+            }
+        }
 	}
 }

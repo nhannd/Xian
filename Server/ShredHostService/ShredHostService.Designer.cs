@@ -62,7 +62,7 @@ namespace ClearCanvas.Server.ShredHostService
         /// </summary>
         private void InitializeComponent()
         {
-            this.ServiceName = string.Format("{0} Shred Host Service", ProductInformation.Component);
+            this.ServiceName = string.Format("{0} ShredHost Service", ProductInformation.Component);
         }
 
         #endregion

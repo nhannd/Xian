@@ -171,5 +171,20 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			Crash(TimeSpan.Zero, true);
 		}
+
+		private void _infoAlertButton_Click(object sender, EventArgs e)
+		{
+			_component.AlertInfo();
+		}
+
+		private void _warningAlertButton_Click(object sender, EventArgs e)
+		{
+			_component.AlertWarning();
+		}
+
+		private void _errorAlertButton_Click(object sender, EventArgs e)
+		{
+			_component.AlertError();
+		}
 	}
 }

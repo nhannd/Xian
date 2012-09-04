@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 								}
 								catch (Exception ex)
 								{
-									Platform.Log(LogLevel.Warn, ex, SR.MessageFailedToGetVOIDataLUTs);
+                                    Platform.Log(LogLevel.Warn, ex, "Creation of VOI Data LUTs failed.");
 									_sopVoiDataLuts = new List<VoiDataLut>().AsReadOnly();
 								}
 							}

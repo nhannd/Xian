@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;

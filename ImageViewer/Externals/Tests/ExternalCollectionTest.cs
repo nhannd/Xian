@@ -246,17 +246,17 @@ namespace ClearCanvas.ImageViewer.Externals.Tests
 
 			var external1 = CollectionUtils.SelectFirst(collection, e => e.Name == "external1");
 			Assert.IsNotNull(external1, "Failed to deserialize external1");
-			Assert.IsInstanceOfType(typeof (CommandLineExternal), external1, "external1: Wrong concrete implementation of IExternal");
+            Assert.IsInstanceOf(typeof(CommandLineExternal), external1, "external1: Wrong concrete implementation of IExternal");
 			AssertCommandLineExternal(expectedExternal1, (CommandLineExternal) external1, "external1");
 
 			var external2 = CollectionUtils.SelectFirst(collection, e => e.Name == "external2");
 			Assert.IsNotNull(external2, "Failed to deserialize external2");
-			Assert.IsInstanceOfType(typeof (CommandLineExternal), external2, "external2: Wrong concrete implementation of IExternal");
+            Assert.IsInstanceOf(typeof(CommandLineExternal), external2, "external2: Wrong concrete implementation of IExternal");
 			AssertCommandLineExternal(expectedExternal2, (CommandLineExternal) external2, "external2");
 
 			var external3 = CollectionUtils.SelectFirst(collection, e => e.Name == "external3");
 			Assert.IsNotNull(external3, "Failed to deserialize external3");
-			Assert.IsInstanceOfType(typeof (CommandLineExternal), external3, "external3: Wrong concrete implementation of IExternal");
+            Assert.IsInstanceOf(typeof(CommandLineExternal), external3, "external3: Wrong concrete implementation of IExternal");
 			AssertCommandLineExternal(expectedExternal3, (CommandLineExternal) external3, "external3");
 		}
 
@@ -309,17 +309,17 @@ namespace ClearCanvas.ImageViewer.Externals.Tests
 
 			var external1 = CollectionUtils.SelectFirst(collection, e => e.Name == "external1");
 			Assert.IsNotNull(external1, "Failed to deserialize external1");
-			Assert.IsInstanceOfType(typeof (CommandLineExternal), external1, "external1: Wrong concrete implementation of IExternal");
+            Assert.IsInstanceOf(typeof(CommandLineExternal), external1, "external1: Wrong concrete implementation of IExternal");
 			AssertCommandLineExternal(expectedExternal1, (CommandLineExternal) external1, "external1");
 
 			var external2 = CollectionUtils.SelectFirst(collection, e => e.Name == "external2");
 			Assert.IsNotNull(external2, "Failed to deserialize external2");
-			Assert.IsInstanceOfType(typeof (CommandLineExternal), external2, "external2: Wrong concrete implementation of IExternal");
+            Assert.IsInstanceOf(typeof(CommandLineExternal), external2, "external2: Wrong concrete implementation of IExternal");
 			AssertCommandLineExternal(expectedExternal2, (CommandLineExternal) external2, "external2");
 
 			var external3 = CollectionUtils.SelectFirst(collection, e => e.Name == "external3");
 			Assert.IsNotNull(external3, "Failed to deserialize external3");
-			Assert.IsInstanceOfType(typeof (CommandLineExternal), external3, "external3: Wrong concrete implementation of IExternal");
+            Assert.IsInstanceOf(typeof(CommandLineExternal), external3, "external3: Wrong concrete implementation of IExternal");
 			AssertCommandLineExternal(expectedExternal3, (CommandLineExternal) external3, "external3");
 		}
 
@@ -395,37 +395,37 @@ namespace ClearCanvas.ImageViewer.Externals.Tests
 
 			var external1 = CollectionUtils.SelectFirst(collection, e => e.Name == "external1");
 			Assert.IsNotNull(external1, "Failed to deserialize external1");
-			Assert.IsInstanceOfType(typeof (MockXmlSerializableExternal), external1, "external1: Wrong concrete implementation of IExternal");
+            Assert.IsInstanceOf(typeof(MockXmlSerializableExternal), external1, "external1: Wrong concrete implementation of IExternal");
 			AssertMockExternal(expectedExternal1, (MockXmlSerializableExternal) external1, "external1");
 
 			var external2 = CollectionUtils.SelectFirst(collection, e => e.Name == "external2");
 			Assert.IsNotNull(external2, "Failed to deserialize external2");
-			Assert.IsInstanceOfType(typeof (MockXmlSerializableExternal), external2, "external2: Wrong concrete implementation of IExternal");
+            Assert.IsInstanceOf(typeof(MockXmlSerializableExternal), external2, "external2: Wrong concrete implementation of IExternal");
 			AssertMockExternal(expectedExternal2, (MockXmlSerializableExternal) external2, "external2");
 
 			var external3 = CollectionUtils.SelectFirst(collection, e => e.Name == "external3");
 			Assert.IsNotNull(external3, "Failed to deserialize external3");
-			Assert.IsInstanceOfType(typeof (MockXmlSerializableExternal), external3, "external3: Wrong concrete implementation of IExternal");
+            Assert.IsInstanceOf(typeof(MockXmlSerializableExternal), external3, "external3: Wrong concrete implementation of IExternal");
 			AssertMockExternal(expectedExternal3, (MockXmlSerializableExternal) external3, "external3");
 
 			var external4 = CollectionUtils.SelectFirst(collection, e => e.Name == "external4");
 			Assert.IsNotNull(external4, "Failed to deserialize external4");
-			Assert.IsInstanceOfType(typeof (MockXmlSerializableExternal), external4, "external4: Wrong concrete implementation of IExternal");
+            Assert.IsInstanceOf(typeof(MockXmlSerializableExternal), external4, "external4: Wrong concrete implementation of IExternal");
 			AssertMockExternal(expectedExternal4, (MockXmlSerializableExternal) external4, "external4");
 
 			var external5 = CollectionUtils.SelectFirst(collection, e => e.Name == "external5");
 			Assert.IsNotNull(external5, "Failed to deserialize external5");
-			Assert.IsInstanceOfType(typeof (MockXmlSerializableExternal), external5, "external5: Wrong concrete implementation of IExternal");
+            Assert.IsInstanceOf(typeof(MockXmlSerializableExternal), external5, "external5: Wrong concrete implementation of IExternal");
 			AssertMockExternal(expectedExternal5, (MockXmlSerializableExternal) external5, "external5");
 
 			var external6 = CollectionUtils.SelectFirst(collection, e => e.Name == "external6");
 			Assert.IsNotNull(external6, "Failed to deserialize external6");
-			Assert.IsInstanceOfType(typeof (MockXmlSerializableExternal), external6, "external6: Wrong concrete implementation of IExternal");
+            Assert.IsInstanceOf(typeof(MockXmlSerializableExternal), external6, "external6: Wrong concrete implementation of IExternal");
 			AssertMockExternal(expectedExternal6, (MockXmlSerializableExternal) external6, "external6");
 
 			var external7 = CollectionUtils.SelectFirst(collection, e => e.Name == "external7");
 			Assert.IsNotNull(external7, "Failed to deserialize external7");
-			Assert.IsInstanceOfType(typeof (MockXmlSerializableExternal), external7, "external7: Wrong concrete implementation of IExternal");
+            Assert.IsInstanceOf(typeof(MockXmlSerializableExternal), external7, "external7: Wrong concrete implementation of IExternal");
 			AssertMockExternal(expectedExternal7, (MockXmlSerializableExternal) external7, "external7");
 		}
 
@@ -461,12 +461,12 @@ namespace ClearCanvas.ImageViewer.Externals.Tests
 
 			var external1 = CollectionUtils.SelectFirst(collection, e => e.Name == "external1");
 			Assert.IsNotNull(external1, "Failed to deserialize external1");
-			Assert.IsInstanceOfType(typeof (MockExternal), external1, "external1: Wrong concrete implementation of IExternal");
+            Assert.IsInstanceOf(typeof(MockExternal), external1, "external1: Wrong concrete implementation of IExternal");
 			AssertMockExternal(expectedExternal1, (MockExternal) external1, "external1");
 
 			var external2 = CollectionUtils.SelectFirst(collection, e => e.Name == "external2");
 			Assert.IsNotNull(external2, "Failed to deserialize external2");
-			Assert.IsInstanceOfType(typeof (MockXmlSerializableExternal), external2, "external2: Wrong concrete implementation of IExternal");
+            Assert.IsInstanceOf(typeof(MockXmlSerializableExternal), external2, "external2: Wrong concrete implementation of IExternal");
 			AssertMockExternal(expectedExternal2, (MockXmlSerializableExternal) external2, "external2");
 		}
 

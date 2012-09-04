@@ -17,12 +17,13 @@ using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Exceptions;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
+using ClearCanvas.ImageServer.Core.Command;
 using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
@@ -389,7 +390,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         private static void RemoveWorkQueueUid(WorkQueueUid uid, string fileToDelete)
         {
-            using (ServerCommandProcessor processor = new ServerCommandProcessor("Remove Work Queue Uid"))
+            using (var processor = new ServerCommandProcessor("Remove Work Queue Uid"))
             {
                 processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
                 if (String.IsNullOrEmpty(fileToDelete) == false)

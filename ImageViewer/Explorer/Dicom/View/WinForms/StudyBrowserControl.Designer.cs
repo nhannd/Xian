@@ -59,35 +59,34 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StudyBrowserControl));
-			this._resultsTitleBar = new ClearCanvas.Desktop.View.WinForms.TitleBar();
-			this._studyTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
-			this.SuspendLayout();
-			// 
-			// _resultsTitleBar
-			// 
-			resources.ApplyResources(this._resultsTitleBar, "_resultsTitleBar");
-			this._resultsTitleBar.Name = "_resultsTitleBar";
-			// 
-			// _studyTableView
-			// 
-			this._studyTableView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.None;
-			this._studyTableView.ColumnHeaderTooltip = null;
-			resources.ApplyResources(this._studyTableView, "_studyTableView");
-			this._studyTableView.Name = "_studyTableView";
-			this._studyTableView.ReadOnly = false;
-			this._studyTableView.SmartColumnSizing = true;
-			this._studyTableView.SortButtonTooltip = null;
-			// 
-			// StudyBrowserControl
-			// 
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.Controls.Add(this._studyTableView);
-			this.Controls.Add(this._resultsTitleBar);
-			this.Name = "StudyBrowserControl";
-			this.ResumeLayout(false);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StudyBrowserControl));
+            this._resultsTitleBar = new ClearCanvas.Desktop.View.WinForms.TitleBar();
+            this._studyTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this.SuspendLayout();
+            // 
+            // _resultsTitleBar
+            // 
+            resources.ApplyResources(this._resultsTitleBar, "_resultsTitleBar");
+            this._resultsTitleBar.Name = "_resultsTitleBar";
+            this._resultsTitleBar.TextAlignment = System.Drawing.StringAlignment.Near;
+            // 
+            // _studyTableView
+            // 
+            this._studyTableView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.None;
+            resources.ApplyResources(this._studyTableView, "_studyTableView");
+            this._studyTableView.Name = "_studyTableView";
+            this._studyTableView.ReadOnly = false;
+            this._studyTableView.SmartColumnSizing = true;
+            // 
+            // StudyBrowserControl
+            // 
+            resources.ApplyResources(this, "$this");
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Controls.Add(this._studyTableView);
+            this.Controls.Add(this._resultsTitleBar);
+            this.Name = "StudyBrowserControl";
+            this.ResumeLayout(false);
 
 		}
 

@@ -15,7 +15,7 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 		{
 			try
 			{
-				using (ExecutionContext context = new ExecutionContext())
+				using (ServerExecutionContext context = new ServerExecutionContext())
 				{
 					string archivePath = Path.Combine(archiveFs.Filesystem.FilesystemPath, "ApplicationLog");
 
@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 			criteria.Timestamp.LessThan(cutOffTime);
 			criteria.Timestamp.SortAsc(0);
 
-			using (ExecutionContext context = new ExecutionContext())
+			using (ServerExecutionContext context = new ServerExecutionContext())
 			{
 				IApplicationLogEntityBroker broker = context.ReadContext.GetBroker<IApplicationLogEntityBroker>();
 

@@ -18,8 +18,8 @@ using System.Runtime.InteropServices;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Clipboard.ImageExport

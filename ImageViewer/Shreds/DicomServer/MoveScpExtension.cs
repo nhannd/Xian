@@ -11,40 +11,46 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
-using ClearCanvas.Dicom.Network.Scu;
-using ClearCanvas.ImageViewer.Services;
-using ClearCanvas.ImageViewer.Services.Auditing;
-using ClearCanvas.ImageViewer.Services.DicomServer;
-using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
+using ClearCanvas.ImageViewer.Common.WorkItem;
+using ClearCanvas.ImageViewer.StudyManagement.Core.Storage;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
-{
+{    
 	[ExtensionOf(typeof(DicomScpExtensionPoint<IDicomServerContext>))]
-	public class MoveScpExtension : ScpExtension, IDicomScp<IDicomServerContext>
+	public class MoveScpExtension : ScpExtension
 	{
 		#region SendOperationInfo class
 
 		private class SendOperationInfo
 		{
-			public SendOperationInfo(SendOperationReference reference, ushort messageId, byte presentationId, Dicom.Network.DicomServer server)
+			public SendOperationInfo(WorkItemData reference, ushort messageId, byte presentationId, ClearCanvas.Dicom.Network.DicomServer server)
 			{
-				this.PresentationId = presentationId;
-				this.Server = server;
-				this.Reference = reference;
-				this.MessageId = messageId;
+				PresentationId = presentationId;
+				Server = server;
+				WorkItemData = reference;
+				MessageId = messageId;
+			    SubOperations = 0;
+			    Complete = false;
+			    FailedSopInstanceUids = new List<string>();
 			}
 
-			public readonly SendOperationReference Reference;
+            public WorkItemData WorkItemData;
 
 			public readonly ushort MessageId;
 			public readonly byte PresentationId;
-			public readonly Dicom.Network.DicomServer Server;
+			public readonly ClearCanvas.Dicom.Network.DicomServer Server;
+		    public int SubOperations;
+		    public readonly List<string> FailedSopInstanceUids;
+		    public bool Complete;
 		}
 
 		#endregion
@@ -52,47 +58,104 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		#region Private Fields
 
 		private readonly object _syncLock = new object();
-		//There will only be one of these at a time, but I'm paranoid.
 		private readonly List<SendOperationInfo> _sendOperations;
+	    private readonly IWorkItemActivityMonitor _activityMonitor;
 
 		#endregion
 
-		public MoveScpExtension()
+        #region Constructors
+
+        public MoveScpExtension()
 			: base(GetSupportedSops())
 		{
 			_sendOperations = new List<SendOperationInfo>();
+            // TODO (CR Jun 2012 - Med): This item is disposable and should ideally be cleaned up.
+            _activityMonitor = WorkItemActivityMonitor.Create(false);
+		    _activityMonitor.WorkItemsChanged += UpdateProgress;
 		}
 
-		#region Private Methods
+        #endregion
 
-		private static IEnumerable<SupportedSop> GetSupportedSops()
+        #region Private Methods
+
+        private static IEnumerable<SupportedSop> GetSupportedSops()
 		{
-			SupportedSop sop = new SupportedSop();
-			sop.SopClass = SopClass.StudyRootQueryRetrieveInformationModelMove;
-			sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
+		    var sop = new SupportedSop
+		                  {
+		                      SopClass = SopClass.StudyRootQueryRetrieveInformationModelMove
+		                  };
+		    sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
 			sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
 			yield return sop;
 		}
 
-		private SendOperationInfo GetSendOperationInfo(SendOperationReference reference)
+		private SendOperationInfo GetSendOperationInfo(WorkItemData reference)
 		{
 			lock (_syncLock)
 			{
 				return CollectionUtils.SelectFirst(_sendOperations,
-					delegate(SendOperationInfo info) { return info.Reference == reference; });
+				                                   info => info.WorkItemData.Identifier == reference.Identifier);
 			}
 		}
 
-		private SendOperationInfo GetSendOperationInfo(int dicomMessageId)
+		private List<SendOperationInfo> GetSendOperationInfo(int dicomMessageId)
 		{
 			lock (_syncLock)
 			{
-				return CollectionUtils.SelectFirst(_sendOperations,
-					delegate(SendOperationInfo info) { return info.MessageId == dicomMessageId; });
+				return CollectionUtils.Select(_sendOperations,
+				                                   info => info.MessageId == dicomMessageId);
 			}
 		}
 
-		private void RemoveSendOperationInfo(SendOperationInfo info)
+        private DicomSendProgress GetProgressByMessageId(int dicomMessageId)
+        {
+            var list = GetSendOperationInfo(dicomMessageId);
+            if (list.Count == 1)
+            {
+                SendOperationInfo sendOperation = CollectionUtils.FirstElement(list);
+                var progress = sendOperation.WorkItemData.Progress as DicomSendProgress ?? new DicomSendProgress
+                                                                                               {
+                                                                                                   TotalImagesToSend = sendOperation.SubOperations
+                                                                                               };
+                if (progress.TotalImagesToSend == 0)
+                    progress.TotalImagesToSend = sendOperation.SubOperations;
+
+                return progress;
+            }
+
+            // TODO (CR Jun 2012): this actually happen?
+            // (SW) - It won't actually happen with our client, but it could happen by other DICOM clients that have a list of UIDs to move.
+            var aggregateProgress = new DicomSendProgress();
+            foreach (var sendOperation in list)
+            {
+                var currentProgress = sendOperation.WorkItemData.Progress as DicomSendProgress;
+                if (currentProgress == null)
+                {
+                    aggregateProgress.TotalImagesToSend += sendOperation.SubOperations;
+                }
+                else
+                {
+                    aggregateProgress.TotalImagesToSend += currentProgress.TotalImagesToSend;
+                    aggregateProgress.FailureSubOperations += currentProgress.FailureSubOperations;
+                    aggregateProgress.SuccessSubOperations += currentProgress.SuccessSubOperations;
+                    aggregateProgress.WarningSubOperations += currentProgress.WarningSubOperations;
+                }
+            }
+            return aggregateProgress;
+        }
+
+        private bool SendOperationsComplete(int dicomMessageId)
+        {
+            var list = GetSendOperationInfo(dicomMessageId);
+            foreach (var sendOperation in list)
+            {
+                if (!sendOperation.Complete)
+                    return false;
+            }
+            return true;
+        }
+
+	    private void RemoveSendOperationInfo(SendOperationInfo info)
 		{
 			lock(_syncLock)
 			{
@@ -100,178 +163,205 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-		private void UpdateProgress(ISendOperation operation)
-		{
-			SendOperationInfo sendOperationInfo = GetSendOperationInfo(operation.Reference);
-			if (sendOperationInfo == null)
-			{
-				// there are some conditions that both throw an exception as well as fails remaining items, so we'll just ignore the second attempt to send a final response
-				// namely, the catch handler block for the call to Connect() in StorageScu.Send()
-				if (!operation.Failed)
-					Platform.Log(LogLevel.Debug, "Received progress update for unknown send operation {0}", operation.Reference.Identifier);
-				return;
-			}
+        private void UpdateProgress(object sender, WorkItemsChangedEventArgs workItemsChangedEventArgs)
+        {
+        	foreach (var item in workItemsChangedEventArgs.ChangedItems)
+        	{
+        		UpdateProgress(item);
+        	}	
+        }
 
-			DicomMessage msg = new DicomMessage();
-			DicomStatus status;
+        private void UpdateProgress(WorkItemData workItem)
+        {
+            try
+            {
+				SendOperationInfo sendOperationInfo = GetSendOperationInfo(workItem);
+                if (sendOperationInfo == null)
+                {
+                    return;
+                }
 
-			if (operation.Failed)
-			{
-				RemoveSendOperationInfo(sendOperationInfo);
+				sendOperationInfo.WorkItemData = workItem;
 
-				status = DicomStatuses.QueryRetrieveUnableToProcess;
-			}
-			else if (operation.RemainingSubOperations == 0)
-			{
-				RemoveSendOperationInfo(sendOperationInfo);
+                var progress = GetProgressByMessageId(sendOperationInfo.MessageId);
 
-				foreach (StorageInstance sop in operation.StorageInstances)
-				{
-					if ((sop.SendStatus.Status != DicomState.Success) && (sop.SendStatus.Status != DicomState.Warning))
-						msg.DataSet[DicomTags.FailedSopInstanceUidList].AppendString(sop.SopInstanceUid);
-				}
+                var msg = new DicomMessage();
+                DicomStatus status;
 
-				if (operation.Canceled)
-					status = DicomStatuses.Cancel;
-				else if (operation.FailureSubOperations > 0)
-					status = DicomStatuses.QueryRetrieveSubOpsOneOrMoreFailures;
-				else
-					status = DicomStatuses.Success;
-			}
-			else
-			{
-				status = DicomStatuses.Pending;
-				if ((operation.RemainingSubOperations % 5) != 0)
-					return;
+				if (workItem.Status == WorkItemStatusEnum.Failed)
+                {
+                    sendOperationInfo.Complete = true;
+                }
+				else if (progress.RemainingSubOperations == 0 && workItem.Status != WorkItemStatusEnum.Pending)
+                {
+                    sendOperationInfo.Complete = true;
+                }
 
-				// Only send a RSP every 5 to reduce network load
-			}
+                if (SendOperationsComplete(sendOperationInfo.MessageId))
+                {
+                    status = DicomStatuses.Success;
 
-			sendOperationInfo.Server.SendCMoveResponse(sendOperationInfo.PresentationId, sendOperationInfo.MessageId,
-			                         msg, status,
-									 (ushort)operation.SuccessSubOperations,
-									 (ushort)operation.RemainingSubOperations,
-									 (ushort)operation.FailureSubOperations,
-									 (ushort)operation.WarningSubOperations);
-		}
+                    foreach (SendOperationInfo info in GetSendOperationInfo(sendOperationInfo.MessageId))
+                    {
+                        foreach (string sopInstanceUid in info.FailedSopInstanceUids)
+                            msg.DataSet[DicomTags.FailedSopInstanceUidList].AppendString(sopInstanceUid);
+						if (workItem.Status == WorkItemStatusEnum.Canceled)
+                            status = DicomStatuses.Cancel;
+						else if (workItem.Status == WorkItemStatusEnum.Failed)
+                            status = DicomStatuses.QueryRetrieveUnableToProcess;
+                        else if (progress.FailureSubOperations > 0 && status == DicomStatuses.Success)
+                            status = DicomStatuses.QueryRetrieveSubOpsOneOrMoreFailures;
+                    }
+                }
+                else
+                {
+                    status = DicomStatuses.Pending;
+                    if ((progress.RemainingSubOperations%5) != 0)
+                        return;
 
-		private void OnReceiveMoveStudiesRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, AEInformation remoteAEInfo)
+                    // Only send a RSP every 5 to reduce network load
+                }
+
+                if (sendOperationInfo.Server.NetworkActive)
+                {
+                    sendOperationInfo.Server.SendCMoveResponse(sendOperationInfo.PresentationId,
+                                                               sendOperationInfo.MessageId,
+                                                               msg, status,
+                                                               (ushort) progress.SuccessSubOperations,
+                                                               (ushort) progress.RemainingSubOperations,
+                                                               (ushort) progress.FailureSubOperations,
+                                                               (ushort) progress.WarningSubOperations);
+                }
+
+                if (status != DicomStatuses.Pending || !sendOperationInfo.Server.NetworkActive)
+                {
+                    foreach (SendOperationInfo info in GetSendOperationInfo(sendOperationInfo.MessageId))
+                    {
+                        RemoveSendOperationInfo(info);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected error processing C-MOVE Responses");
+            }
+        }
+
+	    private void OnReceiveMoveStudiesRequest(ClearCanvas.Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, IDicomServiceNode remoteAEInfo)
 		{
 			IEnumerable<string> studyUids = (string[])message.DataSet[DicomTags.StudyInstanceUid].Values;
-			SendStudiesRequest request = new SendStudiesRequest();
-			request.StudyInstanceUids = studyUids;
-			request.DestinationAEInformation = remoteAEInfo;
 
-			AuditedInstances instances = new AuditedInstances();
-			EventResult result = EventResult.Success;
+            foreach (string studyUid in studyUids)
+            {
+                lock (_syncLock)
+                {
+                    int subOperations = 0;
+                    using (var context = new DataAccessContext())
+                    {
+                        var s =
+                            context.GetStudyStoreQuery().StudyQuery(new StudyRootStudyIdentifier
+                                                                        {StudyInstanceUid = studyUid});
+                        var identifier = CollectionUtils.FirstElement(s);
+                        if (identifier.NumberOfStudyRelatedInstances.HasValue)
+                            subOperations = identifier.NumberOfStudyRelatedInstances.Value;
 
-			lock (_syncLock)
-			{
-				try
-				{
-					foreach (IStudy study in DataStoreQueryHelper.GetStudies(studyUids))
-						instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
-
-					SendOperationReference reference = DicomSendManager.Instance.SendStudies(request, UpdateProgress);
-					_sendOperations.Add(new SendOperationInfo(reference, message.MessageId, presentationID, server));
-				}
-				catch
-				{
-					result = EventResult.MajorFailure;
-					throw;
-				}
-				finally
-				{
-					AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.HostName, instances, EventSource.CurrentProcess, result);
-				}
-			}
+                        var client = new DicomSendBridge();
+                        client.SendStudy(remoteAEInfo, identifier, WorkItemPriorityEnum.High);
+                        _sendOperations.Add(new SendOperationInfo(client.WorkItem, message.MessageId,
+                                                                  presentationID,
+                                                                  server)
+                                                {
+                                                    SubOperations = subOperations
+                                                });
+                    }
+                }
+            }
 		}
 
-		private void OnReceiveMoveSeriesRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, AEInformation remoteAEInfo)
+        private void OnReceiveMoveSeriesRequest(ClearCanvas.Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, IDicomServiceNode remoteAEInfo)
 		{
 			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
-			string[] seriesUids = (string[])message.DataSet[DicomTags.SeriesInstanceUid].Values;
-			SendSeriesRequest request = new SendSeriesRequest();
-			request.DestinationAEInformation = remoteAEInfo;
-			request.StudyInstanceUid = studyInstanceUid;
-			request.SeriesInstanceUids = seriesUids;
+			var seriesUids = (string[])message.DataSet[DicomTags.SeriesInstanceUid].Values;
 
-			AuditedInstances instances = new AuditedInstances();
-			EventResult result = EventResult.Success;
+            lock (_syncLock)
+            {
 
-			lock (_syncLock)
-			{
-				try
-				{
-					IStudy study = DataStoreQueryHelper.GetStudy(studyInstanceUid);
-					instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+                int subOperations = 0;
+                using (var context = new DataAccessContext())
+                {
+                    var results = context.GetStudyStoreQuery().SeriesQuery(new SeriesIdentifier
+                                                                               {
+                                                                                   StudyInstanceUid =
+                                                                                       studyInstanceUid,
+                                                                               });
+                    foreach (SeriesIdentifier series in results)
+                    {
+                        foreach (string seriesUid in seriesUids)
+                            if (series.SeriesInstanceUid.Equals(seriesUid) &&
+                                series.NumberOfSeriesRelatedInstances.HasValue)
+                            {
+                                subOperations += series.NumberOfSeriesRelatedInstances.Value;
+                                break;
+                            }
+                    }
 
-					SendOperationReference reference = DicomSendManager.Instance.SendSeries(request, UpdateProgress);
-					_sendOperations.Add(new SendOperationInfo(reference, message.MessageId, presentationID, server));
-				}
-				catch
-				{
-					result = EventResult.MajorFailure;
-					throw;
-				}
-				finally
-				{
-					AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.HostName, instances, EventSource.CurrentProcess, result);
-				}
-			}
+                    var s =
+                        context.GetStudyStoreQuery().StudyQuery(new StudyRootStudyIdentifier
+                                                                    {StudyInstanceUid = studyInstanceUid});
+                    var identifier = CollectionUtils.FirstElement(s);
+                    var client = new DicomSendBridge();
+
+                    client.SendSeries(remoteAEInfo, identifier, seriesUids, WorkItemPriorityEnum.High);
+                    _sendOperations.Add(new SendOperationInfo(client.WorkItem, message.MessageId, presentationID,
+                                                              server)
+                                            {
+                                                SubOperations = subOperations
+                                            });
+                }
+            }
 		}
 
-		private void OnReceiveMoveImageRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, AEInformation remoteAEInfo)
+        private void OnReceiveMoveImageRequest(ClearCanvas.Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, IDicomServiceNode remoteAEInfo)
 		{
-			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
-			string seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
-			string[] sopInstanceUids = (string[])message.DataSet[DicomTags.SopInstanceUid].Values;
-			SendSopInstancesRequest request = new SendSopInstancesRequest();
-			request.DestinationAEInformation = remoteAEInfo;
-			request.StudyInstanceUid = studyInstanceUid;
-			request.SeriesInstanceUid = seriesInstanceUid;
-			request.SopInstanceUids = sopInstanceUids;
+			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
+			string seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
+			var sopInstanceUids = (string[])message.DataSet[DicomTags.SopInstanceUid].Values;
 
-			EventResult result = EventResult.Success;
-			AuditedInstances instances = new AuditedInstances();
+            lock (_syncLock)
+            {
 
-			lock (_syncLock)
-			{
-				try
-				{
-					IStudy study = DataStoreQueryHelper.GetStudy(studyInstanceUid);
-					instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+                using (var context = new DataAccessContext())
+                {
+                    var s = context.GetStudyStoreQuery().StudyQuery(new StudyRootStudyIdentifier
+                                                                    {StudyInstanceUid = studyInstanceUid});
+                    var identifier = CollectionUtils.FirstElement(s);
 
-					SendOperationReference reference = DicomSendManager.Instance.SendSopInstances(request, UpdateProgress);
-					_sendOperations.Add(new SendOperationInfo(reference, message.MessageId, presentationID, server));
-				}
-				catch
-				{
-					result = EventResult.MajorFailure;
-					throw;
-				}
-				finally
-				{
-					AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.HostName, instances, EventSource.CurrentProcess, result);
-				}
-			}
+                    var client = new DicomSendBridge();
+                    client.SendSops(remoteAEInfo, identifier, seriesInstanceUid, sopInstanceUids, WorkItemPriorityEnum.High);
+                    _sendOperations.Add(new SendOperationInfo(client.WorkItem, message.MessageId, presentationID, server)
+                                            {
+                                                SubOperations = sopInstanceUids.Length
+                                            });
+                }
+            }
 		}
 
 		private void OnReceiveCancelRequest(DicomMessage message)
 		{
 			lock (_syncLock)
 			{
-				SendOperationInfo sendOperationInfo = GetSendOperationInfo(message.MessageIdBeingRespondedTo);
-				if (sendOperationInfo != null)
-				{
-					RemoveSendOperationInfo(sendOperationInfo);
-					DicomSendManager.Instance.Cancel(sendOperationInfo.Reference);
-				}
-				else
-				{
-					Platform.Log(LogLevel.Warn, "Received C-CANCEL-MOVE-RQ for unknown message id {0}",
-						message.MessageIdBeingRespondedTo);
-				}
+                foreach (SendOperationInfo info in _sendOperations)
+                {
+                    if (info.MessageId == message.MessageIdBeingRespondedTo)
+                    {
+                        RemoveSendOperationInfo(info);
+                        WorkItemService.WorkItemService.Instance.Update(new WorkItemUpdateRequest
+                                                                            {
+                                                                                Cancel = true,
+                                                                                Identifier = info.WorkItemData.Identifier
+                                                                            });
+                    }                    
+                }
 			}
 		}
 
@@ -279,7 +369,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#region Overrides
 
-		public override bool OnReceiveRequest(Dicom.Network.DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
+		public override bool OnReceiveRequest(ClearCanvas.Dicom.Network.DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
 		{
 			//// Check for a Cancel message, and cancel the SCU.
 			if (message.CommandField == DicomCommandField.CCancelRequest)
@@ -288,29 +378,31 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				return true;
 			}
 
-			AEInformation remoteAEInfo = RemoteServerDirectory.Lookup(message.MoveDestination);
-			if (remoteAEInfo == null)
+		    // TODO (CR Jun 2012): Log when there's more than 1.
+
+		    var remoteAE = ServerDirectory.GetRemoteServersByAETitle(message.MoveDestination).FirstOrDefault();
+            if (remoteAE == null)
 			{
 				server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
 					DicomStatuses.QueryRetrieveMoveDestinationUnknown);
 				return true;
 			}
 
-			String level = message.DataSet[DicomTags.QueryRetrieveLevel].GetString(0, "");
+			String level = message.DataSet[DicomTags.QueryRetrieveLevel].GetString(0, string.Empty);
 
 			try
 			{
 				if (level.Equals("STUDY"))
 				{
-					OnReceiveMoveStudiesRequest(server, presentationID, message, remoteAEInfo);
+                    OnReceiveMoveStudiesRequest(server, presentationID, message, remoteAE);
 				}
 				else if (level.Equals("SERIES"))
 				{
-					OnReceiveMoveSeriesRequest(server, presentationID, message, remoteAEInfo);
+                    OnReceiveMoveSeriesRequest(server, presentationID, message, remoteAE);
 				}
 				else if (level.Equals("IMAGE"))
 				{
-					OnReceiveMoveImageRequest(server, presentationID, message, remoteAEInfo);
+                    OnReceiveMoveImageRequest(server, presentationID, message, remoteAE);
 				}
 				else
 				{
@@ -327,7 +419,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				try
 				{
 					server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
-											 DicomStatuses.QueryRetrieveUnableToProcess);
+											 DicomStatuses.QueryRetrieveUnableToProcess, e.Message);
 				}
 				catch (Exception ex)
 				{
@@ -339,6 +431,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			return true;
 		}
+
+        public override void Cleanup()
+        {
+            _activityMonitor.WorkItemsChanged -= UpdateProgress;
+            _activityMonitor.Dispose();            
+        }
 
 		#endregion
 	}

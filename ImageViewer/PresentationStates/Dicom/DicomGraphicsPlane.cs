@@ -10,6 +10,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 
@@ -83,8 +84,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				_layers = null;
 			}
 
-			_shutter = (ShutterCollection) CollectionUtils.SelectFirst(base.Graphics, IsType<ShutterCollection>);
-			_layers = (LayerCollection) CollectionUtils.SelectFirst(base.Graphics, IsType<LayerCollection>);
+			_shutter = (ShutterCollection) base.Graphics.FirstOrDefault(IsType<ShutterCollection>);
+			_layers = (LayerCollection) base.Graphics.FirstOrDefault(IsType<LayerCollection>);
 
 			FillOverlayCollections(_shutter);
 			foreach (LayerGraphic layer in _layers)
@@ -93,7 +94,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		private void FillOverlayCollections(IEnumerable<IGraphic> collection)
 		{
-			foreach (OverlayPlaneGraphic overlay in CollectionUtils.Select(collection, IsType<OverlayPlaneGraphic>))
+			foreach (OverlayPlaneGraphic overlay in collection.Where(IsType<OverlayPlaneGraphic>))
 			{
 				if (overlay.Source == OverlayPlaneSource.Image)
 					_imageOverlays.Add(overlay);
@@ -194,7 +195,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				return null;
 
 			GraphicCollection dicomGraphics = dicomPresentationImage.DicomGraphics;
-			DicomGraphicsPlane dicomGraphicsPlane = CollectionUtils.SelectFirst(dicomGraphics, IsType<DicomGraphicsPlane>) as DicomGraphicsPlane;
+			DicomGraphicsPlane dicomGraphicsPlane = dicomGraphics.FirstOrDefault(IsType<DicomGraphicsPlane>) as DicomGraphicsPlane;
 
 			if (dicomGraphicsPlane == null && createIfNecessary)
 				dicomGraphics.Add(dicomGraphicsPlane = new DicomGraphicsPlane());

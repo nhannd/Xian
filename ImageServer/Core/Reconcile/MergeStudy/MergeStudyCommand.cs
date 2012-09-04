@@ -15,9 +15,11 @@ using System.IO;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
+using ClearCanvas.ImageServer.Core.Command;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
@@ -68,7 +70,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 		#endregion
 
 		#region Overriden Protected Methods
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
 		{
 			Platform.CheckForNullReference(Context, "Context");
 

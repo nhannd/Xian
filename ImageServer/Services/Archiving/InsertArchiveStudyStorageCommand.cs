@@ -12,8 +12,9 @@
 using System;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -46,7 +47,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		                                        ServerEntityKey archiveQueueKey,
 		                                        ServerEntityKey serverTransferSyntaxKey,
 		                                        XmlDocument archiveXml)
-			: base("Insert ArchiveStudyStorage", true)
+			: base("Insert ArchiveStudyStorage")
 		{
 			_studyStorageKey = studyStorageKey;
 			_partitionArchiveKey = partitionArchiveKey;
@@ -60,28 +61,33 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		/// </summary>
 		/// <param name="updateContext">Database update context.</param>
 		/// <param name="theProcessor">The processor executing the command.</param>
-		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+		protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
 		{
-			ArchiveStudyStorageUpdateColumns columns = new ArchiveStudyStorageUpdateColumns();
+		    var columns = new ArchiveStudyStorageUpdateColumns
+		                      {
+		                          ArchiveTime = Platform.Time,
+		                          PartitionArchiveKey = _partitionArchiveKey,
+		                          StudyStorageKey = _studyStorageKey,
+		                          ArchiveXml = _archiveXml,
+		                          ServerTransferSyntaxKey = _serverTransferSyntaxKey
+		                      };
 
-			columns.ArchiveTime = Platform.Time;
-			columns.PartitionArchiveKey = _partitionArchiveKey;
-			columns.StudyStorageKey = _studyStorageKey;
-			columns.ArchiveXml = _archiveXml;
-			columns.ServerTransferSyntaxKey = _serverTransferSyntaxKey;
 
-			IArchiveStudyStorageEntityBroker insertBroker = updateContext.GetBroker<IArchiveStudyStorageEntityBroker>();
+		    var insertBroker = updateContext.GetBroker<IArchiveStudyStorageEntityBroker>();
 
 			ArchiveStudyStorage storage = insertBroker.Insert(columns);
 
 
-			UpdateArchiveQueueParameters parms = new UpdateArchiveQueueParameters();
-			parms.ArchiveQueueKey = _archiveQueueKey;
-			parms.ArchiveQueueStatusEnum = ArchiveQueueStatusEnum.Completed;
-			parms.ScheduledTime = Platform.Time;
-			parms.StudyStorageKey = _studyStorageKey;		
+		    var parms = new UpdateArchiveQueueParameters
+		                    {
+		                        ArchiveQueueKey = _archiveQueueKey,
+		                        ArchiveQueueStatusEnum = ArchiveQueueStatusEnum.Completed,
+		                        ScheduledTime = Platform.Time,
+		                        StudyStorageKey = _studyStorageKey
+		                    };
 
-			IUpdateArchiveQueue broker = updateContext.GetBroker<IUpdateArchiveQueue>();
+
+		    var broker = updateContext.GetBroker<IUpdateArchiveQueue>();
 
             if (!broker.Execute(parms))
                 throw new ApplicationException("InsertArchiveStudyStorageCommand failed");

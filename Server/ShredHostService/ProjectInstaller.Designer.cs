@@ -72,8 +72,8 @@ namespace ClearCanvas.Server.ShredHostService
             // 
 			this._serviceInstaller.Description = "Host container process for Shred plugins that run and provide server- and service" +
                 "-like functionality to the suite of ClearCanvas components.";
-			this._serviceInstaller.DisplayName = "ClearCanvas Shred Host Service";
-			this._serviceInstaller.ServiceName = "ClearCanvas Shred Host Service";
+			this._serviceInstaller.DisplayName = "ClearCanvas ShredHost Service";
+			this._serviceInstaller.ServiceName = "ClearCanvas ShredHost Service";
             // 
             // ProjectInstaller
             // 

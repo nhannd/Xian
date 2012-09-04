@@ -13,22 +13,23 @@ using System;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Exceptions;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile
 {
-	internal abstract class ReconcileCommandBase : ServerCommand<ReconcileStudyProcessorContext>, IReconcileServerCommand, IDisposable
+	internal abstract class ReconcileCommandBase : CommandBase<ReconcileStudyProcessorContext>, IReconcileServerCommand, IDisposable
 	{
 	    
 
 	    /// <summary>
-		/// Creates an instance of <see cref="ServerCommand"/>
+		/// Creates an instance of <see cref="CommandBase"/>
 		/// </summary>
 		/// <param name="description"></param>
 		/// <param name="requiresRollback"></param>

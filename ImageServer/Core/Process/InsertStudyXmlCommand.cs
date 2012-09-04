@@ -14,11 +14,11 @@ using System.IO;
 using System.Threading;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Process
@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageServer.Core.Process
 	/// <summary>
 	/// Insert DICOM file into a <see cref="StudyXml"/> file and save to disk.
 	/// </summary>
-	public class InsertStudyXmlCommand : ServerCommand
+	public class InsertStudyXmlCommand : CommandBase
 	{
 		#region Private Members
 
@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageServer.Core.Process
 
 		#region Overridden Protected Methods
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
 		{
 			long fileSize = 0;
 			if (File.Exists(_file.Filename))

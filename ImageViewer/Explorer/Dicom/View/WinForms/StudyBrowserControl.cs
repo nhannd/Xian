@@ -12,7 +12,6 @@
 using System;
 using System.Windows.Forms;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Desktop;
 using System.Collections;
 
@@ -32,7 +31,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_studyBrowserComponent = component;
 			_studyBrowserComponent.StudyTableChanged += OnStudyBrowserComponentOnStudyTableChanged;
 			_studyBrowserComponent.SelectedStudyChanged += OnStudyBrowserComponentSelectedStudyChanged;
-
 			_studyTableView.Table = _studyBrowserComponent.StudyTable;
 			_studyTableView.ToolbarModel = _studyBrowserComponent.ToolbarModel;
 			_studyTableView.MenuModel = _studyBrowserComponent.ContextMenuModel;

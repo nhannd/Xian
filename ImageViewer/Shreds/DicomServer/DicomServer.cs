@@ -9,11 +9,11 @@
 
 #endregion
 
-using System;
 using System.IO;
 using System.Net;
-using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network.Scp;
+using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -24,11 +24,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		public class DicomServerContext : IDicomServerContext
 		{
 			private readonly DicomServer _server;
-
+		
 			internal DicomServerContext(DicomServer server)
 			{
 				_server = server;
-			}
+     		}
 
 			#region IDicomServerContext Members
 
@@ -47,10 +47,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				get { return _server.Port; }	
 			}
 
-			public string InterimStorageDirectory
-			{
-				get { return _server.InterimStorageDirectory; }	
-			}
+		    public StorageConfiguration StorageConfiguration
+		    {
+                get { return StudyStore.GetConfiguration(); }
+		    }
 
 			#endregion
 		}
@@ -63,14 +63,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		private readonly string _aeTitle;
 		private readonly string _host;
 		private readonly int _port;
-		private readonly string _interimStorageDirectory;
 
-		public DicomServer(string aeTitle, string host, int port, string interimStorageDirectory)
+		public DicomServer(DicomServerConfiguration serverConfiguration)
 		{
-			_aeTitle = aeTitle;
-			_host = host;
-			_port = port;
-			_interimStorageDirectory = interimStorageDirectory;
+			_aeTitle = serverConfiguration.AETitle;
+            _host = serverConfiguration.HostName;
+			_port = serverConfiguration.Port;
 
 			_context = new DicomServerContext(this);
 			_scp = new DicomScp<IDicomServerContext>(_context, AssociationVerifier.VerifyAssociation);
@@ -91,17 +89,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		public int Port
 		{
 			get { return _port; }
-		}
-
-		public string InterimStorageDirectory
-		{
-			get
-			{
-				if (!Directory.Exists(_interimStorageDirectory))
-					Directory.CreateDirectory(_interimStorageDirectory);
-
-				return _interimStorageDirectory;
-			}	
 		}
 
 		#endregion

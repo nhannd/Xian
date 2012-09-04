@@ -12,7 +12,6 @@
 using System.Collections.Generic;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {

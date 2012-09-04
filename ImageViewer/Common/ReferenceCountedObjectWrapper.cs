@@ -14,8 +14,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Common
 {
-	//TODO: this could be exposed in Common later, but for now we'll just keep it here.
-
 	public class ReferenceCountedObjectWrapper
 	{
 		private readonly object _item;

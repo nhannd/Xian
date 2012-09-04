@@ -13,19 +13,20 @@ using System;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
 	/// <summary>
-	/// <see cref="ServerCommand"/> for applying rules to a study after it has been restored.
+	/// <see cref="CommandBase"/> for applying rules to a study after it has been restored.
 	/// </summary>
-	public class ApplyRulesCommand : ServerCommand
+	public class ApplyRulesCommand : CommandBase
 	{
 		private readonly string _directory;
 		private readonly string _studyInstanceUid;
@@ -48,7 +49,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// for the rules to the currently executing <see cref="ServerCommandProcessor"/>.  They will be
 		/// executed after all other rules have been executed.
 		/// </remarks>
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		protected override void OnExecute(CommandProcessor theProcessor)
 		{
 			string studyXmlFile = Path.Combine(_directory, String.Format("{0}.xml", _studyInstanceUid));
 			StudyXml theXml = new StudyXml(_studyInstanceUid);

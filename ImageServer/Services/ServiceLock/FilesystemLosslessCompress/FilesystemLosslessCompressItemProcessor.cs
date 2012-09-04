@@ -15,7 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 		/// <param name="type">The type of compress candidate (lossy or lossless)</param>
 		private void ProcessCompressCandidates(IEnumerable<FilesystemQueue> candidateList, FilesystemQueueTypeEnum type)
 		{
-			using (ExecutionContext context = new ExecutionContext())
+			using (ServerExecutionContext context = new ServerExecutionContext())
 			{
 				DateTime scheduledTime = Platform.Time.AddSeconds(10);
 

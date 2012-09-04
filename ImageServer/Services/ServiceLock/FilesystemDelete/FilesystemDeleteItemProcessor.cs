@@ -17,7 +17,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -597,7 +597,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         /// <returns>The number of WorkQueue entries pending.</returns>
         private int CheckWorkQueueCount(Model.ServiceLock item)
         {
-			using (ExecutionContext context = new ExecutionContext())
+			using (ServerExecutionContext context = new ServerExecutionContext())
 			{
 				IWorkQueueEntityBroker select = context.ReadContext.GetBroker<IWorkQueueEntityBroker>();
 

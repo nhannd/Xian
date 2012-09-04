@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,10 +12,11 @@
     <AssemblyName>ClearCanvas.ImageViewer.Tools.Standard.View.WinForms</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -29,7 +31,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,6 +42,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>1591, 0419, 1574, 1587</NoWarn>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -48,6 +51,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotNetMagic2005, Version=5.2.2.0, Culture=neutral, PublicKeyToken=6cf6edec59e036ec, processorArchitecture=MSIL">
@@ -65,13 +69,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CineApplicationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="CineApplicationComponentControl.Designer.cs">
       <DependentUpon>CineApplicationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CineApplicationComponentView.cs" />
     <Compile Include="ImagePropertiesApplicationComponentControl.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ImagePropertiesApplicationComponentControl.Designer.cs">
       <DependentUpon>ImagePropertiesApplicationComponentControl.cs</DependentUpon>
@@ -85,12 +90,14 @@
       <DependentUpon>MagnificationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="PresetVoiLutOperationComponentContainerControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PresetVoiLutOperationComponentContainerControl.Designer.cs">
       <DependentUpon>PresetVoiLutOperationComponentContainerControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PresetVoiLutOperationComponentContainerView.cs" />
     <Compile Include="LinearPresetVoiLutOperationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="LinearPresetVoiLutOperationComponentControl.Designer.cs">
       <DependentUpon>LinearPresetVoiLutOperationComponentControl.cs</DependentUpon>
@@ -98,6 +105,7 @@
     <Compile Include="LinearPresetVoiLutOperationComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PresetVoiLutConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PresetVoiLutConfigurationComponentControl.Designer.cs">
       <DependentUpon>PresetVoiLutConfigurationComponentControl.cs</DependentUpon>
@@ -202,7 +210,7 @@
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

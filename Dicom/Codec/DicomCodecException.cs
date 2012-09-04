@@ -16,8 +16,12 @@ namespace ClearCanvas.Dicom.Codec
     /// <summary>
     /// A codec specific exception.
     /// </summary>
+    [Serializable]
     public class DicomCodecException : DicomException
     {
+        public DicomCodecException()
+        {
+        }
         public DicomCodecException(string desc, Exception e) : base(desc, e)
         {
         }

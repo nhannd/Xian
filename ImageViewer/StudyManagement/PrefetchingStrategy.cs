@@ -17,6 +17,7 @@ using ClearCanvas.ImageViewer;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+    // TODO (CR Mar 2012): Move this and associated classes to their own namespace.
 	/// <summary>
 	/// Abstract base class for <see cref="IPrefetchingStrategy"/>.
 	/// </summary>

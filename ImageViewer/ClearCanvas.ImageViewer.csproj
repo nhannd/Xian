@@ -24,7 +24,7 @@
     <UpgradeBackupLocation />
     <OldToolsVersion>4.0</OldToolsVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -97,10 +97,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ReferencedAssemblies\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="System">
-      <Name>System</Name>
-      <HintPath>C:\WINDOWS\assembly\GAC_MSIL\System\2.0.0.0__b77a5c561934e089\System.dll</HintPath>
-    </Reference>
+    <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -111,11 +108,18 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="StudyManagement\Icons\DeleteToolSmall.png" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionPlaceholder.cs" />
     <Compile Include="Annotations\AnnotationBoxList.cs" />
@@ -165,23 +169,6 @@
     <Compile Include="InputManagement\Tests\ViewerShortcutManagerTests.cs" />
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="AuthorityTokens.cs" />
-    <Compile Include="Common\BufferCache.cs" />
-    <Compile Include="Common\Cache.cs" />
-    <Compile Include="Common\DefaultMemoryManagementStrategy.cs" />
-    <Compile Include="Common\Diagnostics.cs" />
-    <Compile Include="Common\ExtensionData.cs" />
-    <Compile Include="Common\LargeObjectContainer.cs" />
-    <Compile Include="Common\LargeObjectContainerCache.cs" />
-    <Compile Include="Common\MemoryCollector.cs" />
-    <Compile Include="Common\MemoryManagementSettings.cs" />
-    <Compile Include="Common\MemoryManagementSettings.Designer.cs">
-      <DependentUpon>MemoryManagementSettings.settings</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <Compile Include="Common\MemoryManagementStrategy.cs" />
-    <Compile Include="Common\MemoryManager.cs" />
-    <Compile Include="Common\PermissionsHelper.cs" />
     <Compile Include="Comparers\ReverseComparer.cs" />
     <Compile Include="Graphics\ColorBarGraphic.cs" />
     <Compile Include="Graphics\GraphicFocusChangedEventArgs.cs" />
@@ -219,24 +206,52 @@
     <Compile Include="Layout\IHpSerializableElement.cs" />
     <Compile Include="Layout\RectangularGrid.cs" />
     <Compile Include="Layout\Tests\HpApplicabilityResultTests.cs" />
+    <Compile Include="PermissionsHelper.cs" />
     <Compile Include="PresentationStates\Dicom\DicomOverlayDeserializationException.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\GeneratedOverlayTestImages.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\OverlayPlanePresentationTests.cs" />
     <Compile Include="PresentationStates\GeometricShutterCache.cs" />
+    <Compile Include="Services\AuthorityTokens.cs" />
+    <Compile Include="Services\LocalServiceProcess.cs" />
+    <Compile Include="Services\ServiceControlSettings.cs" />
+    <Compile Include="Services\ServiceControlSettings.Designer.cs">
+      <DependentUpon>ServiceControlSettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Services\ServiceControlTool.cs" />
+    <Compile Include="Services\SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="StudyManagement\ActivityMonitorFailureWatcher.cs" />
+    <Compile Include="StudyManagement\ActivityMonitorProgressBar.cs" />
+    <Compile Include="StudyManagement\ActivityMonitorQuickLink.cs" />
+    <Compile Include="StudyManagement\LocalServerWatcher.cs" />
+    <Compile Include="StudyManagement\ReindexTool.cs" />
     <Compile Include="Rendering\RenderingException.cs" />
-    <Compile Include="Common\BlockingCollection.cs" />
-    <Compile Include="Common\BlockingThreadPool.cs" />
-    <Compile Include="Common\IBlockingEnumerator.cs" />
+    <Compile Include="StudyManagement\ActivityMonitorComponent.cs" />
+    <Compile Include="StudyManagement\ActivityMonitorTool.cs" />
+    <Compile Include="StudyManagement\ActivityMonitorManager.cs" />
     <Compile Include="StudyManagement\CorePrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\ImageBoxFrameSelectionStrategy.cs" />
     <Compile Include="StudyManagement\PatientOrientationHelper.cs" />
+    <Compile Include="StudyManagement\ProgressBarIconSet.cs" />
     <Compile Include="StudyManagement\RescaleUnits.cs" />
     <Compile Include="StudyManagement\SopInstanceFactory.cs" />
+    <Compile Include="StudyManagement\SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
     <Compile Include="StudyManagement\StudyExtensions.cs" />
+    <Compile Include="StudyManagement\Tests\ActivityMonitorComponentTests.cs" />
     <Compile Include="StudyManagement\Tests\NormalizedPixelSpacingTests.cs" />
     <Compile Include="StudyManagement\Tests\UnitTestStudyLoader.cs" />
     <Compile Include="StudyManagement\ViewerFrameEnumerator.cs" />
     <Compile Include="StudyManagement\WeightedWindowPrefetchingStrategy.cs" />
+    <Compile Include="Tests\ImageSetGroupsTests.cs" />
     <Compile Include="Tests\ImageDiff.cs" />
     <Compile Include="Tests\MockScreenInfoProvider.cs" />
     <Compile Include="StudyManagement\Tests\StudyBuilder.cs" />
@@ -255,7 +270,6 @@
     <Compile Include="RoiGraphics\Tests\RectangularRoiTests.cs" />
     <Compile Include="RoiGraphics\Tests\RoiStatisticsTests.cs" />
     <Compile Include="RoiGraphics\Tests\RoiTestBase.cs" />
-    <Compile Include="Common\RetryableCommandExecutor.cs" />
     <Compile Include="Comparers\DicomSopComparer.cs" />
     <Compile Include="Comparers\InstanceNumberComparer.cs" />
     <Compile Include="DicomPresentationImageSettings.cs" />
@@ -294,7 +308,6 @@
     <Compile Include="PresentationStates\Dicom\DicomGraphicsDeserializationException.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsFactory.cs" />
     <Compile Include="EditBox.cs" />
-    <Compile Include="Common\FilteredGroup.cs" />
     <Compile Include="Graphics\DecoratorCompositeGraphic.cs" />
     <Compile Include="Graphics\AddGraphicUndoableCommand.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneLayers.cs" />
@@ -529,7 +542,6 @@
     <Compile Include="Mathematics\Vector3D.cs" />
     <Compile Include="PriorStudyFinder.cs" />
     <Compile Include="PriorStudyLoader.cs" />
-    <Compile Include="Common\ReferenceCountedObjectWrapper.cs" />
     <Compile Include="PresentationImageChangedEventArgs.cs" />
     <Compile Include="PresentationImageFactory.cs" />
     <Compile Include="Rendering\BackBuffer.cs" />
@@ -649,7 +661,6 @@
     <Compile Include="Tests\BuildTreeTest.cs" />
     <Compile Include="Tests\AddImageTest.cs" />
     <Compile Include="Tests\DisplaySetSelectionTest.cs" />
-    <Compile Include="Common\Tests\FilteredGroupsTest.cs" />
     <Compile Include="Tests\MockPresentationImage.cs" />
     <Compile Include="Tests\SelectionTest.cs" />
     <Compile Include="Tests\ImageBoxAndDisplaySetInteractionTest.cs" />
@@ -770,6 +781,10 @@
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
+    <ProjectReference Include="Common\ClearCanvas.ImageViewer.Common.csproj">
+      <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
+      <Name>ClearCanvas.ImageViewer.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="BaseTools\MouseToolSettings.settings">
@@ -813,10 +828,6 @@
     <None Include="ClassDiagrams\StudyFindersLoaders.cd" />
     <None Include="ClassDiagrams\VectorGraphics.cd" />
     <None Include="ClassDiagrams\ViewerUndoSupport.cd" />
-    <None Include="Common\MemoryManagementSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>MemoryManagementSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="DicomPresentationImageSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DicomPresentationImageSettings.Designer.cs</LastGenOutput>
@@ -828,6 +839,10 @@
     <None Include="RoiGraphics\RoiSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>RoiSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Services\ServiceControlSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ServiceControlSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="StandardModalitySettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -841,10 +856,19 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Services\SR.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StudyManagement\SR.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -853,8 +877,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Annotations\AnnotationLayoutStoreDefaults.xml" />
     <EmbeddedResource Include="Annotations\Dicom\DicomFilteredAnnotationLayoutStoreDefaults.xml" />
-  </ItemGroup>
-  <ItemGroup>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -907,6 +929,48 @@
     <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicMarqueeMask.png" />
     <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicScannerMask.png" />
     <EmbeddedResource Include="InteractiveGraphics\Resources\ProgressBarGraphicTray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RefreshMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RefreshSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\StartServiceToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\StartServiceToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\StartServiceToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\StopServiceToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\StopServiceToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\StopServiceToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\RestartServiceToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\RestartServiceToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\Icons\RestartServiceToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="StudyManagement\Icons\RestartToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="StudyManagement\Icons\CancelToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="StudyManagement\Icons\StatToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />

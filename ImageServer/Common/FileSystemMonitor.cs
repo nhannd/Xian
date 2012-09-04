@@ -17,7 +17,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -387,7 +387,7 @@ namespace ClearCanvas.ImageServer.Common
 		public void GetReadableStudyStorageLocation(ServerEntityKey partitionKey, string studyInstanceUid, StudyRestore restore, StudyCache cache,
 					out StudyStorageLocation location)
 		{
-			using (ExecutionContext context = new ExecutionContext())
+			using (ServerExecutionContext context = new ServerExecutionContext())
 			{
 				// Get the cached value, if it exists, otherwise fall down and recheck
 				// and handle any nearline issues below
@@ -445,7 +445,7 @@ namespace ClearCanvas.ImageServer.Common
 		/// <returns></returns>
 		public bool GetReadableStudyStorageLocation(ServerEntityKey studyStorageKey, out StudyStorageLocation location)
 		{
-			using (ExecutionContext context = new ExecutionContext())
+			using (ServerExecutionContext context = new ServerExecutionContext())
 			{
 				IQueryStudyStorageLocation procedure = context.ReadContext.GetBroker<IQueryStudyStorageLocation>();
 				StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
@@ -479,7 +479,7 @@ namespace ClearCanvas.ImageServer.Common
 		/// <returns></returns>
 		public void GetWritableStudyStorageLocation(ServerEntityKey partitionKey, string studyInstanceUid, StudyRestore restore, StudyCache cache, out StudyStorageLocation location)
 		{
-			using (ExecutionContext context = new ExecutionContext())
+			using (ServerExecutionContext context = new ServerExecutionContext())
 			{
 				string reason;
 
@@ -537,7 +537,7 @@ namespace ClearCanvas.ImageServer.Common
 		{
             // NOTE: THIS METHOD SHOULD NOT LOAD THE RECORD FROM THE CACHE
 
-			using (ExecutionContext context = new ExecutionContext())
+			using (ServerExecutionContext context = new ServerExecutionContext())
 			{
 				IQueryStudyStorageLocation procedure = context.ReadContext.GetBroker<IQueryStudyStorageLocation>();
 				StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
@@ -636,7 +636,7 @@ namespace ClearCanvas.ImageServer.Common
 		/// <returns>true on a found writeable path, false on failure or no writeable path</returns>
 		public bool GetWriteableIncomingFolder(ServerPartition partition, out string folder)
 		{
-			using (ExecutionContext context = new ExecutionContext())
+			using (ServerExecutionContext context = new ServerExecutionContext())
 			{
 				IServiceLockEntityBroker broker = context.ReadContext.GetBroker<IServiceLockEntityBroker>();
 				ServiceLockSelectCriteria criteria = new ServiceLockSelectCriteria();

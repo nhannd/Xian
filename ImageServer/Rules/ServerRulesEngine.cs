@@ -16,6 +16,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Utilities.Rules;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -43,18 +44,13 @@ namespace ClearCanvas.ImageServer.Rules
     ///   <action>
     ///     <auto-route device="CLEARCANVAS"/>
     ///   </action>
-    /// </rule
+    /// </rule>
     /// </code>
     /// </example>
-    public class ServerRulesEngine
+    public class ServerRulesEngine : RulesEngine<ServerActionContext,ServerRuleTypeEnum>
     {
         private readonly ServerRuleApplyTimeEnum _applyTime;
         private readonly ServerEntityKey _serverPartitionKey;
-        private readonly RuleEngineStatistics _stats;
-		private readonly List<ServerRuleTypeEnum> _omitList = new List<ServerRuleTypeEnum>();
-		private readonly List<ServerRuleTypeEnum> _includeList = new List<ServerRuleTypeEnum>();
-		private readonly Dictionary<ServerRuleTypeEnum, RuleTypeCollection> _typeList =
-            new Dictionary<ServerRuleTypeEnum, RuleTypeCollection>();
 
         #region Constructors
 
@@ -71,7 +67,7 @@ namespace ClearCanvas.ImageServer.Rules
         {
             _applyTime = applyTime;
             _serverPartitionKey = serverPartitionKey;
-            _stats = new RuleEngineStatistics(applyTime.Lookup, applyTime.LongDescription);
+            Statistics = new RulesEngineStatistics(applyTime.Lookup, applyTime.LongDescription);
         }
 
 		#endregion
@@ -86,56 +82,17 @@ namespace ClearCanvas.ImageServer.Rules
             get { return _applyTime; }
         }
 
-        /// <summary>
-        /// Gets the <see cref="RuleEngineStatistics"/> for the rules engine.
-        /// </summary>
-        public RuleEngineStatistics Statistics
-        {
-            get { return _stats; }
-        }
-
         #endregion
 
         #region Public Methods
 
-		/// <summary>
-		/// Add a specific <see cref="ServerRuleTypeEnum"/> to be omitted from the rules engine.
-		/// </summary>
-		/// <remarks>
-		/// This method can be called multiple times, however, the <see cref="AddIncludeType"/> method
-		/// cannot be called if this method has already been called.  Note that this method must be 
-		/// called before <see cref="Load"/> to have an affect.
-		/// </remarks>
-		/// <param name="type">The type to omit</param>
-		public void AddOmittedType(ServerRuleTypeEnum type)
-		{
-			if (_includeList.Count > 0)
-				throw new ApplicationException("Include list already has values, cannot add ommitted type.");
-			_omitList.Add(type);
-		}
-
-		/// <summary>
-		/// Limit the rules engine to only include specific <see cref="ServerRuleTypeEnum"/> types.
-		/// </summary>
-		/// <remarks>
-		/// This methad can be called multiple times to include multiple types, however, the
-		/// <see cref="AddOmittedType"/> method cannot be called if this method has already been 
-		/// called.  Note that this method must be called before <see cref="Load"/> to have an affect.
-		/// </remarks>
-		/// <param name="type">The type to incude.</param>
-		public void AddIncludeType(ServerRuleTypeEnum type)
-		{
-			if (_omitList.Count > 0)
-				throw new ApplicationException("Omitted list already has values, cannot add included type.");
-			_includeList.Add(type);
-		}
-
+	
         /// <summary>
         /// Load the rules engine from the Persistent Store and compile the conditions and actions.
         /// </summary>
         public void Load()
         {
-            _stats.LoadTime.Start();
+            Statistics.LoadTime.Start();
 
             // Clearout the current type list.
             _typeList.Clear();
@@ -166,7 +123,7 @@ namespace ClearCanvas.ImageServer.Rules
                 {
                     try
                     {
-                        Rule theRule = new Rule();
+                        Rule<ServerActionContext, ServerRuleTypeEnum> theRule = new Rule<ServerActionContext, ServerRuleTypeEnum>();
                         theRule.Name = serverRule.RuleName;
                     	theRule.IsDefault = serverRule.DefaultRule;
                     	theRule.IsExempt = serverRule.ExemptRule;
@@ -179,11 +136,11 @@ namespace ClearCanvas.ImageServer.Rules
 
 						theRule.Compile(ruleNode, serverRule.ServerRuleTypeEnum, specCompiler, actionCompiler);
 
-                        RuleTypeCollection typeCollection;
+                        RuleTypeCollection<ServerActionContext, ServerRuleTypeEnum> typeCollection;
 
                         if (!_typeList.ContainsKey(serverRule.ServerRuleTypeEnum))
                         {
-                            typeCollection = new RuleTypeCollection(serverRule.ServerRuleTypeEnum);
+                            typeCollection = new RuleTypeCollection<ServerActionContext, ServerRuleTypeEnum>(serverRule.ServerRuleTypeEnum);
                             _typeList.Add(serverRule.ServerRuleTypeEnum, typeCollection);
                         }
                         else
@@ -202,41 +159,9 @@ namespace ClearCanvas.ImageServer.Rules
                 }
             }
 
-            _stats.LoadTime.End();
+            Statistics.LoadTime.End();
         }
 
-        /// <summary>
-        /// Execute the rules against the context for the rules.
-        /// </summary>
-        /// <param name="context">A class containing the context for applying the rules.</param>
-        public void Execute(ServerActionContext context)
-        {
-            _stats.ExecutionTime.Start();
-
-            foreach (RuleTypeCollection typeCollection in _typeList.Values)
-            {
-                typeCollection.Execute(context, false);
-            }
-
-            _stats.ExecutionTime.End();
-        }
-
-		/// <summary>
-		/// Execute the rules against the context for the rules.
-		/// </summary>
-		/// <param name="context">A class containing the context for applying the rules.</param>
-		/// <param name="stopOnFirst">Stop on first valid rule of type.</param>
-		public void Execute(ServerActionContext context, bool stopOnFirst)
-		{
-			_stats.ExecutionTime.Start();
-
-			foreach (RuleTypeCollection typeCollection in _typeList.Values)
-			{
-				typeCollection.Execute(context, stopOnFirst);
-			}
-
-			_stats.ExecutionTime.End();
-		}
         #endregion
     }
 }

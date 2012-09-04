@@ -11,8 +11,9 @@
 
 using System;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -32,7 +33,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
         #region Constructors
 
         public UpdateInstanceCountCommand(StudyStorageLocation studyLocation, DicomFile file)
-            :base("Update Study Count", true)
+            :base("Update Study Count")
         {
             _studyLocation = studyLocation;
             _file = file;
@@ -42,13 +43,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
         #region Overridden Protected Methods
 
-        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+        protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
         {
             String seriesUid = _file.DataSet[DicomTags.SeriesInstanceUid].ToString();
             String instanceUid = _file.DataSet[DicomTags.SopInstanceUid].ToString();
             
-            IDeleteInstance deleteInstanceBroker = updateContext.GetBroker<IDeleteInstance>();
-            DeleteInstanceParameters parameters = new DeleteInstanceParameters
+            var deleteInstanceBroker = updateContext.GetBroker<IDeleteInstance>();
+            var parameters = new DeleteInstanceParameters
                                                       {
                                                           StudyStorageKey = _studyLocation.GetKey(),
                                                           SeriesInstanceUid = seriesUid,

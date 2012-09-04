@@ -652,7 +652,7 @@ namespace ClearCanvas.Common.log4net
                         // The only exception is if we are not allowed to roll the existing file away.
                         if (m_maxSizeRollBackups != 0 && FileExists(fileName))
                         {
-							LogLog.Error("RollingFileAppender: INTERNAL ERROR. Append is False but OutputFile ["+fileName+"] already exists.");
+                            LogLog.Error(typeof(RollingFileAppender), "RollingFileAppender: INTERNAL ERROR. Append is False but OutputFile [" + fileName + "] already exists.");
                         }
                     }
                 }
@@ -725,7 +725,7 @@ namespace ClearCanvas.Common.log4net
             ArrayList arrayFiles = GetExistingFiles(fullPath);
             InitializeRollBackups(fileName, arrayFiles);
 
-            LogLog.Debug("RollingFileAppender: curSizeRollBackups starts at [" + m_curSizeRollBackups + "]");
+            LogLog.Debug(typeof(RollingFileAppender), "RollingFileAppender: curSizeRollBackups starts at [" + m_curSizeRollBackups + "]");
         }
 
         /// <summary>
@@ -782,7 +782,7 @@ namespace ClearCanvas.Common.log4net
                     }
                 }
             }
-            LogLog.Debug("RollingFileAppender: Searched for existing files in [" + directory + "]");
+            LogLog.Debug(typeof(RollingFileAppender), "RollingFileAppender: Searched for existing files in [" + directory + "]");
             return alFiles;
         }
 
@@ -807,14 +807,14 @@ namespace ClearCanvas.Common.log4net
                         last = System.IO.File.GetLastWriteTime(m_baseFileName);
                     }
 					}
-					LogLog.Debug("["+last.ToString(m_datePattern,System.Globalization.DateTimeFormatInfo.InvariantInfo)+"] vs. ["+m_now.ToString(m_datePattern,System.Globalization.DateTimeFormatInfo.InvariantInfo)+"]");
+                    LogLog.Debug(typeof(RollingFileAppender), "[" + last.ToString(m_datePattern, System.Globalization.DateTimeFormatInfo.InvariantInfo) + "] vs. [" + m_now.ToString(m_datePattern, System.Globalization.DateTimeFormatInfo.InvariantInfo) + "]");
 
 					if (!(last.ToString(m_datePattern,System.Globalization.DateTimeFormatInfo.InvariantInfo).Equals(m_now.ToString(m_datePattern, System.Globalization.DateTimeFormatInfo.InvariantInfo)))) 
                     {
 						m_scheduledFilename = m_baseFileName + last.ToString(m_datePattern, System.Globalization.DateTimeFormatInfo.InvariantInfo);
-						LogLog.Debug("Initial roll over to ["+m_scheduledFilename+"]");
+                        LogLog.Debug(typeof(RollingFileAppender), "Initial roll over to [" + m_scheduledFilename + "]");
                         RollOverTime(false);
-						LogLog.Debug("curSizeRollBackups after rollOver at ["+m_curSizeRollBackups+"]");
+                        LogLog.Debug(typeof(RollingFileAppender), "curSizeRollBackups after rollOver at [" + m_curSizeRollBackups + "]");
                     }
                 }
             }
@@ -853,11 +853,11 @@ namespace ClearCanvas.Common.log4net
                 {
                     if (m_maxSizeRollBackups == 0)
                     {
-                        LogLog.Debug("RollingFileAppender: Output file [" + fileName + "] already exists. MaxSizeRollBackups is 0; cannot roll. Overwriting existing file.");
+                        LogLog.Debug(typeof(RollingFileAppender), "RollingFileAppender: Output file [" + fileName + "] already exists. MaxSizeRollBackups is 0; cannot roll. Overwriting existing file.");
                     }
                     else
                     {
-                        LogLog.Debug("RollingFileAppender: Output file [" + fileName + "] already exists. Not appending to file. Rolling existing file out of the way.");
+                        LogLog.Debug(typeof(RollingFileAppender), "RollingFileAppender: Output file [" + fileName + "] already exists. Not appending to file. Rolling existing file out of the way.");
 
                         RollOverRenameFiles(fileName);
                     }
@@ -904,7 +904,7 @@ namespace ClearCanvas.Common.log4net
             {
 				if (! curFileName.StartsWith(CombinePath(baseFile, m_dateTime.Now.ToString(m_datePattern, System.Globalization.DateTimeFormatInfo.InvariantInfo))))
                 {
-					LogLog.Debug("Ignoring file ["+curFileName+"] because it is from a different date period");
+                    LogLog.Debug(typeof(RollingFileAppender), "Ignoring file [" + curFileName + "] because it is from a different date period");
                     return;
                 }
             }
@@ -946,7 +946,7 @@ namespace ClearCanvas.Common.log4net
                             }
                         }
                     }
-                    LogLog.Debug("RollingFileAppender: File name [" + curFileName + "] moves current count to [" + m_curSizeRollBackups + "]");
+                    LogLog.Debug(typeof(RollingFileAppender), "RollingFileAppender: File name [" + curFileName + "] moves current count to [" + m_curSizeRollBackups + "]");
                 }
 
             }
@@ -954,7 +954,7 @@ namespace ClearCanvas.Common.log4net
             {
                 //this happens when file.log -> file.log.yyyy-mm-dd which is normal
                 //when staticLogFileName == false
-                LogLog.Debug("Encountered a backup file not ending in .x [" + curFileName + "]");
+                LogLog.Debug(typeof(RollingFileAppender), "Encountered a backup file not ending in .x [" + curFileName + "]");
             }
         }
 
@@ -1036,7 +1036,7 @@ namespace ClearCanvas.Common.log4net
                 // Get string representation of next pattern
                 string r1 = NextCheckDate(s_date1970, (RollPoint)i).ToString(datePattern, DateTimeFormatInfo.InvariantInfo);
 
-                LogLog.Debug("RollingFileAppender: Type = [" + i + "], r0 = [" + r0 + "], r1 = [" + r1 + "]");
+                LogLog.Debug(typeof(RollingFileAppender), "RollingFileAppender: Type = [" + i + "], r0 = [" + r0 + "], r1 = [" + r1 + "]");
 
                 // Check if the string representations are different
 				if (r0 != null && r1 != null && !r0.Equals(r1)) 
@@ -1237,7 +1237,7 @@ namespace ClearCanvas.Common.log4net
                 // We may not have permission to move the file, or the file may be locked
                 try
                 {
-                    LogLog.Debug("RollingFileAppender: Moving [" + fromFile + "] -> [" + toFile + "]");
+                    LogLog.Debug(typeof(RollingFileAppender), "RollingFileAppender: Moving [" + fromFile + "] -> [" + toFile + "]");
                     using (SecurityContext.Impersonate(this))
                     {
                         System.IO.File.Move(fromFile, toFile);
@@ -1250,7 +1250,7 @@ namespace ClearCanvas.Common.log4net
             }
             else
             {
-                LogLog.Warn("RollingFileAppender: Cannot RollFile [" + fromFile + "] -> [" + toFile + "]. Source does not exist");
+                LogLog.Warn(typeof(RollingFileAppender), "RollingFileAppender: Cannot RollFile [" + fromFile + "] -> [" + toFile + "]. Source does not exist");
             }
         }
 
@@ -1305,7 +1305,7 @@ namespace ClearCanvas.Common.log4net
                 }
                 catch (Exception moveEx)
                 {
-                    LogLog.Debug("RollingFileAppender: Exception while moving file to be deleted [" + fileName + "] -> [" + tempFileName + "]", moveEx);
+                    LogLog.Debug(typeof(RollingFileAppender), "RollingFileAppender: Exception while moving file to be deleted [" + fileName + "] -> [" + tempFileName + "]", moveEx);
                 }
 
                 // Try to delete the file (either the original or the moved file)
@@ -1315,7 +1315,7 @@ namespace ClearCanvas.Common.log4net
                     {
                         System.IO.File.Delete(fileToDelete);
                     }
-                    LogLog.Debug("RollingFileAppender: Deleted file [" + fileName + "]");
+                    LogLog.Debug(typeof(RollingFileAppender), "RollingFileAppender: Deleted file [" + fileName + "]");
                 }
                 catch (Exception deleteEx)
                 {
@@ -1328,7 +1328,7 @@ namespace ClearCanvas.Common.log4net
                     {
                         // Moved the file, but the delete failed. File is probably locked.
                         // The file should automatically be deleted when the lock is released.
-                        LogLog.Debug("RollingFileAppender: Exception while deleting temp file [" + fileToDelete + "]", deleteEx);
+                        LogLog.Debug(typeof(RollingFileAppender), "RollingFileAppender: Exception while deleting temp file [" + fileToDelete + "]", deleteEx);
                     }
                 }
             }
@@ -1364,10 +1364,10 @@ namespace ClearCanvas.Common.log4net
         {
             CloseFile(); // keep windows happy.
 
-            LogLog.Debug("RollingFileAppender: rolling over count [" + ((CountingQuietTextWriter)QuietWriter).Count + "]");
-            LogLog.Debug("RollingFileAppender: maxSizeRollBackups [" + m_maxSizeRollBackups + "]");
-            LogLog.Debug("RollingFileAppender: curSizeRollBackups [" + m_curSizeRollBackups + "]");
-            LogLog.Debug("RollingFileAppender: countDirection [" + m_countDirection + "]");
+            LogLog.Debug(typeof(RollingFileAppender), "RollingFileAppender: rolling over count [" + ((CountingQuietTextWriter)QuietWriter).Count + "]");
+            LogLog.Debug(typeof(RollingFileAppender), "RollingFileAppender: maxSizeRollBackups [" + m_maxSizeRollBackups + "]");
+            LogLog.Debug(typeof(RollingFileAppender), "RollingFileAppender: curSizeRollBackups [" + m_curSizeRollBackups + "]");
+            LogLog.Debug(typeof(RollingFileAppender), "RollingFileAppender: countDirection [" + m_countDirection + "]");
 
             RollOverRenameFiles(File);
 
