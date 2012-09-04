@@ -232,13 +232,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             if (FileSystem == null)
             {
                 // create a filesystem 
-                FileSystem = new Filesystem();
-                FileSystem.LowWatermark = 80.00M;
-                FileSystem.HighWatermark = 90.00M;
+                FileSystem = new Filesystem
+                    {
+                        LowWatermark = 80.00M, 
+                        HighWatermark = 90.00M
+                    };
             }
 
-            FileSystem.Description = DescriptionTextBox.Text;
-            FileSystem.FilesystemPath = PathTextBox.Text;
+            FileSystem.Description = DescriptionTextBox.Text.Trim();
+            FileSystem.FilesystemPath = PathTextBox.Text.Trim();
             FileSystem.ReadOnly = ReadCheckBox.Checked && WriteCheckBox.Checked == false;
             FileSystem.WriteOnly = WriteCheckBox.Checked && ReadCheckBox.Checked == false;
             FileSystem.Enabled = ReadCheckBox.Checked || WriteCheckBox.Checked;
@@ -253,8 +255,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
 
             FileSystem.FilesystemTierEnum = FilesystemTiers[TiersDropDownList.SelectedIndex];
         }
-
-       
 
         #endregion Private methods
 

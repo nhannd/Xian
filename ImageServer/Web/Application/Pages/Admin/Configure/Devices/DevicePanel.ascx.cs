@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
+using ClearCanvas.ImageServer.Core.Query;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using Resources;
@@ -187,26 +188,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
             if (!String.IsNullOrEmpty(AETitleFilter.Text))
             {
-                string key = SearchHelper.LeadingAndTrailingWildCard(AETitleFilter.Text);
-                key = key.Replace("*", "%");
-                key = key.Replace("?", "_");
-                criteria.AeTitle.Like(key);
+                QueryHelper.SetGuiStringCondition(criteria.AeTitle,
+                                                  SearchHelper.LeadingAndTrailingWildCard(AETitleFilter.Text));
             }
 
             if (!String.IsNullOrEmpty(DescriptionFilter.Text))
             {
-                string key = SearchHelper.LeadingAndTrailingWildCard(DescriptionFilter.Text);
-                key = key.Replace("*", "%");
-                key = key.Replace("?", "_");
-                criteria.Description.Like(key);
+                QueryHelper.SetGuiStringCondition(criteria.Description,
+                                                  SearchHelper.LeadingAndTrailingWildCard(DescriptionFilter.Text));
             }
 
             if (!String.IsNullOrEmpty(IPAddressFilter.Text))
             {
-                string key = SearchHelper.TrailingWildCard(IPAddressFilter.Text);
-                key = key.Replace("*", "%");
-                key = key.Replace("?", "_");
-                criteria.IpAddress.Like(key);
+                QueryHelper.SetGuiStringCondition(criteria.IpAddress,
+                                                  SearchHelper.TrailingWildCard(IPAddressFilter.Text));
             }
 
             if (StatusFilter.SelectedIndex != 0)

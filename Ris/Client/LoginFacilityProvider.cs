@@ -22,33 +22,46 @@ namespace ClearCanvas.Ris.Client
 	[ExtensionOf(typeof (LoginFacilityProviderExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	internal sealed class LoginFacilityProvider : ILoginFacilityProvider
 	{
+		private readonly object _syncRoot = new object();
+		private IList<FacilityInfo> _listFacilities;
+
 		public IList<FacilityInfo> GetAvailableFacilities()
 		{
-			try
+			lock (_syncRoot)
 			{
-				IList<FacilityInfo> choices = null;
-				Platform.Log(LogLevel.Debug, "Contacting server to obtain facility choices for login dialog...");
-				Platform.GetService<ILoginService>(service => { choices = RetrieveFacilityChoices(service); });
-				Platform.Log(LogLevel.Debug, "Got facility choices for login dialog.");
-				return choices;
+				try
+				{
+					Platform.Log(LogLevel.Debug, "Contacting server to obtain facility choices for login dialog...");
+					Platform.GetService<ILoginService>(service => { _listFacilities = RetrieveFacilityChoices(service); });
+					Platform.Log(LogLevel.Debug, "Got facility choices for login dialog.");
+					return _listFacilities;
+				}
+				catch (Exception ex)
+				{
+					Desktop.Application.ShowMessageBox("Unable to connect to RIS server.  The workstation may be configured incorrectly, or the server may be unreachable.", MessageBoxActions.Ok);
+					Platform.Log(LogLevel.Error, ex);
+					return new FacilityInfo[0];
+				}
 			}
-			catch (Exception ex)
+		}
+
+		private FacilityInfo GetFacility(string code)
+		{
+			lock (_syncRoot)
 			{
-				Desktop.Application.ShowMessageBox("Unable to connect to RIS server.  The workstation may be configured incorrectly, or the server may be unreachable.", MessageBoxActions.Ok);
-				Platform.Log(LogLevel.Error, ex);
-				return new FacilityInfo[0];
+				return _listFacilities != null ? _listFacilities.FirstOrDefault(fs => fs.Code == code) : null;
 			}
 		}
 
 		private static IList<FacilityInfo> RetrieveFacilityChoices(ILoginService service)
 		{
 			var choices = service.GetWorkingFacilityChoices(new GetWorkingFacilityChoicesRequest()).FacilityChoices;
-			return choices != null ? choices.Select(fs => new FacilityInfo(fs.Code)).ToArray() : new FacilityInfo[0];
+			return choices != null ? choices.Select(fs => new FacilityInfo(fs.Code, fs.Name)).ToArray() : new FacilityInfo[0];
 		}
 
 		public FacilityInfo CurrentFacility
 		{
-			get { return LoginSession.Current != null ? new FacilityInfo(LoginSession.Current.WorkingFacility.Code) : null; }
+			get { return LoginSession.Current != null ? GetFacility(LoginSession.Current.WorkingFacility.Code) : null; }
 			set
 			{
 				if (LoginSession.Current != null) throw new InvalidOperationException("Current working facility cannot be changed while a user is logged in.");
