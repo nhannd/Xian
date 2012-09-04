@@ -96,6 +96,7 @@
     <Compile Include="DeadlockException.cs" />
     <Compile Include="DeadlockRetryAdvice.cs" />
     <Compile Include="DeadlockRetryManager.cs" />
+    <Compile Include="EntityChangeSetRecorderSettings.cs" />
     <Compile Include="LooseEnumPropertyChangeSetListener.cs" />
     <Compile Include="EqualityUtils.cs" />
     <Compile Include="ExtendedPropertiesSearchCriteria.cs" />
@@ -128,6 +129,11 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PrintSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="EntityChangeSetRecorderSettings.Designer.cs">
+      <DependentUpon>EntityChangeSetRecorderSettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ResponseCachingServerSideAdvice.cs" />
     <Compile Include="ResponseCachingAttribute.cs" />
@@ -286,6 +292,11 @@
     <None Include="Printing\PrintSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>PrintSettings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="EntityChangeSetRecorderSettings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>EntityChangeSetRecorderSettings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
