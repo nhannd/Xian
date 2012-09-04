@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Reject", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Reject", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "Icons.RejectProtocolSmall.png", "Icons.RejectProtocolMedium.png", "Icons.RejectProtocolLarge.png")]
+	[IconSet("apply", IconScheme.Colour, "Icons.RejectTranscriptionSmall.png", "Icons.RejectTranscriptionMedium.png", "Icons.RejectTranscriptionLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.Create)]
 	[ExtensionOf(typeof(TranscriptionWorkflowItemToolExtensionPoint))]

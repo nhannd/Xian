@@ -83,6 +83,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Submit for Review", "Apply")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
 	[IconSet("apply", IconScheme.Colour, "Icons.SubmitForReviewSmall.png", "Icons.SubmitForReviewMedium.png", "Icons.SubmitForReviewLarge.png")]
 	[ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Report.Create, Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview)]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
@@ -91,6 +92,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public CompleteInterpretationForVerificationTool()
 			: base("CompleteInterpretationForVerification")
 		{
+		}
+
+		public event EventHandler VisibleChanged;
+		public bool Visible
+		{
+			get { return new WorkflowConfigurationReader().EnableInterpretationReviewWorkflow; }
 		}
 
 		public override void Initialize()

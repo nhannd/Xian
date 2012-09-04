@@ -400,6 +400,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
+    <EmbeddedResource Include="Icons\RejectTranscriptionLarge.png" />
+    <EmbeddedResource Include="Icons\RejectTranscriptionMedium.png" />
+    <EmbeddedResource Include="Icons\RejectTranscriptionSmall.png" />
     <EmbeddedResource Include="Icons\CancelReportLarge.png" />
     <EmbeddedResource Include="Icons\CancelReportMedium.png" />
     <EmbeddedResource Include="Icons\CancelReportSmall.png" />

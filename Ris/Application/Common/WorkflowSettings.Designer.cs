@@ -65,7 +65,12 @@ namespace ClearCanvas.Ris.Application.Common {
             }
         }
         
+        /// <summary>
+        /// Specifies whether Visit workflow is enabled, and whether Visit-related data is visible in the application.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether Visit workflow is enabled, and whether Visit-related data is vi" +
+            "sible in the application.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool EnableVisitWorkflow {
