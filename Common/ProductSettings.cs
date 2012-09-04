@@ -425,7 +425,6 @@ namespace ClearCanvas.Common
 			return Concatenate(versionString.ToString(), includeVersionSuffix ? VersionSuffix : string.Empty, includeRelease ? Release : string.Empty);
 		}
         
-        // TODO CR Sept 2012: Not used?
 	    public static bool IsEvaluation
 	    {
             get
