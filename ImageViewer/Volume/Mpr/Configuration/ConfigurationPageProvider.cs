@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Configuration;
-using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Configuration
 {

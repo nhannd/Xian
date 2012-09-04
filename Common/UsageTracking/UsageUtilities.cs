@@ -165,7 +165,7 @@ namespace ClearCanvas.Common.UsageTracking
 			}
 			catch (Exception e)
 			{
-				// silient
+				// Fail silently
 #if	DEBUG
 				Platform.Log(LogLevel.Debug, e);
 #endif

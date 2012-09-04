@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 
@@ -217,9 +218,11 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <summary>
 		/// Cancels the operation.
 		/// </summary>
-		public void Cancel()
+		public virtual void Cancel()
 		{
-			if (LogInformation) Platform.Log(LogLevel.Info, "Canceling...");
+			if (LogInformation)
+			    Platform.Log(LogLevel.Info, "Canceling Scu connected from {0} to {1}:{2}:{3}...", ClientAETitle, RemoteAE,
+			                 RemoteHost, RemotePort);
 			Status = ScuOperationStatus.Canceled;
 			ProgressEvent.Set();
 		}

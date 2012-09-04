@@ -29,8 +29,7 @@
 
 #endregion
 
-
-
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 

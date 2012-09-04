@@ -13,12 +13,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Exceptions;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Rebuild;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -275,7 +275,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 		{
 			PersistentStoreRegistry.GetDefaultStore();
 
-			using (ExecutionContext context = new ExecutionContext())
+			using (ServerExecutionContext context = new ServerExecutionContext())
 			{
 				IServerPartitionEntityBroker broker = context.ReadContext.GetBroker<IServerPartitionEntityBroker>();
 				ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();

@@ -30,18 +30,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new ServerPartitionDataAccessSelectCriteria(this);
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartitionDataAccess", ColumnName="DataAccessGroupGUID")]
-        public ISearchCondition<ServerEntityKey> DataAccessGroupKey
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("DataAccessGroupKey"))
-              {
-                 SubCriteria["DataAccessGroupKey"] = new SearchCondition<ServerEntityKey>("DataAccessGroupKey");
-              }
-              return (ISearchCondition<ServerEntityKey>)SubCriteria["DataAccessGroupKey"];
-            } 
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartitionDataAccess", ColumnName="ServerPartitionGUID")]
         public ISearchCondition<ServerEntityKey> ServerPartitionKey
         {
@@ -52,6 +40,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["ServerPartitionKey"] = new SearchCondition<ServerEntityKey>("ServerPartitionKey");
               }
               return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerPartitionKey"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartitionDataAccess", ColumnName="DataAccessGroupGUID")]
+        public ISearchCondition<ServerEntityKey> DataAccessGroupKey
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("DataAccessGroupKey"))
+              {
+                 SubCriteria["DataAccessGroupKey"] = new SearchCondition<ServerEntityKey>("DataAccessGroupKey");
+              }
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["DataAccessGroupKey"];
             } 
         }
     }

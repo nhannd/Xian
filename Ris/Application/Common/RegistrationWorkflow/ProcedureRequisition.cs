@@ -11,6 +11,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
@@ -22,9 +23,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 		/// Constructor for use by service to return requisition back to client for editing.
 		/// </summary>
 		public ProcedureRequisition(
+			EntityRef procedureRef,
 			ProcedureTypeSummary procedureType,
 			string procedureNumber,
 			DateTime? scheduledTime,
+			int scheduledDuration,
+			ModalitySummary modality,
 			EnumValueInfo schedulingCode,
 			FacilitySummary performingFacility,
 			DepartmentSummary performingDepartment,
@@ -35,9 +39,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 			bool canModify,
 			bool cancelled)
 		{
+			this.ProcedureRef = procedureRef;
 			this.ProcedureType = procedureType;
 			this.ProcedureNumber = procedureNumber;
 			this.ScheduledTime = scheduledTime;
+			this.ScheduledDuration = scheduledDuration;
+			this.Modality = modality;
 			this.SchedulingCode = schedulingCode;
 			this.PerformingFacility = performingFacility;
 			this.PerformingDepartment = performingDepartment;
@@ -59,6 +66,11 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 			this.CanModify = true;  // can modify a new requisition
 		}
 
+		/// <summary>
+		/// Procedure reference.  Will be set by the server. Clients should not set or modify this field.
+		/// </summary>
+		[DataMember]
+		public EntityRef ProcedureRef;
 
 		/// <summary>
 		/// The procedure type. Required.
@@ -78,6 +90,19 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 		/// </summary>
 		[DataMember]
 		public DateTime? ScheduledTime;
+
+		/// <summary>
+		/// The duration of the block of time which the procedure is expected to take, in minutes.
+		/// </summary>
+		[DataMember]
+		public int ScheduledDuration;
+
+		/// <summary>
+		/// The modality on which the procedure is to be performed. Optional.
+		/// If not specified, the procedure will be scheduled for its default modality.
+		/// </summary>
+		[DataMember]
+		public ModalitySummary Modality;
 
 		/// <summary>
 		/// Indicates additional info about procedure scheduling via configurable codes.  Optional.

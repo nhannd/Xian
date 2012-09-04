@@ -16,7 +16,12 @@
 	Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard.AlertsGridView" %>
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
 	Width="100%">
-	<asp:TableRow VerticalAlign="top">
+     <asp:TableRow VerticalAlign="top">
+        <asp:TableCell VerticalAlign="top">
+            <ccAsp:GridPager ID="GridPagerTop" runat="server" />   
+        </asp:TableCell>
+    </asp:TableRow>
+    <asp:TableRow VerticalAlign="top">
 		<asp:TableCell VerticalAlign="top">
 			<asp:ObjectDataSource ID="AlertDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.AlertDataSource"
 				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.AlertSummary"
@@ -53,7 +58,7 @@
 						HeaderStyle-HorizontalAlign="Left" />
 				</Columns>
 				<EmptyDataTemplate>
-					<ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="<%$Resources: SR,NoAlertsFound %>" />
+					<ccAsp:EmptySearchResultsMessage runat="server" Message="<%$Resources: SR,NoAlertsFound %>" />
 				</EmptyDataTemplate>
 				<RowStyle CssClass="GlobalGridViewRow" />
 				<AlternatingRowStyle CssClass="GlobalGridViewRow" />

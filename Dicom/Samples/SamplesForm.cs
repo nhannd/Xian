@@ -40,8 +40,10 @@ namespace ClearCanvas.Dicom.Samples
         private readonly List<StorageInstance> _storageList = new List<StorageInstance>();
         private readonly Timer _timer;
         private readonly MemoryAppender _appender = new MemoryAppender();
+        private FindScuBase _findScu;
+        private MoveScuBase _moveScu;
+        private EditSop _editSop;
 
-        
         public SamplesForm()
         {
 			InitializeComponent();
@@ -58,6 +60,7 @@ namespace ClearCanvas.Dicom.Samples
 				_destinationSyntaxCombo.Items.Add(syntax);
 
         	ComboBoxQueryScuQueryTypeSelectedIndexChanged(null, null);
+            ComboBoxMoveScuQueryTypeSelectedIndexChanged(null, null);
 
             // Logging stuff
             Closing += SamplesFormClosing;
@@ -169,8 +172,17 @@ namespace ClearCanvas.Dicom.Samples
             else
             {
                 _buttonStorageScpStartStop.Text = "Stop";
+
                 StorageScp.StorageLocation = _textBoxStorageScpStorageLocation.Text;
                 StorageScp.Bitbucket = _checkBoxStorageScpBitbucket.Checked;
+                StorageScp.List = _checkBoxStorageScpList.Checked;
+
+                StorageScp.J2KLossless = _checkBoxStorageScpJ2KLossless.Checked;
+                StorageScp.J2KLossy = _checkBoxStorageScpJ2KLossy.Checked;
+                StorageScp.JpegLossless = _checkBoxStorageScpJpegLossless.Checked;
+                StorageScp.JpegLossy = _checkBoxStorageScpJpegLossy.Checked;
+                StorageScp.Rle = _checkBoxStorageScpRLE.Checked;
+
                 StorageScp.StartListening(_textBoxStorageScpAeTitle.Text,
                     int.Parse(_textBoxStorageScpPort.Text));
 
@@ -335,7 +347,7 @@ namespace ClearCanvas.Dicom.Samples
 
 			if (comboBoxQueryScuQueryType.SelectedIndex == 0)
 			{
-				Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "StudyRootStudy.xml");
+                Stream stream = GetType().Assembly.GetManifestResourceStream("ClearCanvas.Dicom.Samples.SampleXml.StudyRootStudy.xml");
 				if (stream != null)
 				{
 					doc.Load(stream);
@@ -348,7 +360,7 @@ namespace ClearCanvas.Dicom.Samples
 			}
 			else
 			{
-				var stream = GetType().Assembly.GetManifestResourceStream(GetType(), "PatientRootPatient.xml");
+                var stream = GetType().Assembly.GetManifestResourceStream("ClearCanvas.Dicom.Samples.SampleXml.PatientRootPatient.xml");
 				if (stream != null)
 				{
 					doc.Load(stream);
@@ -385,7 +397,16 @@ namespace ClearCanvas.Dicom.Samples
 
 		private void buttonQueryScuSearch_Click(object sender, EventArgs e)
 		{
-			var theDoc = new XmlDocument();
+            if (_findScu != null)
+            {
+                if (_findScu.Status == ScuOperationStatus.Running)
+                {
+                    return;
+                }
+                _findScu.Dispose();
+                _findScu = null;
+            }
+		    var theDoc = new XmlDocument();
 
 			try
 			{
@@ -405,37 +426,41 @@ namespace ClearCanvas.Dicom.Samples
 				IList<DicomAttributeCollection> resultsList;
 				if (comboBoxQueryScuQueryType.SelectedIndex == 0)
 				{
-				    var findScu = new StudyRootFindScu
+				    _findScu = new StudyRootFindScu
 				                      {
 				                          MaxResults = maxResults
 				                      };
-				    resultsList = findScu.Find(textBoxQueryScuLocalAe.Text,
+                    _findScu.BeginFind(textBoxQueryScuLocalAe.Text,
 								 textBoxQueryScuRemoteAe.Text,
 								 textBoxQueryScuRemoteHost.Text,
-								 int.Parse(textBoxQueryScuRemotePort.Text), queryMessage);
-                    if (findScu.Status != ScuOperationStatus.NotRunning)
-                        Platform.Log(LogLevel.Error, "Unexpected error from Find SCU: {0}",findScu.FailureDescription);
-					findScu.Dispose();
+								 int.Parse(textBoxQueryScuRemotePort.Text), queryMessage, delegate
+								                                                             {
+                                                                                                 foreach (DicomAttributeCollection msg in _findScu.Results)
+                                                                                                 {
+                                                                                                     Platform.Log(LogLevel.Info, msg.DumpString);
+                                                                                                 }
+								                                                             },this);
 				}
 				else
 				{
-				    var findScu = new PatientRootFindScu
+                    _findScu = new PatientRootFindScu
 				                      {
 				                          MaxResults = maxResults
 				                      };
-				    resultsList = findScu.Find(textBoxQueryScuLocalAe.Text,
+                    _findScu.BeginFind(textBoxQueryScuLocalAe.Text,
 								 textBoxQueryScuRemoteAe.Text,
 								 textBoxQueryScuRemoteHost.Text,
-								 int.Parse(textBoxQueryScuRemotePort.Text), queryMessage);
-                    if (findScu.Status != ScuOperationStatus.NotRunning)
-                        Platform.Log(LogLevel.Error, "Unexpected error from Find SCU: {0}", findScu.FailureDescription);
-                    findScu.Dispose();
+								 int.Parse(textBoxQueryScuRemotePort.Text), queryMessage, delegate
+								                                                             {
+                                                                                                 foreach (DicomAttributeCollection msg in _findScu.Results)
+                                                                                                 {
+                                                                                                     Platform.Log(LogLevel.Info, msg.DumpString);
+                                                                                                 }
+								                                                             },this);
+              
 				}
 
-				foreach (DicomAttributeCollection msg in resultsList)
-				{
-					Platform.Log(LogLevel.Info, msg.DumpString);
-				}
+			
 			}
 			catch (Exception x)
 			{
@@ -451,25 +476,25 @@ namespace ClearCanvas.Dicom.Samples
 			if (comboBoxQueryScuQueryType.SelectedIndex == 0)
 			{
 				if (comboBoxQueryScuQueryLevel.SelectedItem.Equals("STUDY"))
-					xmlFile = "StudyRootStudy.xml";
+                    xmlFile = "ClearCanvas.Dicom.Samples.SampleXml.StudyRootStudy.xml";
 				else if (comboBoxQueryScuQueryLevel.SelectedItem.Equals("SERIES"))
-					xmlFile = "StudyRootSeries.xml";
-				else 
-					xmlFile = "StudyRootImage.xml";
+                    xmlFile = "ClearCanvas.Dicom.Samples.SampleXml.StudyRootSeries.xml";
+				else
+                    xmlFile = "ClearCanvas.Dicom.Samples.SampleXml.StudyRootImage.xml";
 			}
 			else
 			{
 				if (comboBoxQueryScuQueryLevel.SelectedItem.Equals("PATIENT"))
-					xmlFile = "PatientRootPatient.xml";
+                    xmlFile = "ClearCanvas.Dicom.Samples.SampleXml.PatientRootPatient.xml";
 				else if (comboBoxQueryScuQueryLevel.SelectedItem.Equals("STUDY"))
-					xmlFile = "PatientRootStudy.xml";
+                    xmlFile = "ClearCanvas.Dicom.Samples.SampleXml.PatientRootStudy.xml";
 				else if (comboBoxQueryScuQueryLevel.SelectedItem.Equals("SERIES"))
-					xmlFile = "PatientRootSeries.xml";
-				else 
-					xmlFile = "PatientRootImage.xml";
+                    xmlFile = "ClearCanvas.Dicom.Samples.SampleXml.PatientRootSeries.xml";
+				else
+                    xmlFile = "ClearCanvas.Dicom.Samples.SampleXml.PatientRootImage.xml";
 			}
 
-			Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), xmlFile);
+			Stream stream = GetType().Assembly.GetManifestResourceStream(xmlFile);
 			if (stream != null)
 			{
 				doc.Load(stream);
@@ -525,5 +550,251 @@ namespace ClearCanvas.Dicom.Samples
 
 			_reader.Send(rootDirectory, _textBoxDicomdirRemoteAe.Text, _textBoxDicomdirRemoteHost.Text, int.Parse(_textBoxDicomdirRemotePort.Text));
 		}
+
+        private void buttonMoveScuMove_Click(object sender, EventArgs e)
+        {
+            if (_moveScu != null)
+            {
+                if (_moveScu.Status == ScuOperationStatus.Running)
+                {
+                    _moveScu.Cancel();
+                    return;
+                }
+                buttonMoveScuMove.Text = "Move";
+                _moveScu.Dispose();
+                _moveScu = null;
+            }
+
+            var theDoc = new XmlDocument();
+
+            buttonMoveScuMove.Text = "Cancel";
+
+            try
+            {
+                theDoc.LoadXml(textBoxMoveMessage.Text);
+                var instanceXml = new InstanceXml(theDoc.DocumentElement, null);
+                DicomAttributeCollection queryMessage = instanceXml.Collection;
+
+                if (queryMessage == null)
+                {
+                    Platform.Log(LogLevel.Error, "Unexpected error parsing move message");
+                    return;
+                }
+
+                
+
+                if (comboBoxMoveScuQueryType.SelectedIndex == 0)
+                {
+                    _moveScu = new StudyRootMoveScu(textBoxMoveScuLocalAe.Text,textBoxMoveScuRemoteAe.Text,textBoxMoveScuRemoteHost.Text,
+                        int.Parse(textBoxMoveScuRemotePort.Text),textBoxMoveScuMoveDestination.Text);
+                }
+                else
+                {
+                    _moveScu = new PatientRootMoveScu(textBoxMoveScuLocalAe.Text, textBoxMoveScuRemoteAe.Text,
+                                                         textBoxMoveScuRemoteHost.Text,
+                                                         int.Parse(textBoxMoveScuRemotePort.Text),
+                                                         textBoxMoveScuMoveDestination.Text);
+                }
+                if (queryMessage.Contains(DicomTags.PatientId))
+                {
+                    var array = queryMessage[DicomTags.PatientId].Values as string[];
+                    if (array != null)
+                        foreach(string s in array)
+                            _moveScu.AddPatientId(s);
+                }
+                if (queryMessage.Contains(DicomTags.StudyInstanceUid))
+                {
+                    var array = queryMessage[DicomTags.StudyInstanceUid].Values as string[];
+                    if (array != null)
+                        foreach (string s in array)
+                            _moveScu.AddStudyInstanceUid(s);
+                }
+                if (queryMessage.Contains(DicomTags.SeriesInstanceUid))
+                {
+                    var array = queryMessage[DicomTags.SeriesInstanceUid].Values as string[];
+                    if (array != null)
+                        foreach (string s in array)
+                            _moveScu.AddSeriesInstanceUid(s);
+                }
+                if (queryMessage.Contains(DicomTags.SopInstanceUid))
+                {
+                    var array = queryMessage[DicomTags.SopInstanceUid].Values as string[];
+                    if (array != null)
+                        foreach (string s in array)
+                            _moveScu.AddSopInstanceUid(s);
+                }
+
+                _moveScu.ImageMoveCompleted += delegate(object o, EventArgs args)
+                                                   {
+                                                       var eventScu = o as MoveScuBase;
+                                                       if (eventScu != null)
+                                                       {
+                                                           Platform.Log(LogLevel.Info,
+                                                                        "Total SubOps: {0}, Remaining SubOps {1}, Success SubOps: {2}, Failure SubOps: {3}, Warning SubOps: {4}, Failure Description: {5}",
+                                                                        eventScu.TotalSubOperations,
+                                                                        eventScu.RemainingSubOperations,
+                                                                        eventScu.SuccessSubOperations,
+                                                                        eventScu.FailureSubOperations,
+                                                                        eventScu.WarningSubOperations,
+                                                                        eventScu.FailureDescription);
+                                                       }
+                                                   };
+                _moveScu.BeginMove(delegate {
+                                           Invoke(new Action<string>(delegate { buttonMoveScuMove.Text = "Move"; }), new object[]{"Move"});                                           
+                                       }, this );
+
+            }
+            catch (Exception x)
+            {
+                Platform.Log(LogLevel.Error, x, "Unable to perform move");
+                buttonMoveScuMove.Text = "Move";
+            }		
+        }
+
+        private void ComboBoxMoveScuQueryTypeSelectedIndexChanged(object sender, EventArgs e)
+        {
+            var doc = new XmlDocument();
+
+            if (comboBoxMoveScuQueryType.SelectedIndex == 0)
+            {
+                Stream stream = GetType().Assembly.GetManifestResourceStream("ClearCanvas.Dicom.Samples.SampleXml.StudyRootMoveStudy.xml");
+                if (stream != null)
+                {
+                    doc.Load(stream);
+                    stream.Close();
+                }
+                comboBoxMoveScuQueryLevel.Items.Clear();
+                comboBoxMoveScuQueryLevel.Items.Add("STUDY");
+                comboBoxMoveScuQueryLevel.Items.Add("SERIES");
+                comboBoxMoveScuQueryLevel.Items.Add("IMAGE");
+            }
+            else
+            {
+                var stream = GetType().Assembly.GetManifestResourceStream("ClearCanvas.Dicom.Samples.SampleXml.PatientRootMovePatient.xml");
+                if (stream != null)
+                {
+                    doc.Load(stream);
+                    stream.Close();
+                }
+                comboBoxMoveScuQueryLevel.Items.Clear();
+                comboBoxMoveScuQueryLevel.Items.Add("PATIENT");
+                comboBoxMoveScuQueryLevel.Items.Add("STUDY");
+                comboBoxMoveScuQueryLevel.Items.Add("SERIES");
+                comboBoxMoveScuQueryLevel.Items.Add("IMAGE");
+            }
+
+            var sw = new StringWriter();
+
+            var xmlSettings = new XmlWriterSettings
+            {
+                Encoding = Encoding.UTF8,
+                ConformanceLevel = ConformanceLevel.Fragment,
+                Indent = true,
+                NewLineOnAttributes = false,
+                CheckCharacters = true,
+                IndentChars = "  "
+            };
+
+
+            XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
+            if (tw != null)
+            {
+                doc.WriteTo(tw);
+                tw.Close();
+            }
+            textBoxMoveMessage.Text = sw.ToString();
+        }
+
+        private void ComboBoxMoveScuQueryLevelSelectedIndexChanged(object sender, EventArgs e)
+        {
+            var doc = new XmlDocument();
+
+            string xmlFile;
+            if (comboBoxMoveScuQueryType.SelectedIndex == 0)
+            {
+                if (comboBoxMoveScuQueryLevel.SelectedItem.Equals("STUDY"))
+                    xmlFile = "ClearCanvas.Dicom.Samples.SampleXml.StudyRootMoveStudy.xml";
+                else if (comboBoxMoveScuQueryLevel.SelectedItem.Equals("SERIES"))
+                    xmlFile = "ClearCanvas.Dicom.Samples.SampleXml.StudyRootMoveSeries.xml";
+                else
+                    xmlFile = "ClearCanvas.Dicom.Samples.SampleXml.StudyRootMoveImage.xml";
+            }
+            else
+            {
+                if (comboBoxMoveScuQueryLevel.SelectedItem.Equals("PATIENT"))
+                    xmlFile = "ClearCanvas.Dicom.Samples.SampleXml.PatientRootMovePatient.xml";
+                else if (comboBoxMoveScuQueryLevel.SelectedItem.Equals("STUDY"))
+                    xmlFile = "ClearCanvas.Dicom.Samples.SampleXml.PatientRootMoveStudy.xml";
+                else if (comboBoxMoveScuQueryLevel.SelectedItem.Equals("SERIES"))
+                    xmlFile = "ClearCanvas.Dicom.Samples.SampleXml.PatientRootMoveSeries.xml";
+                else
+                    xmlFile = "ClearCanvas.Dicom.Samples.SampleXml.PatientRootMoveImage.xml";
+            }
+
+            Stream stream = GetType().Assembly.GetManifestResourceStream(xmlFile);
+            if (stream != null)
+            {
+                doc.Load(stream);
+                stream.Close();
+            }
+
+            var sw = new StringWriter();
+
+            var xmlSettings = new XmlWriterSettings
+            {
+                Encoding = Encoding.UTF8,
+                ConformanceLevel = ConformanceLevel.Fragment,
+                Indent = true,
+                NewLineOnAttributes = false,
+                CheckCharacters = true,
+                IndentChars = "  "
+            };
+
+
+            XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
+
+            if (tw != null)
+            {
+                doc.WriteTo(tw);
+                tw.Close();
+            }
+
+            textBoxMoveMessage.Text = sw.ToString();
+		
+        }
+
+        private void _editSopSaveFileButton_Click(object sender, EventArgs e)
+        {
+            if (_editSop != null)
+            {
+                _editSop.UpdateTags(_editSopTextBox.Text);
+
+                saveFileDialog.Filter = "DICOM|*.dcm";
+                if (DialogResult.OK == saveFileDialog.ShowDialog())
+                {
+                    _destinationPathTextBox.Text = saveFileDialog.FileName;
+                    _editSop.Save(saveFileDialog.FileName);
+                }
+            }
+        }
+
+        private void _editSopOpenFileButton_Click(object sender, EventArgs e)
+        {
+            openFileDialogStorageScu.Multiselect = false;
+            openFileDialogStorageScu.Filter = "DICOM files|*.dcm|All files|*.*";
+            if (DialogResult.OK == openFileDialogStorageScu.ShowDialog())
+            {
+                _editSopSourcePathTextBox.Text = openFileDialogStorageScu.FileName;
+                _editSopDestinationPathTextBox.Text = string.Empty;
+
+                _editSop = new EditSop(openFileDialogStorageScu.FileName);
+                _editSop.Load();
+
+                _editSopTextBox.Text = _editSop.GetXmlRepresentation();
+
+                string dump = _editSop.DicomFile.Dump();
+                Platform.Log(LogLevel.Info, dump);
+            }
+        }
     }
 }

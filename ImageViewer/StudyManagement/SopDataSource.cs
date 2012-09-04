@@ -12,6 +12,7 @@
 using System;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -20,10 +21,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public abstract class SopDataSource : ISopDataSource
 	{
-		private string _studyLoaderName;
-		private object _server;
-
-		/// <summary>
+	    /// <summary>
 		/// Constructs a new <see cref="SopDataSource"/>.
 		/// </summary>
 		protected SopDataSource()
@@ -90,7 +88,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		/// <summary>
 		/// Gets a value indicating whether or not the SOP instance is 'stored',
-		/// for example in the local data store or on a remote PACS server.
+		/// for example in the local store or on a remote PACS server.
 		/// </summary>
 		/// <remarks>
 		/// This would normally be used to determine whether an <see cref="ISopDataSource">data source</see>
@@ -99,31 +97,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public virtual bool IsStored
 		{
-			get { return !String.IsNullOrEmpty(_studyLoaderName); }
+            get { return Server != null; }
 		}
 
-		/// <summary>
-		/// Gets the name of the <see cref="IStudyLoader"/> that created this data source.
-		/// </summary>
-		public string StudyLoaderName
-		{
-			get { return _studyLoaderName; }
-			internal protected set { _studyLoaderName = value; }
-		}
+	    public IDicomServiceNode Server { get; protected internal set; }
 
-		/// <summary>
-		/// Gets an object representing the source server where this data source was loaded from.
-		/// </summary>
-		/// <remarks>
-		/// When non-null, this object is most likely an <see cref="ApplicationEntity"/>, but is not guaranteed to be one.
-		/// </remarks>
-		public object Server
-		{
-			get { return _server; }
-			internal protected set { _server = value; }
-		}
-
-		/// <summary>
+	    /// <summary>
 		/// Gets a value indicating whether or not the SOP instance is an image.
 		/// </summary>
 		public abstract bool IsImage { get; }

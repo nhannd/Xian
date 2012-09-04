@@ -385,10 +385,11 @@ namespace ClearCanvas.Enterprise.Core.Tests
 			var sc = new SearchCondition<int>();
 			sc.Between(1, 3);
 
+			Assert.IsFalse(sc.IsSatisfiedBy(0));
 			Assert.IsTrue(sc.IsSatisfiedBy(1));
 			Assert.IsTrue(sc.IsSatisfiedBy(2));
-			Assert.IsFalse(sc.IsSatisfiedBy(0));
-			Assert.IsFalse(sc.IsSatisfiedBy(3));
+			Assert.IsTrue(sc.IsSatisfiedBy(3));
+			Assert.IsFalse(sc.IsSatisfiedBy(4));
 		}
 
 		[Test]

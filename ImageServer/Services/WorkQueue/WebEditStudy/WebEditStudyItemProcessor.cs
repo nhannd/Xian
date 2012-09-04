@@ -13,9 +13,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 {
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             Debug.Assert(ServerPartition != null);
             Debug.Assert(StorageLocation != null);
 
-			using (ExecutionContext context = new ExecutionContext())
+			using (ServerExecutionContext context = new ServerExecutionContext())
 			{
 				if (_filesystem != null)
 					_filesystem = FilesystemMonitor.Instance.GetFilesystemInfo(StorageLocation.FilesystemKey);

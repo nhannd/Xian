@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Client
 {
     [MenuAction("launch", "global-menus/Admin/Staff", "Launch")]
     [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Staff)]
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
     public class StaffSummaryTool : Tool<IDesktopToolContext>
     {
         private IWorkspace _workspace;

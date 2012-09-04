@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
@@ -45,7 +46,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		{
 			get
 			{
-				if(!_processed)
+				if (!_processed)
 				{
 					BuildRuleSet();
 				}
@@ -80,6 +81,15 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 			{
 				ProcessEntityAttribute(pair);
 			}
+
+			// process external providers of static rules
+			var sources = new EntityValidationRuleSetSourceExtensionPoint().CreateExtensions();
+			var rules = from source in sources.Cast<IValidationRuleSetSource>()
+						where source.IsStatic
+						let r = source.GetRuleSet(_entityClass)
+						where !r.IsEmpty
+						select r;
+			_highLevelRules.AddRange(rules);
 
 			_processed = true;
 		}

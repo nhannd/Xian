@@ -1,9 +1,0 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Configuration" GeneratedClassName="DefaultServerSettings">
-  <Profiles />
-  <Settings>
-    <Setting Name="DefaultServerPaths" Description="Server tree paths to the user's default servers." Type="System.Collections.Specialized.StringCollection" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-  </Settings>
-</SettingsFile>

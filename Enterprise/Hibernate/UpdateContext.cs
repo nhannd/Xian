@@ -24,6 +24,10 @@ namespace ClearCanvas.Enterprise.Hibernate
 	/// </summary>
 	public class UpdateContext : PersistenceContext, IUpdateContext
 	{
+		// read this setting value once and cache it for process lifetime for performance reasons; changes will require a restart.
+		private static readonly bool _enableChangeSetRecording = (new EntityChangeSetRecorderSettings().EnableRecording);
+
+
 		private UpdateContextInterceptor _interceptor;
 		private IEntityChangeSetRecorder _changeSetRecorder;
 		private IDomainObjectValidator _validator;
@@ -217,11 +221,11 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 		/// <summary>
 		/// Writes an audit log entry for the current change-set, assuming the
-		/// <see cref="ChangeSetRecorder"/> property is set.
+		/// <see cref="ChangeSetRecorder"/> property is set and recording is enabled.
 		/// </summary>
 		private void AuditTransaction()
 		{
-			if (_changeSetRecorder != null)
+			if (_enableChangeSetRecording && _changeSetRecorder != null)
 			{
 				// write to the "ChangeSet" audit log
 				var auditLog = new AuditLog(ProductInformation.Component, "ChangeSet");

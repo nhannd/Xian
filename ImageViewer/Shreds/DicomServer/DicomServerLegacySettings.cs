@@ -10,14 +10,14 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Configuration;
+using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.Server.ShredHost;
 using System.IO;
 using ClearCanvas.Common.Utilities;
 using System.Xml;
-using System.Collections;
 using ClearCanvas.Common.Configuration;
+using LocalDicomServer = ClearCanvas.ImageViewer.Common.DicomServer.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -348,13 +348,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		void IMigrateLegacyShredConfigSection.Migrate()
 		{
-			DicomServerSettings.Instance.HostName = HostName;
-			DicomServerSettings.Instance.AETitle = AETitle;
-			DicomServerSettings.Instance.Port = Port;
-			DicomServerSettings.Instance.InterimStorageDirectory = InterimStorageDirectory;
-			DicomServerSettings.Instance.AllowUnknownCaller = AllowUnknownCaller;
-			DicomServerSettings.Instance.QueryResponsesInUtf8 = QueryResponsesInUtf8;
-			DicomServerSettings.Instance.Save();
+            LocalDicomServer.UpdateConfiguration(new DicomServerConfiguration { AETitle = AETitle, HostName = HostName, Port = Port });
+            LocalDicomServer.UpdateExtendedConfiguration(new DicomServerExtendedConfiguration
+                                                             {
+                                                                 AllowUnknownCaller = AllowUnknownCaller,
+                                                                 QueryResponsesInUtf8 = QueryResponsesInUtf8
+                                                             });
 		}
 	}
 }

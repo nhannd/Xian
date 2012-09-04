@@ -204,13 +204,13 @@
     <value>15, 24</value>
   </data>
   <data name="_selectDefaultServerOnStartup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 17</value>
+    <value>180, 17</value>
   </data>
   <data name="_selectDefaultServerOnStartup.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
   <data name="_selectDefaultServerOnStartup.Text" xml:space="preserve">
-    <value>Select Default Server(s) on startup</value>
+    <value>Select Priors Server(s) on startup</value>
   </data>
   <data name="&gt;&gt;_selectDefaultServerOnStartup.Name" xml:space="preserve">
     <value>_selectDefaultServerOnStartup</value>

@@ -11,18 +11,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Common
 {
-    /// <summary>
-    /// Abstract base class for <see cref="EntityRef"/>
-    /// </summary>
-    [DataContract]
-    public class EntityRef : IVersionedEquatable<EntityRef>
-    {
+	/// <summary>
+	/// Abstract base class for <see cref="EntityRef"/>
+	/// </summary>
+	[DataContract]
+	public class EntityRef : IVersionedEquatable<EntityRef>
+	{
 		/// <summary>
 		/// One-letter code representing the OID class, for use in serialization.
 		/// </summary>
@@ -68,17 +69,17 @@ namespace ClearCanvas.Enterprise.Common
 		}
 
 
-        private string _entityClass;
-        private object _entityOid;
-        private int _version;
+		private string _entityClass;
+		private object _entityOid;
+		private int _version;
 
-        /// <summary>
-        /// Deserialization constructor
-        /// </summary>
-        private EntityRef()
-        {
+		/// <summary>
+		/// Deserialization constructor
+		/// </summary>
+		private EntityRef()
+		{
 
-        }
+		}
 
 		/// <summary>
 		/// Deserialization constructor
@@ -89,16 +90,16 @@ namespace ClearCanvas.Enterprise.Common
 			Deserialize(serializedValue);
 		}
 
-        /// <summary>
-        /// Constructs an instance of this class
-        /// </summary>
-        /// <param name="entityClass"></param>
-        /// <param name="entityOid"></param>
-        /// <param name="version"></param>
-        public EntityRef(Type entityClass, object entityOid, int version)
-            :this(GetSafeClassName(entityClass), entityOid, version)
-        {
-        }
+		/// <summary>
+		/// Constructs an instance of this class
+		/// </summary>
+		/// <param name="entityClass"></param>
+		/// <param name="entityOid"></param>
+		/// <param name="version"></param>
+		public EntityRef(Type entityClass, object entityOid, int version)
+			: this(GetSafeClassName(entityClass), entityOid, version)
+		{
+		}
 
 		/// <summary>
 		/// Private constructor
@@ -106,138 +107,138 @@ namespace ClearCanvas.Enterprise.Common
 		/// <param name="entityClassName"></param>
 		/// <param name="entityOid"></param>
 		/// <param name="version"></param>
-        private EntityRef(string entityClassName, object entityOid, int version)
-        {
-            _entityClass = entityClassName;
-            _entityOid = entityOid;
-            _version = version;
-        }
+		private EntityRef(string entityClassName, object entityOid, int version)
+		{
+			_entityClass = entityClassName;
+			_entityOid = entityOid;
+			_version = version;
+		}
 
-        /// <summary>
-        /// Returns the class of the entity that this reference refers to
-        /// </summary>
-        [DataMember]
-        internal string ClassName
-        {
-            get { return _entityClass; }
-            private set { _entityClass = value; }
-        }
+		/// <summary>
+		/// Returns the class of the entity that this reference refers to
+		/// </summary>
+		[DataMember]
+		internal string ClassName
+		{
+			get { return _entityClass; }
+			private set { _entityClass = value; }
+		}
 
-        /// <summary>
-        /// Returns the OID that this reference refers to
-        /// </summary>
-        [DataMember]
-        internal object OID
-        {
-            get { return _entityOid; }
-            private set { _entityOid = value; }
-        }
+		/// <summary>
+		/// Returns the OID that this reference refers to
+		/// </summary>
+		[DataMember]
+		internal object OID
+		{
+			get { return _entityOid; }
+			private set { _entityOid = value; }
+		}
 
-        /// <summary>
-        /// Returns the version of the entity that this reference refers to
-        /// </summary>
-        [DataMember]
-        internal int Version
-        {
-            get { return _version; }
-            private set { _version = value; }
-        }
+		/// <summary>
+		/// Returns the version of the entity that this reference refers to
+		/// </summary>
+		[DataMember]
+		internal int Version
+		{
+			get { return _version; }
+			private set { _version = value; }
+		}
 
-        /// <summary>
-        /// Compares two instances of this class for value-based equality, including
-        /// the version in the comparison.  To exclude version in the comparison,
-        /// call the <see cref="Equals"/> overload that accepts a flag indicating whether to include
-        /// version in the comparison.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public override bool Equals(object obj)
-        {
-            return this.Equals(obj, false);
-        }
+		/// <summary>
+		/// Compares two instances of this class for value-based equality, including
+		/// the version in the comparison.  To exclude version in the comparison,
+		/// call the <see cref="Equals"/> overload that accepts a flag indicating whether to include
+		/// version in the comparison.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public override bool Equals(object obj)
+		{
+			return this.Equals(obj, false);
+		}
 
-        /// <summary>
-        /// Overridden to comply with <see cref="Equals"/>.  Version is included in the hashcode.
-        /// </summary>
-        /// <returns></returns>
-        public override int GetHashCode()
-        {
-            return _entityOid.GetHashCode() ^ _entityClass.GetHashCode() ^ _version.GetHashCode();
-        }
+		/// <summary>
+		/// Overridden to comply with <see cref="Equals"/>.  Version is included in the hashcode.
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode()
+		{
+			return _entityOid.GetHashCode() ^ _entityClass.GetHashCode() ^ _version.GetHashCode();
+		}
 
 
-        /// <summary>
-        /// Provide a string representation of the reference.
-        /// </summary>
-        /// <returns>Formatted string containing the type, OID and version of the referenced object</returns>
-        public override string ToString()
-        {
-            return this.ToString(true, true);
-        }
+		/// <summary>
+		/// Provide a string representation of the reference.
+		/// </summary>
+		/// <returns>Formatted string containing the type, OID and version of the referenced object</returns>
+		public override string ToString()
+		{
+			return this.ToString(true, true);
+		}
 
-        /// <summary>
-        /// Provide a string representation of the reference.
-        /// </summary>
-        /// <param name="includeVersion"></param>
-        /// <returns>Formatted string containing the type, OID and version of the referenced object</returns>
-        public string ToString(bool includeVersion)
-        {
-            return ToString(includeVersion, true);
-        }
+		/// <summary>
+		/// Provide a string representation of the reference.
+		/// </summary>
+		/// <param name="includeVersion"></param>
+		/// <returns>Formatted string containing the type, OID and version of the referenced object</returns>
+		public string ToString(bool includeVersion)
+		{
+			return ToString(includeVersion, true);
+		}
 
-        /// <summary>
-        /// Provide a string representation of the reference.
-        /// </summary>
-        /// <param name="includeVersion"></param>
-        /// <param name="includeEntityClass"></param>
-        /// <returns>Formatted string containing the type, OID and version of the referenced object</returns>
-        public string ToString(bool includeVersion, bool includeEntityClass)
-        {
-            if (includeVersion)
-            {
-                if (includeEntityClass)
-                    return String.Format("{0}/{1}/{2}", _entityClass.ToString(), _entityOid.ToString(), _version.ToString());
-                else
-                    return String.Format("{0}/{1}", _entityOid.ToString(), _version.ToString());
-            }
-            else
-            {
-                if (includeEntityClass)
-                    return String.Format("{0}/{1}", _entityClass.ToString(), _entityOid.ToString());
-                else
-                    return _entityOid.ToString();
-            }
-        }
+		/// <summary>
+		/// Provide a string representation of the reference.
+		/// </summary>
+		/// <param name="includeVersion"></param>
+		/// <param name="includeEntityClass"></param>
+		/// <returns>Formatted string containing the type, OID and version of the referenced object</returns>
+		public string ToString(bool includeVersion, bool includeEntityClass)
+		{
+			if (includeVersion)
+			{
+				if (includeEntityClass)
+					return String.Format("{0}/{1}/{2}", _entityClass.ToString(), _entityOid.ToString(), _version.ToString());
+				else
+					return String.Format("{0}/{1}", _entityOid.ToString(), _version.ToString());
+			}
+			else
+			{
+				if (includeEntityClass)
+					return String.Format("{0}/{1}", _entityClass.ToString(), _entityOid.ToString());
+				else
+					return _entityOid.ToString();
+			}
+		}
 
-        /// <summary>
-        /// Compares instances of this class based on value.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        public static bool operator ==(EntityRef x, EntityRef y)
-        {
-            // check if they are the same instance, or both null
-            if (ReferenceEquals(x, y))
-                return true;
+		/// <summary>
+		/// Compares instances of this class based on value.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		public static bool operator ==(EntityRef x, EntityRef y)
+		{
+			// check if they are the same instance, or both null
+			if (ReferenceEquals(x, y))
+				return true;
 
-            // if either one is null then they can't be equal
-            if ((x as object) == null || (y as object) == null)
-                return false;
+			// if either one is null then they can't be equal
+			if ((x as object) == null || (y as object) == null)
+				return false;
 
-            // compare fields
-            return x.Equals(y);
-        }
+			// compare fields
+			return x.Equals(y);
+		}
 
-        /// <summary>
-        /// Compares instances of this class based on value.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        public static bool operator !=(EntityRef x, EntityRef y)
-        {
-            return !(x == y);
+		/// <summary>
+		/// Compares instances of this class based on value.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		public static bool operator !=(EntityRef x, EntityRef y)
+		{
+			return !(x == y);
 		}
 
 		#region Serialization
@@ -248,11 +249,25 @@ namespace ClearCanvas.Enterprise.Common
 		/// <returns></returns>
 		public string Serialize()
 		{
-			return string.Format("{0}:{1}:{2}:{3}",
-				EntityRefUtils.GetClassName(this),
-				GetOidTypeCode(EntityRefUtils.GetOID(this)),
-				EntityRefUtils.GetOID(this),
-				EntityRefUtils.GetVersion(this));
+			return Serialize(true);
+		}
+
+		/// <summary>
+		/// Obtains a serialized representation of this object.
+		/// </summary>
+		/// <returns></returns>
+		public string Serialize(bool includeVersion)
+		{
+			var parts = new List<string>
+			            	{
+			            		EntityRefUtils.GetClassName(this),
+			            		GetOidTypeCode(EntityRefUtils.GetOID(this)).ToString(),
+			            		EntityRefUtils.GetOID(this).ToString()
+			            	};
+			if (includeVersion)
+				parts.Add(EntityRefUtils.GetVersion(this).ToString(CultureInfo.InvariantCulture));
+
+			return string.Join(":", parts.ToArray());
 		}
 
 		/// <summary>
@@ -264,14 +279,18 @@ namespace ClearCanvas.Enterprise.Common
 		{
 			Platform.CheckForNullReference(value, "value");
 
-			string[] parts = value.Split(':');
-			if (parts.Length != 4)
+			var parts = value.Split(':');
+			if (parts.Length != 3 && parts.Length != 4)
 				throw new SerializationException("Invalid EntityRef string");
 
 			_entityClass = parts[0];
-			OidTypeCode oidType = (OidTypeCode)Enum.Parse(typeof(OidTypeCode), parts[1]);
+			var oidType = (OidTypeCode)Enum.Parse(typeof(OidTypeCode), parts[1]);
 			_entityOid = ParseOid(parts[2], oidType);
-			_version = int.Parse(parts[3]);
+
+			if(parts.Length > 3)
+			{
+				_version = int.Parse(parts[3]);
+			}
 		}
 
 		#endregion

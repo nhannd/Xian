@@ -10,17 +10,14 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.ServiceModel;
 using System.Web.Script.Services;
 using System.Web.Services;
 using System.Xml;
-using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common.ServiceModel;
+using ClearCanvas.Dicom.Utilities.Rules;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Rules;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
@@ -218,7 +215,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
             }
 
             string error;
-            if (false == Rules.Rule.ValidateRule(type, theDoc, out error))
+            if (false == Rule<ServerActionContext, ServerRuleTypeEnum>.ValidateRule(type, theDoc, out error))
             {
                 result.ErrorText = error;
                 result.Success = false;

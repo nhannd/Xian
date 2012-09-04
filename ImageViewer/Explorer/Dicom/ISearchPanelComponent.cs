@@ -10,10 +10,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -24,12 +23,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 	public class SearchRequestedEventArgs : EventArgs
 	{
-		public SearchRequestedEventArgs(IList<QueryParameters> queryParametersList)
+		public SearchRequestedEventArgs(StudyRootStudyIdentifier queryCriteria)
 		{
-			this.QueryParametersList = queryParametersList;
+		    this.QueryCriteria = queryCriteria;
 		}
 
-		public IList<QueryParameters> QueryParametersList { get; private set; }
+		public StudyRootStudyIdentifier QueryCriteria { get; private set; }
 	}
 
 	public interface ISearchPanelComponent : IApplicationComponent

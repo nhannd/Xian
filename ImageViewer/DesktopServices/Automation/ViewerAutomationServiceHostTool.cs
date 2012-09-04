@@ -16,7 +16,7 @@ using System.ServiceModel.Security;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Services.Automation;
+using ClearCanvas.ImageViewer.Common.Automation;
 
 namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 {

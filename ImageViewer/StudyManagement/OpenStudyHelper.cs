@@ -13,8 +13,8 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -28,32 +28,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	{
 		private readonly string[] _studyInstanceUids;
 		private readonly WindowBehaviour _windowBehaviour;
-		private readonly object _server;
-		private readonly string _studyLoaderName;
+		private readonly IDicomServiceNode _server;
 
 		/// <summary>
 		/// Constructs a new <see cref="OpenStudyArgs"/> using the specified parameters.
 		/// </summary>
 		/// <param name="studyInstanceUids">The Study Instance UIDs of the studies to be opened.</param>
-		/// <param name="server">An object specifying the server to open the study from, such as
-		/// <code>null</code> for the local server or an <see cref="ApplicationEntity"/> object specifying the remote server.</param>
-		/// <param name="studyLoaderName">The name of the <see cref="IStudyLoader"/> to use, which is specified by <see cref="IStudyLoader.Name"/>.</param>
+		/// <param name="server">The server from which the study should be loaded.</param>
 		/// <param name="windowBehaviour">The window launch options.</param>
-		public OpenStudyArgs(
-			string[] studyInstanceUids, 
-			object server, 
-			string studyLoaderName,
-			WindowBehaviour windowBehaviour)
+		public OpenStudyArgs(string[] studyInstanceUids, IDicomServiceNode server, WindowBehaviour windowBehaviour)
 		{
-			Platform.CheckForNullReference(studyLoaderName, "studyLoaderName");
 			Platform.CheckForNullReference(studyInstanceUids, "studyInstanceUids");
+            Platform.CheckForNullReference(server, "server");
 
 			if (studyInstanceUids.Length == 0)
 				throw new ArgumentException("studyInstanceUids array cannot be empty.");
 
 			_studyInstanceUids = studyInstanceUids;
 			_server = server;
-			_studyLoaderName = studyLoaderName;
 			_windowBehaviour = windowBehaviour;
 		}
 
@@ -65,21 +57,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _studyInstanceUids; }
 		}
 
-		/// <summary>
-		/// Gets the server to open the study from, such as
-		/// <code>null</code> for the local server or an <see cref="ApplicationEntity"/> object specifying the remote server.
-		/// </summary>
-		public object Server
+		public IDicomServiceNode Server
 		{
 			get { return _server; }
-		}
-
-		/// <summary>
-		/// Gets the name of the <see cref="IStudyLoader"/> to use, which is specified by <see cref="IStudyLoader.Name"/>.
-		/// </summary>
-		public string StudyLoaderName
-		{
-			get { return _studyLoaderName; }
 		}
 
 		/// <summary>
@@ -161,9 +141,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Adds a study to the list of studies to be opened.
 		/// </summary>
-		public void AddStudy(string studyInstanceUid, object server, string studyLoaderName)
+		public void AddStudy(string studyInstanceUid, IDicomServiceNode server)
 		{
-			_studiesToOpen.Add(new LoadStudyArgs(studyInstanceUid, server, studyLoaderName));
+			_studiesToOpen.Add(new LoadStudyArgs(studyInstanceUid, server));
 		}
 
 		/// <summary>
@@ -238,29 +218,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <para>This method has been deprecated and will be removed in the future. Use an instance of OpenStudyHelper instead.</para>
 		/// </remarks>
 		[Obsolete("This method will be removed in a future version.  Please use an instance of OpenStudyHelper instead.")]
-		public static IImageViewer OpenStudies(string studyLoaderName, string[] studyInstanceUids, WindowBehaviour windowBehaviour)
-		{
-			OpenStudyHelper helper = new OpenStudyHelper();
-			helper.WindowBehaviour = windowBehaviour;
-			foreach (string studyInstanceUid in studyInstanceUids)
-				helper.AddStudy(studyInstanceUid, null, studyLoaderName);
-
-			return helper.OpenStudies();
-		}
-
-		/// <summary>
-		/// Launches a new <see cref="ImageViewerComponent"/> with the specified studies.
-		/// </summary>
-		/// <remarks>
-		/// <para>This method has been deprecated and will be removed in the future. Use an instance of OpenStudyHelper instead.</para>
-		/// </remarks>
-		[Obsolete("This method will be removed in a future version.  Please use an instance of OpenStudyHelper instead.")]
 		public static IImageViewer OpenStudies(OpenStudyArgs openStudyArgs)
 		{
 			OpenStudyHelper helper = new OpenStudyHelper();
 			helper.WindowBehaviour = openStudyArgs.WindowBehaviour;
 			foreach (string studyInstanceUid in openStudyArgs.StudyInstanceUids)
-				helper.AddStudy(studyInstanceUid, openStudyArgs.Server, openStudyArgs.StudyLoaderName);
+				helper.AddStudy(studyInstanceUid, openStudyArgs.Server);
 
 			return helper.OpenStudies();
 		}

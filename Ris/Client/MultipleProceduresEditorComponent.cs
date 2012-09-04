@@ -37,19 +37,22 @@ namespace ClearCanvas.Ris.Client
 		private readonly List<ProcedureRequisition> _requisitions;
 
 		private bool _isScheduledTimeEditable;
+		private bool _isScheduledDurationEditable;
 		private bool _isPerformingFacilityEditable;
 		private bool _isPerformingDepartmentEditable;
 		private bool _isLateralityEditable;
 		private bool _isSchedulingCodeEditable;
 		private bool _isPortableEditable;
 		private bool _isCheckedInEditable;
+		private bool _isModalityEditable;
 
 		public MultipleProceduresEditorComponent(List<ProcedureRequisition> requisitions,
 			List<FacilitySummary> facilityChoices,
 			List<DepartmentSummary> departmentChoices,
+			List<ModalitySummary> modalityChoices,
 			List<EnumValueInfo> lateralityChoices,
 			List<EnumValueInfo> schedulingCodeChoices)
-			: base(facilityChoices, departmentChoices, lateralityChoices, schedulingCodeChoices)
+			: base(facilityChoices, departmentChoices, modalityChoices, lateralityChoices, schedulingCodeChoices)
 		{
 			Platform.CheckForNullReference(requisitions, "requisitions");
 
@@ -78,8 +81,10 @@ namespace ClearCanvas.Ris.Client
 		protected override void LoadFromRequisition()
 		{
 			this.ScheduledTime = GetCommonValue(_requisitions, r => r.ScheduledTime);
+			this.ScheduledDuration = GetCommonValue(_requisitions, r => r.ScheduledDuration);
 			this.SelectedFacility = GetCommonValue(_requisitions, r => r.PerformingFacility);
 			this.SelectedDepartment = GetCommonValue(_requisitions, r => r.PerformingDepartment);
+			this.SelectedModality = GetCommonValue(_requisitions, r => r.Modality);
 			this.SelectedLaterality = GetCommonValue(_requisitions, r => r.Laterality);
 			this.SelectedSchedulingCode = GetCommonValue(_requisitions, r => r.SchedulingCode);
 			this.PortableModality = GetCommonValue(_requisitions, r => r.PortableModality);
@@ -93,11 +98,17 @@ namespace ClearCanvas.Ris.Client
 				if (_isScheduledTimeEditable)
 					requisition.ScheduledTime = this.ScheduledTime;
 
+				if (_isScheduledDurationEditable)
+					requisition.ScheduledDuration = this.ScheduledDuration;
+
 				if (_isPerformingFacilityEditable)
 					requisition.PerformingFacility = this.SelectedFacility;
 
 				if (_isPerformingDepartmentEditable)
 					requisition.PerformingDepartment = this.SelectedDepartment;
+
+				if (_isModalityEditable)
+					requisition.Modality = this.SelectedModality;
 
 				if (_isLateralityEditable)
 					requisition.Laterality = this.SelectedLaterality;
@@ -121,6 +132,12 @@ namespace ClearCanvas.Ris.Client
 			set { _isScheduledTimeEditable = value; }
 		}
 
+		public override bool IsScheduledDurationEditable
+		{
+			get { return _isScheduledDurationEditable; }
+			set { _isScheduledDurationEditable = value; }
+		}
+
 		public override bool IsPerformingFacilityEditable
 		{
 			get { return _isPerformingFacilityEditable; }
@@ -131,6 +148,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			get { return _isPerformingDepartmentEditable; }
 			set { _isPerformingDepartmentEditable = value; }
+		}
+
+		public override bool IsModalityEditable
+		{
+			get { return _isModalityEditable; }
+			set { _isModalityEditable = value; }
 		}
 
 		public override bool IsLateralityEditable

@@ -15,17 +15,20 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Helpers;
+using ClearCanvas.ImageServer.Core.Command;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Rules;
+using SaveDicomFileCommand = ClearCanvas.ImageServer.Core.Command.SaveDicomFileCommand;
 
 namespace ClearCanvas.ImageServer.Core
 {
@@ -73,7 +76,7 @@ namespace ClearCanvas.ImageServer.Core
                 {
                     lock (_syncLock)
                     {
-                        _study = _storageLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);    
+                        _study = _storageLocation.LoadStudy(ServerExecutionContext.Current.PersistenceContext);    
                     }
                     
                 }

@@ -18,11 +18,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 	public class TranscriptionComponentWorklistItemManager : WorklistItemManager<ReportingWorklistItemSummary, ITranscriptionWorkflowService>
 	{
 		public TranscriptionComponentWorklistItemManager(string folderName, EntityRef worklistRef, string worklistClassName)
-			: base(folderName, worklistRef, worklistClassName)
+			: base(folderName, worklistRef, worklistClassName, TranscriptionSettings.Default.NextItemQueueCacheSize)
 		{
 		}
 
-		protected override IContinuousWorkflowComponentMode GetMode<TWorklistITem>(ReportingWorklistItemSummary worklistItem)
+		protected override IContinuousWorkflowComponentMode GetMode(ReportingWorklistItemSummary worklistItem)
 		{
 			if (worklistItem == null)
 				return TranscriptionComponentModes.Review;

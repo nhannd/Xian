@@ -15,7 +15,7 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -109,6 +109,7 @@
     <Compile Include="Admin\AuthorityGroupAdmin\ListAuthorityGroupsResponse.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\ListAuthorityTokensRequest.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\ListAuthorityTokensResponse.cs" />
+    <Compile Include="Admin\UserAdmin\IUserSessionAdminService.cs" />
     <Compile Include="Admin\UserAdmin\ListUsersRequest.cs" />
     <Compile Include="Admin\UserAdmin\ListUsersResponse.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\LoadAuthorityGroupForEditRequest.cs" />
@@ -151,6 +152,7 @@
     <Compile Include="Configuration\ListConfigurationDocumentsResponse.cs" />
     <Compile Include="DefaultPrincipal.cs" />
     <Compile Include="EntityRefJsmlSerializerHook.cs" />
+    <Compile Include="Facility.cs" />
     <Compile Include="FailoverClientAdvice.cs" />
     <Compile Include="IChannelProvider.cs" />
     <Compile Include="IOfflineCache.cs" />
@@ -176,7 +178,6 @@
     <Compile Include="Configuration\SetConfigurationDocumentRequest.cs" />
     <Compile Include="Configuration\SetConfigurationDocumentResponse.cs" />
     <Compile Include="EnterpriseCoreServiceAttribute.cs" />
-    <Compile Include="DataContractBase.cs" />
     <Compile Include="EnterpriseConfigurationStore.cs" />
     <Compile Include="EnterpriseSettingsStore.cs" />
     <Compile Include="EnterpriseTimeProvider.cs" />

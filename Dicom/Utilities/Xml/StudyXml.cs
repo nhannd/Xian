@@ -251,13 +251,15 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             InstanceXml instance = series[sopInstanceUid];
             if (instance != null)
             {
-                Platform.Log(LogLevel.Warn,
-                             "Attempting to add a duplicate SOP instance to the stream.  Replacing value: {0}",
-                             theFile.MediaStorageSopInstanceUid);
+                // Decided to remove this log as part of the Marmot development milestone.  Didn't seem like much value.
+                //Platform.Log(LogLevel.Warn,
+                //             "Attempting to add a duplicate SOP instance to the stream.  Replacing value: {0}",
+                //             theFile.MediaStorageSopInstanceUid);
             }
 
             instance = new InstanceXml(data, theFile.SopClass, theFile.TransferSyntax);
-        	instance.SourceFileName = theFile.Filename;
+    	    instance.SourceAETitle = theFile.SourceApplicationEntityTitle;
+            instance.SourceFileName = theFile.Filename;
         	instance.FileSize = fileSize;
             series[sopInstanceUid] = instance;
 

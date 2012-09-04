@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExceptionFacilityAlreadyExist" xml:space="preserve">
     <value>A facility with code {0} already exists</value>
@@ -140,9 +140,6 @@
   </data>
   <data name="ExceptionStaffAlreadyExist" xml:space="preserve">
     <value>A staff with the name {0}, {1} already exists</value>
-  </data>
-  <data name="ExceptionReconciliationRequiresAtLeast2Patients" xml:space="preserve">
-    <value>At least 2 patients must be specified for reconciliation</value>
   </data>
   <data name="ExceptionFamilyNameMissing" xml:space="preserve">
     <value>A family name must be provided</value>

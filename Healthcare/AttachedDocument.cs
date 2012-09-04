@@ -11,11 +11,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Healthcare {
+namespace ClearCanvas.Healthcare
+{
+
+	public class AttachedDocumentCreationArgs
+	{
+		public string MimeType { get; set; }
+		public string FileExtension { get; set; }
+		public string LocalContentFilePath { get; set; }
+	}
 
 
 	/// <summary>
@@ -24,19 +31,41 @@ namespace ClearCanvas.Healthcare {
 	public partial class AttachedDocument
 	{
 		/// <summary>
+		/// Creates a <see cref="AttachedDocument"/> instance, uploading the specified file to the document store.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <param name="documentStore"></param>
+		/// <returns></returns>
+		public static AttachedDocument Create(AttachedDocumentCreationArgs args, IAttachedDocumentStore documentStore)
+		{
+			// create the new document object, and put the remote file
+			var document = new AttachedDocument
+				{
+					MimeType = args.MimeType,
+					FileExtension = args.FileExtension,
+				};
+
+			document.PutFile(documentStore, args.LocalContentFilePath);
+			return document;
+		}
+
+
+
+
+		/// <summary>
 		/// Copy constructor that creates either an exact copy, or an "unprocessed" copy.
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="unprocessed"></param>
 		protected AttachedDocument(AttachedDocument source, bool unprocessed)
-	{
+		{
 			_creationTime = unprocessed ? Platform.Time : source.CreationTime;
 			_mimeType = source.MimeType;
-	  		_fileExtension = source.FileExtension;
+			_fileExtension = source.FileExtension;
 
 			_contentUrl = source.ContentUrl;
 		}
-	
+
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.
@@ -55,8 +84,7 @@ namespace ClearCanvas.Healthcare {
 		/// <returns></returns>
 		public virtual AttachedDocument Duplicate(bool unprocessed)
 		{
-			// derived classes may implement support
-			throw new NotSupportedException();
+			return new AttachedDocument(this, unprocessed);
 		}
 
 		/// <summary>
@@ -65,13 +93,18 @@ namespace ClearCanvas.Healthcare {
 		/// <returns></returns>
 		public virtual AttachedDocument CreateGhostCopy()
 		{
-			// derived classes may implement support
-			throw new NotSupportedException();
+			return new AttachedDocument(this, false) { GhostOf = this };
 		}
 
+		/// <summary>
+		/// Gets the time at which this document was received.
+		/// </summary>
+		/// <remarks>
+		/// By default, this property returns the same value as <see cref="CreationTime"/>.
+		/// </remarks>
 		public virtual DateTime? DocumentReceivedTime
 		{
-			get { return null; }
+			get { return _creationTime; }
 		}
 
 		/// <summary>
@@ -79,6 +112,7 @@ namespace ClearCanvas.Healthcare {
 		/// </summary>
 		public virtual void Attach()
 		{
+			// nothing to do
 		}
 
 		/// <summary>
@@ -86,6 +120,7 @@ namespace ClearCanvas.Healthcare {
 		/// </summary>
 		public virtual void Detach()
 		{
+			// nothing to do
 		}
 
 		/// <summary>
@@ -93,12 +128,18 @@ namespace ClearCanvas.Healthcare {
 		/// </summary>
 		public virtual IDictionary<string, string> DocumentHeaders
 		{
-			get { return null; }
+			get { return new Dictionary<string, string>(); }
 		}
 
+		/// <summary>
+		/// Gets the type of attached document (e.g. Fax, Scanned, etc.).
+		/// </summary>
+		/// <remarks>
+		/// By default this property returns a value of "Document".
+		/// </remarks>
 		public virtual string DocumentTypeName
 		{
-			get { return "Attached Document"; }
+			get { return "Document"; }
 		}
 
 		/// <summary>

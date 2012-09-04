@@ -11,6 +11,7 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Healthcare;
 using ClearCanvas.Workflow;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;

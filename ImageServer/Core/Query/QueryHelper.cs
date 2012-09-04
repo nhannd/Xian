@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageServer.Core.Query
         /// <param name="val"></param>
         public static void SetStringCondition(ISearchCondition<string> cond, string val)
         {
-            if (val.Length == 0)
+            if (val.Length == 0 || SearchValueOnlyWildcard(val, false))
                 return;
 
             if (val.Contains("*") || val.Contains("?"))
@@ -77,6 +77,21 @@ namespace ClearCanvas.ImageServer.Core.Query
             }
             else
                 cond.EqualTo(val);
+        }
+
+        /// <summary>
+        /// Set a <see cref="ISearchCondition{T}"/> for DICOM string based (wildcard matching) value.
+        /// </summary>
+        /// <param name="cond"></param>
+        /// <param name="val"></param>
+        public static void SetGuiStringCondition(ISearchCondition<string> cond, string val)
+        {
+            if ( string.IsNullOrEmpty(val) || SearchValueOnlyWildcard(val, true))
+                return;
+
+            String value = val.Replace('*', '%');
+            value = value.Replace('?', '_');
+            cond.Like(value);
         }
 
         /// <summary>
@@ -95,6 +110,12 @@ namespace ClearCanvas.ImageServer.Core.Query
                 cond.In(vals);
         }
 
+        /// <summary>
+        /// Set a xPath based <see cref="ISearchCondition{T}"/> for an <see cref="XmlDocument"/> column.
+        /// </summary>
+        /// <param name="cond"></param>
+        /// <param name="xPath"></param>
+        /// <param name="match"></param>
         public static void SetXmlStringCondition(ISearchCondition<XmlDocument> cond, string xPath, string match)
         {
             var doc = new XmlDocument();
@@ -129,6 +150,31 @@ namespace ClearCanvas.ImageServer.Core.Query
 
                 cond.EqualTo(doc);
             }
+        }
+
+        /// <summary>
+        /// Check to see if the search value only contains wildcard charcters and can be ommited from a select.
+        /// </summary>
+        /// <param name="val">The value to check</param>
+        /// <param name="sqlWildcards"></param>
+        /// <returns>True if <see cref="val"/> only contains wildcard charcater(s).</returns>
+        private static bool SearchValueOnlyWildcard(string val, bool sqlWildcards)
+        {
+            string val2 = val.Trim();
+
+            if (sqlWildcards)
+            {
+                foreach (char c in val2)
+                    if (c != '*' && c != '%')
+                        return false;
+            }
+            else
+            {
+                foreach (char c in val2)
+                    if (c != '*')
+                        return false;
+            }
+            return true;
         }
     }
 }

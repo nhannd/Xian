@@ -11,12 +11,23 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using System.Xml;
 
 namespace ClearCanvas.Desktop.Validation
 {
+	/// <summary>
+	/// Defines an extension point to allow external sources of validation rule sets.
+	/// </summary>
+	[ExtensionPoint]
+	public class ValidationRuleSourceExtensionPoint : ExtensionPoint<IValidationRuleSource>
+	{
+	}
+
+
 	/// <summary>
 	/// Caches attribute and XML-based validation rules for application components.
 	/// </summary>
@@ -76,6 +87,7 @@ namespace ClearCanvas.Desktop.Validation
 				// build the validation rules (do this outside of the lock, in case it is slow)
 				rules = new List<IValidationRule>();
 				rules.AddRange(ProcessAttributeRules(applicationComponentClass));
+				rules.AddRange(ProcessExtensionRules(applicationComponentClass));
 				rules.AddRange(ProcessCustomRules(applicationComponentClass));
 
 				// cache the rules
@@ -115,6 +127,14 @@ namespace ClearCanvas.Desktop.Validation
 			var compiler = new XmlValidationCompiler();
 			var ruleNodes = XmlValidationManager.Instance.GetRules(applicationComponentClass);
 			return CollectionUtils.Map(ruleNodes, (XmlElement node) => compiler.CompileRule(node));
+		}
+
+		private static List<IValidationRule> ProcessExtensionRules(Type applicationComponentClass)
+		{
+			var rules = from source in new ValidationRuleSourceExtensionPoint().CreateExtensions().Cast<IValidationRuleSource>()
+						from rule in source.GetRules(applicationComponentClass)
+						select rule;
+			return rules.ToList();
 		}
 
 		private static List<IValidationRule> ProcessAttributeRules(Type applicationComponentClass)

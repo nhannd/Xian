@@ -11,9 +11,10 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -35,7 +36,7 @@ namespace ClearCanvas.ImageServer.Rules.GrantAccessAction
         /// <param name="context">A contentxt in which to apply the GrantAccess request.</param>
         /// <param name="authorityGroupOid">The OID of the Authority Group to grant access to the Study.</param>
         public InsertStudyDataAccessCommand(ServerActionContext context, Guid authorityGroupOid)
-            : base("Update/Insert a StudyDataAccess Entry", false)
+            : base("Update/Insert a StudyDataAccess Entry")
         {
             Platform.CheckForNullReference(context, "ServerActionContext");
 
@@ -46,7 +47,7 @@ namespace ClearCanvas.ImageServer.Rules.GrantAccessAction
         /// <summary>
         /// Do the insertion of the AutoRoute.
         /// </summary>
-        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+        protected override void OnExecute(CommandProcessor theProcessor, IUpdateContext updateContext)
         {
             var criteria = new DataAccessGroupSelectCriteria();
             criteria.AuthorityGroupOID.EqualTo(new ServerEntityKey("AuthorityGroupOID",_authorityGroupOid));

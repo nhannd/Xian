@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.IdentityModel.Tokens;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 

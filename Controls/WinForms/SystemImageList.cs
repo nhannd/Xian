@@ -33,12 +33,12 @@ namespace ClearCanvas.Controls.WinForms
 
 			// retrieve the info for a fake file so we can get the image list handle.
 			Native.SHFILEINFO shInfo = new Native.SHFILEINFO();
-			Native.SHGFI dwAttribs = Native.SHGFI.SHGFI_USEFILEATTRIBUTES | Native.SHGFI.SHGFI_SYSICONINDEX;
+			Native.SHGFI uFlags = Native.SHGFI.SHGFI_USEFILEATTRIBUTES | Native.SHGFI.SHGFI_SYSICONINDEX;
 			if (useSmallIcons)
-				dwAttribs |= Native.SHGFI.SHGFI_SMALLICON;
+				uFlags |= Native.SHGFI.SHGFI_SMALLICON;
 			else
-				dwAttribs |= Native.SHGFI.SHGFI_LARGEICON;
-			_handle = Native.Shell32.SHGetFileInfo(".txt", FILE_ATTRIBUTE_NORMAL, out shInfo, (uint) Marshal.SizeOf(shInfo), dwAttribs);
+				uFlags |= Native.SHGFI.SHGFI_LARGEICON;
+			_handle = Native.Shell32.SHGetFileInfo(".txt", FILE_ATTRIBUTE_NORMAL, out shInfo, (uint) Marshal.SizeOf(shInfo), uFlags);
 		}
 
 		public IntPtr Handle

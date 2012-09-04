@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,9 +12,11 @@
     <AssemblyName>ClearCanvas.Enterprise.Desktop.View.WinForms</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -26,10 +29,9 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,6 +41,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -47,6 +50,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotNetMagic2005, Version=5.2.2.0, Culture=neutral, PublicKeyToken=6cf6edec59e036ec, processorArchitecture=MSIL">
@@ -59,17 +63,20 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorityGroupEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="AuthorityGroupEditorComponentControl.Designer.cs">
       <DependentUpon>AuthorityGroupEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="AuthorityGroupEditorComponentView.cs" />
     <Compile Include="PasswordConfirmComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PasswordConfirmComponentControl.Designer.cs">
       <DependentUpon>PasswordConfirmComponentControl.cs</DependentUpon>
@@ -82,18 +89,28 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="SummaryComponentBaseControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SummaryComponentBaseControl.Designer.cs">
       <DependentUpon>SummaryComponentBaseControl.cs</DependentUpon>
     </Compile>
     <Compile Include="SummaryComponentBaseView.cs" />
     <Compile Include="UserEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UserEditorComponentControl.Designer.cs">
       <DependentUpon>UserEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UserEditorComponentView.cs" />
+    <Compile Include="UserSessionsManagementView.cs" />
+    <Compile Include="UserSessionsManagmentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserSessionsManagmentControl.Designer.cs">
+      <DependentUpon>UserSessionsManagmentControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UserSummaryComponentControl.designer.cs">
       <DependentUpon>UserSummaryComponentControl.cs</DependentUpon>
@@ -118,6 +135,10 @@
       <Project>{E2F1A5D4-73A4-4BA6-AA5A-87BBDEC727F8}</Project>
       <Name>ClearCanvas.Utilities.Manifest</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\ClearCanvas.Enterprise.Common.csproj">
+      <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
+      <Name>ClearCanvas.Enterprise.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ClearCanvas.Enterprise.Desktop.csproj">
       <Project>{CBD5EBD0-7AE9-4824-AE8C-4888983E1B5B}</Project>
       <Name>ClearCanvas.Enterprise.Desktop</Name>
@@ -141,6 +162,9 @@
       <DependentUpon>UserEditorComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="UserSessionsManagmentControl.resx">
+      <DependentUpon>UserSessionsManagmentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UserSummaryComponentControl.resx">
       <DependentUpon>UserSummaryComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -162,7 +186,7 @@
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

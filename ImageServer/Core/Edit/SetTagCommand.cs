@@ -196,7 +196,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
                         }
                        
 					}
-                    catch(DicomCharacterSetException ex)
+                    catch(DicomCharacterSetException)
                     {
                         throw; //rethrow
                     }

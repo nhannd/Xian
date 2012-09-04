@@ -17,8 +17,9 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Command;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
@@ -163,10 +164,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
         }
 
         protected void RemoveFilesystem()
-		{
-            using(ServerCommandProcessor processor = new ServerCommandProcessor("Delete Filesystems Processor"))
+        {
+            string path = StorageLocation.GetStudyPath();
+            using(var processor = new ServerCommandProcessor("Delete Filesystems Processor"))
             {
-                processor.AddCommand(new DeleteDirectoryCommand(StorageLocation.GetStudyPath(), true));
+                processor.AddCommand(new DeleteDirectoryCommand(path, true));
 
                 if (_relatedDirectories!=null)
                 {
@@ -184,6 +186,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
                 }
             }
 
+            DirectoryUtility.DeleteIfEmpty(Path.GetDirectoryName(path));
 		}
 
         protected void RemoveDatabase(Model.WorkQueue item)

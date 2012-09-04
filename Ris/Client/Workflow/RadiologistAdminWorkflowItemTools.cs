@@ -21,8 +21,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Reassign", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.AssignSmall.png", "Icons.AssignMedium.png", "Icons.AssignLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Reassign)]
-	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Reassign)]
+	[ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Report.Reassign)]
 	[ExtensionOf(typeof(RadiologistAdminWorkflowItemToolExtensionPoint))]
 	public class ReassignTool : ReportingWorkflowItemTool
 	{

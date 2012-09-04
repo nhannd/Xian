@@ -300,7 +300,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 StudyStorageLocation storage = WorkQueueController.GetLoadStorageLocation(item);
                 studyPath = storage.GetStudyPath();
             }
-            catch(Exception x)
+            catch(Exception)
             {
                 studyPath = string.Empty;
             }

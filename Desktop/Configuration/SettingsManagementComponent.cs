@@ -77,7 +77,7 @@ namespace ClearCanvas.Desktop.Configuration
 			_workspace = ApplicationComponent.LaunchAsWorkspace(
 				this.Context.DesktopWindow,
 				new SettingsManagementComponent(store),
-				SR.TitleSettingsManagement,
+				SR.TitleSettingsEditor,
 				"Settings Management");
 
 			_workspace.Closed += OnWorkspaceClosed;

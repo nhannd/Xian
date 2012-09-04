@@ -75,7 +75,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
         /// <summary>
         /// Creates an instance of <see cref="StreamingClient"/> to connect to a streaming server.
         /// </summary>
-        /// <param name="baseUri">Base Uri to the location where the streaming server is located (eg http://localhost:1000/wado)</param>
+        /// <param name="baseUri">Base Uri to the location where the streaming server is located (eg. http://localhost:1000/wado). </param>
         public StreamingClient(Uri baseUri)
         {
             _baseUri = baseUri;

@@ -1,6 +1,6 @@
 <%-- License
 
-Copyright (c) 2011, ClearCanvas Inc.
+Copyright (c) 2012, ClearCanvas Inc.
 All rights reserved.
 http://www.clearcanvas.ca
 
@@ -9,23 +9,28 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 --%>
 
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true"
-    EnableEventValidation="false" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.Default"
+    EnableEventValidation="false" CodeBehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.Default"
     Title="Study Integrity Queue | ClearCanvas ImageServer" %>
 
 <%@ Register Src="ReconcileDialog.ascx" TagName="ReconcileDialog" TagPrefix="localAsp" %>
-<%@ Register Src="DuplicateSopDialog.ascx" TagName="DuplicateSopReconcileDialog" TagPrefix="localAsp" %>
+<%@ Register Src="DuplicateSopDialog.ascx" TagName="DuplicateSopReconcileDialog"
+    TagPrefix="localAsp" %>
+<%@ Register Src="SearchPanel.ascx" TagName="SearchPanel" TagPrefix="localAsp" %>
 
-<asp:Content runat="server" ID="MainContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder"><asp:Literal ID="Literal1" runat="server" Text="<%$Resources:Titles,StudyIntegrityQueue%>" /></asp:Content>
-    
+<asp:Content runat="server" ID="MainContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder">
+    <asp:Literal ID="Literal1" runat="server" Text="<%$Resources:Titles,StudyIntegrityQueue%>" />
+</asp:Content>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
-    <asp:Panel runat="server" ID="PageContent">
-        <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
-            <ContentTemplate>
-                <ccAsp:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" Visible="true" />
-            </ContentTemplate>
-        </asp:UpdatePanel>
-    </asp:Panel>    
-    
-    <localAsp:ReconcileDialog ID="ReconcileDialog" runat="server" /> 
-     <localAsp:DuplicateSopReconcileDialog ID="DuplicateSopReconcileDialog" runat="server" /> 
+    <asp:UpdatePanel ID="PageContent" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+            <ccAsp:ServerPartitionSelector runat="server" ID="ServerPartitionSelector" Visible="true" />
+            <localAsp:SearchPanel runat="server" id="SearchPanel" visible="true" />
+        </ContentTemplate>
+    </asp:UpdatePanel>
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="DialogsPlaceHolder" runat="server">
+    <localAsp:ReconcileDialog ID="ReconcileDialog" runat="server" />
+    <localAsp:DuplicateSopReconcileDialog ID="DuplicateSopReconcileDialog" runat="server" />
 </asp:Content>

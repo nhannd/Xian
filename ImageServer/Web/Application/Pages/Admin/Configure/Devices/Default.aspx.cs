@@ -27,13 +27,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
     {
         #region Private members
 
-        // Map between the server partition and the panel
-
         // the controller used for database interaction
         private readonly DeviceConfigurationController _controller = new DeviceConfigurationController();
-
-        private readonly IDictionary<ServerEntityKey, DevicePanel> _mapDevicePanel =
-            new Dictionary<ServerEntityKey, DevicePanel>();
 
         #endregion Private members
 
@@ -41,7 +36,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         {
             get
             {
-                return ServerPartitionTabs.GetCurrentPartitionKey();
+                return ServerPartitionSelector.SelectedPartition.Key;
             }
         }
 
@@ -60,9 +55,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                                                            // Commit the change into database
                                                            if (_controller.UpdateDevice(dev))
                                                            {
-                                                               DevicePanel panel =
-                                                                   _mapDevicePanel[dev.ServerPartition.GetKey()];
-                                                               panel.UpdateUI();
+                                                               SearchPanel.Refresh();
                                                            }
                                                        }
                                                        else
@@ -71,9 +64,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                                                            Device newDev = _controller.AddDevice(dev);
                                                            if (newDev != null)
                                                            {
-                                                               DevicePanel panel =
-                                                                   _mapDevicePanel[newDev.ServerPartition.GetKey()];
-                                                               panel.UpdateUI();
+                                                               SearchPanel.Refresh();
                                                            }
                                                        }
 													   UpdateUI();
@@ -88,16 +79,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                                                         var dev = data as Device;
                                                         if (dev != null)
                                                         {
-                                                            DevicePanel oldPanel =
-                                                                _mapDevicePanel[dev.ServerPartition.GetKey()];
-
                                                             if (_controller.GetRelatedWorkQueueCount(dev) == 0)
                                                             {
                                                                 _controller.DeleteDevice(dev);
                                                             }
 
-                                                            if (oldPanel != null)
-                                                                oldPanel.UpdateUI();
+                                                            SearchPanel.Refresh();
                                                         }
                                                         UpdateUI();
                                                     }
@@ -110,28 +97,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             base.OnInit(e);
 
             AddEditDeviceControl1.DevicePage = this;
+            SearchPanel.EnclosingPage = this;
 
             SetupEventHandlers();
+            
+            ServerPartitionSelector.PartitionChanged += delegate(ServerPartition partition)
+            {
+                SearchPanel.ServerPartition = partition;
+                SearchPanel.Reset();
+            };
 
-            ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
-                                                           {
-                                                               var panel =
-                                                                   LoadControl("DevicePanel.ascx") as DevicePanel;
-                                                               if (panel != null)
-                                                               {
-                                                                   panel.ServerPartition = partition;
-                                                                   panel.ID = "DevicePanel_" + partition.AeTitle;
-
-                                                                   panel.EnclosingPage = this;
-                                                                   _mapDevicePanel[partition.GetKey()] = panel;
-                                                                   // this map is used to reload the list when the devices are updated.
-                                                               }
-                                                               return panel;
-                                                           });
+            ServerPartitionSelector.SetUpdatePanel(PageContent);
         }
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
+            SearchPanel.ServerPartition = ServerPartitionSelector.SelectedPartition;
+
 			UpdateUI();
 		}
 

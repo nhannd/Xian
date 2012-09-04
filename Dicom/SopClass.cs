@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -67,17 +67,17 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>Audio SR Storage – Trial (Retired)</para>
+        /// <para>Audio SR Storage - Trial (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.2</para>
         /// </summary>
         public static readonly String AudioSrStorageTrialRetiredUid = "1.2.840.10008.5.1.4.1.1.88.2";
 
         /// <summary>SopClass for
-        /// <para>Audio SR Storage – Trial (Retired)</para>
+        /// <para>Audio SR Storage - Trial (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.2</para>
         /// </summary>
         public static readonly SopClass AudioSrStorageTrialRetired =
-                             new SopClass("Audio SR Storage – Trial (Retired)", 
+                             new SopClass("Audio SR Storage - Trial (Retired)", 
                                           AudioSrStorageTrialRetiredUid, 
                                           false);
 
@@ -427,17 +427,17 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>Comprehensive SR Storage – Trial (Retired)</para>
+        /// <para>Comprehensive SR Storage - Trial (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.4</para>
         /// </summary>
         public static readonly String ComprehensiveSrStorageTrialRetiredUid = "1.2.840.10008.5.1.4.1.1.88.4";
 
         /// <summary>SopClass for
-        /// <para>Comprehensive SR Storage – Trial (Retired)</para>
+        /// <para>Comprehensive SR Storage - Trial (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.4</para>
         /// </summary>
         public static readonly SopClass ComprehensiveSrStorageTrialRetired =
-                             new SopClass("Comprehensive SR Storage – Trial (Retired)", 
+                             new SopClass("Comprehensive SR Storage - Trial (Retired)", 
                                           ComprehensiveSrStorageTrialRetiredUid, 
                                           false);
 
@@ -562,108 +562,198 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>Detail SR Storage – Trial (Retired)</para>
+        /// <para>Detail SR Storage - Trial (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.3</para>
         /// </summary>
         public static readonly String DetailSrStorageTrialRetiredUid = "1.2.840.10008.5.1.4.1.1.88.3";
 
         /// <summary>SopClass for
-        /// <para>Detail SR Storage – Trial (Retired)</para>
+        /// <para>Detail SR Storage - Trial (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.3</para>
         /// </summary>
         public static readonly SopClass DetailSrStorageTrialRetired =
-                             new SopClass("Detail SR Storage – Trial (Retired)", 
+                             new SopClass("Detail SR Storage - Trial (Retired)", 
                                           DetailSrStorageTrialRetiredUid, 
                                           false);
 
         /// <summary>
-        /// <para>Digital Intra-oral X-Ray Image Storage – For Presentation</para>
+        /// <para>DICOS CT Image Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.501.1</para>
+        /// </summary>
+        public static readonly String DicosCtImageStorageUid = "1.2.840.10008.5.1.4.1.1.501.1";
+
+        /// <summary>SopClass for
+        /// <para>DICOS CT Image Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.501.1</para>
+        /// </summary>
+        public static readonly SopClass DicosCtImageStorage =
+                             new SopClass("DICOS CT Image Storage", 
+                                          DicosCtImageStorageUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>DICOS Digital X-Ray Image Storage - For Presentation</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.501.2.1</para>
+        /// </summary>
+        public static readonly String DicosDigitalXRayImageStorageForPresentationUid = "1.2.840.10008.5.1.4.1.1.501.2.1";
+
+        /// <summary>SopClass for
+        /// <para>DICOS Digital X-Ray Image Storage - For Presentation</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.501.2.1</para>
+        /// </summary>
+        public static readonly SopClass DicosDigitalXRayImageStorageForPresentation =
+                             new SopClass("DICOS Digital X-Ray Image Storage - For Presentation", 
+                                          DicosDigitalXRayImageStorageForPresentationUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>DICOS Digital X-Ray Image Storage - For Processing</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.501.2.2</para>
+        /// </summary>
+        public static readonly String DicosDigitalXRayImageStorageForProcessingUid = "1.2.840.10008.5.1.4.1.1.501.2.2";
+
+        /// <summary>SopClass for
+        /// <para>DICOS Digital X-Ray Image Storage - For Processing</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.501.2.2</para>
+        /// </summary>
+        public static readonly SopClass DicosDigitalXRayImageStorageForProcessing =
+                             new SopClass("DICOS Digital X-Ray Image Storage - For Processing", 
+                                          DicosDigitalXRayImageStorageForProcessingUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>DICOS Threat Detection Report Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.501.3</para>
+        /// </summary>
+        public static readonly String DicosThreatDetectionReportStorageUid = "1.2.840.10008.5.1.4.1.1.501.3";
+
+        /// <summary>SopClass for
+        /// <para>DICOS Threat Detection Report Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.501.3</para>
+        /// </summary>
+        public static readonly SopClass DicosThreatDetectionReportStorage =
+                             new SopClass("DICOS Threat Detection Report Storage", 
+                                          DicosThreatDetectionReportStorageUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Digital Intra-oral X-Ray Image Storage - For Presentation</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.3</para>
         /// </summary>
         public static readonly String DigitalIntraOralXRayImageStorageForPresentationUid = "1.2.840.10008.5.1.4.1.1.1.3";
 
         /// <summary>SopClass for
-        /// <para>Digital Intra-oral X-Ray Image Storage – For Presentation</para>
+        /// <para>Digital Intra-oral X-Ray Image Storage - For Presentation</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.3</para>
         /// </summary>
         public static readonly SopClass DigitalIntraOralXRayImageStorageForPresentation =
-                             new SopClass("Digital Intra-oral X-Ray Image Storage – For Presentation", 
+                             new SopClass("Digital Intra-oral X-Ray Image Storage - For Presentation", 
                                           DigitalIntraOralXRayImageStorageForPresentationUid, 
                                           false);
 
         /// <summary>
-        /// <para>Digital Intra-oral X-Ray Image Storage – For Processing</para>
+        /// <para>Digital Intra-oral X-Ray Image Storage - For Processing</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.3.1</para>
         /// </summary>
         public static readonly String DigitalIntraOralXRayImageStorageForProcessingUid = "1.2.840.10008.5.1.4.1.1.1.3.1";
 
         /// <summary>SopClass for
-        /// <para>Digital Intra-oral X-Ray Image Storage – For Processing</para>
+        /// <para>Digital Intra-oral X-Ray Image Storage - For Processing</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.3.1</para>
         /// </summary>
         public static readonly SopClass DigitalIntraOralXRayImageStorageForProcessing =
-                             new SopClass("Digital Intra-oral X-Ray Image Storage – For Processing", 
+                             new SopClass("Digital Intra-oral X-Ray Image Storage - For Processing", 
                                           DigitalIntraOralXRayImageStorageForProcessingUid, 
                                           false);
 
         /// <summary>
-        /// <para>Digital Mammography X-Ray Image Storage – For Presentation</para>
+        /// <para>Digital Mammography X-Ray Image Storage - For Presentation</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.2</para>
         /// </summary>
         public static readonly String DigitalMammographyXRayImageStorageForPresentationUid = "1.2.840.10008.5.1.4.1.1.1.2";
 
         /// <summary>SopClass for
-        /// <para>Digital Mammography X-Ray Image Storage – For Presentation</para>
+        /// <para>Digital Mammography X-Ray Image Storage - For Presentation</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.2</para>
         /// </summary>
         public static readonly SopClass DigitalMammographyXRayImageStorageForPresentation =
-                             new SopClass("Digital Mammography X-Ray Image Storage – For Presentation", 
+                             new SopClass("Digital Mammography X-Ray Image Storage - For Presentation", 
                                           DigitalMammographyXRayImageStorageForPresentationUid, 
                                           false);
 
         /// <summary>
-        /// <para>Digital Mammography X-Ray Image Storage – For Processing</para>
+        /// <para>Digital Mammography X-Ray Image Storage - For Processing</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.2.1</para>
         /// </summary>
         public static readonly String DigitalMammographyXRayImageStorageForProcessingUid = "1.2.840.10008.5.1.4.1.1.1.2.1";
 
         /// <summary>SopClass for
-        /// <para>Digital Mammography X-Ray Image Storage – For Processing</para>
+        /// <para>Digital Mammography X-Ray Image Storage - For Processing</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.2.1</para>
         /// </summary>
         public static readonly SopClass DigitalMammographyXRayImageStorageForProcessing =
-                             new SopClass("Digital Mammography X-Ray Image Storage – For Processing", 
+                             new SopClass("Digital Mammography X-Ray Image Storage - For Processing", 
                                           DigitalMammographyXRayImageStorageForProcessingUid, 
                                           false);
 
         /// <summary>
-        /// <para>Digital X-Ray Image Storage – For Presentation</para>
+        /// <para>Digital X-Ray Image Storage - For Presentation</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.1</para>
         /// </summary>
         public static readonly String DigitalXRayImageStorageForPresentationUid = "1.2.840.10008.5.1.4.1.1.1.1";
 
         /// <summary>SopClass for
-        /// <para>Digital X-Ray Image Storage – For Presentation</para>
+        /// <para>Digital X-Ray Image Storage - For Presentation</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.1</para>
         /// </summary>
         public static readonly SopClass DigitalXRayImageStorageForPresentation =
-                             new SopClass("Digital X-Ray Image Storage – For Presentation", 
+                             new SopClass("Digital X-Ray Image Storage - For Presentation", 
                                           DigitalXRayImageStorageForPresentationUid, 
                                           false);
 
         /// <summary>
-        /// <para>Digital X-Ray Image Storage – For Processing</para>
+        /// <para>Digital X-Ray Image Storage - For Processing</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.1.1</para>
         /// </summary>
         public static readonly String DigitalXRayImageStorageForProcessingUid = "1.2.840.10008.5.1.4.1.1.1.1.1";
 
         /// <summary>SopClass for
-        /// <para>Digital X-Ray Image Storage – For Processing</para>
+        /// <para>Digital X-Ray Image Storage - For Processing</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.1.1</para>
         /// </summary>
         public static readonly SopClass DigitalXRayImageStorageForProcessing =
-                             new SopClass("Digital X-Ray Image Storage – For Processing", 
+                             new SopClass("Digital X-Ray Image Storage - For Processing", 
                                           DigitalXRayImageStorageForProcessingUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Eddy Current Image Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.601.1</para>
+        /// </summary>
+        public static readonly String EddyCurrentImageStorageUid = "1.2.840.10008.5.1.4.1.1.601.1";
+
+        /// <summary>SopClass for
+        /// <para>Eddy Current Image Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.601.1</para>
+        /// </summary>
+        public static readonly SopClass EddyCurrentImageStorage =
+                             new SopClass("Eddy Current Image Storage", 
+                                          EddyCurrentImageStorageUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Eddy Current Multi-frame Image Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.601.2</para>
+        /// </summary>
+        public static readonly String EddyCurrentMultiFrameImageStorageUid = "1.2.840.10008.5.1.4.1.1.601.2";
+
+        /// <summary>SopClass for
+        /// <para>Eddy Current Multi-frame Image Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.601.2</para>
+        /// </summary>
+        public static readonly SopClass EddyCurrentMultiFrameImageStorage =
+                             new SopClass("Eddy Current Multi-frame Image Storage", 
+                                          EddyCurrentMultiFrameImageStorageUid, 
                                           false);
 
         /// <summary>
@@ -877,17 +967,17 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>General Purpose Worklist Information Model – FIND</para>
+        /// <para>General Purpose Worklist Information Model - FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.32.1</para>
         /// </summary>
         public static readonly String GeneralPurposeWorklistInformationModelFindUid = "1.2.840.10008.5.1.4.32.1";
 
         /// <summary>SopClass for
-        /// <para>General Purpose Worklist Information Model – FIND</para>
+        /// <para>General Purpose Worklist Information Model - FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.32.1</para>
         /// </summary>
         public static readonly SopClass GeneralPurposeWorklistInformationModelFind =
-                             new SopClass("General Purpose Worklist Information Model – FIND", 
+                             new SopClass("General Purpose Worklist Information Model - FIND", 
                                           GeneralPurposeWorklistInformationModelFindUid, 
                                           false);
 
@@ -907,6 +997,66 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
+        /// <para>Generic Implant Template Information Model - FIND</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.43.2</para>
+        /// </summary>
+        public static readonly String GenericImplantTemplateInformationModelFindUid = "1.2.840.10008.5.1.4.43.2";
+
+        /// <summary>SopClass for
+        /// <para>Generic Implant Template Information Model - FIND</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.43.2</para>
+        /// </summary>
+        public static readonly SopClass GenericImplantTemplateInformationModelFind =
+                             new SopClass("Generic Implant Template Information Model - FIND", 
+                                          GenericImplantTemplateInformationModelFindUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Generic Implant Template Information Model - GET</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.43.4</para>
+        /// </summary>
+        public static readonly String GenericImplantTemplateInformationModelGetUid = "1.2.840.10008.5.1.4.43.4";
+
+        /// <summary>SopClass for
+        /// <para>Generic Implant Template Information Model - GET</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.43.4</para>
+        /// </summary>
+        public static readonly SopClass GenericImplantTemplateInformationModelGet =
+                             new SopClass("Generic Implant Template Information Model - GET", 
+                                          GenericImplantTemplateInformationModelGetUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Generic Implant Template Information Model - MOVE</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.43.3</para>
+        /// </summary>
+        public static readonly String GenericImplantTemplateInformationModelMoveUid = "1.2.840.10008.5.1.4.43.3";
+
+        /// <summary>SopClass for
+        /// <para>Generic Implant Template Information Model - MOVE</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.43.3</para>
+        /// </summary>
+        public static readonly SopClass GenericImplantTemplateInformationModelMove =
+                             new SopClass("Generic Implant Template Information Model - MOVE", 
+                                          GenericImplantTemplateInformationModelMoveUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Generic Implant Template Storage </para>
+        /// <para>UID: 1.2.840.10008.5.1.4.43.1</para>
+        /// </summary>
+        public static readonly String GenericImplantTemplateStorageUid = "1.2.840.10008.5.1.4.43.1";
+
+        /// <summary>SopClass for
+        /// <para>Generic Implant Template Storage </para>
+        /// <para>UID: 1.2.840.10008.5.1.4.43.1</para>
+        /// </summary>
+        public static readonly SopClass GenericImplantTemplateStorage =
+                             new SopClass("Generic Implant Template Storage ", 
+                                          GenericImplantTemplateStorageUid, 
+                                          false);
+
+        /// <summary>
         /// <para>Grayscale Softcopy Presentation State Storage SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.11.1</para>
         /// </summary>
@@ -922,17 +1072,17 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>Hanging Protocol Information Model – FIND</para>
+        /// <para>Hanging Protocol Information Model - FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.38.2</para>
         /// </summary>
         public static readonly String HangingProtocolInformationModelFindUid = "1.2.840.10008.5.1.4.38.2";
 
         /// <summary>SopClass for
-        /// <para>Hanging Protocol Information Model – FIND</para>
+        /// <para>Hanging Protocol Information Model - FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.38.2</para>
         /// </summary>
         public static readonly SopClass HangingProtocolInformationModelFind =
-                             new SopClass("Hanging Protocol Information Model – FIND", 
+                             new SopClass("Hanging Protocol Information Model - FIND", 
                                           HangingProtocolInformationModelFindUid, 
                                           false);
 
@@ -952,17 +1102,17 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>Hanging Protocol Information Model – MOVE</para>
+        /// <para>Hanging Protocol Information Model - MOVE</para>
         /// <para>UID: 1.2.840.10008.5.1.4.38.3</para>
         /// </summary>
         public static readonly String HangingProtocolInformationModelMoveUid = "1.2.840.10008.5.1.4.38.3";
 
         /// <summary>SopClass for
-        /// <para>Hanging Protocol Information Model – MOVE</para>
+        /// <para>Hanging Protocol Information Model - MOVE</para>
         /// <para>UID: 1.2.840.10008.5.1.4.38.3</para>
         /// </summary>
         public static readonly SopClass HangingProtocolInformationModelMove =
-                             new SopClass("Hanging Protocol Information Model – MOVE", 
+                             new SopClass("Hanging Protocol Information Model - MOVE", 
                                           HangingProtocolInformationModelMoveUid, 
                                           false);
 
@@ -982,21 +1132,6 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>Hardcopy  Grayscale Image Storage SOP Class (Retired)</para>
-        /// <para>UID: 1.2.840.10008.5.1.1.29</para>
-        /// </summary>
-        public static readonly String HardcopyGrayscaleImageStorageSopClassRetiredUid = "1.2.840.10008.5.1.1.29";
-
-        /// <summary>SopClass for
-        /// <para>Hardcopy  Grayscale Image Storage SOP Class (Retired)</para>
-        /// <para>UID: 1.2.840.10008.5.1.1.29</para>
-        /// </summary>
-        public static readonly SopClass HardcopyGrayscaleImageStorageSopClassRetired =
-                             new SopClass("Hardcopy  Grayscale Image Storage SOP Class (Retired)", 
-                                          HardcopyGrayscaleImageStorageSopClassRetiredUid, 
-                                          false);
-
-        /// <summary>
         /// <para>Hardcopy Color Image Storage SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.30</para>
         /// </summary>
@@ -1009,6 +1144,21 @@ namespace ClearCanvas.Dicom
         public static readonly SopClass HardcopyColorImageStorageSopClassRetired =
                              new SopClass("Hardcopy Color Image Storage SOP Class (Retired)", 
                                           HardcopyColorImageStorageSopClassRetiredUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Hardcopy Grayscale Image Storage SOP Class (Retired)</para>
+        /// <para>UID: 1.2.840.10008.5.1.1.29</para>
+        /// </summary>
+        public static readonly String HardcopyGrayscaleImageStorageSopClassRetiredUid = "1.2.840.10008.5.1.1.29";
+
+        /// <summary>SopClass for
+        /// <para>Hardcopy Grayscale Image Storage SOP Class (Retired)</para>
+        /// <para>UID: 1.2.840.10008.5.1.1.29</para>
+        /// </summary>
+        public static readonly SopClass HardcopyGrayscaleImageStorageSopClassRetired =
+                             new SopClass("Hardcopy Grayscale Image Storage SOP Class (Retired)", 
+                                          HardcopyGrayscaleImageStorageSopClassRetiredUid, 
                                           false);
 
         /// <summary>
@@ -1042,6 +1192,141 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
+        /// <para>Implant Assembly Template Information Model - FIND</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.44.2</para>
+        /// </summary>
+        public static readonly String ImplantAssemblyTemplateInformationModelFindUid = "1.2.840.10008.5.1.4.44.2";
+
+        /// <summary>SopClass for
+        /// <para>Implant Assembly Template Information Model - FIND</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.44.2</para>
+        /// </summary>
+        public static readonly SopClass ImplantAssemblyTemplateInformationModelFind =
+                             new SopClass("Implant Assembly Template Information Model - FIND", 
+                                          ImplantAssemblyTemplateInformationModelFindUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Implant Assembly Template Information Model - GET</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.44.4</para>
+        /// </summary>
+        public static readonly String ImplantAssemblyTemplateInformationModelGetUid = "1.2.840.10008.5.1.4.44.4";
+
+        /// <summary>SopClass for
+        /// <para>Implant Assembly Template Information Model - GET</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.44.4</para>
+        /// </summary>
+        public static readonly SopClass ImplantAssemblyTemplateInformationModelGet =
+                             new SopClass("Implant Assembly Template Information Model - GET", 
+                                          ImplantAssemblyTemplateInformationModelGetUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Implant Assembly Template Information Model - MOVE</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.44.3</para>
+        /// </summary>
+        public static readonly String ImplantAssemblyTemplateInformationModelMoveUid = "1.2.840.10008.5.1.4.44.3";
+
+        /// <summary>SopClass for
+        /// <para>Implant Assembly Template Information Model - MOVE</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.44.3</para>
+        /// </summary>
+        public static readonly SopClass ImplantAssemblyTemplateInformationModelMove =
+                             new SopClass("Implant Assembly Template Information Model - MOVE", 
+                                          ImplantAssemblyTemplateInformationModelMoveUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Implant Assembly Template Storage </para>
+        /// <para>UID: 1.2.840.10008.5.1.4.44.1</para>
+        /// </summary>
+        public static readonly String ImplantAssemblyTemplateStorageUid = "1.2.840.10008.5.1.4.44.1";
+
+        /// <summary>SopClass for
+        /// <para>Implant Assembly Template Storage </para>
+        /// <para>UID: 1.2.840.10008.5.1.4.44.1</para>
+        /// </summary>
+        public static readonly SopClass ImplantAssemblyTemplateStorage =
+                             new SopClass("Implant Assembly Template Storage ", 
+                                          ImplantAssemblyTemplateStorageUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Implant Template Group Information Model - FIND</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.45.2</para>
+        /// </summary>
+        public static readonly String ImplantTemplateGroupInformationModelFindUid = "1.2.840.10008.5.1.4.45.2";
+
+        /// <summary>SopClass for
+        /// <para>Implant Template Group Information Model - FIND</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.45.2</para>
+        /// </summary>
+        public static readonly SopClass ImplantTemplateGroupInformationModelFind =
+                             new SopClass("Implant Template Group Information Model - FIND", 
+                                          ImplantTemplateGroupInformationModelFindUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Implant Template Group Information Model - GET</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.45.4</para>
+        /// </summary>
+        public static readonly String ImplantTemplateGroupInformationModelGetUid = "1.2.840.10008.5.1.4.45.4";
+
+        /// <summary>SopClass for
+        /// <para>Implant Template Group Information Model - GET</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.45.4</para>
+        /// </summary>
+        public static readonly SopClass ImplantTemplateGroupInformationModelGet =
+                             new SopClass("Implant Template Group Information Model - GET", 
+                                          ImplantTemplateGroupInformationModelGetUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Implant Template Group Information Model - MOVE</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.45.3</para>
+        /// </summary>
+        public static readonly String ImplantTemplateGroupInformationModelMoveUid = "1.2.840.10008.5.1.4.45.3";
+
+        /// <summary>SopClass for
+        /// <para>Implant Template Group Information Model - MOVE</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.45.3</para>
+        /// </summary>
+        public static readonly SopClass ImplantTemplateGroupInformationModelMove =
+                             new SopClass("Implant Template Group Information Model - MOVE", 
+                                          ImplantTemplateGroupInformationModelMoveUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Implant Template Group Storage </para>
+        /// <para>UID: 1.2.840.10008.5.1.4.45.1</para>
+        /// </summary>
+        public static readonly String ImplantTemplateGroupStorageUid = "1.2.840.10008.5.1.4.45.1";
+
+        /// <summary>SopClass for
+        /// <para>Implant Template Group Storage </para>
+        /// <para>UID: 1.2.840.10008.5.1.4.45.1</para>
+        /// </summary>
+        public static readonly SopClass ImplantTemplateGroupStorage =
+                             new SopClass("Implant Template Group Storage ", 
+                                          ImplantTemplateGroupStorageUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Implantation Plan SR Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.70</para>
+        /// </summary>
+        public static readonly String ImplantationPlanSrStorageUid = "1.2.840.10008.5.1.4.1.1.88.70";
+
+        /// <summary>SopClass for
+        /// <para>Implantation Plan SR Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.70</para>
+        /// </summary>
+        public static readonly SopClass ImplantationPlanSrStorage =
+                             new SopClass("Implantation Plan SR Storage", 
+                                          ImplantationPlanSrStorageUid, 
+                                          false);
+
+        /// <summary>
         /// <para>Instance Availability Notification SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.33</para>
         /// </summary>
@@ -1054,6 +1339,51 @@ namespace ClearCanvas.Dicom
         public static readonly SopClass InstanceAvailabilityNotificationSopClass =
                              new SopClass("Instance Availability Notification SOP Class", 
                                           InstanceAvailabilityNotificationSopClassUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Intraocular Lens Calculations Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.8</para>
+        /// </summary>
+        public static readonly String IntraocularLensCalculationsStorageUid = "1.2.840.10008.5.1.4.1.1.78.8";
+
+        /// <summary>SopClass for
+        /// <para>Intraocular Lens Calculations Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.8</para>
+        /// </summary>
+        public static readonly SopClass IntraocularLensCalculationsStorage =
+                             new SopClass("Intraocular Lens Calculations Storage", 
+                                          IntraocularLensCalculationsStorageUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Intravascular Optical Coherence Tomography Image Storage - For Presentation</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.14.1</para>
+        /// </summary>
+        public static readonly String IntravascularOpticalCoherenceTomographyImageStorageForPresentationUid = "1.2.840.10008.5.1.4.1.1.14.1";
+
+        /// <summary>SopClass for
+        /// <para>Intravascular Optical Coherence Tomography Image Storage - For Presentation</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.14.1</para>
+        /// </summary>
+        public static readonly SopClass IntravascularOpticalCoherenceTomographyImageStorageForPresentation =
+                             new SopClass("Intravascular Optical Coherence Tomography Image Storage - For Presentation", 
+                                          IntravascularOpticalCoherenceTomographyImageStorageForPresentationUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Intravascular Optical Coherence Tomography Image Storage - For Processing</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.14.2</para>
+        /// </summary>
+        public static readonly String IntravascularOpticalCoherenceTomographyImageStorageForProcessingUid = "1.2.840.10008.5.1.4.1.1.14.2";
+
+        /// <summary>SopClass for
+        /// <para>Intravascular Optical Coherence Tomography Image Storage - For Processing</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.14.2</para>
+        /// </summary>
+        public static readonly SopClass IntravascularOpticalCoherenceTomographyImageStorageForProcessing =
+                             new SopClass("Intravascular Optical Coherence Tomography Image Storage - For Processing", 
+                                          IntravascularOpticalCoherenceTomographyImageStorageForProcessingUid, 
                                           false);
 
         /// <summary>
@@ -1207,17 +1537,17 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>Modality Worklist Information Model – FIND</para>
+        /// <para>Modality Worklist Information Model - FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.31</para>
         /// </summary>
         public static readonly String ModalityWorklistInformationModelFindUid = "1.2.840.10008.5.1.4.31";
 
         /// <summary>SopClass for
-        /// <para>Modality Worklist Information Model – FIND</para>
+        /// <para>Modality Worklist Information Model - FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.31</para>
         /// </summary>
         public static readonly SopClass ModalityWorklistInformationModelFind =
-                             new SopClass("Modality Worklist Information Model – FIND", 
+                             new SopClass("Modality Worklist Information Model - FIND", 
                                           ModalityWorklistInformationModelFindUid, 
                                           false);
 
@@ -1312,21 +1642,6 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>Nuclear Medicine Image  Storage (Retired)</para>
-        /// <para>UID: 1.2.840.10008.5.1.4.1.1.5</para>
-        /// </summary>
-        public static readonly String NuclearMedicineImageStorageRetiredUid = "1.2.840.10008.5.1.4.1.1.5";
-
-        /// <summary>SopClass for
-        /// <para>Nuclear Medicine Image  Storage (Retired)</para>
-        /// <para>UID: 1.2.840.10008.5.1.4.1.1.5</para>
-        /// </summary>
-        public static readonly SopClass NuclearMedicineImageStorageRetired =
-                             new SopClass("Nuclear Medicine Image  Storage (Retired)", 
-                                          NuclearMedicineImageStorageRetiredUid, 
-                                          false);
-
-        /// <summary>
         /// <para>Nuclear Medicine Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.20</para>
         /// </summary>
@@ -1339,6 +1654,36 @@ namespace ClearCanvas.Dicom
         public static readonly SopClass NuclearMedicineImageStorage =
                              new SopClass("Nuclear Medicine Image Storage", 
                                           NuclearMedicineImageStorageUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Nuclear Medicine Image Storage (Retired)</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.5</para>
+        /// </summary>
+        public static readonly String NuclearMedicineImageStorageRetiredUid = "1.2.840.10008.5.1.4.1.1.5";
+
+        /// <summary>SopClass for
+        /// <para>Nuclear Medicine Image Storage (Retired)</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.5</para>
+        /// </summary>
+        public static readonly SopClass NuclearMedicineImageStorageRetired =
+                             new SopClass("Nuclear Medicine Image Storage (Retired)", 
+                                          NuclearMedicineImageStorageRetiredUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Ophthalmic Axial Measurements Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.7</para>
+        /// </summary>
+        public static readonly String OphthalmicAxialMeasurementsStorageUid = "1.2.840.10008.5.1.4.1.1.78.7";
+
+        /// <summary>SopClass for
+        /// <para>Ophthalmic Axial Measurements Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.7</para>
+        /// </summary>
+        public static readonly SopClass OphthalmicAxialMeasurementsStorage =
+                             new SopClass("Ophthalmic Axial Measurements Storage", 
+                                          OphthalmicAxialMeasurementsStorageUid, 
                                           false);
 
         /// <summary>
@@ -1387,92 +1732,107 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>Patient Root Query/Retrieve Information Model – FIND</para>
+        /// <para>Ophthalmic Visual Field Static Perimetry Measurements Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.80.1</para>
+        /// </summary>
+        public static readonly String OphthalmicVisualFieldStaticPerimetryMeasurementsStorageUid = "1.2.840.10008.5.1.4.1.1.80.1";
+
+        /// <summary>SopClass for
+        /// <para>Ophthalmic Visual Field Static Perimetry Measurements Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.80.1</para>
+        /// </summary>
+        public static readonly SopClass OphthalmicVisualFieldStaticPerimetryMeasurementsStorage =
+                             new SopClass("Ophthalmic Visual Field Static Perimetry Measurements Storage", 
+                                          OphthalmicVisualFieldStaticPerimetryMeasurementsStorageUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Patient Root Query/Retrieve Information Model - FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.1.1</para>
         /// </summary>
         public static readonly String PatientRootQueryRetrieveInformationModelFindUid = "1.2.840.10008.5.1.4.1.2.1.1";
 
         /// <summary>SopClass for
-        /// <para>Patient Root Query/Retrieve Information Model – FIND</para>
+        /// <para>Patient Root Query/Retrieve Information Model - FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.1.1</para>
         /// </summary>
         public static readonly SopClass PatientRootQueryRetrieveInformationModelFind =
-                             new SopClass("Patient Root Query/Retrieve Information Model – FIND", 
+                             new SopClass("Patient Root Query/Retrieve Information Model - FIND", 
                                           PatientRootQueryRetrieveInformationModelFindUid, 
                                           false);
 
         /// <summary>
-        /// <para>Patient Root Query/Retrieve Information Model – GET</para>
+        /// <para>Patient Root Query/Retrieve Information Model - GET</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.1.3</para>
         /// </summary>
         public static readonly String PatientRootQueryRetrieveInformationModelGetUid = "1.2.840.10008.5.1.4.1.2.1.3";
 
         /// <summary>SopClass for
-        /// <para>Patient Root Query/Retrieve Information Model – GET</para>
+        /// <para>Patient Root Query/Retrieve Information Model - GET</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.1.3</para>
         /// </summary>
         public static readonly SopClass PatientRootQueryRetrieveInformationModelGet =
-                             new SopClass("Patient Root Query/Retrieve Information Model – GET", 
+                             new SopClass("Patient Root Query/Retrieve Information Model - GET", 
                                           PatientRootQueryRetrieveInformationModelGetUid, 
                                           false);
 
         /// <summary>
-        /// <para>Patient Root Query/Retrieve Information Model – MOVE</para>
+        /// <para>Patient Root Query/Retrieve Information Model - MOVE</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.1.2</para>
         /// </summary>
         public static readonly String PatientRootQueryRetrieveInformationModelMoveUid = "1.2.840.10008.5.1.4.1.2.1.2";
 
         /// <summary>SopClass for
-        /// <para>Patient Root Query/Retrieve Information Model – MOVE</para>
+        /// <para>Patient Root Query/Retrieve Information Model - MOVE</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.1.2</para>
         /// </summary>
         public static readonly SopClass PatientRootQueryRetrieveInformationModelMove =
-                             new SopClass("Patient Root Query/Retrieve Information Model – MOVE", 
+                             new SopClass("Patient Root Query/Retrieve Information Model - MOVE", 
                                           PatientRootQueryRetrieveInformationModelMoveUid, 
                                           false);
 
         /// <summary>
-        /// <para>Patient/Study Only Query/Retrieve Information Model  - FIND (Retired)</para>
+        /// <para>Patient/Study Only Query/Retrieve Information Model - FIND (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.3.1</para>
         /// </summary>
         public static readonly String PatientStudyOnlyQueryRetrieveInformationModelFindRetiredUid = "1.2.840.10008.5.1.4.1.2.3.1";
 
         /// <summary>SopClass for
-        /// <para>Patient/Study Only Query/Retrieve Information Model  - FIND (Retired)</para>
+        /// <para>Patient/Study Only Query/Retrieve Information Model - FIND (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.3.1</para>
         /// </summary>
         public static readonly SopClass PatientStudyOnlyQueryRetrieveInformationModelFindRetired =
-                             new SopClass("Patient/Study Only Query/Retrieve Information Model  - FIND (Retired)", 
+                             new SopClass("Patient/Study Only Query/Retrieve Information Model - FIND (Retired)", 
                                           PatientStudyOnlyQueryRetrieveInformationModelFindRetiredUid, 
                                           false);
 
         /// <summary>
-        /// <para>Patient/Study Only Query/Retrieve Information Model  - GET (Retired)</para>
+        /// <para>Patient/Study Only Query/Retrieve Information Model - GET (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.3.3</para>
         /// </summary>
         public static readonly String PatientStudyOnlyQueryRetrieveInformationModelGetRetiredUid = "1.2.840.10008.5.1.4.1.2.3.3";
 
         /// <summary>SopClass for
-        /// <para>Patient/Study Only Query/Retrieve Information Model  - GET (Retired)</para>
+        /// <para>Patient/Study Only Query/Retrieve Information Model - GET (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.3.3</para>
         /// </summary>
         public static readonly SopClass PatientStudyOnlyQueryRetrieveInformationModelGetRetired =
-                             new SopClass("Patient/Study Only Query/Retrieve Information Model  - GET (Retired)", 
+                             new SopClass("Patient/Study Only Query/Retrieve Information Model - GET (Retired)", 
                                           PatientStudyOnlyQueryRetrieveInformationModelGetRetiredUid, 
                                           false);
 
         /// <summary>
-        /// <para>Patient/Study Only Query/Retrieve Information Model  - MOVE (Retired)</para>
+        /// <para>Patient/Study Only Query/Retrieve Information Model - MOVE (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.3.2</para>
         /// </summary>
         public static readonly String PatientStudyOnlyQueryRetrieveInformationModelMoveRetiredUid = "1.2.840.10008.5.1.4.1.2.3.2";
 
         /// <summary>SopClass for
-        /// <para>Patient/Study Only Query/Retrieve Information Model  - MOVE (Retired)</para>
+        /// <para>Patient/Study Only Query/Retrieve Information Model - MOVE (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.3.2</para>
         /// </summary>
         public static readonly SopClass PatientStudyOnlyQueryRetrieveInformationModelMoveRetired =
-                             new SopClass("Patient/Study Only Query/Retrieve Information Model  - MOVE (Retired)", 
+                             new SopClass("Patient/Study Only Query/Retrieve Information Model - MOVE (Retired)", 
                                           PatientStudyOnlyQueryRetrieveInformationModelMoveRetiredUid, 
                                           false);
 
@@ -1702,18 +2062,33 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>RT Beams Delivery Instruction Storage (Supplement 74 Frozen Draft)</para>
-        /// <para>UID: 1.2.840.10008.5.1.4.34.1</para>
+        /// <para>RT Beams Delivery Instruction Storage </para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.7</para>
         /// </summary>
-        public static readonly String RtBeamsDeliveryInstructionStorageSupplement74FrozenDraftUid = "1.2.840.10008.5.1.4.34.1";
+        public static readonly String RtBeamsDeliveryInstructionStorageUid = "1.2.840.10008.5.1.4.34.7";
 
         /// <summary>SopClass for
-        /// <para>RT Beams Delivery Instruction Storage (Supplement 74 Frozen Draft)</para>
+        /// <para>RT Beams Delivery Instruction Storage </para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.7</para>
+        /// </summary>
+        public static readonly SopClass RtBeamsDeliveryInstructionStorage =
+                             new SopClass("RT Beams Delivery Instruction Storage ", 
+                                          RtBeamsDeliveryInstructionStorageUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>RT Beams Delivery Instruction Storage - Trial (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.34.1</para>
         /// </summary>
-        public static readonly SopClass RtBeamsDeliveryInstructionStorageSupplement74FrozenDraft =
-                             new SopClass("RT Beams Delivery Instruction Storage (Supplement 74 Frozen Draft)", 
-                                          RtBeamsDeliveryInstructionStorageSupplement74FrozenDraftUid, 
+        public static readonly String RtBeamsDeliveryInstructionStorageTrialRetiredUid = "1.2.840.10008.5.1.4.34.1";
+
+        /// <summary>SopClass for
+        /// <para>RT Beams Delivery Instruction Storage - Trial (Retired)</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.1</para>
+        /// </summary>
+        public static readonly SopClass RtBeamsDeliveryInstructionStorageTrialRetired =
+                             new SopClass("RT Beams Delivery Instruction Storage - Trial (Retired)", 
+                                          RtBeamsDeliveryInstructionStorageTrialRetiredUid, 
                                           false);
 
         /// <summary>
@@ -1747,18 +2122,33 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>RT Conventional Machine Verification (Supplement 74 Frozen Draft)</para>
-        /// <para>UID: 1.2.840.10008.5.1.4.34.2</para>
+        /// <para>RT Conventional Machine Verification </para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.8</para>
         /// </summary>
-        public static readonly String RtConventionalMachineVerificationSupplement74FrozenDraftUid = "1.2.840.10008.5.1.4.34.2";
+        public static readonly String RtConventionalMachineVerificationUid = "1.2.840.10008.5.1.4.34.8";
 
         /// <summary>SopClass for
-        /// <para>RT Conventional Machine Verification (Supplement 74 Frozen Draft)</para>
+        /// <para>RT Conventional Machine Verification </para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.8</para>
+        /// </summary>
+        public static readonly SopClass RtConventionalMachineVerification =
+                             new SopClass("RT Conventional Machine Verification ", 
+                                          RtConventionalMachineVerificationUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>RT Conventional Machine Verification - Trial (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.34.2</para>
         /// </summary>
-        public static readonly SopClass RtConventionalMachineVerificationSupplement74FrozenDraft =
-                             new SopClass("RT Conventional Machine Verification (Supplement 74 Frozen Draft)", 
-                                          RtConventionalMachineVerificationSupplement74FrozenDraftUid, 
+        public static readonly String RtConventionalMachineVerificationTrialRetiredUid = "1.2.840.10008.5.1.4.34.2";
+
+        /// <summary>SopClass for
+        /// <para>RT Conventional Machine Verification - Trial (Retired)</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.2</para>
+        /// </summary>
+        public static readonly SopClass RtConventionalMachineVerificationTrialRetired =
+                             new SopClass("RT Conventional Machine Verification - Trial (Retired)", 
+                                          RtConventionalMachineVerificationTrialRetiredUid, 
                                           false);
 
         /// <summary>
@@ -1807,18 +2197,33 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>RT Ion Machine Verification (Supplement 74 Frozen Draft)</para>
-        /// <para>UID: 1.2.840.10008.5.1.4.34.3</para>
+        /// <para>RT Ion Machine Verification </para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.9</para>
         /// </summary>
-        public static readonly String RtIonMachineVerificationSupplement74FrozenDraftUid = "1.2.840.10008.5.1.4.34.3";
+        public static readonly String RtIonMachineVerificationUid = "1.2.840.10008.5.1.4.34.9";
 
         /// <summary>SopClass for
-        /// <para>RT Ion Machine Verification (Supplement 74 Frozen Draft)</para>
+        /// <para>RT Ion Machine Verification </para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.9</para>
+        /// </summary>
+        public static readonly SopClass RtIonMachineVerification =
+                             new SopClass("RT Ion Machine Verification ", 
+                                          RtIonMachineVerificationUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>RT Ion Machine Verification - Trial (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.34.3</para>
         /// </summary>
-        public static readonly SopClass RtIonMachineVerificationSupplement74FrozenDraft =
-                             new SopClass("RT Ion Machine Verification (Supplement 74 Frozen Draft)", 
-                                          RtIonMachineVerificationSupplement74FrozenDraftUid, 
+        public static readonly String RtIonMachineVerificationTrialRetiredUid = "1.2.840.10008.5.1.4.34.3";
+
+        /// <summary>SopClass for
+        /// <para>RT Ion Machine Verification - Trial (Retired)</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.3</para>
+        /// </summary>
+        public static readonly SopClass RtIonMachineVerificationTrialRetired =
+                             new SopClass("RT Ion Machine Verification - Trial (Retired)", 
+                                          RtIonMachineVerificationTrialRetiredUid, 
                                           false);
 
         /// <summary>
@@ -1942,18 +2347,18 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>Spectacle Prescription Reports Storage</para>
+        /// <para>Spectacle Prescription Report Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.6</para>
         /// </summary>
-        public static readonly String SpectaclePrescriptionReportsStorageUid = "1.2.840.10008.5.1.4.1.1.78.6";
+        public static readonly String SpectaclePrescriptionReportStorageUid = "1.2.840.10008.5.1.4.1.1.78.6";
 
         /// <summary>SopClass for
-        /// <para>Spectacle Prescription Reports Storage</para>
+        /// <para>Spectacle Prescription Report Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.6</para>
         /// </summary>
-        public static readonly SopClass SpectaclePrescriptionReportsStorage =
-                             new SopClass("Spectacle Prescription Reports Storage", 
-                                          SpectaclePrescriptionReportsStorageUid, 
+        public static readonly SopClass SpectaclePrescriptionReportStorage =
+                             new SopClass("Spectacle Prescription Report Storage", 
+                                          SpectaclePrescriptionReportStorageUid, 
                                           false);
 
         /// <summary>
@@ -2107,47 +2512,47 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>Study Root Query/Retrieve Information Model – FIND</para>
+        /// <para>Study Root Query/Retrieve Information Model - FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.2.1</para>
         /// </summary>
         public static readonly String StudyRootQueryRetrieveInformationModelFindUid = "1.2.840.10008.5.1.4.1.2.2.1";
 
         /// <summary>SopClass for
-        /// <para>Study Root Query/Retrieve Information Model – FIND</para>
+        /// <para>Study Root Query/Retrieve Information Model - FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.2.1</para>
         /// </summary>
         public static readonly SopClass StudyRootQueryRetrieveInformationModelFind =
-                             new SopClass("Study Root Query/Retrieve Information Model – FIND", 
+                             new SopClass("Study Root Query/Retrieve Information Model - FIND", 
                                           StudyRootQueryRetrieveInformationModelFindUid, 
                                           false);
 
         /// <summary>
-        /// <para>Study Root Query/Retrieve Information Model – GET</para>
+        /// <para>Study Root Query/Retrieve Information Model - GET</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.2.3</para>
         /// </summary>
         public static readonly String StudyRootQueryRetrieveInformationModelGetUid = "1.2.840.10008.5.1.4.1.2.2.3";
 
         /// <summary>SopClass for
-        /// <para>Study Root Query/Retrieve Information Model – GET</para>
+        /// <para>Study Root Query/Retrieve Information Model - GET</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.2.3</para>
         /// </summary>
         public static readonly SopClass StudyRootQueryRetrieveInformationModelGet =
-                             new SopClass("Study Root Query/Retrieve Information Model – GET", 
+                             new SopClass("Study Root Query/Retrieve Information Model - GET", 
                                           StudyRootQueryRetrieveInformationModelGetUid, 
                                           false);
 
         /// <summary>
-        /// <para>Study Root Query/Retrieve Information Model – MOVE</para>
+        /// <para>Study Root Query/Retrieve Information Model - MOVE</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.2.2</para>
         /// </summary>
         public static readonly String StudyRootQueryRetrieveInformationModelMoveUid = "1.2.840.10008.5.1.4.1.2.2.2";
 
         /// <summary>SopClass for
-        /// <para>Study Root Query/Retrieve Information Model – MOVE</para>
+        /// <para>Study Root Query/Retrieve Information Model - MOVE</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.2.2</para>
         /// </summary>
         public static readonly SopClass StudyRootQueryRetrieveInformationModelMove =
-                             new SopClass("Study Root Query/Retrieve Information Model – MOVE", 
+                             new SopClass("Study Root Query/Retrieve Information Model - MOVE", 
                                           StudyRootQueryRetrieveInformationModelMoveUid, 
                                           false);
 
@@ -2212,17 +2617,17 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>Text SR Storage – Trial (Retired)</para>
+        /// <para>Text SR Storage - Trial (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.1</para>
         /// </summary>
         public static readonly String TextSrStorageTrialRetiredUid = "1.2.840.10008.5.1.4.1.1.88.1";
 
         /// <summary>SopClass for
-        /// <para>Text SR Storage – Trial (Retired)</para>
+        /// <para>Text SR Storage - Trial (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.1</para>
         /// </summary>
         public static readonly SopClass TextSrStorageTrialRetired =
-                             new SopClass("Text SR Storage – Trial (Retired)", 
+                             new SopClass("Text SR Storage - Trial (Retired)", 
                                           TextSrStorageTrialRetiredUid, 
                                           false);
 
@@ -2287,63 +2692,123 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>Unified Procedure Step – Event SOP Class</para>
-        /// <para>UID: 1.2.840.10008.5.1.4.34.4.4</para>
+        /// <para>Unified Procedure Step - Event SOP Class</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.6.4</para>
         /// </summary>
-        public static readonly String UnifiedProcedureStepEventSopClassUid = "1.2.840.10008.5.1.4.34.4.4";
+        public static readonly String UnifiedProcedureStepEventSopClassUid = "1.2.840.10008.5.1.4.34.6.4";
 
         /// <summary>SopClass for
-        /// <para>Unified Procedure Step – Event SOP Class</para>
-        /// <para>UID: 1.2.840.10008.5.1.4.34.4.4</para>
+        /// <para>Unified Procedure Step - Event SOP Class</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.6.4</para>
         /// </summary>
         public static readonly SopClass UnifiedProcedureStepEventSopClass =
-                             new SopClass("Unified Procedure Step – Event SOP Class", 
+                             new SopClass("Unified Procedure Step - Event SOP Class", 
                                           UnifiedProcedureStepEventSopClassUid, 
                                           false);
 
         /// <summary>
-        /// <para>Unified Procedure Step – Pull SOP Class</para>
-        /// <para>UID: 1.2.840.10008.5.1.4.34.4.3</para>
+        /// <para>Unified Procedure Step - Event SOP Class - Trial (Retired)</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.4.4</para>
         /// </summary>
-        public static readonly String UnifiedProcedureStepPullSopClassUid = "1.2.840.10008.5.1.4.34.4.3";
+        public static readonly String UnifiedProcedureStepEventSopClassTrialRetiredUid = "1.2.840.10008.5.1.4.34.4.4";
 
         /// <summary>SopClass for
-        /// <para>Unified Procedure Step – Pull SOP Class</para>
-        /// <para>UID: 1.2.840.10008.5.1.4.34.4.3</para>
+        /// <para>Unified Procedure Step - Event SOP Class - Trial (Retired)</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.4.4</para>
+        /// </summary>
+        public static readonly SopClass UnifiedProcedureStepEventSopClassTrialRetired =
+                             new SopClass("Unified Procedure Step - Event SOP Class - Trial (Retired)", 
+                                          UnifiedProcedureStepEventSopClassTrialRetiredUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Unified Procedure Step - Pull SOP Class</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.6.3</para>
+        /// </summary>
+        public static readonly String UnifiedProcedureStepPullSopClassUid = "1.2.840.10008.5.1.4.34.6.3";
+
+        /// <summary>SopClass for
+        /// <para>Unified Procedure Step - Pull SOP Class</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.6.3</para>
         /// </summary>
         public static readonly SopClass UnifiedProcedureStepPullSopClass =
-                             new SopClass("Unified Procedure Step – Pull SOP Class", 
+                             new SopClass("Unified Procedure Step - Pull SOP Class", 
                                           UnifiedProcedureStepPullSopClassUid, 
                                           false);
 
         /// <summary>
-        /// <para>Unified Procedure Step – Push SOP Class</para>
-        /// <para>UID: 1.2.840.10008.5.1.4.34.4.1</para>
+        /// <para>Unified Procedure Step - Pull SOP Class - Trial (Retired)</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.4.3</para>
         /// </summary>
-        public static readonly String UnifiedProcedureStepPushSopClassUid = "1.2.840.10008.5.1.4.34.4.1";
+        public static readonly String UnifiedProcedureStepPullSopClassTrialRetiredUid = "1.2.840.10008.5.1.4.34.4.3";
 
         /// <summary>SopClass for
-        /// <para>Unified Procedure Step – Push SOP Class</para>
-        /// <para>UID: 1.2.840.10008.5.1.4.34.4.1</para>
+        /// <para>Unified Procedure Step - Pull SOP Class - Trial (Retired)</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.4.3</para>
+        /// </summary>
+        public static readonly SopClass UnifiedProcedureStepPullSopClassTrialRetired =
+                             new SopClass("Unified Procedure Step - Pull SOP Class - Trial (Retired)", 
+                                          UnifiedProcedureStepPullSopClassTrialRetiredUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Unified Procedure Step - Push SOP Class</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.6.1</para>
+        /// </summary>
+        public static readonly String UnifiedProcedureStepPushSopClassUid = "1.2.840.10008.5.1.4.34.6.1";
+
+        /// <summary>SopClass for
+        /// <para>Unified Procedure Step - Push SOP Class</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.6.1</para>
         /// </summary>
         public static readonly SopClass UnifiedProcedureStepPushSopClass =
-                             new SopClass("Unified Procedure Step – Push SOP Class", 
+                             new SopClass("Unified Procedure Step - Push SOP Class", 
                                           UnifiedProcedureStepPushSopClassUid, 
                                           false);
 
         /// <summary>
-        /// <para>Unified Procedure Step – Watch SOP Class</para>
-        /// <para>UID: 1.2.840.10008.5.1.4.34.4.2</para>
+        /// <para>Unified Procedure Step - Push SOP Class - Trial (Retired)</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.4.1</para>
         /// </summary>
-        public static readonly String UnifiedProcedureStepWatchSopClassUid = "1.2.840.10008.5.1.4.34.4.2";
+        public static readonly String UnifiedProcedureStepPushSopClassTrialRetiredUid = "1.2.840.10008.5.1.4.34.4.1";
 
         /// <summary>SopClass for
-        /// <para>Unified Procedure Step – Watch SOP Class</para>
-        /// <para>UID: 1.2.840.10008.5.1.4.34.4.2</para>
+        /// <para>Unified Procedure Step - Push SOP Class - Trial (Retired)</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.4.1</para>
+        /// </summary>
+        public static readonly SopClass UnifiedProcedureStepPushSopClassTrialRetired =
+                             new SopClass("Unified Procedure Step - Push SOP Class - Trial (Retired)", 
+                                          UnifiedProcedureStepPushSopClassTrialRetiredUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Unified Procedure Step - Watch SOP Class</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.6.2</para>
+        /// </summary>
+        public static readonly String UnifiedProcedureStepWatchSopClassUid = "1.2.840.10008.5.1.4.34.6.2";
+
+        /// <summary>SopClass for
+        /// <para>Unified Procedure Step - Watch SOP Class</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.6.2</para>
         /// </summary>
         public static readonly SopClass UnifiedProcedureStepWatchSopClass =
-                             new SopClass("Unified Procedure Step – Watch SOP Class", 
+                             new SopClass("Unified Procedure Step - Watch SOP Class", 
                                           UnifiedProcedureStepWatchSopClassUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>Unified Procedure Step - Watch SOP Class - Trial (Retired)</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.4.2</para>
+        /// </summary>
+        public static readonly String UnifiedProcedureStepWatchSopClassTrialRetiredUid = "1.2.840.10008.5.1.4.34.4.2";
+
+        /// <summary>SopClass for
+        /// <para>Unified Procedure Step - Watch SOP Class - Trial (Retired)</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.34.4.2</para>
+        /// </summary>
+        public static readonly SopClass UnifiedProcedureStepWatchSopClassTrialRetired =
+                             new SopClass("Unified Procedure Step - Watch SOP Class - Trial (Retired)", 
+                                          UnifiedProcedureStepWatchSopClassTrialRetiredUid, 
                                           false);
 
         /// <summary>
@@ -2407,18 +2872,18 @@ namespace ClearCanvas.Dicom
                                           false);
 
         /// <summary>
-        /// <para>Visual Acuity Measurements </para>
+        /// <para>Visual Acuity Measurements Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.5</para>
         /// </summary>
-        public static readonly String VisualAcuityMeasurementsUid = "1.2.840.10008.5.1.4.1.1.78.5";
+        public static readonly String VisualAcuityMeasurementsStorageUid = "1.2.840.10008.5.1.4.1.1.78.5";
 
         /// <summary>SopClass for
-        /// <para>Visual Acuity Measurements </para>
+        /// <para>Visual Acuity Measurements Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.78.5</para>
         /// </summary>
-        public static readonly SopClass VisualAcuityMeasurements =
-                             new SopClass("Visual Acuity Measurements ", 
-                                          VisualAcuityMeasurementsUid, 
+        public static readonly SopClass VisualAcuityMeasurementsStorage =
+                             new SopClass("Visual Acuity Measurements Storage", 
+                                          VisualAcuityMeasurementsStorageUid, 
                                           false);
 
         /// <summary>
@@ -2479,6 +2944,21 @@ namespace ClearCanvas.Dicom
         public static readonly SopClass VlSlideCoordinatesMicroscopicImageStorage =
                              new SopClass("VL Slide-Coordinates Microscopic Image Storage", 
                                           VlSlideCoordinatesMicroscopicImageStorageUid, 
+                                          false);
+
+        /// <summary>
+        /// <para>VL Whole Slide Microscopy Image Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.77.1.6</para>
+        /// </summary>
+        public static readonly String VlWholeSlideMicroscopyImageStorageUid = "1.2.840.10008.5.1.4.1.1.77.1.6";
+
+        /// <summary>SopClass for
+        /// <para>VL Whole Slide Microscopy Image Storage</para>
+        /// <para>UID: 1.2.840.10008.5.1.4.1.1.77.1.6</para>
+        /// </summary>
+        public static readonly SopClass VlWholeSlideMicroscopyImageStorage =
+                             new SopClass("VL Whole Slide Microscopy Image Storage", 
+                                          VlWholeSlideMicroscopyImageStorageUid, 
                                           false);
 
         /// <summary>
@@ -2790,8 +3270,10 @@ namespace ClearCanvas.Dicom
         {
             SopClass theSop;
             if (!_sopList.TryGetValue(uid, out theSop))
-                return null;
-
+            {
+                theSop = new SopClass(string.Format("Generated: '{0}'", uid), uid, false); 
+                _sopList.Add(uid, theSop);  
+            }
             return theSop;
         }
         static SopClass()
@@ -2907,6 +3389,18 @@ namespace ClearCanvas.Dicom
             _sopList.Add(DetailSrStorageTrialRetiredUid, 
                          DetailSrStorageTrialRetired);
 
+            _sopList.Add(DicosCtImageStorageUid, 
+                         DicosCtImageStorage);
+
+            _sopList.Add(DicosDigitalXRayImageStorageForPresentationUid, 
+                         DicosDigitalXRayImageStorageForPresentation);
+
+            _sopList.Add(DicosDigitalXRayImageStorageForProcessingUid, 
+                         DicosDigitalXRayImageStorageForProcessing);
+
+            _sopList.Add(DicosThreatDetectionReportStorageUid, 
+                         DicosThreatDetectionReportStorage);
+
             _sopList.Add(DigitalIntraOralXRayImageStorageForPresentationUid, 
                          DigitalIntraOralXRayImageStorageForPresentation);
 
@@ -2924,6 +3418,12 @@ namespace ClearCanvas.Dicom
 
             _sopList.Add(DigitalXRayImageStorageForProcessingUid, 
                          DigitalXRayImageStorageForProcessing);
+
+            _sopList.Add(EddyCurrentImageStorageUid, 
+                         EddyCurrentImageStorage);
+
+            _sopList.Add(EddyCurrentMultiFrameImageStorageUid, 
+                         EddyCurrentMultiFrameImageStorage);
 
             _sopList.Add(EncapsulatedCdaStorageUid, 
                          EncapsulatedCdaStorage);
@@ -2973,6 +3473,18 @@ namespace ClearCanvas.Dicom
             _sopList.Add(GeneralRelevantPatientInformationQueryUid, 
                          GeneralRelevantPatientInformationQuery);
 
+            _sopList.Add(GenericImplantTemplateInformationModelFindUid, 
+                         GenericImplantTemplateInformationModelFind);
+
+            _sopList.Add(GenericImplantTemplateInformationModelGetUid, 
+                         GenericImplantTemplateInformationModelGet);
+
+            _sopList.Add(GenericImplantTemplateInformationModelMoveUid, 
+                         GenericImplantTemplateInformationModelMove);
+
+            _sopList.Add(GenericImplantTemplateStorageUid, 
+                         GenericImplantTemplateStorage);
+
             _sopList.Add(GrayscaleSoftcopyPresentationStateStorageSopClassUid, 
                          GrayscaleSoftcopyPresentationStateStorageSopClass);
 
@@ -2988,11 +3500,11 @@ namespace ClearCanvas.Dicom
             _sopList.Add(HangingProtocolStorageUid, 
                          HangingProtocolStorage);
 
-            _sopList.Add(HardcopyGrayscaleImageStorageSopClassRetiredUid, 
-                         HardcopyGrayscaleImageStorageSopClassRetired);
-
             _sopList.Add(HardcopyColorImageStorageSopClassRetiredUid, 
                          HardcopyColorImageStorageSopClassRetired);
+
+            _sopList.Add(HardcopyGrayscaleImageStorageSopClassRetiredUid, 
+                         HardcopyGrayscaleImageStorageSopClassRetired);
 
             _sopList.Add(HemodynamicWaveformStorageUid, 
                          HemodynamicWaveformStorage);
@@ -3000,8 +3512,44 @@ namespace ClearCanvas.Dicom
             _sopList.Add(ImageOverlayBoxSopClassRetiredUid, 
                          ImageOverlayBoxSopClassRetired);
 
+            _sopList.Add(ImplantAssemblyTemplateInformationModelFindUid, 
+                         ImplantAssemblyTemplateInformationModelFind);
+
+            _sopList.Add(ImplantAssemblyTemplateInformationModelGetUid, 
+                         ImplantAssemblyTemplateInformationModelGet);
+
+            _sopList.Add(ImplantAssemblyTemplateInformationModelMoveUid, 
+                         ImplantAssemblyTemplateInformationModelMove);
+
+            _sopList.Add(ImplantAssemblyTemplateStorageUid, 
+                         ImplantAssemblyTemplateStorage);
+
+            _sopList.Add(ImplantTemplateGroupInformationModelFindUid, 
+                         ImplantTemplateGroupInformationModelFind);
+
+            _sopList.Add(ImplantTemplateGroupInformationModelGetUid, 
+                         ImplantTemplateGroupInformationModelGet);
+
+            _sopList.Add(ImplantTemplateGroupInformationModelMoveUid, 
+                         ImplantTemplateGroupInformationModelMove);
+
+            _sopList.Add(ImplantTemplateGroupStorageUid, 
+                         ImplantTemplateGroupStorage);
+
+            _sopList.Add(ImplantationPlanSrStorageUid, 
+                         ImplantationPlanSrStorage);
+
             _sopList.Add(InstanceAvailabilityNotificationSopClassUid, 
                          InstanceAvailabilityNotificationSopClass);
+
+            _sopList.Add(IntraocularLensCalculationsStorageUid, 
+                         IntraocularLensCalculationsStorage);
+
+            _sopList.Add(IntravascularOpticalCoherenceTomographyImageStorageForPresentationUid, 
+                         IntravascularOpticalCoherenceTomographyImageStorageForPresentation);
+
+            _sopList.Add(IntravascularOpticalCoherenceTomographyImageStorageForProcessingUid, 
+                         IntravascularOpticalCoherenceTomographyImageStorageForProcessing);
 
             _sopList.Add(KeratometryMeasurementsStorageUid, 
                          KeratometryMeasurementsStorage);
@@ -3054,11 +3602,14 @@ namespace ClearCanvas.Dicom
             _sopList.Add(MultiFrameTrueColorSecondaryCaptureImageStorageUid, 
                          MultiFrameTrueColorSecondaryCaptureImageStorage);
 
+            _sopList.Add(NuclearMedicineImageStorageUid, 
+                         NuclearMedicineImageStorage);
+
             _sopList.Add(NuclearMedicineImageStorageRetiredUid, 
                          NuclearMedicineImageStorageRetired);
 
-            _sopList.Add(NuclearMedicineImageStorageUid, 
-                         NuclearMedicineImageStorage);
+            _sopList.Add(OphthalmicAxialMeasurementsStorageUid, 
+                         OphthalmicAxialMeasurementsStorage);
 
             _sopList.Add(OphthalmicPhotography16BitImageStorageUid, 
                          OphthalmicPhotography16BitImageStorage);
@@ -3068,6 +3619,9 @@ namespace ClearCanvas.Dicom
 
             _sopList.Add(OphthalmicTomographyImageStorageUid, 
                          OphthalmicTomographyImageStorage);
+
+            _sopList.Add(OphthalmicVisualFieldStaticPerimetryMeasurementsStorageUid, 
+                         OphthalmicVisualFieldStaticPerimetryMeasurementsStorage);
 
             _sopList.Add(PatientRootQueryRetrieveInformationModelFindUid, 
                          PatientRootQueryRetrieveInformationModelFind);
@@ -3132,8 +3686,11 @@ namespace ClearCanvas.Dicom
             _sopList.Add(RespiratoryWaveformStorageUid, 
                          RespiratoryWaveformStorage);
 
-            _sopList.Add(RtBeamsDeliveryInstructionStorageSupplement74FrozenDraftUid, 
-                         RtBeamsDeliveryInstructionStorageSupplement74FrozenDraft);
+            _sopList.Add(RtBeamsDeliveryInstructionStorageUid, 
+                         RtBeamsDeliveryInstructionStorage);
+
+            _sopList.Add(RtBeamsDeliveryInstructionStorageTrialRetiredUid, 
+                         RtBeamsDeliveryInstructionStorageTrialRetired);
 
             _sopList.Add(RtBeamsTreatmentRecordStorageUid, 
                          RtBeamsTreatmentRecordStorage);
@@ -3141,8 +3698,11 @@ namespace ClearCanvas.Dicom
             _sopList.Add(RtBrachyTreatmentRecordStorageUid, 
                          RtBrachyTreatmentRecordStorage);
 
-            _sopList.Add(RtConventionalMachineVerificationSupplement74FrozenDraftUid, 
-                         RtConventionalMachineVerificationSupplement74FrozenDraft);
+            _sopList.Add(RtConventionalMachineVerificationUid, 
+                         RtConventionalMachineVerification);
+
+            _sopList.Add(RtConventionalMachineVerificationTrialRetiredUid, 
+                         RtConventionalMachineVerificationTrialRetired);
 
             _sopList.Add(RtDoseStorageUid, 
                          RtDoseStorage);
@@ -3153,8 +3713,11 @@ namespace ClearCanvas.Dicom
             _sopList.Add(RtIonBeamsTreatmentRecordStorageUid, 
                          RtIonBeamsTreatmentRecordStorage);
 
-            _sopList.Add(RtIonMachineVerificationSupplement74FrozenDraftUid, 
-                         RtIonMachineVerificationSupplement74FrozenDraft);
+            _sopList.Add(RtIonMachineVerificationUid, 
+                         RtIonMachineVerification);
+
+            _sopList.Add(RtIonMachineVerificationTrialRetiredUid, 
+                         RtIonMachineVerificationTrialRetired);
 
             _sopList.Add(RtIonPlanStorageUid, 
                          RtIonPlanStorage);
@@ -3180,8 +3743,8 @@ namespace ClearCanvas.Dicom
             _sopList.Add(SpatialRegistrationStorageUid, 
                          SpatialRegistrationStorage);
 
-            _sopList.Add(SpectaclePrescriptionReportsStorageUid, 
-                         SpectaclePrescriptionReportsStorage);
+            _sopList.Add(SpectaclePrescriptionReportStorageUid, 
+                         SpectaclePrescriptionReportStorage);
 
             _sopList.Add(StandaloneCurveStorageRetiredUid, 
                          StandaloneCurveStorageRetired);
@@ -3252,14 +3815,26 @@ namespace ClearCanvas.Dicom
             _sopList.Add(UnifiedProcedureStepEventSopClassUid, 
                          UnifiedProcedureStepEventSopClass);
 
+            _sopList.Add(UnifiedProcedureStepEventSopClassTrialRetiredUid, 
+                         UnifiedProcedureStepEventSopClassTrialRetired);
+
             _sopList.Add(UnifiedProcedureStepPullSopClassUid, 
                          UnifiedProcedureStepPullSopClass);
+
+            _sopList.Add(UnifiedProcedureStepPullSopClassTrialRetiredUid, 
+                         UnifiedProcedureStepPullSopClassTrialRetired);
 
             _sopList.Add(UnifiedProcedureStepPushSopClassUid, 
                          UnifiedProcedureStepPushSopClass);
 
+            _sopList.Add(UnifiedProcedureStepPushSopClassTrialRetiredUid, 
+                         UnifiedProcedureStepPushSopClassTrialRetired);
+
             _sopList.Add(UnifiedProcedureStepWatchSopClassUid, 
                          UnifiedProcedureStepWatchSopClass);
+
+            _sopList.Add(UnifiedProcedureStepWatchSopClassTrialRetiredUid, 
+                         UnifiedProcedureStepWatchSopClassTrialRetired);
 
             _sopList.Add(VerificationSopClassUid, 
                          VerificationSopClass);
@@ -3273,8 +3848,8 @@ namespace ClearCanvas.Dicom
             _sopList.Add(VideoPhotographicImageStorageUid, 
                          VideoPhotographicImageStorage);
 
-            _sopList.Add(VisualAcuityMeasurementsUid, 
-                         VisualAcuityMeasurements);
+            _sopList.Add(VisualAcuityMeasurementsStorageUid, 
+                         VisualAcuityMeasurementsStorage);
 
             _sopList.Add(VlEndoscopicImageStorageUid, 
                          VlEndoscopicImageStorage);
@@ -3287,6 +3862,9 @@ namespace ClearCanvas.Dicom
 
             _sopList.Add(VlSlideCoordinatesMicroscopicImageStorageUid, 
                          VlSlideCoordinatesMicroscopicImageStorage);
+
+            _sopList.Add(VlWholeSlideMicroscopyImageStorageUid, 
+                         VlWholeSlideMicroscopyImageStorage);
 
             _sopList.Add(VoiLutBoxSopClassUid, 
                          VoiLutBoxSopClass);

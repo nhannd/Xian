@@ -15,7 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 {
@@ -24,15 +24,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 	public interface ISeriesDetailsToolContext : IToolContext
 	{
-		IPatientData Patient { get; }
-		IStudyData Study { get; }
-		IList<ISeriesData> AllSeries { get; }
-		IList<ISeriesData> SelectedSeries { get; }
+	    IDicomServiceNode Server { get; }
+        StudyTableItem Study { get; }
+        IList<SeriesTableItem> AllSeries { get; }
+        IList<SeriesTableItem> SelectedSeries { get; }
 		event EventHandler SelectedSeriesChanged;
 		void RefreshSeriesTable();
 
-		//TODO (CR Sept 2010): don't expose the component.
-		SeriesDetailsComponent Component { get; }
 		IDesktopWindow DesktopWindow { get; }
 	}
 
@@ -59,32 +57,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			}
 		}
 
-		protected SeriesDetailsComponent SeriesDetailsComponent
-		{
-			get { return Context.Component; }
-		}
-
-		protected IPatientData Patient
-		{
-			get { return Context.Patient; }
-		}
-
-		protected IStudyData Study
+		protected StudyTableItem Study
 		{
 			get { return Context.Study; }
 		}
 
-		protected object Server
+		protected IDicomServiceNode Server
 		{
-			get { return Context.Component.StudyItem.Server; }
+			get { return Study.Server; }
 		}
 
-		protected IList<ISeriesData> AllSeries
+        protected IList<SeriesTableItem> AllSeries
 		{
 			get { return Context.AllSeries; }
 		}
 
-		protected IList<ISeriesData> SelectedSeries
+        protected IList<SeriesTableItem> SelectedSeries
 		{
 			get { return Context.SelectedSeries; }
 		}
@@ -120,11 +108,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 		protected virtual void OnSelectedSeriesChanged()
 		{
 			this.Enabled = this.Context.SelectedSeries.Count > 0;
-		}
-
-		protected bool IsStudyLoaderSupported
-		{
-			get { return ImageViewerComponent.IsStudyLoaderSupported(Context.Component.StudyItem.StudyLoaderName); }
 		}
 	}
 }

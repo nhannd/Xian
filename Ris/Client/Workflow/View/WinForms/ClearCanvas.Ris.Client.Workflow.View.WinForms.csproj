@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,10 +12,11 @@
     <AssemblyName>ClearCanvas.Ris.Client.Workflow.View.WinForms</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -29,6 +31,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,6 +41,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -46,6 +50,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -55,13 +60,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CancelOrderComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="CancelOrderComponentControl.Designer.cs">
-      <DependentUpon>CancelOrderComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CancelOrderComponentView.cs" />
     <Compile Include="CheckInOrderComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -69,6 +67,13 @@
       <DependentUpon>CheckInOrderComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CheckInOrderComponentView.cs" />
+    <Compile Include="MppsDocumentationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MppsDocumentationComponentControl.Designer.cs">
+      <DependentUpon>MppsDocumentationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MppsDocumentationComponentView.cs" />
     <Compile Include="DicomSeriesEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -111,13 +116,6 @@
       <DependentUpon>MergeOrdersComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="MergeOrdersComponentView.cs" />
-    <Compile Include="OrderEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="OrderEditorComponentControl.Designer.cs">
-      <DependentUpon>OrderEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="OrderEditorComponentView.cs" />
     <Compile Include="PerformedProcedureComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -133,20 +131,6 @@
     </Compile>
     <Compile Include="PriorReportComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProtocolEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ProtocolEditorComponentControl.Designer.cs">
-      <DependentUpon>ProtocolEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProtocolEditorComponentView.cs" />
-    <Compile Include="ProtocollingComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ProtocollingComponentControl.Designer.cs">
-      <DependentUpon>ProtocollingComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProtocollingComponentView.cs" />
     <Compile Include="ReasonSelectionComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -161,20 +145,6 @@
       <DependentUpon>ReassignComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ReassignComponentView.cs" />
-    <Compile Include="ReconciliationComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ReconciliationComponentControl.Designer.cs">
-      <DependentUpon>ReconciliationComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ReconciliationComponentView.cs" />
-    <Compile Include="ReconciliationConfirmComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ReconciliationConfirmComponentControl.Designer.cs">
-      <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ReconciliationConfirmComponentView.cs" />
     <Compile Include="ReportEditorComponentView.cs" />
     <Compile Include="ReportEditorComponentViewBase.cs" />
     <Compile Include="ReportingComponentControl.cs">
@@ -245,13 +215,6 @@
       <DependentUpon>VisitPractitionersSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="VisitPractitionersSummaryComponentView.cs" />
-    <Compile Include="WorklistPrintComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="WorklistPrintComponentControl.Designer.cs">
-      <DependentUpon>WorklistPrintComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="WorklistPrintComponentView.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -285,32 +248,20 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CancelOrderComponentControl.resx">
-      <DependentUpon>CancelOrderComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="CheckInOrderComponentControl.resx">
       <DependentUpon>CheckInOrderComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MppsDocumentationComponentControl.resx">
+      <DependentUpon>MppsDocumentationComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Folders\FolderOptionComponentControl.resx">
       <DependentUpon>FolderOptionComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="OrderEditorComponentControl.resx">
-      <DependentUpon>OrderEditorComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="PerformedProcedureComponentControl.resx">
       <DependentUpon>PerformedProcedureComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ReconciliationComponentControl.resx">
-      <DependentUpon>ReconciliationComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ReconciliationConfirmComponentControl.resx">
-      <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PerformingDocumentationComponentControl.resx">
@@ -361,14 +312,6 @@
       <DependentUpon>PriorReportComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ProtocolEditorComponentControl.resx">
-      <DependentUpon>ProtocolEditorComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProtocollingComponentControl.resx">
-      <DependentUpon>ProtocollingComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="ReasonSelectionComponentControl.resx">
       <DependentUpon>ReasonSelectionComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -399,14 +342,11 @@
       <SubType>Designer</SubType>
       <DependentUpon>RichTextReportEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="WorklistPrintComponentControl.resx">
-      <DependentUpon>WorklistPrintComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

@@ -75,6 +75,7 @@ CREATE TABLE [dbo].[ServerPartition](
 	[MatchPatientsBirthDate] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchPatientsBirthDate]  DEFAULT ((1)),
 	[MatchPatientsName] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchPatientsName]  DEFAULT ((1)),
 	[MatchPatientsSex] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchPatientsSex]  DEFAULT ((1)),
+	[AcceptLatestReport] bit NOT NULL CONSTRAINT [DF_ServerPartition_AcceptLatestReport] DEFAULT ((1)),
  CONSTRAINT [PK_ServerPartition] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC

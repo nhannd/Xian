@@ -18,7 +18,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
 </asp:ScriptManagerProxy>
 
-<div class="GridViewBorder>
+<div class="GridViewBorder">
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>

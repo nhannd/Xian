@@ -14,6 +14,7 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Rules;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
@@ -22,7 +23,7 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegBaselineAction
 	/// <summary>
 	/// JPEG Baseline action for <see cref="ServerRulesEngine"/>.
 	/// </summary>
-	public class JpegBaselineActionItem : ServerActionItemBase
+	public class JpegBaselineActionItem : ActionItemBase<ServerActionContext>
 	{
 		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.LossyCompress;
 		private readonly Expression _exprScheduledTime;

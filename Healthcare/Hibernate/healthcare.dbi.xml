@@ -22,7 +22,8 @@ on key tables that play a central role in the workflow queries.
 
   <!-- Procedure -->
   <index table="Procedure_" columns="ScheduledStartTime_"/>
-  <index table="Procedure_" columns="StartTime_"/>
+	<index table="Procedure_" columns="ScheduledEndTime_"/>
+	<index table="Procedure_" columns="StartTime_"/>
   <index table="Procedure_" columns="EndTime_"/>
   <index table="Procedure_" columns="Portable_"/>
 

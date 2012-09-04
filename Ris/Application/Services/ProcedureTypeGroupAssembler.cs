@@ -20,7 +20,7 @@ using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    internal class ProcedureTypeGroupAssembler
+    public class ProcedureTypeGroupAssembler
     {
         public ProcedureTypeGroupSummary GetProcedureTypeGroupSummary(ProcedureTypeGroup rptGroup, IPersistenceContext context)
         {

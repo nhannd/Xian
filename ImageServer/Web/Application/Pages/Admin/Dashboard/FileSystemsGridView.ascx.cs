@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ServiceModel;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common;
@@ -21,7 +20,6 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 using Resources;
 using SR = Resources.SR;
 
@@ -53,8 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
             {
                 if (ContainerTable != null)
                     return ContainerTable.Height;
-                else
-                    return _height;
+                return _height;
             }
             set
             {
@@ -146,7 +143,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 
         private float GetFilesystemUsedPercentage(Filesystem fs)
         {
-            if (!isServiceAvailable())
+            if (!IsServiceAvailable())
                 return float.NaN;
 
             try
@@ -172,11 +169,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 
         private void CustomizeUsageColumn(GridViewRow row)
         {
-            Filesystem fs = row.DataItem as Filesystem;
-            Image img = row.FindControl("UsageImage") as Image;
+            var fs = row.DataItem as Filesystem;
+            var img = row.FindControl("UsageImage") as Image;
 
             float usage = GetFilesystemUsedPercentage(fs);
-            if (img != null)
+            if (fs != null && img != null)
             {
                 img.ImageUrl = string.Format(ImageServerConstants.PageURLs.BarChartPage,
                                              usage,
@@ -190,10 +187,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 
         private void CustomizePathColumn(GridViewRow row)
         {
-            Filesystem fs = row.DataItem as Filesystem;
-            Label lbl = row.FindControl("PathLabel") as Label; // The label is added in the template
+            var fs = row.DataItem as Filesystem;
+            var lbl = row.FindControl("PathLabel") as Label; // The label is added in the template
 
-            if (fs.FilesystemPath != null)
+            if (fs != null && lbl!=null && fs.FilesystemPath != null)
             {
                 // truncate it
                 if (fs.FilesystemPath.Length > 50)
@@ -210,26 +207,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 
         private void CustomizeFilesystemTierColumn(GridViewRow row)
         {
-            Filesystem fs = row.DataItem as Filesystem;
-            Label lbl = row.FindControl("FilesystemTierDescription") as Label; // The label is added in the template
-            lbl.Text = ServerEnumDescription.GetLocalizedDescription(fs.FilesystemTierEnum);
+            var fs = row.DataItem as Filesystem;
+            var lbl = row.FindControl("FilesystemTierDescription") as Label; // The label is added in the template
+            if (fs != null && lbl != null)
+                lbl.Text = ServerEnumDescription.GetLocalizedDescription(fs.FilesystemTierEnum);
         }
 
 
         private void CustomizeBooleanColumn(GridViewRow row, string controlName, string fieldName)
         {
-            Image img = ((Image)row.FindControl(controlName));
+            var img = ((Image)row.FindControl(controlName));
             if (img != null)
             {
                 bool active = Convert.ToBoolean(DataBinder.Eval(row.DataItem, fieldName));
-                if (active)
-                {
-                    img.ImageUrl = ImageServerConstants.ImageURLs.Checked;
-                }
-                else
-                {
-                    img.ImageUrl = ImageServerConstants.ImageURLs.Unchecked;
-                }
+                img.ImageUrl = active ? ImageServerConstants.ImageURLs.Checked : ImageServerConstants.ImageURLs.Unchecked;
             }
         }
 
@@ -241,26 +232,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
         {
             base.OnInit(e);
 
+            var theController = new FileSystemsConfigurationController();
+            var criteria = new FilesystemSelectCriteria();
+            criteria.FilesystemTierEnum.SortAsc(0);
+            criteria.Description.SortAsc(1);
+            FileSystems = theController.GetFileSystems(criteria);
+
             TheGrid = FSGridView;
+
+            GridPagerTop.InitializeGridPager(SR.GridPagerFileSystemSingleItem, SR.GridPagerFileSystemMultipleItems, TheGrid,
+                                             () => FileSystems.Count, ImageServerConstants.GridViewPagerPosition.Top);
+            Pager = GridPagerTop;
+            GridPagerTop.Reset();
 
             // Set up the grid
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
 
-
-            FileSystemsConfigurationController _theController = new FileSystemsConfigurationController();
-            FilesystemSelectCriteria criteria = new FilesystemSelectCriteria();
-            FileSystems = _theController.GetFileSystems(criteria);
-
             DataBind();
-
         }
 
         #endregion   
 
         protected void CustomizeReadColumn(GridViewRowEventArgs e)
         {
-            Image img = ((Image) e.Row.FindControl("ReadImage"));
+            var img = ((Image) e.Row.FindControl("ReadImage"));
             if (img != null)
             {
                 bool enabled = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "Enabled"));
@@ -269,14 +265,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 
                 bool canRead = enabled && (readOnly || ( /*not readonly and */ !writeOnly));
 
-                if (canRead)
-                {
-                    img.ImageUrl = ImageServerConstants.ImageURLs.Checked;
-                }
-                else
-                {
-                    img.ImageUrl = ImageServerConstants.ImageURLs.Unchecked;
-                }
+                img.ImageUrl = canRead ? ImageServerConstants.ImageURLs.Checked : ImageServerConstants.ImageURLs.Unchecked;
             }
         }
 
@@ -287,7 +276,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 
         protected void CustomizeWriteColumn(GridViewRowEventArgs e)
         {
-            Image img = ((Image) e.Row.FindControl("WriteImage"));
+            var img = ((Image) e.Row.FindControl("WriteImage"));
             if (img != null)
             {
                 bool enabled = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "Enabled"));
@@ -296,26 +285,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 
                 bool canWrite = enabled && (writeOnly || ( /*not write only and also */ !readOnly));
 
-                if (canWrite)
-                {
-                    img.ImageUrl = ImageServerConstants.ImageURLs.Checked;
-                }
-                else
-                {
-                    img.ImageUrl = ImageServerConstants.ImageURLs.Unchecked;
-                }
+                img.ImageUrl = canWrite ? ImageServerConstants.ImageURLs.Checked : ImageServerConstants.ImageURLs.Unchecked;
             }
         }
 
         #region Private Static members
-        static private bool _serviceIsOffline = false;
+        static private bool _serviceIsOffline;
         static private DateTime _lastServiceAvailableTime = Platform.Time;
 
         /// <summary>
         /// Return a value indicating whether the last web service call was successful.
         /// </summary>
         /// <returns></returns>
-        static private bool isServiceAvailable()
+        static private bool IsServiceAvailable()
         {
             TimeSpan elapsed = Platform.Time - _lastServiceAvailableTime;
             return (!_serviceIsOffline || /*service was offline but */ elapsed.Seconds > 15);

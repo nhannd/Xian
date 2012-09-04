@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
@@ -82,7 +83,7 @@ namespace ClearCanvas.Ris.Application.Common
         public List<OrderNoteSummary> Notes;
 
 		[DataMember]
-		public List<OrderAttachmentSummary> Attachments;
+		public List<AttachmentSummary> Attachments;
 
 		[DataMember]
 		public List<ResultRecipientDetail> ResultRecipients;

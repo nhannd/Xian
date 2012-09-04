@@ -9,6 +9,8 @@
 
 #endregion
 
+using System.Collections;
+
 namespace ClearCanvas.Desktop.Tables
 {
     /// <summary>
@@ -16,36 +18,34 @@ namespace ClearCanvas.Desktop.Tables
     /// </summary>
     public class TableSortParams
     {
-        private ITableColumn _column;
-        private bool _ascending;
-
-        /// <summary>
+    	/// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="column">The column to sort by.</param>
         /// <param name="ascending">True if the items should be sorted in ascending orders.</param>
         public TableSortParams(ITableColumn column, bool ascending)
         {
-            _column = column;
-            _ascending = ascending;
+            Column = column;
+            Ascending = ascending;
         }
 
-        /// <summary>
-        /// Gets or sets the column to sort by.
-        /// </summary>
-        public ITableColumn Column
-        {
-            get { return _column; }
-            set { _column = value; }
-        }
+    	/// <summary>
+    	/// Gets or sets the column to sort by.
+    	/// </summary>
+    	public ITableColumn Column { get; set; }
 
-        /// <summary>
-        /// Gets or sets whether the items should be sorted in ascending or descending order.
-        /// </summary>
-        public bool Ascending
-        {
-            get { return _ascending; }
-            set { _ascending = value; }
-        }
+    	/// <summary>
+    	/// Gets or sets whether the items should be sorted in ascending or descending order.
+    	/// </summary>
+    	public bool Ascending { get; set; }
+
+		/// <summary>
+		/// Gets a comparer representing this sort.
+		/// </summary>
+		/// <returns></returns>
+		public IComparer GetComparer()
+		{
+			return Column.GetComparer(Ascending);
+		}
     }
 }

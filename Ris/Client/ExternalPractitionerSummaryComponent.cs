@@ -21,12 +21,13 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
+using Action = ClearCanvas.Desktop.Actions.Action;
 
 namespace ClearCanvas.Ris.Client
 {
 	[MenuAction("launch", "global-menus/Admin/External Practitioners", "Launch")]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner)]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	public class ExternalPractitionerSummaryTool : Tool<IDesktopToolContext>
 	{
 		private IWorkspace _workspace;

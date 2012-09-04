@@ -15,7 +15,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Network.Scu;
-using ClearCanvas.ImageViewer.Services.ServerTree;
+using ClearCanvas.ImageViewer.Common.DicomServer;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
@@ -27,13 +28,9 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 	[ExtensionOf(typeof(ServerTreeToolExtensionPoint))]
 	public class VerifyServerTool : ServerTreeTool
 	{
-		public VerifyServerTool()
-		{
-		}
-
 		private bool NoServersSelected()
 		{
-			return this.Context.SelectedServers == null || this.Context.SelectedServers.Servers == null || this.Context.SelectedServers.Servers.Count == 0;
+			return this.Context.SelectedServers == null || this.Context.SelectedServers.Count == 0;
 		}
 
 		private void VerifyServer()
@@ -50,32 +47,39 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 				return;
 			}
 
-			string myAE = ImageViewer.Services.ServerTree.ServerTree.GetClientAETitle();
+		    try
+		    {
+		        var localServer = ServerDirectory.GetLocalServer();
 
-			StringBuilder msgText = new StringBuilder();
-			msgText.AppendFormat(SR.MessageCEchoVerificationPrefix + "\r\n\r\n");
-			foreach (Server server in this.Context.SelectedServers.Servers)
-			{
-				using (VerificationScu scu = new VerificationScu())
-				{
-					VerificationResult result = scu.Verify(myAE, server.AETitle, server.Host, server.Port);
-					if (result == VerificationResult.Success)
-						msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", server.Path);
-					else
-						msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", server.Path);
+                var msgText = new StringBuilder();
+                msgText.AppendFormat(SR.MessageCEchoVerificationPrefix + "\r\n\r\n");
+                foreach (var server in this.Context.SelectedServers)
+                {
+                    using (var scu = new VerificationScu())
+                    {
+                        VerificationResult result = scu.Verify(localServer.AETitle, server.AETitle, server.ScpParameters.HostName, server.ScpParameters.Port);
+                        if (result == VerificationResult.Success)
+                            msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", server.Name);
+                        else
+                            msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", server.Name);
 
-					// must wait for the SCU thread to release the connection properly before disposal, otherwise we might end up aborting the connection instead
-					scu.Join(new TimeSpan(0, 0, 2));
-				}
-			}
+                        // must wait for the SCU thread to release the connection properly before disposal, otherwise we might end up aborting the connection instead
+                        scu.Join(new TimeSpan(0, 0, 2));
+                    }
+                }
 
-			msgText.AppendFormat("\r\n");
-			this.Context.DesktopWindow.ShowMessageBox(msgText.ToString(), MessageBoxActions.Ok);
+                msgText.AppendFormat("\r\n");
+                this.Context.DesktopWindow.ShowMessageBox(msgText.ToString(), MessageBoxActions.Ok);
+		    }
+		    catch (Exception e)
+		    {
+                ExceptionHandler.Report(e, base.Context.DesktopWindow);
+		    }
 		}
 
 		protected override void OnSelectedServerChanged(object sender, EventArgs e)
 		{
-			this.Enabled = !this.Context.SelectedServers.IsLocalDatastore && !this.NoServersSelected();                 
+			this.Enabled = !this.Context.SelectedServers.IsLocalServer && !this.NoServersSelected();                 
 		}
 	}
 }

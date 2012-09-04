@@ -12,13 +12,90 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq.Expressions;
+using System.Reflection;
 using SystemConfiguration = System.Configuration.Configuration;
 using System.Xml;
 
 namespace ClearCanvas.Common.Configuration
 {
 	public static class ApplicationSettingsExtensions
-    {
+	{
+		#region Public API
+
+		public static object GetPreviousSharedPropertyValue(this ApplicationSettingsBase settings, string propertyName, string previousExeConfigFilename)
+		{
+			SettingsProperty property = settings.Properties[propertyName];
+			if (property == null)
+				throw new ArgumentException(String.Format("The specified property does not exist: {0}", propertyName), "propertyName");
+
+			ISharedApplicationSettingsProvider provider = GetSharedSettingsProvider(property.Provider);
+			if (provider == null)
+				return null;
+
+			SettingsPropertyValueCollection values = provider.GetPreviousSharedPropertyValues(settings.Context,
+									new SettingsPropertyCollection { property }, previousExeConfigFilename);
+
+			SettingsPropertyValue value = values[propertyName];
+			return value == null ? null : value.PropertyValue;
+		}
+
+		public static TProperty GetSharedPropertyValue<TSettings, TProperty>(this TSettings settings, Expression<Func<TSettings, TProperty>> propertyExpr, TProperty value)
+			where TSettings : ApplicationSettingsBase
+		{
+			return (TProperty)GetSharedPropertyValue(settings, ConvertPropertyExpressionToMember(propertyExpr).Name);
+		}
+
+		public static object GetSharedPropertyValue(this ApplicationSettingsBase settings, string propertyName)
+		{
+			SettingsProperty property = settings.Properties[propertyName];
+			if (property == null)
+				throw new ArgumentException(String.Format("The specified property does not exist: {0}", propertyName), "propertyName");
+
+			ISharedApplicationSettingsProvider sharedSettingsProvider = GetSharedSettingsProvider(property.Provider);
+			if (sharedSettingsProvider == null)
+				return null;
+
+			var values = sharedSettingsProvider.GetSharedPropertyValues(settings.Context, new SettingsPropertyCollection { property });
+			SettingsPropertyValue value = values[propertyName];
+			return value == null ? null : value.PropertyValue;
+		}
+
+		public static void SetSharedPropertyValue<TSettings, TProperty>(this TSettings settings, Expression<Func<TSettings, TProperty>> propertyExpr, TProperty value)
+			where TSettings : ApplicationSettingsBase
+		{
+			SetSharedPropertyValue(settings, ConvertPropertyExpressionToMember(propertyExpr).Name, value);
+		}
+
+		public static void SetSharedPropertyValue(this ApplicationSettingsBase settings, string propertyName, object value)
+		{
+			SettingsProperty property = settings.Properties[propertyName];
+			if (property == null)
+				throw new ArgumentException(String.Format("The specified property does not exist: {0}", propertyName), "propertyName");
+
+			ISharedApplicationSettingsProvider sharedSettingsProvider = GetSharedSettingsProvider(property.Provider);
+			if (sharedSettingsProvider == null)
+				throw new NotSupportedException("Setting shared values is not supported.");
+
+			SettingsPropertyValue settingsValue = new SettingsPropertyValue(property) { PropertyValue = value };
+			sharedSettingsProvider.SetSharedPropertyValues(settings.Context, new SettingsPropertyValueCollection { settingsValue });
+
+			SaveIfDirty(settings);
+			//Need to call Reload because changes to shared settings aren't automatically realized by the .NET settings framework.
+			settings.Reload();
+		}
+
+		public static void ImportSharedSettings(this ApplicationSettingsBase settings, string configurationFilename)
+		{
+			SystemConfiguration configuration = SystemConfigurationHelper.GetExeConfiguration(configurationFilename);
+			var values = SystemConfigurationHelper.GetSettingsValues(configuration, settings.GetType());
+			SetSharedPropertyValues(settings, values);
+		}
+
+		#endregion
+
+		#region Helpers
+
 		private static SettingsPropertyCollection GetPropertiesForProvider(ApplicationSettingsBase settings, SettingsProvider provider)
         {
             SettingsPropertyCollection properties = new SettingsPropertyCollection();
@@ -174,61 +251,33 @@ namespace ClearCanvas.Common.Configuration
 			settings.Reload();
 		}
 
-		public static object GetPreviousSharedPropertyValue(ApplicationSettingsBase settings, string propertyName, string previousExeConfigFilename)
-        {
-            SettingsProperty property = settings.Properties[propertyName];
-            if (property == null)
-                throw new ArgumentException(String.Format("The specified property does not exist: {0}", propertyName), "propertyName");
-            
-            ISharedApplicationSettingsProvider provider = GetSharedSettingsProvider(property.Provider);
-            if (provider == null)
-                return null;
-
-            SettingsPropertyValueCollection values = provider.GetPreviousSharedPropertyValues(settings.Context, 
-                                    new SettingsPropertyCollection { property }, previousExeConfigFilename);
-
-            SettingsPropertyValue value = values[propertyName];
-            return value == null ? null : value.PropertyValue;
-        }
-
-        public static object GetSharedPropertyValue(ApplicationSettingsBase settings, string propertyName)
-        {
-            SettingsProperty property = settings.Properties[propertyName];
-            if (property == null)
-                throw new ArgumentException(String.Format("The specified property does not exist: {0}", propertyName), "propertyName");
-
-			ISharedApplicationSettingsProvider sharedSettingsProvider = GetSharedSettingsProvider(property.Provider);
-            if (sharedSettingsProvider == null)
-                return null;
-
-            var values = sharedSettingsProvider.GetSharedPropertyValues(settings.Context, new SettingsPropertyCollection { property });
-            SettingsPropertyValue value = values[propertyName];
-            return value == null ? null : value.PropertyValue;
-        }
-
-		public static void SetSharedPropertyValue(ApplicationSettingsBase settings, string propertyName, object value)
+		/// <summary>
+		/// Converts a lambda property de-referencing expression to a <see cref="MemberInfo"/>.
+		/// </summary>
+		/// <remarks>
+		/// Given a lambda expression of the form <code>a => a.B</code>, this method returns the <see cref="MemberInfo"/>
+		/// that represents the property B on the object a.  Only one level of de-referencing is supported.
+		/// </remarks>
+		/// <typeparam name="TItem"></typeparam>
+		/// <typeparam name="TProperty"></typeparam>
+		/// <param name="lambda"></param>
+		/// <returns></returns>
+		private static MemberInfo ConvertPropertyExpressionToMember<TItem, TProperty>(Expression<Func<TItem, TProperty>> lambda)
 		{
-			SettingsProperty property = settings.Properties[propertyName];
-			if (property == null)
-				throw new ArgumentException(String.Format("The specified property does not exist: {0}", propertyName), "propertyName");
-
-			ISharedApplicationSettingsProvider sharedSettingsProvider = GetSharedSettingsProvider(property.Provider);
-			if (sharedSettingsProvider == null)
-				throw new NotSupportedException("Setting shared values is not supported.");
-
-			SettingsPropertyValue settingsValue = new SettingsPropertyValue(property) { PropertyValue = value };
-			sharedSettingsProvider.SetSharedPropertyValues(settings.Context, new SettingsPropertyValueCollection{ settingsValue });
-
-			SaveIfDirty(settings);
-			//Need to call Reload because changes to shared settings aren't automatically realized by the .NET settings framework.
-			settings.Reload();
+			// stole this code from .net framework (see system.data.linq.DataLoadOptions, method LoadWith)
+			var body = lambda.Body;
+			if (body.NodeType == ExpressionType.Convert || body.NodeType == ExpressionType.ConvertChecked)
+			{
+				body = ((UnaryExpression)body).Operand;
+			}
+			var memberExpr = body as MemberExpression;
+			if (memberExpr == null || memberExpr.Expression.NodeType != ExpressionType.Parameter)
+			{
+				throw new InvalidOperationException(string.Format("{0} is not a valid property expression.", lambda));
+			}
+			return memberExpr.Member;
 		}
 
-		public static void ImportSharedSettings(ApplicationSettingsBase settings, string configurationFilename)
-		{
-			SystemConfiguration configuration = SystemConfigurationHelper.GetExeConfiguration(configurationFilename);
-			var values = SystemConfigurationHelper.GetSettingsValues(configuration, settings.GetType());
-			SetSharedPropertyValues(settings, values);
-		}
-    }
+		#endregion
+	}
 }

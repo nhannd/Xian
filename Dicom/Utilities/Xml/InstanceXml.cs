@@ -40,7 +40,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		private readonly String _sopInstanceUid;
 		private readonly SopClass _sopClass;
 		private readonly TransferSyntax _transferSyntax;
-		private string _sourceFileName;
+        private string _sourceAETitle;
+        private string _sourceFileName;
 		private long _fileSize = 0;
 
 		private BaseInstanceXml _baseInstance;
@@ -100,7 +101,13 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			}
 		}
 
-		public long FileSize
+	    public string SourceAETitle
+	    {
+            get { return _sourceAETitle; }
+            set { _sourceAETitle = value; }
+	    }
+
+	    public long FileSize
 		{
 			get { return _fileSize; }
 			set { _fileSize = value; }
@@ -159,7 +166,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 		#region Constructors
 
-		public InstanceXml(DicomAttributeCollection collection, SopClass sopClass, TransferSyntax syntax)
+	    public InstanceXml(DicomAttributeCollection collection, SopClass sopClass, TransferSyntax syntax)
 		{
 			_sopInstanceUid = collection[DicomTags.SopInstanceUid];
 
@@ -216,6 +223,11 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			{
 				_sopInstanceUid = instanceNode.Attributes["UID"].Value;
 			}
+
+            if (instanceNode.Attributes["SourceAETitle"] != null)
+            {
+                _sourceAETitle = XmlUnescapeString(instanceNode.Attributes["SourceAETitle"].Value);
+            }
 
 			if (instanceNode.Attributes["SopClassUID"] != null)
 			{
@@ -517,7 +529,14 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 					instance.Attributes.Append(transferSyntaxAttribute);
 				}
 
-				if (_sourceFileName != null && settings.IncludeSourceFileName)
+                if (_sourceAETitle != null)
+                {
+                    XmlAttribute sourceAEAttribute = theDocument.CreateAttribute("SourceAETitle");
+                    sourceAEAttribute.Value = XmlEscapeString(_sourceAETitle);
+                    instance.Attributes.Append(sourceAEAttribute);
+                }
+                
+                if (_sourceFileName != null && settings.IncludeSourceFileName)
 				{
 					XmlAttribute sourceFileNameAttribute = theDocument.CreateAttribute("SourceFileName");
 					string fileName = SecurityElement.Escape(_sourceFileName);

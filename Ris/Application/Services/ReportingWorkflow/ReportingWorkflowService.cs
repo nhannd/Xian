@@ -11,14 +11,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Printing;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.Printing;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
@@ -337,10 +341,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			var op = new Operations.PublishReport();
 			op.Execute(publication, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
-			foreach (var logicalEvent in LogicalHL7EventWorkQueueItem.CreateReportLogicalEvents(LogicalHL7EventType.ReportPublished, publication.Report))
-			{
-				this.PersistenceContext.Lock(logicalEvent.Item, DirtyState.New);
-			}
+			LogicalHL7Event.ReportPublished.EnqueueEvents(publication.Report);
 
 			this.PersistenceContext.SynchState();
 			return new PublishReportResponse(publication.GetRef());
@@ -458,31 +459,30 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 					item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext)));
 		}
 
-		[UpdateOperation]
-		[OperationEnablement("CanSendReportToQueue")]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.SendToFaxQueue)]
-		public SendReportToQueueResponse SendReportToQueue(SendReportToQueueRequest request)
-		{
-			var procedure = this.PersistenceContext.Load<Procedure>(request.ProcedureRef);
+		//[UpdateOperation]
+		//[OperationEnablement("CanSendReportToQueue")]
+		//[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.SendToFaxQueue)]
+		//public SendReportToQueueResponse SendReportToQueue(SendReportToQueueRequest request)
+		//{
+		//    var procedure = this.PersistenceContext.Load<Procedure>(request.ProcedureRef);
 
-			foreach (var detail in request.Recipients)
-			{
-				var item = MailFaxWorkQueueItem.Create(
-					procedure.Order.AccessionNumber,
-					procedure.ActiveReport.GetRef(),
-					detail.PractitionerRef,
-					detail.ContactPointRef);
+		//    foreach (var detail in request.Recipients)
+		//    {
+		//        var item = MailFaxWorkQueueItem.Create(
+		//            procedure.Order.AccessionNumber,
+		//            procedure.ActiveReport.GetRef(),
+		//            detail.PractitionerRef,
+		//            detail.ContactPointRef);
 
-				this.PersistenceContext.Lock(item, DirtyState.New);
-			}
+		//        this.PersistenceContext.Lock(item, DirtyState.New);
+		//    }
 
-			return new SendReportToQueueResponse();
-		}
+		//    return new SendReportToQueueResponse();
+		//}
 
 		[UpdateOperation]
 		[OperationEnablement("CanReassignProcedureStep")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Reassign)]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Reassign)]
 		public ReassignProcedureStepResponse ReassignProcedureStep(ReassignProcedureStepRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
@@ -547,6 +547,25 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			procedure.DowntimeRecoveryMode = false;
 
 			return new CompleteDowntimeProcedureResponse();
+		}
+
+		[ReadOperation]
+		public PrintReportResponse PrintReport(PrintReportRequest request)
+		{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.ReportRef, "ReportRef");
+
+			var report = PersistenceContext.Load<Report>(request.ReportRef);
+
+			var printModel = request.RecipientContactPointRef != null ?
+				 new ReportPageModel(report, PersistenceContext.Load<ExternalPractitionerContactPoint>(request.RecipientContactPointRef))
+				: new ReportPageModel(report);
+
+			using(var printResult = PrintJob.Run(printModel))
+			{
+				var contents = File.ReadAllBytes(printResult.OutputFilePath);
+				return new PrintReportResponse(contents);
+			}
 		}
 
 		#endregion
@@ -675,10 +694,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 		public bool CanPublishReport(ReportingWorklistItemKey itemKey)
 		{
+#if DEBUG
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.TestPublishReport))
 				return false;
 
 			return CanExecuteOperation(new Operations.PublishReport(), itemKey);
+#else
+			return false;
+#endif
 		}
 
 		public bool CanSaveReport(ReportingWorklistItemKey itemKey)
@@ -692,9 +715,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 				return false;
 
 			var procedureStep = this.PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
-
-			if (procedureStep.Is<ProtocolProcedureStep>())
-				return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Reassign);
 
 			if (procedureStep.Is<ReportingProcedureStep>())
 				return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Reassign)

@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,10 +12,26 @@
     <AssemblyName>ClearCanvas.Desktop.View.WinForms</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,6 +41,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +50,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotNetMagic2005, Version=5.2.2.0, Culture=neutral, PublicKeyToken=6cf6edec59e036ec, processorArchitecture=MSIL">
@@ -69,6 +88,13 @@
       <DependentUpon>CloseHelperComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CloseHelperComponentView.cs" />
+    <Compile Include="ComboBoxCellEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ComboBoxCellEditorControl.Designer.cs">
+      <DependentUpon>ComboBoxCellEditorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ComboBoxCellEditorView.cs" />
     <Compile Include="CommonDialogHook.cs" />
     <Compile Include="Configuration\ActionModelConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
@@ -101,6 +127,13 @@
       <DependentUpon>RenameNodeComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Configuration\RenameNodeComponentView.cs" />
+    <Compile Include="AlertViewerComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AlertViewerComponentControl.Designer.cs">
+      <DependentUpon>AlertViewerComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AlertViewerComponentView.cs" />
     <Compile Include="CustomTableCellEditControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -154,6 +187,12 @@
     <Compile Include="DropListPickerField.designer.cs">
       <DependentUpon>DropListPickerField.cs</DependentUpon>
     </Compile>
+    <Compile Include="IndicatorLight.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="IndicatorLight.designer.cs">
+      <DependentUpon>IndicatorLight.cs</DependentUpon>
+    </Compile>
     <Compile Include="KeyModifiersPicker.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -164,12 +203,25 @@
     <Compile Include="LocalePicker.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Meter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SliderBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="TextBoxToolbarItem.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="AlertNotificationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AlertNotificationForm.Designer.cs">
+      <DependentUpon>AlertNotificationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="TitleBar.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="vsstyle.cs" />
     <Compile Include="WinFormsApplicationComponentView.cs" />
     <Compile Include="LocalizableUserControl.cs">
       <SubType>UserControl</SubType>
@@ -462,6 +514,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>CloseHelperComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AlertViewerComponentControl.resx">
+      <DependentUpon>AlertViewerComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="DateTimeField.resx">
       <DependentUpon>DateTimeField.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -572,6 +628,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ClearFilterMini.png" />
+    <EmbeddedResource Include="ComboBoxCellEditorControl.resx">
+      <DependentUpon>ComboBoxCellEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Configuration\ActionModelConfigurationComponentControl.resx">
       <DependentUpon>ActionModelConfigurationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -590,6 +649,12 @@
     <EmbeddedResource Include="GalleryComponentControl.resx">
       <DependentUpon>GalleryComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IndicatorLight.resx">
+      <DependentUpon>IndicatorLight.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AlertNotificationForm.resx">
+      <DependentUpon>AlertNotificationForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorkspaceDialogBoxForm.resx">
       <DependentUpon>WorkspaceDialogBoxForm.cs</DependentUpon>
@@ -661,6 +726,29 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\SearchToolMini.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\close.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\checkmark.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

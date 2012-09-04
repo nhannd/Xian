@@ -15,10 +15,11 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Core
 {

@@ -50,18 +50,4 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 	}
 
-	public class ProtocollingSupervisorSelectionComponent : SupervisorSelectionComponent
-	{
-		protected override string DefaultSupervisorID
-		{
-			get { return ProtocollingSettings.Default.SupervisorID; }
-		}
-
-		protected override void SetStaff(StaffSummary staff)
-		{
-			base.SetStaff(staff);
-			ProtocollingSettings.Default.SupervisorID = staff == null ? "" : staff.StaffId;
-			ProtocollingSettings.Default.Save();
-		}
-	}
 }

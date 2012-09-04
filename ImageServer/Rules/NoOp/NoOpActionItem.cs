@@ -9,9 +9,11 @@
 
 #endregion
 
+using ClearCanvas.Dicom.Utilities.Rules;
+
 namespace ClearCanvas.ImageServer.Rules.NoOp
 {
-    public class NoOpActionItem : ServerActionItemBase
+    public class NoOpActionItem : ActionItemBase<ServerActionContext>
     {
         public NoOpActionItem()
             : base("No-Op Action")

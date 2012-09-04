@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Client.Admin
 {
 	[MenuAction("launch", "global-menus/Admin/Departments", "Launch")]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Department)]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	public class DepartmentAdminTool : Tool<IDesktopToolContext>
 	{
 		private IWorkspace _workspace;

@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		/// <summary>
 		/// Gets a value indicating whether or not the SOP instance is 'stored',
-		/// for example in the local data store or a remote PACS server.
+		/// for example in the local store or a remote PACS server.
 		/// </summary>
 		public bool IsStored
 		{
@@ -122,21 +122,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public IImageIdentifier GetIdentifier()
 		{
-			var studyIdentifier = new StudyItem(StudyInstanceUid, DataSource.Server, DataSource.StudyLoaderName)
-			                      	{InstanceAvailability = "ONLINE"};
+		    var studyIdentifier = GetStudyIdentifier();
 			return new ImageIdentifier(this, studyIdentifier);
 		}
 
 		internal IStudyRootStudyIdentifier GetStudyIdentifier()
 		{
-			return new StudyItem(this, this, DataSource.Server, DataSource.StudyLoaderName)
-			                 	{InstanceAvailability = "ONLINE"};
+			return new StudyRootStudyIdentifier(this, this, null)
+			           {
+			               SpecificCharacterSet = DicomStringHelper.GetDicomStringArray(SpecificCharacterSet), 
+                           RetrieveAE = DataSource.Server, 
+                           InstanceAvailability = "ONLINE"
+			           };
 		}
 
 		internal ISeriesIdentifier GetSeriesIdentifier()
 		{
-			var studyIdentifier = new StudyItem(StudyInstanceUid, DataSource.Server, DataSource.StudyLoaderName)
-			                      	{InstanceAvailability = "ONLINE"};
+		    var studyIdentifier = GetStudyIdentifier();
 			return new SeriesIdentifier(this, studyIdentifier);
 		}
 
@@ -543,7 +545,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
-		string[] IStudyData.ModalitiesInStudy
+        string[] IStudyData.SopClassesInStudy
+        {
+            get
+            {
+                if (_parentSeries != null && _parentSeries.ParentStudy != null)
+                    return _parentSeries.ParentStudy.SopClassesInStudy;
+
+                return null;
+            }
+        }
+        
+        string[] IStudyData.ModalitiesInStudy
 		{
 			get
 			{
@@ -1174,6 +1187,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return IsImageSop(SopClass.GetSopClass(sopClassUid));
 		}
 
+        // TODO (CR Jun 2012): Move to a more common place, like a SopClassExtensions class in IV.Common, or CC.Dicom?
+
 		internal static bool IsImageSop(SopClass sopClass)
 		{
 			return _imageSopClasses.Contains(sopClass);
@@ -1280,7 +1295,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					return;
 			}
 
-			throw new SopValidationException(String.Format(SR.ExceptionInvalidTransferSyntaxUID, this.TransferSyntaxUid));
+            throw new SopValidationException(String.Format("Unsupported transfer syntax: {0}", TransferSyntaxUid));
 		}
 
 		protected virtual IEnumerable<TransferSyntax> GetAllowableTransferSyntaxes()

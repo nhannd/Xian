@@ -9,6 +9,8 @@
 
 #endregion
 
+#if UNIT_TESTS
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -454,3 +456,5 @@ namespace ClearCanvas.Dicom.Codec.Tests
         }
 	}
 }
+
+#endif

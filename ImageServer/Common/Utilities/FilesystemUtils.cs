@@ -22,8 +22,6 @@ namespace ClearCanvas.ImageServer.Common.Utilities
     /// </summary>
     public class FilesystemUtils
     {
-        
-
         [DllImport("kernel32", CharSet = CharSet.Auto)]
         static extern int GetDiskFreeSpaceEx(
                                  string lpDirectoryName,
@@ -45,10 +43,10 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 
             if (timeout > 0)
             {
-                Thread t = new Thread(delegate()
-                                      {
-                                          exists = Directory.Exists(dir);
-                                      });
+                var t = new Thread(delegate()
+                                       {
+                                           exists = Directory.Exists(dir);
+                                       });
 
                 t.Start();
                 t.Join(timeout);
@@ -58,7 +56,6 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             {
                 exists = Directory.Exists(dir);
             }
-
 
             return exists;
         }
@@ -71,9 +68,11 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         /// <returns></returns>
         public static FilesystemInfo GetDirectoryInfo(String path)
         {
-            FilesystemInfo fsInfo = new FilesystemInfo();
-            fsInfo.Path = path;
-            fsInfo.Exists = DirectoryExists(path, 1000);
+            var fsInfo = new FilesystemInfo
+                             {
+                                 Path = path,
+                                 Exists = DirectoryExists(path, 1000)
+                             };
 
             if (fsInfo.Exists)
             {

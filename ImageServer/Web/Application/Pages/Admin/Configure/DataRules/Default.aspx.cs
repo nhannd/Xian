@@ -30,20 +30,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 
         protected override void OnInit(EventArgs e)
         {
-            ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
-            {
-                var panel =
-                    LoadControl("DataRulePanel.ascx") as
-                    DataRulePanel;
-                if (panel != null)
-                {
-                    panel.ServerPartition = partition;
-                    panel.ID = "DataRulePanel_" + partition.AeTitle;
+            ServerPartitionSelector.PartitionChanged += delegate(ServerPartition partition)
+                                                            {
+                                                                SearchPanel.ServerPartition = partition;
+                                                                SearchPanel.Reset();
+                                                            };
 
-                    panel.EnclosingPage = this;
-                }
-                return panel;
-            });
+            ServerPartitionSelector.SetUpdatePanel(PageContent);
+            SearchPanel.EnclosingPage = this;
 
             ConfirmDialog.Confirmed += delegate(object data)
             {
@@ -54,7 +48,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 
                 _controller.DeleteServerRule(rule);
 
-                ServerPartitionTabs.Update(rule.ServerPartitionKey);
+                SearchPanel.Refresh();
             };
 
 
@@ -63,10 +57,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                 if (AddEditDataRuleControl.Mode == AddEditDataRuleDialogMode.Edit)
                 {
                     // Commit the change into database
-                    if (_controller.UpdateServerRule(rule))
-                    {
-                    }
-                    else
+                    if (!_controller.UpdateServerRule(rule))
                     {
                         // TODO: alert user
                     }
@@ -75,16 +66,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
                 {
                     // Create new device in the database
                     ServerRule newRule = _controller.AddServerRule(rule);
-                    if (newRule != null)
-                    {
-                    }
-                    else
+                    if (newRule == null)
                     {
                         //TODO: alert user
                     }
                 }
 
-                ServerPartitionTabs.Update(rule.ServerPartitionKey);
+                SearchPanel.Refresh();                
             };
 
 
@@ -95,11 +83,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
 
         protected override void OnLoad(EventArgs e)
         {
+            SearchPanel.ServerPartition = ServerPartitionSelector.SelectedPartition;
             base.OnLoad(e);
 
             if (!Page.IsPostBack)
             {
-                ServerPartitionTabs.Update(0);
+                SearchPanel.Refresh();
             }
         }
 
@@ -127,7 +116,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.DataRule
         /// <param name="partition"></param>
         public void OnCopyRule(ServerRule rule, ServerPartition partition)
         {
-            ServerRule copiedRule = new ServerRule(rule.RuleName + " (Copy)",rule.ServerPartitionKey,rule.ServerRuleTypeEnum, rule.ServerRuleApplyTimeEnum, rule.Enabled, rule.DefaultRule, rule.ExemptRule, (XmlDocument)rule.RuleXml.CloneNode(true));
+            var copiedRule = new ServerRule(rule.RuleName + " (Copy)",rule.ServerPartitionKey,rule.ServerRuleTypeEnum, rule.ServerRuleApplyTimeEnum, rule.Enabled, rule.DefaultRule, rule.ExemptRule, (XmlDocument)rule.RuleXml.CloneNode(true));
 
             // Store a dummy entity key
             copiedRule.SetKey(new ServerEntityKey("ServerRule",Guid.NewGuid()));

@@ -19,35 +19,39 @@ namespace ClearCanvas.ImageServer.TestApp
 {
     public partial class GenerateDatabase : Form
     {
-        private SopGeneratorHospital _hospital1 = new SopGeneratorHospital()
+        private readonly SopGeneratorHospital _hospital1 = new SopGeneratorHospital()
                                                       {
                                                           Accession = 1000000,
                                                           Name = "MSH",
                                                           RequestedProcedureStepId = 1000,
                                                           ScheduledProcedureStepId = 2000
                                                       };
-        private SopGeneratorHospital _hospital2 = new SopGeneratorHospital()
-        {
-            Accession = 2000000,
-            Name = "TGH",
-            RequestedProcedureStepId = 10000,
-            ScheduledProcedureStepId = 20000
-        };
-        private SopGeneratorHospital _hospital3 = new SopGeneratorHospital()
-        {
-            Accession = 3000000,
-            Name = "TWH",
-            RequestedProcedureStepId = 80000,
-            ScheduledProcedureStepId = 90000
-        };
-        private SopGeneratorHospital _hospital4 = new SopGeneratorHospital()
-        {
-            Accession = 4000000,
-            Name = "WCH",
-            RequestedProcedureStepId = 50000,
-            ScheduledProcedureStepId = 60000
-        };
+
+        private readonly SopGeneratorHospital _hospital2 = new SopGeneratorHospital()
+                                                      {
+                                                          Accession = 2000000,
+                                                          Name = "TGH",
+                                                          RequestedProcedureStepId = 10000,
+                                                          ScheduledProcedureStepId = 20000
+                                                      };
+
+        private readonly SopGeneratorHospital _hospital3 = new SopGeneratorHospital()
+                                                      {
+                                                          Accession = 3000000,
+                                                          Name = "TWH",
+                                                          RequestedProcedureStepId = 80000,
+                                                          ScheduledProcedureStepId = 90000
+                                                      };
+
+        private readonly SopGeneratorHospital _hospital4 = new SopGeneratorHospital()
+                                                               {
+                                                                   Accession = 4000000,
+                                                                   Name = "WCH",
+                                                                   RequestedProcedureStepId = 50000,
+                                                                   ScheduledProcedureStepId = 60000
+                                                               };
         private ImageServerDbGenerator _generator = null;
+
         public GenerateDatabase()
         {
             InitializeComponent();
@@ -63,6 +67,9 @@ namespace ClearCanvas.ImageServer.TestApp
                 }
             }
             _comboBoxServerPartition.ValueMember = "Description";
+
+            // initialize
+            _checkBoxImageServerDatabase_CheckedChanged(null, null);
         }
 
         void ProgressUpdated(object sender, BackgroundTaskProgressEventArgs e)
@@ -87,16 +94,29 @@ namespace ClearCanvas.ImageServer.TestApp
                 totalStudies = 50000;
             if (!int.TryParse(_textBoxStudiesPerDay.Text, out studiesPerDay))
                 studiesPerDay = 1800;
-            if (_comboBoxServerPartition.SelectedItem == null)
-                return;
-           
-            ServerPartition selectedPartition = _comboBoxServerPartition.SelectedItem as ServerPartition;
-            if (selectedPartition == null) 
-                return;
             
-            _generator = new ImageServerDbGenerator(selectedPartition, _dateTimePickerStart.Value, totalStudies,
-                                                                          studiesPerDay,
-                                                                          (int)_numericUpDownPercentWeekend.Value);
+            if (_checkBoxImageServerDatabase.Checked)
+            {
+                if (_comboBoxServerPartition.SelectedItem == null)
+                    return;
+
+                ServerPartition selectedPartition = _comboBoxServerPartition.SelectedItem as ServerPartition;
+                if (selectedPartition == null)
+                    return;
+                
+                _generator = new ImageServerDbGenerator(selectedPartition, _dateTimePickerStart.Value, totalStudies,
+                                                        studiesPerDay,
+                                                        (int) _numericUpDownPercentWeekend.Value);
+            }
+            else
+            {
+                _generator = new ImageServerDbGenerator(_textBoxRemoteAETitle.Text, _textBoxHost.Text,
+                                                        int.Parse(_textBoxPort.Text), _dateTimePickerStart.Value,
+                                                        totalStudies,
+                                                        studiesPerDay,
+                                                        (int) _numericUpDownPercentWeekend.Value);
+
+            }
             _progressBar.Maximum = 0;
             _progressBar.Maximum = 100;
             _generator.RegisterProgressUpated(ProgressUpdated);
@@ -159,6 +179,24 @@ namespace ClearCanvas.ImageServer.TestApp
             {
                 _generator.Cancel();
                 _generator = null;
+            }
+        }
+
+        private void _checkBoxImageServerDatabase_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_checkBoxImageServerDatabase.Checked)
+            {
+                _comboBoxServerPartition.Enabled = true;
+                _textBoxHost.Enabled = false;
+                _textBoxPort.Enabled = false;
+                _textBoxRemoteAETitle.Enabled = false;
+            }
+            else
+            {
+                _comboBoxServerPartition.Enabled = false;
+                _textBoxHost.Enabled = true;
+                _textBoxPort.Enabled = true;
+                _textBoxRemoteAETitle.Enabled = true;
             }
         }
     }

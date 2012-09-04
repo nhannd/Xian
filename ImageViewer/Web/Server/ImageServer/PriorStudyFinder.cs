@@ -11,15 +11,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.ServiceModel;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Layout.Basic;
 using ClearCanvas.ImageViewer.StudyManagement;
 using Patient=ClearCanvas.ImageViewer.StudyManagement.Patient;
@@ -128,8 +131,10 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 
                     try
                     {
-                        StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier();
-                        identifier.PatientId = patientId;
+                        var identifier = new StudyRootStudyIdentifier
+                                             {
+                                                 PatientId = patientId
+                                             };
 
                         IList<StudyRootStudyIdentifier> list = query.StudyQuery(identifier);
                         foreach (StudyRootStudyIdentifier i in list)
@@ -166,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 		private StudyItem ConvertToStudyItem(StudyRootStudyIdentifier study)
 		{
 			string studyLoaderName;
-			ApplicationEntity applicationEntity;
+		    ApplicationEntity applicationEntity;
 
 		    ServerPartition partiton = ServerPartitionMonitor.Instance.GetPartition(study.RetrieveAeTitle);
 			if (partiton != null)
@@ -176,7 +181,13 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 int port = WebViewerServices.Default.ArchiveServerPort;
                 int headerPort = WebViewerServices.Default.ArchiveServerHeaderPort;
                 int wadoPort = WebViewerServices.Default.ArchiveServerWADOPort;
-                applicationEntity = new ApplicationEntity(host, study.RetrieveAeTitle, study.RetrieveAeTitle, port, true, headerPort, wadoPort);
+
+			    applicationEntity = new ApplicationEntity()
+			                            {
+                                            AETitle = study.RetrieveAeTitle,
+			                                ScpParameters = new ScpParameters(host, port),
+			                                StreamingParameters = new StreamingParameters(headerPort, wadoPort)
+			                            };
 
 			}
             else
@@ -185,11 +196,8 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 
                 if (theDevice != null)
 			    {
-		            studyLoaderName = "DICOM_REMOTE";
-
-			        applicationEntity = new ApplicationEntity(theDevice.IpAddress, theDevice.AeTitle, theDevice.Description,
-			                                                  theDevice.Port,
-			                                                  false, 0, 0);
+		            // TODO (Marmot) - Need to get this to work with changes in marmot
+			        applicationEntity = new ApplicationEntity() { ScpParameters = new ScpParameters(theDevice.IpAddress, theDevice.Port), AETitle = theDevice.AeTitle };
 			    }
 			    else // (node == null)
 			    {
@@ -201,7 +209,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 			    }
 			}
 
-		    StudyItem item = new StudyItem(study, applicationEntity, studyLoaderName);
+		    var item = new StudyItem(study, ServiceNodeExtensions.ToServiceNode(applicationEntity));
 			if (String.IsNullOrEmpty(item.InstanceAvailability))
 				item.InstanceAvailability = "ONLINE";
 
@@ -212,13 +220,14 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 		{
             using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                IDeviceEntityBroker broker = ctx.GetBroker<IDeviceEntityBroker>();
-                DeviceSelectCriteria criteria = new DeviceSelectCriteria();
+                var broker = ctx.GetBroker<IDeviceEntityBroker>();
+                var criteria = new DeviceSelectCriteria();
                 criteria.AeTitle.EqualTo(retrieveAeTitle);
                 IList<Device> list = broker.Find(criteria);
                 foreach (Device theDevice in list)
                 {
-                    return theDevice;
+                    if (string.Compare(theDevice.AeTitle, retrieveAeTitle, false, CultureInfo.InvariantCulture) == 0)
+                        return theDevice;
                 }
             }
 

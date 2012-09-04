@@ -135,21 +135,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 	}
 
-	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-	public class BookingMergeOrdersTool : MergeOrdersToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
-	{
-		protected override bool Execute(RegistrationWorklistItemSummary item)
-		{
-			return ExecuteCore(item);
-		}
-
-		protected override void InvalidateFolders()
-		{
-			DocumentManager.InvalidateFolder(typeof(Folders.Registration.ToBeScheduledFolder));
-			DocumentManager.InvalidateFolder(typeof(Folders.Registration.PendingProtocolFolder));
-		}
-	}
-
 	[ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
 	public class PerformingMergeOrdersTool : MergeOrdersToolBase<ModalityWorklistItemSummary, IPerformingWorkflowItemToolContext>
 	{

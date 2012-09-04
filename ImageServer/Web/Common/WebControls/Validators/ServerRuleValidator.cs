@@ -11,6 +11,7 @@
 
 using System;
 using System.Xml;
+using ClearCanvas.Dicom.Utilities.Rules;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
@@ -64,7 +65,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             }
 
             string error;
-                if (false == Rule.ValidateRule(ServerRuleTypeEnum.GetEnum(RuleTypeControl), theDoc, out error))
+                if (false == Rule<ServerActionContext,ServerRuleTypeEnum>.ValidateRule(ServerRuleTypeEnum.GetEnum(RuleTypeControl), theDoc, out error))
                 {
                     ErrorMessage = error;
                     return false;

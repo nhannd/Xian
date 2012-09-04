@@ -72,7 +72,7 @@ namespace ClearCanvas.Healthcare.Tests
         //}
 
         [Test]
-        [ExpectedException(typeof(WorkflowException), "This step must be associated with a Report before procedures can be linked.")]
+        [ExpectedException(typeof(WorkflowException))]
         public void Test_LinkTo_NullReport()
         {
             InterpretationStep ps1 = new InterpretationStep(new Procedure());

@@ -16,8 +16,9 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.Configuration;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
@@ -164,20 +165,23 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		    int failedCount = 0;
 		    int successCount = 0;
 
-		    foreach (var query in DefaultServers.GetQueryInterfaces(true))
+            foreach (var priorsServer in ServerDirectory.GetPriorsServers(true))
 		    {
                 if (_cancel)
                     break;
 
 		        try
 		        {
-                    using (var bridge = new StudyRootQueryBridge(query))
+                    using (var bridge = new StudyRootQueryBridge(priorsServer.GetService<IStudyRootQuery>()))
                     {
                         foreach (string patientId in patientIds.Keys)
                         {
                             var identifier = new StudyRootStudyIdentifier { PatientId = patientId };
 
                             IList<StudyRootStudyIdentifier> studies = bridge.StudyQuery(identifier);
+                            
+                            Platform.Log(LogLevel.Debug, "Found {0} prior studies on server '{1}'", studies.Count, priorsServer.Name);
+
                             foreach (StudyRootStudyIdentifier study in studies)
                             {
                                 if (_cancel)
@@ -203,7 +207,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		        catch (Exception e)
 		        {
 		            ++failedCount;
-                    Platform.Log(LogLevel.Error, e, "Failed to query server: {0}", query);
+                    Platform.Log(LogLevel.Error, e, "Failed to query server: {0}", priorsServer.Name);
 		        }
 		    }
 
@@ -226,6 +230,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                 PriorStudyLoaderExceptionPolicy.NotifySuccessfulQuery();
             }
 
+            Platform.Log(LogLevel.Debug, "Found {0} prior studies in total.", results.Count);
 
             return new PriorStudyFinderResult(new StudyItemList(results.Values), failedCount == 0);
         }
@@ -235,54 +240,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			_cancel = true;
 		}
 
-		private static StudyItem ConvertToStudyItem(IStudyRootStudyIdentifier study)
+		private static StudyItem ConvertToStudyItem(StudyRootStudyIdentifier study)
 		{
-			string studyLoaderName;
-			ApplicationEntity applicationEntity = null;
-
-			IServerTreeNode node = FindServer(study.RetrieveAeTitle);
-			if (node.IsLocalDataStore)
-			{
-				studyLoaderName = "DICOM_LOCAL";
-			}
-			else if (node.IsServer)
-			{
-				var server = (Server) node;
-				studyLoaderName = server.IsStreaming ? "CC_STREAMING" : "DICOM_REMOTE";
-
-				applicationEntity = new ApplicationEntity(server.Host, server.AETitle, server.Name, server.Port,
-				                                          server.IsStreaming, server.HeaderServicePort, server.WadoServicePort);
-			}
-			else // (node == null)
-			{
-				Platform.Log(LogLevel.Warn,
-				             String.Format("Unable to find server information '{0}' in order to load study '{1}'",
-				                           study.RetrieveAeTitle, study.StudyInstanceUid));
-
-				return null;
-			}
-
-			var item = new StudyItem(study, applicationEntity, studyLoaderName){ InstanceAvailability = study.InstanceAvailability };
+		    study.ResolveServer(true);
+		    var item = new StudyItem(study);
 			if (String.IsNullOrEmpty(item.InstanceAvailability))
 				item.InstanceAvailability = "ONLINE";
 
 			return item;
-		}
-
-		private static IServerTreeNode FindServer(string retrieveAETitle)
-		{
-			var serverTree = new ServerTree();
-			if (retrieveAETitle == serverTree.RootNode.LocalDataStoreNode.GetClientAETitle())
-				return serverTree.RootNode.LocalDataStoreNode;
-
-			List<Server> remoteServers = DefaultServers.SelectFrom(serverTree);
-			foreach (Server server in remoteServers)
-			{
-				if (server.AETitle == retrieveAETitle)
-					return server;
-			}
-
-			return null;
 		}
 	}
 }

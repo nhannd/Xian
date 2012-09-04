@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,9 +12,11 @@
     <AssemblyName>ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -26,10 +29,9 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,6 +41,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -47,6 +50,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotNetMagic2005, Version=5.2.2.0, Culture=neutral, PublicKeyToken=6cf6edec59e036ec, processorArchitecture=MSIL">
@@ -65,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DicomExplorerConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DicomExplorerConfigurationComponentControl.Designer.cs">
       <DependentUpon>DicomExplorerConfigurationComponentControl.cs</DependentUpon>
@@ -83,11 +88,19 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SearchPanelComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SearchPanelComponentControl.Designer.cs">
       <DependentUpon>SearchPanelComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="SearchPanelComponentView.cs" />
+    <Compile Include="SeriesBrowserComponentView.cs" />
+    <Compile Include="SeriesDetailsComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SeriesDetailsComponentControl.Designer.cs">
+      <DependentUpon>SeriesDetailsComponentControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -122,9 +135,9 @@
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Services\ClearCanvas.ImageViewer.Services.csproj">
-      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
-      <Name>ClearCanvas.ImageViewer.Services</Name>
+    <ProjectReference Include="..\..\..\..\Common\ClearCanvas.ImageViewer.Common.csproj">
+      <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
+      <Name>ClearCanvas.ImageViewer.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ClearCanvas.ImageViewer.Explorer.Dicom.csproj">
       <Project>{14111EC7-C62E-4483-8573-7C04986D048F}</Project>
@@ -132,6 +145,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="SeriesDetailsComponentControl.resx">
+      <DependentUpon>SeriesDetailsComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="StudyBrowserControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StudyBrowserControl.cs</DependentUpon>
@@ -169,7 +185,7 @@
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

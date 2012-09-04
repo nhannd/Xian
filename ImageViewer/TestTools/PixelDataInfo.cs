@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 			get
 			{
 				if (_internalPhotometricInterpretation == null)
-					_internalPhotometricInterpretation = Dicom.Iod.PhotometricInterpretation.FromCodeString(PhotometricInterpretation);
+					_internalPhotometricInterpretation = ClearCanvas.Dicom.Iod.PhotometricInterpretation.FromCodeString(PhotometricInterpretation);
 				return _internalPhotometricInterpretation;
 			}
 		}

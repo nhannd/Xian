@@ -151,7 +151,8 @@ namespace ClearCanvas.Healthcare
 			return new TimeDirective(
 				WorklistItemField.ProcedureStepScheduledStartTime,
 				null,
-				WorklistOrdering.PrioritizeOldestItems);
+				WorklistOrdering.PrioritizeOldestItems,
+				true);
 		}
 	}
 
@@ -182,7 +183,8 @@ namespace ClearCanvas.Healthcare
 			return new TimeDirective(
 				WorklistItemField.ProcedureStepScheduledStartTime,
 				null,
-				WorklistOrdering.PrioritizeOldestItems);
+				WorklistOrdering.PrioritizeOldestItems,
+				true);
 		}
 	}
 
@@ -215,7 +217,8 @@ namespace ClearCanvas.Healthcare
 			return new TimeDirective(
 				WorklistItemField.ProcedureStepCreationTime,
 				null,
-				WorklistOrdering.PrioritizeOldestItems);
+				WorklistOrdering.PrioritizeOldestItems,
+				true);
 		}
 	}
 
@@ -248,7 +251,8 @@ namespace ClearCanvas.Healthcare
 			return new TimeDirective(
 				WorklistItemField.ProcedureStepCreationTime,
 				null,
-				WorklistOrdering.PrioritizeOldestItems);
+				WorklistOrdering.PrioritizeOldestItems,
+				true);
 		}
 
 		private ReportingWorklistItemSearchCriteria BaseCriteria()
@@ -336,7 +340,8 @@ namespace ClearCanvas.Healthcare
 			return new TimeDirective(
 				WorklistItemField.ProcedureStepCreationTime,
 				null,
-				WorklistOrdering.PrioritizeOldestItems);
+				WorklistOrdering.PrioritizeOldestItems,
+				true);
 		}
 
 		protected override WorklistItemProjection GetProjectionCore(WorklistItemField timeField)

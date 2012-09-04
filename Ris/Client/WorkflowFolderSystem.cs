@@ -13,11 +13,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
@@ -152,6 +152,11 @@ namespace ClearCanvas.Ris.Client
 			public void UnregisterWorkflowService(Type serviceContract)
 			{
 				_owner.UnregisterWorkflowService(serviceContract);
+			}
+
+			public void ExecuteSearch(SearchParams searchParams)
+			{
+				_owner.ExecuteSearch(searchParams);
 			}
 		}
 
@@ -332,6 +337,12 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public virtual IApplicationComponent GetContentComponent()
+		{
+			// return null to indicate that the default Content component should be used
+			return null;
+		}
+
 		public abstract string GetPreviewUrl(IFolder folder, object[] items);
 
 
@@ -448,7 +459,6 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
-
 
 		#region Protected API
 

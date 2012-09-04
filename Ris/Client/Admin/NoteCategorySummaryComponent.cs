@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Admin
     [MenuAction("launch", "global-menus/Admin/Patient Note Categories", "Launch")]
     [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.PatientNoteCategory)]
 
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
     public class NoteCategorySummaryTool : Tool<IDesktopToolContext>
     {
         private IWorkspace _workspace;

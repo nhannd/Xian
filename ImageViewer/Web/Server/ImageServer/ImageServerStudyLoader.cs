@@ -9,16 +9,18 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageViewer.Services.Auditing;
+using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ApplicationEntity=ClearCanvas.ImageViewer.StudyManagement.ApplicationEntity;
 
 namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 {
@@ -27,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
     public class ImageServerStudyLoader : StudyLoader
     {
         private IEnumerator<InstanceXml> _instances;
-        private ApplicationEntity _ae;
+        private IDicomServiceNode _ae;
         private StudyStorageLocation _location;
         public ImageServerStudyLoader()
             : base("CC_ImageServer")
@@ -37,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 
         protected override int OnStart(StudyLoaderArgs studyLoaderArgs)
         {
-            ApplicationEntity ae = studyLoaderArgs.Server as ApplicationEntity;
+            var ae = studyLoaderArgs.Server as IDicomServiceNode;
             _ae = ae;
 
             EventResult result = EventResult.Success;

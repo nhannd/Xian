@@ -11,13 +11,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Common.Automation;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -298,8 +300,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					base.ShowValidation(false);
 				}
 
-				var queryParams = PrepareBaseQueryParameters();
-				var eventArgs = new SearchRequestedEventArgs(new List<QueryParameters> { queryParams });
+                var queryCriteria = GetSearchCriteria().ToIdentifier(true);
+                var eventArgs = new SearchRequestedEventArgs(queryCriteria);
 				OnSearchRequested(eventArgs);
 			}
 			catch (Exception ex)
@@ -426,23 +428,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return new ValidationResult(true, "");
 		}
 
-		private QueryParameters PrepareBaseQueryParameters()
+		private DicomExplorerSearchCriteria GetSearchCriteria()
 		{
-			var queryParams = new QueryParameters();
-			queryParams["PatientsName"] = QueryStringHelper.ConvertNameToSearchCriteria(this.PatientsName);
-			queryParams["ReferringPhysiciansName"] = QueryStringHelper.ConvertNameToSearchCriteria(this.ReferringPhysiciansName);
-			queryParams["PatientId"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(this.PatientID, false, true);
-			queryParams["AccessionNumber"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(this.AccessionNumber, false, true);
-			queryParams["StudyDescription"] = QueryStringHelper.ConvertStringToWildcardSearchCriteria(this.StudyDescription, false, true);
-			queryParams["StudyDate"] = DateRangeHelper.GetDicomDateRangeQueryString(this.StudyDateFrom, this.StudyDateTo);
-
-			//At the application level, ClearCanvas defines the 'ModalitiesInStudy' filter as a multi-valued
-			//Key Attribute.  This goes against the Dicom standard for C-FIND SCU behaviour, so the
-			//underlying IStudyFinder(s) must handle this special case, either by ignoring the filter
-			//or by running multiple queries, one per modality specified (for example).
-			queryParams["ModalitiesInStudy"] = DicomStringHelper.GetDicomStringArray(this.SearchModalities);
-
-			return queryParams;
+            return new DicomExplorerSearchCriteria
+		              {
+		                  PatientsName = PatientsName,
+		                  ReferringPhysiciansName = ReferringPhysiciansName,
+                          PatientId = PatientID,
+		                  AccessionNumber = AccessionNumber,
+		                  StudyDescription = StudyDescription,
+		                  StudyDateFrom = StudyDateFrom,
+                          StudyDateTo = StudyDateTo,
+                          //At the application level, ClearCanvas defines the 'ModalitiesInStudy' filter as a multi-valued
+                          //Key Attribute.  This goes against the Dicom standard for C-FIND SCU behaviour, so the
+                          //underlying IStudyFinder(s) must handle this special case, either by ignoring the filter
+                          //or by running multiple queries, one per modality specified (for example).
+                          Modalities = SearchModalities.ToList()
+		              };
 		}
 
 		protected virtual void OnSearchRequested(SearchRequestedEventArgs e)

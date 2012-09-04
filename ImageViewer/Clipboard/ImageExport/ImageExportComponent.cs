@@ -16,8 +16,8 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using Path=System.IO.Path;
 

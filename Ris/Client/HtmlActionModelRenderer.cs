@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Client
                 return "";
 
             // find the action corresponding to the action label, if exist
-            foreach (Action action in actions)
+            foreach (var action in actions)
             {
                 if (action.Label == labelSearch)
                     return GetHTML(action.Path.LocalizedPath, actionLabel);

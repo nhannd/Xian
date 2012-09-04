@@ -14,11 +14,14 @@ using System.Collections.Generic;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
     //Configuration is not the right place for this, but it was in a lonely plugin
     //all by itself, which seems ridiculous.  Badly need to do some code reorg and refactoring.
+
+    //TODO (Marmot): Move to Common?
 
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, UseSynchronizationContext = false, ConfigurationName = "StudyLocator", Namespace = QueryNamespace.Value)]
 	public class StudyLocator : IStudyRootQuery
@@ -49,24 +52,20 @@ namespace ClearCanvas.ImageViewer.Configuration
 			    var results = new List<T>();
 				try
 				{
-					foreach (IStudyRootQuery query in DefaultServers.GetQueryInterfaces(true))
+					foreach (var priorsServer in ServerDirectory.GetPriorsServers(true))
 					{
 						try
 						{
-							IList<T> r = _query(queryCriteria, query);
+						    IList<T> r = null;
+                            priorsServer.GetService<IStudyRootQuery>(service => r = _query(queryCriteria, service));
                             results.AddRange(r);
 						}
 						catch (Exception e)
 						{
 							QueryFailedFault fault = new QueryFailedFault();
-							fault.Description = String.Format("Failed to query server {0}.", query);
+							fault.Description = String.Format("Failed to query server {0}.", priorsServer.Name);
 							Platform.Log(LogLevel.Error, e, fault.Description);
 							throw new FaultException<QueryFailedFault>(fault, fault.Description);
-						}
-						finally
-						{
-							if (query is IDisposable)
-								(query as IDisposable).Dispose();
 						}
 					}
 				}

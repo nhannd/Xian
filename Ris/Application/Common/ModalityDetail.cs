@@ -10,6 +10,7 @@
 #endregion
 
 using System.Runtime.Serialization;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
@@ -17,11 +18,12 @@ namespace ClearCanvas.Ris.Application.Common
 	[DataContract]
 	public class ModalityDetail : DataContractBase
 	{
-		public ModalityDetail(EntityRef modalityRef, string id, string name, EnumValueInfo dicomModality, bool deactivated)
+		public ModalityDetail(EntityRef modalityRef, string id, string name, string aeTitle, EnumValueInfo dicomModality, bool deactivated)
 		{
 			this.ModalityRef = modalityRef;
 			this.Id = id;
 			this.Name = name;
+			this.AETitle = aeTitle;
 			this.DicomModality = dicomModality;
 			this.Deactivated = deactivated;
 		}
@@ -38,6 +40,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public string Name;
+
+		[DataMember]
+		public string AETitle;
 
 		[DataMember]
 		public EnumValueInfo DicomModality;

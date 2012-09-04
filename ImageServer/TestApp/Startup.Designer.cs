@@ -139,6 +139,7 @@ namespace ClearCanvas.ImageServer.TestApp
             this.DatabaseGenerator.TabIndex = 4;
             this.DatabaseGenerator.Text = "Database Generator";
             this.DatabaseGenerator.UseVisualStyleBackColor = true;
+            this.DatabaseGenerator.Click += new System.EventHandler(this.DatabaseGenerator_Click);
             // 
             // ProductVerify
             // 

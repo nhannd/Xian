@@ -53,12 +53,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			set { SetEntry(columnKey, value); }
 		}
 
-		public SearchResultColumnOption this[TableColumnBase<StudyItem> column]
-		{
-			get { return this[column.Name]; }
-			set { this[column.Name] = value; }
-		}
-
 		public event EventHandler CollectionChanged
 		{
 			add { _collectionChanged += value; }
@@ -70,11 +64,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			foreach (var entry in _entries)
 				entry.Value.PropertyChanged -= HandleEntryPropertyChanged;
 			_entries.Clear();
-		}
-
-		public bool Contains(TableColumnBase<StudyItem> column)
-		{
-			return Contains(column.Name);
 		}
 
 		public bool Contains(string columnKey)
@@ -103,11 +92,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (createIfNotExists)
 				SetEntry(columnKey, entry = new SearchResultColumnOption());
 			return entry;
-		}
-
-		public SearchResultColumnOption GetEntryOrDefault(TableColumnBase<StudyItem> column)
-		{
-			return GetEntryOrDefault(column.Name);
 		}
 
 		public SearchResultColumnOption GetEntryOrDefault(string columnKey)

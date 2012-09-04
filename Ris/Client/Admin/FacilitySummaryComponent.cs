@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Client.Admin
 {
 	[MenuAction("launch", "global-menus/Admin/Facilities", "Launch")]
 	[ActionPermission("launch", Application.Common.AuthorityTokens.Admin.Data.Facility)]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	public class FacilitySummaryTool : Tool<IDesktopToolContext>
 	{
 		private IWorkspace _workspace;

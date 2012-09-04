@@ -17,17 +17,19 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
-using ClearCanvas.Dicom.Iod.Modules;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
+using ClearCanvas.ImageServer.Core.Command;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
+using SaveDicomFileCommand = ClearCanvas.ImageServer.Core.Command.SaveDicomFileCommand;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 {
@@ -236,20 +238,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                         IDicomCodec codec = theCodecFactory.GetDicomCodec();
 
                         // Create a context for applying actions from the rules engine
-                        ServerActionContext context = new ServerActionContext(file, StorageLocation.FilesystemKey, ServerPartition, item.StudyStorageKey);
+                        var context = new ServerActionContext(file, StorageLocation.FilesystemKey, ServerPartition, item.StudyStorageKey);
                         context.CommandProcessor = processor;
                         
-                        DicomCodecParameters parms = theCodecFactory.GetCodecParameters(item.Data);
-                        DicomCompressCommand compressCommand =
+                        var parms = theCodecFactory.GetCodecParameters(item.Data);
+                        var compressCommand =
                             new DicomCompressCommand(context.Message, theCodecFactory.CodecTransferSyntax, codec, parms);
                         processor.AddCommand(compressCommand);
 
-                        SaveDicomFileCommand save = new SaveDicomFileCommand(file.Filename, file, false);
+                        var save = new SaveDicomFileCommand(file.Filename, file, false);
                         processor.AddCommand(save);
 
                         // Update the StudyStream object, must be done after compression
                         // and after the compressed image has been successfully saved
-                        UpdateStudyXmlCommand insertStudyXmlCommand = new UpdateStudyXmlCommand(file, studyXml, StorageLocation);
+                        var insertStudyXmlCommand = new UpdateStudyXmlCommand(file, studyXml, StorageLocation);
                         processor.AddCommand(insertStudyXmlCommand);
 
 						// Delete the WorkQueueUid item

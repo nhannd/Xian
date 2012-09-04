@@ -17,7 +17,6 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.OrderNotes;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -30,12 +29,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[IconSet("view", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
 	[ActionPermission("view", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.PatientBiography.View)]
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
-	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
-	[ExtensionOf(typeof(OrderNoteboxItemToolExtensionPoint))]
 	[ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
 	[ExtensionOf(typeof(RadiologistAdminWorkflowItemToolExtensionPoint))]
 	public class PatientBiographyTool : Tool<IToolContext>
@@ -107,16 +102,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if(this.ContextBase is IWorkflowItemToolContext)
 			{
 				var context = (IWorkflowItemToolContext)ContextBase;
-				if (this.Context is IOrderNoteboxItemToolContext)
-				{
-					var item = (OrderNoteboxItemSummary)context.Selection.Item;
-					OpenPatient(item.PatientRef, item.PatientProfileRef, item.OrderRef, context.DesktopWindow);
-				}
-				else
-				{
-					var item = (WorklistItemSummaryBase) context.Selection.Item;
-					OpenPatient(item.PatientRef, item.PatientProfileRef, item.OrderRef, context.DesktopWindow);
-				}
+				var item = (WorklistItemSummaryBase) context.Selection.Item;
+				OpenPatient(item.PatientRef, item.PatientProfileRef, item.OrderRef, context.DesktopWindow);
 			}
 			else if (this.ContextBase is IPatientSearchToolContext)
 			{

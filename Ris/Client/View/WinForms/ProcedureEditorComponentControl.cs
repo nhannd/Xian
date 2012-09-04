@@ -33,11 +33,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_component = component;
 
-			_procedureType.SuggestionProvider = _component.ProcedureTypeSuggestionProvider;
-			_procedureType.Format += delegate(object sender, ListControlConvertEventArgs e)
-										 {
-											 e.Value = _component.FormatProcedureType(e.ListItem);
-										 };
+			_procedureType.LookupHandler = _component.ProcedureTypeLookupHandler;
 			_procedureType.DataBindings.Add("Enabled", _component, "IsProcedureTypeEditable");
 			_procedureType.DataBindings.Add("Value", _component, "SelectedProcedureType", true, DataSourceUpdateMode.OnPropertyChanged);
 
@@ -57,6 +53,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 				e.Value = _component.FormatDepartment(e.ListItem);
 			};
 
+			_modality.DataSource = _component.ModalityChoices;
+			_modality.DataBindings.Add("Value", _component, "SelectedModality", true, DataSourceUpdateMode.OnPropertyChanged);
+			_modality.DataBindings.Add("Enabled", _component, "IsModalityEditable");
+			_modality.Format += delegate(object sender, ListControlConvertEventArgs e)
+			{
+				e.Value = _component.FormatModality(e.ListItem);
+			};
+
 			_laterality.DataSource = _component.LateralityChoices;
 			_laterality.DataBindings.Add("Value", _component, "SelectedLaterality", true, DataSourceUpdateMode.OnPropertyChanged);
 
@@ -71,6 +75,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_scheduledDate.DataBindings.Add("Enabled", _component, "IsScheduledDateTimeEditable");
 			_scheduledTime.DataBindings.Add("Value", _component, "ScheduledTime", true, DataSourceUpdateMode.OnPropertyChanged);
 			_scheduledTime.DataBindings.Add("Enabled", _component, "IsScheduledDateTimeEditable");
+
+			_duration.DataBindings.Add("Value", _component, "ScheduledDuration", true, DataSourceUpdateMode.OnPropertyChanged);
+			_duration.DataBindings.Add("Enabled", _component, "IsScheduledDurationEditable");
 
 			_portable.DataBindings.Add("Checked", _component, "PortableModality", true, DataSourceUpdateMode.OnPropertyChanged);
 

@@ -10,27 +10,19 @@
 #endregion
 
 using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
 	[DataContract]
 	public class GetOrderRequisitionForEditResponse : DataContractBase
 	{
-		public GetOrderRequisitionForEditResponse(EntityRef orderRef, OrderRequisition requisition, bool IsCompleted)
+		public GetOrderRequisitionForEditResponse(OrderRequisition requisition)
 		{
-			this.OrderRef = orderRef;
 			this.Requisition = requisition;
-			this.IsCompleted = IsCompleted;
 		}
 
 		[DataMember]
 		public OrderRequisition Requisition;
-
-		[DataMember]
-		public EntityRef OrderRef;
-
-		[DataMember]
-		public bool IsCompleted;
 	}
 }

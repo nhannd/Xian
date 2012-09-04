@@ -22,7 +22,13 @@ namespace ClearCanvas.Dicom.Iod
 		[DicomField(DicomTags.StudyInstanceUid)]
 		string StudyInstanceUid { get; }
 
-		/// <summary>
+        /// <summary>
+        /// Gets the sop classes in the identified study.
+        /// </summary>
+        [DicomField(DicomTags.SopClassesInStudy)]
+        string[] SopClassesInStudy { get; }
+        
+        /// <summary>
 		/// Gets the modalities in the identified study.
 		/// </summary>
 		[DicomField(DicomTags.ModalitiesInStudy)]

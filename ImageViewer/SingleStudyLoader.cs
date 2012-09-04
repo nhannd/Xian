@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Threading;
 
@@ -25,6 +26,8 @@ namespace ClearCanvas.ImageViewer
 			private readonly ImageViewerComponent _viewer;
 			private readonly LoadStudyArgs _args;
 			private readonly StudyItem _studyItem;
+
+		    private string _studyLoaderName;
 
 			private readonly object _syncLock = new object();
 			private List<Sop> _sops;
@@ -69,17 +72,6 @@ namespace ClearCanvas.ImageViewer
 				get { return _studyItem; }	
 			}
 
-			public string StudyLoaderName
-			{
-				get
-				{
-					if (_args != null)
-						return _args.StudyLoaderName;
-					else
-						return _studyItem.StudyLoaderName;
-				}	
-			}
-
 			public string StudyInstanceUid
 			{
 				get
@@ -91,7 +83,7 @@ namespace ClearCanvas.ImageViewer
 				}
 			}
 
-			public object Server
+			public IDicomServiceNode Server
 			{
 				get
 				{
@@ -132,17 +124,27 @@ namespace ClearCanvas.ImageViewer
 
 			private List<Sop> LoadSops()
 			{
-				//Use a new loader in case this call is asynchronous, we don't want to use the viewer's instance.
-				IStudyLoader studyLoader = new StudyLoaderMap()[StudyLoaderName];
+			    IStudyLoader studyLoader;
+			    try
+			    {
+                    studyLoader = Server.GetService<IStudyLoader>();
+                    _studyLoaderName = studyLoader.Name;
+                }
+			    catch (Exception e)
+			    {
+                    //For legacy reasons, so code expecting one of these exceptions will still get one.
+                    throw new StudyLoaderNotFoundException(e);
+			    }
 
-				StudyLoaderArgs args = new StudyLoaderArgs(StudyInstanceUid, Server);
+                var args = new StudyLoaderArgs(StudyInstanceUid, Server);
 				int total;
-				List<Sop> sops = new List<Sop>();
+				var sops = new List<Sop>();
 				
 				try
 				{
 					if (LoadOnlineOnly && StudyItem != null)
 					{
+					    // TODO (CR Apr 2012): try to get rid of this.
 						//This stinks, but we pre-emptively throw the offline/nearline exception
 						//to avoid trying to load a prior when we know it's not online.
 						switch (StudyItem.InstanceAvailability)
@@ -156,7 +158,7 @@ namespace ClearCanvas.ImageViewer
 						}
 					}
 
-					total = studyLoader.Start(args);
+                    total = studyLoader.Start(args);
 					if (total <= 0)
 						throw new NotFoundLoadStudyException(args.StudyInstanceUid);
 				}
@@ -173,7 +175,7 @@ namespace ClearCanvas.ImageViewer
 				{
 					while (true)
 					{
-						Sop sop = studyLoader.LoadNextSop();
+                        Sop sop = studyLoader.LoadNextSop();
 						if (sop == null)
 							break;
 
@@ -240,7 +242,9 @@ namespace ClearCanvas.ImageViewer
 				{
 					_viewer.EventBroker.OnStudyLoaded(new StudyLoadedEventArgs(study, error));
 
-					IPrefetchingStrategy prefetchingStrategy = _viewer.StudyLoaders[StudyLoaderName].PrefetchingStrategy;
+                    //We have to use the viewer's instance of the loader so that we don't end up with a prefetching
+                    //strategy per study loaded into the viewer.
+                    IPrefetchingStrategy prefetchingStrategy = _viewer.StudyLoaders[_studyLoaderName].PrefetchingStrategy;
 					if (prefetchingStrategy != null)
 						prefetchingStrategy.Start(_viewer);
 				}
@@ -255,8 +259,8 @@ namespace ClearCanvas.ImageViewer
 				if (!IsStudyInStudyTree)
 				{
 					Platform.Log(LogLevel.Error, Error,
-						"Failed to load prior study '{0}' from study loader '{1}'.",
-						StudyInstanceUid, StudyLoaderName);
+						"Failed to load prior study '{0}' from server '{1}'.",
+						StudyInstanceUid, Server);
 
 					IsValidPrior = true;
 					if (_args != null)
@@ -369,14 +373,14 @@ namespace ClearCanvas.ImageViewer
 					DisposeSops(sops);
 			}
 
-			#region IDisposable Members
+		    #region IDisposable Members
 
 			public void Dispose()
 			{
 				try
 				{
 					DisposeSops();
-					GC.SuppressFinalize(this);
+                    GC.SuppressFinalize(this);
 				}
 				catch (Exception e)
 				{

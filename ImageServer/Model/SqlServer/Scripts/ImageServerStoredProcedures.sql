@@ -628,7 +628,7 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: August 13, 2007
--- Modify date: Jan 09, 2012
+-- Modify date: Aug 17, 2012
 -- Description:	Insert a ServerPartition row
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertServerPartition] 
@@ -648,7 +648,8 @@ CREATE PROCEDURE [dbo].[InsertServerPartition]
     @MatchPatientsBirthDate bit = 1,
     @MatchIssuerOfPatientId bit = 1,
     @MatchPatientsSex bit = 1,
-	@AuditDeleteStudy bit = 0
+	@AuditDeleteStudy bit = 0,
+	@AcceptLatestReport bit = 1
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -668,9 +669,9 @@ BEGIN
 
 	INSERT INTO [ImageServer].[dbo].[ServerPartition] 
 			([GUID],[Enabled],[Description],[AeTitle],[Port],[PartitionFolder],[AcceptAnyDevice],[AutoInsertDevice],[DefaultRemotePort],[DuplicateSopPolicyEnum],
-			[MatchPatientsName], [MatchPatientId], [MatchAccessionNumber], [MatchPatientsBirthDate], [MatchIssuerOfPatientId], [MatchPatientsSex], [AuditDeleteStudy])
+			[MatchPatientsName], [MatchPatientId], [MatchAccessionNumber], [MatchPatientsBirthDate], [MatchIssuerOfPatientId], [MatchPatientsSex], [AuditDeleteStudy], [AcceptLatestReport])
 	VALUES (@ServerPartitionGUID, @Enabled, @Description, @AeTitle, @Port, @PartitionFolder, @AcceptAnyDevice, @AutoInsertDevice, @DefaultRemotePort, @DuplicateSopPolicyEnum,
-			@MatchPatientsName, @MatchPatientId, @MatchAccessionNumber, @MatchPatientsBirthDate, @MatchIssuerOfPatientId, @MatchPatientsSex, @AuditDeleteStudy)
+			@MatchPatientsName, @MatchPatientId, @MatchAccessionNumber, @MatchPatientsBirthDate, @MatchIssuerOfPatientId, @MatchPatientsSex, @AuditDeleteStudy, @AcceptLatestReport)
 
 	-- Populate PartitionSopClass
 	DECLARE cur_sopclass CURSOR FOR 

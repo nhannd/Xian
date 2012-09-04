@@ -11,6 +11,7 @@
 
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -144,8 +145,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 					if (base.ParentPresentationImage is IApplicationGraphicsProvider)
 					{
-						ExceptionGraphic exGraphic = (ExceptionGraphic) CollectionUtils.SelectFirst(
-							((IApplicationGraphicsProvider) base.ParentPresentationImage).ApplicationGraphics, IsType<ExceptionGraphic>);
+						ExceptionGraphic exGraphic = (ExceptionGraphic) ((IApplicationGraphicsProvider) base.ParentPresentationImage).ApplicationGraphics.FirstOrDefault(IsType<ExceptionGraphic>);
 						if (exGraphic == null)
 							((IApplicationGraphicsProvider) base.ParentPresentationImage).ApplicationGraphics.Add(exGraphic = new ExceptionGraphic());
 						exGraphic.Set(exception);
@@ -189,7 +189,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			[OnCloneComplete]
 			private void OnCloneComplete()
 			{
-				_textGraphic = (InvariantTextPrimitive)CollectionUtils.SelectFirst(base.Graphics, IsType<InvariantTextPrimitive>);
+				_textGraphic = (InvariantTextPrimitive)base.Graphics.FirstOrDefault(IsType<InvariantTextPrimitive>);
 			}
 
 			public void Set(Exception exception)

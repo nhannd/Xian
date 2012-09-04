@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -157,17 +157,17 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
-        /// <para>JPEG 2000 Part 2 Multi-component  Image Compression</para>
+        /// <para>JPEG 2000 Part 2 Multi-component Image Compression</para>
         /// <para>UID: 1.2.840.10008.1.2.4.93</para>
         /// </summary>
         public static readonly String Jpeg2000Part2MultiComponentImageCompressionUid = "1.2.840.10008.1.2.4.93";
 
         /// <summary>TransferSyntax object representing
-        /// <para>JPEG 2000 Part 2 Multi-component  Image Compression</para>
+        /// <para>JPEG 2000 Part 2 Multi-component Image Compression</para>
         /// <para>UID: 1.2.840.10008.1.2.4.93</para>
         /// </summary>
         public static readonly TransferSyntax Jpeg2000Part2MultiComponentImageCompression =
-                    new TransferSyntax("JPEG 2000 Part 2 Multi-component  Image Compression",
+                    new TransferSyntax("JPEG 2000 Part 2 Multi-component Image Compression",
                                  Jpeg2000Part2MultiComponentImageCompressionUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
@@ -178,17 +178,17 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
-        /// <para>JPEG 2000 Part 2 Multi-component  Image Compression (Lossless Only)</para>
+        /// <para>JPEG 2000 Part 2 Multi-component Image Compression (Lossless Only)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.92</para>
         /// </summary>
         public static readonly String Jpeg2000Part2MultiComponentImageCompressionLosslessOnlyUid = "1.2.840.10008.1.2.4.92";
 
         /// <summary>TransferSyntax object representing
-        /// <para>JPEG 2000 Part 2 Multi-component  Image Compression (Lossless Only)</para>
+        /// <para>JPEG 2000 Part 2 Multi-component Image Compression (Lossless Only)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.92</para>
         /// </summary>
         public static readonly TransferSyntax Jpeg2000Part2MultiComponentImageCompressionLosslessOnly =
-                    new TransferSyntax("JPEG 2000 Part 2 Multi-component  Image Compression (Lossless Only)",
+                    new TransferSyntax("JPEG 2000 Part 2 Multi-component Image Compression (Lossless Only)",
                                  Jpeg2000Part2MultiComponentImageCompressionLosslessOnlyUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
@@ -703,6 +703,48 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
+        /// <para>MPEG-4 AVC/H.264 BD-compatible High Profile / Level 4.1</para>
+        /// <para>UID: 1.2.840.10008.1.2.4.103</para>
+        /// </summary>
+        public static readonly String Mpeg4AvcH264BdCompatibleHighProfileLevel41Uid = "1.2.840.10008.1.2.4.103";
+
+        /// <summary>TransferSyntax object representing
+        /// <para>MPEG-4 AVC/H.264 BD-compatible High Profile / Level 4.1</para>
+        /// <para>UID: 1.2.840.10008.1.2.4.103</para>
+        /// </summary>
+        public static readonly TransferSyntax Mpeg4AvcH264BdCompatibleHighProfileLevel41 =
+                    new TransferSyntax("MPEG-4 AVC/H.264 BD-compatible High Profile / Level 4.1",
+                                 Mpeg4AvcH264BdCompatibleHighProfileLevel41Uid,
+                                 true, // Little Endian?
+                                 true, // Encapsulated?
+                                 true, // Explicit VR?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 true // lossless?
+                                 );
+
+        /// <summary>String representing
+        /// <para>MPEG-4 AVC/H.264 High Profile / Level 4.1</para>
+        /// <para>UID: 1.2.840.10008.1.2.4.102</para>
+        /// </summary>
+        public static readonly String Mpeg4AvcH264HighProfileLevel41Uid = "1.2.840.10008.1.2.4.102";
+
+        /// <summary>TransferSyntax object representing
+        /// <para>MPEG-4 AVC/H.264 High Profile / Level 4.1</para>
+        /// <para>UID: 1.2.840.10008.1.2.4.102</para>
+        /// </summary>
+        public static readonly TransferSyntax Mpeg4AvcH264HighProfileLevel41 =
+                    new TransferSyntax("MPEG-4 AVC/H.264 High Profile / Level 4.1",
+                                 Mpeg4AvcH264HighProfileLevel41Uid,
+                                 true, // Little Endian?
+                                 true, // Encapsulated?
+                                 true, // Explicit VR?
+                                 false, // Deflated?
+                                 false, // lossy?
+                                 true // lossless?
+                                 );
+
+        /// <summary>String representing
         /// <para>RFC 2557 MIME encapsulation</para>
         /// <para>UID: 1.2.840.10008.1.2.6.1</para>
         /// </summary>
@@ -975,6 +1017,12 @@ namespace ClearCanvas.Dicom
 
             _transferSyntaxes.Add(Mpeg2MainProfileMainLevelUid,
                                   Mpeg2MainProfileMainLevel);
+
+            _transferSyntaxes.Add(Mpeg4AvcH264BdCompatibleHighProfileLevel41Uid,
+                                  Mpeg4AvcH264BdCompatibleHighProfileLevel41);
+
+            _transferSyntaxes.Add(Mpeg4AvcH264HighProfileLevel41Uid,
+                                  Mpeg4AvcH264HighProfileLevel41);
 
             _transferSyntaxes.Add(Rfc2557MimeEncapsulationUid,
                                   Rfc2557MimeEncapsulation);

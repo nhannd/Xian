@@ -206,9 +206,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
                 DefaultRemotePortTextBox.Text = "104";
 
                 AutoInsertDeviceCheckBox.Enabled = true;
-                DefaultRemotePortTextBox.Enabled = true;
+                DefaultRemotePortTextBox.Enabled = true;                
 
                 DuplicateSopDropDownList.SelectedIndex = 0;
+                AcceptLatestReportCheckBox.Checked = true;
 
                 MatchPatientName.Checked = true;
                 MatchPatientID.Checked = true;
@@ -233,6 +234,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
                 DefaultRemotePortTextBox.Enabled = Partition.AutoInsertDevice;
 
                 DuplicateSopDropDownList.SelectedValue = Partition.DuplicateSopPolicyEnum.Lookup;
+                AcceptLatestReportCheckBox.Checked = Partition.AcceptLatestReport;
 
                 MatchPatientName.Checked = Partition.MatchPatientsName;
                 MatchPatientID.Checked = Partition.MatchPatientId;
@@ -271,7 +273,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
                 Partition.DefaultRemotePort = port;
 
             Partition.DuplicateSopPolicyEnum = DuplicateSopPolicyEnum.GetAll()[DuplicateSopDropDownList.SelectedIndex];
-
+            Partition.AcceptLatestReport = AcceptLatestReportCheckBox.Checked;
             Partition.MatchPatientsName = MatchPatientName.Checked;
             Partition.MatchPatientId = MatchPatientID.Checked;
             Partition.MatchPatientsBirthDate = MatchPatientBirthDate.Checked;

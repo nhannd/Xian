@@ -11,6 +11,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
@@ -24,7 +25,7 @@ namespace ClearCanvas.Ris.Application.Common
 
 		public VisitSummary(
 			EntityRef visitRef,
-			EntityRef patientRef,
+			PatientProfileSummary patient,
 			CompositeIdentifierDetail visitNumber,
 			EnumValueInfo patientClass,
 			EnumValueInfo patientType,
@@ -38,7 +39,7 @@ namespace ClearCanvas.Ris.Application.Common
 			string currentBed)
 		{
 			this.VisitRef = visitRef;
-			this.PatientRef = patientRef;
+			this.Patient = patient;
 			this.VisitNumber = visitNumber;
 			this.PatientClass = patientClass;
 			this.PatientType = patientType;
@@ -56,7 +57,7 @@ namespace ClearCanvas.Ris.Application.Common
 		public EntityRef VisitRef;
 
 		[DataMember]
-		public EntityRef PatientRef;
+		public PatientProfileSummary Patient;
 
 		[DataMember]
 		public CompositeIdentifierDetail VisitNumber;

@@ -16,6 +16,9 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 {
@@ -27,11 +30,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		/// <summary>
 		/// Called to get <see cref="ISopDataSource"/>s matching the specified query arguments.
 		/// </summary>
-		/// <param name="server">The object representing the "server" from which the data sources are "retrieved."</param>
+		/// <param name="server">The server from which the data sources are "retrieved."</param>
 		/// <param name="studyInstanceUid">The study instance UID of the data sources to be "retrieved."</param>
 		/// <returns>An enumerable of matching <see cref="ISopDataSource"/> results. May be null.</returns>
-		IEnumerable<ISopDataSource> GetSopDataSources(object server, string studyInstanceUid);
+        IEnumerable<ISopDataSource> GetSopDataSources(IApplicationEntity server, string studyInstanceUid);
 	}
+
+    public class TestServiceNodeServiceProvider : ServiceNodeServiceProvider
+    {
+        public override bool IsSupported(Type type)
+        {
+            return (type == typeof (IStudyLoader));
+        }
+
+        public override object GetService(Type type)
+        {
+            if (type == typeof(IStudyLoader))
+                return new UnitTestStudyLoader();
+            return null;
+        }
+    }
 
 	/// <summary>
 	/// An implementation of <see cref="IStudyLoader"/> suitable for unit testing contexts.
@@ -71,7 +89,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 	/// </example>
 	public sealed class UnitTestStudyLoader : StudyLoader
 	{
-		/// <summary>
+	    /// <summary>
 		/// Gets the ID string of the <see cref="UnitTestStudyLoader"/>.
 		/// </summary>
 		public static readonly string StudyLoaderId = typeof (UnitTestStudyLoader).Name;
@@ -90,7 +108,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		/// <returns>A context object that should be disposed in order to unregister the data sources.</returns>
 		public static UnitTestStudyProviderContext RegisterStudies(IEnumerable<ISopDataSource> sopDataSources)
 		{
-			return RegisterStudies(new object(), sopDataSources);
+			return RegisterStudies(ServerDirectory.GetLocalServer(), sopDataSources);
 		}
 
 		/// <summary>
@@ -103,7 +121,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		/// <param name="server">Specifies the "server" on which these data sources "reside."</param>
 		/// <param name="sopDataSources">The <see cref="ISopDataSource"/>s to be registered.</param>
 		/// <returns>A context object that should be disposed in order to unregister the data sources.</returns>
-		public static UnitTestStudyProviderContext RegisterStudies(object server, IEnumerable<ISopDataSource> sopDataSources)
+		public static UnitTestStudyProviderContext RegisterStudies(IDicomServiceNode server, IEnumerable<ISopDataSource> sopDataSources)
 		{
 			var unitTestStudyProvider = new UnitTestStudyProviderContext(server, sopDataSources);
 			RegisterStudyProvider(unitTestStudyProvider);
@@ -143,7 +161,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		private static IEnumerable<ISopDataSource> GetSopDataSources(object server, string studyInstanceUid)
+		private static IEnumerable<ISopDataSource> GetSopDataSources(IApplicationEntity server, string studyInstanceUid)
 		{
 			var combinedResults = new List<ISopDataSource>();
 			lock (_syncLock)
@@ -208,7 +226,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		/// </summary>
 		public sealed class UnitTestStudyProviderContext : IUnitTestStudyProvider, IDisposable
 		{
-			internal UnitTestStudyProviderContext(object server, IEnumerable<ISopDataSource> sopDataSources)
+			internal UnitTestStudyProviderContext(IDicomServiceNode server, IEnumerable<ISopDataSource> sopDataSources)
 			{
 				Platform.CheckForNullReference(server, "server");
 				Platform.CheckForNullReference(sopDataSources, "sopDataSources");
@@ -228,7 +246,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			/// <summary>
 			/// Gets the "server" on which the represented data sources "reside."
 			/// </summary>
-			public object Server { get; private set; }
+			public IDicomServiceNode Server { get; private set; }
 
 			/// <summary>
 			/// Gets the represented data sources.
@@ -244,7 +262,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 				get { return CollectionUtils.Select(SopDataSources, s => s != null && s.StudyInstanceUid == studyInstanceUid); }
 			}
 
-			IEnumerable<ISopDataSource> IUnitTestStudyProvider.GetSopDataSources(object server, string studyInstanceUid)
+            IEnumerable<ISopDataSource> IUnitTestStudyProvider.GetSopDataSources(IApplicationEntity server, string studyInstanceUid)
 			{
 				if (!Equals(Server, server))
 					return null;

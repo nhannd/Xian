@@ -15,7 +15,8 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -53,11 +54,24 @@
     <Compile Include="ApplySopRulesCommand.cs" />
     <Compile Include="AutoReconciler.cs" />
     <Compile Include="BasePreprocessor.cs" />
-    <Compile Include="CommandProcessor\UpdateStudySizeInDBCommand.cs" />
+    <Compile Include="Command\DeleteDirectoryCommand.cs" />
+    <Compile Include="Command\DeleteWorkQueueUidCommand.cs" />
+    <Compile Include="Command\LockStudyCommand.cs" />
+    <Compile Include="Command\SaveDicomFileCommand.cs" />
+    <Compile Include="Command\SaveXmlCommand.cs" />
+    <Compile Include="Command\UpdateStudySizeInDBCommand.cs" />
+    <Compile Include="Command\UpdateWorkQueueCommand.cs" />
     <Compile Include="Data\ProcessDuplicateChangeLog.cs" />
     <Compile Include="Data\ReprocessStudyChangeLog.cs" />
     <Compile Include="Data\ReprocessStudyQueueData.cs" />
     <Compile Include="Data\UidMapXml.cs" />
+    <Compile Include="Diagnostics\DiagnosticSettings.Designer.cs">
+      <DependentUpon>DiagnosticSettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Diagnostics\RandomError.cs" />
+    <Compile Include="Diagnostics\Settings.cs" />
     <Compile Include="DicomProcessingResult.cs" />
     <Compile Include="DicomSopInstanceValidator.cs" />
     <Compile Include="Edit\BaseImageLevelUpdateCommand.cs" />
@@ -86,7 +100,7 @@
     <Compile Include="Edit\WebEditStudyContext.cs" />
     <Compile Include="Edit\WebEditStudyHistoryRecord.cs" />
     <Compile Include="Process\StudyReprocessor.cs" />
-    <Compile Include="CommandProcessor\RebuildStudyXmlCommand.cs" />
+    <Compile Include="Command\RebuildStudyXmlCommand.cs" />
     <Compile Include="Rebuild\StudyXmlRebuilder.cs" />
     <Compile Include="Reconcile\CreateStudy\CreateStudyCommand.cs" />
     <Compile Include="Reconcile\CreateStudy\CreateStudyCommandProcessor.cs" />
@@ -97,7 +111,6 @@
     <Compile Include="Reconcile\Discard\DiscardImagesCommand.cs" />
     <Compile Include="Reconcile\InsertOrUpdateEntryCommand.cs" />
     <Compile Include="Edit\SetTagCommand.cs" />
-    <Compile Include="Edit\UpdateDicomFileCommand.cs" />
     <Compile Include="Data\ImageSetDescriptor.cs" />
     <Compile Include="Data\ImageSetDetails.cs" />
     <Compile Include="Data\PatientInformation.cs" />
@@ -175,6 +188,12 @@
       <Project>{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}</Project>
       <Name>ClearCanvas.ImageServer.Rules</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Diagnostics\DiagnosticSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DiagnosticSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

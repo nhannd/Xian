@@ -1228,7 +1228,7 @@ var Field =
 	
 	show: function(element, state)
 	{
-		element.style.display = state ? "" : "none";
+		element.style.display = state ? "block" : "none";
 	},
 
 	disabled: function(element, state)

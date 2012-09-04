@@ -10,11 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
@@ -42,9 +37,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _dateOfDeath.DataBindings.Add("Value", _component, "TimeOfDeath", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _mrn.DataBindings.Add("Value", _component, "MrnID", true, DataSourceUpdateMode.OnPropertyChanged);
+			_mrn.DataBindings.Add("Enabled", _component, "MrnIDEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _mrnAuthority.DataSource = _component.MrnAuthorityChoices;
             _mrnAuthority.DataBindings.Add("Value", _component, "MrnAuthority", true, DataSourceUpdateMode.OnPropertyChanged);
+			_mrnAuthority.DataBindings.Add("Enabled", _component, "MrnAuthorityEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _healthcard.DataBindings.Add("Value", _component, "HealthcardID", true, DataSourceUpdateMode.OnPropertyChanged);
 
@@ -53,7 +50,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             _healthcardVersionCode.DataBindings.Add("Value", _component, "HealthcardVersionCode", true, DataSourceUpdateMode.OnPropertyChanged);
             _healthcardExpiry.DataBindings.Add("Value", _component, "HealthcardExpiryDate", true, DataSourceUpdateMode.OnPropertyChanged);
-        }
+
+			_billingInformation.DataBindings.Add("Value", _component, "BillingInformation", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
 
         private void PatientEditorControl_Load(object sender, EventArgs e)
         {

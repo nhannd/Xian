@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core.Modelling;
@@ -33,6 +34,7 @@ namespace ClearCanvas.Healthcare
 			_procedureCheckIn = new ProcedureCheckIn();
 			_reports = new HashedSet<Report>();
 			_protocols = new HashedSet<Protocol>();
+			_scheduledDuration = type.DefaultDuration;
 		}
 
 		#region Public Properties
@@ -260,7 +262,19 @@ namespace ClearCanvas.Healthcare
 		/// Applicable only if this object is in the SC status.
 		/// </summary>
 		/// <param name="startTime"></param>
+		/// <remarks>This overload does not modify the duration of the procedure.</remarks>
 		public virtual void Schedule(DateTime? startTime)
+		{
+			Schedule(startTime, _scheduledDuration);
+		}
+
+		/// <summary>
+		/// Schedules or re-schedules all procedure steps to start at the specified time, and for the specified duration.
+		/// Applicable only if this object is in the SC status.
+		/// </summary>
+		/// <param name="startTime"></param>
+		/// <param name="duration">Duration in minutes.</param>
+		public virtual void Schedule(DateTime? startTime, int duration)
 		{
 			if (_status != ProcedureStatus.SC)
 				throw new WorkflowException("Only procedures in the SC status may be scheduled or re-scheduled.");
@@ -272,12 +286,8 @@ namespace ClearCanvas.Healthcare
 			}
 
 			// Schedule each step appropriately based on the its SchedulingOffset.
-			foreach (var ps in _procedureSteps)
+			foreach (var ps in _procedureSteps.Where(ps => ps.State == ActivityStatus.SC))
 			{
-				// Only step in SC status can be scheduled or rescheduled.
-				if (ps.State != ActivityStatus.SC)
-					continue;
-
 				if (ps.SchedulingOffset == TimeSpan.MinValue)
 				{
 					// Make sure the step is scheduled at creation time.
@@ -291,13 +301,21 @@ namespace ClearCanvas.Healthcare
 				else
 				{
 					// Schedule the step using its offset
-					var stepStartTime = startTime;
-					if (stepStartTime != null)
-						stepStartTime = stepStartTime.Value.Add(ps.SchedulingOffset);
-
-					ps.Schedule(stepStartTime);
+					if (startTime != null)
+					{
+						// truncate to minute, and add ps offset
+						var t = startTime.Value.Truncate(DateTimePrecision.Minute).Add(ps.SchedulingOffset);
+						ps.Schedule(t);
+					}
+					else
+					{
+						ps.Schedule(null);
+					}
 				}
 			}
+
+			_scheduledDuration = duration > 0 ? duration : ComputeDefaultDuration();
+			_scheduledEndTime = _scheduledStartTime + TimeSpan.FromMinutes(_scheduledDuration);
 		}
 
 		/// <summary>
@@ -405,6 +423,8 @@ namespace ClearCanvas.Healthcare
 				_number,
 				new HashedSet<ProcedureStep>(),
 				_scheduledStartTime,
+				_scheduledDuration,
+				_scheduledEndTime,
 				_schedulingCode,
 				_startTime,
 				_endTime,
@@ -604,6 +624,17 @@ namespace ClearCanvas.Healthcare
 				ps => true,
 				ps => ps.EndTime,
 				null);
+		}
+
+		private int ComputeDefaultDuration()
+		{
+			if (!_scheduledStartTime.HasValue)
+				return 0;
+
+			// todo Yen: I don't think the Scheduling.EndTime field is ever populated
+			// hence this will ever return anything other than 0
+			var endTime = _procedureSteps.Max(ps => ps.Scheduling.EndTime);
+			return endTime.HasValue ? (int)(endTime.Value - _scheduledStartTime.Value).TotalMinutes : 0;
 		}
 
 		/// <summary>

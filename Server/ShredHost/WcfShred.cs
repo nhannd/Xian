@@ -44,7 +44,7 @@ namespace ClearCanvas.Server.ShredHost
 				WcfHelper.StartHttpHost<TServiceType, TServiceInterfaceType>(name, description, SharedHttpPort, ServiceAddressBase);
             _serviceEndpointDescriptions[name] = sed;
 
-			Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.Description.Endpoints[0]);
+            Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.Description.Endpoints[0].Address);
 
             return sed;
         }
@@ -60,7 +60,7 @@ namespace ClearCanvas.Server.ShredHost
 				WcfHelper.StartBasicHttpHost<TServiceType, TServiceInterfaceType>(name, description, SharedHttpPort, ServiceAddressBase);
             _serviceEndpointDescriptions[name] = sed;
 
-			Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.Description.Endpoints[0]);
+            Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.Description.Endpoints[0].Address);
 
             return sed;
         }
@@ -77,7 +77,7 @@ namespace ClearCanvas.Server.ShredHost
 				WcfHelper.StartHttpDualHost<TServiceType, TServiceInterfaceType>(name, description, SharedHttpPort, ServiceAddressBase);
             _serviceEndpointDescriptions[name] = sed;
 
-			Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.Description.Endpoints[0]);
+            Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.Description.Endpoints[0].Address);
 
             return sed;
         }
@@ -94,7 +94,7 @@ namespace ClearCanvas.Server.ShredHost
 				WcfHelper.StartNetTcpHost<TServiceType, TServiceInterfaceType>(name, description, SharedTcpPort, SharedHttpPort, ServiceAddressBase);
             _serviceEndpointDescriptions[name] = sed;
 
-			Platform.Log(LogLevel.Info, "WCF Shred {0}is listening at {1}.", name, sed.ServiceHost.Description.Endpoints[0]);
+            Platform.Log(LogLevel.Info, "WCF Shred {0}is listening at {1}.", name, sed.ServiceHost.Description.Endpoints[0].Address);
 
 
             return sed;
@@ -113,7 +113,7 @@ namespace ClearCanvas.Server.ShredHost
             _serviceEndpointDescriptions[name] = sed;
 
 
-            Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.Description.Endpoints[0]);
+            Platform.Log(LogLevel.Info, "WCF Shred {0} is listening at {1}.", name, sed.ServiceHost.Description.Endpoints[0].Address);
 
             return sed;
         }

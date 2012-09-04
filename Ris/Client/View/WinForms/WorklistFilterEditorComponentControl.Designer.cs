@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._portable.AutoSize = true;
 			this._portable.LabelText = "Portable";
-			this._portable.Location = new System.Drawing.Point(246, 130);
+			this._portable.Location = new System.Drawing.Point(14, 124);
 			this._portable.Margin = new System.Windows.Forms.Padding(2);
 			this._portable.Name = "_portable";
 			this._portable.Size = new System.Drawing.Size(213, 40);
@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._priority.AutoSize = true;
 			this._priority.LabelText = "Order Priority";
-			this._priority.Location = new System.Drawing.Point(14, 130);
+			this._priority.Location = new System.Drawing.Point(246, 42);
 			this._priority.Margin = new System.Windows.Forms.Padding(2);
 			this._priority.Name = "_priority";
 			this._priority.Size = new System.Drawing.Size(213, 40);
@@ -90,7 +90,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._patientClass.AutoSize = true;
 			this._patientClass.LabelText = "Patient Class";
-			this._patientClass.Location = new System.Drawing.Point(246, 42);
+			this._patientClass.Location = new System.Drawing.Point(14, 210);
 			this._patientClass.Margin = new System.Windows.Forms.Padding(2);
 			this._patientClass.Name = "_patientClass";
 			this._patientClass.Size = new System.Drawing.Size(213, 40);
@@ -111,7 +111,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._orderingPractitioner.AutoSize = true;
 			this._orderingPractitioner.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._orderingPractitioner.LabelText = "Ordering Practitioner";
-			this._orderingPractitioner.Location = new System.Drawing.Point(14, 211);
+			this._orderingPractitioner.Location = new System.Drawing.Point(246, 121);
 			this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
 			this._orderingPractitioner.Name = "_orderingPractitioner";
 			this._orderingPractitioner.Size = new System.Drawing.Size(213, 43);

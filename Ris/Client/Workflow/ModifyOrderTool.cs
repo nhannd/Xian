@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		where TItem : WorklistItemSummaryBase
 		where TContext : IWorkflowItemToolContext<TItem>
 	{
-		public ModifyOrderToolBase()
+		protected ModifyOrderToolBase()
 			: base("ModifyOrder")
 		{
 		}
@@ -47,28 +47,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected bool ExecuteCore(WorklistItemSummaryBase item)
 		{
-			OrderEditorComponent component = new OrderEditorComponent(
-				item.PatientRef,
-				item.PatientProfileRef,
-				item.OrderRef,
-				OrderEditorComponent.Mode.ModifyOrder);
-
-			IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
+			var component = new OrderEditorComponent(new OrderEditorComponent.ModifyOrderOperatingContext { OrderRef = item.OrderRef});
+			var result = ApplicationComponent.LaunchAsDialog(
 				this.Context.DesktopWindow,
 				component,
 				string.Format("Modify Order - {0} {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)));
 
-			Type selectedFolderType = this.Context.SelectedFolder.GetType();
-			workspace.Closed += delegate
-				{
-					if (component.ExitCode == ApplicationComponentExitCode.Accepted)
-					{
-						InvalidateFolders();
-						DocumentManager.InvalidateFolder(selectedFolderType);
-					}
-				};
+			if(result == ApplicationComponentExitCode.Accepted)
+			{
+				InvalidateFolders();
+				return true;
+			}
 
-			// Return false because even though the modify order component is opened, no workflow action has actually taken place.
 			return false;
 		}
 	}
@@ -95,30 +85,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			DocumentManager.InvalidateFolder(typeof(Folders.Registration.ScheduledFolder));
 			DocumentManager.InvalidateFolder(typeof(Folders.Registration.CheckedInFolder));
-		}
-	}
-
-	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-	public class BookingModifyOrderTool : ModifyOrderToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
-	{
-		public override void Initialize()
-		{
-			base.Initialize();
-
-			this.Context.RegisterDoubleClickHandler(
-				(IClickAction)CollectionUtils.SelectFirst(
-					this.Actions,
-					delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("apply"); }));
-		}
-
-		protected override bool Execute(RegistrationWorklistItemSummary item)
-		{
-			return ExecuteCore(item);
-		}
-
-		protected override void InvalidateFolders()
-		{
-			DocumentManager.InvalidateFolder(typeof(Folders.Registration.ToBeScheduledFolder));
 		}
 	}
 

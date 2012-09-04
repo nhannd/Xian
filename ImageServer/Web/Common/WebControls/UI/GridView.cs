@@ -365,7 +365,14 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 ScriptManager sm = ScriptManager.GetCurrent(Page);
                 sm.RegisterScriptControl(this);    
             }
-            
+
+            if (!Page.IsPostBack)
+            {
+                if (!IsDataBound)
+                {
+                    DataBind();
+                }
+            }
         }
 
         protected override void Render(HtmlTextWriter writer)
@@ -427,7 +434,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         
         }
         
-        public void SelectRow(int rowIndex)
+        public new void SelectRow(int rowIndex)
         {
             Rows[rowIndex].RowState = DataControlRowState.Selected;
             Rows[rowIndex].Attributes["selected"] = "true";

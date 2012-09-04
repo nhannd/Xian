@@ -23,6 +23,7 @@ namespace ClearCanvas.Ris.Application.Services
 				modality.GetRef(),
 				modality.Id,
 				modality.Name,
+				modality.AETitle,
 				EnumUtils.GetEnumValueInfo(modality.DicomModality),
 				modality.Deactivated);
 		}
@@ -33,6 +34,7 @@ namespace ClearCanvas.Ris.Application.Services
 				modality.GetRef(),
 				modality.Id,
 				modality.Name,
+				modality.AETitle,
 				EnumUtils.GetEnumValueInfo(modality.DicomModality),
 				modality.Deactivated);
 		}
@@ -41,6 +43,7 @@ namespace ClearCanvas.Ris.Application.Services
 		{
 			modality.Id = detail.Id;
 			modality.Name = detail.Name;
+			modality.AETitle = detail.AETitle;
 			modality.DicomModality = EnumUtils.GetEnumValue<DicomModalityEnum>(detail.DicomModality, context);
 			modality.Deactivated = detail.Deactivated;
 		}

@@ -11,10 +11,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Serialization;
 
 namespace ClearCanvas.Enterprise.Core.Imex
 {

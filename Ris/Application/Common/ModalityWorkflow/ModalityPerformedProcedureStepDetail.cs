@@ -11,6 +11,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 using System.Collections.Generic;
 

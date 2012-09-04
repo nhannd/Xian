@@ -12,8 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
 {

@@ -63,28 +63,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return false;
 			}
 
-			var component = new OrderEditorComponent(
-				item.PatientRef,
-				item.PatientProfileRef,
-				item.OrderRef,
-				OrderEditorComponent.Mode.ReplaceOrder);
-
-			IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
+			var component = new OrderEditorComponent(new OrderEditorComponent.ReplaceOrderOperatingContext {OrderRef = item.OrderRef});
+			var result = ApplicationComponent.LaunchAsDialog(
 				this.Context.DesktopWindow,
 				component,
 				string.Format(SR.TitleReplaceOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)));
 
-			var selectedFolderType = this.Context.SelectedFolder.GetType();
-			workspace.Closed += delegate
-				{
-					if (component.ExitCode == ApplicationComponentExitCode.Accepted)
-					{
-						InvalidateFolders();
-						DocumentManager.InvalidateFolder(selectedFolderType);
-					}
-				};
+			if(result == ApplicationComponentExitCode.Accepted)
+			{
+				InvalidateFolders();
+				return true;
+			}
 
-			// Return false because even though the modify order component is opened, no workflow action has actually taken place.
 			return false;
 		}
 	}
@@ -101,21 +91,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			DocumentManager.InvalidateFolder(typeof(Folders.Registration.ScheduledFolder));
 			DocumentManager.InvalidateFolder(typeof(Folders.Registration.CancelledFolder));
-		}
-	}
-
-	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-	public class BookingReplaceOrderTool : ReplaceOrderToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
-	{
-		protected override bool Execute(RegistrationWorklistItemSummary item)
-		{
-			return ExecuteCore(item);
-		}
-
-		protected override void InvalidateFolders()
-		{
-			DocumentManager.InvalidateFolder(typeof(Folders.Registration.ToBeScheduledFolder));
-			DocumentManager.InvalidateFolder(typeof(Folders.Registration.PendingProtocolFolder));
 		}
 	}
 

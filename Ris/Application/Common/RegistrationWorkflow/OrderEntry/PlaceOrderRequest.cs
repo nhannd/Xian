@@ -12,8 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.Admin;
 
@@ -36,5 +35,5 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// </summary>
         [DataMember]
         public OrderRequisition Requisition;
-    }
+	}
 }

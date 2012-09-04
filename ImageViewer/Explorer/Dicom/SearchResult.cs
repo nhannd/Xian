@@ -11,54 +11,39 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-	public class SearchResult
+	public partial class SearchResult
 	{
-		protected const string ColumnPatientId = @"Patient ID";
-		protected const string ColumnLastName = @"Last Name";
-		protected const string ColumnFirstName = @"First Name";
-		protected internal const string ColumnIdeographicName = @"Ideographic Name";
-		protected internal const string ColumnPhoneticName = @"Phonetic Name";
-		protected const string ColumnDateOfBirth = @"DOB";
-		protected const string ColumnAccessionNumber = @"Accession Number";
-		protected const string ColumnStudyDate = @"Study Date";
-		protected const string ColumnStudyDescription = @"Study Description";
-		protected const string ColumnModality = @"Modality";
-		protected const string ColumnAttachments = @"Attachments";
-		protected const string ColumnReferringPhysician = @"Referring Physician";
-		protected internal const string ColumnNumberOfInstances = @"Instances";
-		protected const string ColumnServer = @"Server";
-		protected const string ColumnAvailability = @"Availability";
-
 		private string _serverGroupName;
-		private bool _isLocalDataStore;
+		private bool _isLocalServer;
 		private int _numberOfChildServers;
 
-		private readonly Table<StudyItem> _studyTable;
-		private readonly List<StudyItem> _hiddenItems;
+	    private readonly StudyTable _studyTable;
+        private readonly List<StudyTableItem> _hiddenItems;
 
 		private bool _filterDuplicates;
-		private bool _everSearched;
+        private DateTime? _lastSearchEndTime;
+        private string _resultsTitle;
 
-		public SearchResult()
+        private readonly object _tableRefreshLock = new object();
+        private bool _isTableRefreshCheckPending;
+        private DateTime? _lastTableRefreshCheck;
+        private DateTime? _lastTableRefreshTime;
+
+	    public SearchResult()
 		{
-			_everSearched = false;
 			HasDuplicates = false;
 
 			_serverGroupName = "";
-			_isLocalDataStore = false;
+			_isLocalServer = false;
 			_numberOfChildServers = 1;
 
-			_hiddenItems = new List<StudyItem>();
-			_studyTable = new Table<StudyItem>();
+            _hiddenItems = new List<StudyTableItem>();
+            _studyTable = new StudyTable();
+            _setChangedStudies = new Dictionary<string, string>();
 		}
 
 		#region Properties
@@ -69,13 +54,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			set { _serverGroupName = value; }
 		}
 
-		public bool IsLocalDataStore
+		public bool IsLocalServer
 		{
-			get { return _isLocalDataStore; }
+			get { return _isLocalServer; }
 			set
 			{
-				_isLocalDataStore = value;
-				UpdateServerColumnsVisibility();
+                if (Equals(_isLocalServer, value))
+                    return;
+
+				_isLocalServer = value;
+				UpdateColumnVisibility();
+                if (_isLocalServer)
+                    StartMonitoringStudies();
+                else
+                    StopMonitoringStudies();
 			}
 		}
 
@@ -85,25 +77,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			set
 			{
 				_numberOfChildServers = value;
-				UpdateServerColumnsVisibility();
+                UpdateColumnVisibility();
 			}
 		}
 
-		public Table<StudyItem> StudyTable
+	    public StudyTable StudyTable
 		{
 			get { return _studyTable; }
 		}
 
 		public string ResultsTitle
 		{
-			get
-			{
-				if (!_everSearched)
-					return _serverGroupName;
-				else
-					return String.Format(SR.FormatStudiesFound, _studyTable.Items.Count, _serverGroupName);
-			}
+            get { return _resultsTitle; }
+            private set
+            {
+                if (Equals(_resultsTitle, value))
+                    return;
+
+                _resultsTitle = value;
+                EventsHelper.Fire(ResultsTitleChanged, this, EventArgs.Empty);
+            }
 		}
+
+	    public event EventHandler ResultsTitleChanged;
 
 		public bool HasDuplicates { get; private set; }
 
@@ -117,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				{
 					if (_hiddenItems.Count == 0)
 					{
-						RemoveDuplicates(_studyTable.Items, _hiddenItems);
+					    RemoveDuplicates(_studyTable.Items, _hiddenItems);
 					}
 				}
 				else
@@ -130,439 +126,184 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 
 				StudyTable.Sort();
+                SetResultsTitle();
 			}
 		}
-		#endregion
-
-		#region Methods
+		
+        #endregion
 
 		public void Initialize()
 		{
-			InitializeTable();
+            _studyTable.Initialize();
+            //_studyTable.UseSinglePatientNameColumn = true;
+            SetResultsTitle();
 		}
 
-		public void Refresh(StudyItemList studies, bool filterDuplicates)
-		{
-			_everSearched = true;
+        public void SearchStarted()
+        {
+            SearchInProgress = true;
+        }
+
+        public void SearchCanceled()
+        {
+            SearchInProgress = false;
+        }
+
+        public void SearchEnded(List<StudyTableItem> tableItems, bool filterDuplicates)
+        {
+            _lastSearchEndTime = _lastTableRefreshTime = DateTime.Now;
+	        SearchInProgress = false;
 			_filterDuplicates = filterDuplicates;
 
 			_hiddenItems.Clear();
-			IList<StudyItem> filteredStudies = new List<StudyItem>(studies);
-			RemoveDuplicates(filteredStudies, _hiddenItems);
+            var filteredItems = new List<StudyTableItem>(tableItems);
+			RemoveDuplicates(filteredItems, _hiddenItems);
 			HasDuplicates = _hiddenItems.Count > 0;
 
 			if (!_filterDuplicates)
 			{
 				_hiddenItems.Clear();
 				_studyTable.Items.Clear();
-				_studyTable.Items.AddRange(studies);
+				_studyTable.Items.AddRange(tableItems);
 			}
 			else
 			{
 				_studyTable.Items.Clear();
-				_studyTable.Items.AddRange(filteredStudies);
+				_studyTable.Items.AddRange(filteredItems);
 			}
 
 			StudyTable.Sort();
-		}
+            SetResultsTitle();
+        }
 
-		private static void RemoveDuplicates(IList<StudyItem> allStudies, List<StudyItem> removed)
+        // Hack for #10072. We can't inspect the values that are actually shown in the table to see if they need
+        // updated because, for example, midnight crossed and a value needs to change. So, we're hacking it
+        // just for the one specific case where midnight is crossed and the "Delete On" column needs to say
+        // "Today" instead of "Yesterday", for example.
+
+        #region Study Table Refresh Hack
+
+        private bool StudyTableNeedsRefresh()
+        {
+            var now = DateTime.Now;
+            lock (_syncLock)
+            {
+                _lastTableRefreshCheck = now;
+                _isTableRefreshCheckPending = false;
+            }
+
+            //The user has never searched, so there is nothing to refresh.
+            if (!_lastSearchEndTime.HasValue)
+                return false;
+
+            //There is nothing in the table to refresh.
+            if (_studyTable.Items.Count == 0)
+                return false;
+
+            //Has midnight been crossed since the last time the table was refreshed?
+            var lastRefreshTime = _lastTableRefreshTime.HasValue ? _lastTableRefreshTime.Value : _lastSearchEndTime.Value;
+            var timeSinceLastRefresh = now - lastRefreshTime;
+            var nowTimeOfDay = now.TimeOfDay;
+            if (timeSinceLastRefresh < nowTimeOfDay)
+                return false; //haven't crossed midnight yet.
+
+            return true;
+        }
+
+        private void RefreshStudyTable()
+        {
+            _lastTableRefreshTime = DateTime.Now;
+            var allItems = new List<StudyTableItem>(_studyTable.Items);
+
+            using (_studyTable.Items.BeginTransaction())
+            {
+                _studyTable.Items.Clear();
+                _studyTable.Items.AddRange(allItems);
+            }
+        }
+
+        #endregion
+
+        private void SetResultsTitle()
+        {
+            var everSearched = _lastSearchEndTime.HasValue;
+            if (!everSearched)
+            {
+                ResultsTitle = Reindexing
+                                   ? String.Format(SR.FormatNeverSearchedReindexing, _serverGroupName)
+                                   : _serverGroupName;
+            }
+            else
+            {
+                ResultsTitle = Reindexing
+                                   ? String.Format(SR.FormatStudiesFoundReindexing, _studyTable.Items.Count, _serverGroupName)
+                                   : String.Format(SR.FormatStudiesFound, _studyTable.Items.Count, _serverGroupName);
+            }
+        }
+
+        private static void RemoveDuplicates(IList<StudyTableItem> allItems, List<StudyTableItem> removedItems)
 		{
-			removed.Clear();
+			removedItems.Clear();
 
-			Dictionary<string, StudyItem> uniqueStudies = new Dictionary<string, StudyItem>();
-			foreach (StudyItem study in allStudies)
+            var uniqueItems = new Dictionary<string, StudyTableItem>();
+            foreach (StudyTableItem item in allItems)
 			{
-				StudyItem existing;
-				if (uniqueStudies.TryGetValue(study.StudyInstanceUid, out existing))
-				{
-					ApplicationEntity server = study.Server as ApplicationEntity;
+				StudyTableItem existing;
+                if (uniqueItems.TryGetValue(item.StudyInstanceUid, out existing))
+                {
+                    var server = item.Server;
 					//we will only replace an existing entry if this study's server is streaming.
-					if (server != null && server.IsStreaming)
+					if (server != null && server.StreamingParameters != null)
 					{
 						//only replace existing entry if it is on a non-streaming server.
-						server = existing.Server as ApplicationEntity;
-						if (server == null || !server.IsStreaming)
+                        server = existing.Server;
+                        if (server == null || server.StreamingParameters == null)
 						{
-							removed.Add(existing);
-							uniqueStudies[study.StudyInstanceUid] = study;
+							removedItems.Add(existing);
+							uniqueItems[item.StudyInstanceUid] = item;
 							continue;
 						}
 					}
 
 					//this study is a duplicate.
-					removed.Add(study);
+					removedItems.Add(item);
 				}
 				else
 				{
-					uniqueStudies[study.StudyInstanceUid] = study;
+                    uniqueItems[item.StudyInstanceUid] = item;
 				}
 			}
 
-			foreach (StudyItem study in removed)
-				allStudies.Remove(study);
+			foreach (StudyTableItem removedItem in removedItems)
+				allItems.Remove(removedItem);
 		}
 
-		protected virtual void InitializeTable()
-		{
-			_studyTable.Columns.AddRange(CreateExtensionColumns());
-			_studyTable.Columns.AddRange(CreateDefaultColumns());
-			_studyTable.Columns.AddRange(CreateInstanceCountColumns());
-			_studyTable.Columns.AddRange(CreateServerColumns());
+        internal void UpdateColumnVisibility()
+        {
+            var hide = _isLocalServer || _numberOfChildServers == 1;
+            _studyTable.SetServerColumnsVisibility(!hide);
 
-			// Default: Sort by last name
-			var column = FindColumn(ColumnLastName);
-			_studyTable.Sort(new TableSortParams(column, true));
-		}
+            _studyTable.SetColumnVisibility(StudyTable.ColumnNameDeleteOn, _isLocalServer);
+        }
 
-		protected IEnumerable<TableColumnBase<StudyItem>> CreateExtensionColumns()
-		{
-			var columns = new List<TableColumnBase<StudyItem>>();
-			try
-			{
-				// Create and add any extension columns
-				StudyColumnExtensionPoint xp = new StudyColumnExtensionPoint();
-				foreach (object obj in xp.CreateExtensions())
-				{
-					IStudyColumn newColumn = (IStudyColumn)obj;
-
-					var column = new TableColumn<StudyItem, string>(
-						newColumn.Name,
-						item => (newColumn.GetValue(item) ?? "").ToString(),
-						newColumn.WidthFactor);
-
-					newColumn.ColumnValueChanged += OnColumnValueChanged;
-					columns.Add(column);
-				}
-			}
-			catch (NotSupportedException) { }
-			return columns;
-		}
-
-		protected static IEnumerable<TableColumnBase<StudyItem>> CreateDefaultColumns()
-		{
-			var columns = new List<TableColumnBase<StudyItem>>();
-			TableColumn<StudyItem, string> column;
-
-			column = new TableColumn<StudyItem, string>(
-				ColumnPatientId,
-				SR.ColumnHeadingPatientId,
-				delegate(StudyItem item) { return item.PatientId; },
-				0.5f);
-
-			columns.Add(column);
-
-			column = new TableColumn<StudyItem, string>(
-				ColumnLastName,
-				SR.ColumnHeadingLastName,
-				delegate(StudyItem item) { return item.PatientsName.LastName; },
-				0.5f);
-
-			columns.Add(column);
-
-			column = new TableColumn<StudyItem, string>(
-				ColumnFirstName,
-				SR.ColumnHeadingFirstName,
-				delegate(StudyItem item) { return item.PatientsName.FirstName; },
-				0.5f);
-
-			columns.Add(column);
-
-			column = new TableColumn<StudyItem, string>(
-				ColumnIdeographicName,
-				SR.ColumnHeadingIdeographicName,
-				delegate(StudyItem item) { return item.PatientsName.Ideographic; },
-				0.5f) { Visible = false };
-
-			columns.Add(column);
-
-			column = new TableColumn<StudyItem, string>(
-				ColumnPhoneticName,
-				SR.ColumnHeadingPhoneticName,
-				delegate(StudyItem item) { return item.PatientsName.Phonetic; },
-				0.5f) { Visible = false };
-
-			columns.Add(column);
-
-			column = new TableColumn<StudyItem, string>(
-				ColumnDateOfBirth,
-				SR.ColumnHeadingDateOfBirth,
-				delegate(StudyItem item) { return FormatDicomDA(item.PatientsBirthDate); },
-				null,
-				0.4F,
-				(x, y) => CompareDicomDA(x.PatientsBirthDate, y.PatientsBirthDate));
-
-			columns.Add(column);
-
-			column = new TableColumn<StudyItem, string>(
-				ColumnAccessionNumber,
-				SR.ColumnHeadingAccessionNumber,
-				delegate(StudyItem item) { return item.AccessionNumber; },
-				0.45F);
-
-			columns.Add(column);
-
-			column = new TableColumn<StudyItem, string>(
-				ColumnStudyDate,
-				SR.ColumnHeadingStudyDate,
-				delegate(StudyItem item) { return FormatDicomDT(item.StudyDate, item.StudyTime); },
-				null,
-				0.5F,
-				(x, y) => CompareDicomDT(x.StudyDate, x.StudyTime, y.StudyDate, y.StudyTime));
-
-			columns.Add(column);
-
-			column = new TableColumn<StudyItem, string>(
-				ColumnStudyDescription,
-				SR.ColumnHeadingStudyDescription,
-				delegate(StudyItem item) { return item.StudyDescription; },
-				0.75F);
-
-			columns.Add(column);
-
-			column = new TableColumn<StudyItem, string>(
-				ColumnModality,
-				SR.ColumnHeadingModality,
-				delegate(StudyItem item) { return DicomStringHelper.GetDicomStringArray(SortModalities(item.ModalitiesInStudy)); },
-				0.25f);
-
-			columns.Add(column);
-
-			var iconColumn = new TableColumn<StudyItem, IconSet>(
-				ColumnAttachments,
-				SR.ColumnHeadingAttachments,
-				GetAttachmentsIcon,
-				0.25f)
-								{
-									ResourceResolver = new ApplicationThemeResourceResolver(typeof(SearchResult).Assembly),
-									Comparison = (x, y) => x.HasAttachments().CompareTo(y.HasAttachments())
-								};
-
-			columns.Add(iconColumn);
-
-			column = new TableColumn<StudyItem, string>(
-				ColumnReferringPhysician,
-				SR.ColumnHeadingReferringPhysician,
-				delegate(StudyItem item)
-				{
-					if (item.ReferringPhysiciansName != null)
-						return item.ReferringPhysiciansName.FormattedName;
-					else
-						return "";
-				},
-				0.6f);
-
-			columns.Add(column);
-			return columns;
-		}
-
-		protected static IEnumerable<TableColumnBase<StudyItem>> CreateInstanceCountColumns()
-		{
-			var column = new TableColumn<StudyItem, string>(
-				ColumnNumberOfInstances,
-				SR.ColumnHeadingNumberOfInstances,
-				delegate(StudyItem item)
-				{
-					if (item.NumberOfStudyRelatedInstances.HasValue)
-						return item.NumberOfStudyRelatedInstances.ToString();
-					else
-						return "";
-				},
-				null,
-				0.3f,
-					delegate(StudyItem study1, StudyItem study2)
-					{
-						int? instances1 = study1.NumberOfStudyRelatedInstances;
-						int? instances2 = study2.NumberOfStudyRelatedInstances;
-
-						if (instances1 == null)
-						{
-							if (instances2 == null)
-								return 0;
-							else
-								return 1;
-						}
-						else if (instances2 == null)
-						{
-							return -1;
-						}
-
-						return -instances1.Value.CompareTo(instances2.Value);
-					});
-
-			return new TableColumnBase<StudyItem>[] { column };
-		}
-
-		protected static IEnumerable<TableColumnBase<StudyItem>> CreateServerColumns()
-		{
-			var columns = new List<TableColumnBase<StudyItem>>();
-			var column = new TableColumn<StudyItem, string>(ColumnServer, SR.ColumnHeadingServer,
-														delegate(StudyItem item)
-														{
-															return (item.Server == null) ? "" : item.Server.ToString();
-														},
-														0.3f);
-
-			columns.Add(column);
-
-			column = new TableColumn<StudyItem, string>(ColumnAvailability, SR.ColumnHeadingAvailability,
-														delegate(StudyItem item)
-														{
-															return item.InstanceAvailability ?? "";
-														},
-														0.3f);
-
-			columns.Add(column);
-			return columns;
-		}
-
-		internal void UpdateColumnVisibility()
-		{
-			UpdateServerColumnsVisibility();
-		}
-
-		private void UpdateServerColumnsVisibility()
-		{
-			TableColumnBase<StudyItem> column = FindColumn(ColumnServer);
-			if (column != null)
-			{
-				if (_isLocalDataStore || _numberOfChildServers == 1)
-					column.Visible = false;
-				else
-					column.Visible = true;
-			}
-
-			column = FindColumn(ColumnAvailability);
-			if (column != null)
-			{
-				if (_isLocalDataStore)
-					column.Visible = false;
-				else
-					column.Visible = true;
-			}
-		}
-
-		protected TableColumnBase<StudyItem> FindColumn(string columnHeading)
-		{
-			foreach (TableColumnBase<StudyItem> column in StudyTable.Columns)
-			{
-				if (column.Name == columnHeading)
-					return column;
-			}
-
-			return null;
-		}
-
-		protected void OnColumnValueChanged(object sender, ItemEventArgs<StudyItem> e)
-		{
-			this.StudyTable.Items.NotifyItemUpdated(e.Item);
-		}
-
-		#endregion
-
-		protected static string FormatDicomDA(string dicomDate)
-		{
-			DateTime date;
-			if (!DateParser.Parse(dicomDate, out date))
-				return dicomDate;
-
-			return date.ToString(Format.DateFormat);
-		}
-
-		protected static string FormatDicomTM(string dicomTime)
-		{
-			DateTime time;
-			if (!TimeParser.Parse(dicomTime, out time))
-				return dicomTime;
-
-			return time.ToString(Format.TimeFormat);
-		}
-
-		protected static string FormatDicomDT(string dicomDate, string dicomTime)
-		{
-			if (string.IsNullOrEmpty(dicomTime)) return FormatDicomDA(dicomDate); // if time is not specified, just format the date
-
-			DateTime dateTime;
-			if (!DateTimeParser.ParseDateAndTime(string.Empty, dicomDate, dicomTime, out dateTime))
-				return dicomDate + ' ' + dicomTime;
-
-			return dateTime.ToString(Format.DateTimeFormat);
-		}
-
-		protected static int CompareDicomDA(string dicomDate1, string dicomDate2)
-		{
-			return string.Compare(dicomDate1, dicomDate2, StringComparison.InvariantCultureIgnoreCase);
-		}
-
-		protected static int CompareDicomTM(string dicomTime1, string dicomTime2)
-		{
-			return string.Compare(dicomTime1, dicomTime2, StringComparison.InvariantCultureIgnoreCase);
-		}
-
-		protected static int CompareDicomDT(string dicomDate1, string dicomTime1, string dicomDate2, string dicomTime2)
-		{
-			var result = CompareDicomDA(dicomDate1, dicomDate2);
-			return result != 0 ? result : CompareDicomTM(dicomTime1, dicomTime2);
-		}
-
-		private static IconSet GetAttachmentsIcon(StudyItem item)
-		{
-			return item.HasAttachments() ? new IconSet("AttachmentsExtraSmall.png") : null;
-		}
-
-		private static string[] SortModalities(IEnumerable<string> modalities)
-		{
-			var list = new List<string>(modalities);
-			list.Remove(@"DOC"); // the DOC modality is a special case and handled via the attachments icon
-			list.Sort((x, y) =>
-			              {
-			                  var result = GetModalityPriority(x).CompareTo(GetModalityPriority(y));
-			                  if (result == 0)
-			                      result = string.Compare(x, y, StringComparison.InvariantCultureIgnoreCase);
-			                  return result;
-			              });
-			return list.ToArray();
-		}
-
-		private static int GetModalityPriority(string modality)
-		{
-			const int imageModality = 0; // sort all known image modalities to top
-			const int unknownModality = 1; // unknown modalities may be images or may simply be other documents - sort after known images, but before known ancillary documents
-			const int srModality = 2;
-			const int koModality = 3;
-			const int prModality = 4;
-
-			switch (modality)
-			{
-				case @"SR":
-					return srModality;
-				case @"KO":
-					return koModality;
-				case @"PR":
-					return prModality;
-				default:
-					return StandardModalities.Modalities.Contains(modality) ? imageModality : unknownModality;
-			}
-		}
-
-		public static SearchResultColumnOptionCollection ColumnOptions
-		{
-			get
-			{
-				try
-				{
-					return new SearchResultColumnOptionCollection(DicomExplorerConfigurationSettings.Default.ResultColumns);
-				}
-				catch (Exception)
-				{
-					return new SearchResultColumnOptionCollection();
-				}
-			}
-			set
-			{
-				DicomExplorerConfigurationSettings.Default.ResultColumns = value;
-				DicomExplorerConfigurationSettings.Default.Save();
-			}
-		}
-	}
+        public static SearchResultColumnOptionCollection ColumnOptions
+        {
+            get
+            {
+                try
+                {
+                    return new SearchResultColumnOptionCollection(DicomExplorerConfigurationSettings.Default.ResultColumns);
+                }
+                catch (Exception)
+                {
+                    return new SearchResultColumnOptionCollection();
+                }
+            }
+            set
+            {
+                DicomExplorerConfigurationSettings.Default.ResultColumns = value;
+                DicomExplorerConfigurationSettings.Default.Save();
+            }
+        }
+    }
 }

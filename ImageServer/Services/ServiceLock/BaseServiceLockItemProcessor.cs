@@ -20,7 +20,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 		/// <returns>The list of queue entries.</returns>
         protected IList<FilesystemQueue> GetFilesystemQueueCandidates(Model.ServiceLock item, DateTime scheduledTime, FilesystemQueueTypeEnum type, bool statusCheck)
         {
-			using (ExecutionContext context = new ExecutionContext())
+			using (ServerExecutionContext context = new ServerExecutionContext())
 			{
 				IFilesystemQueueEntityBroker broker = context.ReadContext.GetBroker<IFilesystemQueueEntityBroker>();
 				FilesystemQueueSelectCriteria fsQueueCriteria = new FilesystemQueueSelectCriteria();

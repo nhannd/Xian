@@ -26,12 +26,12 @@ namespace ClearCanvas.Ris.Client
 	/// </summary>
 	public class VisitSummaryComponent : SummaryComponentBase<VisitSummary, VisitSummaryTable>
 	{
-		private readonly EntityRef _patientRef;
+		private readonly PatientProfileSummary _patientProfile;
 
-		public VisitSummaryComponent(EntityRef patientRef, bool dialogMode)
+		public VisitSummaryComponent(PatientProfileSummary patientProfile, bool dialogMode)
 			:base(dialogMode)
 		{
-			_patientRef = patientRef;
+			_patientProfile = patientProfile;
 		}
 
 		/// <summary>
@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService(
 				delegate(IVisitAdminService service)
 				{
-					listResponse = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef));
+					listResponse = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientProfile.PatientRef));
 				});
 
 			return listResponse.Visits;
@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client
 		protected override bool AddItems(out IList<VisitSummary> addedItems)
 		{
 			addedItems = new List<VisitSummary>();
-			var editor = new VisitEditorComponent(_patientRef);
+			var editor = new VisitEditorComponent(_patientProfile);
 			if (ApplicationComponentExitCode.Accepted == 
 				LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddVisit))
 			{

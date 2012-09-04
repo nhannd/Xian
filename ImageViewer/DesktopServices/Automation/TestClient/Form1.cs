@@ -26,11 +26,12 @@ using AutomationClient = ClearCanvas.ImageViewer.DesktopServices.Automation.Test
 using QueryClient = ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocatorAsp.StudyLocator;
 #else
 using ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation;
-using ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator;
 using ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.DicomExplorerAutomation;
 using DicomExplorerAutomationClient = ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.DicomExplorerAutomation.DicomExplorerAutomationClient;
 using AutomationClient = ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerAutomationClient;
 using QueryClient = ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyRootQueryClient;
+using StudyRootStudyIdentifier = ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyRootStudyIdentifier;
+
 #endif
 
 namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient

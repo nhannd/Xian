@@ -15,7 +15,7 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -96,6 +96,7 @@
     <Compile Include="DeadlockException.cs" />
     <Compile Include="DeadlockRetryAdvice.cs" />
     <Compile Include="DeadlockRetryManager.cs" />
+    <Compile Include="EntityChangeSetRecorderSettings.cs" />
     <Compile Include="LooseEnumPropertyChangeSetListener.cs" />
     <Compile Include="EqualityUtils.cs" />
     <Compile Include="ExtendedPropertiesSearchCriteria.cs" />
@@ -120,6 +121,20 @@
     <Compile Include="Modelling\ValidationAttribute.cs" />
     <Compile Include="Modelling\XmlValidationRuleSetSource.cs" />
     <Compile Include="Ping\PingService.cs" />
+    <Compile Include="Printing\IPageModel.cs" />
+    <Compile Include="Printing\Print.cs" />
+    <Compile Include="Printing\PrintException.cs" />
+    <Compile Include="Printing\PrintSettings.cs" />
+    <Compile Include="Printing\PrintSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PrintSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="EntityChangeSetRecorderSettings.Designer.cs">
+      <DependentUpon>EntityChangeSetRecorderSettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
     <Compile Include="ResponseCachingServerSideAdvice.cs" />
     <Compile Include="ResponseCachingAttribute.cs" />
     <Compile Include="CoreServiceExtensionPoint.cs" />
@@ -274,6 +289,16 @@
       <LastGenOutput>EntityValidationSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="persistence.cd" />
+    <None Include="Printing\PrintSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PrintSettings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="EntityChangeSetRecorderSettings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>EntityChangeSetRecorderSettings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

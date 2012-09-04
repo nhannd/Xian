@@ -13,15 +13,16 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Xml;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 {
-    internal class RemoveInstanceFromStudyXmlCommand : ServerCommand
+    internal class RemoveInstanceFromStudyXmlCommand : CommandBase
     {
         #region Private Members
 
@@ -45,7 +46,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
         #region Overridden Protected Methods
 
-        protected override void OnExecute(ServerCommandProcessor theProcessor)
+        protected override void OnExecute(CommandProcessor commandProcessor)
         {
             _studyXml.RemoveFile(_file);
 

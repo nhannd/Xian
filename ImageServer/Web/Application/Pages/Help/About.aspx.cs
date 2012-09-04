@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
                     LicenseKey = LicenseInformation.LicenseKey;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

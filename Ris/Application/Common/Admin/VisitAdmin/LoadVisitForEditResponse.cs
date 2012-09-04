@@ -11,7 +11,7 @@
 
 using System;
 using System.Runtime.Serialization;
-
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
@@ -27,9 +27,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
 
         [DataMember]
         public EntityRef VisitRef;
-
-        [DataMember]
-        public EntityRef Patient;
 
         [DataMember]
         public VisitDetail VisitDetail;

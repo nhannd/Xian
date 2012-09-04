@@ -63,7 +63,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <PluginFiles Include="$(TrunkDirectory)\ImageServer\Web\Common\bin\$(Configuration)\System.Web.Extensions.Design.dll"/>
     <PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer.dll"/>
 		<PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer.dll"/>
 	</ItemGroup>

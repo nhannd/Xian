@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -19,7 +20,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Anonymization;
-using ClearCanvas.ImageViewer.Services.Auditing;
+using ClearCanvas.ImageViewer.Common.Auditing;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
@@ -218,7 +219,7 @@ namespace ClearCanvas.Utilities.DicomEditor
         {
             if (applyToAll == false)
             {
-            	if (!WarnReportAndAttachmentAnonymization(new[] {_loadedFiles[_position]}))
+            	if (!WarnReportOrAttachmentAnonymization(_loadedFiles[_position]))
             		return;
 
 				_anonymizer.Anonymize(_loadedFiles[_position]);
@@ -226,7 +227,7 @@ namespace ClearCanvas.Utilities.DicomEditor
             }
             else
             {
-            	if (!WarnReportAndAttachmentAnonymization(_loadedFiles))
+            	if (!WarnReportOrAttachmentAnonymization())
             		return;
 
                 for (int i = 0; i < _loadedFiles.Count; i++)
@@ -244,12 +245,14 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 		public void SaveAll()
 		{
+            if (!WarnSaveEditedReportsOrAttachments())
+                return;
+
 			var modifiedInstances = new AuditedInstances();
 			var failureCount = 0;
 
 			for (int i = 0; i < _loadedFiles.Count; i++)
 			{
-				//TODO: deal with saving mixtures of local and non-local files.
 				var file = _loadedFiles[i];
 				try
 				{
@@ -565,16 +568,46 @@ namespace ClearCanvas.Utilities.DicomEditor
 			}
     	}
 
-    	/// <summary>
+        private bool WarnSaveEditedReportsOrAttachments()
+        {
+            if (AnyReportsOrAttachments(true))
+            {
+                var message = _loadedFiles.Count > 1 
+                    ? SR.MessageConfirmSaveReportsOrAttachments 
+                    : SR.MessageConfirmSaveReportOrAttachment;
+
+                return Host.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo) == DialogBoxAction.Yes;
+            }
+            return true;
+        }
+
+        private bool WarnReportOrAttachmentAnonymization(DicomFile file)
+        {
+            if (IsReportOrAttachment(file))
+                return Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmAnonymizeReportOrAttachment, MessageBoxActions.YesNo) == DialogBoxAction.Yes;
+            return true;
+        }
+        
+        /// <summary>
     	/// Warns the user about anonymization if one or more of the <paramref name="files"/> are reports and/or attachments.
     	/// </summary>
     	/// <returns>True if anonymization should continue; False if user cancels anonymization.</returns>
-    	private bool WarnReportAndAttachmentAnonymization(IEnumerable<DicomFile> files)
+    	private bool WarnReportOrAttachmentAnonymization()
     	{
-    		if (CollectionUtils.Contains(files, f => AnonymizeStudyTool.IsReportOrAttachmentSopClass(f.SopClass != null ? f.SopClass.Uid : string.Empty)))
+            if (AnyReportsOrAttachments(false))
     			return Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmAnonymizeOneOrMoreReportsAndAttachments, MessageBoxActions.YesNo) == DialogBoxAction.Yes;
     		return true;
     	}
+
+        private bool AnyReportsOrAttachments(bool dirtyOnly)
+        {
+            return _loadedFiles.Where((file, i) => !dirtyOnly || _dirtyFlags[i]).Any(IsReportOrAttachment);
+        }
+
+        private bool IsReportOrAttachment(DicomFile file)
+        {
+            return AnonymizeStudyTool.IsReportOrAttachmentSopClass(file.SopClass != null ? file.SopClass.Uid : string.Empty);
+        }
 
         #region Private Members
 

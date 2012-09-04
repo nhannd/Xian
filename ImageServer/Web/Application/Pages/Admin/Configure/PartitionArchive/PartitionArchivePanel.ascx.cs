@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
+using ClearCanvas.ImageServer.Core.Query;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
@@ -25,10 +26,10 @@ using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive
 {
-    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive.PartitionArchivePanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive.PartitionArchivePanel.js")]
     /// <summary>
     /// Server parition panel  used in <seealso cref="Default"/> web page.
     /// </summary>
+    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive.PartitionArchivePanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive.PartitionArchivePanel.js")]
     public partial class PartitionArchivePanel : AJAXScriptControl
     {
         #region Private Members
@@ -37,7 +38,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
         private IList<Model.PartitionArchive> _partitionArchives = new List<Model.PartitionArchive>();
         // used for database interaction
         private PartitionArchiveConfigController _theController;
-		private ServerPartition _serverPartition;
 
         #endregion Private Members
 
@@ -82,14 +82,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             set { _theController = value; }
         }
 
-		/// <summary>
-		/// Gets the <see cref="Model.ServerPartition"/> associated with this search panel.
-		/// </summary>
-		public ServerPartition ServerPartition
-		{
-			get { return _serverPartition; }
-			set { _serverPartition = value; }
-		}
+        /// <summary>
+        /// Gets the <see cref="Model.ServerPartition"/> associated with this search panel.
+        /// </summary>
+        public ServerPartition ServerPartition { get; set; }
+
         #endregion Public Properties
 
         #region Protected Methods
@@ -119,7 +116,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
         {
             base.OnPreRender(e);
 
-            UpdateUI();
+            Refresh();
         }
 
         protected override void OnInit(EventArgs e)
@@ -129,7 +126,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             // initialize the controller
             _theController = new PartitionArchiveConfigController();
 
-            GridPagerTop.InitializeGridPager(SR.GridPagerPartitionSingleItem, SR.GridPagerPartitionMultipleItems, PartitionArchiveGridPanel.TheGrid, delegate { return PartitionArchives.Count; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(SR.GridPagerPartitionSingleItem, SR.GridPagerPartitionMultipleItems, PartitionArchiveGridPanel.TheGrid,
+                                             () => PartitionArchives.Count, ImageServerConstants.GridViewPagerPosition.Top);
             PartitionArchiveGridPanel.Pager = GridPagerTop;
 
         }
@@ -142,21 +140,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
 
         protected void LoadData()
         {
-            PartitionArchiveSelectCriteria criteria = new PartitionArchiveSelectCriteria();
+            var criteria = new PartitionArchiveSelectCriteria();
 
             if (String.IsNullOrEmpty(DescriptionFilter.Text) == false)
             {
-                string key = SearchHelper.TrailingWildCard(DescriptionFilter.Text);
-                key = key.Replace("*", "%");
-                criteria.Description.Like(key + "%");
+                QueryHelper.SetGuiStringCondition(criteria.Description,
+                                                   SearchHelper.TrailingWildCard(DescriptionFilter.Text));
             }
 
             if (StatusFilter.SelectedIndex > 0)
             {
-                if (StatusFilter.SelectedIndex == 1)
-                    criteria.Enabled.EqualTo(true);
-                else
-                    criteria.Enabled.EqualTo(false);
+                criteria.Enabled.EqualTo(StatusFilter.SelectedIndex == 1);
             }
 
         	criteria.ServerPartitionKey.EqualTo(ServerPartition.Key);
@@ -202,7 +196,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
 
         #region Public Methods
 
-        public void UpdateUI()
+        public void Refresh()
         {
             LoadData();
             PartitionArchiveGridPanel.UpdateUI();
@@ -210,6 +204,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             SearchUpdatePanel.Update();
         }
 
+        internal void Reset()
+        {
+            //Clear();
+            PartitionArchiveGridPanel.Reset();
+        }
         #endregion Public methods       
     }
 }

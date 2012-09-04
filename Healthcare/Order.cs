@@ -141,6 +141,19 @@ namespace ClearCanvas.Healthcare
 		#region Public properties
 
 		/// <summary>
+		/// Priority
+		/// </summary>
+		public OrderPriority Priority
+		{
+			get { return _priority; }
+			set
+			{
+				_priority = value;
+				_priorityRank = (int) value;
+			}
+		}
+
+		/// <summary>
 		/// Gets a value indicating whether this order is in a terminal state.
 		/// </summary>
 		public virtual bool IsTerminated
@@ -220,19 +233,6 @@ namespace ClearCanvas.Healthcare
 			}
 			return false;
 		}
-
-		/// <summary>
-		/// Schedules all procedures in this order for the specified start time.
-		/// </summary>
-		/// <param name="startTime"></param>
-		public virtual void Schedule(DateTime? startTime)
-		{
-			foreach (var procedure in _procedures)
-			{
-				procedure.Schedule(startTime);
-			}
-		}
-
 
 		/// <summary>
 		/// Check to see if merge is possible.
@@ -396,6 +396,7 @@ namespace ClearCanvas.Healthcare
 					new List<OrderAttachment>(),
 					_reasonForStudy,
 					_priority,
+					(int)_priority,
 					OrderStatus.SC,
 					null,
 					null,

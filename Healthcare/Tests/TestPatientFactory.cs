@@ -35,6 +35,7 @@ namespace ClearCanvas.Healthcare.Tests
                 new SpokenLanguageEnum("en", "English", null),
                 new ReligionEnum("X", "unknown", null),
                 false,
+				null,
                 null,
                 null,
                 null,

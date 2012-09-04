@@ -515,13 +515,13 @@ namespace ClearCanvas.Healthcare.Tests
 
 			procedure.Schedule(now);
 
-			Assert.AreEqual(now, ps.Scheduling.StartTime);
+			Assert.AreEqual(now.Truncate(DateTimePrecision.Minute), ps.Scheduling.StartTime);
 			Assert.AreEqual(ProcedureStatus.SC, procedure.Status);
 			Assert.AreEqual(ActivityStatus.SC, ps.State);
 
 			procedure.Schedule(later);
 
-			Assert.AreEqual(later, ps.Scheduling.StartTime);
+			Assert.AreEqual(later.Truncate(DateTimePrecision.Minute), ps.Scheduling.StartTime);
 			Assert.AreEqual(ProcedureStatus.SC, procedure.Status);
 			Assert.AreEqual(ActivityStatus.SC, ps.State);
 		}
@@ -547,7 +547,7 @@ namespace ClearCanvas.Healthcare.Tests
 			var now = DateTime.Now;
 			procedure.Schedule(now);
 
-			Assert.AreEqual(now, procedure.ScheduledStartTime);
+			Assert.AreEqual(now.Truncate(DateTimePrecision.Minute), procedure.ScheduledStartTime);
 			Assert.AreEqual(protocolStep.CreationTime, protocolStep.Scheduling.StartTime);
 			Assert.AreEqual(procedure.ScheduledStartTime, registrationStep.Scheduling.StartTime);
 			Assert.AreEqual(procedure.ScheduledStartTime, modalityStep.Scheduling.StartTime);

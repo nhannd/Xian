@@ -42,11 +42,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private const int CELL_SUBROW_HEIGHT = 18;
         private readonly int _rowHeight = 0;
+		private Font _subRowFont;
 
-    	private ISelection _selectionBeforeSort;
+    	private ISelection _rememberedSelection;
+		private int _rememberedScrollPosition;
 
     	private string _sortButtonTooltipBase;
     	private string _columnHeaderTooltipBase;
+
+		private Bitmap _checkmarkBitmap;
 
 		public TableView()
         {
@@ -64,10 +68,35 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.DataGridView.RowPostPaint += OutlineCell;
             this.DataGridView.RowPostPaint += SetLinkColor;
 
-            // Use a DelayedEventPublisher to make fixes for bugs 386 and 8032 a little clearer.  Previously used a Timer directly
-            // to delay the events
-            _delayedSelectionChangedPublisher = new DelayedEventPublisher((sender, args) => NotifySelectionChanged(), 50);
+			if (!DesignMode)
+			{
+				// Use a DelayedEventPublisher to make fixes for bugs 386 and 8032 a little clearer.  Previously used a Timer directly
+				// to delay the events
+				_delayedSelectionChangedPublisher = new DelayedEventPublisher((sender, args) => NotifySelectionChanged(), 50);
+			}
+
+			try
+			{
+				var resolver = new ResourceResolver(typeof (TableView), false);
+				using (var s = resolver.OpenResource("checkmark.png"))
+				{
+					_checkmarkBitmap = new Bitmap(s);
+				}
+			}
+			catch (Exception) {}
         }
+
+    	private void PerformDispose(bool disposing)
+    	{
+    		if (disposing)
+    		{
+    			if (_checkmarkBitmap != null)
+    			{
+    				_checkmarkBitmap.Dispose();
+    				_checkmarkBitmap = null;
+    			}
+    		}
+    	}
 
         #region Design Time properties and Events
 
@@ -251,6 +280,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set { _columnHeaderTooltipBase = value; }
 		}
 
+		[DefaultValue(null)]
+		[Description("Specifies the font to be used by sub-rows.")]
+		public Font SubRowFont
+    	{
+			get { return _subRowFont; }
+			set { _subRowFont = value; }
+    	}
+
         public event EventHandler SelectionChanged
         {
             add { _selectionChanged += value; }
@@ -286,6 +323,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
     	[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     	public bool SuppressSelectionChangedEvent { get; set; }
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool SuppressForceSelectionDisplay { get; set; }
+
 
     	[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     	public ActionModelNode ToolbarModel
@@ -369,9 +410,9 @@ namespace ClearCanvas.Desktop.View.WinForms
     			_dataGridView.DataSource = new TableAdapter(_table);
     			_dataGridView.ColumnHeaderMouseClick += _dataGridView_ColumnHeaderMouseClick;
 
-    			_table.BeforeSorted += _table_BeforeSortedEvent;
-    			_table.Sorted += _table_SortedEvent;
-    		}
+				_table.Items.TransactionStarted += _table_Items_TransactionStarted;
+				_table.Items.TransactionCompleted += _table_Items_TransactionCompleted;
+			}
 
     		InitializeSortButton();
     		IntializeFilter();
@@ -430,6 +471,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void ForceSelectionDisplay()
         {
+			if (SuppressForceSelectionDisplay)
+				return;
+
             // check if ALL the selected entries are not visible to the user
             if (CollectionUtils.TrueForAll(_dataGridView.SelectedRows, (DataGridViewRow row) => !row.Displayed)
 				&& _table.Items.Count != 0)
@@ -661,33 +705,34 @@ namespace ClearCanvas.Desktop.View.WinForms
                 {
                     // this is ugly but somebody's gotta do it
                     DataGridViewColumn dgcol;
-                    if (col.ColumnType == typeof(bool))
-                        dgcol = new DataGridViewCheckBoxColumn();
-                    else if (col.ColumnType == typeof(Image) || col.ColumnType == typeof(IconSet))
-                    {
-                        dgcol = new DataGridViewImageColumn();
-
-                        dgcol.SortMode = DataGridViewColumnSortMode.Automatic;
-
-                        // Set the default to display nothing if not icons are provided.
-                        // Otherwise WinForms will by default display an ugly icon with 'x'
-                        dgcol.DefaultCellStyle.NullValue = null;
-                    }
-                    else if (col.HasClickableLink)
-                    {
-                        dgcol = new DataGridViewLinkColumn();
-                        var linkColumn = (DataGridViewLinkColumn)dgcol;
-                        linkColumn.LinkBehavior = LinkBehavior.SystemDefault;
-                        linkColumn.TrackVisitedState = false;
-                        linkColumn.SortMode = DataGridViewColumnSortMode.Automatic;
-                    }
-                    else
-                    {
-                        // assume any other type of column will be displayed as text
+					if (col.ColumnType == typeof(bool))
+					{
+						// if read-only, we use an image column so we can display our own checkbox
+						dgcol = col.ReadOnly ? (DataGridViewColumn)
+							new DataGridViewImageColumn {SortMode = DataGridViewColumnSortMode.Automatic, DefaultCellStyle = {NullValue = null}} :
+							new DataGridViewCheckBoxColumn();
+					}
+					else if (col.ColumnType == typeof(Image) || col.ColumnType == typeof(IconSet))
+					{
+						// Set the default to display nothing if not icons are provided.
+						// Otherwise WinForms will by default display an ugly icon with 'x'
+						dgcol = new DataGridViewImageColumn {SortMode = DataGridViewColumnSortMode.Automatic, DefaultCellStyle = {NullValue = null}};
+					}
+					else if (col.HasClickableLink)
+					{
+						dgcol = new DataGridViewLinkColumn();
+						var linkColumn = (DataGridViewLinkColumn)dgcol;
+						linkColumn.LinkBehavior = LinkBehavior.SystemDefault;
+						linkColumn.TrackVisitedState = false;
+						linkColumn.SortMode = DataGridViewColumnSortMode.Automatic;
+					}
+					else
+					{
+						// assume any other type of column will be displayed as text
 						// if it provides a custom editor, then we need to use a sub-class of the text box column
-                        dgcol = (col.GetCellEditor() != null) ? 
-							(DataGridViewColumn) new CustomEditableTableViewColumn(_table, col) : new DataGridViewTextBoxColumn();
-                    }
+						dgcol = (col.GetCellEditor() != null) ?
+							(DataGridViewColumn)new CustomEditableTableViewColumn(_table, col) : new DataGridViewTextBoxColumn();
+					}
 
                     // initialize the necessary properties
                     dgcol.Name = col.Name;
@@ -718,9 +763,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 				_dataGridView.ColumnHeaderMouseClick -= _dataGridView_ColumnHeaderMouseClick;
 				_table.Columns.ItemsChanged -= OnColumnsChanged;
-				_table.BeforeSorted -= _table_BeforeSortedEvent;
-				_table.Sorted -= _table_SortedEvent;
-            }
+				_table.Items.TransactionStarted -= _table_Items_TransactionStarted;
+				_table.Items.TransactionCompleted -= _table_Items_TransactionCompleted;
+			}
         }
 
     	private void OnColumnsChanged(object sender, ItemChangedEventArgs e)
@@ -876,10 +921,6 @@ namespace ClearCanvas.Desktop.View.WinForms
                         var oldClip = e.Graphics.ClipBounds;
                         e.Graphics.SetClip(clip);
 
-                        // Use a different font for subrows
-                        // TODO: Make this a parameter of the Table
-                        //Font subRowFont = new Font(e.InheritedRowStyle.Font, FontStyle.Italic);
-
                         var format = new StringFormat
                                      	{
                                      		FormatFlags = StringFormatFlags.NoWrap,
@@ -887,7 +928,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                                      	};
 
                     	// Draw the content that spans multiple columns.
-                        e.Graphics.DrawString(text, e.InheritedRowStyle.Font, forebrush, textArea, format);
+                        e.Graphics.DrawString(text, _subRowFont ?? e.InheritedRowStyle.Font, forebrush, textArea, format);
 
                         e.Graphics.SetClip(oldClip);
                     }
@@ -1077,15 +1118,20 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _sortDescendingButton.Image = value ? SR.CheckSmall : null; }
         }
 
-        private void _table_BeforeSortedEvent(object sender, EventArgs e)
-        {
-        	_selectionBeforeSort = this.Selection;
-        }
+		private void _table_Items_TransactionStarted(object sender, EventArgs e)
+		{
+			// remember the selection and scroll position
+			_rememberedSelection = this.Selection;
+			_rememberedScrollPosition = this.FirstDisplayedScrollingRowIndex;
+		}
 
-		private void _table_SortedEvent(object sender, EventArgs e)
-        {
-			if (_selectionBeforeSort.Items.Length > 0)
-				this.Selection = _selectionBeforeSort;
+		private void _table_Items_TransactionCompleted(object sender, EventArgs e)
+		{
+			// attempt to reset the selection and scroll position
+			if (_rememberedSelection.Items.Length > 0)
+				this.Selection = _rememberedSelection;
+			if (_rememberedScrollPosition > 0 && _rememberedScrollPosition < _table.Items.Count)
+				this.FirstDisplayedScrollingRowIndex = _rememberedScrollPosition;
 
 			ResetSortButtonState();
 		}
@@ -1215,11 +1261,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 				{
 					Platform.Log(LogLevel.Error, ex);
 				}
+				return;
 			}
-			else
+
+			// special case: for a readonly boolean cell, we convert the value to a representative icon
+			if (column.ColumnType == typeof(bool) && column.ReadOnly)
 			{
-				e.Value = column.FormatValue(e.Value);
+				var b = (bool) e.Value;
+				e.Value = b ? _checkmarkBitmap : null;
+				return;
 			}
+
+    		e.Value = column.FormatValue(e.Value);
 		}
 
 		private void _dataGridView_CellParsing(object sender, DataGridViewCellParsingEventArgs e)

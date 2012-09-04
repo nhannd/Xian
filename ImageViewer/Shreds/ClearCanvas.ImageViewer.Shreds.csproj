@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,10 +12,26 @@
     <AssemblyName>ClearCanvas.ImageViewer.Shreds</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,6 +41,7 @@
     <DefineConstants>TRACE;DEBUG;UNIT_TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,97 +50,72 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
-    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Management" />
-    <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
-    <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DicomServer\AssociationVerifier.cs" />
-    <Compile Include="DicomServer\DataStoreQueryHelper.cs" />
     <Compile Include="DicomServer\DicomServerLegacySettings.cs" />
     <Compile Include="DicomServer\DicomServerManager.cs" />
-    <Compile Include="DicomServer\DicomServerSettings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DicomServer\DicomServerSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>DicomServerSettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="DicomServer\DicomStatusTranslator.cs" />
     <Compile Include="DicomServer\FindScpExtension.cs" />
     <Compile Include="DicomServer\DicomServer.cs" />
     <Compile Include="DicomServer\DicomServerExtension.cs" />
     <Compile Include="DicomServer\DicomServerServiceType.cs" />
-    <Compile Include="DicomServer\DicomSendServiceType.cs" />
-    <Compile Include="DicomServer\LocalDataStoreEventPublisher.cs" />
     <Compile Include="DicomServer\MoveScpExtension.cs" />
-    <Compile Include="DicomServer\RemoteServerDirectory.cs" />
-    <Compile Include="DicomServer\DicomRetrieveManager.cs" />
     <Compile Include="DicomServer\ScpExtension.cs" />
-    <Compile Include="DicomServer\DicomSendManager.cs" />
     <Compile Include="DicomServer\StoreScpExtension.cs" />
-    <Compile Include="DicomServer\Tests\DicomServerSettingsTests.cs" />
     <Compile Include="DicomServer\VerifyScpExtension.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerLegacySettings.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerSettings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DiskspaceManager\DiskspaceManagerSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>DiskspaceManagerSettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="DiskspaceManager\DiskUsageInfo.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerExtension.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerProcessor.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerServiceType.cs" />
-    <Compile Include="LocalDataStore\DicomFileImporter.cs" />
-    <Compile Include="LocalDataStore\FileRemover.cs" />
-    <Compile Include="LocalDataStore\ImportProcessor.cs" />
-    <Compile Include="LocalDataStore\ImportProcessorBase.cs" />
-    <Compile Include="LocalDataStore\InstanceDeletionProcessor.cs" />
-    <Compile Include="LocalDataStore\LocalDataStoreActivityMonitorServiceType.cs" />
-    <Compile Include="LocalDataStore\LocalDataStoreActivityPublisher.cs" />
-    <Compile Include="LocalDataStore\LocalDataStoreService.cs" />
-    <Compile Include="LocalDataStore\LocalDataStoreServiceExtension.cs" />
-    <Compile Include="LocalDataStore\LocalDataStoreServiceLegacySettings.cs" />
-    <Compile Include="LocalDataStore\LocalDataStoreServiceSettings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="LocalDataStore\LocalDataStoreServiceSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>LocalDataStoreServiceSettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="LocalDataStore\LocalDataStoreServiceType.cs" />
-    <Compile Include="LocalDataStore\PublishManager.cs" />
-    <Compile Include="LocalDataStore\ReceivedFileProcessor.cs" />
-    <Compile Include="LocalDataStore\ReindexProcessor.cs" />
-    <Compile Include="LocalDataStore\SentFileProcessor.cs" />
-    <Compile Include="LocalDataStore\SubscriptionManager.cs" />
-    <Compile Include="StudyInformationFieldExchanger.cs" />
+    <Compile Include="FilestoreManagement\FilestoreManagementProcessor.cs" />
+    <Compile Include="FilestoreManagement\FilestoreManagementShred.cs" />
     <Compile Include="ServiceClientImpersonationContext.cs" />
-    <Compile Include="UserIdentityContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="UserIdentityCache.cs" />
+    <Compile Include="UserIdentityContext.cs" />
+    <Compile Include="WorkItemService\DicomSend\DicomSendFactory.cs" />
+    <Compile Include="WorkItemService\DicomSend\DicomSendItemProcessor.cs" />
+    <Compile Include="WorkItemService\Import\ImportFactory.cs" />
+    <Compile Include="WorkItemService\Import\ImportItemProcessor.cs" />
+    <Compile Include="WorkItemService\ReapplyRules\ReapplyRulesFactory.cs" />
+    <Compile Include="WorkItemService\ReapplyRules\ReapplyRulesItemProcessor.cs" />
+    <Compile Include="WorkItemService\Reindex\ReindexFactory.cs" />
+    <Compile Include="WorkItemService\Reindex\ReindexItemProcessor.cs" />
+    <Compile Include="WorkItemService\DeleteSeries\DeleteSeriesFactory.cs" />
+    <Compile Include="WorkItemService\DeleteSeries\DeleteSeriesItemProcessor.cs" />
+    <Compile Include="WorkItemService\DeleteStudy\DeleteStudyFactory.cs" />
+    <Compile Include="WorkItemService\DeleteStudy\DeleteStudyItemProcessor.cs" />
+    <Compile Include="WorkItemService\ProcessStudy\ProcessStudyFactory.cs" />
+    <Compile Include="WorkItemService\ProcessStudy\ProcessStudyItemProcessor.cs" />
+    <Compile Include="WorkItemService\DicomRetrieve\DicomRetrieveItemProcessor.cs" />
+    <Compile Include="WorkItemService\DicomRetrieve\DicomRetrieveFactory.cs" />
+    <Compile Include="WorkItemService\Tests\WorkItemSchedulingTest.cs" />
+    <Compile Include="WorkItemService\WorkItemActivityMonitorServiceType.cs" />
+    <Compile Include="WorkItemService\WorkItemProcessor.cs" />
+    <Compile Include="WorkItemService\WorkItemProcessorExtension.cs" />
+    <Compile Include="WorkItemService\WorkItemQuery.cs" />
+    <Compile Include="WorkItemService\WorkItemService.cs" />
+    <Compile Include="WorkItemService\WorkItemServiceExtension.cs" />
+    <Compile Include="WorkItemService\WorkItemServiceType.cs" />
+    <Compile Include="WorkItemService\WorkItemThreadPool.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
@@ -140,33 +133,39 @@
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Dicom\DataStore\ClearCanvas.Dicom.DataStore.csproj">
-      <Project>{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}</Project>
-      <Name>ClearCanvas.Dicom.DataStore</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Server\ShredHost\ClearCanvas.Server.ShredHost.csproj">
       <Project>{8347B928-805E-42E7-B980-08D8AF1A0671}</Project>
       <Name>ClearCanvas.Server.ShredHost</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Services\ClearCanvas.ImageViewer.Services.csproj">
-      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
-      <Name>ClearCanvas.ImageViewer.Services</Name>
+    <ProjectReference Include="..\Common\ClearCanvas.ImageViewer.Common.csproj">
+      <Project>{FEFD73C5-8541-47D2-BBDB-FF61DEA28291}</Project>
+      <Name>ClearCanvas.ImageViewer.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\StudyManagement\Core\ClearCanvas.ImageViewer.StudyManagement.Core.csproj">
+      <Project>{624BC225-49A8-4E92-942D-CDC976292EB9}</Project>
+      <Name>ClearCanvas.ImageViewer.StudyManagement.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="DicomServer\DicomServerSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>DicomServerSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="DiskspaceManager\DiskspaceManagerSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>DiskspaceManagerSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="LocalDataStore\LocalDataStoreServiceSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>LocalDataStoreServiceSettings.Designer.cs</LastGenOutput>
-    </None>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

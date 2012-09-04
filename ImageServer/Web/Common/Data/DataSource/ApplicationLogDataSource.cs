@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.ImageServer.Core.Query;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -92,8 +93,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		#region Private Methods
 		private ApplicationLogSelectCriteria GetSelectCriteria()
 		{
-			ApplicationLogSelectCriteria criteria = new ApplicationLogSelectCriteria();
-
+			var criteria = new ApplicationLogSelectCriteria();
 
 			if (!String.IsNullOrEmpty(LogLevel))
 			{
@@ -103,19 +103,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				criteria.LogLevel.Like(key);
 			}
 
-			if (!String.IsNullOrEmpty(Thread))
-			{
-				string key = Thread.Replace("*", "%");
-				key = key.Replace("?", "_");
-				criteria.Thread.Like(key);
-			}
-
-			if (!String.IsNullOrEmpty(Host))
-			{
-				string key = Host.Replace("*", "%");
-				key = key.Replace("?", "_");
-				criteria.Host.Like(key);
-			}
+            QueryHelper.SetGuiStringCondition(criteria.Thread, Thread);
+            QueryHelper.SetGuiStringCondition(criteria.Host, Host);
+            QueryHelper.SetGuiStringCondition(criteria.Message, Message);
 
 			if (!String.IsNullOrEmpty(Exception))
 			{
@@ -123,13 +113,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				key = key.Replace("?", "_");
 				key = "%" + key + "%";
 				criteria.Exception.Like(key);
-			}
-
-			if (!String.IsNullOrEmpty(Message))
-			{
-				string key = Message.Replace("*", "%");
-				key = key.Replace("?", "_");
-				criteria.Message.Like(key);
 			}
 
 			// Sort with the latest timestamp first

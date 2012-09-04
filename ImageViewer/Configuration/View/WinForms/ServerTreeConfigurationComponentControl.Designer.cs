@@ -59,37 +59,39 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServerTreeConfigurationComponentControl));
-			this._splitContainer = new System.Windows.Forms.SplitContainer();
-			this._description = new System.Windows.Forms.Label();
-			this._splitContainer.Panel1.SuspendLayout();
-			this._splitContainer.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// _splitContainer
-			// 
-			resources.ApplyResources(this._splitContainer, "_splitContainer");
-			this._splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			this._splitContainer.Name = "_splitContainer";
-			// 
-			// _splitContainer.Panel1
-			// 
-			this._splitContainer.Panel1.Controls.Add(this._description);
-			// 
-			// _description
-			// 
-			resources.ApplyResources(this._description, "_description");
-			this._description.Name = "_description";
-			// 
-			// ServerTreeConfigurationComponentControl
-			// 
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._splitContainer);
-			this.Name = "ServerTreeConfigurationComponentControl";
-			this._splitContainer.Panel1.ResumeLayout(false);
-			this._splitContainer.ResumeLayout(false);
-			this.ResumeLayout(false);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServerTreeConfigurationComponentControl));
+            this._splitContainer = new System.Windows.Forms.SplitContainer();
+            this._description = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this._splitContainer)).BeginInit();
+            this._splitContainer.Panel1.SuspendLayout();
+            this._splitContainer.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // _splitContainer
+            // 
+            resources.ApplyResources(this._splitContainer, "_splitContainer");
+            this._splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this._splitContainer.Name = "_splitContainer";
+            // 
+            // _splitContainer.Panel1
+            // 
+            this._splitContainer.Panel1.Controls.Add(this._description);
+            // 
+            // _description
+            // 
+            resources.ApplyResources(this._description, "_description");
+            this._description.Name = "_description";
+            // 
+            // ServerTreeConfigurationComponentControl
+            // 
+            resources.ApplyResources(this, "$this");
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._splitContainer);
+            this.Name = "ServerTreeConfigurationComponentControl";
+            this._splitContainer.Panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this._splitContainer)).EndInit();
+            this._splitContainer.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 

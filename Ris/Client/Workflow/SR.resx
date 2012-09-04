@@ -112,14 +112,11 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ColumnAbbreviationReconciliation" xml:space="preserve">
-    <value>Rec.</value>
-  </data>
   <data name="ColumnAccessionNumber" xml:space="preserve">
     <value>Accession #</value>
   </data>
@@ -246,9 +243,6 @@
   <data name="ColumnScheduledStep" xml:space="preserve">
     <value>Scheduled Step</value>
   </data>
-  <data name="ColumnScore" xml:space="preserve">
-    <value>Score</value>
-  </data>
   <data name="ColumnSex" xml:space="preserve">
     <value>Sex</value>
   </data>
@@ -339,9 +333,6 @@
   <data name="ExceptionPerformingWorkflowSuspendTool" xml:space="preserve">
     <value>Cannot suspend procedure</value>
   </data>
-  <data name="ExceptionReconcilePatientProfiles" xml:space="preserve">
-    <value>Unable to reconcile patient profiles</value>
-  </data>
   <data name="FormatContinuousWorkflowDescription" xml:space="preserve">
     <value>{0} from the "{1}" worklist</value>
   </data>
@@ -357,9 +348,6 @@
   <data name="FormatReportingStatusText" xml:space="preserve">
     <value>- {0} more item(s) available - {1} item(s) completed, {2} item(s) skipped</value>
   </data>
-  <data name="FormatTitleContextDescriptionReviewOrderNoteConversation" xml:space="preserve">
-    <value>Review Preliminary Diagnosis - {0} {1} - {2}</value>
-  </data>
   <data name="MessageChooseRadiologist" xml:space="preserve">
     <value>You must choose a supervisor.</value>
   </data>
@@ -371,9 +359,6 @@
   </data>
   <data name="MessageConfirmDiscardSelectedAddendum" xml:space="preserve">
     <value>Discard the selected addendum?</value>
-  </data>
-  <data name="MessageConfirmDiscardSelectedProtocol" xml:space="preserve">
-    <value>Discard the selected protocol?</value>
   </data>
   <data name="MessageConfirmDiscardSelectedReport" xml:space="preserve">
     <value>Discard the selected report?</value>
@@ -395,10 +380,6 @@
   </data>
   <data name="MessagePrintDowntimeFormProgress" xml:space="preserve">
     <value>Printing downtime form {0} of {1}</value>
-  </data>
-  <data name="MessageProtocollingComponentAlreadyOpened" xml:space="preserve">
-    <value>You are currently editing the protocol for {0}.
-Do you want to save it to your Drafts folder and open the protocol for {1}?</value>
   </data>
   <data name="MessageRadiologistAdminSearchMessage" xml:space="preserve">
     <value>Enter search criteria (Staff Name or Staff ID)</value>
@@ -422,12 +403,6 @@ Do you want to save it to your Drafts folder and open the transcription for {1}?
   </data>
   <data name="TextAny" xml:space="preserve">
     <value>(Any)</value>
-  </data>
-  <data name="TextLinkProtocolHeading" xml:space="preserve">
-    <value>Protocolling:</value>
-  </data>
-  <data name="TextLinkProtocolInstructions" xml:space="preserve">
-    <value>Check any additional procedures that should be linked to this protocol</value>
   </data>
   <data name="TextLinkReportInstructions" xml:space="preserve">
     <value>Check any additional procedures that should be linked to this report</value>
@@ -471,17 +446,11 @@ Do you want to save it to your Drafts folder and open the transcription for {1}?
   <data name="TitleAssignProtocol" xml:space="preserve">
     <value>Assign Protocol</value>
   </data>
-  <data name="TitleBookingFolderSystem" xml:space="preserve">
-    <value>Booking</value>
-  </data>
   <data name="TitleCancelOrder" xml:space="preserve">
     <value>Cancel Order for {0}</value>
   </data>
   <data name="TitleChooseRadiologist" xml:space="preserve">
     <value>Choose Radiologist</value>
-  </data>
-  <data name="TitleConfirmReconciliation" xml:space="preserve">
-    <value>Confirm Reconciliation</value>
   </data>
   <data name="TitleContactPersons" xml:space="preserve">
     <value>Contact Persons</value>
@@ -525,9 +494,6 @@ Do you want to save it to your Drafts folder and open the transcription for {1}?
   <data name="TitleEmailAddresses" xml:space="preserve">
     <value>Email Addresses</value>
   </data>
-  <data name="TitleEmergencyFolderSystem" xml:space="preserve">
-    <value>Emergency</value>
-  </data>
   <data name="TitleEmergencyHome" xml:space="preserve">
     <value>Emergency Home</value>
   </data>
@@ -570,9 +536,6 @@ Do you want to save it to your Drafts folder and open the transcription for {1}?
   <data name="TitlePatientProfile" xml:space="preserve">
     <value>Patient Profile</value>
   </data>
-  <data name="TitlePatientReconciliation" xml:space="preserve">
-    <value>Patient Reconciliation</value>
-  </data>
   <data name="TitlePatientSearch" xml:space="preserve">
     <value>Patient Search</value>
   </data>
@@ -596,9 +559,6 @@ Do you want to save it to your Drafts folder and open the transcription for {1}?
   </data>
   <data name="TitlePrintFaxReport" xml:space="preserve">
     <value>Print/Fax Report</value>
-  </data>
-  <data name="TitleProtocollingFolderSystem" xml:space="preserve">
-    <value>Protocolling</value>
   </data>
   <data name="TitleRadiologistAdminFolderSystem" xml:space="preserve">
     <value>Radiologist Admin</value>
@@ -650,11 +610,6 @@ Do you want to save it to your Drafts folder and open the transcription for {1}?
   </data>
   <data name="TitleVisitSummaryComponent" xml:space="preserve">
     <value>Patient Visits - {0} {1}</value>
-  </data>
-  <data name="MessageQueryPrelimDiagnosisReviewRequired" xml:space="preserve">
-    <value>You are about to verify a '{0}' procedure.  Do you wish to send a review request for this report?
-Choose "Yes" to open up the Preliminary Diagnosis window and enter your request.
-Choose "No" to verify this report without further action.</value>
   </data>
   <data name="MessageConfirmCheckInProcedures" xml:space="preserve">
     <value>Do you still want to check-in the selected procedure(s)?</value>

@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
+using ClearCanvas.Common.Serialization;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Workflow

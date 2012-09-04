@@ -49,10 +49,9 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			{
 				components.Dispose();
 
-				if (_component.ShowLocalDataStoreNode)
+				if (_component.ShowLocalServerNode)
 				{
-					_aeTreeView.MouseEnter -= new EventHandler(OnLocalDataStoreNodeUpdated);
-					_component.ServerTree.RootNode.LocalDataStoreNode.DicomServerConfigurationProvider.Changed -= new EventHandler(OnLocalDataStoreNodeUpdated);
+                    _aeTreeView.MouseEnter -= OnMouseEnter;
 				}
 
 			}
@@ -144,7 +143,5 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         private System.Windows.Forms.ToolStrip _serverTools;
         private System.Windows.Forms.ContextMenuStrip _contextMenu;
 		private System.Windows.Forms.ImageList _stateImageList;
-
-
     }
 }

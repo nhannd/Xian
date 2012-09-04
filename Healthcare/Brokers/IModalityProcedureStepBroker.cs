@@ -17,7 +17,8 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Brokers
 {
-    public interface IModalityProcedureStepBroker : IEntityBroker<ModalityProcedureStep, ModalityProcedureStepSearchCriteria>
-    {
-    }
+	public interface IModalityProcedureStepBroker : IEntityBroker<ModalityProcedureStep, ModalityProcedureStepSearchCriteria>
+	{
+		IList<ModalityProcedureStep> Find(ModalityProcedureStepSearchCriteria mpsCriteria, ProcedureSearchCriteria procedureCriteria);
+	}
 }

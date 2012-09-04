@@ -12,11 +12,12 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
+using ClearCanvas.Dicom.Utilities.Rules;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
 {
-    public class Tier1RetentionActionItem : ServerActionItemBase
+    public class Tier1RetentionActionItem : ActionItemBase<ServerActionContext>
     {
         private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.TierMigrate;
         private readonly Expression _exprScheduledTime;

@@ -14,6 +14,7 @@ using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
@@ -34,7 +35,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	}
 
 	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
-	[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FolderSystems.Reporting)]
+	[PrincipalPermission(SecurityAction.Demand, Role = Application.Common.AuthorityTokens.FolderSystems.Reporting)]
 	public class ReportingWorkflowFolderSystem
 		: ReportingWorkflowFolderSystemBase<ReportingWorkflowFolderExtensionPoint, ReportingWorkflowFolderToolExtensionPoint,
 			ReportingWorkflowItemToolExtensionPoint>
@@ -49,20 +50,22 @@ namespace ClearCanvas.Ris.Client.Workflow
 			// add the personal folders, since they are not extensions and will not be automatically added
 			this.Folders.Add(new Folders.Reporting.AssignedFolder());
 
-			if (CurrentStaffCanSupervise())
+			var workflowConfig = new WorkflowConfigurationReader();
+			if (workflowConfig.EnableInterpretationReviewWorkflow && CurrentStaffCanSupervise())
 			{
 				this.Folders.Add(new Folders.Reporting.AssignedForReviewFolder());
 			}
 
 			this.Folders.Add(new Folders.Reporting.DraftFolder());
 
-			if (ReportingSettings.Default.EnableTranscriptionWorkflow)
+			if (workflowConfig.EnableTranscriptionWorkflow)
 			{
 				this.Folders.Add(new Folders.Reporting.InTranscriptionFolder());
 				this.Folders.Add(new Folders.Reporting.ReviewTranscriptionFolder());
 			}
 
-			if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview))
+			if (workflowConfig.EnableInterpretationReviewWorkflow && 
+				Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview))
 				this.Folders.Add(new Folders.Reporting.AwaitingReviewFolder());
 
 			this.Folders.Add(new Folders.Reporting.VerifiedFolder());

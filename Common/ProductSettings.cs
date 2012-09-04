@@ -33,6 +33,7 @@ namespace ClearCanvas.Common
 		{
 			var settings = new DecryptedProductSettings();
 			Console.WriteLine(@"Name: {0}", settings.Name);
+			Console.WriteLine(@"Family: {0}", settings.FamilyName);
 			Console.WriteLine(@"Product: {0}", settings.Product);
 			Console.WriteLine(@"Component: {0}", settings.Component);
 			Console.WriteLine(@"Edition: {0}", settings.Edition);
@@ -425,7 +426,6 @@ namespace ClearCanvas.Common
 			return Concatenate(versionString.ToString(), includeVersionSuffix ? VersionSuffix : string.Empty, includeRelease ? Release : string.Empty);
 		}
         
-        // TODO CR Sept 2012: Not used?
 	    public static bool IsEvaluation
 	    {
             get

@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using ClearCanvas.ImageServer.Core.Query;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -185,15 +186,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		#region Private Methods
 		private AlertSelectCriteria GetSelectCriteria()
 		{
-			AlertSelectCriteria criteria = new AlertSelectCriteria();
+			var criteria = new AlertSelectCriteria();
 
-			if (!string.IsNullOrEmpty(Component))
-			{
-				string key = Component;
-				key = key.Replace("*", "%");
-				key = key.Replace("?", "_");
-				criteria.Component.Like(key);
-			}
+            QueryHelper.SetGuiStringCondition(criteria.Component, Component);
+          
 			if (!String.IsNullOrEmpty(InsertTime))
 			{
 				DateTime lowerDate = DateTime.ParseExact(InsertTime, DateFormats, null);

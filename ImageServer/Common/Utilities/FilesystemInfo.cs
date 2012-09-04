@@ -22,41 +22,22 @@ namespace ClearCanvas.ImageServer.Common.Utilities
     public class FilesystemInfo
     {
         #region Private members
-        private string _path;
-        private bool _exists;
-        private ulong _sizeInKb;
-        private ulong _freeSizeInKb;
 
         #endregion Private members
 
         #region Public properties
+
         [DataMember(IsRequired=true)]
-        public string Path
-        {
-            get { return _path; }
-            set { _path = value; }
-        }
+        public string Path { get; set; }
 
         [DataMember]
-        public bool Exists
-        {
-            get { return _exists; }
-            set { _exists = value; }
-        }
+        public bool Exists { get; set; }
 
         [DataMember]
-        public ulong SizeInKB
-        {
-            get { return _sizeInKb; }
-            set { _sizeInKb = value; }
-        }
+        public ulong SizeInKB { get; set; }
 
         [DataMember]
-        public ulong FreeSizeInKB
-        {
-            get { return _freeSizeInKb; }
-            set { _freeSizeInKb = value; }
-        }
+        public ulong FreeSizeInKB { get; set; }
 
         #endregion Public properties
     }

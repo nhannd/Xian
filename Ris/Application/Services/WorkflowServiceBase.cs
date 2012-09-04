@@ -12,6 +12,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
@@ -219,24 +220,6 @@ namespace ClearCanvas.Ris.Application.Services
 			var helper = new WorklistItemTextQueryHelper<TItem, TSummary>(broker, mapCallback, procedureStepClass, projection, request.Options, PersistenceContext);
 
 			return helper.Query(request);
-		}
-
-		protected void CreateLogicalHL7Event(Order order, string type)
-		{
-			if (new LogicalHL7EventSettings().LogicalHL7EventsEnabled)
-			{
-				var logicalEvent = LogicalHL7EventWorkQueueItem.CreateOrderLogicalEvent(type, order);
-				this.PersistenceContext.Lock(logicalEvent.Item, DirtyState.New);
-			}
-		}
-
-		protected void CreateLogicalHL7Event(Procedure procedure, string type)
-		{
-			if (new LogicalHL7EventSettings().LogicalHL7EventsEnabled)
-			{
-				var logicalEvent = LogicalHL7EventWorkQueueItem.CreateProcedureLogicalEvent(type, procedure);
-				this.PersistenceContext.Lock(logicalEvent.Item, DirtyState.New);
-			}
 		}
 
 		#endregion

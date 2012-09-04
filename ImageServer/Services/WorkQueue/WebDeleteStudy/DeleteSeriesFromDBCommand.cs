@@ -10,7 +10,8 @@
 #endregion
 
 using System;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.Dicom.Utilities.Command;
+using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -23,7 +24,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
         private readonly Series _series;
 
         public DeleteSeriesFromDBCommand(StudyStorageLocation location, Series series)
-            : base(String.Format("Delete Series In DB {0}", series.SeriesInstanceUid), true)
+            : base(String.Format("Delete Series In DB {0}", series.SeriesInstanceUid))
         {
             _location = location;
             _series = series;
@@ -35,7 +36,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
         }
 
 
-        protected override void OnExecute(ServerCommandProcessor theProcessor, ClearCanvas.Enterprise.Core.IUpdateContext updateContext)
+        protected override void OnExecute(CommandProcessor theProcessor, ClearCanvas.Enterprise.Core.IUpdateContext updateContext)
         {
             IDeleteSeries broker = updateContext.GetBroker<IDeleteSeries>();
             DeleteSeriesParameters criteria = new DeleteSeriesParameters();

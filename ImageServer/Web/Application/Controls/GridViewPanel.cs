@@ -41,6 +41,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             get { return _theGrid; }
         }
 
+        public void Reset()
+        {
+            if (_gridPager != null) _gridPager.Reset();
+            _theGrid.ClearSelections();
+            _theGrid.PageIndex = 0;
+            _theGrid.DataSource = null;
+            _theGrid.DataBind();
+        }
+
         public void Refresh()
         {
             if(_gridPager != null) _gridPager.Reset();

@@ -10,6 +10,7 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
 
@@ -27,22 +28,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 		}
 
-		private bool _publishToDefaultServers;
 		private bool _publishLocalToSourceAE;
-
-		public bool PublishToDefaultServers
-		{
-			get { return _publishToDefaultServers; }
-			set
-			{
-				if (value == _publishToDefaultServers)
-					return;
-
-				_publishToDefaultServers = value;
-				base.Modified = true;
-				NotifyPropertyChanged("PublishToDefaultServers");
-			}
-		}
 
 		public bool PublishLocalToSourceAE
 		{
@@ -60,17 +46,14 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		public override void Start()
 		{
-			_publishToDefaultServers = PublishingSettings.Default.PublishToDefaultServers;
-			_publishLocalToSourceAE = PublishingSettings.Default.PublishLocalToSourceAE;
+			_publishLocalToSourceAE = DicomPublishingSettings.Default.SendLocalToStudySourceAE;
 
 			base.Start();
 		}
 
 		public override void Save()
 		{
-			PublishingSettings.Default.PublishToDefaultServers = PublishToDefaultServers;
-			PublishingSettings.Default.PublishLocalToSourceAE = PublishLocalToSourceAE;
-			PublishingSettings.Default.Save();
+            ApplicationSettingsExtensions.SetSharedPropertyValue(DicomPublishingSettings.Default, "SendLocalToStudySourceAE", PublishLocalToSourceAE);
 		}
 	}
 }

@@ -72,7 +72,7 @@
                                 Style="font-size: 12px;" />
                             <asp:Label ID="PageCountLabel" runat="server" Text="Label" CssClass="GlobalGridPagerLabel" />
                             <aspAjax:FilteredTextBoxExtender runat="server" ID="CurrentPageFilter" FilterType="Numbers" TargetControlID="CurrentPage"  />
-                        </asp:panel>
+                            </asp:panel>
                     </td>
                     <td valign="top" style="padding-top: 0px;">
                         <asp:ImageButton ID="NextPageButton" runat="server" CommandArgument="Next" CommandName="Page"
