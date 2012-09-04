@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using Castle.Core.Interceptor;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
@@ -52,7 +53,7 @@ namespace ClearCanvas.Enterprise.Core
 							operationName,
 							invocation.InvocationTarget.GetType(),
 							invocation.MethodInvocationTarget,
-							invocation.Arguments,
+							invocation.Arguments.FirstOrDefault(),
 							invocation.ReturnValue,
 							exception);
 

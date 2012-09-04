@@ -9,12 +9,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
+using System.IO;
 using System.Xml;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Configuration;
 using ClearCanvas.Enterprise.Core;
 
@@ -23,38 +19,44 @@ namespace ClearCanvas.Enterprise.Configuration
 	/// <summary>
 	/// Records custom information about operations on <see cref="IConfigurationService"/>.
 	/// </summary>
-    public class ConfigurationServiceRecorder : ServiceOperationRecorderBase
-    {
+	public class ConfigurationServiceRecorder : ServiceOperationRecorderBase
+	{
 		/// <summary>
 		/// Gets the category that should be assigned to the audit entries.
 		/// </summary>
-		public override string Category
-        {
-            get { return "Configuration"; }
-        }
+		protected override string Category
+		{
+			get { return "Configuration"; }
+		}
 
-		/// <summary>
-		/// Writes the detailed message to the specified XML writer.
-		/// </summary>
-		protected override bool WriteXml(XmlWriter writer, ServiceOperationInvocationInfo info)
-        {
-            // don't bother logging failed attempts
-            if(info.Exception != null)
-                return false;
+		protected override bool GenerateMessage(ServiceOperationInvocationInfo info, out string message)
+		{
+			// don't bother logging failed attempts
+			if (info.Exception != null)
+			{
+				message = null;
+				return false;
+			}
 
-			ConfigurationDocumentRequestBase request = (ConfigurationDocumentRequestBase)info.Arguments[0];
+			var request = (ConfigurationDocumentRequestBase)info.Request;
 
-            writer.WriteStartDocument();
-            writer.WriteStartElement("action");
-            writer.WriteAttributeString("type", info.OperationMethodInfo.Name);
-            writer.WriteAttributeString("documentName", request.DocumentKey.DocumentName);
-            writer.WriteAttributeString("documentVersion", request.DocumentKey.Version.ToString());
-            writer.WriteAttributeString("documentUser", request.DocumentKey.User ?? "{application}");
-            writer.WriteAttributeString("instanceKey", request.DocumentKey.InstanceKey ?? "{default}");
-            writer.WriteEndElement();
-            writer.WriteEndDocument();
+			var sw = new StringWriter();
+			using (var writer = new XmlTextWriter(sw))
+			{
+				writer.Formatting = Formatting.Indented;
+				writer.WriteStartDocument();
+				writer.WriteStartElement("action");
+				writer.WriteAttributeString("type", info.OperationMethodInfo.Name);
+				writer.WriteAttributeString("documentName", request.DocumentKey.DocumentName);
+				writer.WriteAttributeString("documentVersion", request.DocumentKey.Version.ToString());
+				writer.WriteAttributeString("documentUser", request.DocumentKey.User ?? "{application}");
+				writer.WriteAttributeString("instanceKey", request.DocumentKey.InstanceKey ?? "{default}");
+				writer.WriteEndElement();
+				writer.WriteEndDocument();
+			}
 
-            return true;
-        }
-    }
+			message = sw.ToString();
+			return true;
+		}
+	}
 }
