@@ -173,6 +173,11 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+    	public bool PatientClassVisible
+    	{
+			get { return new WorkflowConfigurationReader().EnableVisitWorkflow; }
+    	}
+
         public IList PatientClassChoices
         {
             get { return _patientClassChoices; }

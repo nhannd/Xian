@@ -25,11 +25,18 @@ using ClearCanvas.Ris.Application.Common.Admin.LocationAdmin;
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Locations", "Launch")]
-    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Location)]
+    [VisibleStateObserver("launch", "Visible", "VisibleChanged")]
+	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Location)]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
     public class LocationSummaryTool : Tool<IDesktopToolContext>
     {
         private IWorkspace _workspace;
+
+    	public event EventHandler VisibleChanged;
+    	public bool Visible
+    	{
+			get { return new WorkflowConfigurationReader().EnableVisitWorkflow; }
+    	}
 
         public void Launch()
         {

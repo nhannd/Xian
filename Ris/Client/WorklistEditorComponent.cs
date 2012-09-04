@@ -116,7 +116,7 @@ namespace ClearCanvas.Ris.Client
 		private SelectorEditorComponent<StaffSummary, StaffSelectorTable> _staffSubscribersComponent;
 		private SelectorEditorComponent<StaffGroupSummary, StaffGroupTable> _groupSubscribersComponent;
 		private WorklistSummaryComponent _summaryComponent;
-		private NavigatorPage _patientLocationComponentPage;
+		private NavigatorPage _departmentComponentPage;
 		private NavigatorPage _interpretedByFilterComponentPage;
 		private NavigatorPage _transcribedByFilterComponentPage;
 		private NavigatorPage _verifiedByFilterComponentPage;
@@ -298,8 +298,12 @@ namespace ClearCanvas.Ris.Client
 			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters", _filterComponent));
 			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/FilterProcedureType", _procedureTypeFilterComponent));
 			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/FilterProcedureTypeGroup", _procedureTypeGroupFilterComponent));
-			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/FilterDepartment", _departmentFilterComponent));
-			this.Pages.Add(_patientLocationComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/FilterPatientLocation", _locationFilterComponent));
+
+			if(new WorkflowConfigurationReader().EnableVisitWorkflow)
+			{
+				this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/FilterPatientLocation", _locationFilterComponent));
+			}
+			this.Pages.Add(_departmentComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/FilterDepartment", _departmentFilterComponent));
 
 			_procedureTypeFilterComponent.ItemsAdded += OnProcedureTypeAdded;
 			_procedureTypeGroupFilterComponent.ItemsAdded += OnProcedureTypeGroupAdded;
@@ -379,7 +383,7 @@ namespace ClearCanvas.Ris.Client
 		private void ShowWorklistCategoryDependantPages()
 		{
 			var showStaffFilters = ShowStaffRoleFilterPages;
-			ShowAfterPage(_interpretedByFilterComponentPage, showStaffFilters, _patientLocationComponentPage);
+			ShowAfterPage(_interpretedByFilterComponentPage, showStaffFilters, _departmentComponentPage);
 
 			if (WorklistEditorComponentSettings.Default.ShowTranscribedByPage)
 			{
