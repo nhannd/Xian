@@ -141,6 +141,71 @@ namespace ClearCanvas.Dicom.Codec.Tests
 			Assert.IsFalse(newFile.DataSet.Equals(saveCopy.DataSet));
 		}
 
+        public static void LosslessImageTestWithBitsAllocatedConversion(TransferSyntax syntax, DicomFile theFile)
+        {
+            if (File.Exists(theFile.Filename))
+                File.Delete(theFile.Filename);
+
+            DicomFile saveCopy = new DicomFile(theFile.Filename, theFile.MetaInfo.Copy(), theFile.DataSet.Copy());
+
+            theFile.ChangeTransferSyntax(syntax);
+
+            theFile.Save(DicomWriteOptions.ExplicitLengthSequence);
+
+            DicomFile newFile = new DicomFile(theFile.Filename);
+
+            newFile.Load(DicomReadOptions.Default);
+
+            newFile.ChangeTransferSyntax(saveCopy.TransferSyntax);
+
+            string failureDescription;
+            var newPd = DicomPixelData.CreateFrom(newFile);
+            var oldPd = DicomPixelData.CreateFrom(saveCopy);
+
+            bool result = Compare(newPd, oldPd, out failureDescription);
+            Assert.IsFalse(result, failureDescription);
+
+            Assert.IsFalse(newFile.DataSet.Equals(saveCopy.DataSet));
+
+            DicomAttributeCollection newDataSet = newFile.DataSet.Copy(true, true, true);
+            DicomAttributeCollection oldDataSet = theFile.DataSet.Copy(true, true, true);
+
+            oldDataSet.RemoveAttribute(DicomTags.BitsAllocated);
+            newDataSet.RemoveAttribute(DicomTags.BitsAllocated);
+            oldDataSet.RemoveAttribute(DicomTags.PixelData);
+            newDataSet.RemoveAttribute(DicomTags.PixelData);
+
+            var results = new List<DicomAttributeComparisonResult>();
+
+            bool check = oldDataSet.Equals(newDataSet, ref results);
+            Assert.IsTrue(check, results.Count > 0 ? CollectionUtils.FirstElement(results).Details : string.Empty);
+
+            for (int i = 0; i < oldPd.NumberOfFrames; i++)
+            {
+                var frame = oldPd.GetFrame(i);
+                var convertedFrame = DicomUncompressedPixelData.ToggleBitDepth(frame, frame.Length,
+                                                                              oldPd.UncompressedFrameSize,
+                                                                              oldPd.BitsStored, oldPd.BitsAllocated);
+                var newFrame = newPd.GetFrame(i);
+
+                int pixelsVarying = 0;
+                decimal totalVariation = 0.0m;
+                for (int j = 0; j < convertedFrame.Length; j++)
+                    if (convertedFrame[j] != newFrame[j])
+                    {
+                        pixelsVarying++;
+                        totalVariation += Math.Abs(convertedFrame[i] - newFrame[i]);
+                    }
+
+                if (pixelsVarying > 0)
+                {
+                    Assert.Fail(String.Format(
+                        "Tag (7fe0,0010) Pixel Data: {0} of {1} pixels varying, average difference: {2}",
+                        pixelsVarying, convertedFrame.Length, totalVariation/pixelsVarying));
+                }
+            }
+        }
+
 		public static void LossyImageTest(TransferSyntax syntax, DicomFile theFile)
 		{
 			if (File.Exists(theFile.Filename))

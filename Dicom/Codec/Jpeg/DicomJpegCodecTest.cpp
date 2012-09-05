@@ -246,7 +246,7 @@ void DicomJpegCodecTest::DicomJpegLossless14CodecTest_8BitsStored16BitsAllocated
 {
 	TransferSyntax^ syntax = TransferSyntax::JpegLosslessNonHierarchicalProcess14;
 	DicomFile^ file = CreateFile(256, 256, "MONOCHROME1", 8, 16, false, 1);
-	LosslessImageTestWithConversion(syntax, file);
+	LosslessImageTestWithBitsAllocatedConversion(syntax, file);
 }
 
 void DicomJpegCodecTest::DicomJpegLossless14SV1CodecTest()
@@ -318,7 +318,7 @@ void DicomJpegCodecTest::DicomJpegLossless14SV1CodecTest_8BitsStored16BitsAlloca
 {
 	TransferSyntax^ syntax = TransferSyntax::JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1;
 	DicomFile^ file = CreateFile(256, 256, "MONOCHROME1", 8, 16, false, 1);
-	LosslessImageTestWithConversion(syntax, file);
+	LosslessImageTestWithBitsAllocatedConversion(syntax, file);
 }
 
 }

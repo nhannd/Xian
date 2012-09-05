@@ -1068,6 +1068,55 @@ namespace ClearCanvas.Dicom
 			}
 		}
 
+
+        /// <summary>
+        /// Change a 8-bit pixel data to a 16-bit buffer
+        /// </summary>
+        public unsafe static byte[] ToggleBitDepth(byte[] frameData, int length, int uncompressedFrameSize,  int bitsStored, int bitsAllocated)
+        {
+            if ((bitsStored != 8 || bitsAllocated != 16))
+                throw new DicomCodecUnsupportedSopException("Invalid bits allocated/stored value(s).");
+
+            if (length == uncompressedFrameSize)
+            {
+                var b = new byte[length / 2];
+
+                fixed (byte* destFrameData = b)
+                fixed (byte* pFrameData = frameData)
+                {
+                    var pixelData = (ushort*)pFrameData;
+                    var destData = destFrameData;
+
+                    for (int p = 0; p < length/2; p++, pixelData++, destData++)
+                    {
+                        int pixel = (byte)(*pixelData);
+                        *destData = (byte) (pixel);
+                    }
+                }
+
+                return b;
+            }
+            else
+            {
+                var b = new byte[length*2];
+
+                fixed (byte* destFrameData = b)
+                fixed (byte* pFrameData = frameData)
+                {
+                    var pixelData = pFrameData;
+                    var destData = (ushort*) destFrameData;
+
+                    for (int p = 0; p < length; p++, pixelData++, destData++)
+                    {
+                        int pixel = (sbyte) (*pixelData);
+                        *destData = (byte) (pixel);
+                    }
+                }
+
+                return b;
+            }
+        }
+
 		#endregion
 
 		#region Unused Bit Masking
