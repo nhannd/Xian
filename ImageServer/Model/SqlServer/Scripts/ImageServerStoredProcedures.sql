@@ -2023,11 +2023,12 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: November 19, 2007
--- Update date: Oct 06, 2009
+-- Update date: Sep 05, 2012
 -- Description:	Completely delete a Study from the database
 -- History
 --	Oct 06, 2009:  Delete StudyHistory record if DestStudyStorageGUID matches
 --  Aug 18, 2011:  Delete StudyDataAccess
+--  Sep 05, 2012:  Move updating ServerPartition count to end of procedure
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteStudyStorage] 
 	-- Add the parameters for the stored procedure here
@@ -2105,14 +2106,20 @@ BEGIN
 	DELETE FROM StudyStorage
 	WHERE GUID = @StudyStorageGUID
 
+	declare @NumberOfStudiesDeleted int
+	set @NumberOfStudiesDeleted = @@ROWCOUNT
+
 	UPDATE Patient
 	SET	NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies -1,
 		NumberOfPatientRelatedSeries = NumberOfPatientRelatedSeries - @NumberOfStudyRelatedSeries,
 		NumberOfPatientRelatedInstances = NumberOfPatientRelatedInstances - @NumberOfStudyRelatedInstances
 	WHERE GUID = @PatientGUID
 	
-	UPDATE dbo.ServerPartition SET StudyCount=StudyCount-1
-	WHERE GUID=@ServerPartitionGUID
+	if @NumberOfStudiesDeleted != 0
+	BEGIN
+		UPDATE dbo.ServerPartition SET StudyCount=StudyCount-@NumberOfStudiesDeleted
+		WHERE GUID=@ServerPartitionGUID
+	END
 
 	-- Do afterwards, in case multiple studies for the same patient are being deleted at once.
 	SELECT @NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies 
