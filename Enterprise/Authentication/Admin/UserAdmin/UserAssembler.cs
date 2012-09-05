@@ -9,13 +9,10 @@
 
 #endregion
 
-using System.Collections.Generic;
-
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
 {
@@ -29,9 +26,9 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
 
         internal UserDetail GetUserDetail(User user)
         {
-            AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
+            var assembler = new AuthorityGroupAssembler();
 
-        	List<AuthorityGroupSummary> groups = CollectionUtils.Map(
+        	var groups = CollectionUtils.Map(
         		user.AuthorityGroups,
         		(AuthorityGroup group) => assembler.CreateAuthorityGroupSummary(group));
 				
@@ -51,7 +48,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
             user.EmailAddress = detail.EmailAddress;
 
             // process authority groups
-			List<AuthorityGroup> authGroups = CollectionUtils.Map(
+			var authGroups = CollectionUtils.Map(
 				detail.AuthorityGroups,
 				(AuthorityGroupSummary group) => context.Load<AuthorityGroup>(group.AuthorityGroupRef, EntityLoadFlags.Proxy));
 
@@ -59,27 +56,16 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
 			user.AuthorityGroups.AddAll(authGroups);
         }
 
-        internal List<UserSessionSummary> GetUserSessionSummaries(User user)
-        {
-            Platform.CheckForNullReference(user, "user");
-
-            if (user.Sessions == null || user.Sessions.Count == 0)
-                return null; // data contract
-
-            var list = new List<UserSessionSummary>();
-            foreach (var session in user.Sessions)
-            {
-                list.Add(new UserSessionSummary()
-                {
-                    Application = session.Application,
-                    CreationTime = session.CreationTime,
-                    ExpiryTime = session.ExpiryTime,
-                    HostName = session.HostName,
-                    SessionID = session.SessionId             
-                });
-            }
-
-            return list;
-        }
+		internal UserSessionSummary GetUserSessionSummary(UserSession session)
+		{
+			return new UserSessionSummary
+			       	{
+			       		Application = session.Application,
+			       		CreationTime = session.CreationTime,
+			       		ExpiryTime = session.ExpiryTime,
+			       		HostName = session.HostName,
+			       		SessionId = session.SessionId
+			       	};
+		}
     }
 }

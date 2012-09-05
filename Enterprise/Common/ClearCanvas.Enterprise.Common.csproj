@@ -109,7 +109,8 @@
     <Compile Include="Admin\AuthorityGroupAdmin\ListAuthorityGroupsResponse.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\ListAuthorityTokensRequest.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\ListAuthorityTokensResponse.cs" />
-    <Compile Include="Admin\UserAdmin\IUserSessionAdminService.cs" />
+    <Compile Include="Admin\UserAdmin\ListUserSessionsRequest.cs" />
+    <Compile Include="Admin\UserAdmin\ListUserSessionsResponse.cs" />
     <Compile Include="Admin\UserAdmin\ListUsersRequest.cs" />
     <Compile Include="Admin\UserAdmin\ListUsersResponse.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\LoadAuthorityGroupForEditRequest.cs" />
@@ -120,9 +121,12 @@
     <Compile Include="Admin\UserAdmin\ResetUserPasswordResponse.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\UpdateAuthorityGroupRequest.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\UpdateAuthorityGroupResponse.cs" />
+    <Compile Include="Admin\UserAdmin\TerminateUserSessionRequest.cs" />
+    <Compile Include="Admin\UserAdmin\TerminateUserSessionResponse.cs" />
     <Compile Include="Admin\UserAdmin\UpdateUserRequest.cs" />
     <Compile Include="Admin\UserAdmin\UpdateUserResponse.cs" />
     <Compile Include="Admin\UserAdmin\UserDetail.cs" />
+    <Compile Include="Admin\UserAdmin\UserSessionSummary.cs" />
     <Compile Include="Admin\UserAdmin\UserSummary.cs" />
     <Compile Include="AopInterceptorChain.cs" />
     <Compile Include="Audit\AuditException.cs" />
