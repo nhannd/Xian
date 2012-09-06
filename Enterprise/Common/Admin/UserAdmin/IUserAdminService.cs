@@ -9,8 +9,6 @@
 
 #endregion
 
-using System;
-
 using System.ServiceModel;
 
 namespace ClearCanvas.Enterprise.Common.Admin.UserAdmin
@@ -70,11 +68,29 @@ namespace ClearCanvas.Enterprise.Common.Admin.UserAdmin
         ResetUserPasswordResponse ResetUserPassword(ResetUserPasswordRequest request);
 
         /// <summary>
-        /// Load details for a specified user account
+        /// Load details for a specified user account.
         /// </summary>
         /// <param name="request"><see cref="LoadUserForEditRequest"/></param>
         /// <returns><see cref="LoadUserForEditResponse"/></returns>
         [OperationContract]
         LoadUserForEditResponse LoadUserForEdit(LoadUserForEditRequest request);
+
+		/// <summary>
+		/// List active sessions for a specified user account.
+		/// </summary>
+		/// <param name="request"><see cref="ListUserSessionsRequest"/></param>
+		/// <returns><see cref="ListUserSessionsResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(RequestValidationException))]
+		ListUserSessionsResponse ListUserSessions(ListUserSessionsRequest request);
+
+		/// <summary>
+		/// Terminate the specified session(s).
+		/// </summary>
+		/// <param name="request"><see cref="ListUserSessionsRequest"/></param>
+		/// <returns><see cref="TerminateUserSessionResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(RequestValidationException))]
+		TerminateUserSessionResponse TerminateUserSession(TerminateUserSessionRequest request);
 	}
 }

@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
 
@@ -25,6 +26,7 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 		    this.DisplayName = displayName;
 		    this.DataGroupOids = authorityGroups;
 		    this.EmailAddress = emailAddress;
+			this.WarningMessages = new List<string>();
 		}
 
 		/// <summary>
@@ -56,5 +58,11 @@ namespace ClearCanvas.Enterprise.Common.Authentication
         /// </summary>
         [DataMember]
         public Guid[] DataGroupOids;
-    }
+
+		/// <summary>
+		/// Warning messages to be presented to user upon login, if any.
+		/// </summary>
+		[DataMember]
+		public List<string> WarningMessages;
+	}
 }

@@ -191,6 +191,9 @@ Note: This change may not take effect immediately.</value>
   <data name="ExceptionUserAccessDenied" xml:space="preserve">
     <value>Unable to update Authority Group, the password entered is incorrect.</value>
   </data>
+  <data name="LabelTerminateSessions" xml:space="preserve">
+    <value>Terminate...</value>
+  </data>
   <data name="MenuAdmin" xml:space="preserve">
     <value>Admin</value>
   </data>
@@ -200,8 +203,14 @@ Note: This change may not take effect immediately.</value>
   <data name="MenuUsers" xml:space="preserve">
     <value>Users</value>
   </data>
+  <data name="MessageCannotDeleteOwnCurrentSession" xml:space="preserve">
+    <value>You cannot delete your own current session.</value>
+  </data>
   <data name="MessageConfirmDeleteSelectedItems" xml:space="preserve">
     <value>Are you sure you want to delete the selected item(s)?</value>
+  </data>
+  <data name="MessageConfirmTerminateSelectedSessions" xml:space="preserve">
+    <value>Terminating a session that is in use may cause the associated user to lose unsaved data.  Are you sure you want to terminate the selected session(s)?</value>
   </data>
   <data name="MessageServerOffline" xml:space="preserve">
     <value>The server is currently offline.  Please try again later.</value>
@@ -244,5 +253,8 @@ Note: This change may not take effect immediately.</value>
   </data>
   <data name="TooltipImportAuthorityGroup" xml:space="preserve">
     <value>Import authority tokens and groups from local plugins</value>
+  </data>
+  <data name="TooltipTerminateSessions" xml:space="preserve">
+    <value>Terminate selected session(s)</value>
   </data>
 </root>

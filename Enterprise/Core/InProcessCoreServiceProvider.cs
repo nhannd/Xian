@@ -37,7 +37,7 @@ namespace ClearCanvas.Enterprise.Core
 			_serviceFactory.Interceptors.Add(new PersistenceContextAdvice());
 
 			// add audit advice inside of main persistence context advice,
-			// so that the audit record will be inserted as part of the main transaction (this applies only to update contexts)
+			// so that the audit recorders can benefit from already loaded entities
 			_serviceFactory.Interceptors.Add(new AuditAdvice());
 		}
 
