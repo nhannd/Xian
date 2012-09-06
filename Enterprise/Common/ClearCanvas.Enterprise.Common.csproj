@@ -87,6 +87,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdditionalServiceInterceptorProvider.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\IAuthorityGroupAdminService.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\AddAuthorityGroupRequest.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\AddAuthorityGroupResponse.cs" />
