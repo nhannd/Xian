@@ -357,12 +357,29 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 
 		jpeg_start_compress(&cinfo, TRUE);
 
+		if (oldPixelData->BitsAllocated == 16 && oldPixelData->BitsStored == 8)
+		{
+		    array<unsigned char>^ toggledFrameData = DicomUncompressedPixelData::ToggleBitDepth(frameData,frameData->Length, oldPixelData->UncompressedFrameSize, oldPixelData->BitsStored, oldPixelData->BitsAllocated);
+			pin_ptr<unsigned char> toggledFramePin = &toggledFrameData[0];
+		    unsigned char* toggledFramePtr = toggledFramePin;
+			unsigned int toggledFrameSize = toggledFrameData->Length;
+			JSAMPROW row_pointer[1];
+			int row_stride = oldPixelData->ImageWidth * oldPixelData->SamplesPerPixel;
+
+			while (cinfo.next_scanline < cinfo.image_height) {
+				row_pointer[0] = (JSAMPLE *)(&toggledFramePtr[cinfo.next_scanline * row_stride]);
+				jpeg_write_scanlines(&cinfo, row_pointer, 1);
+			}
+		}
+		else
+		{
 		JSAMPROW row_pointer[1];
 		int row_stride = oldPixelData->ImageWidth * oldPixelData->SamplesPerPixel * oldPixelData->BytesAllocated;
 
 		while (cinfo.next_scanline < cinfo.image_height) {
 			row_pointer[0] = (JSAMPLE *)(&framePtr[cinfo.next_scanline * row_stride]);
 			jpeg_write_scanlines(&cinfo, row_pointer, 1);
+		}
 		}
 
 		jpeg_finish_compress(&cinfo);
