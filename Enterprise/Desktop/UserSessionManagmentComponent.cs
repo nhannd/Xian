@@ -12,15 +12,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Common.Serialization;
-using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Enterprise.Desktop
 {
@@ -35,34 +32,15 @@ namespace ClearCanvas.Enterprise.Desktop
 
     public class UserSessionSummaryTable : Table<UserSessionSummary>
     {
-        #region Public Properties
-
-        public UserSessionManagmentComponent Component;
-
-        #endregion
-
         #region Constructor
 
         public UserSessionSummaryTable()
         {
             Columns.Add(new TableColumn<UserSessionSummary, string>("Application", row => row.Application, 1.5f));
-            Columns.Add(new TableColumn<UserSessionSummary, string>("Session ID", row => row.SessionID, 1f));
+            Columns.Add(new TableColumn<UserSessionSummary, string>("Session ID", row => row.SessionId, 1f));
             Columns.Add(new TableColumn<UserSessionSummary, string>("Hostname", row => row.HostName, 1f));
             Columns.Add(new DateTimeTableColumn<UserSessionSummary>("Creation Time", row => row.CreationTime, 1f));
             Columns.Add(new DateTimeTableColumn<UserSessionSummary>("Expiry Time", row => row.ExpiryTime, 1f));
-            Columns.Add(new TableColumn<UserSessionSummary, string>(" ", session => "Terminate", 0.7f) { ClickLinkDelegate = OnSessionItemClicked });
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private void OnSessionItemClicked(UserSessionSummary session)
-        {
-            if (Component != null)
-            {
-                Component.TerminateSession(session.SessionID);
-            }
         }
 
         #endregion
@@ -83,84 +61,60 @@ namespace ClearCanvas.Enterprise.Desktop
 
         #endregion
 
-        #region Public Properties
+        #region Presentation Model
 
         public UserSummary User { get; private set; }
 
-        public override ITable SummaryTable
-        {
-            get
-            {
-                if (base.SummaryTable != null)
-                {
-                    (base.SummaryTable as UserSessionSummaryTable).Component = this;
-                }
+		public void Close()
+		{
+			Exit(ApplicationComponentExitCode.None);
+		}
 
-                return base.SummaryTable;
-            }
-        }
-
-        protected override bool SupportsAdd { get { return false; } }
-
-        protected override bool SupportsDeactivation
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        protected override bool SupportsDelete
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        protected override bool SupportsEdit
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        public override ActionModelNode SummaryTableActionModel
-        {
-            get
-            {
-                // no RCCM 
-                return null;
-            }
-        }
-
-        #endregion
+		#endregion
 
         #region Overridden Methods
 
-        protected override IList<UserSessionSummary> ListItems(int firstRow, int maxRows)
-        {
-            List<UserSessionSummary> list = null ;
-            try
-            {
-                
-                Platform.GetService<IUserSessionAdminService>(service =>
-                {
-                    var response = service.ListUserSessions(new ListUserSessionsRequest() { UserName = User.UserName });
-                    list = response.Sessions;
-                });               
-            }
-            catch (Exception ex)
-            {
-                ExceptionHandler.Report(ex, this.Host.DesktopWindow);
-            }
-            
-            if (list==null)
-                return new List<UserSessionSummary>();
+		protected override bool SupportsAdd
+		{
+			get { return false; }
+		}
 
-            list.Sort(SortByTime);
-            return list;
+		protected override bool SupportsDeactivation
+		{
+			get { return false; }
+		}
+
+		protected override bool SupportsDelete
+		{
+			get { return true; }
+		}
+
+		protected override bool SupportsEdit
+		{
+			get { return false; }
+		}
+
+		protected override bool SupportsPaging
+		{
+			get { return false; }
+		}
+
+		protected override void InitializeActionModel(AdminActionModel model)
+		{
+			base.InitializeActionModel(model);
+
+			// modify the lable and tooltip on the delete button to be more appropriate for this context
+			model.Delete.Label = SR.LabelTerminateSessions;
+			model.Delete.Tooltip = SR.TooltipTerminateSessions;
+		}
+
+		protected override IList<UserSessionSummary> ListItems(int firstRow, int maxRows)
+        {
+            List<UserSessionSummary> sessions = null;
+            Platform.GetService<IUserAdminService>(service => {
+                sessions = service.ListUserSessions(new ListUserSessionsRequest(User.UserName)).Sessions.OrderBy(s => s.CreationTime).ToList();
+            });               
+            return sessions;
         }
 
         protected override bool AddItems(out IList<UserSessionSummary> addedItems)
@@ -173,63 +127,26 @@ namespace ClearCanvas.Enterprise.Desktop
             throw new NotSupportedException("AddItems");
         }
 
+		protected override string DeleteConfirmationMessage
+		{
+			get { return SR.MessageConfirmTerminateSelectedSessions; }
+		}
+
         protected override bool DeleteItems(IList<UserSessionSummary> items, out IList<UserSessionSummary> deletedItems, out string failureMessage)
         {
-            throw new NotImplementedException();
+        	List<string> terminatedSessionIds = null;
+			Platform.GetService<IUserAdminService>(service => {
+				var request = new TerminateUserSessionRequest(items.Select(s => s.SessionId).ToList());
+				terminatedSessionIds = service.TerminateUserSession(request).TerminatedSessionIds;
+			});
+			deletedItems = terminatedSessionIds.Select(id => items.First(s => s.SessionId == id)).ToList();
+        	failureMessage = null;
+        	return true;
         }
 
         protected override bool IsSameItem(UserSessionSummary x, UserSessionSummary y)
         {
-            return x.SessionID.Equals(y.SessionID);
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private int SortByTime(UserSessionSummary x, UserSessionSummary y)
-        {
-            return x.ExpiryTime.CompareTo(y.ExpiryTime);
-        }
-
-        private void TerminateSessionInternal(string sessionID)
-        {
-            try
-            {
-
-                Platform.GetService<IUserSessionAdminService>(service =>
-                {
-                    var response = service.TerminateUserSession(new TerminateUserSessionRequest()
-                    {
-                        SessionIDs = new List<string>(new[]{sessionID})
-                    });
-
-                });
-
-            }
-            catch (Exception ex)
-            {
-                ExceptionHandler.Report(ex, this.Host.DesktopWindow);
-            }
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        public void TerminateSession(string sessionID)
-        {
-            TerminateSessionInternal(sessionID);
-            base.Search();
-        }
-
-        public void TerminateSelectedSessions()
-        {
-            if (SelectedItems != null && SelectedItems.Count > 0)
-            {
-                CollectionUtils.ForEach(SelectedItems, session => TerminateSessionInternal(session.SessionID));
-                base.Search();
-            }
+			return x.SessionId.Equals(y.SessionId);
         }
 
         #endregion

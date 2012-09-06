@@ -252,9 +252,14 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 		/// <param name="interceptors"></param>
 		protected virtual void ApplyInterceptors(IList<IInterceptor> interceptors)
 		{
-
 			// add exception promotion advice at the beginning of the interception chain (outside of the service transaction)
 			interceptors.Add(new ExceptionPromotionAdvice());
+
+			// additional interceptors are added outside of all others
+			foreach (var interceptor in AdditionalServiceInterceptorProvider.GetInterceptors(ServiceInterceptSite.Server))
+			{
+				interceptors.Add(interceptor);
+			}
 
 			// add performance logging advice conditionally
 			if (_enablePerformanceLogging)
@@ -277,8 +282,9 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 			interceptors.Add(new ResponseCachingServerSideAdvice());
 
 			// add audit advice inside of main persistence context advice,
-			// so that the audit record will be inserted as part of the main transaction (this applies only to update contexts)
+			// so that the audit recorders can benefit from already loaded entities
 			interceptors.Add(new AuditAdvice());
+
 		}
 
 		#endregion

@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens;
+using System.Linq;
 using ClearCanvas.Enterprise.Common;
 using Iesi.Collections.Generic;
 using ClearCanvas.Common;

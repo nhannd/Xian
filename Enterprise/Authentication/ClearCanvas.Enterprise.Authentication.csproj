@@ -81,7 +81,6 @@
     <Compile Include="Admin\AuthorityTokenAssembler.cs" />
     <Compile Include="Admin\UserAdmin\UserAdminService.cs" />
     <Compile Include="Admin\UserAdmin\UserAssembler.cs" />
-    <Compile Include="Admin\UserAdmin\UserSessionAdminService.cs" />
     <Compile Include="AuthenticationService.cs" />
     <Compile Include="AuthorityGroup.cs" />
     <Compile Include="Brokers\IAuthorityGroupBroker.cs" />
