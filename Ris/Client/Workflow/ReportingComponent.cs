@@ -174,7 +174,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// </summary>
 		/// <param name="delta"></param>
 		/// <remarks>
-		/// Attempting to raise the priority above the maximum value, or lower it below the minimum value, has no effect.
+		/// Attempting to raise the priority above the maximum value, or lower it below the minimum value, has no effect. Specifying a delta of 0 will cause the priority to cycle to the next valid value.
 		/// </remarks>
 		void ChangePriority(int delta);
 
@@ -1368,8 +1368,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private void ChangePriority(int delta)
 		{
 			var currentPriority = _priorityChoices.IndexOf(_orderDetail.OrderPriority);
-			var newPriority = Math.Min(Math.Max(currentPriority + delta, 0), _priorityChoices.Count - 1);
-			_orderDetail.OrderPriority = _priorityChoices[newPriority];
+			var newPriority = 0;
+			if (delta != 0)
+				newPriority = Math.Min(Math.Max(currentPriority + delta, 0), _priorityChoices.Count - 1);
+			else if (currentPriority + 1 < _priorityChoices.Count)
+				newPriority = currentPriority + 1;
+			Priority = _priorityChoices[newPriority];
 		}
 
 		private void ResetChildComponents()
