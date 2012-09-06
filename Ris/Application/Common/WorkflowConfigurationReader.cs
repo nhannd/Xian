@@ -39,5 +39,10 @@ namespace ClearCanvas.Ris.Application.Common
 		{
 			get { return _settings.EnableVisitWorkflow; }
 		}
+
+		public bool AllowUnscheduledProcedures
+		{
+			get { return _settings.AllowUnscheduledProcedures; }
+		}
 	}
 }

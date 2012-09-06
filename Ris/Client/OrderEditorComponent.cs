@@ -157,6 +157,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region Private fields
 
+		private readonly WorkflowConfigurationReader _workflowConfiguration = new WorkflowConfigurationReader();
 		private readonly OperatingContext _operatingContext;
 		private bool _isComplete;
 		private PatientProfileLookupHandler _patientProfileLookupHandler;
@@ -277,9 +278,13 @@ namespace ClearCanvas.Ris.Client
 					!(this.IsDowntimeAccessionNumberVisible && string.IsNullOrEmpty(_downtimeAccessionNumber)),
 					SR.MessageDowntimeAccessionNumberRequired)));
 
-			// add validation rule to ensure the table has at least non-cancelled procedure
+			// add validation rule to ensure the table has at least one non-cancelled procedure
 			this.Validation.Add(new ValidationRule("SelectedProcedures",
 				component => new ValidationResult(HasActiveProcedures(), SR.MessageNoActiveProcedures)));
+			// add validation rule to ensure that any new procedures in the table have scheduled time
+			this.Validation.Add(new ValidationRule("SelectedProcedures",
+				component => new ValidationResult(_workflowConfiguration.AllowUnscheduledProcedures || AllProceduresAreScheduled(),
+					SR.MessageAllProceduresMustBeScheduled)));
 
 			_noteSummaryComponent = new OrderNoteSummaryComponent(OrderNoteCategory.General);
 			_noteSummaryComponent.ModifiedChanged += ((sender, args) => this.Modified = true);
@@ -764,6 +769,11 @@ namespace ClearCanvas.Ris.Client
 				_schedulingRequestTime = value;
 				this.Modified = true;
 			}
+		}
+
+		public bool SchedulingRequestTimeVisible
+		{
+			get { return _workflowConfiguration.AllowUnscheduledProcedures; }
 		}
 
 		public void AddProcedure()
@@ -1337,6 +1347,11 @@ namespace ClearCanvas.Ris.Client
 		private bool HasActiveProcedures()
 		{
 			return _proceduresTable.Items.Any(p => !p.Cancelled);
+		}
+
+		private bool AllProceduresAreScheduled()
+		{
+			return _proceduresTable.Items.All(p => p.ScheduledTime.HasValue);
 		}
 
 		private void CheckIfOrderShouldBeCancelled()

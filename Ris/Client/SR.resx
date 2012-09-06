@@ -1164,4 +1164,7 @@
   <data name="MenuLogout" xml:space="preserve">
     <value>Logout</value>
   </data>
+  <data name="MessageAllProceduresMustBeScheduled" xml:space="preserve">
+    <value>All procedures must be scheduled.</value>
+  </data>
 </root>

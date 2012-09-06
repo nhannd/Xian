@@ -114,8 +114,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// bind date and time to same property
 			_schedulingRequestDate.DataBindings.Add("Value", _component, "SchedulingRequestTime", true, DataSourceUpdateMode.OnPropertyChanged);
 			_schedulingRequestDate.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
+			_schedulingRequestDate.DataBindings.Add("Visible", _component, "SchedulingRequestTimeVisible");
 			_schedulingRequestTime.DataBindings.Add("Value", _component, "SchedulingRequestTime", true, DataSourceUpdateMode.OnPropertyChanged);
 			_schedulingRequestTime.DataBindings.Add("Enabled", _component, "OrderIsNotCompleted");
+			_schedulingRequestTime.DataBindings.Add("Visible", _component, "SchedulingRequestTimeVisible");
 
 			_reorderReason.DataSource = _component.CancelReasonChoices;
 			_reorderReason.DataBindings.Add("Value", _component, "SelectedCancelReason", true, DataSourceUpdateMode.OnPropertyChanged);

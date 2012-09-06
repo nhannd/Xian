@@ -78,5 +78,20 @@ namespace ClearCanvas.Ris.Application.Common {
                 return ((bool)(this["EnableVisitWorkflow"]));
             }
         }
+        
+        /// <summary>
+        /// Specifies whether procedures can be entered without a scheduled time, in which case the order will have a scheduling request time, indicating when the procedures should ultimately be scheduled for.
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether procedures can be entered without a scheduled time, in which ca" +
+            "se the order will have a scheduling request time, indicating when the procedures" +
+            " should ultimately be scheduled for.")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AllowUnscheduledProcedures {
+            get {
+                return ((bool)(this["AllowUnscheduledProcedures"]));
+            }
+        }
     }
 }
