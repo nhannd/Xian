@@ -102,24 +102,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
 
         }
 
-		protected override void OnPreRender(EventArgs e)
-		{
-			foreach (GridViewRow row in TheGrid.Rows)
-			{
-				if (row.RowType == DataControlRowType.DataRow)
-				{
-					ServerPartition partition = Partitions[row.RowIndex];
-
-					if (partition != null)
-					{
-						if (_theController.CanDelete(partition))
-							row.Attributes.Add("candelete", "true");
-					}
-				}
-			}
-			base.OnPreRender(e);
-		}
-
         protected void PartitionGridView_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (PartitionGridView.EditIndex != e.Row.RowIndex)
@@ -129,6 +111,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
                     CustomizeActiveColumn(e);
                     CustomizeAcceptAnyDeviceColumn(e);
                     CustomizeDuplicateSopPolicyColumn(e.Row);
+
+                    var partition = e.Row.DataItem as ServerPartition;
+
+                    if (partition != null)
+                    {
+                        if (_theController.CanDelete(partition))
+                            e.Row.Attributes.Add("candelete", "true");
+                    }
                 }
             }
         }
