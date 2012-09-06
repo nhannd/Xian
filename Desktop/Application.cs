@@ -245,6 +245,23 @@ namespace ClearCanvas.Desktop
 			_instance.Quit(true);
 		}
 
+		/// <summary>
+		/// Invalidates the current session, which will typically require the user to
+		/// re-authenticate in order to continue using the application.
+		/// </summary>
+		/// <returns></returns>
+		public static void InvalidateSession()
+		{
+			try
+			{
+				SessionManager.Current.InvalidateSession();
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Error, ex);
+			}
+		}
+
     	/// <summary>
         /// Occurs when a request has been made for the application to quit.
         /// </summary>

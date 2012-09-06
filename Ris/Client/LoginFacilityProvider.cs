@@ -64,7 +64,12 @@ namespace ClearCanvas.Ris.Client
 			get { return LoginSession.Current != null ? GetFacility(LoginSession.Current.WorkingFacility.Code) : null; }
 			set
 			{
-				if (LoginSession.Current != null) throw new InvalidOperationException("Current working facility cannot be changed while a user is logged in.");
+				// once the session has been established, it can't be changed, but we
+				// can just fail silently in order to support the case where the user
+				// reconnects after a session expires
+				if (LoginSession.Current != null)
+					return;
+
 				if (value != null && !string.IsNullOrEmpty(value.Code))
 				{
 					LoginSession.Create(value.Code);

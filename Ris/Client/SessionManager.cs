@@ -83,6 +83,11 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public void InvalidateSession()
+		{
+			// todo
+		}
+
 		void ISessionManager.TerminateSession()
 		{
 			try

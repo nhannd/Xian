@@ -86,6 +86,17 @@ namespace ClearCanvas.Desktop
 		bool InitiateSession();
 
 		/// <summary>
+		/// Called to mark the existing session as invalid, which will typically require the user to
+		/// re-authenticate in order to continue using the application.
+		/// </summary>
+		/// <returns></returns>
+		/// <remarks>
+		/// Note that calling this method does not itself renew the session, but merely marks the session
+		/// as invalid.  Hence, the session not necessarily have been renewed yet when this method returns.
+		/// </remarks>
+		void InvalidateSession();
+
+		/// <summary>
 		/// Called by the framework at shutdown to terminate an existing session.
 		/// </summary>
 		/// <remarks>
@@ -94,19 +105,29 @@ namespace ClearCanvas.Desktop
 		/// </remarks>
 		void TerminateSession();
 
+		/// <summary>
+		/// Gets the current status of the session.
+		/// </summary>
 		SessionStatus SessionStatus { get; }
+
+		/// <summary>
+		/// Occurs when the <see cref="SessionStatus"/> property changes.
+		/// </summary>
 		event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged;
 	}
 
 	#region Static Part
 
+	/// <summary>
+	/// Session manager base class.
+	/// </summary>
 	public partial class SessionManager
 	{
-		#region Default Session Manager Implementation
+		#region NullSessionManager Implementation
 
-		private class Default : SessionManager
+		private class NullSessionManager : SessionManager
 		{
-			public Default()
+			public NullSessionManager()
 				: base(SessionStatus.LocalOnly)
 			{
 			}
@@ -128,9 +149,16 @@ namespace ClearCanvas.Desktop
 			Current = Create();
 		}
 
+		/// <summary>
+		/// Gets the current session manager.
+		/// </summary>
 		internal static readonly ISessionManager Current;
 
-		internal static ISessionManager Create()
+		/// <summary>
+		/// Instantiates the session manager.
+		/// </summary>
+		/// <returns></returns>
+		private static ISessionManager Create()
 		{
 			try
 			{
@@ -141,7 +169,7 @@ namespace ClearCanvas.Desktop
 			catch (NotSupportedException)
 			{
 				Platform.Log(LogLevel.Debug, "No session manager extension found");
-				return new Default();
+				return new NullSessionManager();
 			}
 		}
 	}
@@ -167,17 +195,57 @@ namespace ClearCanvas.Desktop
 
 		#region ISessionManager Members
 
+		/// <summary>
+		/// Called by the framework at start-up to initiate a session.
+		/// </summary>
 		bool ISessionManager.InitiateSession()
 		{
 			return InitiateSession();
 		}
 
+		/// <summary>
+		/// Called to request that the existing session be renewed, which typically involves asking the user to re-enter
+		/// their credentials.
+		/// </summary>
+		void ISessionManager.InvalidateSession()
+		{
+			InvalidateSession();
+		}
+
+		/// <summary>
+		/// Called by the framework at shutdown to terminate an existing session.
+		/// </summary>
 		void ISessionManager.TerminateSession()
 		{
 			TerminateSession();
 		}
 
-		public SessionStatus SessionStatus
+
+		/// <summary>
+		/// Gets the current status of the session.
+		/// </summary>
+		SessionStatus ISessionManager.SessionStatus
+		{
+			get { return this.SessionStatus; }
+		}
+
+		/// <summary>
+		/// Occurs when the <see cref="ISessionManager.SessionStatus"/> property changes.
+		/// </summary>
+		event EventHandler<SessionStatusChangedEventArgs> ISessionManager.SessionStatusChanged
+		{
+			add { this.SessionStatusChanged += value; }
+			remove { this.SessionStatusChanged += value; }
+		}
+
+		#endregion
+
+		#region Protected API
+
+		/// <summary>
+		/// Gets or sets the session status.
+		/// </summary>
+		protected SessionStatus SessionStatus
 		{
 			get
 			{
@@ -186,7 +254,7 @@ namespace ClearCanvas.Desktop
 					return _sessionStatus;
 				}
 			}
-			protected set
+			set
 			{
 				lock (_syncLock)
 				{
@@ -200,7 +268,10 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
-		public event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged
+		/// <summary>
+		/// Occurs when the <see cref="SessionStatus"/> property changes.
+		/// </summary>
+		protected event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged
 		{
 			add
 			{
@@ -218,14 +289,39 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
-		#endregion
-
+		/// <summary>
+		/// Called to initiate the session.
+		/// </summary>
+		/// <returns></returns>
 		protected abstract bool InitiateSession();
+
+		/// <summary>
+		/// Called to invalidate the existing session.
+		/// </summary>
+		/// <returns></returns>
+		/// <remarks>
+		/// The default implementation sets the session status to <see cref="Desktop.SessionStatus.Expired"/>.
+		/// </remarks>
+		protected virtual void InvalidateSession()
+		{
+			this.SessionStatus = SessionStatus.Expired;
+		}
+
+		/// <summary>
+		/// Called to terminate the session.
+		/// </summary>
 		protected abstract void TerminateSession();
 
+		/// <summary>
+		/// Called when the session status changes.
+		/// </summary>
+		/// <param name="oldStatus"></param>
+		/// <param name="newStatus"></param>
 		protected virtual void OnStatusChanged(SessionStatus oldStatus, SessionStatus newStatus)
 		{
 		}
+
+		#endregion
 
 		private void NotifyStatusChanged(SessionStatus oldStatus, SessionStatus newStatus)
 		{

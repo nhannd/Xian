@@ -120,9 +120,9 @@ namespace ClearCanvas.Ris.Client
         {
             try
             {
-                // typically this means authentication failed, which is usually because
-                // the session has expired
-                SessionManager.RenewLogin();
+                // typically this means authentication failed, which is usually because the session is no longer valid
+				// so inform the desktop of the situation
+            	Desktop.Application.InvalidateSession();
             }
             catch (Exception)
             {
