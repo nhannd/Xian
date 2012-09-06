@@ -62,26 +62,6 @@ namespace ClearCanvas.Common
 		}
 
 		/// <summary>
-		/// Gets the number of the concurrent active sessions.
-		/// </summary>
-		public static int SessionCount
-		{
-			get
-			{
-				CheckLicenseProvider();
-
-				lock (_syncRoot)
-				{
-					if (_machineIdentifier == null)
-					{
-						_licenseProvider.GetLicenseInfo(out _licenseKey, out _machineIdentifier, out _sessionCount);
-					}
-					return _sessionCount;
-				}
-			}
-		}
-
-		/// <summary>
 		/// Gets a unique identifier for the installation.
 		/// </summary>
 		public static string MachineIdentifier
@@ -94,7 +74,7 @@ namespace ClearCanvas.Common
 				{
 					if (_machineIdentifier == null)
 					{
-						_licenseProvider.GetLicenseInfo(out _licenseKey, out _machineIdentifier, out _sessionCount);
+						_licenseProvider.GetLicenseInfo(out _licenseKey, out _machineIdentifier);
 					}
 					return _machineIdentifier;
 				}
@@ -113,7 +93,7 @@ namespace ClearCanvas.Common
 				lock (_syncRoot)
 				{
 					// don't cache this result - we want to know if license key changes
-					_licenseProvider.GetLicenseInfo(out _licenseKey, out _machineIdentifier, out _sessionCount);
+					_licenseProvider.GetLicenseInfo(out _licenseKey, out _machineIdentifier);
 					return _licenseKey;
 				}
 			}
