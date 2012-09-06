@@ -98,6 +98,14 @@ namespace ClearCanvas.Enterprise.Authentication {
         }
 
 		/// <summary>
+		/// Obtains the set of sessions that are currently active (not expired).
+		/// </summary>
+    	public IEnumerable<UserSession> ActiveSessions
+    	{
+			get { return _sessions.Where(s => !s.IsExpired).ToList(); }
+    	}
+
+		/// <summary>
 		/// Initiates a new session for this user, updating the <see cref="Sessions"/> collection and returning
 		/// the new session.
 		/// </summary>

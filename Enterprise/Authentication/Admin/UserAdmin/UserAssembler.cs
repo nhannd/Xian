@@ -9,6 +9,7 @@
 
 #endregion
 
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
@@ -21,7 +22,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
         internal UserSummary GetUserSummary(User user)
         {
             return new UserSummary(user.UserName, user.DisplayName, user.EmailAddress, user.CreationTime, user.ValidFrom, user.ValidUntil,
-                                   user.LastLoginTime, user.Password.ExpiryTime, user.Enabled, user.Sessions.Count);
+                                   user.LastLoginTime, user.Password.ExpiryTime, user.Enabled, user.ActiveSessions.Count());
         }
 
         internal UserDetail GetUserDetail(User user)

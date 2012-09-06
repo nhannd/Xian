@@ -168,7 +168,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
 
 			var user = FindUserByName(request.UserName);
 			var assembler = new UserAssembler();
-			return new ListUserSessionsResponse(user.UserName, user.Sessions.Select(assembler.GetUserSessionSummary).ToList());
+			return new ListUserSessionsResponse(user.UserName, user.ActiveSessions.Select(assembler.GetUserSessionSummary).ToList());
 		}
 
 
