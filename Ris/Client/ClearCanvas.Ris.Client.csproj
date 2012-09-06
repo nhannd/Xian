@@ -78,7 +78,6 @@
     <Compile Include="CancelOrderComponent.cs" />
     <Compile Include="DocumentViewTool.cs" />
     <Compile Include="LoginFacilityProvider.cs" />
-    <Compile Include="LogoutTool.cs" />
     <Compile Include="PrintReportComponent.cs" />
     <Compile Include="OrderCancelHelper.cs" />
     <Compile Include="OrderEditorComponent2.cs" />
