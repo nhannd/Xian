@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -68,7 +68,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.DataGridView.RowPostPaint += OutlineCell;
             this.DataGridView.RowPostPaint += SetLinkColor;
 
-			if (!DesignMode)
+			// System.Component.DesignMode does not work in control constructors
+			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
 			{
 				// Use a DelayedEventPublisher to make fixes for bugs 386 and 8032 a little clearer.  Previously used a Timer directly
 				// to delay the events
