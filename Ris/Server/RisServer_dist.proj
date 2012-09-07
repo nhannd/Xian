@@ -21,6 +21,7 @@
   <PropertyGroup>
     <PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
     <DicomDirectory>$(SolutionDir)..\..\Dicom</DicomDirectory>
+    <ManifestUtilityDirectory>$(SolutionDir)..\..\Utilities\Manifest</ManifestUtilityDirectory>
     <EnterpriseDirectory>$(SolutionDir)..\..\Enterprise</EnterpriseDirectory>
     <WorkflowDirectory>$(SolutionDir)..\..\Workflow</WorkflowDirectory>
     <HealthcareDirectory>$(SolutionDir)..\..\Healthcare</HealthcareDirectory>
@@ -74,6 +75,7 @@
     <RisFiles Include="$(ShredHostDirectory)\bin\$(Configuration)\ClearCanvas.Server.ShredHost.dll" />
     <RisFiles Include="$(DicomDirectory)\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
     <RisFiles Include="$(RisShredsDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Shreds.dll" />
+    <RisFiles Include="$(ManifestUtilityDirectory)\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -106,5 +108,7 @@
     <Copy SourceFiles="@(EnterprisePluginFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
     <Copy SourceFiles="@(ModelFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
     <Copy SourceFiles="@(RisFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
+    
+    <MakeDir Directories="$(DistributionDir)\manifest" ContinueOnError="false" />
   </Target>
 </Project>
