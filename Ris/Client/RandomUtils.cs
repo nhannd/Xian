@@ -405,7 +405,7 @@ namespace ClearCanvas.Ris.Client
 
 					requisition.Procedures.AddRange(
 						CollectionUtils.Map(dsResponse.DiagnosticServicePlan.ProcedureTypes,
-							(ProcedureTypeSummary rpt) => new ProcedureRequisition(rpt, performingFacility)
+                            (ProcedureTypeDetail rpt) => new ProcedureRequisition(rpt != null ? rpt.GetSummary() : null, performingFacility)
 															{
 																ScheduledTime = scheduledTime, 
 																Laterality = laterality,
