@@ -14,6 +14,7 @@ using System.Security.Permissions;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using Resources;
+using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 {
@@ -23,6 +24,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
         protected void Page_Load(object sender, EventArgs e)
         {
             SetPageTitle(Titles.DashboardTitle);
+
+            switch(ServerPlatform.ServerOperatingMode)
+            {
+                case ServerOperatingMode.TemporaryCache:
+                    OperatingModeLabel.Text = SR.ServerModeTemporaryCache;
+                    break;
+
+                case ServerOperatingMode.Archive:
+                    OperatingModeLabel.Text = SR.ServerModeArchive;
+                    break;
+
+                case ServerOperatingMode.MixedMode:
+                    OperatingModeLabel.Text = SR.ServerModeMixedMode
+                    break;
+            }
+            
         }
     }
 }

@@ -27,6 +27,13 @@
 
 <div class="DashboardBody">
 
+<div id="OperatingModeIndicationPanel">
+    <asp:Label runat="server" ID="OperatingModeLabel" Text="This server is configured to operate as ....."/>
+        <asp:HyperLink ID="OperatingModeLinkButton" CssClass="OperatingModeLinkButtonBorder" runat='server' 
+        NavigateUrl="~/Pages/Help/usersguide/index.html?Overview.htm#ArchiveVsCache" Text="?" Target="_blank" />
+    
+</div>
+
 <table width="100%" border="0" >
 <tr><td valign="top" style="border-right: dashed 1px #cccccc;">
 

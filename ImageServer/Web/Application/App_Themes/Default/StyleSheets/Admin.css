@@ -194,6 +194,25 @@ div.DeleteAlertTableContainer {
  * Dashboard
  *=========================*/
 
+#OperatingModeIndicationPanel
+{
+	padding:10px;
+	border-bottom:2px dashed lightgray;
+	font-size:large;
+	color:#205F87;
+	font-weight:bold;
+	text-align:center;
+}
+
+.OperatingModeLinkButtonBorder
+{
+	margin-left:30px;
+	border:1px solid gray; 
+	padding-left:3px; 
+	padding-right:3px; 
+	font-size:x-small
+}
+
 .UsersOverview
 {
     background: #ffffff;

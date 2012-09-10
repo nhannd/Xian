@@ -736,7 +736,7 @@ BEGIN
 	INSERT INTO [ImageServer].[dbo].[ServerRule]
 			   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Enabled],[DefaultRule],[RuleXml])
 		 VALUES
-			   (newid(),''Default Delete'',@ServerPartitionGUID, @StudyServerRuleApplyTimeEnum, @StudyDeleteServerRuleTypeEnum, 1, 1,
+			   (newid(),''Default Delete'',@ServerPartitionGUID, @StudyServerRuleApplyTimeEnum, @StudyDeleteServerRuleTypeEnum, 0, 0,
 				''<rule id="Default Delete">
 					<condition>
 					</condition>
