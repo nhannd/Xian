@@ -16,6 +16,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Xml;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Audit;
 using ClearCanvas.Dicom.Audit;
@@ -45,6 +46,11 @@ namespace ClearCanvas.ImageServer.Common
         private static bool? _manifestVerified;
         private static readonly TimeSpan ManifestRecheckTimeSpan = TimeSpan.FromMinutes(15);
         private static DateTime? _lastManifestCheckTimestamp;
+
+
+        private static DateTime? _systemModeLastCheckTimestamp;
+        private static ServerOperatingMode _serverMode;
+
     	#endregion
 
         /// <summary>
@@ -536,5 +542,76 @@ namespace ClearCanvas.ImageServer.Common
             path = Path.Combine(path, queueItem.GroupID);
             return path;
 	    }
+
+        /// <summary>
+        /// Indicates if the ImageServer is operating as a temporary cache mode 
+        /// (i.e., images will not be archived and will be deleted per delete rule)
+        /// </summary>
+        public static ServerOperatingMode ServerOperatingMode
+        {
+            get
+            {
+                CheckSystemMode();
+                return _serverMode;
+            }
+        }
+
+        private static void CheckSystemMode()
+        {
+            var now= Platform.Time;
+
+            if (!_systemModeLastCheckTimestamp.HasValue || now - _systemModeLastCheckTimestamp  > TimeSpan.FromSeconds(15))
+            {
+                lock (_syncLock)
+                {
+                    if (!_systemModeLastCheckTimestamp.HasValue || now - _systemModeLastCheckTimestamp > TimeSpan.FromSeconds(15))
+                    {
+                        try
+                        {
+                            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+                            using (IReadContext ctx = store.OpenReadContext())
+                            {
+                                var deleteRuleBroker = ctx.GetBroker<IServerRuleEntityBroker>();
+                                var deleteRuleSearchCriteria = new ServerRuleSelectCriteria();
+                                deleteRuleSearchCriteria.ServerRuleTypeEnum.EqualTo(ServerRuleTypeEnum.StudyDelete);
+                                deleteRuleSearchCriteria.Enabled.EqualTo(true);
+                                var deleteRules = deleteRuleBroker.Find(deleteRuleSearchCriteria);
+
+                                if (deleteRules==null || deleteRules.Count==0)
+                                    _serverMode = Common.ServerOperatingMode.Archive;
+
+                                var defaultDeleteRuleExists = deleteRules.Any(r=>r.RuleName.Equals("Default Delete"));
+                                var customDeleteRuleExists = deleteRules.Any(r=>!r.RuleName.Equals("Default Delete"));
+
+                                if (defaultDeleteRuleExists)
+                                    _serverMode = Common.ServerOperatingMode.TemporaryCache;
+                                else {
+                                    if (customDeleteRuleExists)
+                                        _serverMode = Common.ServerOperatingMode.MixedMode;
+                                    else
+                                        _serverMode = Common.ServerOperatingMode.Archive;
+                                }
+                                    
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Platform.Log(LogLevel.Error, ex);
+                        }
+                        finally
+                        {
+                            _systemModeLastCheckTimestamp = now;
+                        }
+                    }
+                }
+            }       
+        }
+    }
+
+    public enum ServerOperatingMode
+    {
+        Archive,
+        TemporaryCache,
+        MixedMode
     }
 }

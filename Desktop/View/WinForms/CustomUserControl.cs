@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms
@@ -20,6 +21,8 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// </summary>
     public class CustomUserControl : LocalizableUserControl
     {
+        // N.B. do not make this class abstract, no matter how tempting it may look. You will break the VS Forms designer.
+
         private IButtonControl _acceptButton;
         private IButtonControl _cancelButton;
 
@@ -39,6 +42,17 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             get { return _cancelButton; }
             set { _cancelButton = value; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the <see cref="ApplicationComponentUserControl"/> is currently in design mode.
+        /// </summary>
+        /// <remarks>
+        /// This implementation solves the problem where <see cref="Component.DesignMode"/> property does not work when called in the control's constructor.
+        /// </remarks>
+        protected new bool DesignMode
+        {
+            get { return base.DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime; }
         }
 
         /// <summary>

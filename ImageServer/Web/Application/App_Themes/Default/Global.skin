@@ -1,6 +1,4 @@
 <%@ Register assembly="ClearCanvas.ImageServer.Web.Common" namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" tagPrefix="ccUI" %>
-<%@ Register src="~/Controls/InvalidInputIndicator.ascx" tagPrefix="ccASP" tagName="InvalidInputIndicator" %>
-
 
 <%-- Error Pages --%>
 <asp:Image runat="server" SkinID="ImageServerLogo" ImageUrl="images/ImageServerLogo.png" />

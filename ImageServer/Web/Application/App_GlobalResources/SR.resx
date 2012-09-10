@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="All" xml:space="preserve">
     <value>All</value>
@@ -824,5 +824,14 @@ At least one server partition is required. Please add a new server partition.</v
   </data>
   <data name="StudyDetails_JumpToNonUpdatableGroupListingSectionLink" xml:space="preserve">
     <value>Jump to other authority groups</value>
+  </data>
+  <data name="ServerModeArchive" xml:space="preserve">
+    <value>This server is configured to operate as an archive.</value>
+  </data>
+  <data name="ServerModeMixedMode" xml:space="preserve">
+    <value>This server is configured to operate in a mixed mode.</value>
+  </data>
+  <data name="ServerModeTemporaryCache" xml:space="preserve">
+    <value>This server is configured to operate as a temporary cache.</value>
   </data>
 </root>
