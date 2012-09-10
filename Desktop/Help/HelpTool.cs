@@ -43,7 +43,7 @@ namespace ClearCanvas.Desktop.Help
 
         public void ShowAbout()
 		{
-			AboutForm aboutForm = new AboutForm();
+			var aboutForm = AboutDialogExtensionPoint.CreateDialog();
 			aboutForm.ShowDialog();
 		}
 
