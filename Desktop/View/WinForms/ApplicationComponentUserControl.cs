@@ -27,7 +27,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         public ApplicationComponentUserControl()
         {
-            InitializeComponent();
         }
 
         /// <summary>
@@ -35,8 +34,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         /// <param name="component"></param>
         public ApplicationComponentUserControl(IApplicationComponent component)
-            : this()
         {
+            InitializeComponent();
+
             _errorProvider.DataSource = component;
             component.ValidationVisibleChanged += ValidationVisibleChangedEventHandler;
 
