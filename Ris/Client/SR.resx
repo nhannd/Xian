@@ -1167,4 +1167,7 @@
   <data name="MessageAllProceduresMustBeScheduled" xml:space="preserve">
     <value>All procedures must be scheduled.</value>
   </data>
+  <data name="MessageEndpointNotFoundOfflineMode" xml:space="preserve">
+    <value>The server is currently offline.</value>
+  </data>
 </root>

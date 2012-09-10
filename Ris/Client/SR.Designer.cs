@@ -1906,6 +1906,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The server is currently offline..
+        /// </summary>
+        internal static string MessageEndpointNotFoundOfflineMode {
+            get {
+                return ResourceManager.GetString("MessageEndpointNotFoundOfflineMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;To&apos; must be later or equal to &apos;From&apos;.
         /// </summary>
         internal static string MessageEndTimeMustBeGreaterOrEqualStartTime {

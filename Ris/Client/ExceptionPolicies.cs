@@ -81,7 +81,6 @@ namespace ClearCanvas.Ris.Client
     /// </summary>
     [ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
     [ExceptionPolicyFor(typeof(CommunicationException))]
-    [ExceptionPolicyFor(typeof(EndpointNotFoundException))]
     public class CommunicationExceptionPolicy : IExceptionPolicy
     {
         public void Handle(Exception e, IExceptionHandlingContext context)
@@ -90,6 +89,26 @@ namespace ClearCanvas.Ris.Client
             context.ShowMessageBox(SR.MessageCommunicationError, true);
         }
     }
+
+	/// <summary>
+	/// Policy for endpoint-not-found exceptions
+	/// </summary>
+	[ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
+	[ExceptionPolicyFor(typeof(EndpointNotFoundException))]
+	public class EndpointNotFoundExceptionPolicy : IExceptionPolicy
+	{
+		public void Handle(Exception e, IExceptionHandlingContext context)
+		{
+			context.Log(LogLevel.Error, e);
+
+			// if we're known to be in offline mode, then communicate this, otherwise
+			// just report a generic communication error 
+			context.ShowMessageBox(
+				Desktop.Application.SessionStatus == SessionStatus.Offline
+					? SR.MessageEndpointNotFoundOfflineMode
+					: SR.MessageCommunicationError, true);
+		}
+	}
 
     /// <summary>
     /// Policy for Security Access exceptions
