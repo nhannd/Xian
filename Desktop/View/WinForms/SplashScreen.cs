@@ -17,6 +17,7 @@ using System.Drawing.Imaging;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 using ClearCanvas.Common;
@@ -123,6 +124,41 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 
 			return null;
+		}
+
+		public static Image CreateRecoloredGraphic(Image image)
+		{
+			var oem = OemConfiguration.Load();
+			return CreateRecoloredGraphic(image, oem.GlyphColor);
+		}
+
+		public static Image CreateRecoloredGraphic(Image image, Color color)
+		{
+			var bitmap = new Bitmap(image);
+			if (!color.IsEmpty && color.ToArgb() != 0)
+			{
+				var bitmapData = bitmap.LockBits(new Rectangle(Point.Empty, image.Size), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+				try
+				{
+					var rescaleRed = color.R/255f;
+					var rescaleGreen = color.G/255f;
+					var rescaleBlue = color.B/255f;
+					var length = bitmapData.Height*bitmapData.Width;
+					var buffer = new int[length];
+					Marshal.Copy(bitmapData.Scan0, buffer, 0, length);
+					for (var n = 0; n < length; ++n)
+					{
+						var value = buffer[n];
+						buffer[n] = ((int) (value & 0xFF000000)) | (((byte) (((value >> 16) & 0x0FF)*rescaleRed)) << 16) | (((byte) (((value >> 8) & 0x0FF)*rescaleGreen)) << 8) | ((byte) ((value & 0x0FF)*rescaleBlue));
+					}
+					Marshal.Copy(buffer, 0, bitmapData.Scan0, length);
+				}
+				finally
+				{
+					bitmap.UnlockBits(bitmapData);
+				}
+			}
+			return bitmap;
 		}
 
 		#endregion

@@ -24,7 +24,7 @@ using ClearCanvas.Utilities.Manifest;
 
 namespace ClearCanvas.Desktop.Help
 {
-	public partial class AboutForm : Form
+	public partial class AboutForm : Form, IAboutDialog
 	{
 		public AboutForm()
 		{
