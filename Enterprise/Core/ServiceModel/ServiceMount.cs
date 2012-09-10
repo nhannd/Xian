@@ -274,17 +274,15 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 			// since each retry should be done in a new persistence context
 			interceptors.Add(new DeadlockRetryAdvice());
 
+			// add audit advice outside of main persistence context advice, so that messages are written post-commit
+			interceptors.Add(new AuditAdvice());
+
 			// add persistence context advice, that controls the persistence context for the main transaction
 			interceptors.Add(new PersistenceContextAdvice());
 
 			// add response caching advice inside of persistence context, because
 			// the context may be used when determining the cache directive, etc.
 			interceptors.Add(new ResponseCachingServerSideAdvice());
-
-			// add audit advice inside of main persistence context advice,
-			// so that the audit recorders can benefit from already loaded entities
-			interceptors.Add(new AuditAdvice());
-
 		}
 
 		#endregion

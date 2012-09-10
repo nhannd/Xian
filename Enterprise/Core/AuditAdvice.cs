@@ -10,11 +10,14 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Castle.Core.Interceptor;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Audit;
+using ClearCanvas.Enterprise.Common;
 
 
 namespace ClearCanvas.Enterprise.Core
@@ -24,67 +27,173 @@ namespace ClearCanvas.Enterprise.Core
 	/// </summary>
 	public class AuditAdvice : IInterceptor
 	{
-		#region IInterceptor Members
+		#region RecorderContext class
 
-		public void Intercept(IInvocation invocation)
+		/// <summary>
+		/// Implementation of <see cref="IServiceOperationRecorderContext"/>
+		/// </summary>
+		class RecorderContext : IServiceOperationRecorderContext
 		{
-			Exception exception = null;
-			try
+			private readonly IInvocation _invocation;
+			private readonly IServiceOperationRecorder _recorder;
+			private readonly AuditLog _auditLog;
+			private readonly string _operationName;
+			private EntityChangeSet _changeSet;
+
+			internal RecorderContext(IInvocation invocation, IServiceOperationRecorder recorder)
 			{
-				invocation.Proceed();
+				_invocation = invocation;
+				_recorder = recorder;
+				_auditLog = new AuditLog(_recorder.Application, _recorder.Category);
+				_operationName = string.Format("{0}.{1}", _invocation.InvocationTarget.GetType().FullName, _invocation.Method.Name);
 			}
-			catch (Exception e)
+
+			string IServiceOperationRecorderContext.OperationName
 			{
-				exception = e;
-				throw;
+				get { return _operationName; }
 			}
-			finally
+
+			Type IServiceOperationRecorderContext.ServiceClass
 			{
-				var auditAttrs = AttributeUtils.GetAttributes<AuditAttribute>(invocation.MethodInvocationTarget, true);
-				if (auditAttrs.Count > 0)
+				get { return _invocation.InvocationTarget.GetType(); }
+			}
+
+			MethodInfo IServiceOperationRecorderContext.OperationMethodInfo
+			{
+				get { return _invocation.MethodInvocationTarget; }
+			}
+
+			object IServiceOperationRecorderContext.Request
+			{
+				get { return _invocation.Arguments.FirstOrDefault(); }
+			}
+
+			object IServiceOperationRecorderContext.Response
+			{
+				get { return _invocation.ReturnValue; }
+			}
+
+			void IServiceOperationRecorderContext.Write(string operation, string message)
+			{
+				_auditLog.WriteEntry(operation ?? _operationName, message);
+			}
+
+			void IServiceOperationRecorderContext.Write(string message)
+			{
+				_auditLog.WriteEntry(_operationName, message);
+			}
+
+			EntityChangeSet IServiceOperationRecorderContext.ChangeSet
+			{
+				get { return _changeSet; }
+			}
+
+			internal void PreCommit(EntityChangeSet changeSet)
+			{
+				try
 				{
-					// inherit the current persistence scope, which should still be valid, or optionally create a new one
-					using (var scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.Required))
-					{
-						var operationName =
-							string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
+					_changeSet = changeSet;
+					_recorder.PreCommit(this);
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
+				}
+			}
 
-						var info = new ServiceOperationInvocationInfo(
-							operationName,
-							invocation.InvocationTarget.GetType(),
-							invocation.MethodInvocationTarget,
-							invocation.Arguments.FirstOrDefault(),
-							invocation.ReturnValue,
-							exception);
-
-						// multiple audit recorders may be specified for a given service operation
-						foreach (var attr in auditAttrs)
-						{
-							try
-							{
-								Audit(attr, info);
-							}
-							catch (Exception e)
-							{
-								// audit operation failed - this is low-level, so we log directly to log file
-								Platform.Log(LogLevel.Error, e);
-							}
-						}
-
-						scope.Complete();
-					}
+			internal void PostCommit()
+			{
+				try
+				{
+					_recorder.PreCommit(this);
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
 				}
 			}
 		}
 
-		private static void Audit(AuditAttribute attr, ServiceOperationInvocationInfo info)
-		{
-			// create an instance of the specified recorder class
-			var recorder = (IServiceOperationRecorder)Activator.CreateInstance(attr.RecorderClass);
+		#endregion
 
-			// write to the audit log
-			var log = new AuditLog(null, recorder.Category);
-			recorder.WriteLogEntry(info, log);
+		#region InvocationInfo class 
+
+		class InvocationInfo
+		{
+			private readonly List<RecorderContext> _recorderContexts;
+
+			public InvocationInfo(List<RecorderContext> recorderContexts)
+			{
+				_recorderContexts = recorderContexts;
+			}
+
+			internal void PreCommit(EntityChangeSet changeSet)
+			{
+				foreach (var recorderContext in _recorderContexts)
+				{
+					recorderContext.PreCommit(changeSet);
+				}
+			}
+
+			internal void PostCommit()
+			{
+				foreach (var recorderContext in _recorderContexts)
+				{
+					recorderContext.PostCommit();
+				}
+			}
+		}
+
+		#endregion
+
+		#region ChangeSetListener class
+
+		[ExtensionOf(typeof(EntityChangeSetListenerExtensionPoint))]
+		public class ChangeSetListener: IEntityChangeSetListener
+		{
+			public void PreCommit(EntityChangeSetPreCommitArgs args)
+			{
+				// store a copy of the change set for use by recorders
+				if (_invocationInfo == null)
+					return;
+
+				_invocationInfo.PreCommit(args.ChangeSet);
+			}
+
+			public void PostCommit(EntityChangeSetPostCommitArgs args)
+			{
+			}
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Keep track of the invocation that is happening on the current thread.
+		/// </summary>
+		[ThreadStatic]
+		private static InvocationInfo _invocationInfo;
+
+		#region IInterceptor Members
+
+		public void Intercept(IInvocation invocation)
+		{
+			try
+			{
+				var recorderContexts = AttributeUtils.GetAttributes<AuditAttribute>(invocation.MethodInvocationTarget, true)
+										.Select(a => new RecorderContext(invocation, (IServiceOperationRecorder)Activator.CreateInstance(a.RecorderClass)))
+										.ToList();
+
+				_invocationInfo = new InvocationInfo(recorderContexts);
+
+				invocation.Proceed();
+
+				_invocationInfo.PostCommit();
+			}
+			finally
+			{
+				// clear current invocation
+				_invocationInfo = null;
+			}
 		}
 
 		#endregion

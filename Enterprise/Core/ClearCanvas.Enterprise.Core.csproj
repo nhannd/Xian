@@ -238,7 +238,6 @@
     <Compile Include="ServiceOperationAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ServiceOperationRecorderBase.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
