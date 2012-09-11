@@ -19,26 +19,25 @@ namespace ClearCanvas.Enterprise.Configuration
 	/// <summary>
 	/// Records custom information about operations on <see cref="IConfigurationService"/>.
 	/// </summary>
-	public class ConfigurationServiceRecorder : ServiceOperationRecorderBase
+	public class ConfigurationServiceRecorder : IServiceOperationRecorder
 	{
-		/// <summary>
-		/// Gets the category that should be assigned to the audit entries.
-		/// </summary>
-		protected override string Category
+		public string Application
+		{
+			get { return "Enterprise Server"; }
+		}
+
+		string IServiceOperationRecorder.Category
 		{
 			get { return "Configuration"; }
 		}
 
-		protected override bool GenerateMessage(ServiceOperationInvocationInfo info, out string message)
+		public void PreCommit(IServiceOperationRecorderContext recorderContext, IPersistenceContext persistenceContent)
 		{
-			// don't bother logging failed attempts
-			if (info.Exception != null)
-			{
-				message = null;
-				return false;
-			}
+		}
 
-			var request = (ConfigurationDocumentRequestBase)info.Request;
+		public void PostCommit(IServiceOperationRecorderContext recorderContext)
+		{
+			var request = (ConfigurationDocumentRequestBase)recorderContext.Request;
 
 			var sw = new StringWriter();
 			using (var writer = new XmlTextWriter(sw))
@@ -46,7 +45,7 @@ namespace ClearCanvas.Enterprise.Configuration
 				writer.Formatting = Formatting.Indented;
 				writer.WriteStartDocument();
 				writer.WriteStartElement("action");
-				writer.WriteAttributeString("type", info.OperationMethodInfo.Name);
+				writer.WriteAttributeString("type", recorderContext.OperationMethodInfo.Name);
 				writer.WriteAttributeString("documentName", request.DocumentKey.DocumentName);
 				writer.WriteAttributeString("documentVersion", request.DocumentKey.Version.ToString());
 				writer.WriteAttributeString("documentUser", request.DocumentKey.User ?? "{application}");
@@ -55,8 +54,7 @@ namespace ClearCanvas.Enterprise.Configuration
 				writer.WriteEndDocument();
 			}
 
-			message = sw.ToString();
-			return true;
+			recorderContext.Write(sw.ToString());
 		}
 	}
 }
