@@ -31,7 +31,7 @@ namespace ClearCanvas.Enterprise.Configuration
 			get { return "Configuration"; }
 		}
 
-		public void PreCommit(IServiceOperationRecorderContext recorderContext)
+		public void PreCommit(IServiceOperationRecorderContext recorderContext, IPersistenceContext persistenceContent)
 		{
 		}
 

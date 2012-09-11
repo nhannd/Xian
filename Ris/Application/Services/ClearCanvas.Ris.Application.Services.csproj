@@ -92,6 +92,7 @@
   <ItemGroup>
     <Compile Include="AddressAssembler.cs" />
     <Compile Include="Admin\DepartmentAdmin\DepartmentAdminService.cs" />
+    <Compile Include="Admin\PatientAdmin\PatientAdminServiceRecorder.cs" />
     <Compile Include="Admin\PatientAdmin\PatientAdminSettings.cs" />
     <Compile Include="Admin\PatientAdmin\PatientAdminSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -99,6 +100,7 @@
       <DependentUpon>PatientAdminSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="AttachmentStore.cs" />
+    <Compile Include="ModalityWorkflow\ModalityWorkflowServiceRecorder.cs" />
     <Compile Include="PatientAllergyAssembler.cs" />
     <Compile Include="DepartmentAssembler.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceAdminService.cs" />
@@ -107,7 +109,10 @@
     <Compile Include="Admin\WorkQueueAdmin\WorkQueueAdminService.cs" />
     <Compile Include="DicomSeriesAssembler.cs" />
     <Compile Include="PersistentWorkflow.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntryServiceRecorder.cs" />
+    <Compile Include="ReportingWorkflow\ReportingWorkflowServiceRecorder.cs" />
     <Compile Include="ReportingWorklistItemKey.cs" />
+    <Compile Include="RisServiceOperationRecorderBase.cs" />
     <Compile Include="TranscriptionWorkflow\TranscriptionWorkflowService.cs" />
     <Compile Include="ModalityWorklistItemKey.cs" />
     <Compile Include="RegistrationWorklistItemKey.cs" />

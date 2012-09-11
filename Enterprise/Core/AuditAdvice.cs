@@ -23,7 +23,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Enterprise.Core
 {
 	/// <summary>
-	/// Advice class responsible for honouring <see cref="AuditAttribute"/>s applied to service operation methods.
+	/// Advice class responsible for honouring <see cref="AuditRecorderAttribute"/>s applied to service operation methods.
 	/// </summary>
 	public class AuditAdvice : IInterceptor
 	{
@@ -88,12 +88,12 @@ namespace ClearCanvas.Enterprise.Core
 				get { return _changeSet; }
 			}
 
-			internal void PreCommit(EntityChangeSet changeSet)
+			internal void PreCommit(EntityChangeSet changeSet, IPersistenceContext persistenceContext)
 			{
 				try
 				{
 					_changeSet = changeSet;
-					_recorder.PreCommit(this);
+					_recorder.PreCommit(this, persistenceContext);
 				}
 				catch (Exception e)
 				{
@@ -105,7 +105,7 @@ namespace ClearCanvas.Enterprise.Core
 			{
 				try
 				{
-					_recorder.PreCommit(this);
+					_recorder.PostCommit(this);
 				}
 				catch (Exception e)
 				{
@@ -127,11 +127,11 @@ namespace ClearCanvas.Enterprise.Core
 				_recorderContexts = recorderContexts;
 			}
 
-			internal void PreCommit(EntityChangeSet changeSet)
+			internal void PreCommit(EntityChangeSet changeSet, IPersistenceContext persistenceContext)
 			{
 				foreach (var recorderContext in _recorderContexts)
 				{
-					recorderContext.PreCommit(changeSet);
+					recorderContext.PreCommit(changeSet, persistenceContext);
 				}
 			}
 
@@ -157,7 +157,7 @@ namespace ClearCanvas.Enterprise.Core
 				if (_invocationInfo == null)
 					return;
 
-				_invocationInfo.PreCommit(args.ChangeSet);
+				_invocationInfo.Peek().PreCommit(args.ChangeSet, args.PersistenceContext);
 			}
 
 			public void PostCommit(EntityChangeSetPostCommitArgs args)
@@ -168,31 +168,36 @@ namespace ClearCanvas.Enterprise.Core
 		#endregion
 
 		/// <summary>
-		/// Keep track of the invocation that is happening on the current thread.
+		/// Keep track of the invocations on the current thread.
 		/// </summary>
 		[ThreadStatic]
-		private static InvocationInfo _invocationInfo;
+		private static Stack<InvocationInfo> _invocationInfo;
 
 		#region IInterceptor Members
 
 		public void Intercept(IInvocation invocation)
 		{
+			// ensure the thread-static variable is initialized for the current thread
+			if (_invocationInfo == null)
+				_invocationInfo = new Stack<InvocationInfo>();
+
 			try
 			{
-				var recorderContexts = AttributeUtils.GetAttributes<AuditAttribute>(invocation.MethodInvocationTarget, true)
+
+				var recorderContexts = AttributeUtils.GetAttributes<AuditRecorderAttribute>(invocation.MethodInvocationTarget, true)
 										.Select(a => new RecorderContext(invocation, (IServiceOperationRecorder)Activator.CreateInstance(a.RecorderClass)))
 										.ToList();
 
-				_invocationInfo = new InvocationInfo(recorderContexts);
+				_invocationInfo.Push(new InvocationInfo(recorderContexts));
 
 				invocation.Proceed();
 
-				_invocationInfo.PostCommit();
+				_invocationInfo.Peek().PostCommit();
 			}
 			finally
 			{
 				// clear current invocation
-				_invocationInfo = null;
+				_invocationInfo.Pop();
 			}
 		}
 

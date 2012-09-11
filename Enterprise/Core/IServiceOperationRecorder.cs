@@ -64,17 +64,32 @@ namespace ClearCanvas.Enterprise.Core
 
 
 	/// <summary>
-	/// Defines an interface for writing an audit log entry that records
-	/// information about the invocation of a service operation.
+	/// Defines an interface to an object that records information about the invocation of a service operation
+	/// for auditing purposes.
 	/// </summary>
 	public interface IServiceOperationRecorder
 	{
+		/// <summary>
+		/// Gets the application name under which to log the message.
+		/// </summary>
 		string Application { get; }
 
+		/// <summary>
+		/// Gets the audit log category under which to log the message.
+		/// </summary>
 		string Category { get; }
 
-		void PreCommit(IServiceOperationRecorderContext recorderContext);
+		/// <summary>
+		/// Called after the body of the operation has executed, but prior to commit.
+		/// </summary>
+		/// <param name="recorderContext"></param>
+		/// <param name="persistenceContent"></param>
+		void PreCommit(IServiceOperationRecorderContext recorderContext, IPersistenceContext persistenceContent);
 
+		/// <summary>
+		/// Called after the transaction has been committed.
+		/// </summary>
+		/// <param name="recorderContext"></param>
 		void PostCommit(IServiceOperationRecorderContext recorderContext);
 	}
 }
