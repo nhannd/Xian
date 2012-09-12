@@ -156,7 +156,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._resultCommunicationMode.Location = new System.Drawing.Point(14, 101);
 			this._resultCommunicationMode.Margin = new System.Windows.Forms.Padding(2);
 			this._resultCommunicationMode.Name = "_resultCommunicationMode";
-			this._resultCommunicationMode.Size = new System.Drawing.Size(224, 41);
+			this._resultCommunicationMode.Size = new System.Drawing.Size(357, 41);
 			this._resultCommunicationMode.TabIndex = 3;
 			this._resultCommunicationMode.Value = null;
 			// 
@@ -217,7 +217,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._informationAuthority.Location = new System.Drawing.Point(14, 147);
 			this._informationAuthority.Margin = new System.Windows.Forms.Padding(2);
 			this._informationAuthority.Name = "_informationAuthority";
-			this._informationAuthority.Size = new System.Drawing.Size(224, 41);
+			this._informationAuthority.Size = new System.Drawing.Size(357, 41);
 			this._informationAuthority.TabIndex = 4;
 			this._informationAuthority.Value = null;
 			// 

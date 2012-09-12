@@ -1170,4 +1170,7 @@
   <data name="MessageEndpointNotFoundOfflineMode" xml:space="preserve">
     <value>The server is currently offline.</value>
   </data>
+  <data name="MessageDiagnosticServiceMustHaveAssociatedProcedureTypes" xml:space="preserve">
+    <value>At least one procedure type must be selected.</value>
+  </data>
 </root>

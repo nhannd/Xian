@@ -153,10 +153,10 @@ namespace ClearCanvas.Enterprise.Core
 		{
 			public void PreCommit(EntityChangeSetPreCommitArgs args)
 			{
-				// store a copy of the change set for use by recorders
-				if (_invocationInfo == null)
+				if (_invocationInfo == null || _invocationInfo.Count == 0)
 					return;
 
+				// store a copy of the change set for use by recorders
 				_invocationInfo.Peek().PreCommit(args.ChangeSet, args.PersistenceContext);
 			}
 
