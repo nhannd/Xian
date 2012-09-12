@@ -18,6 +18,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.Mwl;
 using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
@@ -44,7 +45,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		{
 			var assembler = new ModalityWorkflowAssembler();
 			var broker = this.PersistenceContext.GetBroker<IModalityWorklistItemBroker>();
-			return SearchHelper<WorklistItem, ModalityWorklistItemSummary>(
+			return SearchHelper<MwlWorklistItem, ModalityWorklistItemSummary>(
 				request,
 				broker,
 				WorklistItemProjection.ModalityWorklistSearch,
@@ -61,7 +62,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		public QueryWorklistResponse<ModalityWorklistItemSummary> QueryWorklist(QueryWorklistRequest request)
 		{
 			var assembler = new ModalityWorkflowAssembler();
-			return QueryWorklistHelper<WorklistItem, ModalityWorklistItemSummary>(
+			return QueryWorklistHelper<MwlWorklistItem, ModalityWorklistItemSummary>(
 				request,
 				item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext));
 		}

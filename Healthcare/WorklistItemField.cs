@@ -133,6 +133,11 @@ namespace ClearCanvas.Healthcare
 		
 		#endregion
 
+		#region MWL specific field constants
+
+		public static readonly WorklistItemField ProcedureStudyInstanceUID = new WorklistItemField(WorklistItemFieldLevel.Procedure);
+
+		#endregion
 
 		#region Reporting-specific field constants
 

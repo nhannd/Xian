@@ -436,6 +436,7 @@ namespace ClearCanvas.Healthcare
 				new ProcedureCheckIn(),
 				_imageAvailability,
 				_downtimeRecoveryMode,
+				_studyInstanceUID,
 				new HashedSet<Report>(),
 				new HashedSet<Protocol>(),
 				this);

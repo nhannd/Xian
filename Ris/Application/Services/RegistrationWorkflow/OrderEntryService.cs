@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Permissions;
 using System.Threading;
+using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core.Printing;
 using ClearCanvas.Healthcare.Printing;
 using ClearCanvas.Healthcare.Workflow.OrderEntry;
@@ -566,6 +567,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					// important to set this flag prior to creating the procedure steps, because it may affect
 					// which procedure steps are created
 					rp.DowntimeRecoveryMode = requisition.IsDowntimeOrder;
+					rp.StudyInstanceUID = DicomUid.GenerateUid().UID;
 					return rp;
 				});
 

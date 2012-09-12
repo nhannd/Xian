@@ -65,6 +65,7 @@ namespace ClearCanvas.Healthcare
 			// initialize the "search" projections for each type of worklist
 
 			ModalityWorklistSearch = GetDefaultProjection(WorklistItemField.ProcedureScheduledStartTime);
+			ModalityWorklistSearch.AddFields(new[] {WorklistItemField.ProcedureStudyInstanceUID});
 
 			// need to display the correct time field
 			// ProcedureScheduledStartTime seems like a reasonable choice for registration homepage search,
