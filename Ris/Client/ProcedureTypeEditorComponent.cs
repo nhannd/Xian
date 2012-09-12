@@ -124,6 +124,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		[ValidateNotNull]
 		public ModalitySummary DefaultModality
 		{
 			get { return _procedureTypeDetail.DefaultModality; }
