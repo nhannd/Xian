@@ -76,6 +76,7 @@
     <Compile Include="Data\DuplicateSopEntryController.cs" />
     <Compile Include="Data\Model\WorkQueueInfo.cs" />
     <Compile Include="EntityCollection.cs" />
+    <Compile Include="Extensions\LoginPageExtensionPoint.cs" />
     <Compile Include="HttpContextData.cs" />
     <Compile Include="Data\StudyDeleteReasonAdaptor.cs" />
     <Compile Include="Data\UserManagementController.cs" />
