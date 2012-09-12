@@ -206,7 +206,7 @@ namespace ClearCanvas.Ris.Application.Services
 			{
 				var changeSetData = DefaultEntityChangeSetRecorder.WriteChangeSet(_capturedData.Operation, recorderContext.ChangeSet.Changes);
 				var includedActions = from action in changeSetData.Actions
-									  where _changeSetIncludes.Contains(action.OID) || _changeSetIncludes.Contains(action.Class)
+									  where action.Type == "Update" && _changeSetIncludes.Contains(action.OID) || _changeSetIncludes.Contains(action.Class)
 									  select (object)action;
 				_capturedData.ChangeSet = new ChangeSetData {Actions = includedActions.ToList()};
 			}
