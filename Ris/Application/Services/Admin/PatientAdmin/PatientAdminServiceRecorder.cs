@@ -20,6 +20,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 		static class Operations
 		{
 			public const string New = "Patient:New";
+			public const string OpenForUpdate = "PatientProfile:OpenForUpdate";
 			public const string Update = "PatientProfile:Update";
 		}
 
@@ -31,6 +32,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 				var patientProfile = persistenceContext.Load<PatientProfile>(response.PatientProfile.PatientProfileRef, EntityLoadFlags.None);
 
 				return new OperationData(Operations.New, patientProfile);
+			}
+		}
+
+		internal class LoadPatientProfileForEdit : RisServiceOperationRecorderBase
+		{
+			protected override OperationData Capture(IServiceOperationRecorderContext recorderContext, IPersistenceContext persistenceContext)
+			{
+				var response = (LoadPatientProfileForEditResponse)recorderContext.Response;
+				var patientProfile = persistenceContext.Load<PatientProfile>(response.PatientProfileRef, EntityLoadFlags.None);
+
+				return new OperationData(Operations.OpenForUpdate, patientProfile);
 			}
 		}
 

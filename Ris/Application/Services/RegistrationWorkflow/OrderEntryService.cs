@@ -174,6 +174,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		}
 
 		[ReadOperation]
+		[AuditRecorder(typeof(OrderEntryServiceRecorder.LoadOrderForEdit))]
 		public GetOrderRequisitionForEditResponse GetOrderRequisitionForEdit(GetOrderRequisitionForEditRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");

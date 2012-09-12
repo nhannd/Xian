@@ -31,11 +31,14 @@ namespace ClearCanvas.Enterprise.Core
 			// JR: is there any point in logging exceptions from the in-process provider?  Or is this just redundant?
 			//_serviceFactory.Interceptors.Add(new ExceptionLoggingAdvice());
 
-			// add audit advice outside of main persistence context advice, so that messages are written post-commit
-			_serviceFactory.Interceptors.Add(new AuditAdvice());
+			// add outer audit advice outside of main persistence context advice
+			_serviceFactory.Interceptors.Add(new AuditAdvice.Outer());
 
 			// add persistence context advice, that controls the persistence context for the main transaction
 			_serviceFactory.Interceptors.Add(new PersistenceContextAdvice());
+
+			// add inner audit advice inside of main persistence context advice
+			_serviceFactory.Interceptors.Add(new AuditAdvice.Inner());
 		}
 
 		#region IServiceProvider Members
