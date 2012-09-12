@@ -10,8 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -24,26 +22,21 @@ namespace ClearCanvas.Enterprise.Core
     /// a default constructor.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
-    public class AuditAttribute : Attribute
+    public class AuditRecorderAttribute : Attribute
     {
-        private readonly Type _recorderClass;
-
-        /// <summary>
+    	/// <summary>
         /// Constructor
         /// </summary>
         /// <param name="recorderClass"></param>
-        public AuditAttribute(Type recorderClass)
+        public AuditRecorderAttribute(Type recorderClass)
         {
-            _recorderClass = recorderClass;
+            RecorderClass = recorderClass;
         }
 
-        /// <summary>
-        /// Gets the implementation of <see cref="IServiceOperationRecorder"/> that
-        /// will create the audit log entry.
-        /// </summary>
-        internal Type RecorderClass
-        {
-            get { return _recorderClass; }
-        }
+    	/// <summary>
+    	/// Gets the implementation of <see cref="IServiceOperationRecorder"/> that
+    	/// will create the audit log entry.
+    	/// </summary>
+    	internal Type RecorderClass { get; private set; }
     }
 }

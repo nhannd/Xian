@@ -11,253 +11,287 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Xml;
+using System.Linq;
+using System.Runtime.Serialization;
 using ClearCanvas.Common.Audit;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
 using System.Collections;
-using System.Reflection;
 using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Enterprise.Core
 {
-    /// <summary>
-    /// Default implementation of <see cref="IEntityChangeSetRecorder"/>.
-    /// </summary>
-    public class DefaultEntityChangeSetRecorder : IEntityChangeSetRecorder
-    {
-        private const int MaxStringLength = 255;
-        private const string NullValue = "{null}";
-        private const string MultiValued = "{multiple-values}";
+	/// <summary>
+	/// Default implementation of <see cref="IEntityChangeSetRecorder"/>.
+	/// </summary>
+	public class DefaultEntityChangeSetRecorder : IEntityChangeSetRecorder
+	{
+		#region Data contracts
+
+		[DataContract]
+		public class ChangeSetData
+		{
+			[DataMember]
+			public string Operation;
+
+			[DataMember]
+			public List<ActionData> Actions;
+		}
+
+		[DataContract]
+		public class ActionData
+		{
+			[DataMember]
+			public string Type;
+
+			[DataMember]
+			public string Class;
+
+			[DataMember]
+			public string OID;
+
+			[DataMember]
+			public int Version;
+
+			[DataMember]
+			public Dictionary<string, PropertyData> ChangedProperties;
+		}
+
+		[DataContract]
+		public class PropertyData
+		{
+			[DataMember]
+			public object OldValue;
+
+			[DataMember]
+			public object NewValue;
+		}
+
+		#endregion
+
+		private const int MaxStringLength = 255;
+		private const string NullValue = "{null}";
+		private const string MultiValued = "{multiple-values}";
 
 		#region ObjectWriter implementation
 
 		class ObjectWriter : IObjectWriter
 		{
-			private readonly XmlWriter _xmlWriter;
-			private readonly DefaultEntityChangeSetRecorder _owner;
+			private readonly Dictionary<string, object> _data = new Dictionary<string, object>();
 
-			public ObjectWriter(DefaultEntityChangeSetRecorder owner, XmlWriter xmlWriter)
+			void IObjectWriter.WriteProperty(string name, object value)
 			{
-				_owner = owner;
-				_xmlWriter = xmlWriter;
+				_data[name] = WritePropertyValue(value);
 			}
 
-			public void WriteProperty(string name, object value)
+			internal Dictionary<string, object> Data
 			{
-				_owner.WritePropertyValue(_xmlWriter, name, value);
+				get { return _data; }
 			}
 		}
 
 		#endregion
 
+		/// <summary>
+		/// Obtains a data-contract instance representing the specified change-set, suitable for
+		/// transmission and/or serialization to an audit log.
+		/// </summary>
+		/// <param name="operationName"></param>
+		/// <param name="changeSet"></param>
+		/// <returns></returns>
+		public static ChangeSetData WriteChangeSet(string operationName, IEnumerable<EntityChange> changeSet)
+		{
+			var actionData = from entityChange in changeSet
+							 select new ActionData
+							 {
+								 Type = entityChange.ChangeType.ToString(),
+								 Class = EntityRefUtils.GetClass(entityChange.EntityRef).FullName,
+								 OID = EntityRefUtils.GetOID(entityChange.EntityRef).ToString(),
+								 Version = EntityRefUtils.GetVersion(entityChange.EntityRef),
+								 ChangedProperties = WriteProperties(entityChange)
+							 };
+
+			return new ChangeSetData { Operation = StringUtilities.EmptyIfNull(operationName), Actions = actionData.ToList() };
+		}
+
+
 		private string _operationName;
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public DefaultEntityChangeSetRecorder()
-        {
-        }
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public DefaultEntityChangeSetRecorder()
+		{
+		}
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="operationName"></param>
-        public DefaultEntityChangeSetRecorder(string operationName)
-        {
-            _operationName = operationName;
-        }
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="operationName"></param>
+		public DefaultEntityChangeSetRecorder(string operationName)
+		{
+			_operationName = operationName;
+		}
 
-        /// <summary>
-        /// Gets or sets a logical operation name for the operation that produced the change set.
-        /// </summary>
-        public string OperationName
-        {
-            get { return _operationName; }
-            set { _operationName = value; }
+		/// <summary>
+		/// Gets or sets a logical operation name for the operation that produced the change set.
+		/// </summary>
+		public string OperationName
+		{
+			get { return _operationName; }
+			set { _operationName = value; }
 		}
 
 
 		#region IEntityChangeSetRecorder Members
 
-    	/// <summary>
-    	/// Writes an audit log entry for the specified change set.
-    	/// </summary>
-    	public void WriteLogEntry(IEnumerable<EntityChange> changeSet, AuditLog auditLog)
-        {
-			auditLog.WriteEntry(_operationName, WriteXml(changeSet));
-        }
+		/// <summary>
+		/// Writes an audit log entry for the specified change set.
+		/// </summary>
+		void IEntityChangeSetRecorder.WriteLogEntry(IEnumerable<EntityChange> changeSet, AuditLog auditLog)
+		{
+			var xml = JsmlSerializer.Serialize(WriteChangeSet(_operationName, changeSet), "ChangeSet");
+			auditLog.WriteEntry(_operationName, xml);
+		}
 
-        #endregion
+		#endregion
 
-        private string WriteXml(IEnumerable<EntityChange> changeSet)
-        {
-            StringWriter sw = new StringWriter();
-            using (XmlTextWriter writer = new XmlTextWriter(sw))
-            {
-                writer.Formatting = Formatting.Indented;
-                WriteChangeSet(writer, changeSet);
-                return sw.ToString();
-            }
-        }
+		#region Helpers
 
-        private void WriteChangeSet(XmlWriter writer, IEnumerable<EntityChange> changeSet)
-        {
-            writer.WriteStartDocument();
-            writer.WriteStartElement("change-set");
-            writer.WriteAttributeString("operation", StringUtilities.EmptyIfNull(_operationName));
-            foreach (EntityChange entityChange in changeSet)
-            {
-                writer.WriteStartElement("action");
-                writer.WriteAttributeString("type", entityChange.ChangeType.ToString());
-                writer.WriteAttributeString("class", EntityRefUtils.GetClass(entityChange.EntityRef).FullName);
-                writer.WriteAttributeString("oid", EntityRefUtils.GetOID(entityChange.EntityRef).ToString());
-                writer.WriteAttributeString("version", EntityRefUtils.GetVersion(entityChange.EntityRef).ToString());
+		private static Dictionary<string, PropertyData> WriteProperties(EntityChange entityChange)
+		{
+			var propertiesData = new Dictionary<string, PropertyData>();
 
-                // write property changes
-                WriteProperties(writer, entityChange);
-
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-            writer.WriteEndDocument();
-        }
-
-        private void WriteProperties(XmlWriter writer, EntityChange entityChange)
-        {
-        	Type entityClass = EntityRefUtils.GetClass(entityChange.EntityRef);
-
-            foreach (PropertyChange prop in entityChange.PropertyChanges)
-            {
-            	PropertyInfo pi = entityClass.GetProperty(prop.PropertyName);
+			var entityClass = EntityRefUtils.GetClass(entityChange.EntityRef);
+			foreach (var prop in entityChange.PropertyChanges)
+			{
+				var pi = entityClass.GetProperty(prop.PropertyName);
 
 				// special handling of extended properties collections
-                // note that we need to check pi != null because it may represent a field-access "property"
-                // which has no corresponding .NET property
-            	if(pi != null && AttributeUtils.HasAttribute<ExtendedPropertiesCollectionAttribute>(pi))
-            	{
-            		WriteExtendedProperties(writer, prop, entityChange.ChangeType);
-            	}
-				else
-            	{
-					WriteProperty(writer, prop.PropertyName, prop.OldValue, prop.NewValue, entityChange.ChangeType);
+				// note that we need to check pi != null because it may represent a field-access "property"
+				// which has no corresponding .NET property
+				if (pi != null && AttributeUtils.HasAttribute<ExtendedPropertiesCollectionAttribute>(pi))
+				{
+					var extendedProps = WriteExtendedProperties(prop, entityChange.ChangeType);
+					foreach (var extendedProp in extendedProps)
+					{
+						propertiesData.Add(extendedProp.Key, extendedProp.Value);
+					}
 				}
-            }
-        }
+				else
+				{
+					var propertyData = WriteProperty(prop.OldValue, prop.NewValue, entityChange.ChangeType);
+					propertiesData.Add(prop.PropertyName, propertyData);
+				}
+			}
+			return propertiesData;
+		}
 
-		private void WriteProperty(XmlWriter writer, string propertyName, object oldValue, object newValue, EntityChangeType changeType)
+		private static PropertyData WriteProperty(object oldValue, object newValue, EntityChangeType changeType)
 		{
-			writer.WriteStartElement("property");
-			writer.WriteAttributeString("name", propertyName);
+			var data = new PropertyData();
 
 			// for Updates and Deletes, write the old value
 			if (changeType != EntityChangeType.Create)
 			{
-				WritePropertyValue(writer, "old-value", oldValue);
+				data.OldValue = WritePropertyValue(oldValue);
 			}
 
 			// for Creates and Updates, write the new value
-			if(changeType != EntityChangeType.Delete)
+			if (changeType != EntityChangeType.Delete)
 			{
-				WritePropertyValue(writer, "new-value", newValue);
+				data.NewValue = WritePropertyValue(newValue);
 			}
-			writer.WriteEndElement();
+			return data;
 		}
 
-		private void WriteExtendedProperties(XmlWriter writer, PropertyChange propertyChange, EntityChangeType changeType)
+		private static Dictionary<string, PropertyData> WriteExtendedProperties(PropertyChange propertyChange, EntityChangeType changeType)
 		{
-			string collectionName = propertyChange.PropertyName;
-			IDictionary oldColl = propertyChange.OldValue == null ? new Hashtable() : (IDictionary) propertyChange.OldValue;
-			IDictionary newColl = propertyChange.NewValue == null ? new Hashtable() : (IDictionary) propertyChange.NewValue;
+			var result = new Dictionary<string, PropertyData>();
+
+			var collectionName = propertyChange.PropertyName;
+			var oldColl = propertyChange.OldValue == null ? new Hashtable() : (IDictionary)propertyChange.OldValue;
+			var newColl = propertyChange.NewValue == null ? new Hashtable() : (IDictionary)propertyChange.NewValue;
 
 			// obtain unique set of keys over both items
-			ArrayList keys = CollectionUtils.Unique(CollectionUtils.Concat(oldColl.Keys, newColl.Keys));
+			var keys = CollectionUtils.Unique(CollectionUtils.Concat(oldColl.Keys, newColl.Keys));
 
 			// enumerate each key
-			foreach (object key in keys)
+			foreach (var key in keys)
 			{
-				object oldValue = oldColl.Contains(key) ? oldColl[key] : null;
-				object newValue = newColl.Contains(key) ? newColl[key] : null;
+				var oldValue = oldColl.Contains(key) ? oldColl[key] : null;
+				var newValue = newColl.Contains(key) ? newColl[key] : null;
 
 				// has this "property" changed?
-				if(!Equals(oldValue, newValue))
+				if (!Equals(oldValue, newValue))
 				{
-					string propertyName = string.Concat(collectionName, ".", key);
-					WriteProperty(writer, propertyName, oldValue, newValue, changeType);
+					var propertyName = string.Concat(collectionName, ".", key);
+					var propertyData = WriteProperty(oldValue, newValue, changeType);
+					result.Add(propertyName, propertyData);
 				}
 			}
+			return result;
 		}
 
-        private void WritePropertyValue(XmlWriter writer, string tagName, object propertyValue)
-        {
-			if(propertyValue is ICollection)
-			{
-				writer.WriteStartElement(tagName);
-				WriteCollectionContent(writer, propertyValue);
-				writer.WriteEndElement();
-			}
-			else
-			{
-				writer.WriteStartElement(tagName);
-				if(propertyValue is IAuditFormattable)
-				{
-					// allow value to write itself
-					IAuditFormattable formattable = propertyValue as IAuditFormattable;
-					formattable.Write(new ObjectWriter(this, writer));
-				}
-				else
-				{
-					// use simple serialization
-					writer.WriteValue(GetSerializedValue(propertyValue));
-				}
-
-				writer.WriteEndElement();
-			}
-        }
-
-		private void WriteCollectionContent(XmlWriter writer, object collection)
+		private static object WritePropertyValue(object propertyValue)
 		{
-			foreach (object item in (IEnumerable)collection)
+			if (propertyValue is ICollection)
 			{
-				WritePropertyValue(writer, "item", item);
+				return WriteCollectionContent(propertyValue);
 			}
+
+			if (propertyValue is IAuditFormattable)
+			{
+				// allow value to write itself
+				var formattable = propertyValue as IAuditFormattable;
+				var objectWriter = new ObjectWriter();
+				formattable.Write(objectWriter);
+				return objectWriter.Data;
+			}
+
+			// use simple serialization
+			return GetSerializedValue(propertyValue);
 		}
 
-        private static string GetSerializedValue(object value)
-        {
-            if(value == null)
-                return NullValue;
+		private static List<object> WriteCollectionContent(object collection)
+		{
+			return (from object item in ((IEnumerable) collection)
+					select WritePropertyValue(item)).ToList();
+		}
 
-            // use ISO format for date times, because it is easy to parse
-            if(value is DateTime)
-                return DateTimeUtils.FormatISO((DateTime)value);
-
-            // for entities, write the class name and object id
-            if(value is Entity)
-            {
-                Entity entity = value as Entity;
-                return string.Format("{0}:{1}", entity.GetClass().FullName, entity.OID);
-            }
-
-            // for enum values, write the code
-            if(value is EnumValue)
-                return (value as EnumValue).Code;
-
-            // don't support dealing with nested collections at the present time
-            // just write out that it is multi-valued
-            if(value is ICollection || value is IList)
-                return MultiValued;
-
-            // for all other values, including components (ValueObject subclasses)
-			// just call ToString() and truncate to MaxStringLength chars
-        	string s = value.ToString();
-			if (s == null)
+		private static string GetSerializedValue(object value)
+		{
+			if (value == null)
 				return NullValue;
-			return (s.Length > MaxStringLength) ? s.Substring(0, MaxStringLength) : s;
-        }
 
-    }
+			// use ISO format for date times, because it is easy to parse
+			if (value is DateTime)
+				return DateTimeUtils.FormatISO((DateTime)value);
+
+			// for entities, write the class name and object id
+			if (value is Entity)
+			{
+				var entity = value as Entity;
+				return string.Format("{0}:{1}", entity.GetClass().FullName, entity.OID);
+			}
+
+			// for enum values, write the code
+			if (value is EnumValue)
+				return (value as EnumValue).Code;
+
+			// don't support dealing with nested collections at the present time
+			// just write out that it is multi-valued
+			if (value is ICollection)
+				return MultiValued;
+
+			// for all other values, including components (ValueObject subclasses)
+			// just call ToString() and truncate to MaxStringLength chars
+			var s = value.ToString();
+			return (s.Length > MaxStringLength) ? s.Substring(0, MaxStringLength) : s;
+		}
+
+		#endregion
+
+	}
 }

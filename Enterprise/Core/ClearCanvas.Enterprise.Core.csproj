@@ -89,7 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuditAdvice.cs" />
-    <Compile Include="AuditAttribute.cs" />
+    <Compile Include="AuditRecorderAttribute.cs" />
     <Compile Include="AuditLogEntry.cs" />
     <Compile Include="Audit\AuditLogEntryAssembler.cs" />
     <Compile Include="Audit\AuditService.cs" />
@@ -238,7 +238,6 @@
     <Compile Include="ServiceOperationAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ServiceOperationRecorderBase.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

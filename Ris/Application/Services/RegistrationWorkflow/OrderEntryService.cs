@@ -194,6 +194,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Create)]
+		[AuditRecorder(typeof(OrderEntryServiceRecorder.PlaceOrder))]
 		public PlaceOrderResponse PlaceOrder(PlaceOrderRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
@@ -215,6 +216,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Modify)]
 		[OperationEnablement("CanModifyOrder")]
+		[AuditRecorder(typeof(OrderEntryServiceRecorder.ModifyOrder))]
 		public ModifyOrderResponse ModifyOrder(ModifyOrderRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
@@ -238,6 +240,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Replace)]
 		[OperationEnablement("CanReplaceOrder")]
+		[AuditRecorder(typeof(OrderEntryServiceRecorder.ReplaceOrder))]
 		public ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
@@ -275,6 +278,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Merge)]
 		[OperationEnablement("CanMergeOrder")]
+		[AuditRecorder(typeof(OrderEntryServiceRecorder.MergeOrder))]
 		public MergeOrderResponse MergeOrder(MergeOrderRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
@@ -306,6 +310,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Unmerge)]
 		[OperationEnablement("CanUnmergeOrder")]
+		[AuditRecorder(typeof(OrderEntryServiceRecorder.UnmergeOrder))]
 		public UnmergeOrderResponse UnmergeOrder(UnmergeOrderRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
@@ -341,6 +346,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		[UpdateOperation]
 		[OperationEnablement("CanCancelOrder")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Cancel)]
+		[AuditRecorder(typeof(OrderEntryServiceRecorder.CancelOrder))]
 		public CancelOrderResponse CancelOrder(CancelOrderRequest request)
 		{
 			var order = this.PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);

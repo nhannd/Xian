@@ -136,6 +136,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 		[UpdateOperation]
 		[OperationEnablement("CanCompleteInterpretationForTranscription")]
+		[AuditRecorder(typeof(ReportingWorkflowServiceRecorder.CompleteInterpretation))]
 		public CompleteInterpretationForTranscriptionResponse CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request)
 		{
 			var interpretation = this.PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
@@ -160,6 +161,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		[UpdateOperation]
 		[OperationEnablement("CanCompleteInterpretationForVerification")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.SubmitForReview)]
+		[AuditRecorder(typeof(ReportingWorkflowServiceRecorder.CompleteInterpretation))]
 		public CompleteInterpretationForVerificationResponse CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request)
 		{
 			var interpretation = this.PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
@@ -184,6 +186,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		[UpdateOperation]
 		[OperationEnablement("CanCompleteInterpretationAndVerify")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Verify)]
+		[AuditRecorder(typeof(ReportingWorkflowServiceRecorder.CompleteVerification))]
 		public CompleteInterpretationAndVerifyResponse CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request)
 		{
 			var interpretation = this.PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
@@ -209,6 +212,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		[OperationEnablement("CanCancelReportingStep")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Create)]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Cancel)]
+		[AuditRecorder(typeof(ReportingWorkflowServiceRecorder.Discard))]
 		public CancelReportingStepResponse CancelReportingStep(CancelReportingStepRequest request)
 		{
 			var step = this.PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
@@ -283,6 +287,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		[UpdateOperation]
 		[OperationEnablement("CanCompleteVerification")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Verify)]
+		[AuditRecorder(typeof(ReportingWorkflowServiceRecorder.CompleteVerification))]
 		public CompleteVerificationResponse CompleteVerification(CompleteVerificationRequest request)
 		{
 			var verification = this.PersistenceContext.Load<VerificationStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
@@ -325,6 +330,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		[UpdateOperation]
 		[OperationEnablement("CanReviseUnpublishedReport")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Verify)]
+		[AuditRecorder(typeof(ReportingWorkflowServiceRecorder.Revise))]
 		public ReviseUnpublishedReportResponse ReviseUnpublishedReport(ReviseUnpublishedReportRequest request)
 		{
 			var publication = this.PersistenceContext.Load<PublicationStep>(request.PublicationStepRef, EntityLoadFlags.CheckVersion);

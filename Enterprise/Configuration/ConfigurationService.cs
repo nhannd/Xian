@@ -119,7 +119,7 @@ namespace ClearCanvas.Enterprise.Configuration
 		// because this service is invoked by the framework, rather than by the application,
 		// it is safest to use a new persistence scope
 		[UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
-		[Audit(typeof(ConfigurationServiceRecorder))]
+		[AuditRecorder(typeof(ConfigurationServiceRecorder))]
 		public SetConfigurationDocumentResponse SetConfigurationDocument(SetConfigurationDocumentRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");

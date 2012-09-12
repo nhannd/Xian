@@ -79,6 +79,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Patient.Update)]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.PatientProfile.Update)]
+		[AuditRecorder(typeof(PatientAdminServiceRecorder.UpdatePatientProfile))]
 		public UpdatePatientProfileResponse UpdatePatientProfile(UpdatePatientProfileRequest request)
 		{
 			var profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef, EntityLoadFlags.CheckVersion);
@@ -98,6 +99,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 
 		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Patient.Create)]
+		[AuditRecorder(typeof(PatientAdminServiceRecorder.AddPatient))]
 		public AddPatientResponse AddPatient(AddPatientRequest request)
 		{
 			var profile = new PatientProfile();
