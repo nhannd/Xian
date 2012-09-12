@@ -159,4 +159,7 @@
   <data name="LogicalHL7EventShredName" xml:space="preserve">
     <value>Logical HL7 Event Processor</value>
   </data>
+  <data name="UsageTrackingShred" xml:space="preserve">
+    <value>Usage Tracking Shred</value>
+  </data>
 </root>
