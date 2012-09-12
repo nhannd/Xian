@@ -41,8 +41,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_nameBox.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
 			_acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_itemSelector.AvailableItemsTable = _component.AvailableDiagnosticServices;
-			_itemSelector.SelectedItemsTable = _component.SelectedDiagnosticServices;
+			_itemSelector.AvailableItemsTable = _component.AvailableProcedureTypes;
+			_itemSelector.SelectedItemsTable = _component.SelectedProcedureTypes;
 
 			_itemSelector.ItemAdded += OnItemsAddedOrRemoved;
 			_itemSelector.ItemRemoved += OnItemsAddedOrRemoved;

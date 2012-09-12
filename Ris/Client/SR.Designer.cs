@@ -1879,6 +1879,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to At least one procedure type must be selected..
+        /// </summary>
+        internal static string MessageDiagnosticServiceMustHaveAssociatedProcedureTypes {
+            get {
+                return ResourceManager.GetString("MessageDiagnosticServiceMustHaveAssociatedProcedureTypes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Discharge time must be later than or equal to admit time..
         /// </summary>
         internal static string MessageDischargeTimeMustBeLaterThanOrEqualToAdmitTime {
