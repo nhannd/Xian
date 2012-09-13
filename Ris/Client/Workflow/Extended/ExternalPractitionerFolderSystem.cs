@@ -127,6 +127,11 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 			return WebResourcesSettings.Default.ExternalPractitionerFolderSystemUrl;
 		}
 
+		protected override PreviewOperationAuditData[] GetPreviewAuditData(WorkflowFolder folder, ICollection<ExternalPractitionerSummary> items)
+		{
+			return new PreviewOperationAuditData[0];	// audit not required
+		}
+
 		protected override IWorkflowItemToolContext CreateItemToolContext()
 		{
 			return new ExternalPractitionerItemToolContext(this);

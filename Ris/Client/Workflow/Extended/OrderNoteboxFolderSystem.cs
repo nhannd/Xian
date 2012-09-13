@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -128,6 +129,11 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<OrderNoteboxItemSummary> items)
 		{
 			return WebResourcesSettings.Default.OrderNoteboxFolderSystemUrl;
+		}
+
+		protected override PreviewOperationAuditData[] GetPreviewAuditData(WorkflowFolder folder, ICollection<OrderNoteboxItemSummary> items)
+		{
+			return items.Select(item => new PreviewOperationAuditData("Order Notes", item.Mrn, item.PatientName, item.AccessionNumber)).ToArray();
 		}
 
 		protected override IWorkflowFolderToolContext CreateFolderToolContext()

@@ -47,19 +47,24 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public override string GetTitle()
 		{
-			return ReportDocument.GetTitle(_worklistItem);
+			return GetTitle(_worklistItem);
 		}
 
 		public override bool SaveAndClose()
 		{
 			_component.SaveReport(true);
-			return base.Close();
+			return Close();
 		}
 
 		public override IApplicationComponent GetComponent()
 		{
 			_component = new ReportingComponent(_worklistItem, _folderName, _worklistRef, _worklistClassName, _shouldOpenImages);
 			return _component;
+		}
+
+		public override OpenWorkspaceOperationAuditData GetAuditData()
+		{
+			return new OpenWorkspaceOperationAuditData("Reporting", _worklistItem);
 		}
 
 		/// <summary>

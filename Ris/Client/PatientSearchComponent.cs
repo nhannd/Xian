@@ -187,7 +187,7 @@ namespace ClearCanvas.Ris.Client
 				var document = DocumentManager.Get<PatientBiographyDocument>(_selectedProfile.PatientProfileRef);
 				if (document == null)
 				{
-					document = new PatientBiographyDocument(_selectedProfile.PatientRef, _selectedProfile.PatientProfileRef, this.Host.DesktopWindow);
+					document = new PatientBiographyDocument(_selectedProfile, this.Host.DesktopWindow);
 					document.Open();
 				}
 				else

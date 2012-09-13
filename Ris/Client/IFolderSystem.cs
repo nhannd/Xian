@@ -147,6 +147,14 @@ namespace ClearCanvas.Ris.Client
 		/// </remarks>
 		string GetPreviewUrl(IFolder folder, object[] items);
 
+		/// <summary>
+		/// Gets the audit data for previewing the specified items.
+		/// </summary>
+		/// <param name="folder"> </param>
+		/// <param name="items"> </param>
+		/// <returns></returns>
+		PreviewOperationAuditData[] GetPreviewAuditData(IFolder folder, object[] items);
+
 		#endregion
 
 		#region Folder Invalidation
@@ -223,5 +231,6 @@ namespace ClearCanvas.Ris.Client
 		Type SearchComponentType { get; }
 
 		#endregion
+
 	}
 }

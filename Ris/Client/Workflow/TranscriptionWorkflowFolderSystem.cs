@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
@@ -71,6 +72,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<ReportingWorklistItemSummary> items)
 		{
 			return WebResourcesSettings.Default.TranscriptionFolderSystemUrl;
+		}
+
+		protected override PreviewOperationAuditData[] GetPreviewAuditData(WorkflowFolder folder, ICollection<ReportingWorklistItemSummary> items)
+		{
+			return items.Select(item => new PreviewOperationAuditData("Transcription", item)).ToArray();
 		}
 
 		protected override SearchResultsFolder CreateSearchResultsFolder()

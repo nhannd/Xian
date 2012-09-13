@@ -59,19 +59,24 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 
 		public override string GetTitle()
 		{
-			return ProtocolDocument.GetTitle(_item);
+			return GetTitle(_item);
 		}
 
 		public override bool SaveAndClose()
 		{
 			_component.Save(true);
-			return base.Close();
+			return Close();
 		}
 
 		public override IApplicationComponent GetComponent()
 		{
 			_component = new ProtocollingComponent(_item, _mode, _folderName, _worklistRef, _worklistClassName);
 			return _component;
+		}
+
+		public override OpenWorkspaceOperationAuditData GetAuditData()
+		{
+			return new OpenWorkspaceOperationAuditData("Protocolling", _item);
 		}
 
 		#endregion

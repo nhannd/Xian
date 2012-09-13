@@ -103,24 +103,44 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				var context = (IWorkflowItemToolContext)ContextBase;
 				var item = (WorklistItemSummaryBase) context.Selection.Item;
-				OpenPatient(item.PatientRef, item.PatientProfileRef, item.OrderRef, context.DesktopWindow);
+				OpenPatient(item, context.DesktopWindow);
 			}
 			else if (this.ContextBase is IPatientSearchToolContext)
 			{
 				var context = (IPatientSearchToolContext)this.ContextBase;
-				var profile = context.SelectedProfile;
-				OpenPatient(profile.PatientRef, profile.PatientProfileRef, null, context.DesktopWindow);
+				OpenPatient(context.SelectedProfile, context.DesktopWindow);
 			}
 		}
 
-		protected static void OpenPatient(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef, IDesktopWindow window)
+		protected static void OpenPatient(WorklistItemSummaryBase worklistItem, IDesktopWindow window)
 		{
 			try
 			{
-				var document = DocumentManager.Get<PatientBiographyDocument>(patientRef);
+				var document = DocumentManager.Get<PatientBiographyDocument>(worklistItem.PatientRef);
 				if (document == null)
 				{
-					document = new PatientBiographyDocument(patientRef, profileRef, orderRef, window);
+					document = new PatientBiographyDocument(worklistItem, window);
+					document.Open();
+				}
+				else
+				{
+					document.Open();
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, window);
+			}
+		}
+
+		protected static void OpenPatient(PatientProfileSummary patientProfile, IDesktopWindow window)
+		{
+			try
+			{
+				var document = DocumentManager.Get<PatientBiographyDocument>(patientProfile.PatientRef);
+				if (document == null)
+				{
+					document = new PatientBiographyDocument(patientProfile, window);
 					document.Open();
 				}
 				else
