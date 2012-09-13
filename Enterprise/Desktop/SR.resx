@@ -209,6 +209,9 @@ Note: This change may not take effect immediately.</value>
   <data name="MessageConfirmDeleteSelectedItems" xml:space="preserve">
     <value>Are you sure you want to delete the selected item(s)?</value>
   </data>
+  <data name="MessageConfirmImportLocallyDefinedAuthorityTokens" xml:space="preserve">
+    <value>Import authority tokens defined in locally installed plugins?</value>
+  </data>
   <data name="MessageConfirmTerminateSelectedSessions" xml:space="preserve">
     <value>Terminating a session that is in use may cause the associated user to lose unsaved data.  Are you sure you want to terminate the selected session(s)?</value>
   </data>

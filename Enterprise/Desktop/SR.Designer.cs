@@ -333,6 +333,15 @@ namespace ClearCanvas.Enterprise.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Import authority tokens defined in locally installed plugins?.
+        /// </summary>
+        public static string MessageConfirmImportLocallyDefinedAuthorityTokens {
+            get {
+                return ResourceManager.GetString("MessageConfirmImportLocallyDefinedAuthorityTokens", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Terminating a session that is in use may cause the associated user to lose unsaved data.  Are you sure you want to terminate the selected session(s)?.
         /// </summary>
         public static string MessageConfirmTerminateSelectedSessions {
