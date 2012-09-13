@@ -20,12 +20,13 @@ namespace ClearCanvas.Ris.Application.Services
 		static class Operations
 		{
 			public const string WorklistSearch = "Worklist:Search";
+			public const string PatientProfileSearch = "PatientProfile:Search";
 		}
 
-		internal class SearchWorklists : RisServiceOperationRecorderBase
+		internal abstract class SearchOperationRecorderBase : RisServiceOperationRecorderBase
 		{
 			[DataContract]
-			class SearchOperationData : OperationData
+			protected class SearchOperationData : OperationData
 			{
 				public SearchOperationData(string operation, string queryString)
 					: base(operation)
@@ -45,16 +46,25 @@ namespace ClearCanvas.Ris.Application.Services
 				[DataMember]
 				public object SearchParameters;
 			}
+		}
+
+		internal class SearchWorklists : SearchOperationRecorderBase
+		{
+			protected override OperationData Capture(IServiceOperationRecorderContext recorderContext, IPersistenceContext persistenceContext)
+			{
+				var request = (WorklistItemTextQueryRequest) recorderContext.Request;
+				return request.UseAdvancedSearch ?
+					new SearchOperationData(Operations.WorklistSearch, request.SearchFields)
+					: new SearchOperationData(Operations.WorklistSearch, request.TextQuery);
+			}
+		}
+
+		internal class SearchPatientProfiles : SearchOperationRecorderBase
+		{
 
 			protected override OperationData Capture(IServiceOperationRecorderContext recorderContext, IPersistenceContext persistenceContext)
 			{
-				var request = recorderContext.Request as WorklistItemTextQueryRequest;
-				if (request != null && request.UseAdvancedSearch)
-				{
-					return new SearchOperationData(Operations.WorklistSearch, request.SearchFields);
-				}
-
-				return new SearchOperationData(Operations.WorklistSearch, ((TextQueryRequest)recorderContext.Request).TextQuery);
+				return new SearchOperationData(Operations.PatientProfileSearch, ((TextQueryRequest)recorderContext.Request).TextQuery);
 			}
 		}
 	}

@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		}
 
 		[ReadOperation]
-		[AuditRecorder(typeof(WorkflowServiceRecorder.SearchWorklists))]
+		[AuditRecorder(typeof(WorkflowServiceRecorder.SearchPatientProfiles))]
 		public TextQueryResponse<PatientProfileSummary> PatientProfileTextQuery(TextQueryRequest request)
 		{
 			var helper = new PatientProfileTextQueryHelper(this.PersistenceContext);
