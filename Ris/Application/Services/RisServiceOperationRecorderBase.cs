@@ -81,6 +81,11 @@ namespace ClearCanvas.Ris.Application.Services
 		[DataContract]
 		public class OperationData
 		{
+			public OperationData(string operation)
+			{
+				Operation = operation;
+			}
+
 			public OperationData(string operation, PatientProfile patientProfile)
 			{
 				Operation = operation;
@@ -202,11 +207,11 @@ namespace ClearCanvas.Ris.Application.Services
 
 		private void Write(IServiceOperationRecorderContext recorderContext)
 		{
-			if (_changeSetIncludes.Any())
+			if (_changeSetIncludes.Any() && recorderContext.ChangeSet != null)
 			{
 				var changeSetData = DefaultEntityChangeSetRecorder.WriteChangeSet(_capturedData.Operation, recorderContext.ChangeSet.Changes);
 				var includedActions = from action in changeSetData.Actions
-									  where _changeSetIncludes.Contains(action.OID) || _changeSetIncludes.Contains(action.Class)
+									  where action.Type == "Update" && _changeSetIncludes.Contains(action.OID) || _changeSetIncludes.Contains(action.Class)
 									  select (object)action;
 				_capturedData.ChangeSet = new ChangeSetData {Actions = includedActions.ToList()};
 			}

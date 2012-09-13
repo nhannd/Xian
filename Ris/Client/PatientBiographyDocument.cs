@@ -12,6 +12,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -20,22 +21,34 @@ namespace ClearCanvas.Ris.Client
 		private readonly EntityRef _patientRef;
 		private readonly EntityRef _profileRef;
     	private readonly EntityRef _orderRef;
+    	private readonly PersonNameDetail _patientName;
+    	private readonly CompositeIdentifierDetail _mrn;
 
-		public PatientBiographyDocument(EntityRef patientRef, EntityRef profileRef, IDesktopWindow window)
-			: base(patientRef, window)
+		public PatientBiographyDocument(PatientProfileSummary patientProfile, IDesktopWindow window)
+			: base(patientProfile.PatientRef, window)
 		{
-			Platform.CheckForNullReference(patientRef, "patientRef");
-			Platform.CheckForNullReference(profileRef, "profileRef");
+			Platform.CheckForNullReference(patientProfile.PatientRef, "PatientRef");
+			Platform.CheckForNullReference(patientProfile.PatientProfileRef, "PatientProfileRef");
 
-			_patientRef = patientRef;
-			_profileRef = profileRef;
+			_patientRef = patientProfile.PatientRef;
+			_profileRef = patientProfile.PatientProfileRef;
+			_patientName = patientProfile.Name;
+			_mrn = patientProfile.Mrn;
 		}
 
-		public PatientBiographyDocument(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef, IDesktopWindow window)
-			: this(patientRef, profileRef, window)
+		public PatientBiographyDocument(WorklistItemSummaryBase worklistItem, IDesktopWindow window)
+			: base(worklistItem.PatientRef, window)
         {
-			_orderRef = orderRef;
-		}
+			Platform.CheckForNullReference(worklistItem.PatientRef, "PatientRef");
+			Platform.CheckForNullReference(worklistItem.PatientProfileRef, "PatientProfileRef");
+			Platform.CheckForNullReference(worklistItem.OrderRef, "OrderRef");
+
+			_patientRef = worklistItem.PatientRef;
+			_profileRef = worklistItem.PatientProfileRef;
+			_orderRef = worklistItem.OrderRef;
+			_patientName = worklistItem.PatientName;
+			_mrn = worklistItem.Mrn;
+        }
 
         public override string GetTitle()
         {
@@ -52,5 +65,10 @@ namespace ClearCanvas.Ris.Client
 			var component = new BiographyOverviewComponent(_patientRef, _profileRef, _orderRef);
         	return component;
         }
+
+    	public override OpenWorkspaceOperationAuditData GetAuditData()
+    	{
+			return new OpenWorkspaceOperationAuditData("Biography", _mrn, _patientName);
+    	}
     }    
 }

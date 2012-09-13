@@ -10,6 +10,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -49,6 +50,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<RegistrationWorklistItemSummary> items)
 		{
 			return WebResourcesSettings.Default.RegistrationFolderSystemUrl;
+		}
+
+		protected override PreviewOperationAuditData[] GetPreviewAuditData(WorkflowFolder folder, ICollection<RegistrationWorklistItemSummary> items)
+		{
+			return items.Select(item => new PreviewOperationAuditData("Registration", item)).ToArray();
 		}
 
         protected override SearchResultsFolder CreateSearchResultsFolder()

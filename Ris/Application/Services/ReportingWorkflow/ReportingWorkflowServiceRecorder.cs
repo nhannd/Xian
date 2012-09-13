@@ -25,6 +25,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			public const string Corrected = "Report:Corrected";
 			public const string Revised = "Report:Revised";
 			public const string Discarded = "Report:Discarded";
+			public const string Printed = "Report:Printed";
 		}
 
 		// CompleteInterpretationForTranscription
@@ -84,6 +85,20 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 				var request = (CancelReportingStepRequest)recorderContext.Request;
 				var rps = persistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.None);
 				return ReportingWorkflowServiceRecorder.Capture(Operations.Discarded, rps);
+			}
+		}
+
+		internal class PrintReport : RisServiceOperationRecorderBase
+		{
+			protected override OperationData Capture(IServiceOperationRecorderContext recorderContext, IPersistenceContext persistenceContext)
+			{
+				var request = (PrintReportRequest)recorderContext.Request;
+				var report = persistenceContext.Load<Report>(request.ReportRef, EntityLoadFlags.None);
+				var procedures = report.Procedures;
+				var order = procedures.First().Order;
+				var patientProfile = procedures.First().PatientProfile;
+
+				return new OperationData(Operations.Printed, patientProfile, order, procedures);
 			}
 		}
 

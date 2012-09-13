@@ -247,24 +247,39 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 				if (this.Context is IOrderNoteboxItemToolContext)
 				{
 					var item = (OrderNoteboxItemSummary)context.Selection.Item;
-					OpenPatient(item.PatientRef, item.PatientProfileRef, item.OrderRef, context.DesktopWindow);
+
+					// this is super-hokey, but it should work as long as we fill out
+					// the key properties
+					var worklistItem = new WorklistItemSummaryBase
+										{
+											AccessionNumber = item.AccessionNumber,
+											DiagnosticServiceName = item.DiagnosticServiceName,
+											Mrn = item.Mrn,
+											OrderRef = item.OrderRef,
+											PatientName = item.PatientName,
+											PatientProfileRef = item.PatientProfileRef,
+											PatientRef = item.PatientRef,
+
+										};
+
+					OpenPatient(worklistItem, context.DesktopWindow);
 				}
 				else
 				{
 					var item = (WorklistItemSummaryBase)context.Selection.Item;
-					OpenPatient(item.PatientRef, item.PatientProfileRef, item.OrderRef, context.DesktopWindow);
+					OpenPatient(item, context.DesktopWindow);
 				}
 			}
 		}
 
-		protected static void OpenPatient(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef, IDesktopWindow window)
+		protected static void OpenPatient(WorklistItemSummaryBase worklistItem, IDesktopWindow window)
 		{
 			try
 			{
-				var document = DocumentManager.Get<PatientBiographyDocument>(patientRef);
+				var document = DocumentManager.Get<PatientBiographyDocument>(worklistItem.PatientRef);
 				if (document == null)
 				{
-					document = new PatientBiographyDocument(patientRef, profileRef, orderRef, window);
+					document = new PatientBiographyDocument(worklistItem, window);
 					document.Open();
 				}
 				else

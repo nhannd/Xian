@@ -61,6 +61,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		}
 
 		[ReadOperation]
+		[AuditRecorder(typeof(WorkflowServiceRecorder.SearchWorklists))]
 		public TextQueryResponse<ReportingWorklistItemSummary> SearchWorklists(WorklistItemTextQueryRequest request)
 		{
 			var procedureStepClass = request.ProcedureStepClassName == null ? null
@@ -563,6 +564,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		}
 
 		[ReadOperation]
+		[AuditRecorder(typeof(ReportingWorkflowServiceRecorder.PrintReport))]
 		public PrintReportResponse PrintReport(PrintReportRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");

@@ -59,6 +59,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return _component;
 		}
 
+		public override OpenWorkspaceOperationAuditData GetAuditData()
+		{
+			return new OpenWorkspaceOperationAuditData("Transcription", _worklistItem);
+		}
+
 		public static string GetTitle(ReportingWorklistItemSummary item)
 		{
 			return string.Format("Transcription - {0} - {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
