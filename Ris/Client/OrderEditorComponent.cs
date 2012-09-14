@@ -1361,7 +1361,7 @@ namespace ClearCanvas.Ris.Client
 				var action = this.Host.ShowMessageBox(SR.MessageCancelAllProceduresShouldCancelOrder, MessageBoxActions.YesNo);
 				if (action == DialogBoxAction.Yes)
 				{
-					var cancelled = OrderCancelHelper.CancelOrder(_orderRef, _patientProfile.Name, this.Host.DesktopWindow);
+					var cancelled = OrderCancelHelper.CancelOrder(_orderRef, PersonNameFormat.Format(_patientProfile.Name), this.Host.DesktopWindow);
 					if (cancelled)
 					{
 						this.Exit(ApplicationComponentExitCode.Accepted);

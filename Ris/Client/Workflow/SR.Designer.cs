@@ -916,6 +916,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All active procedures for this order have already been checked-in..
+        /// </summary>
+        internal static string MessageNoProceduresCanBeCheckedIn {
+            get {
+                return ResourceManager.GetString("MessageNoProceduresCanBeCheckedIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There are no reconciliation candidates for this patient..
         /// </summary>
         internal static string MessageNoReconciliationCandidate {

@@ -16,6 +16,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -45,7 +46,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected bool ExecuteCore(WorklistItemSummaryBase item)
 		{
-			if (OrderCancelHelper.CancelOrder(item.OrderRef, item.PatientName, this.Context.DesktopWindow))
+			if (OrderCancelHelper.CancelOrder(item.OrderRef, PersonNameFormat.Format(item.PatientName), this.Context.DesktopWindow))
 			{
 				InvalidateFolders();
 				return true;
