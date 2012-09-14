@@ -32,15 +32,14 @@ namespace ClearCanvas.Enterprise.Core.Printing
 
 		class HttpServer
 		{
-			private readonly string _host;
+			private readonly Dictionary<Guid, Page> _runningJobs = new Dictionary<Guid, Page>();
 			private readonly HttpListener _httpListener;
+			private string _host;
 			private Thread _listenerThread;
 
-			public HttpServer(string host)
+			public HttpServer()
 			{
-				_host = host;
 				_httpListener = new HttpListener();
-				_httpListener.Prefixes.Add(host);
 			}
 
 			public void Start()
@@ -48,15 +47,29 @@ namespace ClearCanvas.Enterprise.Core.Printing
 				if (_httpListener.IsListening)
 					return;
 
-				_httpListener.Start();
+				var settings = new PrintSettings();
+				var portRange = GetPortRange(settings.HttpProxyServerPortRange);
+				Platform.Log(LogLevel.Info, "Starting print server...");
 
-				_listenerThread = new Thread(Listen) {IsBackground = true};
-				_listenerThread.Start();
+				foreach (var port in portRange)
+				{
+					if (!TryStartHttpListener(port, out _host))
+						continue;
+
+					Platform.Log(LogLevel.Info, "Print server started on port {0}.", port);
+
+					_listenerThread = new Thread(Listen) { IsBackground = true };
+					_listenerThread.Start();
+					return;
+				}
+				throw new PrintException(string.Format("Unable to start HTTP print server on any port in range {0}.", portRange));
 			}
 
 			public void Stop()
 			{
 				_httpListener.Stop();
+				_listenerThread.Join();
+				_listenerThread = null;
 			}
 
 			public bool IsStarted
@@ -69,12 +82,42 @@ namespace ClearCanvas.Enterprise.Core.Printing
 				get { return _host; }
 			}
 
+			public void AddPage(Page page)
+			{
+				lock (_runningJobs)
+				{
+					_runningJobs.Add(page.Id, page);
+				}
+			}
+
+			public void RemovePage(Page page)
+			{
+				lock (_runningJobs)
+				{
+					_runningJobs.Remove(page.Id);
+				}
+			}
+
 			private void Listen(object state)
 			{
-				while (_httpListener.IsListening)
+				try
 				{
-					var context = _httpListener.GetContext();
-					ThreadPool.QueueUserWorkItem(ProcessRequest, context);
+					while (_httpListener.IsListening)
+					{
+						var context = _httpListener.GetContext();
+						ThreadPool.QueueUserWorkItem(ProcessRequest, context);
+					}
+				}
+				catch (HttpListenerException e)
+				{
+					if (e.ErrorCode == 995)
+					{
+						// this exception gets thrown when Stop() is called
+					}
+					else
+					{
+						throw;
+					}
 				}
 			}
 
@@ -147,6 +190,95 @@ namespace ClearCanvas.Enterprise.Core.Printing
 			{
 				return string.IsNullOrEmpty(url.Query) ? new NameValueCollection() : HttpUtility.ParseQueryString(url.Query);
 			}
+
+			private bool TryStartHttpListener(int port, out string host)
+			{
+				try
+				{
+					host = string.Format("{0}:{1}/", LocalHost, port);
+					_httpListener.Prefixes.Clear();
+					_httpListener.Prefixes.Add(host);
+					_httpListener.Start();
+					return true;
+				}
+				catch (HttpListenerException)
+				{
+					host = null;
+					return false;
+				}
+			}
+
+			private static IEnumerable<int> GetPortRange(string portRangeString)
+			{
+				if (!string.IsNullOrEmpty(portRangeString))
+				{
+					var match = Regex.Match(portRangeString, @"^\s*(\d+)\s*\-\s*(\d+)\s*$");
+					if (match.Success)
+					{
+						var lower = int.Parse(match.Groups[1].Value);
+						var upper = int.Parse(match.Groups[2].Value);
+						if (upper > lower)
+						{
+							return Enumerable.Range(lower, upper - lower + 1);
+						}
+					}
+				}
+				throw new PrintException("PrintSettings.HttpProxyServerPortRange must specify a valid port range in the form e.g. 10000-10005.");
+			}
+		}
+
+		#endregion
+
+		#region HttpServerScope
+
+		/// <summary>
+		/// Manages lifetime of HTTP server.
+		/// </summary>
+		class HttpServerScope : IDisposable
+		{
+			private static readonly HttpServer _httpServer = new HttpServer();
+			private static int _refCount;
+
+			private readonly IEnumerable<Page> _pages;
+			private bool _disposed;
+
+			public HttpServerScope(IEnumerable<Page> pages)
+			{
+				_pages = pages;
+				lock (_httpServer)
+				{
+					if (!_httpServer.IsStarted)
+						_httpServer.Start();
+
+					foreach (var page in _pages)
+						_httpServer.AddPage(page);
+
+					_refCount++;
+				}
+			}
+
+			public static HttpServer Server
+			{
+				get { return _httpServer; }
+			}
+
+			public void Dispose()
+			{
+				if(_disposed)
+					throw new InvalidOperationException("Already disposed.");
+
+				lock (_httpServer)
+				{
+					_refCount--;
+
+					foreach (var page in _pages)
+						_httpServer.RemovePage(page);
+
+					if (_refCount == 0)
+						_httpServer.Stop();
+				}
+				_disposed = true;
+			}
 		}
 
 		#endregion
@@ -205,7 +337,7 @@ namespace ClearCanvas.Enterprise.Core.Printing
 				get
 				{
 					var sourcePath = string.Format("{0}?id={1}", TemplateUrl.AbsolutePath, _id.ToString("N"));
-					return new Uri(new Uri(_httpServer.Host), sourcePath);
+					return new Uri(new Uri(HttpServerScope.Server.Host), sourcePath);
 				}
 			}
 
@@ -269,32 +401,6 @@ namespace ClearCanvas.Enterprise.Core.Printing
 		#endregion
 
 		private const string LocalHost = "http://localhost";
-		private static readonly Dictionary<Guid, Page> _runningJobs = new Dictionary<Guid, Page>();
-		private static readonly HttpServer _httpServer;
-
-		static PrintJob()
-		{
-			try
-			{
-				var settings = new PrintSettings();
-				var portRange = GetPortRange(settings.HttpProxyServerPortRange);
-				Platform.Log(LogLevel.Info, "Starting print server...");
-
-				foreach (var port in portRange)
-				{
-					if(TryStartHttpServer(port, out _httpServer))
-					{
-						Platform.Log(LogLevel.Info, "Print server started on port {0}.", port);
-						return;
-					}
-				}
-				Platform.Log(LogLevel.Error, "Unable to start print server on any port in range {0}.", portRange);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
-			}
-		}
 
 		/// <summary>
 		/// Creates and executes a single-page print job.
@@ -340,35 +446,24 @@ namespace ClearCanvas.Enterprise.Core.Printing
 
 		private Result Run()
 		{
-			if(_httpServer == null || !_httpServer.IsStarted)
-				throw new PrintException("The print HTTP server could not be started.");
-
 			var outputFilePath = Path.GetTempFileName();
-
-			lock (_runningJobs)
-			{
-				foreach (var page in _pages)
-					_runningJobs.Add(page.Id, page);
-			}
 
 			try
 			{
-				// try this up to five times
-				for (var i = 0; i < 5; i++)
+				using (new HttpServerScope(_pages))
 				{
-					_error = false;
-					RunConverter(outputFilePath);
-					if (!_error)
-						break;
+					// try this up to five times
+					for (var i = 0; i < 5; i++)
+					{
+						_error = false;
+						RunConverter(outputFilePath);
+						if (!_error)
+							break;
+					}
 				}
 			}
 			finally
 			{
-				lock (_runningJobs)
-				{
-					foreach (var page in _pages)
-						_runningJobs.Remove(page.Id);
-				}
 				if(_error)
 				{
 					File.Delete(outputFilePath);
@@ -408,13 +503,6 @@ namespace ClearCanvas.Enterprise.Core.Printing
 					settings.ConverterProgram)
 				);
 			}
-
-			//var exitCode = process.ExitCode;
-			//Console.WriteLine("EXITCODE = " + exitCode);
-
-			//var startInfo = new ProcessStartInfo(sourceUrl.ToString());
-			//var process = Process.Start(startInfo);
-			//Thread.Sleep(10000);
 		}
 
 		private void SetError(string message)
@@ -423,37 +511,5 @@ namespace ClearCanvas.Enterprise.Core.Printing
 			_errorMessage = message;
 		}
 
-		private static bool TryStartHttpServer(int port, out HttpServer server)
-		{
-			try
-			{
-				server = new HttpServer(string.Format("{0}:{1}/", LocalHost, port));
-				server.Start();
-				return true;
-			}
-			catch (HttpListenerException)
-			{
-				server = null;
-				return false;
-			}
-		}
-
-		private static IEnumerable<int> GetPortRange(string portRangeString)
-		{
-			if (!string.IsNullOrEmpty(portRangeString))
-			{
-				var match = Regex.Match(portRangeString, @"^\s*(\d+)\s*\-\s*(\d+)\s*$");
-				if (match.Success)
-				{
-					var lower = int.Parse(match.Groups[1].Value);
-					var upper = int.Parse(match.Groups[2].Value);
-					if (upper > lower)
-					{
-						return Enumerable.Range(lower, upper - lower + 1);
-					}
-				}
-			}
-			throw new PrintException("PrintSettings.HttpProxyServerPortRange must specify a valid port range in the form e.g. 10000-10005.");
-		}
 	}
 }
