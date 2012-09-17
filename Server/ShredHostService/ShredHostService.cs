@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -9,18 +9,22 @@
 
 #endregion
 
+using System;
+using System.IO;
 using System.ServiceProcess;
 
 namespace ClearCanvas.Server.ShredHostService
 {
-    public partial class ShredHostService : ServiceBase
-    {
+	public partial class ShredHostService : ServiceBase
+	{
+		private const int _serviceOperationTimeout = 3*60*1000;
+
 		internal static void InternalStart()
 		{
 			// the default startup path is in the system folder
 			// we need to change this to be able to scan for plugins and to log
-			string startupPath = System.AppDomain.CurrentDomain.BaseDirectory;
-			System.IO.Directory.SetCurrentDirectory(startupPath);
+			string startupPath = AppDomain.CurrentDomain.BaseDirectory;
+			Directory.SetCurrentDirectory(startupPath);
 			ShredHost.ShredHost.Start();
 		}
 
@@ -30,19 +34,22 @@ namespace ClearCanvas.Server.ShredHostService
 		}
 
 		public ShredHostService()
-        {
-            InitializeComponent();
+		{
+			InitializeComponent();
+		}
 
-        }
+		protected override void OnStart(string[] args)
+		{
+			RequestAdditionalTime(_serviceOperationTimeout);
 
-        protected override void OnStart(string[] args)
-        {
-        	InternalStart();
-        }
+			InternalStart();
+		}
 
-        protected override void OnStop()
-        {
+		protected override void OnStop()
+		{
+			RequestAdditionalTime(_serviceOperationTimeout);
+
 			InternalStop();
-        }
-    }
+		}
+	}
 }
