@@ -20,7 +20,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.Configuration
 	{
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
-			yield return new ConfigurationPage<ToolConfigurationComponent>(@"TitleTools");
+            if (PermissionsHelper.IsInRole(AuthorityTokens.ViewerVisible))
+			    yield return new ConfigurationPage<ToolConfigurationComponent>(@"TitleTools");
 		}
 	}
 }

@@ -475,5 +475,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
                 return ResourceManager.GetString("WarningMaximumDiskUsageExceeded", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You do not have permission to start a re-index..
+        /// </summary>
+        public static string WarningReindexPermission {
+            get {
+                return ResourceManager.GetString("WarningReindexPermission", resourceCulture);
+            }
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
     [Tooltip("activate", "TooltipDeleteSeries")]
     [IconSet("activate", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-    [ViewerActionPermission("activate", Common.AuthorityTokens.Study.Delete)]
+    [ViewerActionPermission("activate", ImageViewer.AuthorityTokens.Study.Delete)]
     [ExtensionOf(typeof(SeriesDetailsToolExtensionPoint))]
     public class DeleteSeriesTool : SeriesDetailsTool
     {

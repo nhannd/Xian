@@ -403,4 +403,7 @@ You can click the "Stop Local Service" link now, or cancel your changes.</value>
   <data name="ConfirmAETitleConflict_OneServer" xml:space="preserve">
     <value>Another server exists with the same AE Title, but a different host name and/or port. Are you sure you want to apply this change?</value>
   </data>
+  <data name="MessageSystemConfigurationNoPermission" xml:space="preserve">
+    <value>You do not have permission to view System Configuration.</value>
+  </data>
 </root>

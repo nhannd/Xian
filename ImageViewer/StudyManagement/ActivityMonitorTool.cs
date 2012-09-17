@@ -22,6 +22,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	[MenuAction("show", "global-menus/MenuTools/MenuActivityMonitor", "Show")]
 	[Tooltip("show", "TooltipActivityMonitor")]
+    [ViewerActionPermissionAttribute("show", AuthorityTokens.ViewerVisible)]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class ActivityMonitorTool : Tool<IDesktopToolContext>
 	{

@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     [VisibleStateObserver("activate", "Visible", "VisibleChanged")]
     [Tooltip("activate", "TooltipRetrieveStudy")]
 	[IconSet("activate", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png")]
-    [ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Retrieve)]
+    [ViewerActionPermission("activate", ImageViewer.AuthorityTokens.Study.Retrieve)]
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class RetrieveStudyTool : StudyBrowserTool
 	{

@@ -19,6 +19,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Clipboard;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.KeyObjects;

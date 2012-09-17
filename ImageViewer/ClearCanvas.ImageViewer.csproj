@@ -211,7 +211,6 @@
     <Compile Include="PresentationStates\Dicom\Tests\GeneratedOverlayTestImages.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\OverlayPlanePresentationTests.cs" />
     <Compile Include="PresentationStates\GeometricShutterCache.cs" />
-    <Compile Include="Services\AuthorityTokens.cs" />
     <Compile Include="Services\LocalServiceProcess.cs" />
     <Compile Include="Services\ServiceControlSettings.cs" />
     <Compile Include="Services\ServiceControlSettings.Designer.cs">

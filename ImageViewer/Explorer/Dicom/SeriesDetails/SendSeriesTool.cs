@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
     [Tooltip("activate", "TooltipSendSeries")]
     [IconSet("activate", "Icons.SendSeriesToolSmall.png", "Icons.SendSeriesToolSmall.png", "Icons.SendSeriesToolSmall.png")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-    [ViewerActionPermission("activate", Common.AuthorityTokens.Study.Send)]
+    [ViewerActionPermission("activate", ImageViewer.AuthorityTokens.Study.Send)]
     [ExtensionOf(typeof(SeriesDetailsToolExtensionPoint))]
     public class SendSeriesTool : SeriesDetailsTool
     {
