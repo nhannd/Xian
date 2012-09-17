@@ -254,6 +254,9 @@ make room, or increase the maximum usage.</value>
   <data name="TooltipStopWorkItem" xml:space="preserve">
     <value>Stop selected work item(s)</value>
   </data>
+  <data name="WarningActivityMonitorPermission" xml:space="preserve">
+    <value>You do not have permission to open the Activity Monitor.</value>
+  </data>
   <data name="WarningMaximumDiskUsageExceeded" xml:space="preserve">
     <value>Maximum disk usage has been exceeded.  Other devices will not be able to send studies to the workstation.</value>
   </data>

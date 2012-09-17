@@ -48,6 +48,28 @@ namespace ClearCanvas.ImageViewer
             public const string Import = "Viewer/Study/Import";
         }
 
+	    public class ActivityMonitor
+	    {
+            [AuthorityToken(Description = "Permission to view the Activity Monitor.")]
+            public const string View = "Viewer/Activity Monitor/View";
+            
+            public class WorkItems
+            {
+                [AuthorityToken(Description = "Permission to stop a work item.")]
+                public const string Stop = "Viewer/Activity Monitor/Work Items/Stop";
+
+                [AuthorityToken(Description = "Permission to restart a work item.")]
+                public const string Restart = "Viewer/Activity Monitor/Work Items/Restart";
+
+                [AuthorityToken(Description = "Permission to delete a work item.")]
+                public const string Delete = "Viewer/Activity Monitor/Work Items/Delete";
+
+                [AuthorityToken(Description = "Permission to stat or re-prioritize work items.")]
+                public const string Prioritize = "Viewer/Activity Monitor/Work Items/Prioritize";
+            }
+        }
+
+
 	    public static class Administration
 	    {
 	        [AuthorityToken(Description = "Permission to re-index the local file store.", Formerly = "Viewer/Administration/Reindex Local Data Store")]

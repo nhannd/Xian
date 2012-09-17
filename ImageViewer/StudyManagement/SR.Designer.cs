@@ -468,6 +468,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You do not have permission to open the Activity Monitor..
+        /// </summary>
+        public static string WarningActivityMonitorPermission {
+            get {
+                return ResourceManager.GetString("WarningActivityMonitorPermission", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximum disk usage has been exceeded.  Other devices will not be able to send studies to the workstation..
         /// </summary>
         public static string WarningMaximumDiskUsageExceeded {

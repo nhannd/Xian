@@ -525,10 +525,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				_workItems = workItems;
 				_owner = owner;
-				this.CancelAction = AddAction("cancel", SR.MenuStopWorkItem, "CancelToolSmall.png", SR.TooltipStopWorkItem, CancelSelectedWorkItems);
-				this.RestartAction = AddAction("restart", SR.MenuRestartWorkItem, "RestartToolSmall.png", SR.TooltipRestartWorkItem, RestartSelectedWorkItems);
-				this.DeleteAction = AddAction("delete", SR.MenuDeleteWorkItem, "DeleteToolSmall.png", SR.TooltipDeleteWorkItem, DeleteSelectedWorkItems);
-				this.StatAction = AddAction("stat", SR.MenuStatWorkItem, "StatToolSmall.png", SR.TooltipStatWorkItem, StatSelectedWorkItems);
+                if (PermissionsHelper.IsInRole(AuthorityTokens.ActivityMonitor.WorkItems.Stop))
+				    this.CancelAction = AddAction("cancel", SR.MenuStopWorkItem, "CancelToolSmall.png", SR.TooltipStopWorkItem, CancelSelectedWorkItems);
+
+                if (PermissionsHelper.IsInRole(AuthorityTokens.ActivityMonitor.WorkItems.Restart))
+				    this.RestartAction = AddAction("restart", SR.MenuRestartWorkItem, "RestartToolSmall.png", SR.TooltipRestartWorkItem, RestartSelectedWorkItems);
+
+                if (PermissionsHelper.IsInRole(AuthorityTokens.ActivityMonitor.WorkItems.Delete))
+                    this.DeleteAction = AddAction("delete", SR.MenuDeleteWorkItem, "DeleteToolSmall.png", SR.TooltipDeleteWorkItem, DeleteSelectedWorkItems);
+                
+                if (PermissionsHelper.IsInRole(AuthorityTokens.ActivityMonitor.WorkItems.Prioritize))
+                    this.StatAction = AddAction("stat", SR.MenuStatWorkItem, "StatToolSmall.png", SR.TooltipStatWorkItem, StatSelectedWorkItems);
 			}
 
 			public IList<long> SelectedWorkItemIDs
