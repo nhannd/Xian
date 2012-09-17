@@ -10,6 +10,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -70,6 +71,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 				default:
 					return null;
 			}
+		}
+
+		protected override PreviewOperationAuditData[] GetPreviewAuditData(WorkflowFolder folder, ICollection<ReportingWorklistItemSummary> items)
+		{
+			return items.Select(item => new PreviewOperationAuditData("Radiologist Admin", item)).ToArray();
 		}
 
 		public override bool AdvancedSearchEnabled

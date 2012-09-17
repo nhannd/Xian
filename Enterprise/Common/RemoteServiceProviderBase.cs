@@ -90,7 +90,8 @@ namespace ClearCanvas.Enterprise.Common
 			MaxReceivedMessageSize = maxReceivedMessageSize;
 			CertificateValidationMode = certificateValidationMode;
 			RevocationMode = revocationMode;
-			UserCredentialsProvider = string.IsNullOrEmpty(credentialsProviderClassName) ? null :
+			UserCredentialsProvider = string.IsNullOrEmpty(credentialsProviderClassName) ?
+				new DefaultUserCredentialsProvider() : 
 				InstantiateClass<IUserCredentialsProvider>(credentialsProviderClassName);
 		}
 
@@ -131,7 +132,6 @@ namespace ClearCanvas.Enterprise.Common
 
 		/// <summary>
 		/// Gets or sets an <see cref="IUserCredentialsProvider"/>.
-		/// May be null if user credentials are not relevant.
 		/// </summary>
 		public IUserCredentialsProvider UserCredentialsProvider { get; set; }
 

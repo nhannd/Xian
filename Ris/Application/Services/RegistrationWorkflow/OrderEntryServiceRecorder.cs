@@ -24,6 +24,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		static class Operations
 		{
 			public const string New = "Order:New";
+			public const string OpenForModifyOrReplace = "Order:OpenForModifyOrReplace";
 			public const string Modify = "Order:Modify";
 			public const string Replace = "Order:Replace";
 			public const string Cancel = "Order:Cancel";
@@ -74,6 +75,18 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				var newOrder = persistenceContext.Load<Order>(response.Order.OrderRef, EntityLoadFlags.None);
 
 				return new ReplaceOrderOperationData(Operations.Replace, profile, cancelledOrder, newOrder);
+			}
+		}
+
+		internal class LoadOrderForEdit : RisServiceOperationRecorderBase
+		{
+			protected override OperationData Capture(IServiceOperationRecorderContext recorderContext, IPersistenceContext persistenceContext)
+			{
+				var response = (GetOrderRequisitionForEditResponse)recorderContext.Response;
+				var patientProfile = persistenceContext.Load<PatientProfile>(response.Requisition.Patient.PatientProfileRef, EntityLoadFlags.None);
+				var order = persistenceContext.Load<Order>(response.Requisition.OrderRef, EntityLoadFlags.None);
+
+				return new OperationData(Operations.OpenForModifyOrReplace, patientProfile, order);
 			}
 		}
 

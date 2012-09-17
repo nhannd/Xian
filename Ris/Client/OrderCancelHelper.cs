@@ -23,7 +23,7 @@ namespace ClearCanvas.Ris.Client
 {
 	public static class OrderCancelHelper
 	{
-		public static bool CancelOrder(EntityRef orderRef, PersonNameDetail patientName, IDesktopWindow desktopWindow)
+		public static bool CancelOrder(EntityRef orderRef, string description, IDesktopWindow desktopWindow)
 		{
 			// first check for warnings
 			var warnings = new List<string>();
@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client
 			var exitCode = ApplicationComponent.LaunchAsDialog(
 				desktopWindow,
 				cancelOrderComponent,
-				String.Format(SR.TitleCancelOrder, PersonNameFormat.Format(patientName)));
+				String.Format(SR.TitleCancelOrder, description));
 
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{

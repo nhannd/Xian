@@ -152,6 +152,7 @@ namespace ClearCanvas.Ris.Client
 				}
 
 				_selectedFolder = value;
+				_selectedItems = new Selection();	// clear selected items
 
 				if (_selectedFolder != null)
 				{

@@ -67,6 +67,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 
 
 		[ReadOperation]
+		[AuditRecorder(typeof(PatientAdminServiceRecorder.LoadPatientProfileForEdit))]
 		public LoadPatientProfileForEditResponse LoadPatientProfileForEdit(LoadPatientProfileForEditRequest request)
 		{
 			var broker = PersistenceContext.GetBroker<IPatientProfileBroker>();

@@ -32,6 +32,12 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
             [DataMember]
             public string Name;
 
+			[DataMember]
+			public string Description;
+
+			[DataMember]
+			public bool DataGroup;
+
             [DataMember]
             public List<string> Tokens;
         }
@@ -50,6 +56,8 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
         {
             AuthorityGroupData data = new AuthorityGroupData();
             data.Name = group.Name;
+        	data.Description = group.Description;
+        	data.DataGroup = group.DataGroup;
             data.Tokens = CollectionUtils.Map<AuthorityToken, string>(
                 group.AuthorityTokens,
                 delegate(AuthorityToken token)
@@ -63,6 +71,8 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
         protected override void Import(AuthorityGroupData data, IUpdateContext context)
         {
             AuthorityGroup group = LoadOrCreateGroup(data.Name, context);
+        	group.Description = data.Description;
+        	group.DataGroup = data.DataGroup;
             if (data.Tokens != null)
             {
                 foreach (string token in data.Tokens)

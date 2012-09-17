@@ -61,7 +61,11 @@ namespace ClearCanvas.Ris.Client
 
 		public FacilityInfo CurrentFacility
 		{
-			get { return LoginSession.Current != null ? GetFacility(LoginSession.Current.WorkingFacility.Code) : null; }
+			get
+			{
+				return LoginSession.Current == null  || LoginSession.Current.WorkingFacility == null ? null
+					: GetFacility(LoginSession.Current.WorkingFacility.Code);
+			}
 			set
 			{
 				// once the session has been established, it can't be changed, but we

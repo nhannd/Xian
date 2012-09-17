@@ -10,10 +10,12 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -48,7 +50,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return WebResourcesSettings.Default.PerformingFolderSystemUrl;
 		}
 
-        protected override SearchResultsFolder CreateSearchResultsFolder()
+		protected override PreviewOperationAuditData[] GetPreviewAuditData(WorkflowFolder folder, ICollection<ModalityWorklistItemSummary> items)
+		{
+			return items.Select(item => new PreviewOperationAuditData("Performing", item)).ToArray();
+		}
+
+		protected override SearchResultsFolder CreateSearchResultsFolder()
         {
             return new Folders.Performing.SearchFolder();
         }

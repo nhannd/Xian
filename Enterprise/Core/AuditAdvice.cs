@@ -25,7 +25,7 @@ namespace ClearCanvas.Enterprise.Core
 	/// <summary>
 	/// Advice class responsible for honouring <see cref="AuditRecorderAttribute"/>s applied to service operation methods.
 	/// </summary>
-	public class AuditAdvice : IInterceptor
+	public class AuditAdvice
 	{
 		#region RecorderContext class
 
@@ -88,11 +88,15 @@ namespace ClearCanvas.Enterprise.Core
 				get { return _changeSet; }
 			}
 
-			internal void PreCommit(EntityChangeSet changeSet, IPersistenceContext persistenceContext)
+			internal void SetChangeSet(EntityChangeSet changeSet)
+			{
+					_changeSet = changeSet;
+			}
+
+			internal void PreCommit(IPersistenceContext persistenceContext)
 			{
 				try
 				{
-					_changeSet = changeSet;
 					_recorder.PreCommit(this, persistenceContext);
 				}
 				catch (Exception e)
@@ -127,11 +131,18 @@ namespace ClearCanvas.Enterprise.Core
 				_recorderContexts = recorderContexts;
 			}
 
-			internal void PreCommit(EntityChangeSet changeSet, IPersistenceContext persistenceContext)
+			internal void SetChangeSet(EntityChangeSet changeSet)
 			{
 				foreach (var recorderContext in _recorderContexts)
 				{
-					recorderContext.PreCommit(changeSet, persistenceContext);
+					recorderContext.SetChangeSet(changeSet);
+				}
+			}
+			internal void PreCommit(IPersistenceContext persistenceContext)
+			{
+				foreach (var recorderContext in _recorderContexts)
+				{
+					recorderContext.PreCommit(persistenceContext);
 				}
 			}
 
@@ -148,6 +159,9 @@ namespace ClearCanvas.Enterprise.Core
 
 		#region ChangeSetListener class
 
+		/// <summary>
+		/// Change set listener responsible for grabbing the current change set and passing it over to the invocation context.
+		/// </summary>
 		[ExtensionOf(typeof(EntityChangeSetListenerExtensionPoint))]
 		public class ChangeSetListener: IEntityChangeSetListener
 		{
@@ -157,7 +171,7 @@ namespace ClearCanvas.Enterprise.Core
 					return;
 
 				// store a copy of the change set for use by recorders
-				_invocationInfo.Peek().PreCommit(args.ChangeSet, args.PersistenceContext);
+				_invocationInfo.Peek().SetChangeSet(args.ChangeSet);
 			}
 
 			public void PostCommit(EntityChangeSetPostCommitArgs args)
@@ -168,39 +182,53 @@ namespace ClearCanvas.Enterprise.Core
 		#endregion
 
 		/// <summary>
+		/// Outer (post-commit) interceptor.
+		/// </summary>
+		public class Outer : IInterceptor
+		{
+			public void Intercept(IInvocation invocation)
+			{
+				// ensure the thread-static variable is initialized for the current thread
+				if (_invocationInfo == null)
+					_invocationInfo = new Stack<InvocationInfo>();
+
+				try
+				{
+
+					var recorderContexts = AttributeUtils.GetAttributes<AuditRecorderAttribute>(invocation.MethodInvocationTarget, true)
+											.Select(a => new RecorderContext(invocation, (IServiceOperationRecorder)Activator.CreateInstance(a.RecorderClass)))
+											.ToList();
+
+					_invocationInfo.Push(new InvocationInfo(recorderContexts));
+
+					invocation.Proceed();
+
+					_invocationInfo.Peek().PostCommit();
+				}
+				finally
+				{
+					// clear current invocation
+					_invocationInfo.Pop();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Inner (pre-commit) interceptor.
+		/// </summary>
+		public class Inner : IInterceptor
+		{
+			public void Intercept(IInvocation invocation)
+			{
+				invocation.Proceed();
+				_invocationInfo.Peek().PreCommit(PersistenceScope.CurrentContext);
+			}
+		}
+
+		/// <summary>
 		/// Keep track of the invocations on the current thread.
 		/// </summary>
 		[ThreadStatic]
 		private static Stack<InvocationInfo> _invocationInfo;
-
-		#region IInterceptor Members
-
-		public void Intercept(IInvocation invocation)
-		{
-			// ensure the thread-static variable is initialized for the current thread
-			if (_invocationInfo == null)
-				_invocationInfo = new Stack<InvocationInfo>();
-
-			try
-			{
-
-				var recorderContexts = AttributeUtils.GetAttributes<AuditRecorderAttribute>(invocation.MethodInvocationTarget, true)
-										.Select(a => new RecorderContext(invocation, (IServiceOperationRecorder)Activator.CreateInstance(a.RecorderClass)))
-										.ToList();
-
-				_invocationInfo.Push(new InvocationInfo(recorderContexts));
-
-				invocation.Proceed();
-
-				_invocationInfo.Peek().PostCommit();
-			}
-			finally
-			{
-				// clear current invocation
-				_invocationInfo.Pop();
-			}
-		}
-
-		#endregion
 	}
 }

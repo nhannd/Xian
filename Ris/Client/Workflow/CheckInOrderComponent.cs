@@ -36,16 +36,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[AssociateView(typeof(CheckInOrderComponentViewExtensionPoint))]
 	public class CheckInOrderComponent : ApplicationComponent
 	{
-		private readonly RegistrationWorklistItemSummary _worklistItem;
+		private readonly List<ProcedureSummary> _procedures;
 		private CheckInOrderTable _checkInOrderTable;
 		private DateTime _checkInTime;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public CheckInOrderComponent(RegistrationWorklistItemSummary item)
+		internal CheckInOrderComponent(List<ProcedureSummary> procedures)
 		{
-			_worklistItem = item;
+			_procedures = procedures;
 		}
 
 		public override void Start()
@@ -53,19 +53,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_checkInOrderTable = new CheckInOrderTable();
 			_checkInTime = Platform.Time;
 
-			Platform.GetService(
-				delegate(IRegistrationWorkflowService service)
-				{
-					var response = service.ListProceduresForCheckIn(new ListProceduresForCheckInRequest(_worklistItem.OrderRef));
-					_checkInOrderTable.Items.AddRange(
-						CollectionUtils.Map(response.Procedures,
-								delegate(ProcedureSummary item)
-								{
-									var entry = new CheckInOrderTableEntry(item);
-									entry.CheckedChanged += OrderCheckedStateChangedEventHandler;
-									return entry;
-								}));
-				});
+			_checkInOrderTable.Items.AddRange(
+				CollectionUtils.Map(_procedures,
+						delegate(ProcedureSummary item)
+						{
+							var entry = new CheckInOrderTableEntry(item);
+							entry.CheckedChanged += OrderCheckedStateChangedEventHandler;
+							return entry;
+						}));
 
 			base.Start();
 		}
@@ -145,8 +140,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 						break;
 					case CheckInSettings.ValidateResult.NotScheduled:
 						errorProcedures.Add(entry.Procedure);
-						break;
-					default:
 						break;
 				}
 			}

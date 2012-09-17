@@ -794,4 +794,7 @@ Do you want to save it to your Drafts folder and open the transcription for {1}?
   <data name="MessagePrintWorklist" xml:space="preserve">
     <value>You are about to print out information that contains confidential patient data.  Do you want to continue?</value>
   </data>
+  <data name="MessageNoProceduresCanBeCheckedIn" xml:space="preserve">
+    <value>All active procedures for this order have already been checked-in.</value>
+  </data>
 </root>

@@ -39,6 +39,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		/// <param name="request"></param>
 		/// <returns></returns>
 		[ReadOperation]
+		[AuditRecorder(typeof(WorkflowServiceRecorder.SearchWorklists))]
 		public TextQueryResponse<ModalityWorklistItemSummary> SearchWorklists(WorklistItemTextQueryRequest request)
 		{
 			var assembler = new ModalityWorkflowAssembler();

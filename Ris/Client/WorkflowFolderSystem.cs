@@ -345,6 +345,8 @@ namespace ClearCanvas.Ris.Client
 
 		public abstract string GetPreviewUrl(IFolder folder, object[] items);
 
+		public abstract PreviewOperationAuditData[] GetPreviewAuditData(IFolder folder, object[] items);
+
 
 		public event EventHandler TitleChanged
 		{
@@ -936,9 +938,14 @@ namespace ClearCanvas.Ris.Client
 
 		#region Overrides
 
-		public override string GetPreviewUrl(IFolder folder, object[] items)
+		public sealed override string GetPreviewUrl(IFolder folder, object[] items)
 		{
 			return GetPreviewUrl((WorkflowFolder)folder, CollectionUtils.Cast<TItem>(items));
+		}
+
+		public sealed override PreviewOperationAuditData[] GetPreviewAuditData(IFolder folder, object[] items)
+		{
+			return GetPreviewAuditData((WorkflowFolder)folder, CollectionUtils.Cast<TItem>(items));
 		}
 
 		/// <summary>
@@ -1029,6 +1036,15 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="items"></param>
 		/// <returns></returns>
 		protected abstract string GetPreviewUrl(WorkflowFolder folder, ICollection<TItem> items);
+
+		/// <summary>
+		/// Called to obtain the preview audit data for the specified folder and items.
+		/// </summary>
+		/// <param name="folder"></param>
+		/// <param name="items"></param>
+		/// <returns></returns>
+		protected abstract PreviewOperationAuditData[] GetPreviewAuditData(WorkflowFolder folder, ICollection<TItem> items);
+
 
 		/// <summary>
 		/// Called once to instantiate the item tool context.

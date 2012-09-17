@@ -32,6 +32,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		#region IRegistrationWorkflowService Members
 
 		[ReadOperation]
+		[AuditRecorder(typeof(WorkflowServiceRecorder.SearchWorklists))]
 		public TextQueryResponse<RegistrationWorklistItemSummary> SearchWorklists(WorklistItemTextQueryRequest request)
 		{
 			var assembler = new RegistrationWorkflowAssembler();
@@ -45,6 +46,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		}
 
 		[ReadOperation]
+		[AuditRecorder(typeof(WorkflowServiceRecorder.SearchPatientProfiles))]
 		public TextQueryResponse<PatientProfileSummary> PatientProfileTextQuery(TextQueryRequest request)
 		{
 			var helper = new PatientProfileTextQueryHelper(this.PersistenceContext);

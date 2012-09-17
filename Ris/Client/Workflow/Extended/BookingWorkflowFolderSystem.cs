@@ -10,6 +10,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
@@ -48,7 +49,12 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 			return WebResourcesSettings.Default.BookingFolderSystemUrl;
 		}
 
-        protected override SearchResultsFolder CreateSearchResultsFolder()
+		protected override PreviewOperationAuditData[] GetPreviewAuditData(WorkflowFolder folder, ICollection<RegistrationWorklistItemSummary> items)
+		{
+			return items.Select(item => new PreviewOperationAuditData("Booking", item)).ToArray();
+		}
+
+		protected override SearchResultsFolder CreateSearchResultsFolder()
         {
             return new Folders.Booking.BookingSearchFolder();
         }
