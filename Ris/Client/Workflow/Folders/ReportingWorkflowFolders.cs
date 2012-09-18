@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
@@ -40,6 +41,11 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[FolderDescription("ReportingToBeReviewedFolderDescription")]
 		public class ToBeReviewedFolder : ReportingWorkflowFolder
 		{
+			public ToBeReviewedFolder()
+			{
+				if(!new WorkflowConfigurationReader().EnableInterpretationReviewWorkflow)
+					throw new NotSupportedException();
+			}
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.ReportingAssignedReviewWorklist)]
