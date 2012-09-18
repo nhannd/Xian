@@ -31,7 +31,7 @@ namespace ClearCanvas.Enterprise.Desktop
 	/// Abstract base class for admin summary components.
 	/// </summary>
 	[AssociateView(typeof(SummaryComponentBaseViewExtensionPoint))]
-	public abstract class SummaryComponentBase : ApplicationComponent
+	public abstract class SummaryComponentBase : ApplicationComponent, ISummaryComponent
 	{
 		#region Presentation Model
 
@@ -108,7 +108,7 @@ namespace ClearCanvas.Enterprise.Desktop
 	/// </summary>
 	/// <typeparam name="TSummary"></typeparam>
 	/// <typeparam name="TTable"></typeparam>
-	public abstract class SummaryComponentBase<TSummary, TTable> : SummaryComponentBase
+	public abstract class SummaryComponentBase<TSummary, TTable> : SummaryComponentBase, ISummaryComponent<TSummary, TTable>
 		where TSummary : class
 		where TTable : Table<TSummary>, new()
 	{

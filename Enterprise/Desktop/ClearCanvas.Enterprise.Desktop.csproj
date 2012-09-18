@@ -66,6 +66,7 @@
     <Compile Include="AuthorityGroupEditorComponent.cs" />
     <Compile Include="AuthorityGroupSummaryComponent.cs" />
     <Compile Include="AuthorityGroupTable.cs" />
+    <Compile Include="ISummaryComponent.cs" />
     <Compile Include="PasswordConfirmComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
