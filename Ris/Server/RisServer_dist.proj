@@ -99,9 +99,6 @@
   </Target>
 
   <Target Name="CopyServerFiles" >
-    <!-- Copy Server Distribution files -->
-    <Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
-    
     <!-- Copy Server Plugin files -->
     <MakeDir Condition="!Exists('$(PluginsDirectory)')" Directories="$(PluginsDirectory)" ContinueOnError="true" />
 

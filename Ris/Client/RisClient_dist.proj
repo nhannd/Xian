@@ -17,10 +17,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-		<ConfigFiles Include="$(SolutionDir)\Workflow\actionmodels.xml" />
-	</ItemGroup>
-
-  <ItemGroup>
     <SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.1\Castle.Core.dll "/>
     <SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.1\Castle.DynamicProxy2.dll" />
     <SharedLibraryFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
@@ -54,8 +50,6 @@
 
   <Target Name="CopyClientFiles" DependsOnTargets="AppConfigs">
 		<!-- Copy Client files -->
-		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
-		
 		<MakeDir Condition="!Exists('$(PluginsDirectory)')" Directories="$(PluginsDirectory)" ContinueOnError="true" />
 		<Copy SourceFiles="@(CommonFiles)" DestinationFolder="$(CommonDirectory)" ContinueOnError="true" />
     <Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
