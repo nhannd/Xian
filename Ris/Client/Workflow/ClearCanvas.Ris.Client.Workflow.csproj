@@ -73,6 +73,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>OrderMergeSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ReportingMppsDocumentationComponent.cs" />
     <Compile Include="UnmergeOrdersTool.cs" />
     <Compile Include="DicomSeriesEditorComponent.cs" />
     <Compile Include="DowntimePrintFormsComponent.cs" />
