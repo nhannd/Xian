@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Shreds;
 
 namespace ClearCanvas.Enterprise.Core
@@ -162,7 +163,7 @@ namespace ClearCanvas.Enterprise.Core
 				catch (Exception e)
 				{
 					// one of the actions failed
-					ExceptionLogger.Log(this.GetType().FullName + ".ProcessItem", e);
+					Platform.Log(LogLevel.Error, e);
 					error = e;
 				}
 			}
@@ -214,7 +215,7 @@ namespace ClearCanvas.Enterprise.Core
 			catch (Exception e)
 			{
 				// Swallow exception on purpose.  We don't care if the resources failed to get cleanup.
-				ExceptionLogger.Log(this.GetType().FullName + ".ProcessItem", e);
+				Platform.Log(LogLevel.Error, e);
 			}
 		}
 	}

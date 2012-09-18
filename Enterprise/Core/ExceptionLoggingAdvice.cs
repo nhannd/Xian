@@ -10,8 +10,9 @@
 #endregion
 
 using System;
-using Castle.DynamicProxy;
+using System.ServiceModel;
 using Castle.Core.Interceptor;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -28,13 +29,23 @@ namespace ClearCanvas.Enterprise.Core
             {
                 invocation.Proceed();
             }
+			catch(FaultException e)
+			{
+				// if it was promoted to a fault, it isn't really an error as far as the server is concerned,
+				// but more of an expected type of failure that is being communicated back to the client
+				// Log at info level, and don't include stack trace since it isn't necessary
+				var operation = string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
+				var faultType = e.GetType().IsGenericType ? e.GetType().GetGenericArguments()[0] : null;
+				Platform.Log(LogLevel.Info, "Fault ({0}): {1} ({2})", faultType != null ? faultType.Name : "unknown", e.Message, operation);
+
+				// rethrow the exception so the fault gets to the client
+				throw;
+			}
             catch (Exception e)
             {
-                ExceptionLogger.Log(
-                    string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name), 
-                    e);
+				Platform.Log(LogLevel.Error, e);
 
-                // rethrow the exception
+                // rethrow the exception so that the client gets an error
                 throw;
             }
         }

@@ -252,6 +252,9 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 		/// <param name="interceptors"></param>
 		protected virtual void ApplyInterceptors(IList<IInterceptor> interceptors)
 		{
+			// exception logging occurs outside of the main persistence context
+			interceptors.Add(new ExceptionLoggingAdvice());
+
 			// add exception promotion advice at the beginning of the interception chain (outside of the service transaction)
 			interceptors.Add(new ExceptionPromotionAdvice());
 
@@ -266,9 +269,6 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 			{
 				interceptors.Add(new PerformanceLoggingAdvice());
 			}
-
-			// exception logging occurs outside of the main persistence context
-			interceptors.Add(new ExceptionLoggingAdvice());
 
 			// deadlock recovery occurs outside of persistence context,
 			// since each retry should be done in a new persistence context
