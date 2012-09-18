@@ -1184,7 +1184,7 @@ Preview.ReportPreview = function () {
 	{
 		var timePropertyMap = {X: 'CancelledTime', D: 'CreationTime', P: 'PreliminaryTime', F: 'CompletedTime'};
 		var timeText = Ris.formatDateTime(report[timePropertyMap[report.Status.Code]]);
-		var warningText = " *** THIS " + (isAddendum ? "ADDENDUM" : "REPORT") + " HAS NOT BEEN VERIFIED ***";
+		var warningText = " *** THIS " + (isAddendum ? "ADDENDUM" : "REPORT") + " HAS NOT BEEN FINALIZED ***";
 
 		var statusText = report.Status.Value + " - " + timeText;
 
