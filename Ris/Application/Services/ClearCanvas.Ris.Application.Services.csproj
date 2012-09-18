@@ -209,10 +209,6 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Healthcare\Mwl\ClearCanvas.Healthcare.Mwl.csproj">
-      <Project>{1564BDBC-73B1-4A9F-A8CA-1D56C6E99D76}</Project>
-      <Name>ClearCanvas.Healthcare.Mwl</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>

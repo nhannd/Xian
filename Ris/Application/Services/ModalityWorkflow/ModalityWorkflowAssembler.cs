@@ -10,8 +10,6 @@
 #endregion
 
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Mwl;
-using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Healthcare;
 
@@ -19,7 +17,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
     public class ModalityWorkflowAssembler
     {
-        public ModalityWorklistItemSummary CreateWorklistItemSummary(MwlWorklistItem domainItem, IPersistenceContext context)
+        public ModalityWorklistItemSummary CreateWorklistItemSummary(WorklistItem domainItem, IPersistenceContext context)
         {
             PersonNameAssembler assembler = new PersonNameAssembler();
             return new ModalityWorklistItemSummary(
@@ -37,7 +35,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                 domainItem.ProcedureName,
 				domainItem.ProcedurePortable,
 				EnumUtils.GetEnumValueInfo(domainItem.ProcedureLaterality, context),
-				domainItem.ProcedureStudyInstanceUID,
                 domainItem.ProcedureStepName,
                 domainItem.Time
                 );

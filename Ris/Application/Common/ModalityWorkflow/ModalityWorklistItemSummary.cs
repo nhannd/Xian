@@ -33,7 +33,6 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
             string procedureName,
 			bool procedurePortable,
 			EnumValueInfo procedureLaterality,
-			string procedureStudyInstanceUID,
             string procedureStepName,
             DateTime? time)
             :base(
@@ -55,10 +54,6 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
                 time
             )
         {
-        	this.ProcedureStudyInstanceUID = procedureStudyInstanceUID;
         }
-
-		[DataMember]
-		public string ProcedureStudyInstanceUID;
 	}
 }
