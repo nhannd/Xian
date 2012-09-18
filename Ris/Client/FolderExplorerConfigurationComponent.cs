@@ -35,9 +35,10 @@ namespace ClearCanvas.Ris.Client
 		{
 			var listPages = new List<IConfigurationPage>();
 
-			if (Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.HomePage.View) &&
-				Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Desktop.FolderOrganization) &&
-				LoginSession.Current.IsStaff)
+			if (Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.HomePage.View)
+				&& Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Desktop.FolderOrganization)
+				&& LoginSession.Current != null && LoginSession.Current.IsStaff
+				&& Desktop.Application.SessionStatus == SessionStatus.Online)
 			{
 				listPages.Add(new ConfigurationPage<FolderExplorerConfigurationComponent>(SR.FolderExplorerConfigurationPagePath));
 			}
@@ -89,6 +90,8 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
+			base.Start();
+
 			// establish default resource resolver on this assembly (not the assembly of the derived class)
 			IResourceResolver resourceResolver = new ResourceResolver(typeof(FolderConfigurationNodeBase).Assembly);
 
@@ -115,8 +118,6 @@ namespace ClearCanvas.Ris.Client
 			editFolderAction.KeyStroke = XKeys.F2;
 
 			LoadFolderSystems();
-
-			base.Start();
 		}
 
 		#region IConfigurationApplicationComponent Members

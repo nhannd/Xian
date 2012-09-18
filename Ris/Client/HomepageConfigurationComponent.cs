@@ -25,8 +25,9 @@ namespace ClearCanvas.Ris.Client
 
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
-			if (!Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.HomePage.View) ||
-				!LoginSession.Current.IsStaff)
+			if (!Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.HomePage.View)
+				|| LoginSession.Current == null
+				|| !LoginSession.Current.IsStaff)
 				return new IConfigurationPage[] {}; 
 			
 			return new IConfigurationPage[] { new HomepageConfigurationPage() };

@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Client
 			base.Initialize();
 
 			// automatically launch home page on startup, only if current user is a Staff
-			if (LoginSession.Current.IsStaff 
+			if (LoginSession.Current != null && LoginSession.Current.IsStaff 
 				&& Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.HomePage.View)
 				&& HomePageSettings.Default.ShowHomepageOnStartUp
 				&& _risWindow == null)
@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client
 			get
 			{
 				// bug 3087: only visible in the RIS window
-				return LoginSession.Current.IsStaff &&
+				return LoginSession.Current != null && LoginSession.Current.IsStaff &&
 					(_risWindow == null || _risWindow == this.Context.DesktopWindow);
 			}
 		}
