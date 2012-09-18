@@ -111,7 +111,7 @@
 	function formatReportPartStatus(part, isAddendum)
 	{
 		var statusText = part.Status + " as of " + part.StatusDateTime;
-		var warningText = " *** THIS " + (isAddendum ? "ADDENDUM" : "REPORT") + " HAS NOT BEEN VERIFIED ***";
+		var warningText = " *** THIS " + (isAddendum ? "ADDENDUM" : "REPORT") + " HAS NOT BEEN FINALIZED ***";
 		if (part.Status.toUpperCase() !== 'FINAL')
 			statusText = "<font color='red'>" + statusText + warningText + "</font>";
 

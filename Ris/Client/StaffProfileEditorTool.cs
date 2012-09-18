@@ -29,6 +29,14 @@ namespace ClearCanvas.Ris.Client
 	{
 		public void Launch()
 		{
+			if(LoginSession.Current == null)
+			{
+				this.Context.DesktopWindow.ShowMessageBox(
+					"This feature will be available the next time you start the workstation.",
+					MessageBoxActions.Ok);
+				return;
+			}
+
 			try
 			{
 				if (LoginSession.Current.Staff == null)

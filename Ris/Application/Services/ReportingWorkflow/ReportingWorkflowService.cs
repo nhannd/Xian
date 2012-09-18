@@ -504,6 +504,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			Platform.CheckMemberIsSet(request.ReassignedRadiologistRef, "ReassignedRadiologistRef");
 
 			var procedureStep = this.PersistenceContext.Load<ProcedureStep>(request.ProcedureStepRef, EntityLoadFlags.Proxy);
+
+			// bug #6418 - this operation doesn't apply to transcription steps, because it doesn't make any sense to assign
+			// a transcription step to a radiologist
+
+
 			var newStaff = this.PersistenceContext.Load<Staff>(request.ReassignedRadiologistRef, EntityLoadFlags.Proxy);
 
 			var newStep = procedureStep.Reassign(newStaff);
@@ -647,7 +652,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 					return false;
 			}
 
-			return CanExecuteOperation(new Operations.CancelReportingStep(), itemKey, true);
+			return CanExecuteOperation(new Operations.CancelReportingStep(), itemKey);
 		}
 
 		public bool CanReviseResidentReport(ReportingWorklistItemKey itemKey)
@@ -730,6 +735,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 				return false;
 
 			var procedureStep = this.PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
+
+			// bug #6418 - this operation doesn't apply to transcription steps, because it doesn't make any sense to assign
+			// a transcription step to a radiologist
+			if (procedureStep.Is<TranscriptionStep>())
+				return false;
 
 			if (procedureStep.Is<ReportingProcedureStep>())
 				return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Reassign)
