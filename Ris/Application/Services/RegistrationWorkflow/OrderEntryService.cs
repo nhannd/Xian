@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Permissions;
 using System.Threading;
-using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core.Printing;
 using ClearCanvas.Healthcare.Printing;
 using ClearCanvas.Healthcare.Workflow.OrderEntry;
@@ -26,7 +25,6 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
-using ClearCanvas.Workflow;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 using System;
 using System.Linq;
@@ -560,18 +558,18 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			var orderAssembler = new OrderEntryAssembler();
 			var mapProcToReq = new Dictionary<Procedure, ProcedureRequisition>();
 			var procedureNumberBroker = PersistenceContext.GetBroker<IProcedureNumberBroker>();
+			var dicomUidBroker = PersistenceContext.GetBroker<IDicomUidBroker>();
 			var procedures = CollectionUtils.Map(
 				requisition.Procedures ?? new List<ProcedureRequisition>(),
 				delegate(ProcedureRequisition req)
 				{
 					var rpt = this.PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
-					var rp = new Procedure(rpt, procedureNumberBroker.GetNext());
+					var rp = new Procedure(rpt, procedureNumberBroker.GetNext(), dicomUidBroker.GetNewUid());
 					mapProcToReq.Add(rp, req);
 
 					// important to set this flag prior to creating the procedure steps, because it may affect
 					// which procedure steps are created
 					rp.DowntimeRecoveryMode = requisition.IsDowntimeOrder;
-					rp.StudyInstanceUID = DicomUid.GenerateUid().UID;
 					return rp;
 				});
 
@@ -593,7 +591,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 					orderingPhysician,
 					resultRecipients,
 					procedures),
-				procedureNumberBroker);
+				procedureNumberBroker,
+				dicomUidBroker);
 
 			// note: need to lock the new order now, prior to creating the procedure steps
 			// otherwise may get exceptions saying the Procedure is a transient object
@@ -769,12 +768,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			// process the additions first, so that we don't accidentally cancel an order (if all its procedures are cancelled momentarily)
 			var procedureNumberBroker = PersistenceContext.GetBroker<IProcedureNumberBroker>();
+			var dicomUidBroker = PersistenceContext.GetBroker<IDicomUidBroker>();
 			foreach (var req in addedReqs)
 			{
 				var requestedType = this.PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
 
 				// create a new procedure for this requisition
-				var procedure = new Procedure(requestedType, procedureNumberBroker.GetNext()) { DowntimeRecoveryMode = isDowntime };
+				var procedure = new Procedure(requestedType, procedureNumberBroker.GetNext(), dicomUidBroker.GetNewUid()) { DowntimeRecoveryMode = isDowntime };
 				order.AddProcedure(procedure);
 
 				// note: need to lock the new procedure now, prior to creating the procedure steps

@@ -97,6 +97,7 @@
     <Compile Include="Alerts\ReconciliationAlert.cs" />
     <Compile Include="Allergy.cs" />
     <Compile Include="AttachedDocument.cs" />
+    <Compile Include="Brokers\IDicomUidBroker.cs" />
     <Compile Include="Brokers\IMrnBroker.cs" />
     <Compile Include="Brokers\IPerformedProcedureStepBroker.cs" />
     <Compile Include="Brokers\IProcedureNumberBroker.cs" />
@@ -237,6 +238,7 @@
     <Compile Include="Tests\PublicationStepTests.cs" />
     <Compile Include="Tests\ReportingProcedureStepTests.cs" />
     <Compile Include="Tests\ReportTests.cs" />
+    <Compile Include="Tests\TestDicomUidBroker.cs" />
     <Compile Include="Tests\TestExtensionFactory.cs" />
     <Compile Include="Tests\TestLocationFactory.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />

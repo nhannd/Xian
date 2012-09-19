@@ -32,7 +32,7 @@
     <property name="DowntimeRecoveryMode" column="DowntimeRecoveryMode_" type="Boolean" not-null="true"/>
 
     <!-- specify the StudyInstanceUID that would be returned to the modality via MWL -->
-    <property name="StudyInstanceUID" column="StudyInstanceUID_" type="String" length="64" not-null="true"/>
+    <property name="StudyInstanceUID" column="StudyInstanceUID_" type="String" length="64" not-null="true" access="nosetter.camelcase-underscore"/>
 
     <!-- Radiology Reports : a Procedure should only ever have one Report in a status other than X.
           The collection may contain multiple entries, because a report may have been cancelled by the author

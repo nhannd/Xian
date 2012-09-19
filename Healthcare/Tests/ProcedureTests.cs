@@ -119,7 +119,7 @@ namespace ClearCanvas.Healthcare.Tests
 		public void Test_Constructor()
 		{
 			var procedureType = new ProcedureType();
-			var procedure = new Procedure(procedureType, "111");
+			var procedure = new Procedure(procedureType, "111", "1.111");
 
 			Assert.AreEqual(procedureType, procedure.Type);
 			Assert.AreEqual(0, procedure.ProcedureSteps.Count);
@@ -529,7 +529,7 @@ namespace ClearCanvas.Healthcare.Tests
 		[Test]
 		public void Test_Schedule_PreStep_And_SchedulingOffset()
 		{
-			var procedure = new Procedure(new ProcedureType(), "111");
+			var procedure = new Procedure(new ProcedureType(), "111", "1.111");
 
 			var protocolStep = new ProtocolAssignmentStep(new Protocol(procedure));
 			procedure.AddProcedureStep(protocolStep);

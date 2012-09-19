@@ -26,7 +26,7 @@ namespace ClearCanvas.Healthcare
 	[Validation(HighLevelRulesProviderMethod = "GetValidationRules")]
 	public partial class Procedure
 	{
-		public Procedure(ProcedureType type, string procedureNumber)
+		public Procedure(ProcedureType type, string procedureNumber, string studyInstanceUid)
 		{
 			_type = type;
 			_number = procedureNumber;
@@ -35,6 +35,7 @@ namespace ClearCanvas.Healthcare
 			_reports = new HashedSet<Report>();
 			_protocols = new HashedSet<Protocol>();
 			_scheduledDuration = type.DefaultDuration;
+			_studyInstanceUID = studyInstanceUid;
 		}
 
 		#region Public Properties

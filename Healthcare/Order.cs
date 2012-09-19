@@ -53,7 +53,7 @@ namespace ClearCanvas.Healthcare
 		/// <summary>
 		/// Factory method to create a new order.
 		/// </summary>
-		public static Order NewOrder(OrderCreationArgs args, IProcedureNumberBroker procedureNumberBroker)
+		public static Order NewOrder(OrderCreationArgs args, IProcedureNumberBroker procedureNumberBroker, IDicomUidBroker dicomUidBroker)
 		{
 			// validate required members are set
 			Platform.CheckMemberIsSet(args.Patient, "Patient");
@@ -87,7 +87,7 @@ namespace ClearCanvas.Healthcare
 				// create procedures according to the diagnostic service plan
 				args.Procedures = CollectionUtils.Map<ProcedureType, Procedure>(
 					args.DiagnosticService.ProcedureTypes,
-					type => new Procedure(type, procedureNumberBroker.GetNext())
+					type => new Procedure(type, procedureNumberBroker.GetNext(), dicomUidBroker.GetNewUid())
 								{
 									PerformingFacility = args.PerformingFacility ?? args.OrderingFacility
 								});
