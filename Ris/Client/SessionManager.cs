@@ -139,7 +139,7 @@ namespace ClearCanvas.Ris.Client
 				return false;
 			if (!_current._loginResult.LoggedIn)
 				return false;
-
+			Platform.Log(LogLevel.Info, "RisSM : changePassword call");
 			string newPassword;
 			return ChangePassword(_current._loginResult.UserName, null, out newPassword);
 		}
@@ -187,8 +187,9 @@ namespace ClearCanvas.Ris.Client
 					// try to create the session
 					return DoLogin(userName, password);
 				}
-				catch (PasswordExpiredException)
+				catch (PasswordExpiredException ex)
 				{
+					Platform.Log(LogLevel.Info, ex, "RisSM");
 					string newPassword;
 					if (!ChangePassword(userName, password, out newPassword))
 					{
@@ -201,9 +202,10 @@ namespace ClearCanvas.Ris.Client
 					password = newPassword;
 					needLoginDialog = false;
 				}
-				catch (Exception e)
+				catch (Exception ex)
 				{
-					ReportException(e);
+					Platform.Log(LogLevel.Info, ex, "RisSM");
+					ReportException(ex);
 				}
 			}
 		}
