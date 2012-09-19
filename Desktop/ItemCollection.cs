@@ -225,15 +225,17 @@ namespace ClearCanvas.Desktop
     	/// <param name="constraint">A predicate against which all items in the collection will be compared, and replaced with the new value.</param>
     	/// <param name="newValue">The new value with which to replace all matching items in the collection.</param>
     	public virtual void Replace(Predicate<TItem> constraint, TItem newValue)
-        {
-            for (int i = 0; i < this.Count; i++)
-            {
-                if (constraint(_list[i]))
-                {
-                    // this assignment will automatically fire a notification event
-                    this[i] = newValue;
-                }
-            }
+    	{
+			// capture the set of indices that require updating, prior to updating any entries
+    		var indices = (from i in Enumerable.Range(0, this.Count)
+    		               where constraint(_list[i])
+    		               select i).ToList();
+
+    		foreach (var i in indices)
+    		{
+				// this assignment will automatically fire a notification event
+				this[i] = newValue;
+			}
         }
 
     	/// <summary>
