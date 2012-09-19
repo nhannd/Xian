@@ -20,18 +20,17 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost/WebPortal/Services/ApplicationService.svc" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost/Phoenix5ImageServer/Services/ApplicationService.svc?wsdl" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="ApplicationService513.xsd" MetadataType="Schema" ID="19949cf9-6a52-41b2-b107-a6aa301f6cdb" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd0" />
-    <MetadataFile FileName="ApplicationService514.xsd" MetadataType="Schema" ID="3d99bd66-1894-4629-af77-cc6708a36a86" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd4" />
-    <MetadataFile FileName="ApplicationService515.xsd" MetadataType="Schema" ID="adde5dcf-b8f6-4816-8d79-967fe1acb945" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd1" />
-    <MetadataFile FileName="ApplicationService516.xsd" MetadataType="Schema" ID="fe36b04d-4741-4026-803a-7e46389457dd" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd2" />
-    <MetadataFile FileName="ApplicationService517.xsd" MetadataType="Schema" ID="d8cf3110-2ae5-4e30-a7b1-4ddfdd9ee660" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd3" />
-    <MetadataFile FileName="ApplicationService26.wsdl" MetadataType="Wsdl" ID="5d004fbb-d639-4774-9c8b-78f005b619fc" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?wsdl=wsdl0" />
-    <MetadataFile FileName="ApplicationService27.wsdl" MetadataType="Wsdl" ID="acdff376-c897-452c-9a8f-b28a15c93238" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?wsdl" />
-    <MetadataFile FileName="ApplicationService518.xsd" MetadataType="Schema" ID="5a8eeca5-4980-4a2b-bf51-392182d8955c" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd5" />
-    <MetadataFile FileName="ApplicationService13.disco" MetadataType="Disco" ID="4be98619-c9a0-4f19-9cc5-146080d8c8e6" SourceId="1" SourceUrl="http://localhost/WebPortal/Services/ApplicationService.svc?disco" />
+    <MetadataFile FileName="ApplicationService6.xsd" MetadataType="Schema" ID="5c563afb-114a-4fb9-a699-135c7533dd44" SourceId="1" SourceUrl="http://bright/Phoenix5ImageServer/Services/ApplicationService.svc?xsd=xsd4" />
+    <MetadataFile FileName="PollingApplicationService.wsdl" MetadataType="Wsdl" ID="9f685a77-3b23-446c-8f5c-6b4fc65aca16" SourceId="1" SourceUrl="http://localhost/Phoenix5ImageServer/Services/ApplicationService.svc?wsdl" />
+    <MetadataFile FileName="ApplicationService7.xsd" MetadataType="Schema" ID="49819f39-c41a-454e-960d-2dade1a6c745" SourceId="1" SourceUrl="http://bright/Phoenix5ImageServer/Services/ApplicationService.svc?xsd=xsd1" />
+    <MetadataFile FileName="ApplicationService3.wsdl" MetadataType="Wsdl" ID="42e4983b-0524-45e8-9f83-4a310ec5d131" SourceId="1" SourceUrl="http://bright/Phoenix5ImageServer/Services/ApplicationService.svc?wsdl=wsdl0" />
+    <MetadataFile FileName="ApplicationService8.xsd" MetadataType="Schema" ID="50b9a816-b8ad-40fe-b190-43edfca3f0d7" SourceId="1" SourceUrl="http://bright/Phoenix5ImageServer/Services/ApplicationService.svc?xsd=xsd0" />
+    <MetadataFile FileName="ApplicationService9.xsd" MetadataType="Schema" ID="55842341-65f1-495f-b796-674eaa179015" SourceId="1" SourceUrl="http://bright/Phoenix5ImageServer/Services/ApplicationService.svc?xsd=xsd3" />
+    <MetadataFile FileName="ApplicationService10.xsd" MetadataType="Schema" ID="d29c0c1d-303a-4bde-99d5-463c70620a81" SourceId="1" SourceUrl="http://bright/Phoenix5ImageServer/Services/ApplicationService.svc?xsd=xsd2" />
+    <MetadataFile FileName="ApplicationService11.xsd" MetadataType="Schema" ID="2d9da258-bb7c-4cad-8d3e-7247a1aee40c" SourceId="1" SourceUrl="http://bright/Phoenix5ImageServer/Services/ApplicationService.svc?xsd=xsd5" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

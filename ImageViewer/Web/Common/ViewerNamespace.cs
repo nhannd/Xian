@@ -15,6 +15,4 @@ namespace ClearCanvas.ImageViewer.Web.Common
     {
         public const string Value = "http://www.clearcanvas.ca/web/application/viewer";
     }
-
-
 }

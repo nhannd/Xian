@@ -133,7 +133,7 @@ namespace ClearCanvas.Web.Services
 		[ThreadStatic]
 		private static Application _current;
 
-		protected ApplicationContext _context;
+		private ApplicationContext _context;
 
 		private string _userName;
 	    private volatile UserSessionInfo _session;
@@ -141,7 +141,7 @@ namespace ClearCanvas.Web.Services
 		private TimeSpan _sessionPollingIntervalSeconds;
 		private volatile int _lastSessionCheckTicks;
 
-        private DateTime _lastClientMessage = DateTime.Now;
+        private DateTime? _lastClientMessage;
 		private volatile bool _timedOut;
 
 		private readonly object _syncLock = new object();
@@ -194,7 +194,6 @@ namespace ClearCanvas.Web.Services
 
 		private bool IsSessionShared { get; set; }
 
-
         public abstract string InstanceName { get;  }
 
         public MessageBatchMode BatchMode { get; protected set; }
@@ -213,7 +212,6 @@ namespace ClearCanvas.Web.Services
 
             if (_session.Principal != null)
                 Thread.CurrentPrincipal = Principal = _session.Principal;
-
 		}
 
 		private void Logout()
@@ -356,7 +354,6 @@ namespace ClearCanvas.Web.Services
             //TODO: Remove from cache immediately?
         }
 
-
 	    public void Stop(string message)
 		{
 			lock (_syncLock)
@@ -462,7 +459,7 @@ namespace ClearCanvas.Web.Services
                 // it is idle. Assume max waiting time for GetPendingEvent is 10 seconds,
                 // we can assume the client browser is closed or connection is lost if we don't receive 
                 // one for 20 seconds
-                if (DateTime.Now - _lastClientMessage > TimeSpan.FromSeconds(20))
+                if (_lastClientMessage.HasValue && DateTime.Now - _lastClientMessage > TimeSpan.FromSeconds(20))
                 {
                     Stop(String.Format(SR.MessageNoCommunicationFromClientError, _lastClientMessage));
                 }
@@ -558,7 +555,6 @@ namespace ClearCanvas.Web.Services
 		protected abstract void OnStop();
 	    protected abstract EventSet OnGetPendingOutboundEvent(int wait);
         
-
         public EventSet GetPendingOutboundEvent(int wait)
         {
             _lastClientMessage = DateTime.Now;

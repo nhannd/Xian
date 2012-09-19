@@ -17,6 +17,8 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming.WebStation
 {
+    // TODO (CR Sep 2012): Remove
+
     [ExtensionOf(typeof(ServiceNodeServiceProviderExtensionPoint), Enabled = false)]
     internal class StudyLoaderServiceProvider : ServiceNodeServiceProvider
     {

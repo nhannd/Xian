@@ -24,6 +24,5 @@ namespace ClearCanvas.ImageViewer.Web.Common
         Right,
         [EnumMember]
         Middle
-        
     }
 }

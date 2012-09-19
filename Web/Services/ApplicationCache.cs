@@ -16,143 +16,144 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Web.Services
 {
-	internal class Cache
-		{
-		    private const int CheckIntervalInSeconds = 15;
-            private const int ApplicationShutdownDelayInSeconds = 5;
+    internal class Cache
+    {
+        private const int CheckIntervalInSeconds = 15;
+        private const int ApplicationShutdownDelayInSeconds = 5;
 
-			public static readonly Cache Instance;
+        public static readonly Cache Instance;
 
-			static Cache()
-			{
-				Instance = new Cache();
-			}
+        static Cache()
+        {
+            Instance = new Cache();
+        }
 
-			private readonly object _syncLock = new object();
-			private readonly Dictionary<Guid, Application> _applications = new Dictionary<Guid, Application>();
-            private Dictionary<Guid, DateTime> _appsToBeRemoved = new Dictionary<Guid, DateTime>();
-		    
-            private Timer _cleanupTimer;
+        private readonly object _syncLock = new object();
+        private readonly Dictionary<Guid, Application> _applications = new Dictionary<Guid, Application>();
+        private Dictionary<Guid, DateTime> _appsToBeRemoved = new Dictionary<Guid, DateTime>();
 
-		    internal object SyncLock
-		    {
-                get { return _syncLock; }
-		    }
+        private Timer _cleanupTimer;
 
-		    internal int Count
-		    {
-		        get{
-                    lock (_syncLock)
-                    {
-                        return _applications.Count;
-                    }
-		        }
-		    }
+        internal object SyncLock
+        {
+            get { return _syncLock; }
+        }
 
-            private Cache()
+        internal int Count
+        {
+            get
             {
-                // TODO: Cleanup ther timer?
-                _cleanupTimer = new Timer(OnCleanupTimerCallback, null, TimeSpan.FromSeconds(CheckIntervalInSeconds),
-                                          TimeSpan.FromSeconds(CheckIntervalInSeconds));
-            }
-
-            private void OnCleanupTimerCallback(object ignore)
-            {
-                try
+                lock (_syncLock)
                 {
-                    lock (_syncLock)
+                    return _applications.Count;
+                }
+            }
+        }
+
+        private Cache()
+        {
+            // TODO: Cleanup ther timer?
+            _cleanupTimer = new Timer(OnCleanupTimerCallback, null, TimeSpan.FromSeconds(CheckIntervalInSeconds),
+                                      TimeSpan.FromSeconds(CheckIntervalInSeconds));
+        }
+
+        private void OnCleanupTimerCallback(object ignore)
+        {
+            try
+            {
+                lock (_syncLock)
+                {
+                    if (_appsToBeRemoved.Count > 0)
                     {
-                        if (_appsToBeRemoved.Count > 0)
+
+                        List<Guid> removalList = new List<Guid>();
+                        foreach (Guid appId in _appsToBeRemoved.Keys)
                         {
-
-                            List<Guid> removalList = new List<Guid>();
-                            foreach (Guid appId in _appsToBeRemoved.Keys)
+                            if (DateTime.Now - _appsToBeRemoved[appId] >
+                                TimeSpan.FromSeconds(ApplicationShutdownDelayInSeconds))
                             {
-                                if (DateTime.Now - _appsToBeRemoved[appId] >
-                                    TimeSpan.FromSeconds(ApplicationShutdownDelayInSeconds))
-                                {
-                                    removalList.Add(appId);
-                                }
+                                removalList.Add(appId);
                             }
+                        }
 
-                            if (removalList.Count > 0)
+                        if (removalList.Count > 0)
+                        {
+                            string appInstanceName = null;
+                            foreach (Guid appId in removalList)
                             {
-                                string appInstanceName = null;
-                                foreach (Guid appId in removalList)
+                                Application app = null;
+                                try
                                 {
-                                    Application app = null;
-                                    try
-                                    {
 
-                                        app = _applications[appId];
-                                        appInstanceName = app.InstanceName;
-                                        _applications.Remove(appId);
-                                        _appsToBeRemoved.Remove(appId);
-                                    }
-                                    finally
+                                    app = _applications[appId];
+                                    appInstanceName = app.InstanceName;
+                                    _applications.Remove(appId);
+                                    _appsToBeRemoved.Remove(appId);
+                                }
+                                finally
+                                {
+                                    if (app != null)
                                     {
-                                        if (app != null)
-                                        {
-                                            app.DisposeMembers();
-                                        }
-                                        Platform.Log(LogLevel.Info, "{0} removed from cache.", appInstanceName);
+                                        app.DisposeMembers();
                                     }
+                                    Platform.Log(LogLevel.Info, "{0} removed from cache.", appInstanceName);
                                 }
                             }
                         }
                     }
                 }
-                catch (Exception)
-                {
-                    //ignore
-                }
             }
+            catch (Exception)
+            {
+                //ignore
+            }
+        }
 
-		    public void Add(Application application)
-			{
-				lock (_syncLock)
-				{
-					_applications.Add(application.Identifier, application);
-				    var identifier = application.Identifier;
-                    application.Stopped += delegate { Remove(identifier); };
-				}
-			}
+        public void Add(Application application)
+        {
+            lock (_syncLock)
+            {
+                _applications.Add(application.Identifier, application);
+                var identifier = application.Identifier;
+                application.Stopped += delegate { Remove(identifier); };
+            }
+        }
 
-			public Application Find(Guid applicationId)
-			{
-				lock (_syncLock)
-				{
-					Application application;
-					return _applications.TryGetValue(applicationId, out application) ? application : null;
-				}
-			}
+        public Application Find(Guid applicationId)
+        {
+            lock (_syncLock)
+            {
+                Application application;
+                return _applications.TryGetValue(applicationId, out application) ? application : null;
+            }
+        }
 
-		    private void Remove(Guid applicationId)
-			{
-				lock (_syncLock)
-				{
-					if (!_applications.ContainsKey(applicationId))
-						return;
+        private void Remove(Guid applicationId)
+        {
+            lock (_syncLock)
+            {
+                if (!_applications.ContainsKey(applicationId))
+                    return;
 
-					// App shutdown must be delayed to give the client some time to poll the remaining events.
-                    if (!_appsToBeRemoved.ContainsKey(applicationId))
-                        _appsToBeRemoved.Add(applicationId, DateTime.Now);            
-				}
-			}
+                // App shutdown must be delayed to give the client some time to poll the remaining events.
+                if (!_appsToBeRemoved.ContainsKey(applicationId))
+                    _appsToBeRemoved.Add(applicationId, DateTime.Now);
+            }
+        }
 
-            // CR 3-22-2011, This is no longer used now that we're hosted in IIS.
-			public void StopAndClearAll(string message)
-			{
-				lock (_syncLock)
-				{
-					foreach(Application app in _applications.Values)
-					{
-                        app.Stop(message);
-					    app.DisposeMembers();
-					}
+        // CR 3-22-2011, This is no longer used now that we're hosted in IIS.
+        public void StopAndClearAll(string message)
+        {
+            lock (_syncLock)
+            {
+                foreach (Application app in _applications.Values)
+                {
+                    app.Stop(message);
+                    app.DisposeMembers();
+                }
 
-					_applications.Clear();
-				}
-			}
-		}	
+                _applications.Clear();
+            }
+        }
+    }
 }

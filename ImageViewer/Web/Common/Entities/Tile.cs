@@ -40,9 +40,5 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
 
         [DataMember(IsRequired = false)]
         public InformationBox InformationBox { get; set; }
-
-		// TODO: Still need this?
-        [DataMember(IsRequired = false)]
-        public long DrawTime { get; set; }
     }
 }

@@ -32,7 +32,6 @@ namespace ClearCanvas.Web.Common
 
         [DataMember(IsRequired = false)]
         public MetaInformation MetaInformation { get; set; }
-
 	}
 
     [DataContract(Namespace = Namespace.Value)]
@@ -43,11 +42,10 @@ namespace ClearCanvas.Web.Common
     }
 
     [DataContract(Namespace = Namespace.Value)]
-    public class StartApplicationRequestResponse
+    public class StartApplicationResult
     {
         [DataMember(IsRequired = true)]
         public Guid AppIdentifier { get; set; }
-
     }
     
 	[DataContract(Namespace = Namespace.Value)]
@@ -68,7 +66,7 @@ namespace ClearCanvas.Web.Common
 	}
 
     [DataContract(Namespace = Namespace.Value)]
-    public class GetPendingEventRequestResponse
+    public class GetPendingEventResult
     {
         [DataMember(IsRequired = true)]
         public Guid ApplicationId { get; set; }
@@ -84,7 +82,7 @@ namespace ClearCanvas.Web.Common
 		[OperationContract(IsOneWay = false)]
         [FaultContract(typeof(SessionValidationFault))]
         [FaultContract(typeof(OutOfResourceFault))]
-        StartApplicationRequestResponse StartApplication(StartApplicationRequest request);
+        StartApplicationResult StartApplication(StartApplicationRequest request);
 
 		[OperationContract(IsOneWay = false)]
         [FaultContract(typeof(InvalidOperationFault))]
@@ -93,16 +91,41 @@ namespace ClearCanvas.Web.Common
         [OperationContract(IsOneWay = false)]
         [FaultContract(typeof(InvalidOperationFault))]
         ProcessMessagesResult ProcessMessages(MessageSet messages);
-        
+    }
+
+    [DataContract(Namespace = Namespace.Value)]
+    public class ProcessEventsRequest
+    {
+        [DataMember(IsRequired = true)]
+        public Guid ApplicationId { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public EventSet EventSet { get; set; }
+    }
+
+    [ServiceContract(Namespace = Namespace.Value)]
+    public interface IPollingApplicationService : IApplicationService
+    {
         [OperationContract(IsOneWay = false)]
         [FaultContract(typeof(InvalidOperationFault))]
-        GetPendingEventRequestResponse GetPendingEvent(GetPendingEventRequest request);
+        GetPendingEventResult GetPendingEvent(GetPendingEventRequest request);
 
         [OperationContract(IsOneWay = true)]
         void ReportPerformance(PerformanceData data);
 
         [OperationContract(IsOneWay = false)]
         void SetProperty(SetPropertyRequest request);
+    }
+
+    public interface IApplicationServiceCallback
+    {
+        [OperationContract(IsOneWay = false)]
+        void ProcessEvents(ProcessEventsRequest request);
+    }
+
+    [ServiceContract(Namespace = Namespace.Value, CallbackContract = typeof(IApplicationServiceCallback))]
+    public interface IDuplexApplicationService : IApplicationService
+    {
     }
 
     [DataContract]
