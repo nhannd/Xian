@@ -226,7 +226,7 @@ namespace ClearCanvas.Desktop
     	/// <param name="newValue">The new value with which to replace all matching items in the collection.</param>
     	public virtual void Replace(Predicate<TItem> constraint, TItem newValue)
     	{
-			// capture the set of indices that require updating, prior to updating any entries
+			// bug #10550: capture the set of indices that require updating, prior to updating any entries
     		var indices = (from i in Enumerable.Range(0, this.Count)
     		               where constraint(_list[i])
     		               select i).ToList();
