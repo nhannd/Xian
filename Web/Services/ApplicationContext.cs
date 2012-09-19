@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Web.Common;
 using System.Security.Principal;
 
@@ -26,6 +27,8 @@ namespace ClearCanvas.Web.Services
 		void FatalError(Exception e);
 
         EventSet GetPendingOutboundEvent(int wait);
+
+	    event EventHandler EventFired;
 
 	    bool HasProperty(string key);
         bool TryGetValue<T>(string key, out T value);
@@ -64,7 +67,10 @@ namespace ClearCanvas.Web.Services
 	    {
             get { return _application.Identifier; }
 	    }
-	
+
+	    // TODO (CR Sep 2012): Yuck.
+	    public event EventHandler EventFired;
+
 		#region IApplicationContext Members
 
 		public EntityHandlerStore EntityHandlers { get; private set; }
@@ -109,11 +115,12 @@ namespace ClearCanvas.Web.Services
 			InjectSenderName(@event);
 			if (_eventQueue != null)
 			    _eventQueue.Send(@event);
-		}
+
+	        EventsHelper.Fire(EventFired, this, EventArgs.Empty);
+        }
 
 	    #endregion
-
-
+        
         private void InjectSenderName(Event @event)
         {
             IEntityHandler handler = EntityHandlers[@event.SenderId];

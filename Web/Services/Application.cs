@@ -527,7 +527,7 @@ namespace ClearCanvas.Web.Services
 			remove { lock (_syncLock) { _stopped -= value; } }
 		}
 
-		ProcessMessagesResult IApplication.ProcessMessages(MessageSet messageSet)
+		public ProcessMessagesResult ProcessMessages(MessageSet messageSet)
 		{
 			lock (_syncLock)
 			{
@@ -584,7 +584,7 @@ namespace ClearCanvas.Web.Services
 
 		#region Static Helpers
 
-		internal static Application Start(StartApplicationRequest request)
+		public static Application Start(StartApplicationRequest request)
 		{
 			var filter = new AttributeExtensionFilter(new ApplicationAttribute(request.GetType()));
 			var app = new ApplicationExtensionPoint().CreateExtension(filter) as IApplication;
