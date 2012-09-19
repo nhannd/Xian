@@ -47,12 +47,16 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended
 
 		public void Print()
 		{
-			var fsName = this.Context.SelectedFolder.FolderSystem.Title;
-			var folderName = this.Context.SelectedFolder.Name;
-			var folderDescription = this.Context.SelectedFolder.Tooltip;
-			var totalItemCount = this.Context.SelectedFolder.TotalItemCount;
+			var selectedFolder = this.Context.SelectedFolder;
+			if(selectedFolder == null)
+				return;
+
+			var fsName = selectedFolder.FolderSystem != null ? selectedFolder.FolderSystem.Title : "";
+			var folderName = selectedFolder.Name;
+			var folderDescription = selectedFolder.Tooltip;
+			var totalItemCount = selectedFolder.TotalItemCount;
 			var items = new List<object>();
-			foreach (var item in this.Context.SelectedFolder.ItemsTable.Items)
+			foreach (var item in selectedFolder.ItemsTable.Items)
 				items.Add(item);
 
 			ApplicationComponent.LaunchAsDialog(

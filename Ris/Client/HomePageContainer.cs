@@ -103,19 +103,20 @@ namespace ClearCanvas.Ris.Client
 
 		private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
 		{
+			var selectedItems = _folderContentComponent.SelectedItems.Items;
 			// update the preview component url whenever the selected items change,
 			// regardless of whether the folder system has changed or not
 			// this should help to guarantee that the correct preview page is always displayed
 			var selectedExplorer = _folderSystemGroup.SelectedFolderExplorer;
 			var url = selectedExplorer.SelectedFolder is WorkflowFolder
-							? selectedExplorer.FolderSystem.GetPreviewUrl(selectedExplorer.SelectedFolder, _folderContentComponent.SelectedItems.Items)
+							? selectedExplorer.FolderSystem.GetPreviewUrl(selectedExplorer.SelectedFolder, selectedItems)
 			             	: null;
 
-			_previewComponent.SetPreviewItems(url, _folderContentComponent.SelectedItems.Items);
+			_previewComponent.SetPreviewItems(url, selectedItems);
 
-			if(selectedExplorer.SelectedFolder != null)
+			if(selectedExplorer.SelectedFolder != null && selectedItems.Length > 0)
 			{
-				AuditHelper.FolderItemPreviewed(selectedExplorer.SelectedFolder, _folderContentComponent.SelectedItems.Items);
+				AuditHelper.FolderItemPreviewed(selectedExplorer.SelectedFolder, selectedItems);
 			}
 		}
 

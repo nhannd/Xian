@@ -54,6 +54,11 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="selectedItems"></param>
 		public static void FolderItemPreviewed(IFolder folder, object[] selectedItems)
 		{
+			// the folder system can be null sometimes (e.g. a container folder),
+			// in which case this can't be audited (and presumably doesn't need to be)
+			if (folder.FolderSystem == null)
+				return;
+
 			var datas = folder.FolderSystem.GetPreviewAuditData(folder, selectedItems);
 			foreach (var auditData in datas)
 			{
