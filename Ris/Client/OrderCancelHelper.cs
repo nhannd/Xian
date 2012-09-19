@@ -10,14 +10,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -26,13 +23,20 @@ namespace ClearCanvas.Ris.Client
 		public static bool CancelOrder(EntityRef orderRef, string description, IDesktopWindow desktopWindow)
 		{
 			// first check for warnings
-			var warnings = new List<string>();
+			QueryCancelOrderWarningsResponse response = null;
 			Platform.GetService<IOrderEntryService>(
-				service => warnings = service.QueryCancelOrderWarnings(new QueryCancelOrderWarningsRequest(orderRef)).Warnings);
+				service => response = service.QueryCancelOrderWarnings(new QueryCancelOrderWarningsRequest(orderRef)));
 
-			if (warnings.Count > 0)
+			if (response.Errors != null && response.Errors.Count > 0)
 			{
-				var warn = CollectionUtils.FirstElement(warnings);
+				var error = CollectionUtils.FirstElement(response.Errors);
+				desktopWindow.ShowMessageBox(error, MessageBoxActions.Ok);
+				return false;
+			}
+
+			if (response.Warnings != null && response.Warnings.Count > 0)
+			{
+				var warn = CollectionUtils.FirstElement(response.Warnings);
 				var action = desktopWindow.ShowMessageBox(
 					warn + "\n\nAre you sure you want to cancel this order?",
 					MessageBoxActions.YesNo);

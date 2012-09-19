@@ -367,6 +367,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 			var order = this.PersistenceContext.Load<Order>(request.OrderRef);
 			var warnings = new List<string>();
+			var errors = new List<string>();
+
+			if(order.IsTerminated)
+			{
+				errors.Add("This order cannot be cancelled because it has already been completed or otherwise terminated.");
+				return new QueryCancelOrderWarningsResponse(warnings, errors);
+			}
 
 			var hasActiveReportingSteps = CollectionUtils.Contains(
 				order.Procedures,
@@ -377,7 +384,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				warnings.Add("This order has been performed and may have reports in progress.");
 			}
 
-			return new QueryCancelOrderWarningsResponse(warnings);
+			return new QueryCancelOrderWarningsResponse(warnings, errors);
 		}
 
 		[UpdateOperation]

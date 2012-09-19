@@ -18,12 +18,16 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 	[DataContract]
 	public class QueryCancelOrderWarningsResponse : DataContractBase
 	{
-		public QueryCancelOrderWarningsResponse(List<string> warnings)
+		public QueryCancelOrderWarningsResponse(List<string> warnings, List<string> errors)
 		{
 			Warnings = warnings;
+			Errors = errors;
 		}
 
 		[DataMember]
 		public List<string> Warnings;
+
+		[DataMember]
+		public List<string> Errors;
 	}
 }
