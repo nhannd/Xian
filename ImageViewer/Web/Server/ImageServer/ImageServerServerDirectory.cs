@@ -45,37 +45,39 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
         private ServerDirectoryEntry FindLocalPartition(string retrieveAeTitle)
         {
             var webUser = Thread.CurrentPrincipal as CustomPrincipal;
-            if (webUser != null)
+            if (webUser == null)
             {
-                ServerPartition partition = ServerPartitionMonitor.Instance.GetPartition(retrieveAeTitle);
-                if (partition != null)
-                {
-                        foreach (var oid in webUser.Credentials.DataAccessAuthorityGroups)
-                        {
-                            if (partition.IsAccessAllowed(oid.ToString()))
-                            {
-                                throw new PermissionDeniedException(string.Empty);
-                            }
-                        }
-                        
-                        return new ServerDirectoryEntry()
-                                   {
-                                       IsPriorsServer = true,
-                                       Server = new ApplicationEntity()
-                                                    {
-                                                        AETitle = partition.AeTitle,
-                                                        Description = partition.Description,
-                                                        Name = partition.AeTitle,
-                                                        ScpParameters = new ScpParameters(WebViewerServices.Default.ArchiveServerHostname, partition.Port),
-                                                        StreamingParameters = new StreamingParameters(WebViewerServices.Default.ArchiveServerHeaderPort, WebViewerServices.Default.ArchiveServerWADOPort)
-                                                    }
-                                   };
+                Platform.Log(LogLevel.Debug, "ImageServerServerDirectory: FindLocalPartition(): user is not logged in ?");
+                return null;
+            }
 
-                    
+            ServerPartition partition = ServerPartitionMonitor.Instance.GetPartition(retrieveAeTitle);
+            if (partition == null)
+            {
+                Platform.Log(LogLevel.Debug, "ImageServerServerDirectory: FindLocalPartition(): Could not find partition with AE Title '{0}'", retrieveAeTitle);
+                return null;
+            }
+
+            foreach (var oid in webUser.Credentials.DataAccessAuthorityGroups)
+            {
+                if (partition.IsAccessAllowed(oid.ToString()))
+                {
+                    throw new PermissionDeniedException(string.Empty);
                 }
             }
 
-            return null;
+            return new ServerDirectoryEntry()
+            {
+                IsPriorsServer = true,
+                Server = new ApplicationEntity()
+                {
+                    AETitle = partition.AeTitle,
+                    Description = partition.Description,
+                    Name = partition.AeTitle,
+                    ScpParameters = new ScpParameters(WebViewerServices.Default.ArchiveServerHostname, partition.Port),
+                    StreamingParameters = new StreamingParameters(WebViewerServices.Default.ArchiveServerHeaderPort, WebViewerServices.Default.ArchiveServerWADOPort)
+                }
+            };
         }
         private static Device FindServer(string retrieveAeTitle)
         {
@@ -92,11 +94,9 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                         {
                             if (partition.IsAccessAllowed(oid.ToString()))
                             {
-                                throw new PermissionDeniedException("");
+                                throw new PermissionDeniedException(string.Format("User does not have permission to access partition {0}", partition.AeTitle));
                             }
                         }
-
-
                     }
                 }
             }
