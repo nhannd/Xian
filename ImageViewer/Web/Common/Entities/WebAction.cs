@@ -43,13 +43,13 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
 	public class WebIconSet
 	{
 		[DataMember(IsRequired = false)]
-		public byte[] SmallIcon { get; set; }
+		public string SmallIcon { get; set; }
 
 		[DataMember(IsRequired = false)]
-		public byte[] MediumIcon { get; set; }
+        public string MediumIcon { get; set; }
 
 		[DataMember(IsRequired = false)]
-		public byte[] LargeIcon { get; set; }
+        public string LargeIcon { get; set; }
 
         [DataMember(IsRequired = false)]
         public bool HasOverlay { get; set; }
