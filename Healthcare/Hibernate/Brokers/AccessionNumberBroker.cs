@@ -22,7 +22,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 	{
 		private const string TableName = "AccessionSequence_";
 		private const string ColumnName = "NextValue_";
-		private const long InitialValue = 100000000;
+		private const long InitialValue = 1000000;
 
 		public AccessionNumberBroker()
 			: base(TableName, ColumnName, InitialValue)
