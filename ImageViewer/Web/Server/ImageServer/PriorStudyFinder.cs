@@ -170,13 +170,11 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 
 		private StudyItem ConvertToStudyItem(StudyRootStudyIdentifier study)
 		{
-			string studyLoaderName;
 		    ApplicationEntity applicationEntity;
 
 		    ServerPartition partiton = ServerPartitionMonitor.Instance.GetPartition(study.RetrieveAeTitle);
 			if (partiton != null)
 			{
-                studyLoaderName = WebViewerServices.Default.StudyLoaderName;
                 string host = WebViewerServices.Default.ArchiveServerHostname;
                 int port = WebViewerServices.Default.ArchiveServerPort;
                 int headerPort = WebViewerServices.Default.ArchiveServerHeaderPort;
@@ -197,7 +195,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 if (theDevice != null)
 			    {
 		            // TODO (Marmot) - Need to get this to work with changes in marmot
-			        applicationEntity = new ApplicationEntity() { ScpParameters = new ScpParameters(theDevice.IpAddress, theDevice.Port), AETitle = theDevice.AeTitle };
+			        applicationEntity = new ApplicationEntity { ScpParameters = new ScpParameters(theDevice.IpAddress, theDevice.Port), AETitle = theDevice.AeTitle };
 			    }
 			    else // (node == null)
 			    {
@@ -209,7 +207,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 			    }
 			}
 
-		    var item = new StudyItem(study, ServiceNodeExtensions.ToServiceNode(applicationEntity));
+		    var item = new StudyItem(study, applicationEntity.ToServiceNode());
 			if (String.IsNullOrEmpty(item.InstanceAvailability))
 				item.InstanceAvailability = "ONLINE";
 
