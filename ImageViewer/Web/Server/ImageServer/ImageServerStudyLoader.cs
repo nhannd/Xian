@@ -27,18 +27,9 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
     [ExtensionOf(typeof(ServiceNodeServiceProviderExtensionPoint), Enabled = false)]
     internal class StudyLoaderServiceProvider : ServiceNodeServiceProvider
     {
-        private bool IsStreamingServiceNode
-        {
-            get
-            {
-                var dicomServiceNode = Context.ServiceNode as IDicomServiceNode;
-                return dicomServiceNode != null && dicomServiceNode.StreamingParameters != null;
-            }
-        }
-
         public override bool IsSupported(Type type)
         {
-            return type == typeof(IStudyLoader) && IsStreamingServiceNode;
+            return type == typeof(IStudyLoader);
         }
 
         public override object GetService(Type type)
