@@ -488,11 +488,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			if (itemKey.OrderRef == null)
 				return false;
 
-			var order = this.PersistenceContext.GetBroker<IOrderBroker>().Load(itemKey.OrderRef);
-
-			// the only time an order should be modifiable is when it's scheduled or in progress
-			var orderStatus = order.Status;
-			return orderStatus == OrderStatus.SC || orderStatus == OrderStatus.IP;
+			return true;
 		}
 
 		public bool CanCancelOrder(WorklistItemKey itemKey)

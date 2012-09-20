@@ -280,7 +280,7 @@ namespace ClearCanvas.Ris.Client
 
 			// add validation rule to ensure the table has at least one non-cancelled procedure
 			this.Validation.Add(new ValidationRule("SelectedProcedures",
-				component => new ValidationResult(HasActiveProcedures(), SR.MessageNoActiveProcedures)));
+				component => new ValidationResult(_isComplete || HasActiveProcedures(), SR.MessageNoActiveProcedures)));
 			// add validation rule to ensure that any new procedures in the table have scheduled time
 			this.Validation.Add(new ValidationRule("SelectedProcedures",
 				component => new ValidationResult(_workflowConfiguration.AllowUnscheduledProcedures || AllProceduresAreScheduled(),
@@ -1356,7 +1356,7 @@ namespace ClearCanvas.Ris.Client
 
 		private void CheckIfOrderShouldBeCancelled()
 		{
-			if (_operatingContext.Mode != Mode.NewOrder && !HasActiveProcedures())
+			if (!_isComplete && _operatingContext.Mode != Mode.NewOrder && !HasActiveProcedures())
 			{
 				var action = this.Host.ShowMessageBox(SR.MessageCancelAllProceduresShouldCancelOrder, MessageBoxActions.YesNo);
 				if (action == DialogBoxAction.Yes)
