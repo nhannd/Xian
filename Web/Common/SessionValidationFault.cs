@@ -14,14 +14,14 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Web.Common
 {
     [DataContract]
-    public class SessionValidationFault
+    public class SessionValidationFault : DataContractBase
     {
         [DataMember(IsRequired=false)]
         public string ErrorMessage { get; set; }
     }
 
     [DataContract(Namespace = Namespace.Value)]
-    public class OutOfResourceFault
+    public class OutOfResourceFault : DataContractBase
     {
         [DataMember(IsRequired = false)]
         public string ErrorMessage { get; set; }

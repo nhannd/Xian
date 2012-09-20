@@ -16,9 +16,9 @@ using System.Collections;
 namespace ClearCanvas.Web.Common
 {
 	[DataContract(Namespace = Namespace.Value)]
-    public abstract class Event
+    public abstract class Event : DataContractBase
     {
-        [DataMember(IsRequired = false)]
+	    [DataMember(IsRequired = false)]
         public String Sender { get; set; }
 
         [DataMember(IsRequired = false)]
@@ -74,7 +74,7 @@ namespace ClearCanvas.Web.Common
 	}
 
     [DataContract(Namespace = Namespace.Value)]
-    public class EventSet : IEnumerable
+    public class EventSet : DataContractBase, IEnumerable
     {
     	// TODO: Is it used?
         [DataMember(IsRequired = true)]

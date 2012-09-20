@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -13,17 +13,22 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Web.Common
 {
+    /// <summary>
+    /// For clients that don't have type information.
+    /// </summary>
     [DataContract(Namespace = Namespace.Value)]
-    public class PerformanceData : DataContractBase
+    public abstract class DataContractBase
     {
-        [DataMember(IsRequired = true)]
-        public string ClientIp { get; set; }
+        protected DataContractBase()
+        {
+            Name = GetType().Name;
+            Name = GetType().FullName;
+        }
 
         [DataMember(IsRequired = true)]
         public string Name { get; set; }
 
         [DataMember(IsRequired = true)]
-        public object Value { get; set; }
-
+        public string FullName { get; set; }
     }
 }

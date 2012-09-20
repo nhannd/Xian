@@ -219,7 +219,7 @@ namespace ClearCanvas.Web.Services
             if (IsSessionShared || _session == null)
 				return;
 
-            UserAuthentication.Logout(_session);
+            //UserAuthentication.Logout(_session);
 		}
 
 		protected void EnsureSessionIsValid()
@@ -299,7 +299,7 @@ namespace ClearCanvas.Web.Services
             try
 			{
                 ProcessMetaInfo(request.MetaInformation);
-				AuthenticateUser(request);
+				//AuthenticateUser(request);
                 _synchronizationContext = new WebSynchronizationContext(this);
 				_synchronizationContext.Send(nothing => DoStart(request), null);
 			}
@@ -446,7 +446,7 @@ namespace ClearCanvas.Web.Services
                 Thread.CurrentThread.CurrentCulture = Culture;
                 Thread.CurrentThread.CurrentUICulture = Culture;
                 
-                CheckIfSessionIsStillValid();
+                //CheckIfSessionIsStillValid();
 
                 // TODO: REVIEW THIS
                 // This is a temporary workaround to ensure the app shuts down when the connection is lost.
@@ -536,7 +536,7 @@ namespace ClearCanvas.Web.Services
 			}
 
             //TODO: do this here (which will fault the channel), or inside DoProcessMessages and stop the app?
-			EnsureSessionIsValid();
+			//EnsureSessionIsValid();
 
 			bool processed = _incomingMessageQueue.ProcessMessageSet(messageSet);
 

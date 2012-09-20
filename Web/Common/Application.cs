@@ -15,7 +15,7 @@ using System;
 namespace ClearCanvas.Web.Common
 {
 	[DataContract(Namespace = Namespace.Value)]
-	public abstract class Application
+    public abstract class Application : DataContractBase
 	{
 		[DataMember(IsRequired = true)]
 		public Guid Identifier { get; set; }

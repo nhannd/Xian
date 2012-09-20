@@ -14,7 +14,7 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Web.Common
 {
     [DataContract]
-    public class ProcessMessagesResult
+    public class ProcessMessagesResult : DataContractBase
     {
         /// <summary>
         /// Indicates whether the message sent in ProcessMessages has been queued or processed.
