@@ -16,7 +16,7 @@ using System;
 namespace ClearCanvas.Web.Common
 {
 	[DataContract(Namespace = Namespace.Value)]
-	public abstract class StartApplicationRequest
+    public abstract class StartApplicationRequest : DataContractBase
 	{
 		[DataMember(IsRequired = true)]
 		public Guid Identifier { get; set; }
@@ -35,28 +35,28 @@ namespace ClearCanvas.Web.Common
 	}
 
     [DataContract(Namespace = Namespace.Value)]
-    public class MetaInformation
+    public class MetaInformation : DataContractBase
     {
         [DataMember(IsRequired = true)]
         public string Language { get; set; }
     }
 
     [DataContract(Namespace = Namespace.Value)]
-    public class StartApplicationResult
+    public class StartApplicationResult : DataContractBase
     {
         [DataMember(IsRequired = true)]
         public Guid AppIdentifier { get; set; }
     }
     
 	[DataContract(Namespace = Namespace.Value)]
-	public class StopApplicationRequest
+    public class StopApplicationRequest : DataContractBase
 	{
 		[DataMember(IsRequired = true)]
 		public Guid ApplicationId { get; set; }
 	}
 
     [DataContract(Namespace = Namespace.Value)]
-    public class GetPendingEventRequest
+    public class GetPendingEventRequest : DataContractBase
 	{
 		[DataMember(IsRequired = true)]
 		public Guid ApplicationId { get; set; }
@@ -66,7 +66,7 @@ namespace ClearCanvas.Web.Common
 	}
 
     [DataContract(Namespace = Namespace.Value)]
-    public class GetPendingEventResult
+    public class GetPendingEventResult : DataContractBase
     {
         [DataMember(IsRequired = true)]
         public Guid ApplicationId { get; set; }
@@ -94,7 +94,7 @@ namespace ClearCanvas.Web.Common
     }
 
     [DataContract(Namespace = Namespace.Value)]
-    public class ProcessEventsRequest
+    public class ProcessEventsRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
         public Guid ApplicationId { get; set; }
@@ -129,12 +129,12 @@ namespace ClearCanvas.Web.Common
     }
 
     [DataContract]
-    public class InvalidOperationFault
+    public class InvalidOperationFault : DataContractBase
     {
     }
 
     [DataContract]
-    public class SetPropertyRequest
+    public class SetPropertyRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
         public Guid ApplicationId { get; set; }

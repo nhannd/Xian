@@ -74,7 +74,7 @@ namespace ClearCanvas.Web.Common
 	}
 
     [DataContract(Namespace = Namespace.Value)]
-    public class EventSet : DataContractBase, IEnumerable
+    public class EventSet : DataContractBase
     {
     	// TODO: Is it used?
         [DataMember(IsRequired = true)]
@@ -88,14 +88,5 @@ namespace ClearCanvas.Web.Common
 
 		[DataMember(IsRequired = true)]
 		public Guid ApplicationId { get; set; }
-		
-		#region IEnumerable Members
-
-		public IEnumerator GetEnumerator()
-		{
-			return (Events ?? new Event[0]).GetEnumerator();
-		}
-
-		#endregion
 	}
 }

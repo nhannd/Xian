@@ -322,12 +322,14 @@ namespace ClearCanvas.Web.Services
 
         private void DoStart(StartApplicationRequest request)
         {
-            _context.FireEvent(new ApplicationStartedEvent
-                                   {
-                                       Identifier = Guid.NewGuid(),
-                                       SenderId = Identifier,
-                                       StartRequestId = request.Identifier
-                                   });
+            var @event = new ApplicationStartedEvent
+                {
+                    Identifier = Guid.NewGuid(),
+                    SenderId = Identifier,
+                    StartRequestId = request.Identifier
+                };
+
+            _context.FireEvent(@event);
 
             OnStart(request);
 

@@ -22,7 +22,7 @@ namespace ClearCanvas.Web.Common
         protected DataContractBase()
         {
             Name = GetType().Name;
-            Name = GetType().FullName;
+            FullName = GetType().FullName;
         }
 
         [DataMember(IsRequired = true)]
