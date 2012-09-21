@@ -100,6 +100,7 @@
       <DependentUpon>PatientAdminSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="AttachmentStore.cs" />
+    <Compile Include="Manifest\RisManifestService.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorkflowServiceRecorder.cs" />
     <Compile Include="PatientAllergyAssembler.cs" />
     <Compile Include="DepartmentAssembler.cs" />
@@ -228,6 +229,10 @@
     <ProjectReference Include="..\..\..\Healthcare\ClearCanvas.Healthcare.csproj">
       <Project>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</Project>
       <Name>ClearCanvas.Healthcare</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Utilities\Manifest\ClearCanvas.Utilities.Manifest.csproj">
+      <Project>{E2F1A5D4-73A4-4BA6-AA5A-87BBDEC727F8}</Project>
+      <Name>ClearCanvas.Utilities.Manifest</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Workflow\ClearCanvas.Workflow.csproj">
       <Project>{576C4A35-B314-49D0-BF53-4BD43D8D1F31}</Project>

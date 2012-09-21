@@ -106,6 +106,7 @@
     <Compile Include="IPersistenceBrokerFactory.cs" />
     <Compile Include="Mail\IMailQueueService.cs" />
     <Compile Include="Mail\OutgoingMailMessage.cs" />
+    <Compile Include="Manifest\ManifestService.cs" />
     <Compile Include="Modelling\IDomainObjectValidator.cs" />
     <Compile Include="Modelling\PublishInChangeSetsAttribute.cs" />
     <Compile Include="Modelling\DomainObjectValidator.cs" />
@@ -275,6 +276,10 @@
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Utilities\Manifest\ClearCanvas.Utilities.Manifest.csproj">
+      <Project>{E2F1A5D4-73A4-4BA6-AA5A-87BBDEC727F8}</Project>
+      <Name>ClearCanvas.Utilities.Manifest</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common\ClearCanvas.Enterprise.Common.csproj">
       <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>

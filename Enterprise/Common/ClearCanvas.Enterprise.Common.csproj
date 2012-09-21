@@ -162,6 +162,8 @@
     <Compile Include="IChannelProvider.cs" />
     <Compile Include="IOfflineCache.cs" />
     <Compile Include="ListRequestBase.cs" />
+    <Compile Include="Manifest\IManifestService.cs" />
+    <Compile Include="Manifest\ServerManifestVerification.cs" />
     <Compile Include="NullOfflineCache.cs" />
     <Compile Include="PagedDataContractBase.cs" />
     <Compile Include="Ping\IPingService.cs" />

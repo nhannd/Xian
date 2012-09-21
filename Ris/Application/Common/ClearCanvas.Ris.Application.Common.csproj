@@ -192,6 +192,8 @@
     <Compile Include="Documents\UploadRequest.cs" />
     <Compile Include="FeatureTokens.cs" />
     <Compile Include="Jsml\ShimUtil.cs" />
+    <Compile Include="Manifest\IRisManifestService.cs" />
+    <Compile Include="Manifest\RisServerManifestVerification.cs" />
     <Compile Include="ModalityProcedureStepSummary.cs" />
     <Compile Include="ModalityWorkflow\DicomSeriesDetail.cs" />
     <Compile Include="PatientAllergyDetail.cs" />
