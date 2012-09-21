@@ -269,19 +269,19 @@ namespace ClearCanvas.Enterprise.Hibernate
 				// we return an untyped set - this is a bit lazy, we could create a typed set with some extra effort, but do we need it?
 				return new HybridSet((ICollection)snapshot);
 			}
-			if (collection is IList && snapshot is IDictionary)
-			{
-				// "idbag"
-				// we return an untyped list - this is a bit lazy, we could create a typed list with some extra effort, but do we need it?
-				return new ArrayList(((IDictionary)snapshot).Values);
-			}
-			if (collection is IList && snapshot is IList)
-			{
-				// "list" or "bag"
-				// in this case, the NH snapshot is the same type as the original collection
-				return snapshot;
-			}
-			if (collection is IDictionary)
+            if (collection is IList)
+            {
+                if (snapshot is IList) return snapshot;
+
+                // "idbag"
+                // we return an untyped list - this is a bit lazy, we could create a typed list with some extra effort, but do we need it?
+                if (snapshot is IDictionary) return new ArrayList(((IDictionary) snapshot).Values);
+
+                //PersistentIdentifierBag
+                if (snapshot is ISet) return new ArrayList(((ISet) snapshot));
+            }
+
+		    if (collection is IDictionary)
 			{
 				// in this case, the NH snapshot is the same type as the original collection
 				return snapshot;

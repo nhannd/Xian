@@ -16,7 +16,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using System.Security.Cryptography.X509Certificates;
 using Castle.DynamicProxy;
-using Castle.Core.Interceptor;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Common.Configuration;
 
@@ -374,7 +373,7 @@ namespace ClearCanvas.Enterprise.Common
 				// so subsequent calls based on the same contract will be fast
 				// note: important to proxy IDisposable too, otherwise channels can't get disposed!!!
 				var aopChain = new AopInterceptorChain(interceptors);
-				return _proxyGenerator.CreateInterfaceProxyWithTarget(
+				return _proxyGenerator.CreateInterfaceProxyWithTargetInterface(
 					serviceContract,
 					new[] { serviceContract, typeof(IDisposable) },
 					channel,

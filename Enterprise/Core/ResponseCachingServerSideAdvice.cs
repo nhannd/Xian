@@ -10,7 +10,7 @@
 #endregion
 
 using System;
-using Castle.Core.Interceptor;
+using Castle.DynamicProxy;
 using ClearCanvas.Common.Utilities;
 using System.ServiceModel;
 using ClearCanvas.Enterprise.Common;

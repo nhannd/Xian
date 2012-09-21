@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
-using Castle.Core.Interceptor;
+using Castle.DynamicProxy;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Ping;
