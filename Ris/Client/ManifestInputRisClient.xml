@@ -16,9 +16,9 @@
     <!--<File name="ClearCanvas.Desktop.Executable.exe.critical.config" checksum="true" config="true" />-->
     <File name="common\DotNetMagic2005.DLL" />
     <File name="common\log4net.dll" checksum="true" />
+    <File name="common\Castle.Core.dll" checksum="true" />
+    <File name="common\Castle.DynamicProxy2.dll" checksum="true" />
     <File name="common\ClearCanvas.Common.dll" checksum="true" />
-    <File name="plugins\Castle.Core.dll" checksum="true" />
-    <File name="plugins\Castle.DynamicProxy2.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Desktop.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Desktop.ExtensionBrowser.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" checksum="true" />
