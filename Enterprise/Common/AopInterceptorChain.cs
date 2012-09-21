@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Castle.Core.Interceptor;
 using Castle.DynamicProxy;
 
 namespace ClearCanvas.Enterprise.Common

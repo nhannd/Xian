@@ -9,7 +9,7 @@
 
 #endregion
 
-using Castle.Core.Interceptor;
+using Castle.DynamicProxy;
 using ClearCanvas.Common.Utilities;
 
 

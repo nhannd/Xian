@@ -30,6 +30,7 @@ namespace ClearCanvas.Healthcare
         {
         }
 
+        private string PlanXml { get { return _planXml; } }
         /// <summary>
         /// Sets the plan for this procedure type from the specified prototype procedure.
         /// </summary>

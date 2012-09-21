@@ -17,8 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.1\Castle.Core.dll "/>
-    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.1\Castle.DynamicProxy2.dll" />
+    <SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate\Castle.Core.dll "/>
   </ItemGroup>
 
   <ItemGroup>

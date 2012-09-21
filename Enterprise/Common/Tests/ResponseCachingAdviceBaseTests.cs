@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Caching;
-using Castle.Core.Interceptor;
+using Castle.DynamicProxy;
 using System.Reflection;
 using ClearCanvas.Common.Utilities;
 

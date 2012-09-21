@@ -11,7 +11,7 @@
 
 using System;
 using System.ServiceModel.Channels;
-using Castle.Core.Interceptor;
+using Castle.DynamicProxy;
 using ClearCanvas.Common.Caching;
 using System.ServiceModel;
 

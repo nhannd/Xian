@@ -19,7 +19,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using System.IdentityModel.Selectors;
-using Castle.Core.Interceptor;
+using Castle.DynamicProxy;
 using ClearCanvas.Enterprise.Common.ServiceConfiguration.Server;
 
 namespace ClearCanvas.Enterprise.Core.ServiceModel
