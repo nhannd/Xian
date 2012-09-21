@@ -463,7 +463,8 @@ namespace ClearCanvas.Web.Services
                 // one for 20 seconds
                 if (_lastClientMessage.HasValue && DateTime.Now - _lastClientMessage > TimeSpan.FromSeconds(20))
                 {
-                    Stop(String.Format(SR.MessageNoCommunicationFromClientError, _lastClientMessage));
+                    // TODO: This causes the HTML5 viewer to time out after 20 seconds, since there's no polling!
+                    //Stop(String.Format(SR.MessageNoCommunicationFromClientError, _lastClientMessage));
                 }
 			}
             catch(SessionDoesNotExistException)
