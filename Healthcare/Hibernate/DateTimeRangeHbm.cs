@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using NHibernate;
 using NHibernate.Engine;
@@ -117,23 +118,20 @@ namespace ClearCanvas.Healthcare.Hibernate
             get { return true; }
         }
 
-        public object NullSafeGet(System.Data.IDataReader dr, string[] names, NHibernate.Engine.ISessionImplementor session, object owner)
+        public object NullSafeGet(IDataReader dr, string[] names, ISessionImplementor session, object owner)
         {
-            DateTime? from = (DateTime?)NHibernateUtil.DateTime.NullSafeGet(dr, names[0], session, owner);
-            DateTime? until = (DateTime?)NHibernateUtil.DateTime.NullSafeGet(dr, names[1], session, owner);
-
-            //return (from == null && until == null) ? null : new DateTimeRange(from, until);
+            var from = (DateTime?)NHibernateUtil.DateTime.NullSafeGet(dr, names[0], session, owner);
+            var until = (DateTime?)NHibernateUtil.DateTime.NullSafeGet(dr, names[1], session, owner);
             return new DateTimeRange(from, until);
         }
 
-        public void NullSafeSet(System.Data.IDbCommand cmd, object value, int index, NHibernate.Engine.ISessionImplementor session)
+
+      public void NullSafeSet(IDbCommand cmd, object value, int index, bool[] settable, ISessionImplementor session)
         {
-            DateTimeRange dtr = (DateTimeRange)value;
-
-            NHibernateUtil.DateTime.NullSafeSet(cmd, dtr == null ? null : dtr.From, index, session);
-            NHibernateUtil.DateTime.NullSafeSet(cmd, dtr == null ? null : dtr.Until, index + 1, session);
+            var dtr = (DateTimeRange)value;
+            NHibernateUtil.DateTime.NullSafeSet(cmd, dtr == null ? null : dtr.From, index, settable, session);
+            NHibernateUtil.DateTime.NullSafeSet(cmd, dtr == null ? null : dtr.Until, index + 1, settable, session);
         }
-
 
         #endregion
     }

@@ -138,6 +138,9 @@ namespace ClearCanvas.Healthcare
 
 		#endregion
 
+        private Iesi.Collections.Generic.ISet<Procedure> GhostProcedures { get { return _ghostProcedures; } }
+        private int PriorityRank { get { return _priorityRank; } }
+
 		#region Public properties
 
 		/// <summary>

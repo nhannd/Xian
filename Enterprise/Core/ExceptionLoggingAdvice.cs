@@ -11,7 +11,7 @@
 
 using System;
 using System.ServiceModel;
-using Castle.Core.Interceptor;
+using Castle.DynamicProxy;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Core
