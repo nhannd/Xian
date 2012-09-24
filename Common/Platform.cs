@@ -435,7 +435,7 @@ namespace ClearCanvas.Common
                             catch (NotSupportedException)
                             {
                                 // can't find time provider, default to local time
-                                Log(LogLevel.Warn, SR.LogTimeProviderNotFound);
+                                Log(LogLevel.Debug, SR.LogTimeProviderNotFound);
 
                                 _timeProvider = new LocalTimeProvider();
                             }
