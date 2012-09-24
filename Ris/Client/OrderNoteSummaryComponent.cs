@@ -119,32 +119,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			editedItems = new List<OrderNoteDetail>();
 
-			var originalNote = CollectionUtils.FirstElement(items);
-			// manually clone ordernote
-			var editedNote = new OrderNoteDetail(
-				originalNote.OrderNoteRef,
-				originalNote.Category,
-				originalNote.CreationTime,
-				originalNote.PostTime,
-				originalNote.Author,
-				originalNote.OnBehalfOfGroup,
-				originalNote.Urgent,
-				originalNote.StaffRecipients,
-				originalNote.GroupRecipients,
-				originalNote.NoteBody,
-				originalNote.CanAcknowledge
-				);
-
-			var editor = new OrderNoteEditorComponent(editedNote);
+			var note = CollectionUtils.FirstElement(items);
+			var editor = new OrderNoteEditorComponent(note);
 			if (ApplicationComponentExitCode.Accepted == LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNoteText))
 			{
-				editedItems.Add(editedNote);
-
-				// Preserve the order of the items
-				var index = _notes.IndexOf(originalNote);
-				_notes.Insert(index, editedNote);
-				_notes.Remove(originalNote);
-
+				editedItems.Add(note);
 				return true;
 			}
 
@@ -170,7 +149,7 @@ namespace ClearCanvas.Ris.Client
 			if (ReferenceEquals(x, y))
 				return true;
 
-			// if only one is null, they are not the same
+			// if either one is null, we cannot assume they are the same item
 			if (x.OrderNoteRef == null || y.OrderNoteRef == null)
 				return false;
 
