@@ -130,7 +130,7 @@ namespace ClearCanvas.Ris.Client
 			_pagesContainer.Pages.Add(new TabPage(SR.TitleDemographicProfiles, _demographicComponent));
 			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientAttachments, _documentComponent));
 			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientNotes, _noteComponent));
-			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientAllergies, _allergyComponent));
+			//_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientAllergies, _allergyComponent));
 
 			var tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
 			tabGroupContainer.AddTabGroup(new TabGroup(_pagesContainer, 1.0f));
