@@ -233,13 +233,15 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		public static void Show(ShelfDisplayHint displayHint)
 		{
-			Show(Application.ActiveDesktopWindow, displayHint);
+			Show(null, displayHint);
 		}
 
 		public static void Show(IDesktopWindow desktopWindow, ShelfDisplayHint displayHint)
 		{
 			if (!PermissionsHelper.IsInRole(AuthorityTokens.KeyImages))
 				throw new PolicyException(SR.ExceptionViewKeyImagePermissionDenied);
+
+			desktopWindow = desktopWindow ?? Application.ActiveDesktopWindow;
 
 			IShelf shelf = GetClipboardShelf(desktopWindow);
 			if (shelf != null)
@@ -260,7 +262,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		public static void Show()
 		{
-			Show(Application.ActiveDesktopWindow);
+			Show(null);
 		}
 
 		#endregion

@@ -60,6 +60,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 				List<string> files = CollectionUtils.Map(base.SelectedItems, (IStudyItem item) => item.Filename);
 				DicomFileExporter exporter = new DicomFileExporter(files)
 				                        	{
+				                        		DesktopWindow = Context.DesktopWindow,
 				                        		OutputPath = _lastExportAnonymizedFolder, 
 												Anonymize = true
 				                        	};
@@ -84,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.CoreTools
 			try
 			{
 				List<string> files = CollectionUtils.Map(base.SelectedItems, (IStudyItem item) => item.Filename);
-				DicomFileExporter exporter = new DicomFileExporter(files) { OutputPath = _lastExportCopyFolder };
+				DicomFileExporter exporter = new DicomFileExporter(files) { DesktopWindow = Context.DesktopWindow, OutputPath = _lastExportCopyFolder };
 
 				bool success = exporter.Export();
 				_lastExportCopyFolder = exporter.OutputPath;

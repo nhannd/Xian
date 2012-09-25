@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		public void Show()
 		{
 			if (this.ShowEnabled)
-				KeyImageClipboard.Show();
+				KeyImageClipboard.Show(Context.DesktopWindow);
 		}
 
 		public void Create()
@@ -145,7 +145,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 				if (_firstKeyImageCreation && this.ShowEnabled)
 				{
-					KeyImageClipboard.Show(ShelfDisplayHint.DockAutoHide | ShelfDisplayHint.DockLeft);
+					KeyImageClipboard.Show(Context.DesktopWindow, ShelfDisplayHint.DockAutoHide | ShelfDisplayHint.DockLeft);
 					_firstKeyImageCreation = false;
 				}
 			}
