@@ -20,9 +20,6 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		public static class Configuration
 		{
-            [AuthorityToken(Description = "Allow configuration of priors servers.", Formerly = "Viewer/Configuration/Default Servers")]
-			public const string PriorsServers = "Viewer/Configuration/Priors Servers";
-
 		    [AuthorityToken(Description = "Allow configuration of data publishing options.", Formerly = "Viewer/Administration/Key Images")]
 			public const string Publishing = "Viewer/Configuration/Publishing";
 

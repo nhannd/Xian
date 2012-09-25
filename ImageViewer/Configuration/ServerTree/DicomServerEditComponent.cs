@@ -10,10 +10,12 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.ImageViewer.Common.ServerDirectory;
 
 namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 {
@@ -95,6 +97,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 		private bool _isStreaming;
 		private int _headerServicePort;
 		private int _wadoServicePort;
+		private bool _isPriorsServer;
 
 		#endregion
 
@@ -113,6 +116,8 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
                 _isStreaming = server.IsStreaming;
                 _headerServicePort = server.HeaderServicePort;
                 _wadoServicePort = server.WadoServicePort;
+
+				GetServerNodeMetaProperties(_serverName, out _isPriorsServer);
             }
             else
             {
@@ -270,6 +275,20 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			}
 		}
 
+		public bool IsPriorsServer
+		{
+			get { return _isPriorsServer; }
+			set
+			{
+				if (_isPriorsServer == value)
+					return;
+
+				_isPriorsServer = value;
+				AcceptEnabled = true;
+				NotifyPropertyChanged("IsPriorsServer");
+			}
+		}
+
 		public bool AcceptEnabled
 		{
 			get { return this.Modified; }
@@ -332,6 +351,9 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 				}
 
                 _serverTree.Save();
+
+				SetServerNodeMetaProperties(_serverName, _isPriorsServer);
+
                 _serverTree.FireServerTreeUpdatedEvent();
 
 				this.ExitCode = ApplicationComponentExitCode.Accepted;
@@ -345,5 +367,30 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 		}
 
 		#endregion
+
+		private void GetServerNodeMetaProperties(string serverName, out bool isPriorsServer)
+		{
+			var directoryEntry = (ServerDirectoryEntry) null;
+			Platform.GetService<IServerDirectory>(service => directoryEntry = (service.GetServers(new GetServersRequest {Name = serverName}).ServerEntries ?? new List<ServerDirectoryEntry>()).FirstOrDefault());
+
+			isPriorsServer = false;
+			if (directoryEntry != null)
+			{
+				isPriorsServer = directoryEntry.IsPriorsServer;
+			}
+		}
+
+		private void SetServerNodeMetaProperties(string serverName, bool isPriorsServer)
+		{
+			var directoryEntry = (ServerDirectoryEntry) null;
+			Platform.GetService<IServerDirectory>(service => directoryEntry = (service.GetServers(new GetServersRequest {Name = serverName}).ServerEntries ?? new List<ServerDirectoryEntry>()).FirstOrDefault());
+
+			if (directoryEntry != null && (directoryEntry.IsPriorsServer != isPriorsServer))
+			{
+				directoryEntry.IsPriorsServer = isPriorsServer;
+
+				Platform.GetService<IServerDirectory>(service => service.UpdateServer(new UpdateServerRequest {ServerEntry = directoryEntry}));
+			}
+		}
 	}
 }

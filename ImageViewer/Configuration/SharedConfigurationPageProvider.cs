@@ -45,9 +45,6 @@ namespace ClearCanvas.ImageViewer.Configuration
             if (PermissionsHelper.IsInRole(AuthorityTokens.Configuration.Storage) && Common.StudyManagement.StudyStore.IsSupported)
                 listPages.Add(new ConfigurationPage<StorageConfigurationComponent>(StorageConfigurationPath));
 
-            if (PermissionsHelper.IsInRoles(AuthorityTokens.Configuration.PriorsServers) && ServerDirectory.IsSupported)
-                listPages.Add(new ConfigurationPage<PriorsServersConfigurationComponent>(PriorsServerConfigurationPath));
-
             if (PermissionsHelper.IsInRole(AuthorityTokens.Configuration.Publishing))
                 listPages.Add(new ConfigurationPage(PublishingConfigurationPath, new PublishingConfigurationComponent()));
 
