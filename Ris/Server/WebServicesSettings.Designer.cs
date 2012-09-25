@@ -88,5 +88,50 @@ namespace ClearCanvas.Ris.Server {
                 return ((bool)(this["EnablePerformanceLogging"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public string ConfigurationServiceResponseCachingEnabled {
+            get {
+                return ((string)(this["ConfigurationServiceResponseCachingEnabled"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("FindBySubjectDistinguishedName")]
+        public global::System.Security.Cryptography.X509Certificates.X509FindType CertificateFindType {
+            get {
+                return ((global::System.Security.Cryptography.X509Certificates.X509FindType)(this["CertificateFindType"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("My")]
+        public global::System.Security.Cryptography.X509Certificates.StoreName CertificateStoreName {
+            get {
+                return ((global::System.Security.Cryptography.X509Certificates.StoreName)(this["CertificateStoreName"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("LocalMachine")]
+        public global::System.Security.Cryptography.X509Certificates.StoreLocation CertificateStoreLocation {
+            get {
+                return ((global::System.Security.Cryptography.X509Certificates.StoreLocation)(this["CertificateStoreLocation"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CertificateCustomFindValue {
+            get {
+                return ((string)(this["CertificateCustomFindValue"]));
+            }
+        }
     }
 }
