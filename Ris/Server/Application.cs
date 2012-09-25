@@ -115,9 +115,12 @@ namespace ClearCanvas.Ris.Server
 
 		private static CertificateSearchDirective GetCertificateSearchDirective(WebServicesSettings settings, Uri hostUri)
 		{
-			return string.IsNullOrEmpty(settings.CertificateCustomFindValue)
-					? CertificateSearchDirective.CreateDefault(settings.CertificateFindType, hostUri)
+			var directive = string.IsNullOrEmpty(settings.CertificateCustomFindValue)
+					? CertificateSearchDirective.CreateBasic(hostUri)
 					: CertificateSearchDirective.CreateCustom(settings.CertificateFindType, settings.CertificateCustomFindValue);
+			directive.StoreLocation = settings.CertificateStoreLocation;
+			directive.StoreName = settings.CertificateStoreName;
+			return directive;
 		}
 
 		#endregion

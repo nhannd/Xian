@@ -19,21 +19,32 @@ namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Server
 	/// </summary>
 	public class CertificateSearchDirective
 	{
-		public static CertificateSearchDirective CreateDefault(X509FindType findType, Uri hostUri)
+		/// <summary>
+		/// Creates a basic certificate search directive based on the host name, useful for self-signed certificates.
+		/// </summary>
+		/// <param name="hostUri"></param>
+		/// <returns></returns>
+		public static CertificateSearchDirective CreateBasic(Uri hostUri)
 		{
 			return new CertificateSearchDirective
 					{
-						FindType = findType,
-						FindValue = GetDefaultCertificateFindValue(findType, hostUri)
+						FindType = X509FindType.FindBySubjectDistinguishedName,
+						FindValue = string.Format("CN={0}", hostUri.Host)
 					};
 		}
 
-		public static CertificateSearchDirective CreateCustom(X509FindType findType, object customFindValue)
+		/// <summary>
+		/// Creates a custom certificate search directive, based on the specified find type and value.
+		/// </summary>
+		/// <param name="findType"></param>
+		/// <param name="findValue"></param>
+		/// <returns></returns>
+		public static CertificateSearchDirective CreateCustom(X509FindType findType, string findValue)
 		{
 			return new CertificateSearchDirective
 			{
 				FindType = findType,
-				FindValue = customFindValue
+				FindValue = findValue
 			};
 		}
 
@@ -48,10 +59,19 @@ namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Server
 			this.FindType = X509FindType.FindBySubjectName;
 		}
 
-		public StoreLocation StoreLocation { get; private set; }
+		/// <summary>
+		/// Gets or sets the store location.
+		/// </summary>
+		public StoreLocation StoreLocation { get; set; }
 
-		public StoreName StoreName { get; private set; }
+		/// <summary>
+		/// Gets or sets the store name.
+		/// </summary>
+		public StoreName StoreName { get; set; }
 
+		/// <summary>
+		/// Gets the find type.
+		/// </summary>
 		public X509FindType FindType
 		{
 			get { return _findType; }
@@ -68,30 +88,9 @@ namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Server
 			}
 		}
 
-		public object FindValue { get; set; }
-
-		private static string GetDefaultCertificateFindValue(X509FindType findType, Uri hostUri)
-		{
-			switch (findType)
-			{
-				case X509FindType.FindBySubjectName:
-					return hostUri.Host;
-
-				case X509FindType.FindBySubjectDistinguishedName:
-					// Ideally we must include all parts in a DN (Common name, Organization, Organizational Unit, City, State, Country, Domain Component)
-					// in a REAL certificate. Howerver, for simplicity, we allow people to use self-signed certificate 
-					// and assume only the common name is specified in the certificate.
-					return string.Format("CN={0}", hostUri.Host);
-
-				case X509FindType.FindByTimeValid:
-				case X509FindType.FindByTimeNotYetValid:
-				case X509FindType.FindByTimeExpired:
-					// for these, FindValue must be a DateTime value
-					throw new NotSupportedException(string.Format("{0} is not supported", findType));
-
-				default:
-					return hostUri.Host;
-			}
-		}
+		/// <summary>
+		/// Gets or sets the find value.
+		/// </summary>
+		public string FindValue { get; set; }
 	}
 }

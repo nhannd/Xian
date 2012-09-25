@@ -21,7 +21,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="CertificateFindType" Type="System.Security.Cryptography.X509Certificates.X509FindType" Scope="Application">
-      <Value Profile="(Default)">FindBySubjectDistinguishedName</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="CertificateStoreName" Type="System.Security.Cryptography.X509Certificates.StoreName" Scope="Application">
       <Value Profile="(Default)">My</Value>

@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using System.ServiceModel;
@@ -60,7 +59,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 			_configuration = configuration;
 
 			// establish default certificate search parameters consistent with behaviour prior to #8219
-			_certificateSearchDirective = CertificateSearchDirective.CreateDefault(X509FindType.FindBySubjectName, _baseAddress);
+			_certificateSearchDirective = CertificateSearchDirective.CreateBasic(_baseAddress);
 		}
 
 		/// <summary>

@@ -100,7 +100,6 @@ namespace ClearCanvas.Ris.Server {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("FindBySubjectDistinguishedName")]
         public global::System.Security.Cryptography.X509Certificates.X509FindType CertificateFindType {
             get {
                 return ((global::System.Security.Cryptography.X509Certificates.X509FindType)(this["CertificateFindType"]));
