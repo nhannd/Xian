@@ -309,6 +309,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				}
 				else
 				{
+					AllocateTicks(0);
 					_baseLine.Visible = false;
 				}
 
@@ -422,10 +423,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				len = Math.Abs(p0.Y - p1.Y) * pxH;
 			}
 
+			// compute the square of the effective on-screen tick spacing (in screen pixels)
+			// if the effective spacing is less than 3 pixels, the ticks will start being too silly to render distinctly
+			const int effectiveScreenTickSpacingThreshold = 9;
+			var screenTickSpacing = base.SpatialTransform.ConvertToDestination(TickOffset.CreateTickOffset(MinorTick*pxS, pxR, xyW));
+			var effectiveScreenTickSpacing = screenTickSpacing.Width*screenTickSpacing.Width + screenTickSpacing.Height*screenTickSpacing.Height;
+
 			List<PointF> listMajorTicks = new List<PointF>();
 			List<PointF> listMinorTicks = new List<PointF>();
 
-			if (this.MinorTick < len)
+			if (this.MinorTick < len && effectiveScreenTickSpacing > effectiveScreenTickSpacingThreshold)
 			{
 				Dictionary<string, object> map = new Dictionary<string, object>();
 				PointF ptPos, ptNeg;
