@@ -129,6 +129,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
             while (!WorkItemActivityMonitor.IsRunning)
 			{
+				// TODO CR (Sep 12): convert this to a desktop alert
 				DialogBoxAction result = Application.ActiveDesktopWindow.ShowMessageBox(
 					SR.MessageCannotPublishKeyImagesServersNotRunning, MessageBoxActions.OkCancel);
 
@@ -177,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		        Platform.Log(LogLevel.Error, e, "An unexpected error occurred while trying to publish key images.");
 		    }
 
-
+			// TODO CR (Sep 12): convert this to a desktop alert
 			if (anyFailed)
 				Application.ActiveDesktopWindow.ShowMessageBox(SR.MessageKeyImagePublishingFailed, MessageBoxActions.Ok);
 		}
