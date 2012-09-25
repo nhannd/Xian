@@ -126,18 +126,12 @@ namespace ClearCanvas.Ris.Application.Services
 		#endregion
 
 
-		private const string ApplicationName = "RIS";
 		private const string CategoryName = "RIS";
 
 		private OperationData _capturedData;
 		private readonly HashSet<object> _changeSetIncludes = new HashSet<object>();
 
 		#region IServiceOperationRecorder implementation
-
-		string IServiceOperationRecorder.Application
-		{
-			get { return ApplicationName; }
-		}
 
 		string IServiceOperationRecorder.Category
 		{

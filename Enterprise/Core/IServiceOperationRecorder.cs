@@ -70,11 +70,6 @@ namespace ClearCanvas.Enterprise.Core
 	public interface IServiceOperationRecorder
 	{
 		/// <summary>
-		/// Gets the application name under which to log the message.
-		/// </summary>
-		string Application { get; }
-
-		/// <summary>
 		/// Gets the audit log category under which to log the message.
 		/// </summary>
 		string Category { get; }

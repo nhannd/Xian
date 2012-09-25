@@ -44,7 +44,7 @@ namespace ClearCanvas.Enterprise.Core
 			{
 				_invocation = invocation;
 				_recorder = recorder;
-				_auditLog = new AuditLog(_recorder.Application, _recorder.Category);
+				_auditLog = new AuditLog(ProductInformation.Component, _recorder.Category);
 				_operationName = string.Format("{0}.{1}", _invocation.InvocationTarget.GetType().FullName, _invocation.Method.Name);
 			}
 

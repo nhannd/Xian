@@ -21,11 +21,6 @@ namespace ClearCanvas.Enterprise.Configuration
 	/// </summary>
 	public class ConfigurationServiceRecorder : IServiceOperationRecorder
 	{
-		public string Application
-		{
-			get { return "Enterprise Server"; }
-		}
-
 		string IServiceOperationRecorder.Category
 		{
 			get { return "Configuration"; }
