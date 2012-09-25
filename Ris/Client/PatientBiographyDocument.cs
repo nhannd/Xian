@@ -41,13 +41,14 @@ namespace ClearCanvas.Ris.Client
         {
 			Platform.CheckForNullReference(worklistItem.PatientRef, "PatientRef");
 			Platform.CheckForNullReference(worklistItem.PatientProfileRef, "PatientProfileRef");
-			Platform.CheckForNullReference(worklistItem.OrderRef, "OrderRef");
+			// the worklist item may not have an OrderRef (may represent just a patient)
 
 			_patientRef = worklistItem.PatientRef;
 			_profileRef = worklistItem.PatientProfileRef;
-			_orderRef = worklistItem.OrderRef;
 			_patientName = worklistItem.PatientName;
 			_mrn = worklistItem.Mrn;
+
+			_orderRef = worklistItem.OrderRef;
         }
 
         public override string GetTitle()

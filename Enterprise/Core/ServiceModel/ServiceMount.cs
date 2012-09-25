@@ -59,7 +59,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 			_configuration = configuration;
 
 			// establish default certificate search parameters consistent with behaviour prior to #8219
-			_certificateSearchDirective = new CertificateSearchDirective { FindValue = _baseAddress.Host };
+			_certificateSearchDirective = CertificateSearchDirective.CreateBasic(_baseAddress);
 		}
 
 		/// <summary>
@@ -314,7 +314,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 
 			// determine if service requires authentication
 			var authenticationAttribute = AttributeUtils.GetAttribute<AuthenticationAttribute>(contractAttribute.ServiceContract);
-			var authenticated = authenticationAttribute == null ? true : authenticationAttribute.AuthenticationRequired;
+			var authenticated = authenticationAttribute == null || authenticationAttribute.AuthenticationRequired;
 
 			// create service URI
 			var uri = new Uri(_baseAddress, contractAttribute.ServiceContract.FullName);
@@ -368,7 +368,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 
 		private static object InstantiateClass(string className)
 		{
-			var type = Type.GetType(className);
+			var type = Type.GetType(className, true);
 			return Activator.CreateInstance(type);
 		}
 
