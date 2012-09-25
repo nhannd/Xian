@@ -1483,9 +1483,9 @@ Preview.SectionContainer = function () {
 				}
 
 				cell.innerHTML = 
-					'<a href="javascript:void(0)" class="collapsibleSectionHeading" onclick="Collapse.toggleCollapsedSection(this)" style="{text-decoration: none; color: white;}">' +
-					'<img src="' + (collapsedByDefault ? expandImageSrc : collapseImageSrc) + 
-					'" border="0" style="{margin-right: 5px; margin-left: -8px; background: #1b4066;}"/>' + text + '</a>';
+					"<a href='javascript:void(0)' class='collapsibleSectionHeading' onclick='Collapse.toggleCollapsedSection(this)' style='{text-decoration: none; color: white;}'>" +
+					"<img src='" + (collapsedByDefault ? expandImageSrc : collapseImageSrc) + 
+					"' border='0' style='{margin-right: 5px; margin-left: -8px; background: #1b4066;}'/>" + text + "</a>";
 			}
 			else
 			{
@@ -1502,17 +1502,18 @@ Preview.SectionContainer = function () {
 		table.className = "SectionContainer";
 		table.appendChild(body);
 
-		var row = body.insertRow();
+		var row, cell;
+		row = body.insertRow();
 		_createCell(row, "SectionHeadingLeft");
 		_createHeadingCell(row, "SectionHeadingBackground", title, collapsible, collapsedByDefault);
 		_createCell(row, "SectionHeadingRight");
 
 		row = body.insertRow();
-		var cell = _createCell(row, "ContentCell");
+		cell = _createCell(row, "ContentCell");
 		cell.colSpan = "3";
 		cell.appendChild(content);
 		
-		//if(collapsible) Collapse.collapseSection(table, collapsedByDefault);
+		if(collapsible) Collapse.collapseSection(table, collapsedByDefault);
 		
 		return table;
 	};
