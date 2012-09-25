@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 
@@ -42,7 +43,8 @@ namespace ClearCanvas.ImageViewer.Common.Automation
             return base.Channel.GetViewers(request);
         }
 
-        public GetActiveViewersResult GetActiveViewers()
+		[Obsolete("Use GetViewers instead.")]
+		public GetActiveViewersResult GetActiveViewers()
 		{
 			return base.Channel.GetActiveViewers();
 		}

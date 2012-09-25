@@ -33,8 +33,8 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	/// Data contract for fault when there are no active viewers.
 	/// </summary>
 	[DataContract(Namespace = AutomationNamespace.Value)]
-    [Obsolete("Use GetViewers instead.")]
-    public class NoActiveViewersFault
+	[Obsolete("Used only by the deprecated GetActiveViewers method. Replaced by NoViewersFault, which is thrown by the GetViewers method.")]
+	public class NoActiveViewersFault
 	{
 	}
 
@@ -189,8 +189,8 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	/// Data contract for results returned from <see cref="IViewerAutomation.GetActiveViewers"/>.
 	/// </summary>
 	[DataContract(Namespace = AutomationNamespace.Value)]
-    [Obsolete("Use GetViewers method.")]
-    public class GetActiveViewersResult
+	[Obsolete("Used only by the deprecated GetActiveViewers method. Replaced by GetViewersResult, which is returned by the GetViewers method.")]
+	public class GetActiveViewersResult
 	{
 	    /// <summary>
 		/// Constructor.
@@ -212,7 +212,7 @@ namespace ClearCanvas.ImageViewer.Common.Automation
     {}
 
     /// <summary>
-    /// Data contract for results returned from <see cref="IViewerAutomation.GetActiveViewers"/>.
+    /// Data contract for results returned from <see cref="IViewerAutomation.GetViewers"/>.
     /// </summary>
     [DataContract(Namespace = AutomationNamespace.Value)]
     public class GetViewersResult

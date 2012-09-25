@@ -1255,6 +1255,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
+		internal void EnsureImagesAreVisible()
+		{
+			OpenImages();
+		}
 
 		private bool ClaimAndLinkWorklistItem(ReportingWorklistItemSummary item)
 		{

@@ -109,7 +109,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			// check if the document is already open
 			if (ActivateIfAlreadyOpen(item))
+			{
+				// if we want to load images, and the document was already open, ensure the images are visible
+				if (_loadImages)
+				{
+					var document = DocumentManager.Get<ReportDocument>(item.ProcedureStepRef);
+					var component = document != null ? document.GetComponent() as ReportingComponent : null;
+					if (component != null) component.EnsureImagesAreVisible();
+				}
 				return true;
+			}
 
 			// open the report editor
 			OpenReportEditor(item, _loadImages);

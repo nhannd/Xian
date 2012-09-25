@@ -71,10 +71,11 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 
             return new GetViewersResult {Viewers = viewers};
         }
-        
-        public GetActiveViewersResult GetActiveViewers()
+
+		[Obsolete("Use GetViewers instead.")]
+		public GetActiveViewersResult GetActiveViewers()
 		{
-            return new GetActiveViewersResult {ActiveViewers = GetViewers(new GetViewersRequest()).Viewers};
+			return new GetActiveViewersResult {ActiveViewers = GetViewers(new GetViewersRequest()).Viewers};
 		}
 
 		public GetViewerInfoResult GetViewerInfo(GetViewerInfoRequest request)

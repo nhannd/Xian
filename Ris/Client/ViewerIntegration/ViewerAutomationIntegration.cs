@@ -96,22 +96,36 @@ namespace ClearCanvas.Ris.Client.ViewerIntegration
 
 		public void Close(string accessionNumber)
 		{
-			using (IViewerAutomationBridge bridge = CreateBridge())
+			try
 			{
-				foreach (Viewer viewer in bridge.GetViewersByAccessionNumber(accessionNumber))
-					bridge.CloseViewer(viewer);
+				using (IViewerAutomationBridge bridge = CreateBridge())
+				{
+					foreach (Viewer viewer in bridge.GetViewersByAccessionNumber(accessionNumber))
+						bridge.CloseViewer(viewer);
+				}
+			}
+			catch (FaultException<NoViewersFault>)
+			{
+				// eat this exception, as it really just means that the user has closed all viewer workspaces
 			}
 		}
 
 		public void Activate(string accessionNumber)
 		{
-			using (IViewerAutomationBridge bridge = CreateBridge())
+			try
 			{
-				foreach (Viewer viewer in bridge.GetViewersByAccessionNumber(accessionNumber))
+				using (IViewerAutomationBridge bridge = CreateBridge())
 				{
-					bridge.ActivateViewer(viewer);
-					return;
+					foreach (Viewer viewer in bridge.GetViewersByAccessionNumber(accessionNumber))
+					{
+						bridge.ActivateViewer(viewer);
+						return;
+					}
 				}
+			}
+			catch (FaultException<NoViewersFault>)
+			{
+				// eat this exception, as it really just means that the user has closed all viewer workspaces
 			}
 		}
 

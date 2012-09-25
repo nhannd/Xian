@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		#region IViewerAutomationBridge Members
 
 		/// <summary>
-		/// Specifies what the behaviour should be if the primary study is already the primary study in an existing viewer.
+		/// Specifies how the ImageViewer should behave when opening a study for display.
 		/// </summary>
 		public OpenStudiesBehaviour OpenStudiesBehaviour
 		{
@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// <returns></returns>
 		public IList<Viewer> GetViewers()
 		{
-			return _viewerAutomationClient.GetActiveViewers().ActiveViewers;
+			return _viewerAutomationClient.GetViewers(new GetViewersRequest()).Viewers;
 		}
 
 		/// <summary>
