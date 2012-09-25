@@ -401,7 +401,6 @@
     <EmbeddedResource Include="Icons\VisitSummaryToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="actionmodels.xml" />
     <EmbeddedResource Include="Icons\RejectTranscriptionLarge.png" />
     <EmbeddedResource Include="Icons\RejectTranscriptionMedium.png" />
     <EmbeddedResource Include="Icons\RejectTranscriptionSmall.png" />
