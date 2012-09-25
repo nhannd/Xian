@@ -29,7 +29,7 @@ namespace ClearCanvas.Healthcare {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether a worklist is required to have a time window specified.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool TimeWindowRequired {
             get {
                 return ((bool)(this["TimeWindowRequired"]));

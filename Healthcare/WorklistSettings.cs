@@ -18,7 +18,7 @@ namespace ClearCanvas.Healthcare
 
 	[SettingsGroupDescription("Settings that configure the behaviour of worklists.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-	internal sealed partial class WorklistSettings
+	internal sealed partial class  WorklistSettings
 	{
 		///<summary>
 		/// Public constructor.  Server-side settings classes should be instantiated via constructor rather
