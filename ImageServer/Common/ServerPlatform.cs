@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageServer.Common
 			lock (_syncLock)
 			{
 				if (_log == null)
-					_log = new AuditLog("ImageServer","DICOM");
+					_log = new AuditLog(ProductInformation.Component,"DICOM");
 
                 string serializeText = null;
                 try
