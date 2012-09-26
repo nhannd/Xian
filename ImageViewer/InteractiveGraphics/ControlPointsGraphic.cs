@@ -245,6 +245,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Called to notify the derived class of a control point change event.
 		/// </summary>
+		/// <remarks>
+		/// The <paramref name="point"/> parameter is given in the graphic's current <see cref="IGraphic.CoordinateSystem"/>.
+		/// </remarks>
 		/// <param name="index">The index of the point that changed.</param>
 		/// <param name="point">The value of the point that changed.</param>
 		protected virtual void OnControlPointChanged(int index, PointF point) {}
