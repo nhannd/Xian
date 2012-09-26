@@ -72,9 +72,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             Sort(new TableSortParams(ColumnLastName, true));
         }
 
-        public void SetServerColumnsVisibility(bool visible)
+        public void SetServerColumnVisibility(bool visible)
         {
-            ColumnServer.Visible = ColumnAvailability.Visible = visible;
+            ColumnServer.Visible = visible;
+        }
+
+        public void SetAvailabilityColumnsVisibility(bool visible)
+        {
+            ColumnAvailability.Visible = visible;
         }
 
         public void SetIdeographicAndPhoneticNamesVisibility(bool visible)
