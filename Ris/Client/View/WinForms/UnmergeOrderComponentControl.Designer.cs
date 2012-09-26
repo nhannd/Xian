@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    partial class CancelOrderComponentControl
+    partial class UnmergeOrderComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -62,15 +62,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
 			this._cancelReason = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-			this._proceduresTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
-			this.label1 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// _cancelButton
 			// 
 			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._cancelButton.Location = new System.Drawing.Point(319, 280);
+			this._cancelButton.Location = new System.Drawing.Point(319, 70);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 5;
@@ -81,7 +78,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _okButton
 			// 
 			this._okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._okButton.Location = new System.Drawing.Point(238, 280);
+			this._okButton.Location = new System.Drawing.Point(238, 70);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
 			this._okButton.TabIndex = 4;
@@ -94,60 +91,26 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelReason.DataSource = null;
 			this._cancelReason.DisplayMember = "";
 			this._cancelReason.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._cancelReason.LabelText = "Cancel Reason";
-			this._cancelReason.Location = new System.Drawing.Point(6, 223);
+			this._cancelReason.LabelText = "Reason";
+			this._cancelReason.Location = new System.Drawing.Point(8, 15);
 			this._cancelReason.Margin = new System.Windows.Forms.Padding(2);
 			this._cancelReason.Name = "_cancelReason";
 			this._cancelReason.Size = new System.Drawing.Size(386, 41);
 			this._cancelReason.TabIndex = 3;
 			this._cancelReason.Value = null;
 			// 
-			// _proceduresTableView
-			// 
-			this._proceduresTableView.ColumnHeaderTooltip = null;
-			this._proceduresTableView.FilterTextBoxWidth = 132;
-			this._proceduresTableView.Location = new System.Drawing.Point(6, 31);
-			this._proceduresTableView.Margin = new System.Windows.Forms.Padding(0);
-			this._proceduresTableView.Name = "_proceduresTableView";
-			this._proceduresTableView.ShowToolbar = false;
-			this._proceduresTableView.Size = new System.Drawing.Size(386, 147);
-			this._proceduresTableView.SortButtonTooltip = null;
-			this._proceduresTableView.TabIndex = 1;
-			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(5, 9);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(281, 13);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "Canceling this order will cancel all procedures (listed here):";
-			// 
-			// label2
-			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(5, 186);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(290, 13);
-			this.label2.TabIndex = 2;
-			this.label2.Text = "(To cancel individual procedures, use Modify Order instead.)";
-			// 
-			// CancelOrderComponentControl
+			// UnmergeOrderComponentControl
 			// 
 			this.AcceptButton = this._okButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._cancelButton;
-			this.Controls.Add(this.label2);
-			this.Controls.Add(this._proceduresTableView);
-			this.Controls.Add(this.label1);
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._cancelReason);
 			this.Controls.Add(this._okButton);
-			this.Name = "CancelOrderComponentControl";
-			this.Size = new System.Drawing.Size(401, 314);
+			this.Name = "UnmergeOrderComponentControl";
+			this.Size = new System.Drawing.Size(401, 104);
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
         }
 
@@ -156,8 +119,5 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _okButton;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _cancelReason;
-		private Desktop.View.WinForms.TableView _proceduresTableView;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
     }
 }

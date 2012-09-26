@@ -11,8 +11,11 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 
@@ -32,14 +35,20 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(CancelOrderComponentViewExtensionPoint))]
 	public class CancelOrderComponent : ApplicationComponent
 	{
+		private readonly EntityRef _orderRef;
+		private readonly ProcedureRequisitionTable _proceduresTable;
 		private EnumValueInfo _selectedCancelReason;
 		private List<EnumValueInfo> _cancelReasonChoices;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public CancelOrderComponent()
+		public CancelOrderComponent(EntityRef orderRef)
 		{
+			_orderRef = orderRef;
+			_proceduresTable = new ProcedureRequisitionTable();
+			_proceduresTable.ScheduledDurationColumn.Visible = false;
+			_proceduresTable.ModalityColumn.Visible = false;
 		}
 
 		public override void Start()
@@ -47,14 +56,20 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IOrderEntryService>(
 				service =>
 				{
-					var response = service.GetCancelOrderFormData(new GetCancelOrderFormDataRequest());
-					_cancelReasonChoices = response.CancelReasonChoices;
+					_cancelReasonChoices = service.GetCancelOrderFormData(new GetCancelOrderFormDataRequest()).CancelReasonChoices;
+					var orderReq = service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest() {OrderRef = _orderRef}).Requisition;
+					_proceduresTable.Items.AddRange(orderReq.Procedures.Where(pr => !pr.Cancelled));
 				});
 
 			base.Start();
 		}
 
 		#region Presentation Model
+
+		public ITable ProceduresTable
+		{
+			get { return _proceduresTable; }
+		}
 
 		public IList CancelReasonChoices
 		{

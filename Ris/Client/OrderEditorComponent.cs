@@ -191,7 +191,7 @@ namespace ClearCanvas.Ris.Client
 
 		private DateTime? _schedulingRequestTime;
 
-		private readonly Table<ProcedureRequisition> _proceduresTable;
+		private readonly ProcedureRequisitionTable _proceduresTable;
 		private readonly CrudActionModel _proceduresActionModel;
 		private List<ProcedureRequisition> _selectedProcedures = new List<ProcedureRequisition>();
 
@@ -237,12 +237,7 @@ namespace ClearCanvas.Ris.Client
 
 			_operatingContext = operatingContext;
 
-			_proceduresTable = new Table<ProcedureRequisition>();
-			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Procedure", ProcedureFormat.Format));
-			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Facility", FormatPerformingFacility));
-			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Scheduled Time", FormatScheduledTime));
-			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Scheduled Duration", FormatScheduledDuration));
-			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Modality", FormatScheduledModality));
+			_proceduresTable = new ProcedureRequisitionTable();
 
 			_proceduresActionModel = new CrudActionModel();
 			_proceduresActionModel.Add.SetClickHandler(AddProcedure);
@@ -965,30 +960,6 @@ namespace ClearCanvas.Ris.Client
 			this.Modified = false; // bug 6299: ensure we begin without modifications
 		}
 
-		private string FormatPerformingFacility(ProcedureRequisition requisition)
-		{
-			var sb = new StringBuilder();
-			if (requisition.PerformingFacility != null)
-			{
-				sb.Append(requisition.PerformingFacility.Name);
-			}
-			if (requisition.PerformingDepartment != null)
-			{
-				sb.Append(" (" + requisition.PerformingDepartment.Name + ")");
-			}
-			return sb.ToString();
-		}
-
-		private string FormatScheduledModality(ProcedureRequisition procedureRequisition)
-		{
-			return procedureRequisition.Modality != null ? procedureRequisition.Modality.Name : null;
-		}
-
-		private string FormatScheduledDuration(ProcedureRequisition procedureRequisition)
-		{
-			return string.Format("{0} min", procedureRequisition.ScheduledDuration);
-		}
-
 		private void LoadVisits()
 		{
 			// remember the previous selection before updating the list
@@ -1368,18 +1339,6 @@ namespace ClearCanvas.Ris.Client
 					}
 				}
 			}
-		}
-
-		private static string FormatScheduledTime(ProcedureRequisition item)
-		{
-			// if new or scheduled
-			if (item.Status != null && item.Status.Code != "SC")
-				return item.Status.Value;
-
-			if (item.Cancelled)
-				return "Cancel Pending";
-
-			return Format.DateTime(item.ScheduledTime);
 		}
 	}
 }

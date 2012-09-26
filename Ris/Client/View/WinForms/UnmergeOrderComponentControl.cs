@@ -17,24 +17,23 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
 	/// <summary>
-	/// Provides a Windows Forms user-interface for <see cref="CancelOrderComponent"/>
+	/// Provides a Windows Forms user-interface for <see cref="UnmergeOrderComponent"/>
 	/// </summary>
-	public partial class CancelOrderComponentControl : ApplicationComponentUserControl
+	public partial class UnmergeOrderComponentControl : ApplicationComponentUserControl
 	{
-		private readonly CancelOrderComponent _component;
+		private readonly UnmergeOrderComponent _component;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public CancelOrderComponentControl(CancelOrderComponent component)
+		public UnmergeOrderComponentControl(UnmergeOrderComponent component)
 			: base(component)
 		{
 			InitializeComponent();
 			_component = component;
 
-			_proceduresTableView.Table = _component.ProceduresTable;
-			_cancelReason.DataSource = _component.CancelReasonChoices;
-			_cancelReason.DataBindings.Add("Value", _component, "SelectedCancelReason", true, DataSourceUpdateMode.OnPropertyChanged);
+			_cancelReason.DataSource = _component.ReasonChoices;
+			_cancelReason.DataBindings.Add("Value", _component, "SelectedReason", true, DataSourceUpdateMode.OnPropertyChanged);
 			_okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
@@ -45,7 +44,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 		private void _cancelButton_Click(object sender, EventArgs e)
 		{
-			_component.Cancel();
+			_component.Unmerge();
 		}
 	}
 }

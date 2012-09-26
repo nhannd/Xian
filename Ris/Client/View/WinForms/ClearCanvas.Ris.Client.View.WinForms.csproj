@@ -167,6 +167,13 @@
     </Compile>
     <Compile Include="ChangePasswordDialog.cs" />
     <Compile Include="AttachDocumentComponentView.cs" />
+    <Compile Include="UnmergeOrderComponentView.cs" />
+    <Compile Include="UnmergeOrderComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UnmergeOrderComponentControl.Designer.cs">
+      <DependentUpon>UnmergeOrderComponentControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="PrintReportComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -641,6 +648,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ChangePasswordForm.resx">
       <DependentUpon>ChangePasswordForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UnmergeOrderComponentControl.resx">
+      <DependentUpon>UnmergeOrderComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PrintReportComponentControl.resx">
