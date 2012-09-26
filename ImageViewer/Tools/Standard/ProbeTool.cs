@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{
-			if (this.SelectedImageGraphicProvider == null)
+			if (this.SelectedImageGraphicProvider == null || SelectedImageSopProvider == null)
 				return false;
 
 			_selectedTile = mouseInformation.Tile as Tile;
