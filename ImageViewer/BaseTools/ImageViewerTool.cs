@@ -15,7 +15,6 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.BaseTools
@@ -31,9 +30,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// <summary>
 		/// Protected constructor.
 		/// </summary>
-		protected ImageViewerTool()
-		{
-		}
+		protected ImageViewerTool() {}
 
 		/// <summary>
 		/// Disposes of this object; override this method to do any necessary cleanup.
@@ -41,8 +38,8 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// <param name="disposing">True if this object is being disposed, false if it is being finalized.</param>
 		protected override void Dispose(bool disposing)
 		{
-			this.Context.Viewer.EventBroker.TileSelected -= new EventHandler<TileSelectedEventArgs>(OnTileSelected);
-			this.Context.Viewer.EventBroker.PresentationImageSelected -= new EventHandler<PresentationImageSelectedEventArgs>(OnPresentationImageSelected);
+			ImageViewer.EventBroker.TileSelected -= OnTileSelected;
+			ImageViewer.EventBroker.PresentationImageSelected -= OnPresentationImageSelected;
 
 			base.Dispose(disposing);
 		}
@@ -52,8 +49,8 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// </summary>
 		public override void Initialize()
 		{
-			this.Context.Viewer.EventBroker.TileSelected += new EventHandler<TileSelectedEventArgs>(OnTileSelected);
-			this.Context.Viewer.EventBroker.PresentationImageSelected += new EventHandler<PresentationImageSelectedEventArgs>(OnPresentationImageSelected);
+			ImageViewer.EventBroker.TileSelected += OnTileSelected;
+			ImageViewer.EventBroker.PresentationImageSelected += OnPresentationImageSelected;
 
 			base.Initialize();
 		}
@@ -82,13 +79,13 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			add { _enabledChanged += value; }
 			remove { _enabledChanged -= value; }
 		}
-		
+
 		/// <summary>
 		/// Gets the <see cref="IImageViewer"/> associated with this tool.
 		/// </summary>
 		protected IImageViewer ImageViewer
 		{
-			get { return this.Context.Viewer; }
+			get { return Context.Viewer; }
 		}
 
 		/// <summary>
@@ -98,13 +95,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// if no <see cref="IPresentationImage"/> is currently selected.</value>
 		protected IPresentationImage SelectedPresentationImage
 		{
-			get
-			{
-				if (this.ImageViewer != null)
-					return this.ImageViewer.SelectedPresentationImage;
-				else
-					return null;
-			}
+			get { return ImageViewer != null ? ImageViewer.SelectedPresentationImage : null; }
 		}
 
 		/// <summary>
@@ -114,13 +105,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// if no <see cref="IImageGraphicProvider"/> is currently selected.</value>
 		protected IImageGraphicProvider SelectedImageGraphicProvider
 		{
-			get
-			{
-				if (this.SelectedPresentationImage != null)
-					return this.SelectedPresentationImage as IImageGraphicProvider;
-				else
-					return null;
-			}
+			get { return SelectedPresentationImage as IImageGraphicProvider; }
 		}
 
 		/// <summary>
@@ -130,13 +115,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// if no <see cref="IImageSopProvider"/> is currently selected.</value>
 		protected IImageSopProvider SelectedImageSopProvider
 		{
-			get
-			{
-				if (this.SelectedPresentationImage != null)
-					return this.SelectedPresentationImage as IImageSopProvider;
-				else
-					return null;
-			}
+			get { return SelectedPresentationImage as IImageSopProvider; }
 		}
 
 		/// <summary>
@@ -146,13 +125,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// if no <see cref="ISpatialTransformProvider"/> is currently selected.</value>
 		protected ISpatialTransformProvider SelectedSpatialTransformProvider
 		{
-			get
-			{
-				if (this.SelectedPresentationImage != null)
-					return this.SelectedPresentationImage as ISpatialTransformProvider;
-				else
-					return null;
-			}
+			get { return SelectedPresentationImage as ISpatialTransformProvider; }
 		}
 
 		/// <summary>
@@ -162,16 +135,9 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// if no <see cref="IVoiLutProvider"/> is currently selected.</value>
 		protected IVoiLutProvider SelectedVoiLutProvider
 		{
-			get
-			{
-				if (this.SelectedPresentationImage != null)
-				{
-					return this.SelectedPresentationImage as IVoiLutProvider;
-				}
-				else
-					return null;
-			}
+			get { return SelectedPresentationImage as IVoiLutProvider; }
 		}
+
 		/// <summary>
 		/// Gets the selected <see cref="IOverlayGraphicsProvider"/>.
 		/// </summary>
@@ -179,13 +145,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// if no <see cref="IOverlayGraphicsProvider"/> is currently selected.</value>
 		protected IOverlayGraphicsProvider SelectedOverlayGraphicsProvider
 		{
-			get
-			{
-				if (this.SelectedPresentationImage != null)
-					return this.SelectedPresentationImage as IOverlayGraphicsProvider;
-				else
-					return null;
-			}
+			get { return SelectedPresentationImage as IOverlayGraphicsProvider; }
 		}
 
 		/// <summary>
@@ -195,13 +155,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// if no <see cref="IAnnotationLayoutProvider"/> is currently selected.</value>
 		protected IAnnotationLayoutProvider SelectedAnnotationLayoutProvider
 		{
-			get
-			{
-				if (this.SelectedPresentationImage != null)
-					return this.SelectedPresentationImage as IAnnotationLayoutProvider;
-				else
-					return null;
-			}
+			get { return SelectedPresentationImage as IAnnotationLayoutProvider; }
 		}
 
 		/// <summary>
@@ -209,10 +163,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// </summary>
 		protected virtual void OnTileSelected(object sender, TileSelectedEventArgs e)
 		{
-			if (e.SelectedTile.PresentationImage == null)
-				this.Enabled = false;
-			else
-				this.Enabled = true;
+			Enabled = e.SelectedTile.PresentationImage != null;
 		}
 
 		/// <summary>
@@ -222,10 +173,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// <param name="e"></param>
 		protected virtual void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
-			if (e.SelectedPresentationImage == null)
-				this.Enabled = false;
-			else
-				this.Enabled = true;
+			Enabled = e.SelectedPresentationImage != null;
 		}
 	}
 }
