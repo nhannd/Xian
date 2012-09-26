@@ -15,7 +15,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Client.Formatting;
@@ -27,87 +26,40 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ButtonAction("neworder", "patientsearch-items-toolbar/New Order", "NewOrder")]
 	[MenuAction("neworder", "patientsearch-items-contextmenu/New Order", "NewOrder")]
 	[IconSet("neworder", IconScheme.Colour, "NewOrderSmall.png", "NewOrderMedium.png", "NewOrderLarge.png")]
-	[EnabledStateObserver("neworder", "Enabled", "EnabledChanged")]
-	[ActionPermission("neworder", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Create)]
+	[ActionPermission("neworder", Application.Common.AuthorityTokens.Workflow.Order.Create)]
 
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
 	public class NewOrderTool : Tool<IToolContext>
 	{
-		private bool _enabled;
-		private event EventHandler _enabledChanged;
-
-		public override void Initialize()
-		{
-			base.Initialize();
-			_enabled = false;   // disable by default
-
-			if (this.Context is IRegistrationWorkflowItemToolContext)
-			{
-				((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
-				{
-					this.Enabled = (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
-					&& ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
-				};
-			}
-			else if (this.Context is IPatientSearchToolContext)
-			{
-				((IPatientSearchToolContext)this.ContextBase).SelectedProfileChanged += delegate
-				{
-					var context = (IPatientSearchToolContext)this.ContextBase;
-					this.Enabled = (context.SelectedProfile != null && context.SelectedProfile.PatientProfileRef != null);
-				};
-			}
-			else if (this.Context is IPatientBiographyToolContext)
-			{
-				this.Enabled = true;
-			}
-		}
-
-		public bool Enabled
-		{
-			get { return _enabled; }
-			set
-			{
-				if (_enabled != value)
-				{
-					_enabled = value;
-					EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
-				}
-			}
-		}
-
-		public event EventHandler EnabledChanged
-		{
-			add { _enabledChanged += value; }
-			remove { _enabledChanged -= value; }
-		}
-
 		public void NewOrder()
 		{
 			if (this.Context is IRegistrationWorkflowItemToolContext)
 			{
 				var context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
 				var item = CollectionUtils.FirstElement(context.SelectedItems);
-				var title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
-				NewOrder(item.PatientProfileRef, title, context.DesktopWindow);
+				NewOrder(item, context.DesktopWindow);
 			}
 			else if (this.Context is IPatientSearchToolContext)
 			{
 				var context = (IPatientSearchToolContext)this.ContextBase;
-				var title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(context.SelectedProfile.Name), MrnFormat.Format(context.SelectedProfile.Mrn));
-				NewOrder(context.SelectedProfile, title, context.DesktopWindow);
+				NewOrder(context.SelectedProfile, context.DesktopWindow);
 			}
 			else if (this.Context is IPatientBiographyToolContext)
 			{
 				var context = (IPatientBiographyToolContext)this.ContextBase;
-				var title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(context.PatientProfile.Name), MrnFormat.Format(context.PatientProfile.Mrn));
-				NewOrder(context.PatientProfile.GetSummary(), title, context.DesktopWindow);
+				NewOrder(context.PatientProfile.GetSummary(), context.DesktopWindow);
 			}
 		}
 
-		private static void NewOrder(EntityRef profileRef, string title, IDesktopWindow desktopWindow)
+		private static void NewOrder(WorklistItemSummaryBase worklistItem, IDesktopWindow desktopWindow)
 		{
+			if(worklistItem == null)
+			{
+				NewOrder(null, "New Order", desktopWindow);
+				return;
+			}
+
 			PatientProfileSummary summary = null;
 			Platform.GetService<IBrowsePatientDataService>(
 				service =>
@@ -116,13 +68,25 @@ namespace ClearCanvas.Ris.Client.Workflow
 													{
 														GetPatientProfileDetailRequest = new GetPatientProfileDetailRequest
 																							{
-																								PatientProfileRef = profileRef
+																								PatientProfileRef = worklistItem.PatientProfileRef
 																							}
 													});
 					summary = response.GetPatientProfileDetailResponse.PatientProfile.GetSummary();
 				});
 
-			NewOrder(summary, title, desktopWindow);
+			NewOrder(summary, desktopWindow);
+		}
+
+		private static void NewOrder(PatientProfileSummary patientProfile, IDesktopWindow desktopWindow)
+		{
+			if(patientProfile == null)
+			{
+				NewOrder(null, "New Order", desktopWindow);
+				return;
+			}
+
+			var title = string.Format(SR.TitleNewOrder, PersonNameFormat.Format(patientProfile.Name), MrnFormat.Format(patientProfile.Mrn));
+			NewOrder(patientProfile, title, desktopWindow);
 		}
 
 		private static void NewOrder(PatientProfileSummary patientProfile, string title, IDesktopWindow desktopWindow)
