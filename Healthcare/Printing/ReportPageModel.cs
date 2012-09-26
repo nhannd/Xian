@@ -47,7 +47,7 @@ namespace ClearCanvas.Healthcare.Printing
 			{
 				get
 				{
-					var address = _contactPoint == null ? new Address() : _contactPoint.CurrentAddress;
+					var address = (_contactPoint == null ? null : _contactPoint.CurrentAddress) ?? new Address();
 					return new AddressFacade(address);
 				}
 			}
