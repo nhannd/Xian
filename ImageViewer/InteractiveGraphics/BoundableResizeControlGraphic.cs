@@ -286,25 +286,36 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="point">The value of the point that changed.</param>
 		protected override void OnControlPointChanged(int index, PointF point)
 		{
-			IBoundableGraphic subject = this.Subject;
-			RectangleF rect = subject.Rectangle;
-			switch (index)
+			// this operation must be performed in source coodinates because the definition of top-left/bottom-left/top-right/bottom-right controls are relative to image not tile!
+			var sourcePoint = CoordinateSystem == CoordinateSystem.Destination ? SpatialTransform.ConvertToSource(point) : point;
+			CoordinateSystem = CoordinateSystem.Source;
+			try
 			{
-				case _topLeft:
-					subject.TopLeft = point;
-					break;
-				case _bottomRight:
-					subject.BottomRight = point;
-					break;
-				case _topRight:
-					subject.TopLeft = new PointF(rect.Left, point.Y);
-					subject.BottomRight = new PointF(point.X, rect.Bottom);
-					break;
-				case _bottomLeft:
-					subject.TopLeft = new PointF(point.X, rect.Top);
-					subject.BottomRight = new PointF(rect.Right, point.Y);
-					break;
+				var subject = Subject;
+				var rect = subject.Rectangle;
+				switch (index)
+				{
+					case _topLeft:
+						subject.TopLeft = sourcePoint;
+						break;
+					case _bottomRight:
+						subject.BottomRight = sourcePoint;
+						break;
+					case _topRight:
+						subject.TopLeft = new PointF(rect.Left, sourcePoint.Y);
+						subject.BottomRight = new PointF(sourcePoint.X, rect.Bottom);
+						break;
+					case _bottomLeft:
+						subject.TopLeft = new PointF(sourcePoint.X, rect.Top);
+						subject.BottomRight = new PointF(rect.Right, sourcePoint.Y);
+						break;
+				}
 			}
+			finally
+			{
+				ResetCoordinateSystem();
+			}
+
 			base.OnControlPointChanged(index, point);
 		}
 
