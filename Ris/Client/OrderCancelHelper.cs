@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client
 					return false;
 			}
 
-			var cancelOrderComponent = new CancelOrderComponent();
+			var cancelOrderComponent = new CancelOrderComponent(orderRef);
 			var exitCode = ApplicationComponent.LaunchAsDialog(
 				desktopWindow,
 				cancelOrderComponent,

@@ -66,16 +66,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 			var reasonCode = OrderMergeSettings.Default.UnmergeDefaultReasonCode;
 			if(string.IsNullOrEmpty(reasonCode))
 			{
-				var cancelOrderComponent = new CancelOrderComponent();
+				var unmergeComponent = new UnmergeOrderComponent();
 				var exitCode = ApplicationComponent.LaunchAsDialog(
 					this.Context.DesktopWindow,
-					cancelOrderComponent,
+					unmergeComponent,
 					string.Format("Undo merge order {0}", AccessionFormat.Format(item.AccessionNumber)));
 
 				if (exitCode != ApplicationComponentExitCode.Accepted)
 					return false;
 
-				reason = cancelOrderComponent.SelectedCancelReason;
+				reason = unmergeComponent.SelectedReason;
 			}
 			else
 			{

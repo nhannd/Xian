@@ -78,6 +78,7 @@
     <Compile Include="BannerSettings.cs" />
     <Compile Include="AttachDocumentComponent.cs" />
     <Compile Include="CancelOrderComponent.cs" />
+    <Compile Include="UnmergeOrderComponent.cs" />
     <Compile Include="DocumentViewTool.cs" />
     <Compile Include="LoginFacilityProvider.cs" />
     <Compile Include="PrintReportComponent.cs" />
@@ -203,6 +204,7 @@
     <Compile Include="ProcedureEditorComponentBase.cs" />
     <Compile Include="ProcedureEditorComponent.cs" />
     <Compile Include="FolderRefreshTool.cs" />
+    <Compile Include="ProcedureRequisitionTable.cs" />
     <Compile Include="ProcedureTypeEditorComponent.cs" />
     <Compile Include="ProcedureTypeLookupHandler.cs" />
     <Compile Include="ProcedureTypeLookupSettings.cs" />
