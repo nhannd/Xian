@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
 		public bool Selected { get; set; }
 
 		[DataMember(IsRequired = false)]
-        public byte[] Image { get; set; }
+        public string Image { get; set; }
 
 		[DataMember(IsRequired = false)]
 		public bool HasCapture { get; set; }
@@ -40,9 +40,5 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
 
         [DataMember(IsRequired = false)]
         public InformationBox InformationBox { get; set; }
-
-		// TODO: Still need this?
-        [DataMember(IsRequired = false)]
-        public long DrawTime { get; set; }
     }
 }

@@ -248,14 +248,14 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			return iconSet is MouseButtonIconSet && ((MouseButtonIconSet)iconSet).ShowMouseButtonIconOverlay;
 		}
 
-		protected static byte[] LoadIcon(IAction action, IconSize size)
+		protected static string LoadIcon(IAction action, IconSize size)
 		{
 			Image image = action.IconSet.CreateIcon(size, action.ResourceResolver);
 			using (MemoryStream theStream = new MemoryStream())
 			{
 				image.Save(theStream, ImageFormat.Png);
 				theStream.Position = 0;
-				return theStream.GetBuffer();
+				return Convert.ToBase64String(theStream.GetBuffer());
 			}
 		}
 

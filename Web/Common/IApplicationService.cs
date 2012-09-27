@@ -16,7 +16,7 @@ using System;
 namespace ClearCanvas.Web.Common
 {
 	[DataContract(Namespace = Namespace.Value)]
-	public abstract class StartApplicationRequest
+    public abstract class StartApplicationRequest : DataContractBase
 	{
 		[DataMember(IsRequired = true)]
 		public Guid Identifier { get; set; }
@@ -32,33 +32,31 @@ namespace ClearCanvas.Web.Common
 
         [DataMember(IsRequired = false)]
         public MetaInformation MetaInformation { get; set; }
-
 	}
 
     [DataContract(Namespace = Namespace.Value)]
-    public class MetaInformation
+    public class MetaInformation : DataContractBase
     {
         [DataMember(IsRequired = true)]
         public string Language { get; set; }
     }
 
     [DataContract(Namespace = Namespace.Value)]
-    public class StartApplicationRequestResponse
+    public class StartApplicationResult : DataContractBase
     {
         [DataMember(IsRequired = true)]
         public Guid AppIdentifier { get; set; }
-
     }
     
 	[DataContract(Namespace = Namespace.Value)]
-	public class StopApplicationRequest
+    public class StopApplicationRequest : DataContractBase
 	{
 		[DataMember(IsRequired = true)]
 		public Guid ApplicationId { get; set; }
 	}
 
     [DataContract(Namespace = Namespace.Value)]
-    public class GetPendingEventRequest
+    public class GetPendingEventRequest : DataContractBase
 	{
 		[DataMember(IsRequired = true)]
 		public Guid ApplicationId { get; set; }
@@ -68,7 +66,7 @@ namespace ClearCanvas.Web.Common
 	}
 
     [DataContract(Namespace = Namespace.Value)]
-    public class GetPendingEventRequestResponse
+    public class GetPendingEventResult : DataContractBase
     {
         [DataMember(IsRequired = true)]
         public Guid ApplicationId { get; set; }
@@ -84,7 +82,7 @@ namespace ClearCanvas.Web.Common
 		[OperationContract(IsOneWay = false)]
         [FaultContract(typeof(SessionValidationFault))]
         [FaultContract(typeof(OutOfResourceFault))]
-        StartApplicationRequestResponse StartApplication(StartApplicationRequest request);
+        StartApplicationResult StartApplication(StartApplicationRequest request);
 
 		[OperationContract(IsOneWay = false)]
         [FaultContract(typeof(InvalidOperationFault))]
@@ -93,10 +91,24 @@ namespace ClearCanvas.Web.Common
         [OperationContract(IsOneWay = false)]
         [FaultContract(typeof(InvalidOperationFault))]
         ProcessMessagesResult ProcessMessages(MessageSet messages);
-        
+    }
+
+    [DataContract(Namespace = Namespace.Value)]
+    public class ProcessEventsRequest : DataContractBase
+    {
+        [DataMember(IsRequired = true)]
+        public Guid ApplicationId { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public EventSet EventSet { get; set; }
+    }
+
+    [ServiceContract(Namespace = Namespace.Value)]
+    public interface IPollingApplicationService : IApplicationService
+    {
         [OperationContract(IsOneWay = false)]
         [FaultContract(typeof(InvalidOperationFault))]
-        GetPendingEventRequestResponse GetPendingEvent(GetPendingEventRequest request);
+        GetPendingEventResult GetPendingEvent(GetPendingEventRequest request);
 
         [OperationContract(IsOneWay = true)]
         void ReportPerformance(PerformanceData data);
@@ -105,13 +117,24 @@ namespace ClearCanvas.Web.Common
         void SetProperty(SetPropertyRequest request);
     }
 
-    [DataContract]
-    public class InvalidOperationFault
+    public interface IApplicationServiceCallback
+    {
+        [OperationContract(IsOneWay = false)]
+        void ProcessEvents(ProcessEventsRequest request);
+    }
+
+    [ServiceContract(Namespace = Namespace.Value, CallbackContract = typeof(IApplicationServiceCallback))]
+    public interface IDuplexApplicationService : IApplicationService
     {
     }
 
     [DataContract]
-    public class SetPropertyRequest
+    public class InvalidOperationFault : DataContractBase
+    {
+    }
+
+    [DataContract]
+    public class SetPropertyRequest : DataContractBase
     {
         [DataMember(IsRequired = true)]
         public Guid ApplicationId { get; set; }

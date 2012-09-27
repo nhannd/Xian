@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Web
 
 	    private readonly RemoteClientInformation _client;
         
-        public  ViewerApplication()
+        public ViewerApplication()
         {
             _client = new RemoteClientInformation
                           {
@@ -268,13 +268,13 @@ namespace ClearCanvas.ImageViewer.Web
 
 	    protected override EventSet OnGetPendingOutboundEvent(int wait)
 	    {
-            if (_context == null)
+            if (Context == null)
             {
                 string reason = string.Format("Application context no longer exists");
                 throw new Exception(reason);
             }
 
-            return _context.GetPendingOutboundEvent(wait);
+            return Context.GetPendingOutboundEvent(wait);
 	    }
 
 
@@ -307,9 +307,6 @@ namespace ClearCanvas.ImageViewer.Web
                 if (Application.Instance == null)
 					Platform.StartApp("ClearCanvas.Desktop.Application",new string[] {"-r"});
 			}
-
-            
-
 
             if (Platform.IsLogLevelEnabled(LogLevel.Debug))
                 Platform.Log(LogLevel.Debug, "Finding studies...");

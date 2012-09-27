@@ -42,6 +42,9 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                        {
                            Configuration = new Common.DicomServer.DicomServerConfiguration
                                                {
+                                                   //TODO (CR Sep 2012): Shouldn't we be getting a partition here?
+                                                   //Maybe we can set the "main" partition for the application based
+                                                   //on the aetitle passed in to start the viewer app?
                                                    AETitle = WebViewerServices.Default.AETitle,
                                                    HostName = WebViewerServices.Default.ArchiveServerHostname,
                                                    Port = WebViewerServices.Default.ArchiveServerPort

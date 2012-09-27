@@ -2,16 +2,17 @@
     <system.serviceModel>
         <bindings>
             <customBinding>
-                <binding name="CustomBinding_IApplicationService">
+                <binding name="CustomBinding_IPollingApplicationService">
                     <binaryMessageEncoding />
                     <httpTransport maxReceivedMessageSize="2147483647" maxBufferSize="2147483647" />
                 </binding>
             </customBinding>
         </bindings>
         <client>
-            <endpoint address="http://localhost/WebPortal/Services/ApplicationService.svc/basicHttp"
-                binding="customBinding" bindingConfiguration="CustomBinding_IApplicationService"
-                contract="AppServiceReference.IApplicationService" name="CustomBinding_IApplicationService" />
+            <endpoint address="http://bright/Phoenix5ImageServer/Services/ApplicationService.svc/basicHttp"
+                binding="customBinding" bindingConfiguration="CustomBinding_IPollingApplicationService"
+                contract="AppServiceReference.IPollingApplicationService"
+                name="CustomBinding_IPollingApplicationService" />
         </client>
     </system.serviceModel>
 </configuration>

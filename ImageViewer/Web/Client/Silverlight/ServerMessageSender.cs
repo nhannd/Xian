@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
     {
         #region Members
         
-        private ApplicationServiceClient _proxy;
+        private PollingApplicationServiceClient _proxy;
         private bool _connectionOpened;
         private Binding _binding;
         private readonly object _sync = new object();
@@ -417,7 +417,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             var binding = GetChannelBinding();
             var remoteAddress = GetServerAddress();
-            _proxy = new ApplicationServiceClient(binding, remoteAddress);
+            _proxy = new PollingApplicationServiceClient(binding, remoteAddress);
 
             _proxy.InnerChannel.Faulted += OnChannelFaulted;
             _proxy.InnerChannel.Opening += OnChannelOpening;

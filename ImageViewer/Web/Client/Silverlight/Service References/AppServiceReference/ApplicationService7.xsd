@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://www.clearcanvas.ca/web/application" elementFormDefault="qualified" targetNamespace="http://www.clearcanvas.ca/web/application" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd0" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-  <xs:import schemaLocation="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
-  <xs:import schemaLocation="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd5" namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Web.Common" />
+  <xs:import schemaLocation="http://bright/Phoenix5ImageServer/Services/ApplicationService.svc?xsd=xsd0" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:import schemaLocation="http://bright/Phoenix5ImageServer/Services/ApplicationService.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="http://bright/Phoenix5ImageServer/Services/ApplicationService.svc?xsd=xsd5" namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Web.Common" />
   <xs:complexType name="ApplicationNotFoundEvent">
     <xs:complexContent mixed="false">
       <xs:extension base="tns:Event">
@@ -132,16 +132,16 @@
   <xs:element name="StartApplicationResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="StartApplicationResult" nillable="true" type="tns:StartApplicationRequestResponse" />
+        <xs:element minOccurs="0" name="StartApplicationResult" nillable="true" type="tns:StartApplicationResult" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:complexType name="StartApplicationRequestResponse">
+  <xs:complexType name="StartApplicationResult">
     <xs:sequence>
       <xs:element name="AppIdentifier" type="ser:guid" />
     </xs:sequence>
   </xs:complexType>
-  <xs:element name="StartApplicationRequestResponse" nillable="true" type="tns:StartApplicationRequestResponse" />
+  <xs:element name="StartApplicationResult" nillable="true" type="tns:StartApplicationResult" />
   <xs:complexType name="OutOfResourceFault">
     <xs:sequence>
       <xs:element minOccurs="0" name="ErrorMessage" nillable="true" type="xs:string" />
@@ -227,17 +227,17 @@
   <xs:element name="GetPendingEventResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="GetPendingEventResult" nillable="true" type="tns:GetPendingEventRequestResponse" />
+        <xs:element minOccurs="0" name="GetPendingEventResult" nillable="true" type="tns:GetPendingEventResult" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:complexType name="GetPendingEventRequestResponse">
+  <xs:complexType name="GetPendingEventResult">
     <xs:sequence>
       <xs:element name="ApplicationId" type="ser:guid" />
       <xs:element minOccurs="0" name="EventSet" nillable="true" type="tns:EventSet" />
     </xs:sequence>
   </xs:complexType>
-  <xs:element name="GetPendingEventRequestResponse" nillable="true" type="tns:GetPendingEventRequestResponse" />
+  <xs:element name="GetPendingEventResult" nillable="true" type="tns:GetPendingEventResult" />
   <xs:element name="ReportPerformance">
     <xs:complexType>
       <xs:sequence>

@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Web.Common;
 using System.Security.Principal;
 
@@ -27,6 +28,8 @@ namespace ClearCanvas.Web.Services
 
         EventSet GetPendingOutboundEvent(int wait);
 
+	    event EventHandler EventFired;
+
 	    bool HasProperty(string key);
         bool TryGetValue<T>(string key, out T value);
 	    void SetProperty<T>(string key, T value);
@@ -35,14 +38,14 @@ namespace ClearCanvas.Web.Services
 	public class ApplicationContext : IApplicationContext, IDisposable
     {
 		private readonly Application _application;
-		internal EventQueue _eventBroker;
+        private EventQueue _eventQueue;
 	    private readonly Dictionary<string, object> _properties;
 
         internal ApplicationContext(Application application)
         {
             _properties = new Dictionary<string, object>();
 			_application = application;
-			_eventBroker = new EventQueue(application);
+			_eventQueue = new EventQueue(application);
 			EntityHandlers = new EntityHandlerStore();
         }
 
@@ -64,7 +67,10 @@ namespace ClearCanvas.Web.Services
 	    {
             get { return _application.Identifier; }
 	    }
-	
+
+	    // TODO (CR Sep 2012): Yuck.
+	    public event EventHandler EventFired;
+
 		#region IApplicationContext Members
 
 		public EntityHandlerStore EntityHandlers { get; private set; }
@@ -77,9 +83,9 @@ namespace ClearCanvas.Web.Services
         public EventSet GetPendingOutboundEvent(int wait)
 	    {
             
-            if (_eventBroker == null)
+            if (_eventQueue == null)
                 return null;
-	        return _eventBroker.GetPendingEvent(wait);
+	        return _eventQueue.GetPendingEvent(wait);
 	    }
 
         public bool TryGetValue<T>(string key, out T value)
@@ -107,13 +113,14 @@ namespace ClearCanvas.Web.Services
 	    public void FireEvent(Event @event)
         {
 			InjectSenderName(@event);
-			if (_eventBroker != null)
-			    _eventBroker.Send(@event);
-		}
+			if (_eventQueue != null)
+			    _eventQueue.Send(@event);
+
+	        EventsHelper.Fire(EventFired, this, EventArgs.Empty);
+        }
 
 	    #endregion
-
-
+        
         private void InjectSenderName(Event @event)
         {
             IEntityHandler handler = EntityHandlers[@event.SenderId];
@@ -142,11 +149,11 @@ namespace ClearCanvas.Web.Services
         /// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing || _eventBroker == null) 
+            if (!disposing || _eventQueue == null) 
 				return;
 
-        	_eventBroker.Dispose();
-        	_eventBroker = null;
+        	_eventQueue.Dispose();
+        	_eventQueue = null;
         }
 	}
 }

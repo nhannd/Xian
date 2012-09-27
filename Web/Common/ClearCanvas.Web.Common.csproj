@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
+    <Compile Include="DataContractBase.cs" />
     <Compile Include="Events\ApplicationStoppedEvent.cs" />
     <Compile Include="Events\SessionUpdatedEvent.cs" />
     <Compile Include="IKnownTypeProvider.cs" />
@@ -75,7 +76,6 @@
     <Compile Include="Events\EntityUpdatedEvent.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="IApplicationService.cs" />
-    <Compile Include="IApplicationServiceCallback.cs" />
     <Compile Include="ProcessMessagesResult.cs" />
     <Compile Include="SessionValidationFault.cs" />
     <Compile Include="Message.cs" />

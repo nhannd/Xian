@@ -16,8 +16,6 @@ using ClearCanvas.Web.Common.Events;
 
 namespace ClearCanvas.Web.Services
 {
-	//TODO: add extension point, much like desktop view extension points
-
 	public interface IEntityHandler
 	{
 		Guid Identifier { get; }

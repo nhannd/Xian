@@ -308,28 +308,15 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Service References\AppServiceReference\ApplicationService10.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService11.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\AppServiceReference\ApplicationService22.wsdl" />
     <None Include="Service References\AppServiceReference\ApplicationService23.wsdl" />
-    <None Include="Service References\AppServiceReference\ApplicationService26.wsdl" />
-    <None Include="Service References\AppServiceReference\ApplicationService27.wsdl" />
-    <None Include="Service References\AppServiceReference\ApplicationService513.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\AppServiceReference\ApplicationService514.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\AppServiceReference\ApplicationService515.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\AppServiceReference\ApplicationService516.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\AppServiceReference\ApplicationService517.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\AppServiceReference\ApplicationService518.xsd">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService3.wsdl" />
     <None Include="Service References\AppServiceReference\ApplicationService54.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -345,23 +332,35 @@
     <None Include="Service References\AppServiceReference\ApplicationService59.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AppServiceReference\ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventRequestResponse.datasource">
+    <None Include="Service References\AppServiceReference\ApplicationService6.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService7.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService8.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ApplicationService9.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AppServiceReference\ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.GetPendingEventResult.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\AppServiceReference\ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.ProcessMessagesResult.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\AppServiceReference\ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartApplicationRequestResponse.datasource">
+    <None Include="Service References\AppServiceReference\ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference.StartApplicationResult.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\AppServiceReference\configuration91.svcinfo" />
     <None Include="Service References\AppServiceReference\configuration.svcinfo" />
+    <None Include="Service References\AppServiceReference\PollingApplicationService.wsdl" />
     <None Include="Service References\AppServiceReference\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <None Include="Service References\AppServiceReference\ApplicationService11.disco" />
-    <None Include="Service References\AppServiceReference\ApplicationService13.disco" />
     <Content Include="ServiceReferences.ClientConfig" />
   </ItemGroup>
   <ItemGroup>

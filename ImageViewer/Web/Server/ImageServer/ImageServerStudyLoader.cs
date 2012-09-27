@@ -24,6 +24,20 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 {
+    [ExtensionOf(typeof(ServiceNodeServiceProviderExtensionPoint), Enabled = false)]
+    internal class StudyLoaderServiceProvider : ServiceNodeServiceProvider
+    {
+        public override bool IsSupported(Type type)
+        {
+            return type == typeof(IStudyLoader);
+        }
+
+        public override object GetService(Type type)
+        {
+            return IsSupported(type) ? new ImageServerStudyLoader() : null;
+        }
+    }
+
     //TODO: Delete this since we are now using streaming study loader only?
     [ExtensionOf(typeof(StudyLoaderExtensionPoint))]
     public class ImageServerStudyLoader : StudyLoader

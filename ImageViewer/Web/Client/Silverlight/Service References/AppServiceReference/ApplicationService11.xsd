@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/ClearCanvas.Web.Common" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Web.Common" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd1" namespace="http://www.clearcanvas.ca/web/application" />
-  <xs:import schemaLocation="http://localhost/WebPortal/Services/ApplicationService.svc?xsd=xsd0" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:import schemaLocation="http://bright/Phoenix5ImageServer/Services/ApplicationService.svc?xsd=xsd1" namespace="http://www.clearcanvas.ca/web/application" />
+  <xs:import schemaLocation="http://bright/Phoenix5ImageServer/Services/ApplicationService.svc?xsd=xsd0" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
   <xs:complexType name="SessionValidationFault">
     <xs:sequence>
       <xs:element minOccurs="0" name="ErrorMessage" nillable="true" type="xs:string" />

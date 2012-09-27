@@ -133,7 +133,7 @@ namespace ClearCanvas.Web.Services
 		[ThreadStatic]
 		private static Application _current;
 
-		protected ApplicationContext _context;
+		private ApplicationContext _context;
 
 		private string _userName;
 	    private volatile UserSessionInfo _session;
@@ -141,7 +141,7 @@ namespace ClearCanvas.Web.Services
 		private TimeSpan _sessionPollingIntervalSeconds;
 		private volatile int _lastSessionCheckTicks;
 
-        private DateTime _lastClientMessage = DateTime.Now;
+        private DateTime? _lastClientMessage;
 		private volatile bool _timedOut;
 
 		private readonly object _syncLock = new object();
@@ -194,7 +194,6 @@ namespace ClearCanvas.Web.Services
 
 		private bool IsSessionShared { get; set; }
 
-
         public abstract string InstanceName { get;  }
 
         public MessageBatchMode BatchMode { get; protected set; }
@@ -213,7 +212,6 @@ namespace ClearCanvas.Web.Services
 
             if (_session.Principal != null)
                 Thread.CurrentPrincipal = Principal = _session.Principal;
-
 		}
 
 		private void Logout()
@@ -221,7 +219,7 @@ namespace ClearCanvas.Web.Services
             if (IsSessionShared || _session == null)
 				return;
 
-            UserAuthentication.Logout(_session);
+            //UserAuthentication.Logout(_session);
 		}
 
 		protected void EnsureSessionIsValid()
@@ -301,7 +299,7 @@ namespace ClearCanvas.Web.Services
             try
 			{
                 ProcessMetaInfo(request.MetaInformation);
-				AuthenticateUser(request);
+				//AuthenticateUser(request);
                 _synchronizationContext = new WebSynchronizationContext(this);
 				_synchronizationContext.Send(nothing => DoStart(request), null);
 			}
@@ -324,12 +322,14 @@ namespace ClearCanvas.Web.Services
 
         private void DoStart(StartApplicationRequest request)
         {
-            _context.FireEvent(new ApplicationStartedEvent
-                                   {
-                                       Identifier = Guid.NewGuid(),
-                                       SenderId = Identifier,
-                                       StartRequestId = request.Identifier
-                                   });
+            var @event = new ApplicationStartedEvent
+                {
+                    Identifier = Guid.NewGuid(),
+                    SenderId = Identifier,
+                    StartRequestId = request.Identifier
+                };
+
+            _context.FireEvent(@event);
 
             OnStart(request);
 
@@ -355,7 +355,6 @@ namespace ClearCanvas.Web.Services
             DisposeMembers();
             //TODO: Remove from cache immediately?
         }
-
 
 	    public void Stop(string message)
 		{
@@ -449,7 +448,7 @@ namespace ClearCanvas.Web.Services
                 Thread.CurrentThread.CurrentCulture = Culture;
                 Thread.CurrentThread.CurrentUICulture = Culture;
                 
-                CheckIfSessionIsStillValid();
+                //CheckIfSessionIsStillValid();
 
                 // TODO: REVIEW THIS
                 // This is a temporary workaround to ensure the app shuts down when the connection is lost.
@@ -462,9 +461,10 @@ namespace ClearCanvas.Web.Services
                 // it is idle. Assume max waiting time for GetPendingEvent is 10 seconds,
                 // we can assume the client browser is closed or connection is lost if we don't receive 
                 // one for 20 seconds
-                if (DateTime.Now - _lastClientMessage > TimeSpan.FromSeconds(20))
+                if (_lastClientMessage.HasValue && DateTime.Now - _lastClientMessage > TimeSpan.FromSeconds(20))
                 {
-                    Stop(String.Format(SR.MessageNoCommunicationFromClientError, _lastClientMessage));
+                    // TODO: This causes the HTML5 viewer to time out after 20 seconds, since there's no polling!
+                    //Stop(String.Format(SR.MessageNoCommunicationFromClientError, _lastClientMessage));
                 }
 			}
             catch(SessionDoesNotExistException)
@@ -530,7 +530,7 @@ namespace ClearCanvas.Web.Services
 			remove { lock (_syncLock) { _stopped -= value; } }
 		}
 
-		ProcessMessagesResult IApplication.ProcessMessages(MessageSet messageSet)
+		public ProcessMessagesResult ProcessMessages(MessageSet messageSet)
 		{
 			lock (_syncLock)
 			{
@@ -539,7 +539,7 @@ namespace ClearCanvas.Web.Services
 			}
 
             //TODO: do this here (which will fault the channel), or inside DoProcessMessages and stop the app?
-			EnsureSessionIsValid();
+			//EnsureSessionIsValid();
 
 			bool processed = _incomingMessageQueue.ProcessMessageSet(messageSet);
 
@@ -558,7 +558,6 @@ namespace ClearCanvas.Web.Services
 		protected abstract void OnStop();
 	    protected abstract EventSet OnGetPendingOutboundEvent(int wait);
         
-
         public EventSet GetPendingOutboundEvent(int wait)
         {
             _lastClientMessage = DateTime.Now;
@@ -588,7 +587,7 @@ namespace ClearCanvas.Web.Services
 
 		#region Static Helpers
 
-		internal static Application Start(StartApplicationRequest request)
+		public static Application Start(StartApplicationRequest request)
 		{
 			var filter = new AttributeExtensionFilter(new ApplicationAttribute(request.GetType()));
 			var app = new ApplicationExtensionPoint().CreateExtension(filter) as IApplication;

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
@@ -38,6 +39,7 @@ using ClearCanvas.ImageViewer.Web.Common.Entities;
 using ClearCanvas.Web.Common.Messages;
 using ClearCanvas.Common;
 using Cursor=ClearCanvas.ImageViewer.Web.Common.Entities.Cursor;
+using Encoder = System.Drawing.Imaging.Encoder;
 
 namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 {
@@ -289,7 +291,9 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			entity.HasCapture = HasCapture;
 			entity.Cursor = CreateCursor();
 			entity.InformationBox = CreateInformationBox();
-			entity.Image = CreateImage();
+		    var image = CreateImage();
+            if (image != null)
+                entity.Image = Convert.ToBase64String(image);
 		}
 
 		private void OnContextMenuRequested(object sender, ItemEventArgs<Point> e)

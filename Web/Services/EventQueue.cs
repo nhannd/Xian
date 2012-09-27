@@ -97,13 +97,12 @@ namespace ClearCanvas.Web.Services
 
                         if (!@event.AllowSendInBatch)
                         {
-                            List<Event> speciallyMarkedEvents;
                             Event theEvent = @event;
 
                             if (_application.BatchMode == MessageBatchMode.PerType)
                             {
                                 // Only include the event if there's no other event of the same type to be sent.
-                                if (events.Exists(i => i.GetType().Equals(theEvent.GetType())))
+                                if (events.Exists(i => i.GetType() == theEvent.GetType()))
                                     break;
                             }
                             else if (_application.BatchMode == MessageBatchMode.PerTarget)
@@ -111,6 +110,7 @@ namespace ClearCanvas.Web.Services
                                 // Note: We can send messages of the same type but targetted to different
                                 // entities in the same response instead of separated ones to improve performance. 
                                 // One example in the web station is during sync stacking
+                                List<Event> speciallyMarkedEvents;
                                 if (markedEvents.TryGetValue(@event.SenderId, out speciallyMarkedEvents))
                                 {
                                     if (speciallyMarkedEvents.Find(i => i.GetType() == @theEvent.GetType()) != null)
