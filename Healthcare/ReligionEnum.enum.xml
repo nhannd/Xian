@@ -184,10 +184,6 @@
     <value>Christian: Protestant</value>
     <description></description>
   </enum-value>
-  <enum-value code="QUA">
-    <value>Christian: Friends</value>
-    <description></description>
-  </enum-value>
   <enum-value code="REC">
     <value>Christian: Reformed Church</value>
     <description></description>
