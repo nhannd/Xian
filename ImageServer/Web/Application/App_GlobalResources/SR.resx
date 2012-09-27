@@ -826,10 +826,10 @@ At least one server partition is required. Please add a new server partition.</v
     <value>Jump to other authority groups</value>
   </data>
   <data name="ServerModeArchive" xml:space="preserve">
-    <value>This server is configured to operate as an archive.</value>
+    <value>This server is configured with a Partition Archive and will store studies permanently.</value>
   </data>
   <data name="ServerModeMixedMode" xml:space="preserve">
-    <value>This server is configured to operate in a mixed mode.</value>
+    <value>This server is configured with a Partition Archive and as a temporary cache.</value>
   </data>
   <data name="ServerModeTemporaryCache" xml:space="preserve">
     <value>This server is configured to operate as a temporary cache.</value>
