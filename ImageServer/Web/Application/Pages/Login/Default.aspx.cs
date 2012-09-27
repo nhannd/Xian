@@ -23,11 +23,20 @@ using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
 using SR = Resources.SR;
 using Resources;
+using ClearCanvas.ImageServer.Web.Common.Extensions;
+using System.Web.UI;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
 {
-    public partial class _Default : BasePage
+    [ExtensibleAttribute(ExtensionPoint=typeof(LoginPageExtensionPoint))]
+    public partial class LoginPage : BasePage, ILoginPage
     {
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            ForeachExtension<ILoginPageExtension>(ext => ext.OnInit(this));
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (SessionManager.Current != null)
@@ -40,6 +49,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             {
                 ManifestWarningTextLabel.Text = SR.NonStandardInstallation;
             }
+
+            VersionLabel.Text = String.IsNullOrEmpty(ServerPlatform.VersionString) ? Resources.SR.Unknown : ServerPlatform.VersionString;
+            LanguageLabel.Text = Thread.CurrentThread.CurrentUICulture.NativeName;
+            CopyrightLabel.Text = ProductInformation.Copyright;
+
+            ForeachExtension<ILoginPageExtension>(ext => ext.OnPageLoad());
 
             DataBind();
 
@@ -118,5 +133,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             ErrorMessage.Text = error;
             ErrorMessagePanel.Visible = true;
         }
+
+        public Control SplashScreenControl { get { return this.LoginSplash; } }
     }
 }

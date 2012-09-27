@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
                     break;
 
                 case ServerOperatingMode.MixedMode:
-                    OperatingModeLabel.Text = SR.ServerModeMixedMode
+                    OperatingModeLabel.Text = SR.ServerModeMixedMode;
                     break;
             }
             
