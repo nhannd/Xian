@@ -1487,7 +1487,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This server is configured to operate as an archive..
+        ///   Looks up a localized string similar to This server is configured with a Partition Archive and will store studies permanently..
         /// </summary>
         internal static string ServerModeArchive {
             get {
@@ -1496,7 +1496,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This server is configured to operate in a mixed mode..
+        ///   Looks up a localized string similar to This server is configured with a Partition Archive and as a temporary cache..
         /// </summary>
         internal static string ServerModeMixedMode {
             get {

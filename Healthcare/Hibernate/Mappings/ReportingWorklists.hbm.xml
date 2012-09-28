@@ -42,11 +42,7 @@
 
 	</subclass>
   
-  <subclass name="ProtocolingWorklist" extends="Worklist" discriminator-value="REPORTING_PROTOCOLING"/>
-  
   <!-- concrete classes -->
   <subclass name="ReportingToBeReportedWorklist" extends="ReportingWorklist" discriminator-value="REPORTING_TOBEREPORTED"/>
-  <subclass name="ReportingToBeReviewedReportWorklist" extends="ReportingWorklist" discriminator-value="REPORTING_TOBEREVIEWEDREPORT"/>
-  <subclass name="ReportingToBeProtocolledWorklist" extends="ProtocolingWorklist" discriminator-value="REPORTING_TOBEPROTOCOLLED"/>
-  <subclass name="ReportingToBeReviewedProtocolWorklist" extends="ProtocolingWorklist" discriminator-value="REPORTING_TOBEREVIEWEDPROTOCOL"/>
+	<subclass name="ReportingToBeReviewedReportWorklist" extends="ReportingWorklist" discriminator-value="REPORTING_TOBEREVIEWEDREPORT"/>
 </hibernate-mapping>

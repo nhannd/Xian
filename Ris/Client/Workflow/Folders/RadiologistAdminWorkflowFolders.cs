@@ -35,14 +35,6 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		}
 
 		[ExtensionOf(typeof(RadiologistAdminWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.ProtocollingAdminAssignedWorklist)]
-		[FolderPath("Active Protocolling Items", true)]
-		[FolderDescription("ProtocollingAdminAssignedFolderDescription")]
-		public class ProtocollingAdminAssignedFolder : ReportingWorkflowFolder
-		{
-		}
-
-		[ExtensionOf(typeof(RadiologistAdminWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.ReportingAdminToBeTranscribedWorklist)]
 		[FolderPath("To Be Transcribed Items", true)]
 		[FolderDescription("ReportingAdminToBeTranscribedWorklistDescription")]

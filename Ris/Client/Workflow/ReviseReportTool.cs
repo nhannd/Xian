@@ -9,10 +9,12 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
@@ -82,6 +84,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Return to Interpreter", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Return to Interpreter", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.AssignSmall.png", "Icons.AssignMedium.png", "Icons.AssignLarge.png")]
+	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify)]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
@@ -91,6 +94,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public ReturnToInterpreterTool()
 			: base("ReturnToInterpreter")
 		{
+		}
+
+		public event EventHandler VisibleChanged;
+		public bool Visible
+		{
+			get { return new WorkflowConfigurationReader().EnableInterpretationReviewWorkflow; }
 		}
 
 		protected override bool Execute(ReportingWorklistItemSummary item)

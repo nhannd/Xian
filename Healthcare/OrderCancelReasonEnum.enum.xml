@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <enum class="OrderCancelReason">
   <enum-value code="IO">
-    <value>Inappropriate procedure ordered</value>
+    <value>Inappropriate imaging service ordered</value>
     <description></description>
   </enum-value>
   <enum-value code="PA">
@@ -9,7 +9,7 @@
     <description></description>
   </enum-value>
   <enum-value code="PH">
-    <value>Cancelled by Physician</value>
+    <value>Cancelled by physician</value>
     <description></description>
   </enum-value>
   <enum-value code="CL">

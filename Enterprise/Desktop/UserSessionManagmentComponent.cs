@@ -37,7 +37,6 @@ namespace ClearCanvas.Enterprise.Desktop
         public UserSessionSummaryTable()
         {
             Columns.Add(new TableColumn<UserSessionSummary, string>("Application", row => row.Application, 1.5f));
-            Columns.Add(new TableColumn<UserSessionSummary, string>("Session ID", row => row.SessionId, 1f));
             Columns.Add(new TableColumn<UserSessionSummary, string>("Hostname", row => row.HostName, 1f));
             Columns.Add(new DateTimeTableColumn<UserSessionSummary>("Creation Time", row => row.CreationTime, 1f));
             Columns.Add(new DateTimeTableColumn<UserSessionSummary>("Expiry Time", row => row.ExpiryTime, 1f));

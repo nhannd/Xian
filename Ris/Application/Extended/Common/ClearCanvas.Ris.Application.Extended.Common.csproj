@@ -133,6 +133,7 @@
     <Compile Include="ProtocollingWorkflow\SubmitProtocolForApprovalRequest.cs" />
     <Compile Include="ProtocollingWorkflow\SubmitProtocolForApprovalResponse.cs" />
     <Compile Include="ProtocollingWorkflow\UpdateProtocolRequest.cs" />
+    <Compile Include="WorklistClassNames.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Common\ClearCanvas.Common.csproj">
