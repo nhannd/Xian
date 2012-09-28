@@ -47,11 +47,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected bool ExecuteCore(WorklistItemSummaryBase item)
 		{
+			var title = string.Format("Modify Order {0} - {1} {2}",
+				AccessionFormat.Format(item.AccessionNumber),
+				PersonNameFormat.Format(item.PatientName),
+				MrnFormat.Format(item.Mrn));
 			var component = new OrderEditorComponent(new OrderEditorComponent.ModifyOrderOperatingContext { OrderRef = item.OrderRef});
 			var result = ApplicationComponent.LaunchAsDialog(
 				this.Context.DesktopWindow,
 				component,
-				string.Format("Modify Order - {0} {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)));
+				title);
 
 			if(result == ApplicationComponentExitCode.Accepted)
 			{

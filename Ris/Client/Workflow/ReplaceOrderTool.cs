@@ -63,11 +63,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return false;
 			}
 
-			var component = new OrderEditorComponent(new OrderEditorComponent.ReplaceOrderOperatingContext {OrderRef = item.OrderRef});
+			var title = string.Format("Replace Order {0} - {1} {2}",
+				AccessionFormat.Format(item.AccessionNumber),
+				PersonNameFormat.Format(item.PatientName),
+				MrnFormat.Format(item.Mrn));
+			var component = new OrderEditorComponent(new OrderEditorComponent.ReplaceOrderOperatingContext { OrderRef = item.OrderRef });
 			var result = ApplicationComponent.LaunchAsDialog(
 				this.Context.DesktopWindow,
 				component,
-				string.Format(SR.TitleReplaceOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)));
+				title);
 
 			if(result == ApplicationComponentExitCode.Accepted)
 			{
