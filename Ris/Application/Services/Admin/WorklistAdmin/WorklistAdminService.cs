@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -29,13 +30,26 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
 	public class WorklistAdminService : ApplicationServiceBase, IWorklistAdminService
 	{
+		private static readonly string[] _interpretationReviewClasses = new []
+				                                  	{
+				                                  		WorklistClassNames.ReportingToBeReviewedReportWorklist,
+				                                  		WorklistClassNames.ReportingAwaitingReviewWorklist,
+				                                  		WorklistClassNames.ReportingAssignedReviewWorklist
+				                                  	};
+		private static readonly string[] _transcriptionReviewClasses = new []
+				                                  	{
+				                                  		WorklistClassNames.TranscriptionToBeReviewedWorklist,
+				                                  		WorklistClassNames.TranscriptionAwaitingReviewWorklist
+				                                  	};
+
+
 		#region IWorklistAdminService Members
 
 		[ReadOperation]
 		public ListWorklistCategoriesResponse ListWorklistCategories(ListWorklistCategoriesRequest request)
 		{
 			var categories = CollectionUtils.Map<Type, string>(
-				WorklistFactory.Instance.ListWorklistClasses(true),
+				ListClassesHelper(null, null, true),
 				Worklist.GetCategory);
 
 			// in case some worklist classes did not have assigned categories
@@ -67,7 +81,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			// grab the persistent worklists
 			var broker = PersistenceContext.GetBroker<IWorklistBroker>();
 			var persistentClassNames = CollectionUtils.Select(worklistClasses, t => !Worklist.GetIsStatic(t))
-				.ConvertAll<string>(Worklist.GetClassName);
+				.ConvertAll(Worklist.GetClassName);
 
 			var worklists = broker.Find(request.WorklistName, request.IncludeUserDefinedWorklists, persistentClassNames, request.Page);
 
@@ -221,7 +235,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
 			var assembler = new WorklistAdminAssembler();
 			response.WorklistClasses = CollectionUtils.Map<Type, WorklistClassSummary>(
-				WorklistFactory.Instance.ListWorklistClasses(false),
+				ListClassesHelper(null, null, false),
 				assembler.CreateClassSummary);
 
 			var staffAssembler = new StaffAssembler();
@@ -382,27 +396,38 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
 		public static List<Type> ListClassesHelper(List<string> classNames, List<string> categories, bool includeStatic)
 		{
-			var worklistClasses = new List<Type>(WorklistFactory.Instance.ListWorklistClasses(true));
+			var worklistClasses = (IEnumerable<Type>)WorklistFactory.Instance.ListWorklistClasses(true);
 
 			// optionally filter classes by class name
 			if (classNames != null && classNames.Count > 0)
 			{
-				worklistClasses = CollectionUtils.Select(worklistClasses, t => classNames.Contains(Worklist.GetClassName(t)));
+				worklistClasses = worklistClasses.Where(t => classNames.Contains(Worklist.GetClassName(t)));
 			}
 
 			// optionally filter classes by category
 			if (categories != null && categories.Count > 0)
 			{
-				worklistClasses = CollectionUtils.Select(worklistClasses, t => categories.Contains(Worklist.GetCategory(t)));
+				worklistClasses = worklistClasses.Where(t => categories.Contains(Worklist.GetCategory(t)));
 			}
 
 			// optionally exclude static
 			if (!includeStatic)
 			{
-				worklistClasses = CollectionUtils.Select(worklistClasses, t => !Worklist.GetIsStatic(t));
+				worklistClasses = worklistClasses.Where(t => !Worklist.GetIsStatic(t));
 			}
 
-			return worklistClasses;
+			// manually exclude some classes based on workflow settings
+			var workflowConfig = new WorkflowConfigurationReader();
+			if (!workflowConfig.EnableInterpretationReviewWorkflow)
+			{
+				worklistClasses = worklistClasses.Where(t => !_interpretationReviewClasses.Contains(Worklist.GetClassName(t)));
+			}
+			if (!workflowConfig.EnableTranscriptionReviewWorkflow)
+			{
+				worklistClasses = worklistClasses.Where(t => !_transcriptionReviewClasses.Contains(Worklist.GetClassName(t)));
+			}
+
+			return worklistClasses.ToList();
 		}
 	}
 }
