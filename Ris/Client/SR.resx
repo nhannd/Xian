@@ -1173,4 +1173,16 @@
   <data name="MessageDiagnosticServiceMustHaveAssociatedProcedureTypes" xml:space="preserve">
     <value>At least one procedure type must be selected.</value>
   </data>
+  <data name="MenuDowntimeRecoveryMode" xml:space="preserve">
+    <value>Downtime Recovery Mode</value>
+  </data>
+  <data name="MenuHome" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="TextDowntimeRecovery" xml:space="preserve">
+    <value>Downtime Recovery</value>
+  </data>
+  <data name="TitleHome" xml:space="preserve">
+    <value>Home</value>
+  </data>
 </root>
