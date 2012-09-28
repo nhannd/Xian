@@ -155,7 +155,6 @@
     <Compile Include="ProcedurePlan.cs" />
     <Compile Include="ProtocolingWorklistItemSearchCriteria.cs" />
     <Compile Include="DicomSeries.cs" />
-    <Compile Include="EmergencyWorklists.cs" />
     <Compile Include="EntityValidationRulesSettings.cs" />
     <Compile Include="EntityValidationRulesSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -201,7 +200,6 @@
     <Compile Include="PublicationStepSearchCriteria.cs" />
     <Compile Include="RadiologistAdminWorklists.cs" />
     <Compile Include="RegistrationProcedureStep.cs" />
-    <Compile Include="ReportingProtocolWorklists.cs" />
     <Compile Include="ExternalPractitionerContactPoint.cs" />
     <Compile Include="IWorklistQueryContext.cs" />
     <Compile Include="MinMaxHelper.cs" />
@@ -210,11 +208,11 @@
     <Compile Include="ProcedureBuilder.cs" />
     <Compile Include="ProcedureStepSchedulingSearchCriteria.cs" />
     <Compile Include="ReadingGroup.cs" />
-    <Compile Include="RegistrationProtocolWorklists.cs" />
     <Compile Include="ProtocolAssignmentStep.cs" />
     <Compile Include="ProtocolProcedureStepSearchCriteria.cs" />
     <Compile Include="ProtocolResolutionStep.cs" />
     <Compile Include="RelevanceGroup.cs" />
+    <Compile Include="ReportingReviewWorklists.cs" />
     <Compile Include="ReportingWorklists.cs" />
     <Compile Include="ReportTrackingWorklists.cs" />
     <Compile Include="ResultCommunicationMode.cs" />
@@ -250,6 +248,7 @@
     <Compile Include="Tests\WorklistTimePointTests.cs" />
     <Compile Include="TranscriptionReviewStep.cs" />
     <Compile Include="TranscriptionReviewStepSearchCriteria.cs" />
+    <Compile Include="TranscriptionReviewWorklists.cs" />
     <Compile Include="TranscriptionWorklists.cs" />
     <Compile Include="Workflow\DiscontinueOrderOperation.cs" />
     <Compile Include="Workflow\OrderEntry\Operations.cs" />

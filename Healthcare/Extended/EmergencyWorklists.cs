@@ -11,7 +11,7 @@
 
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Healthcare
+namespace ClearCanvas.Healthcare.Extended
 {
 	/// <summary>
 	/// EmergencyScheduledWorklist entity

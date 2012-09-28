@@ -18,7 +18,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended.Folders
 	public class Booking
 	{
 		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.RegistrationToBeScheduledWorklist)]
+		[FolderForWorklistClass(Application.Extended.Common.WorklistClassNames.RegistrationToBeScheduledWorklist)]
 		[FolderPath("To Be Scheduled")]
 		[FolderDescription("BookingToBeScheduledFolderDescription")]
 		public class ToBeScheduledFolder : RegistrationWorkflowFolder
@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended.Folders
 		}
 
 		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.RegistrationPendingProtocolWorklist)]
+		[FolderForWorklistClass(Application.Extended.Common.WorklistClassNames.RegistrationPendingProtocolWorklist)]
 		[FolderPath("Pending Protocol")]
 		[FolderDescription("BookingPendingProtocolFolderDescription")]
 		public class PendingProtocolFolder : RegistrationWorkflowFolder
@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended.Folders
 		}
 
 		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.RegistrationCompletedProtocolWorklist)]
+		[FolderForWorklistClass(Application.Extended.Common.WorklistClassNames.RegistrationCompletedProtocolWorklist)]
 		[FolderPath("Completed Protocol", true)]
 		[FolderDescription("BookingCompletedProtocolFolderDescription")]
 		public class CompletedProtocolFolder : RegistrationWorkflowFolder
@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended.Folders
 		}
 
 		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.RegistrationRejectedProtocolWorklist)]
+		[FolderForWorklistClass(Application.Extended.Common.WorklistClassNames.RegistrationRejectedProtocolWorklist)]
 		[FolderPath("Rejected Protocol")]
 		[FolderDescription("BookingRejectedProtocolFolderDescription")]
 		public class RejectedProtocolFolder : RegistrationWorkflowFolder

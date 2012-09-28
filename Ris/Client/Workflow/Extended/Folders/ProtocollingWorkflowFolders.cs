@@ -10,22 +10,29 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.Extended.Folders
 {
 	public class Reporting
 	{
+		[ExtensionOf(typeof(RadiologistAdminWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(Application.Extended.Common.WorklistClassNames.ProtocollingAdminAssignedWorklist)]
+		[FolderPath("Active Protocolling Items", true)]
+		[FolderDescription("ProtocollingAdminAssignedFolderDescription")]
+		public class ProtocollingAdminAssignedFolder : ReportingWorkflowFolder
+		{
+		}
+
 		[ExtensionOf(typeof(ProtocolWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.ReportingToBeProtocolledWorklist)]
+		[FolderForWorklistClass(Application.Extended.Common.WorklistClassNames.ReportingToBeProtocolledWorklist)]
 		[FolderPath("To be Protocolled", true)]
 		[FolderDescription("ReportingToBeProtocolledFolderDescription")]
 		public class ToBeProtocolledFolder : ReportingWorkflowFolder
 		{
 		}
 
-		[FolderForWorklistClass(WorklistClassNames.ReportingAssignedProtocolWorklist)]
+		[FolderForWorklistClass(Application.Extended.Common.WorklistClassNames.ReportingAssignedProtocolWorklist)]
 		[FolderPath("My Items/To be Protocolled")]
 		[FolderDescription("ReportingAssignedToBeProtocolFolderDescription")]
 		public class AssignedToBeProtocolFolder : ReportingWorkflowFolder
@@ -33,42 +40,42 @@ namespace ClearCanvas.Ris.Client.Workflow.Extended.Folders
 		}
 
 		[ExtensionOf(typeof(ProtocolWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.ReportingToBeReviewedProtocolWorklist)]
+		[FolderForWorklistClass(Application.Extended.Common.WorklistClassNames.ReportingToBeReviewedProtocolWorklist)]
 		[FolderPath("To be Reviewed", true)]
 		[FolderDescription("ReportingToBeReviewedProtocolFolderDescription")]
 		public class ToBeReviewedProtocolFolder : ReportingWorkflowFolder
 		{
 		}
 
-		[FolderForWorklistClass(WorklistClassNames.ReportingAssignedReviewProtocolWorklist)]
+		[FolderForWorklistClass(Application.Extended.Common.WorklistClassNames.ReportingAssignedReviewProtocolWorklist)]
 		[FolderPath("My Items/To be Reviewed")]
 		[FolderDescription("ReportingAssignedForReviewProtocolFolderDescription")]
 		public class AssignedForReviewProtocolFolder : ReportingWorkflowFolder
 		{
 		}
 
-		[FolderForWorklistClass(WorklistClassNames.ReportingDraftProtocolWorklist)]
+		[FolderForWorklistClass(Application.Extended.Common.WorklistClassNames.ReportingDraftProtocolWorklist)]
 		[FolderPath("My Items/Draft")]
 		[FolderDescription("ReportingDraftProtocolFolderDescription")]
 		public class DraftProtocolFolder : ReportingWorkflowFolder
 		{
 		}
 
-		[FolderForWorklistClass(WorklistClassNames.ReportingCompletedProtocolWorklist)]
+		[FolderForWorklistClass(Application.Extended.Common.WorklistClassNames.ReportingCompletedProtocolWorklist)]
 		[FolderPath("My Items/Completed")]
 		[FolderDescription("ReportingCompletedProtocolFolderDescription")]
 		public class CompletedProtocolFolder : ReportingWorkflowFolder
 		{
 		}
 
-		[FolderForWorklistClass(WorklistClassNames.ReportingAwaitingApprovalProtocolWorklist)]
+		[FolderForWorklistClass(Application.Extended.Common.WorklistClassNames.ReportingAwaitingApprovalProtocolWorklist)]
 		[FolderPath("My Items/Awaiting Review")]
 		[FolderDescription("ReportingAwaitingApprovalProtocolFolderDescription")]
 		public class AwaitingApprovalProtocolFolder : ReportingWorkflowFolder
 		{
 		}
 
-		[FolderForWorklistClass(WorklistClassNames.ReportingRejectedProtocolWorklist)]
+		[FolderForWorklistClass(Application.Extended.Common.WorklistClassNames.ReportingRejectedProtocolWorklist)]
 		[FolderPath("My Items/Rejected")]
 		[FolderDescription("ReportingRejectedProtocolFolderDescription")]
 		public class RejectedProtocolFolder : ReportingWorkflowFolder
