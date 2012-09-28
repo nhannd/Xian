@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			{
 				var request = (ReplaceOrderRequest)recorderContext.Request;
 				var profile = persistenceContext.Load<PatientProfile>(request.Requisition.Patient.PatientProfileRef, EntityLoadFlags.None);
-				var cancelledOrder = persistenceContext.Load<Order>(request.Requisition.OrderRef, EntityLoadFlags.None);
+				var cancelledOrder = persistenceContext.Load<Order>(request.OrderRef, EntityLoadFlags.None);
 
 				var response = (ReplaceOrderResponse)recorderContext.Response;
 				var newOrder = persistenceContext.Load<Order>(response.Order.OrderRef, EntityLoadFlags.None);
@@ -136,15 +136,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			[DataContract]
 			public class MergeOrderOperationData : OperationData
 			{
-				public MergeOrderOperationData(string operation, PatientProfile patientProfile, Order newOrder, IEnumerable<Order> mergedOrders)
+				public MergeOrderOperationData(string operation, PatientProfile patientProfile, Order destOrder, IEnumerable<Order> mergedOrders)
 					: base(operation, patientProfile)
 				{
-					this.NewOrder = new OrderData(newOrder);
+					this.MergedIntoOrder = new OrderData(destOrder);
 					this.MergedOrders = mergedOrders.Select(x => new OrderData(x)).ToList();
 				}
 
 				[DataMember]
-				public OrderData NewOrder;
+				public OrderData MergedIntoOrder;
 
 				[DataMember]
 				public List<OrderData> MergedOrders;
@@ -161,7 +161,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				var request = (MergeOrderRequest)recorderContext.Request;
 				var destOrder = persistenceContext.Load<Order>(request.DestinationOrderRef, EntityLoadFlags.None);
 				var patientProfile = destOrder.Procedures.First().PatientProfile;	// choose patient profile from one procedure?
-				var sourceOrders = request.SourceOrderRefs.Select(persistenceContext.Load<Order>);
+				var sourceOrders = request.SourceOrderRefs.Select(r => persistenceContext.Load<Order>(r, EntityLoadFlags.None));
 
 				return new MergeOrderOperationData(Operations.Merge, patientProfile, destOrder, sourceOrders);
 			}

@@ -144,6 +144,18 @@ namespace ClearCanvas.Ris.Application.Services
 				return;
 
 			_capturedData = Capture(recorderContext, persistenceContext);
+
+			// if we need to capture the change-set, it is important that we do so now,
+ 			// while the persistence context is still alive, rather than during the 
+			// post-commit phase, where we can get lazy loading exceptions
+			if (_changeSetIncludes.Any() && recorderContext.ChangeSet != null)
+			{
+				var changeSetData = DefaultEntityChangeSetRecorder.WriteChangeSet(_capturedData.Operation, recorderContext.ChangeSet.Changes);
+				var includedActions = from action in changeSetData.Actions
+									  where action.Type == "Update" && _changeSetIncludes.Contains(action.OID) || _changeSetIncludes.Contains(action.Class)
+									  select (object)action;
+				_capturedData.ChangeSet = new ChangeSetData { Actions = includedActions.ToList() };
+			}
 		}
 
 		void IServiceOperationRecorder.PostCommit(IServiceOperationRecorderContext recorderContext)
@@ -201,15 +213,6 @@ namespace ClearCanvas.Ris.Application.Services
 
 		private void Write(IServiceOperationRecorderContext recorderContext)
 		{
-			if (_changeSetIncludes.Any() && recorderContext.ChangeSet != null)
-			{
-				var changeSetData = DefaultEntityChangeSetRecorder.WriteChangeSet(_capturedData.Operation, recorderContext.ChangeSet.Changes);
-				var includedActions = from action in changeSetData.Actions
-									  where action.Type == "Update" && _changeSetIncludes.Contains(action.OID) || _changeSetIncludes.Contains(action.Class)
-									  select (object)action;
-				_capturedData.ChangeSet = new ChangeSetData {Actions = includedActions.ToList()};
-			}
-
 			var xml = JsmlSerializer.Serialize(_capturedData, "Audit");
 			recorderContext.Write(_capturedData.Operation, xml);
 		}

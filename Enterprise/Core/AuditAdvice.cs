@@ -170,8 +170,12 @@ namespace ClearCanvas.Enterprise.Core
 				if (_invocationInfo == null || _invocationInfo.Count == 0)
 					return;
 
-				// store a copy of the change set for use by recorders
-				_invocationInfo.Peek().SetChangeSet(args.ChangeSet);
+				var info = _invocationInfo.Peek();
+
+				// store a copy of the change set for use by recorders,
+				// and then invoke their PreCommit callback
+				info.SetChangeSet(args.ChangeSet);
+				info.PreCommit(args.PersistenceContext);
 			}
 
 			public void PostCommit(EntityChangeSetPostCommitArgs args)
@@ -221,7 +225,14 @@ namespace ClearCanvas.Enterprise.Core
 			public void Intercept(IInvocation invocation)
 			{
 				invocation.Proceed();
-				_invocationInfo.Peek().PreCommit(PersistenceScope.CurrentContext);
+
+				var pctx = PersistenceScope.CurrentContext;
+				if (pctx is IReadContext && _invocationInfo.Count > 0)
+				{
+					// if this is a read operation, we call PreCommit here
+					// otherwise it gets called by the ChangeSetListener class 
+					_invocationInfo.Peek().PreCommit(PersistenceScope.CurrentContext);
+				}
 			}
 		}
 
