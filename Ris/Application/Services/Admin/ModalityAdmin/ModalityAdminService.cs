@@ -10,6 +10,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -57,8 +58,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
 		[ReadOperation]
 		public LoadModalityEditorFormDataResponse LoadModalityEditorFormData(LoadModalityEditorFormDataRequest request)
 		{
+			var facilityAssembler = new FacilityAssembler();
 			return new LoadModalityEditorFormDataResponse
 			{
+				FacilityChoices = PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false).Select(facilityAssembler.CreateFacilitySummary).ToList(),
 				DicomModalityChoices = EnumUtils.GetEnumValueList<DicomModalityEnum>(this.PersistenceContext)
 			};
 		}

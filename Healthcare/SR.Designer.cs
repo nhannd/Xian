@@ -583,6 +583,15 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A procedure&apos;s performing modalities must belong to its performing facility..
+        /// </summary>
+        internal static string MessageValidateProcedurePerformingFacilityAndModalities {
+            get {
+                return ResourceManager.GetString("MessageValidateProcedurePerformingFacilityAndModalities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Procedure type and procedure type group cannot both be used as worklist filters.  Please make sure only one is used..
         /// </summary>
         internal static string MessageValidateWorklistProcedureTypeAndGroupFilters {

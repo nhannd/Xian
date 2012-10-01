@@ -664,6 +664,10 @@ namespace ClearCanvas.Healthcare
 			var performingDepartmentIsInPerformingFacilityRule = new ValidationRule<Procedure>(
 				OrderRules.PerformingDepartmentAlignsWithPerformingFacility);
 
+			// modalities must be associated with performing facility
+			var modalitiesAlignWithPerformingFacilityRule = new ValidationRule<Procedure>(
+				OrderRules.ModalitiesAlignWithPerformingFacility);
+
 			// patient must have a profile at the performing facility
 			var patientProfileExistsForPerformingFacilityRule = new ValidationRule<Procedure>(
 				OrderRules.PatientProfileExistsForPerformingFacility);
@@ -673,7 +677,8 @@ namespace ClearCanvas.Healthcare
 				sameInformationAuthorityRule,
 				samePerformingFacilityRule, 
 				samePerformingDepartmentRule, 
-				performingDepartmentIsInPerformingFacilityRule, 
+				performingDepartmentIsInPerformingFacilityRule,
+				modalitiesAlignWithPerformingFacilityRule,
 				patientProfileExistsForPerformingFacilityRule
 			});
 		}

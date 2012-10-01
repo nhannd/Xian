@@ -19,6 +19,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin
 	public class LoadModalityEditorFormDataResponse : DataContractBase
 	{
 		[DataMember]
+		public List<FacilitySummary> FacilityChoices;
+
+		[DataMember]
 		public List<EnumValueInfo> DicomModalityChoices;
 	}
 }

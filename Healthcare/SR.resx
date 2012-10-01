@@ -546,4 +546,7 @@
   <data name="MessageValidateInformationAuthorityForVisitAndPerformingFacilities" xml:space="preserve">
     <value>Visit must have the same information authority as the performing facility.</value>
   </data>
+  <data name="MessageValidateProcedurePerformingFacilityAndModalities" xml:space="preserve">
+    <value>A procedure's performing modalities must belong to its performing facility.</value>
+  </data>
 </root>

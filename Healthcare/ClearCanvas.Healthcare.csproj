@@ -190,7 +190,6 @@
     <Compile Include="NotePosting.cs" />
     <Compile Include="Imex\ExternalPractitionerImporter.cs" />
     <Compile Include="Imex\FacilityImporter.cs" />
-    <Compile Include="Imex\ModalityImporter.cs" />
     <Compile Include="Imex\StaffImporter.cs" />
     <Compile Include="OrderCancelInfo.cs" />
     <Compile Include="OrderCreationArgs.cs" />
