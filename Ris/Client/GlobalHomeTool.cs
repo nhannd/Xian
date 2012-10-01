@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client
 
 		public override string Title
 		{
-			get { return DowntimeRecovery.InDowntimeRecoveryMode ? string.Format("{0} ({1})", SR.TextHome, SR.TextDowntimeRecovery) : SR.TextHome; }
+			get { return DowntimeRecovery.InDowntimeRecoveryMode ? string.Format("{0} ({1})", SR.TitleHome, SR.TitleDowntimeRecovery) : SR.TitleHome; }
 		}
 
 		protected override bool IsUserClosableWorkspace

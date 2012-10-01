@@ -2545,15 +2545,6 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Downtime Recovery.
-        /// </summary>
-        internal static string TextDowntimeRecovery {
-            get {
-                return ResourceManager.GetString("TextDowntimeRecovery", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Add.
         /// </summary>
         internal static string TitleAdd {
@@ -2784,6 +2775,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleDone {
             get {
                 return ResourceManager.GetString("TitleDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downtime Recovery.
+        /// </summary>
+        internal static string TitleDowntimeRecovery {
+            get {
+                return ResourceManager.GetString("TitleDowntimeRecovery", resourceCulture);
             }
         }
         

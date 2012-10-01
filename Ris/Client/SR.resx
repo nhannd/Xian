@@ -1179,7 +1179,7 @@
   <data name="MenuHome" xml:space="preserve">
     <value>Home</value>
   </data>
-  <data name="TextDowntimeRecovery" xml:space="preserve">
+  <data name="TitleDowntimeRecovery" xml:space="preserve">
     <value>Downtime Recovery</value>
   </data>
   <data name="TitleHome" xml:space="preserve">
