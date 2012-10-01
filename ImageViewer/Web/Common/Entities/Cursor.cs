@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
 		{}
 
 		[DataMember(IsRequired = false)]
-		public byte[] Icon { get; set; }
+		public string Icon { get; set; }
 
 		[DataMember(IsRequired = false)]
 		public Position HotSpot { get; set; }

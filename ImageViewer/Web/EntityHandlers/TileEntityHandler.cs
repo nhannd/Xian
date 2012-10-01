@@ -385,7 +385,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 				bitmap.Save(stream, ImageFormat.Png);
 				stream.Position = 0;
 
-				webCursor.Icon = stream.GetBuffer();
+			    webCursor.Icon = Convert.ToBase64String(stream.GetBuffer());
 				stream.Close();
 			}
 
