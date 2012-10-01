@@ -546,7 +546,7 @@ namespace ClearCanvas.Ris.Client
 		/// Sets the checked state without propagating.
 		/// </summary>
 		/// <param name="value"></param>
-		private void SetCheckStateInternal(bool value)
+		protected virtual void SetCheckStateInternal(bool value)
 		{
 			if (_isChecked == value)
 				return;
@@ -617,11 +617,20 @@ namespace ClearCanvas.Ris.Client
 	{
 		private readonly IFolderSystem _folderSystem;
 		private readonly bool _readonly;
+		private bool _initialized;
 
 		public FolderSystemConfigurationNode(IFolderSystem folderSystem, bool isReadonly)
 		{
 			_folderSystem = folderSystem;
 			_readonly = isReadonly;
+		}
+
+		public void InitializeFolderSystemOnce()
+		{
+			if (_initialized) return;
+
+			_folderSystem.Initialize();
+			_initialized = true;
 		}
 
 		public IFolderSystem FolderSystem
@@ -764,15 +773,6 @@ namespace ClearCanvas.Ris.Client
 			get { return false; }
 		}
 
-		public override bool IsChecked
-		{
-			set
-			{
-				base.IsChecked = value;
-				_folder.Visible = value;
-			}
-		}
-
 		public override IconSet IconSet
 		{
 			get { return _folder.IconSet; }
@@ -781,6 +781,12 @@ namespace ClearCanvas.Ris.Client
 		public override IResourceResolver ResourceResolver
 		{
 			get { return _resourceResolver; }
+		}
+
+		protected override void SetCheckStateInternal(bool value)
+		{
+			base.SetCheckStateInternal(value);
+			_folder.Visible = value;
 		}
 
 		#endregion

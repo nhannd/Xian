@@ -384,7 +384,7 @@ namespace ClearCanvas.Ris.Client
 				return;
 
 			// Initialize the list of Folders
-			folderSystemNode.FolderSystem.Initialize();
+			folderSystemNode.InitializeFolderSystemOnce();
 
 			var folders = FolderExplorerComponentSettings.Default.ApplyFolderCustomizations(folderSystemNode.FolderSystem, includeUserCustomizations);
 
