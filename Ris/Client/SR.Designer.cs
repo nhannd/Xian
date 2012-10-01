@@ -1564,6 +1564,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Downtime Recovery Mode.
+        /// </summary>
+        internal static string MenuDowntimeRecoveryMode {
+            get {
+                return ResourceManager.GetString("MenuDowntimeRecoveryMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        internal static string MenuHome {
+            get {
+                return ResourceManager.GetString("MenuHome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Logout.
         /// </summary>
         internal static string MenuLogout {
@@ -2761,6 +2779,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Downtime Recovery.
+        /// </summary>
+        internal static string TitleDowntimeRecovery {
+            get {
+                return ResourceManager.GetString("TitleDowntimeRecovery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate.
         /// </summary>
         internal static string TitleDuplicate {
@@ -2811,6 +2838,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleFolderExplorer {
             get {
                 return ResourceManager.GetString("TitleFolderExplorer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        internal static string TitleHome {
+            get {
+                return ResourceManager.GetString("TitleHome", resourceCulture);
             }
         }
         

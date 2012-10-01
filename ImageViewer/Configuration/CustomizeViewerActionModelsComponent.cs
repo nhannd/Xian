@@ -56,8 +56,6 @@ namespace ClearCanvas.ImageViewer.Configuration
 			_actionMap = new MultiValuedDictionary<string, AbstractActionModelTreeLeafAction>();
 
 			NodePropertiesValidationPolicy validationPolicy = new NodePropertiesValidationPolicy();
-			validationPolicy.AddRule<AbstractActionModelTreeLeafAction>("CheckState", (n, value) => n.ActionId != typeof (CustomizeViewerActionModelTool).FullName + ":customize" || Equals(value, CheckState.Checked));
-			validationPolicy.AddRule<AbstractActionModelTreeLeafAction>("CheckState", (n, value) => n.ActionId != "ClearCanvas.Desktop.Configuration.Tools.OptionsTool:show" || Equals(value, CheckState.Checked));
 			validationPolicy.AddRule<AbstractActionModelTreeLeafAction, XMouseButtons>("ActiveMouseButtons", ValidateMouseToolMouseButton);
 			validationPolicy.AddRule<AbstractActionModelTreeLeafClickAction, XKeys>("KeyStroke", this.ValidateClickActionKeyStroke);
 			validationPolicy.AddRule<AbstractActionModelTreeLeafAction, bool>("InitiallyActive", this.ValidateMouseToolInitiallyActive);

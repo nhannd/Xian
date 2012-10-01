@@ -179,7 +179,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._keepOpen.Name = "_keepOpen";
 			this._keepOpen.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
 			this._keepOpen.Size = new System.Drawing.Size(109, 23);
-			this._keepOpen.TabIndex = 0;
+			this._keepOpen.TabIndex = 1;
 			this._keepOpen.Text = "Keep dialog open";
 			this._keepOpen.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this._keepOpen.UseVisualStyleBackColor = true;
@@ -271,7 +271,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._showDeactivatedChoices.Name = "_showDeactivatedChoices";
 			this._showDeactivatedChoices.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
 			this._showDeactivatedChoices.Size = new System.Drawing.Size(201, 23);
-			this._showDeactivatedChoices.TabIndex = 1;
+			this._showDeactivatedChoices.TabIndex = 0;
 			this._showDeactivatedChoices.Text = "Include inactive items in filter choices";
 			this._showDeactivatedChoices.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this._showDeactivatedChoices.UseVisualStyleBackColor = true;
