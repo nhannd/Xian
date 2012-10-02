@@ -352,7 +352,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		private void OnCursorTokenChanged(object sender, EventArgs e)
 		{
-			NotifyEntityPropertyChanged("MousePosition", new Position(_mousePosition));
+		    MousePosition = _tileController.Location;
 			NotifyEntityPropertyChanged("Cursor", CreateCursor());
 		}
 
