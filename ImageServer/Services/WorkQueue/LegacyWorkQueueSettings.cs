@@ -12,6 +12,8 @@
 using System.Configuration;
 using ClearCanvas.Server.ShredHost;
 using System;
+using ClearCanvas.Common.Configuration;
+using System.ComponentModel;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue {
     
@@ -143,7 +145,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 	
         #region IMigrateLegacyShredConfigSection Members
 
-        public void  Migrate()
+        void IMigrateLegacyShredConfigSection.Migrate()
         {
             WorkQueueSettings.Instance.EnableStudyIntegrityValidation = EnableStudyIntegrityValidation;
             WorkQueueSettings.Instance.MemoryLimitedWorkQueueThreadCount = MemoryLimitedWorkQueueThreadCount;
@@ -156,7 +158,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
         }
 
         #endregion
-        }
+
+    }
 
 
 }
