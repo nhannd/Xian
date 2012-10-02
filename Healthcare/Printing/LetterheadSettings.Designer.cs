@@ -13,11 +13,11 @@ namespace ClearCanvas.Healthcare.Printing {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
-    internal sealed partial class PrintTemplateSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class LetterheadSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static PrintTemplateSettings defaultInstance = ((PrintTemplateSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new PrintTemplateSettings())));
+        private static LetterheadSettings defaultInstance = ((LetterheadSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new LetterheadSettings())));
         
-        public static PrintTemplateSettings Default {
+        public static LetterheadSettings Default {
             get {
                 return defaultInstance;
             }

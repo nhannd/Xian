@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Healthcare.Printing" GeneratedClassName="PrintTemplateSettings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Healthcare.Printing" GeneratedClassName="LetterheadSettings">
   <Profiles />
   <Settings>
     <Setting Name="LetterheadFacilityTitle" Description="Name of the Imaging Facility." Type="System.String" Scope="Application">
