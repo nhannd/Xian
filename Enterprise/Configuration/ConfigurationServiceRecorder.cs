@@ -9,8 +9,9 @@
 
 #endregion
 
-using System.IO;
-using System.Xml;
+using System.Runtime.Serialization;
+using ClearCanvas.Common.Serialization;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Configuration;
 using ClearCanvas.Enterprise.Core;
 
@@ -21,6 +22,21 @@ namespace ClearCanvas.Enterprise.Configuration
 	/// </summary>
 	public class ConfigurationServiceRecorder : IServiceOperationRecorder
 	{
+		[DataContract]
+		class OperationData
+		{
+			[DataMember]
+			public string Operation;
+			[DataMember]
+			public string DocumentName;
+			[DataMember]
+			public string DocumentVersion;
+			[DataMember]
+			public string DocumentUser;
+			[DataMember]
+			public string DocumentInstanceKey;
+		}
+
 		string IServiceOperationRecorder.Category
 		{
 			get { return "Configuration"; }
@@ -34,22 +50,18 @@ namespace ClearCanvas.Enterprise.Configuration
 		{
 			var request = (ConfigurationDocumentRequestBase)recorderContext.Request;
 
-			var sw = new StringWriter();
-			using (var writer = new XmlTextWriter(sw))
-			{
-				writer.Formatting = Formatting.Indented;
-				writer.WriteStartDocument();
-				writer.WriteStartElement("action");
-				writer.WriteAttributeString("type", recorderContext.OperationMethodInfo.Name);
-				writer.WriteAttributeString("documentName", request.DocumentKey.DocumentName);
-				writer.WriteAttributeString("documentVersion", request.DocumentKey.Version.ToString());
-				writer.WriteAttributeString("documentUser", request.DocumentKey.User ?? "{application}");
-				writer.WriteAttributeString("instanceKey", request.DocumentKey.InstanceKey ?? "{default}");
-				writer.WriteEndElement();
-				writer.WriteEndDocument();
-			}
+			var data = new OperationData
+						{
+							Operation = "SetConfigurationDocument",
+							DocumentName = request.DocumentKey.DocumentName,
+							DocumentVersion = request.DocumentKey.Version.ToString(),
+							DocumentUser = request.DocumentKey.User ?? "{application}",
+							DocumentInstanceKey = StringUtilities.NullIfEmpty(request.DocumentKey.InstanceKey) ?? "{default}"
+						};
 
-			recorderContext.Write(sw.ToString());
+
+			var xml = JsmlSerializer.Serialize(data, "Audit");
+			recorderContext.Write(data.Operation, xml);
 		}
 	}
 }
