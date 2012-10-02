@@ -75,7 +75,7 @@ namespace ClearCanvas.Healthcare
 	/// PerformingWorklistCheckedInWorklist entity
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistClassDescription("PerformingWorklistCheckedInWorklistDescription")]
+	[WorklistClassDescription("PerformingCheckedInWorklistDescription")]
 	public class PerformingCheckedInWorklist : PerformingWorklist
     {
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
@@ -100,7 +100,7 @@ namespace ClearCanvas.Healthcare
 	/// PerformingWorklistInProgessWorklist entity
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistClassDescription("PerformingWorklistInProgressWorklistDescription")]
+	[WorklistClassDescription("PerformingInProgressWorklistDescription")]
 	public class PerformingInProgressWorklist : PerformingWorklist
     {
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
@@ -123,7 +123,7 @@ namespace ClearCanvas.Healthcare
 	/// PerformingWorklistPerformedWorklist entity
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistClassDescription("PerformingWorklistPerformingWorklistDescription")]
+	[WorklistClassDescription("PerformingPerformedWorklistDescription")]
 	public class PerformingPerformedWorklist : PerformingWorklist
     {
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)

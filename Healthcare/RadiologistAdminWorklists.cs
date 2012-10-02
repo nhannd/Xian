@@ -97,7 +97,7 @@ namespace ClearCanvas.Healthcare
 	/// ReportingAdminToBeTranscribedWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistClassDescription("ReportingAdminToBeTranscribedDescription")]
+	[WorklistClassDescription("ReportingAdminToBeTranscribedWorklistDescription")]
 	public class ReportingAdminToBeTranscribedWorklist : ReportingAdminWorklist
 	{
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
