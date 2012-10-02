@@ -834,4 +834,13 @@ At least one server partition is required. Please add a new server partition.</v
   <data name="ServerModeTemporaryCache" xml:space="preserve">
     <value>This server is configured to operate as a temporary cache.</value>
   </data>
+  <data name="PartitionStorageConfiguration_ArchiveConfiguredNoDeleteRule" xml:space="preserve">
+    <value>Archive exists, studies may become nearline.</value>
+  </data>
+  <data name="PartitionStorageConfiguration_DeleteRuleExists" xml:space="preserve">
+    <value>Delete rule enabled, older studies may be deleted.</value>
+  </data>
+  <data name="PartitionStorageConfiguration_NoArchiveConfiguredNoDeleteRule" xml:space="preserve">
+    <value>New processed studies will now be kept online.</value>
+  </data>
 </root>

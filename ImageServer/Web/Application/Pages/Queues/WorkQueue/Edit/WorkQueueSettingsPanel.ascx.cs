@@ -36,14 +36,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #endregion
 
-        #region Delegates
-
-        public delegate void OnNoItemsEventHandler();
-
-        #endregion
-
-        public event OnNoItemsEventHandler OnNoWorkQueueItems;
-
+      
         #region Public Properties
 
         /// <summary>
@@ -144,16 +137,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             NewScheduleTime.Enabled = true;
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+        }
+
         protected void ScheduleNow_CheckChanged(object sender, EventArgs arg)
         {
-            var itemList = Parent.FindControl("SelectedWorkQueueItemList") as WorkQueueItemList;
-
-            if (itemList.WorkQueueItems == null || itemList.WorkQueueItems.Count == 0)
-            {
-                if (OnNoWorkQueueItems != null) OnNoWorkQueueItems();
-                return;
-            }
-
             ScheduleNow = ScheduleNowCheckBox.Checked;
 
             if (ScheduleNow)
@@ -217,10 +207,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             NewScheduledDateTime = newDate;
         }
 
-        public void WorkQueueItemNoLongerExists()
+        internal void ResetSelections()
         {
+            ScheduleNowCheckBox.Checked = false;
+            NewScheduleDate.Enabled = true;
+            NewScheduleTime.Enabled = true;
         }
 
         #endregion Public Methods
+
     }
 }

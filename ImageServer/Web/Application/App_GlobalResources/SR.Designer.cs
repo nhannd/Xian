@@ -1388,6 +1388,33 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Archive exists, studies may become nearline..
+        /// </summary>
+        internal static string PartitionStorageConfiguration_ArchiveConfiguredNoDeleteRule {
+            get {
+                return ResourceManager.GetString("PartitionStorageConfiguration_ArchiveConfiguredNoDeleteRule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete rule enabled, older studies may be deleted..
+        /// </summary>
+        internal static string PartitionStorageConfiguration_DeleteRuleExists {
+            get {
+                return ResourceManager.GetString("PartitionStorageConfiguration_DeleteRuleExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New processed studies will now be kept online..
+        /// </summary>
+        internal static string PartitionStorageConfiguration_NoArchiveConfiguredNoDeleteRule {
+            get {
+                return ResourceManager.GetString("PartitionStorageConfiguration_NoArchiveConfiguredNoDeleteRule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Patient ID.
         /// </summary>
         internal static string PatientID {

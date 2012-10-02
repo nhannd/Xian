@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -9,6 +9,7 @@
 
 #endregion
 
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common.Utilities;
@@ -68,11 +69,42 @@ namespace ClearCanvas.ImageServer.Model
     {
         private readonly object _syncLock = new object();
         bool _dataAccessInfoloaded = false;
+        bool _rulesLoaded = false;
+        bool _archiveLoaded = false;
+        private IList<ServerRule> _rules = null;
+        private IList<PartitionArchive> _archives = null;
 
         private Dictionary<DataAccessGroup, ServerEntityKey> _mapDataAccessGroupsAuthorityGroups = null;
 
         IEnumerable<ServerPartitionDataAccess> _dataAccessGroups = null;
-         
+
+        /// <summary>
+        /// Indicates the server partition contains at least one delete rule which is enabled
+        /// </summary>
+        public bool HasEnabledDeleteRules
+        {
+            get
+            {
+                LoadServerRules();
+
+                return _rules != null && _rules.Any(r => r.ServerRuleTypeEnum == ServerRuleTypeEnum.StudyDelete && r.Enabled);
+            }
+        }
+
+        /// <summary>
+        /// Indicates the server partition currently has an archive configured (which may/may not be active)
+        /// </summary>
+        public bool ArchiveExists
+        {
+            get
+            {
+                LoadArchiveInfo();
+
+                return _archives != null && _archives.Count > 0;
+            }
+        }
+
+
 
         public StudyCompareOptions GetComparisonOptions()
         {
@@ -87,18 +119,17 @@ namespace ClearCanvas.ImageServer.Model
             return options;
         }
 
-        
         public IEnumerable<ServerPartitionDataAccess> DataAccessGroups
         {
             get
             {
-                if (_dataAccessGroups==null)
+                if (_dataAccessGroups == null)
                 {
-                    using(var ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                    using (var ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
                     {
-                        LoadDataAcessInformation(ctx);    
+                        LoadDataAcessInformation(ctx);
                     }
-                    
+
                 }
                 return _dataAccessGroups;
             }
@@ -108,14 +139,14 @@ namespace ClearCanvas.ImageServer.Model
         {
             get
             {
-                if (_mapDataAccessGroupsAuthorityGroups==null)
+                if (_mapDataAccessGroupsAuthorityGroups == null)
                 {
                     using (var ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
                     {
 
                         LoadAuthorityGroup(ctx);
                     }
-                    
+
                 }
 
                 return _mapDataAccessGroupsAuthorityGroups;
@@ -132,12 +163,12 @@ namespace ClearCanvas.ImageServer.Model
             if (existingGroups == null)
                 return false;
 
-            return CollectionUtils.Contains(existingGroups, g => g.DataAccessGroupKey.Equals(dataAccessGroup.Key)); 
+            return CollectionUtils.Contains(existingGroups, g => g.DataAccessGroupKey.Equals(dataAccessGroup.Key));
         }
 
         public void LoadDataAcessInformation(IPersistenceContext context)
         {
-            lock(_syncLock)
+            lock (_syncLock)
             {
                 if (_dataAccessInfoloaded)
                     return;
@@ -149,13 +180,58 @@ namespace ClearCanvas.ImageServer.Model
 
                 _dataAccessInfoloaded = true;
             }
-            
-           
+
+
+        }
+
+        private void LoadServerRules()
+        {
+            if (!_rulesLoaded)
+            {
+                lock (_syncLock)
+                {
+                    if (!_rulesLoaded)
+                    {
+                        using (var ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                        {
+                            var broker = ctx.GetBroker<IServerRuleEntityBroker>();
+                            var criteria = new ServerRuleSelectCriteria();
+                            criteria.ServerPartitionKey.EqualTo(this.Key);
+                            _rules = broker.Find(criteria);
+                        }
+
+                        _rulesLoaded = true;
+                    }
+                }
+            }
+
+        }
+
+        private void LoadArchiveInfo()
+        {
+            if (!_archiveLoaded)
+            {
+                lock (_syncLock)
+                {
+                    if (!_archiveLoaded)
+                    {
+                        using (var ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                        {
+                            var broker = ctx.GetBroker<IPartitionArchiveEntityBroker>();
+                            var criteria = new PartitionArchiveSelectCriteria();
+                            criteria.ServerPartitionKey.EqualTo(this.Key);
+                            _archives = broker.Find(criteria);
+                        }
+
+                        _archiveLoaded = true;
+                    }
+                }
+            }
         }
 
         private DataAccessGroup FindDataAccessGroup(string authorityGroupOID)
         {
-            foreach(var entry in MapDataAccessGroupsAuthorityGroups)
+            foreach (var entry in MapDataAccessGroupsAuthorityGroups)
             {
                 if (entry.Value.Key.ToString().Equals(authorityGroupOID))
                     return entry.Key;

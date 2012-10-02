@@ -139,6 +139,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
                     CustomizeActiveColumn(e);
                     CustomizeAcceptAnyDeviceColumn(e);
                     CustomizeDuplicateSopPolicyColumn(e.Row);
+                    CustomizePartitionStorageConfiguration(e.Row);
+                }
+            }
+        }
+
+        private void CustomizePartitionStorageConfiguration(GridViewRow row)
+        {
+            ServerPartition partition = row.DataItem as ServerPartition;
+            Label lbl = row.FindControl("PartitionStorageConfigurationLabel") as Label; // The label is added in the template
+            if (lbl != null)
+            {
+                if (partition.HasEnabledDeleteRules)
+                    lbl.Text = Resources.SR.PartitionStorageConfiguration_DeleteRuleExists;
+                else
+                {
+                    lbl.Text = partition.ArchiveExists
+                            ? Resources.SR.PartitionStorageConfiguration_ArchiveConfiguredNoDeleteRule
+                            : Resources.SR.PartitionStorageConfiguration_NoArchiveConfiguredNoDeleteRule;
                 }
             }
         }

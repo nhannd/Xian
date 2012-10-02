@@ -82,17 +82,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             ScheduleWorkQueueDialog.WorkQueueUpdated += ScheduleWorkQueueDialog_OnWorkQueueUpdated;
             ScheduleWorkQueueDialog.OnShow += DisableRefresh;
             ScheduleWorkQueueDialog.OnHide += () => RefreshTimer.Reset(AutoRefresh);
-            ScheduleWorkQueueDialog.SchedulePanel.OnNoWorkQueueItems += () =>
-                                                                            {
-                                                                                ScheduleWorkQueueDialog.Hide();
 
-                                                                                MessageBox.BackgroundCSS = string.Empty;
-                                                                                MessageBox.Message = SR.SelectedWorkQueueNoLongerOnTheList;
-                                                                                MessageBox.MessageStyle = "color: red; font-weight: bold;";
-                                                                                MessageBox.MessageType = Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
-
-                                                                                MessageBox.Show();
-                                                                            };
             ResetWorkQueueDialog.WorkQueueItemReseted += ResetWorkQueueDialog_WorkQueueItemReseted;
             ResetWorkQueueDialog.OnShow += DisableRefresh;
             ResetWorkQueueDialog.OnHide += () => RefreshTimer.Reset(AutoRefresh);
@@ -235,6 +225,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 }
 
                 ScheduleWorkQueueDialog.WorkQueueKeys = new List<ServerEntityKey> {itemKey};
+                ScheduleWorkQueueDialog.Reset();
                 ScheduleWorkQueueDialog.Show();
             }
         }
