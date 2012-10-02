@@ -23,7 +23,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// The minimum length of query string required to obtain suggestions.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("The minimum length of query string required to obtain suggestions.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("2")]
         public int MinQueryStringLength {
@@ -32,7 +36,12 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// The maximum number of suggestions that a given query string can return.  A query that would return more suggestions will not return any.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("The maximum number of suggestions that a given query string can return.  A query " +
+            "that would return more suggestions will not return any.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
         public int QuerySpecificityThreshold {

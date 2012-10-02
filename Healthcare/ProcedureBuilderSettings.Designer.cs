@@ -23,7 +23,12 @@ namespace ClearCanvas.Healthcare {
             }
         }
         
+        /// <summary>
+        /// Root procedure plan, inherited by all procedure plans that do not explicitly specify a base plan.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Root procedure plan, inherited by all procedure plans that do not explicitly spec" +
+            "ify a base plan.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("ProcedureBuilderRootProcedurePlan.xml")]
         public string RootProcedurePlanXml {

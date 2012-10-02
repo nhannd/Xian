@@ -13,7 +13,7 @@ using System.Configuration;
 
 namespace ClearCanvas.Enterprise.Authentication
 {
-	[SettingsGroupDescription("Configurates behaviour related to password reset emails.")]
+	[SettingsGroupDescription("Configures behaviour related to password reset emails.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class PasswordResetEmailSettings
 	{

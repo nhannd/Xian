@@ -16,8 +16,7 @@ using ClearCanvas.Common.Configuration;
 namespace ClearCanvas.Ris.Shreds.Merge
 {
 
-	// TODO add a description of the purpose of the settings group here
-	[SettingsGroupDescription("")]
+	[SettingsGroupDescription("Configures behaviour of the Merge Shred.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class MergeShredSettings
 	{

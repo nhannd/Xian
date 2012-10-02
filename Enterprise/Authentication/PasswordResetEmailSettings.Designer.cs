@@ -23,7 +23,11 @@ namespace ClearCanvas.Enterprise.Authentication {
             }
         }
         
+        /// <summary>
+        /// Template for the subject line of the email.  May include the variable $USER.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Template for the subject line of the email.  May include the variable $USER.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Your password has been reset")]
         public string SubjectTemplate {
@@ -32,7 +36,12 @@ namespace ClearCanvas.Enterprise.Authentication {
             }
         }
         
+        /// <summary>
+        /// Template for the body of the email.  May include the variables $USER and $PASSWORD.  May be in HTML or plain text.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Template for the body of the email.  May include the variables $USER and $PASSWOR" +
+            "D.  May be in HTML or plain text.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute(@"
 <!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.0 Transitional//EN"" ""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd""> 
@@ -48,7 +57,11 @@ namespace ClearCanvas.Enterprise.Authentication {
             }
         }
         
+        /// <summary>
+        /// The &apos;from&apos; address to include in the email.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("The \'from\' address to include in the email.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("noreply@example.com")]
         public string FromAddress {
