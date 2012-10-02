@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="EnableTranscriptionWorkflow" Description="Specifies whether the transcription portion of the workflow is enabled." Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="EnableInterpretationReviewWorkflow" Description="Specifies whether the interpretation review (i.e. resident/supervisor) portion of the workflow is enabled." Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>

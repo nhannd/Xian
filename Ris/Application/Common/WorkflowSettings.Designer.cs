@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Application.Common {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether the transcription portion of the workflow is enabled.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool EnableTranscriptionWorkflow {
             get {
                 return ((bool)(this["EnableTranscriptionWorkflow"]));
