@@ -103,7 +103,8 @@
     <File name="Web\Controls\ServerPartitionSelector.ascx" />
     <File name="Web\Controls\SessionTimeout.ascx" />
     <File name="Web\Controls\TimedDialog.ascx" />
-    <File name="Web\Images\favicon.ico" checksum="true" />
+	<File name="Web\Controls\UsersGuideLink.ascx" />
+	<File name="Web\Images\favicon.ico" checksum="true" />
     <File name="Web\Pages\Admin\Alerts\AlertHoverPopupDetails.ascx" />
     <File name="Web\Pages\Admin\Alerts\StudyAlertContextInfoView.ascx" />
     <File name="Web\Pages\Admin\Alerts\AlertsGridPanel.ascx" />
