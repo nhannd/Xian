@@ -75,8 +75,22 @@ namespace ClearCanvas.ImageViewer.Configuration
 	    internal const string _mainMenuCustomizeId = "customize";
         internal const string _contextMenuCustomizeId = "customizeContextMenu";
 
+        public override IActionSet Actions
+        {
+            get
+            {
+                var baseActions = base.Actions;
+                if (baseActions.Count == 0)
+                    base.Actions = CreateActions();
+                return base.Actions;
+            }
+            protected set
+            {
+                base.Actions = value;
+            }
+        }
 
-        protected override IActionSet CreateActions()
+        private IActionSet CreateActions()
         {
             var toolType = typeof (CustomizeViewerActionModelTool);
             var resolver = new ActionResourceResolver(toolType);

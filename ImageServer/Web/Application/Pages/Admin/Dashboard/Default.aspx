@@ -31,25 +31,6 @@
 <tr><td valign="top" style="border-right: dashed 1px #cccccc;">
 
 <div class="DashboardItemContainer">
-<div class="DashboardItemHeader"><%= Labels.Dashboard_OperatingMode %></div>
-<div class="SidebarInfoContainer">
-    <div style="margin:5px">        
-        <table>
-            <tr>
-                <td><asp:Label runat="server" ID="OperatingModeLabel" style="color:#205F87;" Text="This server is configured to operate as ....."/></td>
-            </tr>
-            <tr>
-                <td align="right">
-                    <asp:HyperLink ID="OperatingModeLinkButton" CssClass="OperatingModeLinkButtonBorder" runat='server' 
-                NavigateUrl="~/Pages/Help/usersguide/index.html?Overview.htm#ArchiveVsCache" Text="info" Target="_blank" /></td>
-            </tr>
-        </table>
-    </div>
-</div>
-</div>
-
-
-<div class="DashboardItemContainer">
 <div class="DashboardItemHeader"><a href="../../Studies/Default.aspx"><%= Labels.Dashboard_Studies%></a></div>
 <div class="SidebarInfoContainer">
 <localAsp:StudiesSummary runat="server" ID="StudiesSummary" />

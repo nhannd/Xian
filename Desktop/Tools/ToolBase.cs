@@ -79,15 +79,11 @@ namespace ClearCanvas.Desktop.Tools
     	/// </remarks>
     	public virtual IActionSet Actions
         {
-            get { return _actions ?? (_actions = CreateActions()); }
+            get { return _actions ?? (_actions = new ActionSet(ActionAttributeProcessor.Process(this))); }
+            protected set { _actions = value; }
         }
 
         #endregion
-
-        protected virtual IActionSet CreateActions()
-        {
-            return new ActionSet(ActionAttributeProcessor.Process(this));
-        }
 
         /// <summary>
 		/// Disposes of this object; override this method to do any necessary cleanup.

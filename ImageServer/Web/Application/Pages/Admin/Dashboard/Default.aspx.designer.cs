@@ -22,24 +22,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard {
         protected global::System.Web.UI.WebControls.Literal Literal1;
         
         /// <summary>
-        /// OperatingModeLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label OperatingModeLabel;
-        
-        /// <summary>
-        /// OperatingModeLinkButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink OperatingModeLinkButton;
-        
-        /// <summary>
         /// StudiesSummary control.
         /// </summary>
         /// <remarks>

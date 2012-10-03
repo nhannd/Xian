@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
             }
 
             if (viewers.Count == 0)
-                throw new FaultException<NoActiveViewersFault>(new NoActiveViewersFault(), "No active viewers were found.");
+                throw new FaultException<NoViewersFault>(new NoViewersFault(), "No active viewers were found.");
 
             return new GetViewersResult {Viewers = viewers};
         }
@@ -75,7 +75,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		[Obsolete("Use GetViewers instead.")]
 		public GetActiveViewersResult GetActiveViewers()
 		{
-			return new GetActiveViewersResult {ActiveViewers = GetViewers(new GetViewersRequest()).Viewers};
+			try
+			{
+				return new GetActiveViewersResult { ActiveViewers = GetViewers(new GetViewersRequest()).Viewers };
+			}
+			catch (FaultException<NoViewersFault>)
+			{
+				// translate the exception correctly, since the type of exception is specified in the service contract
+				throw new FaultException<NoActiveViewersFault>(new NoActiveViewersFault(), "No active viewers were found.");
+			}
 		}
 
 		public GetViewerInfoResult GetViewerInfo(GetViewerInfoRequest request)

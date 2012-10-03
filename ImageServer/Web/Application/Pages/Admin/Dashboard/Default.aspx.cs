@@ -25,20 +25,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
         {
             SetPageTitle(Titles.DashboardTitle);
 
-            switch(ServerPlatform.ServerOperatingMode)
-            {
-                case ServerOperatingMode.TemporaryCache:
-                    OperatingModeLabel.Text = SR.ServerModeTemporaryCache;
-                    break;
-
-                case ServerOperatingMode.Archive:
-                    OperatingModeLabel.Text = SR.ServerModeArchive;
-                    break;
-
-                case ServerOperatingMode.MixedMode:
-                    OperatingModeLabel.Text = SR.ServerModeMixedMode;
-                    break;
-            }
             
         }
     }

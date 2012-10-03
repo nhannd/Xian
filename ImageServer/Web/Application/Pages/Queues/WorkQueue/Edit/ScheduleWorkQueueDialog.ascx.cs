@@ -19,6 +19,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 {
@@ -93,6 +94,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         public delegate void OnShowEventHandler();
 
+
         /// <summary>
         /// Defines the event handler for <see cref="WorkQueueUpdated"/> event.
         /// </summary>
@@ -129,7 +131,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                                                                    else source.SearchKeys = WorkQueueKeys;
                                                                };
 
-            SelectedWorkQueueItemList.TheGrid = SelectedWorkQueueItemList.WorkQueueItemGridView;            
+            SelectedWorkQueueItemList.TheGrid = SelectedWorkQueueItemList.WorkQueueItemGridView;
+        }
+
+        public override void DataBind()
+        {
+            base.DataBind();
+
+            if (WorkQueues == null || WorkQueues.Count == 0)
+            {
+                MessageDialog.BackgroundCSS = string.Empty;
+                MessageDialog.Message = Resources.SR.SelectedWorkQueueNoLongerOnTheList;
+                MessageDialog.MessageStyle = "color: red; font-weight: bold;";
+                MessageDialog.MessageType = Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
+
+                MessageDialog.Show();
+            }
+        }
+
+
+        internal void Reset()
+        {
+            SchedulePanel.ResetSelections();
         }
 
         protected void WorkQueueListControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -354,5 +377,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         }
 
         #endregion Public Methods
+
     }
 }

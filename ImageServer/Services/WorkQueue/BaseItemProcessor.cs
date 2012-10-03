@@ -899,7 +899,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                                                       FailureDescription = failureDescription
                                                                   };
 
-                            WorkQueueSettings settings = WorkQueueSettings.Instance;
+                            var settings = WorkQueueSettings.Instance;
                             if ((item.FailureCount + 1) > WorkQueueProperties.MaxFailureCount)
                             {
                                 Platform.Log(LogLevel.Error,
