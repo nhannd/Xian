@@ -12,6 +12,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.DesktopServices.StudyLocator
 {
@@ -33,6 +34,19 @@ namespace ClearCanvas.ImageViewer.DesktopServices.StudyLocator
 				{
 					//return the true service client.
 					return new StudyRootQueryServiceClient();
+				}
+			}
+			else if (serviceType == typeof(IStudyLocator))
+			{
+				if (AppDomain.CurrentDomain == DesktopServiceHostTool.HostAppDomain)
+				{
+					//just return an instance when in the same process/domain.
+					return new Configuration.StudyLocator();
+				}
+				else
+				{
+					//return the true service client.
+					return new StudyLocatorServiceClient();
 				}
 			}
 

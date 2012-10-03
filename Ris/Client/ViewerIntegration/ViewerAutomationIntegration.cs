@@ -9,13 +9,14 @@
 
 #endregion
 
+using System;
 using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.Automation;
-using ClearCanvas.Desktop;
-using System;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.Ris.Client.ViewerIntegration
 {
@@ -62,7 +63,7 @@ namespace ClearCanvas.Ris.Client.ViewerIntegration
 		{
 			var bridge = new ViewerAutomationBridge(
 				Platform.GetService<IViewerAutomation>(), 
-				Platform.GetService<IStudyRootQuery>());
+				Platform.GetService<IStudyLocator>());
 
 			bridge.OpenStudiesBehaviour.ActivateExistingViewer = true;
 			//The viewer knows what the problem is better than us, so let it show the user an error.

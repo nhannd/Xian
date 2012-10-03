@@ -23,6 +23,7 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Automation;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Common.DicomServer;
@@ -41,9 +42,9 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		{
 		}
 
-		private static IStudyRootQuery GetStudyRootQuery()
+		private static IStudyLocator GetStudyLocator()
 		{
-			return Platform.GetService<IStudyRootQuery>();
+			return Platform.GetService<IStudyLocator>();
 		}
 
 	    /// TODO (CR Dec 2011): Build this functionality right into ImageViewerComponent?
@@ -338,9 +339,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 
 			List<string> incompleteStudyUids = incomplete.Select(info => info.StudyInstanceUid).ToList();
 
-			using (var bridge = new StudyRootQueryBridge(GetStudyRootQuery()))
+			using (var bridge = new StudyLocatorBridge(GetStudyLocator()))
 			{
-				IList<StudyRootStudyIdentifier> foundStudies = bridge.QueryByStudyInstanceUid(incompleteStudyUids);
+				LocateFailureInfo[] queryFailures;
+				IList<StudyRootStudyIdentifier> foundStudies = bridge.LocateStudyByInstanceUid(incompleteStudyUids, out queryFailures);
 				foreach (StudyRootStudyIdentifier study in foundStudies)
 				{
 					foreach (OpenStudyInfo info in openStudyInfo)
@@ -352,12 +354,27 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 						}
 					}
 				}
+
+				var unlocated = openStudyInfo.Where(info => string.IsNullOrEmpty(info.SourceAETitle)).Select(info => info.StudyInstanceUid).ToArray();
+				if (unlocated.Any())
+				{
+					var fault = new OpenStudiesFault(string.Format("One or more specified studies could not be opened: {0}", string.Join(", ", unlocated)));
+					throw new FaultException<OpenStudiesFault>(fault, fault.FailureDescription);
+				}
 			}
 		}
 
 		private static IImageViewer LaunchViewer(OpenStudiesRequest request, string primaryStudyInstanceUid)
 		{
-			CompleteOpenStudyInfo(request.StudiesToOpen);
+			try
+			{
+				CompleteOpenStudyInfo(request.StudiesToOpen);
+			}
+			catch (Exception ex)
+			{
+				if (request.ReportFaultToUser) SynchronizationContext.Current.Post(ReportLoadFailures, ex);
+				throw;
+			}
 		    
             ImageViewerComponent viewer;
             if (!request.LoadPriors.HasValue || request.LoadPriors.Value)
