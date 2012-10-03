@@ -25,7 +25,7 @@ namespace ClearCanvas.Healthcare.Printing
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal partial class PrintTemplateSettings : ApplicationSettingsBase
 	{
-		internal PrintTemplateSettings()
+		public PrintTemplateSettings()
 		{
 		}
 
