@@ -71,6 +71,7 @@
     <Compile Include="Entities\ImageBox.cs" />
     <Compile Include="Events\ContextMenuEvent.cs" />
     <Compile Include="Messages\DismissMessageBoxMessage.cs" />
+    <Compile Include="Messages\MouseLeaveMessage.cs" />
     <Compile Include="Messages\MouseMoveMessage.cs" />
     <Compile Include="Messages\SetLayoutActionMessage.cs" />
     <Compile Include="MouseButton.cs" />
