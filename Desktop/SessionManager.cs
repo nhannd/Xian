@@ -235,7 +235,7 @@ namespace ClearCanvas.Desktop
 		event EventHandler<SessionStatusChangedEventArgs> ISessionManager.SessionStatusChanged
 		{
 			add { this.SessionStatusChanged += value; }
-			remove { this.SessionStatusChanged += value; }
+			remove { this.SessionStatusChanged -= value; }
 		}
 
 		#endregion
