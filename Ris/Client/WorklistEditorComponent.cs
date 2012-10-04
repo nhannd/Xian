@@ -611,7 +611,6 @@ namespace ClearCanvas.Ris.Client
 		private void WarnAboutNonOptimalFilterChoices()
 		{
 			CheckFilterChoices(SR.FilterProcedureType, _worklistDetail.ProcedureTypes, _formDataResponse.ProcedureTypeChoices);
-			CheckFilterChoices(SR.FilterProcedureTypeGroup, _worklistDetail.ProcedureTypeGroups, _procedureTypeGroupFilterComponent.AllItems);
 			CheckFilterChoices(SR.FilterPerformingFacility, _worklistDetail.Facilities, _formDataResponse.FacilityChoices);
 			CheckFilterChoices(SR.FilterDepartment, _worklistDetail.Departments, _formDataResponse.DepartmentChoices);
 			CheckFilterChoices(SR.FilterPatientClass, _worklistDetail.PatientClasses, _formDataResponse.PatientClassChoices);
