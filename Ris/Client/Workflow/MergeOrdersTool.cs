@@ -87,7 +87,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return false;
 			}
 
-			var args = new DialogBoxCreationArgs(component, SR.TitleMergeOrders, null, true);
+			var args = new DialogBoxCreationArgs(component, SR.TitleMergeOrders, null) {AllowUserResize = true};
 			if (ApplicationComponentExitCode.Accepted != ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, args))
 				return false;
 
