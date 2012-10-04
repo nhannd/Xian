@@ -45,9 +45,9 @@ namespace ClearCanvas.Ris.Application.Common
 			get { return _settings.AllowUnscheduledProcedures; }
 		}
 
-		public bool AllowMultipleInformationAuthorities
+		public bool AutoGenerateMrn
 		{
-			get { return _settings.AllowMultipleInformationAuthorities; }
+			get { return _settings.AutoGenerateMrn; }
 		}
 	}
 }

@@ -93,12 +93,6 @@
     <Compile Include="AddressAssembler.cs" />
     <Compile Include="Admin\DepartmentAdmin\DepartmentAdminService.cs" />
     <Compile Include="Admin\PatientAdmin\PatientAdminServiceRecorder.cs" />
-    <Compile Include="Admin\PatientAdmin\PatientAdminSettings.cs" />
-    <Compile Include="Admin\PatientAdmin\PatientAdminSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>PatientAdminSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="AttachmentStore.cs" />
     <Compile Include="Manifest\RisManifestService.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorkflowServiceRecorder.cs" />
@@ -251,10 +245,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Admin\PatientAdmin\PatientAdminSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>PatientAdminSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="app.config" />
     <None Include="WorklistSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

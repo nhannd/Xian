@@ -96,10 +96,10 @@ namespace ClearCanvas.Ris.Application.Common {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AllowMultipleInformationAuthorities {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoGenerateMrn {
             get {
-                return ((bool)(this["AllowMultipleInformationAuthorities"]));
+                return ((bool)(this["AutoGenerateMrn"]));
             }
         }
     }

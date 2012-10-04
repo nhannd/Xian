@@ -377,7 +377,7 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The system does not support multiple information authorities.  All facilities must be assigned to the same information authority..
+        ///   Looks up a localized string similar to The system is not configured to support multiple information authorities.  All facilities must be assigned to the same information authority..
         /// </summary>
         internal static string MessageMultipleInformationAuthoritiesNotSupported {
             get {

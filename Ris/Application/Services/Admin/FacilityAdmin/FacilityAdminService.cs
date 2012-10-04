@@ -117,7 +117,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
 		private void CheckMultipleInformationAuthoritiesUsed()
 		{
 			var workflowConfig = new WorkflowConfigurationReader();
-			if (workflowConfig.AllowMultipleInformationAuthorities)
+
+			// if we're not generating the MRNs, then this doesn't apply
+			if (!workflowConfig.AutoGenerateMrn)
 				return;
 
 			var iaInUse = PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false)
