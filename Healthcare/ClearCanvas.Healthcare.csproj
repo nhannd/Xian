@@ -83,7 +83,6 @@
     <Compile Include="Alerts\ExternalPractitionerAlertBase.cs" />
     <Compile Include="Alerts\ExternalPractitionerAlerts.cs" />
     <Compile Include="Alerts\IncompleteDemographicDataAlert.cs" />
-    <Compile Include="Alerts\InvalidVisitAlert.cs" />
     <Compile Include="Alerts\OrderAlertBase.cs">
       <SubType>Code</SubType>
     </Compile>
