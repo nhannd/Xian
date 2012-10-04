@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EmergencyWorklists.cs" />
+    <Compile Include="InvalidVisitAlert.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtocolingAdminWorklists.cs" />
     <Compile Include="RegistrationProtocolWorklists.cs" />
