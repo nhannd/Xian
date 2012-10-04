@@ -2194,6 +2194,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Contact points that have already been saved cannot be deleted.  Use the Toggle Activation tool to de-activate them instead..
+        /// </summary>
+        internal static string MessageSavedContactPointsCannotBeDeleted {
+            get {
+                return ResourceManager.GetString("MessageSavedContactPointsCannotBeDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter search criteria (MRN#, Name, Healthcard ID, or A#).
         /// </summary>
         internal static string MessageSearchMessageDefault {

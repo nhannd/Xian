@@ -126,12 +126,13 @@ namespace ClearCanvas.Enterprise.Desktop
             throw new NotSupportedException("AddItems");
         }
 
-		protected override string DeleteConfirmationMessage
-		{
-			get { return SR.MessageConfirmTerminateSelectedSessions; }
-		}
+    	protected override bool GetDeleteConfirmationMessage(IList<UserSessionSummary> itemsToBeDeleted, out string message)
+    	{
+    		message = SR.MessageConfirmTerminateSelectedSessions;
+    		return true;
+    	}
 
-        protected override bool DeleteItems(IList<UserSessionSummary> items, out IList<UserSessionSummary> deletedItems, out string failureMessage)
+    	protected override bool DeleteItems(IList<UserSessionSummary> items, out IList<UserSessionSummary> deletedItems, out string failureMessage)
         {
         	List<string> terminatedSessionIds = null;
 			Platform.GetService<IUserAdminService>(service => {
