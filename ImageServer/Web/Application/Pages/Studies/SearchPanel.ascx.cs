@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         [ClientPropertyName("ViewImagePageUrl")]
         public string ViewImagePageUrl
         {
-            get { return Page.ResolveClientUrl(ImageServerConstants.PageURLs.ViewImagesPage); }
+            get { return Page.ResolveClientUrl(ConfigurationManager.AppSettings["WebViewerPage"] ?? ImageServerConstants.PageURLs.ViewImagesPage); }
         }
         
         [ExtenderControlProperty]

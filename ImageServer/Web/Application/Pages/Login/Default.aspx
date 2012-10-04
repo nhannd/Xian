@@ -9,7 +9,7 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 --%>
 
 
-<%@ Page Language="C#" AutoEventWireup="True" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login._Default" %>
+<%@ Page Language="C#" AutoEventWireup="True" Codebehind="LoginPage.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login.LoginPage" %>
 <%@ Import Namespace="ClearCanvas.Common"%>
 <%@ Import Namespace="System.Threading"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Common"%> 
@@ -48,8 +48,13 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
             <table cellpadding="1">
             <tr><td align="right">
                         <asp:Label runat="server" Text="<%$Resources: Labels,Version %>"></asp:Label>:
-                        <%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? Resources.SR.Unknown : ServerPlatform.VersionString%></td></tr>
-             <tr><td align="right" ><%= Thread.CurrentThread.CurrentUICulture.NativeName %></td></tr>
+                        <asp:Label runat="server" ID="VersionLabel" />
+                        <%--<%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? Resources.SR.Unknown : ServerPlatform.VersionString%>--%>
+                        </td>
+                        </tr>
+             <tr><td align="right">
+                    <asp:Label runat="server" ID="LanguageLabel" />
+                        <%--<%= Thread.CurrentThread.CurrentUICulture.NativeName %>--%></td></tr>
             </table>
         </div>
         
@@ -59,9 +64,8 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
         
         <div id="Copyright">
            <asp:Label runat="server" ID="CopyrightLabel">
-            <%= ProductInformation.Copyright %>
-           </asp:Label>
-        
+            <%--<%= ProductInformation.Copyright %>--%>
+           </asp:Label>        
         </div>
     
         <div id="LoginCredentials">

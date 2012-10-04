@@ -201,9 +201,6 @@
     <Compile Include="Controls\ModalDialog.ascx.designer.cs">
       <DependentUpon>ModalDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PartitionTabs.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="Controls\PersonNameInputPanel.ascx.cs">
       <DependentUpon>PersonNameInputPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -218,12 +215,12 @@
     <Compile Include="Controls\SectionPanel.ascx.designer.cs">
       <DependentUpon>SectionPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ServerPartitionTabs.ascx.cs">
-      <DependentUpon>ServerPartitionTabs.ascx</DependentUpon>
+    <Compile Include="Controls\ServerPartitionSelector.ascx.cs">
+      <DependentUpon>ServerPartitionSelector.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Controls\ServerPartitionTabs.ascx.designer.cs">
-      <DependentUpon>ServerPartitionTabs.ascx</DependentUpon>
+    <Compile Include="Controls\ServerPartitionSelector.ascx.designer.cs">
+      <DependentUpon>ServerPartitionSelector.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\SessionTimeout.ascx.cs">
       <DependentUpon>SessionTimeout.ascx</DependentUpon>
@@ -1620,6 +1617,7 @@
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogBodyBackgroundTall.png" />
     <Content Include="App_Themes\Default\WebStation\WebstationLogo.png" />
     <Content Include="Builds\SplashScreen\ClearCanvasWebViewerLogo.png" />
+    <Content Include="Controls\ServerPartitionSelector.ascx" />
     <Content Include="Pages\Admin\Alerts\StudyAlertContextInfoView.ascx" />
     <Content Include="Pages\Admin\Configure\DataRules\AddEditDataRuleDialog.ascx" />
     <Content Include="Pages\Admin\Configure\DataRules\DataRuleGridView.ascx" />
@@ -1842,7 +1840,6 @@
     <EmbeddedResource Include="Controls\PersonNameInputPanel.js" />
     <Content Include="Controls\PersonNameInputPanel.ascx" />
     <Content Include="Controls\SectionPanel.ascx" />
-    <Content Include="Controls\ServerPartitionTabs.ascx" />
     <Content Include="Controls\SessionTimeout.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
     <Content Include="Global.asax" />

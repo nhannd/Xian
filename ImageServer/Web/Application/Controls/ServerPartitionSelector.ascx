@@ -1,4 +1,4 @@
-<%--  License
+﻿<%--  License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -9,25 +9,17 @@
 
 --%>
 
-<%@ Control Language="C#" AutoEventWireup="true" Codebehind="ServerPartitionTabs.ascx.cs"
-    Inherits="ClearCanvas.ImageServer.Web.Application.Controls.ServerPartitionTabs" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ServerPartitionSelector.ascx.cs" 
+    Inherits="ClearCanvas.ImageServer.Web.Application.Controls.ServerPartitionSelector" %>
+
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Security"%>
 <%@ Import Namespace="Resources" %>
 
 <asp:Panel runat="server" ID="PartitionPanel" CssClass="PartitionPanel">
-        <asp:Label ID="Label1" runat="server" Text="<%$Resources: Labels,Partitions %>" CssClass="SearchTextBoxLabel" EnableViewState="False" style="padding-left: 5px;"/><br />    
-        <aspAjax:TabContainer ID="PartitionTabContainer" runat="server" ActiveTabIndex="0" CssClass="PartitionTabControl" >
-            <aspAjax:TabPanel ID="PartitionTabPanel" runat="server">
-                <HeaderTemplate>
-                    <asp:Literal runat="server" Text="<%$Resources: Labels, AddPartition%>"></asp:Literal>
-                </HeaderTemplate>
-                <ContentTemplate>
-                
-                </ContentTemplate>            
-            </aspAjax:TabPanel>
-        </aspAjax:TabContainer>
+    <asp:Label ID="PartitionLabel" runat="server" Text="<%$Resources: Labels,Partitions %>" CssClass="SearchTextBoxLabel" EnableViewState="False" style="padding-left: 5px;"/>
+    <asp:Panel ID="PartitionLinkPanel" runat="server" Visible="True" Wrap="True"/> 
+    
 </asp:Panel>
-
   
 <asp:Panel runat="server" ID="NoPartitionPanel" CssClass="PartitionPanel" Visible="false">
     <% if (SessionManager.Current.User.IsInRole(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.Admin.Configuration.ServerPartitions)){%>
