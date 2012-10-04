@@ -87,7 +87,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return false;
 			}
 
-			if (ApplicationComponentExitCode.Accepted != ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, component, SR.TitleMergeOrders))
+			var args = new DialogBoxCreationArgs(component, SR.TitleMergeOrders, null, true);
+			if (ApplicationComponentExitCode.Accepted != ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, args))
 				return false;
 
 			InvalidateFolders();
