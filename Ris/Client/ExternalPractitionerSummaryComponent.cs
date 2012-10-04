@@ -162,6 +162,10 @@ namespace ClearCanvas.Ris.Client
 				OrPermissions(
 					Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
 					Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Merge));
+
+			// #10231: hide these tools for the time being, since the functionality is not well tested
+			_mergePractitionerAction.Visible = false;
+			_mergeContactPointAction.Visible = false;
 		}
 
 		protected override bool SupportsDelete
