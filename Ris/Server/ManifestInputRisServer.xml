@@ -10,6 +10,7 @@
     <File name="Logging.config" ignore="true" />
     <File name="logs\" ignore="true" />
     <File name="manifest\" ignore="true" />
+    <File name="scripts\" ignore="true" />
     <File name="ClearCanvas.Ris.Server.Executable.exe" checksum="true" />
     <File name="ClearCanvas.Ris.Server.Executable.exe.config" config="true" />
     <!--<File name="ClearCanvas.Ris.Server.Executable.exe.critical.config" checksum="true" config="true" />-->
