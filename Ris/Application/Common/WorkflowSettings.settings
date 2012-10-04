@@ -17,5 +17,8 @@
     <Setting Name="AllowUnscheduledProcedures" Description="Specifies whether procedures can be entered without a scheduled time, in which case the order will have a scheduling request time, indicating when the procedures should ultimately be scheduled for." Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="AllowMultipleInformationAuthorities" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

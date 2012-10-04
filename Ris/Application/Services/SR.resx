@@ -232,4 +232,7 @@ Please use the "Merge Contact Points" tool to merge the contact point(s) with an
   <data name="MessageSourceMergeOrderNote" xml:space="preserve">
     <value>Auto-generated note.  This order was merged into {0}.</value>
   </data>
+  <data name="MessageMultipleInformationAuthoritiesNotSupported" xml:space="preserve">
+    <value>The system does not support multiple information authorities.  All facilities must be assigned to the same information authority.</value>
+  </data>
 </root>
