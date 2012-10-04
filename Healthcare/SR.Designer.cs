@@ -520,6 +520,15 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Interpretation.
+        /// </summary>
+        internal static string InterpretationStep {
+            get {
+                return ResourceManager.GetString("InterpretationStep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Location.
         /// </summary>
         internal static string Location {
@@ -588,6 +597,15 @@ namespace ClearCanvas.Healthcare {
         internal static string MessageValidateProcedurePerformingFacilityAndModalities {
             get {
                 return ResourceManager.GetString("MessageValidateProcedurePerformingFacilityAndModalities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Report contents cannot be empty..
+        /// </summary>
+        internal static string MessageValidateVerifiedReportIsNotBlank {
+            get {
+                return ResourceManager.GetString("MessageValidateVerifiedReportIsNotBlank", resourceCulture);
             }
         }
         
@@ -831,6 +849,15 @@ namespace ClearCanvas.Healthcare {
         internal static string ProcedureTypeGroup {
             get {
                 return ResourceManager.GetString("ProcedureTypeGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Publication.
+        /// </summary>
+        internal static string PublicationStep {
+            get {
+                return ResourceManager.GetString("PublicationStep", resourceCulture);
             }
         }
         
@@ -1258,6 +1285,15 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Transcription.
+        /// </summary>
+        internal static string TranscriptionStep {
+            get {
+                return ResourceManager.GetString("TranscriptionStep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to To be Transcribed.
         /// </summary>
         internal static string TranscriptionToBeTranscribedWorklist {
@@ -1272,6 +1308,15 @@ namespace ClearCanvas.Healthcare {
         internal static string TranscriptionToBeTranscribedWorklistDescription {
             get {
                 return ResourceManager.GetString("TranscriptionToBeTranscribedWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verification.
+        /// </summary>
+        internal static string VerificationStep {
+            get {
+                return ResourceManager.GetString("VerificationStep", resourceCulture);
             }
         }
         

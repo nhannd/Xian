@@ -549,4 +549,19 @@
   <data name="MessageValidateProcedurePerformingFacilityAndModalities" xml:space="preserve">
     <value>A procedure's performing modalities must belong to its performing facility.</value>
   </data>
+  <data name="InterpretationStep" xml:space="preserve">
+    <value>Interpretation</value>
+  </data>
+  <data name="MessageValidateVerifiedReportIsNotBlank" xml:space="preserve">
+    <value>Report contents cannot be empty.</value>
+  </data>
+  <data name="PublicationStep" xml:space="preserve">
+    <value>Publication</value>
+  </data>
+  <data name="TranscriptionStep" xml:space="preserve">
+    <value>Transcription</value>
+  </data>
+  <data name="VerificationStep" xml:space="preserve">
+    <value>Verification</value>
+  </data>
 </root>
