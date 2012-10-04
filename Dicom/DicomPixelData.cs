@@ -19,7 +19,6 @@ using ClearCanvas.Dicom.IO;
 using ClearCanvas.Dicom.Iod;
 using System.Globalization;
 using ClearCanvas.Dicom.Iod.Macros;
-using ValueType=System.ValueType;
 
 namespace ClearCanvas.Dicom
 {
@@ -218,9 +217,7 @@ namespace ClearCanvas.Dicom
 
         #endregion
 
-		#region GetFrame
-
-		/// <summary>
+        /// <summary>
         /// Get a specific frame's data in uncompressed format.
         /// </summary>
         /// <param name="frame">The zero offset frame to get.</param>
@@ -240,9 +237,7 @@ namespace ClearCanvas.Dicom
         /// <returns>A byte array containing the uncompressed pixel data.</returns>
         public abstract byte[] GetFrame(int frame, out string photometricInterpretation);
 
-		#endregion
-
-		/// <summary>
+        /// <summary>
         /// Update the tags in an attribute collection.
         /// </summary>
         /// <param name="dataset">The attribute collection to update.</param>
@@ -276,10 +271,6 @@ namespace ClearCanvas.Dicom
     	[DicomField(DicomTags.HighBit, DefaultValue = DicomFieldDefault.Default)]
     	public ushort HighBit { get; set; }
 
-		public ushort LowBit 
-		{
-			get { return GetLowBit(BitsStored, HighBit); }
-		}
     	[DicomField(DicomTags.BitsStored, DefaultValue = DicomFieldDefault.Default)]
     	public ushort BitsStored { get; set; }
 
@@ -580,35 +571,8 @@ namespace ClearCanvas.Dicom
 
 		#endregion
 		#endregion
+	}
 
-		/// <summary>
-		/// Gets the corresponding low bit for the given bits stored and high bit.
-		/// </summary>
-		public static ushort GetLowBit(int bitsStored, int highBit)
-		{
-			return (ushort) (highBit - (bitsStored - 1));
-		}
-
-		#region Min/Max Pixel Values
-
-		/// <summary>
-		/// Gets the minimum pixel value for the given bits stored and sign.
-		/// </summary>
-		public static int GetMinPixelValue(int bitsStored, bool isSigned)
-		{
-			return !isSigned ? 0 : -(int)Math.Pow(2, bitsStored - 1);
-		}
-
-		/// <summary>
-		/// Gets the maximum pixel value for the given bits stored and sign.
-		/// </summary>
-		public static int GetMaxPixelValue(int bitsStored, bool isSigned)
-		{
-			return !isSigned ? (int)Math.Pow(2, bitsStored) - 1 : (int)Math.Pow(2, bitsStored - 1) - 1;
-		}
-
-		#endregion
-    }
 
     /// <summary>
     /// Class representing uncompressed pixel data.
@@ -890,31 +854,6 @@ namespace ClearCanvas.Dicom
 
             return null;
         }
-        /// <summary>
-        /// Replace a specific uncompressed frame.
-        /// </summary>
-        /// <param name="frame">The zero-offset index of the frame to be replaced.</param>
-        /// <param name="frameData">Frame data to replace the current data</param>
-        /// <returns>A byte array containing the frame data.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="frame"/> specifies an invalid frame index.</exception>
-        /// <exception cref="DicomDataException">Thrown if there was a problem extracting the specified frame from the pixel data buffer.</exception>
-        public void ReplaceFrame(int frame, byte[] frameData)
-        {
-            const string messageBufferOverrun = "Cannot replace frame when stored in a MemoryStream.";
-
-            if (frame >= NumberOfFrames || frame < 0)
-                throw new ArgumentOutOfRangeException("frame");
-
-            if (_ms != null)
-            {
-                throw new DicomDataException(messageBufferOverrun);
-            }
-
-            // forces the pixel data to be loaded into memory if its on disk
-            byte[] b = (byte[])_pd.Values;
-
-            Array.Copy(frameData, 0, b, frame*UncompressedFrameSize, UncompressedFrameSize);
-        }
 
 		public void ConvertPaletteColorToRgb()
 		{
@@ -947,8 +886,6 @@ namespace ClearCanvas.Dicom
 
         #region Static Methods
 
-		#region Toggle Methods
-
 		/// <summary>
 		/// Toggle the planar configuration of a pixel data array
 		/// </summary>
@@ -957,7 +894,8 @@ namespace ClearCanvas.Dicom
 		/// <param name="bitsAllocated"></param>
 		/// <param name="samplesPerPixel"></param>
 		/// <param name="oldPlanerConfiguration"></param>
-		public static void TogglePlanarConfiguration(byte[] pixelData, int numValues, int bitsAllocated, int samplesPerPixel, int oldPlanerConfiguration)
+		public static void TogglePlanarConfiguration(byte[] pixelData, int numValues, int bitsAllocated,
+        int samplesPerPixel, int oldPlanerConfiguration)
         {
             int bytesAllocated = bitsAllocated / 8;
             int numPixels = numValues / samplesPerPixel;
@@ -994,38 +932,33 @@ namespace ClearCanvas.Dicom
 				throw new DicomCodecUnsupportedSopException(String.Format("BitsAllocated={0} is not supported!", bitsAllocated));
         }
 
-    	/// <summary>
+		/// <summary>
 		/// Toggle the pixel representation of a frame
 		/// </summary>
-		public unsafe static void TogglePixelRepresentation(byte[] frameData, int highBit, int bitsStored, int bitsAllocated, out int rescale)
+		/// <param name="frameData"></param>
+		/// <param name="bitsStored"></param>
+		/// <param name="bitsAllocated"></param>
+		public unsafe static void TogglePixelRepresentation(byte[] frameData, int bitsStored, int bitsAllocated)
 		{
-			if ((bitsAllocated != 8 && bitsAllocated != 16) || bitsStored > bitsAllocated)
+			if (bitsAllocated > 16 || bitsStored > bitsAllocated)
 				throw new DicomCodecUnsupportedSopException("Invalid bits allocated/stored value(s).");
 
-			int highestBit = bitsAllocated - 1;
-			const int lowestBit = 0;
-			if (highBit > highestBit || highBit < lowestBit)
-				throw new ArgumentException(String.Format("Invalid high bit for {0}-bit pixel data ({1}).", bitsAllocated, highBit));
 
 			int bytesAllocated = bitsAllocated/8;
+
 			int numValues = frameData.Length/bytesAllocated;
+			int signShift = bitsAllocated - bitsStored;
 
-			int unusedHighBitsCount = highestBit - highBit;
-			int unusedLowBitsCount = GetLowBit(bitsStored, highBit);
+			int rescale = (int) Math.Pow(2, (bitsStored - 1));
 
-			int signShift = unusedHighBitsCount;
-			int rightAlignShift = unusedLowBitsCount + unusedHighBitsCount;
-
-    		rescale = -GetMinPixelValue(bitsStored, true);
-			
 			if (bitsStored < 8 && bitsAllocated <= 8)
 			{
 				fixed (byte* pFrameData = frameData)
 				{
-					var pixelData = pFrameData;
+					byte* pixelData = pFrameData;
 					for (int p = 0; p < numValues; p++, pixelData++)
 					{
-						int pixel = ((sbyte)(*pixelData << signShift)) >> rightAlignShift;
+						int pixel = ((sbyte) (*pixelData << signShift)) >> signShift;
 						*pixelData = (byte) (pixel + rescale);
 					}
 				}
@@ -1034,7 +967,7 @@ namespace ClearCanvas.Dicom
 			{
 				fixed (byte* pFrameData = frameData)
 				{
-					var pixelData = pFrameData;
+					byte* pixelData = pFrameData;
 					for (int p = 0; p < numValues; p++, pixelData++)
 					{
 						int pixel = (sbyte) (*pixelData);
@@ -1046,10 +979,10 @@ namespace ClearCanvas.Dicom
 			{
 				fixed (byte* pFrameData = frameData)
 				{
-					var pixelData = (ushort*)pFrameData;
+					ushort* pixelData = (ushort*) pFrameData;
 					for (int p = 0; p < numValues; p++, pixelData++)
 					{
-						int pixel = ((short)(*pixelData << signShift)) >> rightAlignShift;
+						int pixel = ((short) (*pixelData << signShift)) >> signShift;
 						*pixelData = (ushort) (pixel + rescale);
 					}
 				}
@@ -1058,7 +991,7 @@ namespace ClearCanvas.Dicom
 			{
 				fixed (byte* pFrameData = frameData)
 				{
-					var pixelData = (ushort*)pFrameData;
+					ushort* pixelData = (ushort*) pFrameData;
 					for (int p = 0; p < numValues; p++, pixelData++)
 					{
 						int pixel = (short) (*pixelData);
@@ -1067,260 +1000,6 @@ namespace ClearCanvas.Dicom
 				}
 			}
 		}
-
-		#endregion
-
-		#region Unused Bit Masking
-
-		/// <summary>
-		/// Masks
-		/// </summary>
-		/// <param name="pixelData"></param>
-		/// <param name="bitsAllocated"></param>
-		/// <param name="bitsStored"></param>
-		/// <param name="highBit"></param>
-		/// <returns></returns>
-		public static bool ZeroUnusedBits(byte[] pixelData, int bitsAllocated, int bitsStored, int highBit)
-		{
-			return ZeroUnusedBits(pixelData, bitsAllocated, bitsStored, highBit, ByteBuffer.LocalMachineEndian);
-		}
-
-		public static unsafe bool ZeroUnusedBits(byte[] pixelData, int bitsAllocated, int bitsStored, int highBit, Endian endian)
-	    {
-			if (bitsAllocated != 8 && bitsAllocated != 16)
-				throw new ArgumentException(String.Format("Invalid value for Bits Allocated ({0})", bitsAllocated));
-
-			if (bitsAllocated == 8)
-				return ZeroUnusedBits(pixelData, bitsStored, highBit);
-
-			fixed (byte* p = pixelData)
-				return ZeroUnusedBits((ushort*)p, bitsStored, highBit, pixelData.Length / 2, endian);
-		}
-
-		public static unsafe bool ZeroUnusedBits(byte[] pixelData, int bitsStored, int highBit)
-		{
-			fixed (byte* ptr = pixelData)
-				return ZeroUnusedBits(ptr, bitsStored, highBit, pixelData.Length);
-		}
-
-		public static bool ZeroUnusedBits(ushort[] pixelData, int bitsStored, int highBit)
-		{
-			return ZeroUnusedBits(pixelData, bitsStored, highBit, ByteBuffer.LocalMachineEndian);
-		}
-
-		public static unsafe bool ZeroUnusedBits(ushort[] pixelData, int bitsStored, int highBit, Endian endian)
-		{
-			fixed(ushort* ptr = pixelData)
-				return ZeroUnusedBits(ptr, bitsStored, highBit, pixelData.Length, endian);
-		}
-
-    	private static unsafe bool ZeroUnusedBits(byte* pixelData, int bitsStored, int highBit, int length)
-		{
-			const int bitsAllocated = 8;
-			if (bitsStored > bitsAllocated)
-				throw new ArgumentException(String.Format("Bits stored cannot be greater than bits allocated ({0} > {1}).", bitsStored, bitsAllocated));
-
-			const int highestBit = 7;
-			const int lowestBit = 0;
-			if (highBit > highestBit || highBit < lowestBit)
-				throw new ArgumentException(String.Format("Invalid high bit for 8-bit pixel data ({0}).", highBit));
-
-			const byte noOpMask = 0xFF;
-			int unusedHighBitsCount = highestBit - highBit;
-			int unusedLowBitsCount = GetLowBit(bitsStored, highBit);
-			int unusedBitsCount = unusedLowBitsCount + unusedHighBitsCount;
-			var mask = (byte)((noOpMask >> unusedBitsCount) << unusedLowBitsCount);
-
-			var anyChanged = false;
-			var p = pixelData;
-			for (int i = 0; i < length; ++i, ++p)
-			{
-				//Optimization: don't make unnecessary assignments.
-				var vOld = *p;
-				var vNew = vOld;
-				vNew &= mask;
-				if (vOld == vNew)
-					continue;
-
-				*p = vNew;
-				if (!anyChanged)
-					anyChanged = true;
-			}
-
-			// Since most pixel data is "good" and doesn't have anything in the extra bits,
-			// this will usually be false.  We return this value so the caller can avoid
-			// replacing a frame (for example) unnecessarily.
-			return anyChanged;
-		}
-
-		private static unsafe bool ZeroUnusedBits(ushort* pixelData, int bitsStored, int highBit, int length, Endian endian)
-		{
-			const int bitsAllocated = 16;
-			if (bitsStored > bitsAllocated)
-				throw new ArgumentException(String.Format("Bits stored cannot be greater than bits allocated ({0} > {1}).", bitsStored, bitsAllocated));
-
-			const int highestBit = 15;
-			const int lowestBit = 0;
-			if (highBit > highestBit || highBit < lowestBit)
-				throw new ArgumentException(String.Format("Invalid high bit for 16-bit pixel data ({0}).", highBit));
-
-			const ushort noOpMask = 0xFFFF;
-			int unusedHighBitsCount = highestBit - highBit;
-			int unusedLowBitsCount = GetLowBit(bitsStored, highBit);
-			int unusedBitsCount = unusedLowBitsCount + unusedHighBitsCount;
-			var mask = (ushort) ((noOpMask >> unusedBitsCount) << unusedLowBitsCount);
-
-			if (endian != ByteBuffer.LocalMachineEndian) //swap the mask rather than each value.
-				mask = unchecked((ushort)((mask << 8) | (mask >> 8)));
-
-			var anyChanged = false;
-			var p = pixelData;
-			for (int i = 0; i < length; ++i, ++p)
-			{
-				//Optimization: don't make unnecessary assignments.
-				var vOld = *p;
-				var vNew = vOld;
-				vNew &= mask;
-				if (vOld == vNew)
-					continue;
-				
-				*p = vNew;
-				if (!anyChanged)
-					anyChanged = true;
-			}
-
-			// Since most pixel data is "good" and doesn't have anything in the extra bits,
-			// this will usually be false.  We return this value so the caller can avoid
-			// replacing a frame (for example) unnecessarily.
-			return anyChanged;
-		}
-
-		#endregion
-
-		#region Right Align Pixel Data
-
-		public static bool RightAlign(byte[] pixelData, int bitsAllocated, int bitsStored, int highBit)
-		{
-			return RightAlign(pixelData, bitsAllocated, bitsStored, highBit, ByteBuffer.LocalMachineEndian);
-		}
-
-		public static unsafe bool RightAlign(byte[] pixelData, int bitsAllocated, int bitsStored, int highBit, Endian endian)
-		{
-			if (bitsAllocated != 8 && bitsAllocated != 16)
-				throw new ArgumentException(String.Format("Invalid value for Bits Allocated ({0})", bitsAllocated));
-
-			if (bitsAllocated == 8)
-				return RightAlign(pixelData, bitsStored, highBit);
-
-			fixed (byte* p = pixelData)
-				return RightAlign((ushort*)p, bitsStored, highBit, pixelData.Length / 2, endian);
-		}
-
-		public static unsafe bool RightAlign(byte[] pixelData, int bitsStored, int highBit)
-		{
-			fixed (byte* ptr = pixelData)
-				return RightAlign(ptr, bitsStored, highBit, pixelData.Length);
-		}
-
-		public static bool RightAlign(ushort[] pixelData, int bitsStored, int highBit)
-		{
-			return RightAlign(pixelData, bitsStored, highBit, ByteBuffer.LocalMachineEndian);
-		}
-
-		public static unsafe bool RightAlign(ushort[] pixelData, int bitsStored, int highBit, Endian endian)
-		{
-			fixed (ushort* ptr = pixelData)
-				return RightAlign(ptr, bitsStored, highBit, pixelData.Length, endian);
-		}
-
-    	private static unsafe bool RightAlign(byte* pixelData, int bitsStored, int highBit, int length)
-		{
-			const int highestBit = 7;
-			const int lowestBit = 0;
-			if (highBit > highestBit || highBit < lowestBit)
-				throw new ArgumentException(String.Format("Invalid high bit for 8-bit pixel data ({0}).", highBit));
-
-			int unusedLowBitsCount = GetLowBit(bitsStored, highBit);
-			if (unusedLowBitsCount == 0)
-				return false;
-
-			var anyChanged = false;
-			var p = pixelData;
-			for (int i = 0; i < length; ++i, ++p)
-			{
-				var value = *p;
-				if (value == 0) //Optimization - there are a lot of zeros in pixel data, so we skip the assignment.
-					continue;
-
-				value >>= unusedLowBitsCount;
-				*p = value;
-				if (!anyChanged)
-					anyChanged = true;
-			}
-
-			return anyChanged;
-		}
-
-		private static unsafe bool RightAlign(ushort* pixelData, int bitsStored, int highBit, int length, Endian endian)
-		{
-			const int highestBit = 15;
-			const int lowestBit = 0;
-			if (highBit > highestBit || highBit < lowestBit)
-				throw new ArgumentException(String.Format("Invalid high bit for 16-bit pixel data ({0}).", highBit));
-
-			int unusedLowBitsCount = GetLowBit(bitsStored, highBit);
-			if (unusedLowBitsCount == 0)
-				return false;
-
-			bool anyChanged = false;
-			if (endian != ByteBuffer.LocalMachineEndian)
-			{
-				var p = (byte*)pixelData;
-				var shiftBuffer = new byte[2];
-				fixed (byte* pShiftBuffer = shiftBuffer)
-				{
-					var pShiftedValue = (ushort*)pShiftBuffer;
-					for (int i = 0; i < length; ++i, p += 2)
-					{
-						//swap to machine representation before right-shifting.
-						shiftBuffer[0] = p[1];
-						shiftBuffer[1] = p[0];
-						var value = *pShiftedValue;
-						if (value == 0) //Optimization - there are a lot of zeros in pixel data, so we skip the assignment.
-							continue;
-
-						value >>= unusedLowBitsCount;
-						*pShiftedValue = value;
-						//assign shifted value back.
-						p[0] = shiftBuffer[1];
-						p[1] = shiftBuffer[0];
-						if (!anyChanged)
-							anyChanged = true;
-					}
-				}
-			}
-			else
-			{
-				var p = pixelData;
-				for (int i = 0; i < length; ++i, ++p)
-				{
-					var value = *p;
-					if (value == 0)
-						continue;
-
-					value >>= unusedLowBitsCount;
-					*p = value;
-					if (!anyChanged)
-						anyChanged = true;
-				}
-
-				return anyChanged;
-			}
-
-			return true;
-		}
-
-    	#endregion
 
 		/// <summary>
 		/// Convert Palette Color pixel data to RGB.
@@ -1417,11 +1096,9 @@ namespace ClearCanvas.Dicom
     				}
     			}
     		}
-		}
+    	}
 
-		#region Color Space Conversion
-
-		/// <summary>
+    	/// <summary>
 		/// Converts a YBR_FULL value to RGB.
 		/// </summary>
 		/// <returns>A 32-bit ARGB value.</returns>
@@ -1521,8 +1198,8 @@ namespace ClearCanvas.Dicom
 
 			return argb;
 		}
-		#endregion
-		#endregion
+
+    	#endregion
 
 		private static void Limit(ref int color)
 		{

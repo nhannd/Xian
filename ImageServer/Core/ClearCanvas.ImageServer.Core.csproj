@@ -114,7 +114,6 @@
     <Compile Include="ServerHelper.cs" />
     <Compile Include="SopInstanceImporter.cs" />
     <Compile Include="SopInstanceProcessor.cs" />
-    <Compile Include="StudyAlertGenerator.cs" />
     <Compile Include="StudyEditor.cs" />
     <Compile Include="UpdateStudyStatusCommand.cs" />
     <Compile Include="Validation\ValidationStudyInfo.cs" />

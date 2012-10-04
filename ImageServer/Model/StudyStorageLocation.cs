@@ -414,9 +414,11 @@ namespace ClearCanvas.ImageServer.Model
 
         /// <summary>
         /// Returns a value indicating whether this study can be updated.
-        /// It does not necessarily mean a work queue entry can be inserted. Other conditions may require (eg, . </summary>
+        /// </summary>
 		/// <param name="reason"></param>
         /// <returns></returns>
+        /// <remarks>A study can be updated does not necessarily mean a work queue entry
+        /// can be inserted. Other conditions may require.</remarks>
         public bool CanUpdate(out string reason)
         {
             reason = null;
@@ -558,7 +560,6 @@ namespace ClearCanvas.ImageServer.Model
 
 			return _studyXml;
 		}
-
 
         #endregion
 

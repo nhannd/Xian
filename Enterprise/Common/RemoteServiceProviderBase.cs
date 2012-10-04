@@ -105,11 +105,6 @@ namespace ClearCanvas.Enterprise.Common
 		public string FailoverBaseUrl { get; set; }
 
 		/// <summary>
-		/// Minimum time that must elapse before attempting to contact a previously unreachable endpoint.
-		/// </summary>
-		public TimeSpan FailedEndpointBlackoutTime { get; set; }
-
-		/// <summary>
 		/// Configuration that is responsible for configuring the service binding/endpoint.
 		/// </summary>
 		public IServiceChannelConfiguration Configuration { get; set; }
@@ -183,15 +178,7 @@ namespace ClearCanvas.Enterprise.Common
 					// do not proceed along the interceptor chain
 					if(channel != null)
 					{
-						switch (channel.State)
-						{
-							case CommunicationState.Opened:
-								channel.Close();
-								break;
-							case CommunicationState.Faulted:
-								channel.Abort();
-								break;
-						}
+						channel.Close();
 						channel.Dispose();
 					}
 				}
@@ -234,31 +221,25 @@ namespace ClearCanvas.Enterprise.Common
 		private readonly IChannelProvider _channelProvider;
 		private readonly IUserCredentialsProvider _userCredentialsProvider;
 
-		private readonly ResponseCachingClientSideAdvice _responseCachingAdvice;
-		private readonly FailedEndpointThrottleClientAdvice _failedEndpointThrottleAdvice;
-		private readonly FailoverClientAdvice _failoverAdvice;
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="args"></param>
 		protected RemoteServiceProviderBase(RemoteServiceProviderArgs args)
-			: this(new StaticChannelProvider(args), args.UserCredentialsProvider, args.FailedEndpointBlackoutTime)
+			: this(new StaticChannelProvider(args), args.UserCredentialsProvider)
 		{
 		}
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		protected RemoteServiceProviderBase(IChannelProvider channelProvider, IUserCredentialsProvider userCredentialsProvider, TimeSpan failedEndpointBlackoutTime)
+		/// <param name="channelProvider"></param>
+		/// <param name="userCredentialsProvider"></param>
+		protected RemoteServiceProviderBase(IChannelProvider channelProvider, IUserCredentialsProvider userCredentialsProvider)
 		{
 			_channelProvider = channelProvider;
 			_userCredentialsProvider = userCredentialsProvider;
 			_proxyGenerator = new ProxyGenerator();
-
-			_responseCachingAdvice = new ResponseCachingClientSideAdvice();
-			_failedEndpointThrottleAdvice = new FailedEndpointThrottleClientAdvice(failedEndpointBlackoutTime);
-			_failoverAdvice = new FailoverClientAdvice(this);
 		}
 
 		#region IServiceProvider
@@ -311,14 +292,12 @@ namespace ClearCanvas.Enterprise.Common
 			if (Caching.Cache.IsSupported() && IsResponseCachingEnabled(serviceType))
 			{
 				// add response-caching client-side advice
-				interceptors.Add(_responseCachingAdvice);
+				interceptors.Add(new ResponseCachingClientSideAdvice());
 			}
-
-			interceptors.Add(_failedEndpointThrottleAdvice);
 
 			// add fail-over advice at the end of the list, closest the target call
 			//TODO: can we avoid adding this advice if no failover is defined?
-			interceptors.Add(_failoverAdvice);
+			interceptors.Add(new FailoverClientAdvice(this));
 		}
 
 		/// <summary>
@@ -369,13 +348,12 @@ namespace ClearCanvas.Enterprise.Common
 				// note: _proxyGenerator does internal caching based on service contract
 				// so subsequent calls based on the same contract will be fast
 				// note: important to proxy IDisposable too, otherwise channels can't get disposed!!!
-				var aopChain = new AopInterceptorChain(interceptors);
 				return _proxyGenerator.CreateInterfaceProxyWithTarget(
 					serviceContract,
 					new[] { serviceContract, typeof(IDisposable) },
 					channel,
 					options,
-					aopChain);
+					interceptors.ToArray());
 			}
 		}
 

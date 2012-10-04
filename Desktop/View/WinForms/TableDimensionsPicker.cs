@@ -571,7 +571,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		public override Font Font
 		{
 			get { return base.Font; }
-			set { }
+			set { throw new NotSupportedException("This property is not relevant for this control."); }
 		}
 
 		/// <summary>
@@ -579,11 +579,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		[Localizable(true)]
 		public override RightToLeft RightToLeft
 		{
 			get { return base.RightToLeft; }
-			set { }
+			set { throw new NotSupportedException("This property is not relevant for this control."); }
 		}
 
 		/// <summary>
@@ -594,7 +593,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		public override string Text
 		{
 			get { return string.Empty; }
-			set { }
+			set { throw new NotSupportedException("This property is not relevant for this control."); }
 		}
 
 		/// <summary>

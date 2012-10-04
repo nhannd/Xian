@@ -19,7 +19,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Shreds;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming;
 using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers;

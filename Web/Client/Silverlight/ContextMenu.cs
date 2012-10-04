@@ -236,8 +236,6 @@ namespace ClearCanvas.Web.Client.Silverlight
             if (!HasItems || IsOpen)
                 return;
 
-            this.IsTabStop = true;    
-            
             Popup.Content = this;
             UpdateLayout();
 
@@ -246,8 +244,6 @@ namespace ClearCanvas.Web.Client.Silverlight
                 strategy.BeforeOpenPopup(this, Popup);
 
             Popup.IsOpen = true;
-            this.Focus();
-
             ItemCoordinator.OnMenuVisibilityChanged();
             
             UpdateLayout();

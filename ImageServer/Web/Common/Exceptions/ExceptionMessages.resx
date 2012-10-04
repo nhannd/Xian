@@ -150,9 +150,6 @@
   <data name="StudyNotFoundDescription" xml:space="preserve">
     <value>This message is being displayed because the ImageServer can't find the study that has been requested. This usually occurs because the Study Instance UID is invalid and not contained within the ImageServer.</value>
   </data>
-  <data name="UserGroupCannotBeDeleted_UserExists" xml:space="preserve">
-    <value>Cannot delete user group '{0}' because there are users who are a part of this group.</value>
-  </data>
   <data name="WorkQueueItemNotFound" xml:space="preserve">
     <value>The ImageServer can't find the work queue item requested.</value>
   </data>

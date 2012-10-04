@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="helpproject.xsl" ?>
+<topic template="Default" lasteditedby="Jonathan" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="helpproject.xsd">
+  <title translate="true">Technology</title>
+  <body>
+    <header>
+      <para styleclass="Heading1"><text styleclass="Heading1" translate="true">Technology</text></para>
+    </header>
+    <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><table rowcount="2" colcount="2" style="width:100%; cell-padding:0px; cell-spacing:0px; page-break-inside:auto; border-width:0px; border-spacing:0px; cell-border-width:0px; border-style:none; background-color:none; head-row-background-color:none; alt-row-background-color:none;">
+      <tr style="vertical-align:top">
+        <td style="vertical-align:bottom;">
+          <para><anchor id="idnav" styleclass="Normal text" style="font-family:Arial; font-size:10pt; font-weight:normal; font-style:normal; text-decoration:none; text-transform:none; vertical-align:baseline; color:#000000; background-color:transparent; letter-spacing:normal; letter-scaling:100%;"></anchor><text styleclass="Normal" style="font-size:8pt; font-weight:bold; text-decoration:none; vertical-align:baseline;" translate="true">Navigation:</text><text styleclass="crumbs" style="font-family:Arial; font-size:8pt; font-weight:normal; font-style:normal; text-decoration:none; text-transform:none; vertical-align:baseline; color:#000000; background-color:transparent; letter-spacing:normal; letter-scaling:100%;" translate="true"> &#160;Introduction &gt;</text></para>
+          <para styleclass="p_heading1" style="text-align:left; text-indent:0px; margin-top:3px; margin-right:0px; margin-bottom:0px; margin-left:0px; line-height:1.0; background-color:transparent; white-space:normal; page-break-inside:auto; page-break-after:auto; border:none; tabstops:none;"><text styleclass="f_heading1" style="font-family:Arial; font-size:16pt; font-weight:bold; font-style:normal; text-decoration:none; text-transform:none; vertical-align:baseline; color:#ffffff; background-color:transparent; letter-spacing:normal; letter-scaling:100%;" translate="true">Technology</text></para>
+        </td>
+        <td style="vertical-align:middle; width:120px;">
+          <para style="text-align:right;"><link displaytype="image" src="btn_prev_n.gif" type="topiclink" href="System_requirements"></link><link displaytype="image" src="btn_home_n.gif" type="topiclink" href="Welcome"></link><link displaytype="image" src="btn_next_n.gif" type="topiclink" href="Architecture"></link></para>
+        </td>
+      </tr>
+      <tr style="vertical-align:top">
+        <td>
+        </td>
+        <td>
+        </td>
+      </tr>
+    </table></para>
+    <para styleclass="Normal" style="margin-left:10px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-size:11pt; text-decoration:none; vertical-align:baseline;" translate="true">The Web Viewer essentially has two main components: a Silverlight app/control (hereafter, the &quot;client&quot;) hosted in a web page, and a separate service application with which the client communicates. &#160;Simply put, for each user session, the application service (hereafter, the &quot;server&quot;) creates an instance of a &quot;viewer&quot;, in much the same way </text><text styleclass="Normal" style="font-size:11pt; font-weight:bold; text-decoration:none; vertical-align:baseline;" translate="true">ClearCanvas Workstation</text><text styleclass="Normal" style="font-size:11pt; text-decoration:none; vertical-align:baseline;" translate="true"> does when the user loads an imaging study, but there are no UI components on the server; those all exist in the client. &#160;The server contains all the logic (and images) and the user interacts with the UI on the client, which triggers changes on the server, which in turn causes updates in the client UI, and so on. &#160;The client display, and the state of the &quot;viewer&quot; on the server are always in sync.</text></para>
+    <para styleclass="Normal" style="margin-top:10px; margin-left:10px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-size:11pt; text-decoration:none; vertical-align:baseline;" translate="true">Those familiar with software development will recognize this as a common design pattern called Presentation Model. &#160;Other similar design patterns are Model-View-Controller, Model-View-Presenter and Passive View. &#160;The main takeaway of these patterns is that the UI components and the logical model they represent, are completely separated. &#160;But, in this case, they are on separate machines!</text></para>
+    <para styleclass="Normal" style="margin-top:10px; margin-left:10px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-size:11pt; text-decoration:none; vertical-align:baseline;" translate="true">&#32;</text></para>
+    <para styleclass="Normal" style="margin-top:10px; margin-left:82px; line-height:1.0; tabstops:none;"><image src="webviewertechnology.png" scale="100.00%" styleclass="Image Caption"></image></para>
+    <para styleclass="Normal" style="margin-top:10px; margin-bottom:10px; margin-left:10px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-size:11pt; font-weight:bold; text-decoration:none; vertical-align:baseline;" translate="true">Deployment note</text><text styleclass="Normal" style="font-size:11pt; text-decoration:none; vertical-align:baseline;" translate="true">: because the application service is a separate process that cannot be hosted in IIS, the Web Viewer requires usage of 2 separate ports if the application service resides on the same machine as IIS. &#160;If the server running IIS is a separate machine, then you can use the same port. &#160;The above diagram shows the most ideal deployment scenario.</text></para>
+  </body>
+</topic>

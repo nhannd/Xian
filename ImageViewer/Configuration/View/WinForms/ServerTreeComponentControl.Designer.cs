@@ -79,28 +79,38 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			// 
 			// _titleBar
 			// 
-			resources.ApplyResources(this._titleBar, "_titleBar");
+			this._titleBar.Dock = System.Windows.Forms.DockStyle.Top;
+			this._titleBar.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
+			this._titleBar.Location = new System.Drawing.Point(0, 0);
 			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._titleBar.Name = "_titleBar";
+			this._titleBar.Size = new System.Drawing.Size(300, 30);
 			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
+			this._titleBar.TabIndex = 2;
+			this._titleBar.Text = "Servers";
 			// 
 			// _aeTreeView
 			// 
 			this._aeTreeView.AllowDrop = true;
 			this._aeTreeView.ContextMenuStrip = this._contextMenu;
-			resources.ApplyResources(this._aeTreeView, "_aeTreeView");
+			this._aeTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._aeTreeView.HideSelection = false;
+			this._aeTreeView.ImageIndex = 0;
 			this._aeTreeView.ImageList = this._imageList;
+			this._aeTreeView.Location = new System.Drawing.Point(0, 55);
 			this._aeTreeView.Name = "_aeTreeView";
+			this._aeTreeView.SelectedImageIndex = 1;
+			this._aeTreeView.Size = new System.Drawing.Size(300, 247);
 			this._aeTreeView.StateImageList = this._stateImageList;
+			this._aeTreeView.TabIndex = 3;
 			this._aeTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeViewNodeMouseDoubleClick);
 			// 
 			// _contextMenu
 			// 
 			this._contextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._contextMenu.Name = "_contextMenu";
-			resources.ApplyResources(this._contextMenu, "_contextMenu");
+			this._contextMenu.Size = new System.Drawing.Size(61, 4);
 			// 
 			// _imageList
 			// 
@@ -122,18 +132,22 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			// 
 			this._serverTools.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this._serverTools.ImageScalingSize = new System.Drawing.Size(24, 24);
-			resources.ApplyResources(this._serverTools, "_serverTools");
+			this._serverTools.Location = new System.Drawing.Point(0, 30);
 			this._serverTools.Name = "_serverTools";
+			this._serverTools.Size = new System.Drawing.Size(300, 25);
+			this._serverTools.TabIndex = 4;
+			this._serverTools.Text = "toolStrip2";
 			// 
 			// ServerTreeComponentControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.Controls.Add(this._aeTreeView);
 			this.Controls.Add(this._serverTools);
 			this.Controls.Add(this._titleBar);
 			this.Name = "ServerTreeComponentControl";
+			this.Size = new System.Drawing.Size(300, 302);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

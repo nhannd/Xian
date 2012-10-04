@@ -1,0 +1,5 @@
+drop procedure owls_BuildModalityWorklistView
+drop procedure owls_BuildProcedureSearchView
+drop procedure owls_BuildProtocolWorklistView
+drop procedure owls_BuildRegistrationWorklistView
+drop procedure owls_BuildReportingWorklistView

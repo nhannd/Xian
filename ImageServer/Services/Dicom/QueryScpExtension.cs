@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
         	IList<Series> list = select.Find(parms);
 
-            string value = string.Empty;
+            string value = "";
             foreach (Series series in list)
             {
                 value = value.Length == 0 
@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
 			RequestAttributesSelectCriteria criteria = new RequestAttributesSelectCriteria();
 
-            criteria.SeriesKey.EqualTo(row.Key);
+            criteria.SeriesKey.EqualTo(row.GetKey());
 
             IList<RequestAttributes> list = select.Find(criteria);
 
@@ -193,7 +193,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="response">The response message to populate with results.</param>
         /// <param name="tagList">The list of tags to populate.</param>
         /// <param name="row">The <see cref="Patient"/> table to populate from.</param>
-        private void PopulatePatient(DicomMessageBase response, IEnumerable<DicomTag> tagList, Patient row)
+        private void PopulatePatient(DicomMessageBase response, IEnumerable<uint> tagList, Patient row)
         {
             DicomAttributeCollection dataSet = response.DataSet;
 
@@ -211,11 +211,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 			if (relatedStudies.Count > 0)
 				study = CollectionUtils.FirstElement(relatedStudies);
 
-            foreach (DicomTag tag in tagList)
+            foreach (uint tag in tagList)
             {
                 try
                 {
-                    switch (tag.TagValue)
+                    switch (tag)
                     {
                         case DicomTags.PatientsName:
                             dataSet[DicomTags.PatientsName].SetStringValue(row.PatientsName);
@@ -242,7 +242,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						case DicomTags.PatientsSex:
 							if (study == null)
 								dataSet[DicomTags.PatientsSex].SetNullValue();
-							else
+							else 
 								dataSet[DicomTags.PatientsSex].SetStringValue(study.PatientsSex);
                     		break;
 						case DicomTags.PatientsBirthDate:
@@ -253,8 +253,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 							break;
 
                         default:
-                            if (!tag.IsPrivate)
-                                dataSet[tag].SetNullValue();
+                            dataSet[tag].SetNullValue();
                             break;
 
 						// Meta tags that should have not been in the RQ, but we've already set
@@ -268,8 +267,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 {
                     Platform.Log(LogLevel.Warn, e, "Unexpected error setting tag {0} in C-FIND-RSP",
                                  dataSet[tag].Tag.ToString());
-                    if (!tag.IsPrivate)
-                        dataSet[tag].SetNullValue();
+                    dataSet[tag].SetNullValue();
                 }
             }
         }
@@ -282,7 +280,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="tagList"></param>
 	    /// <param name="row">The <see cref="Study"/> table to populate the response from.</param>
 	    /// <param name="availability">Instance availability string.</param>
-        private void PopulateStudy(IPersistenceContext read, DicomMessageBase response, IEnumerable<DicomTag> tagList, Study row, string availability)
+        private void PopulateStudy(IPersistenceContext read, DicomMessageBase response, IEnumerable<uint> tagList, Study row, string availability)
         {
             DicomAttributeCollection dataSet = response.DataSet;
 
@@ -295,11 +293,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 dataSet[DicomTags.SpecificCharacterSet].SetStringValue(row.SpecificCharacterSet);
                 dataSet.SpecificCharacterSet = row.SpecificCharacterSet; // this will ensure the data is encoded using the specified character set
             }
-            foreach (DicomTag tag in tagList)
+            foreach (uint tag in tagList)
             {
                 try
                 {
-                    switch (tag.TagValue)
+                    switch (tag)
                     {
                         case DicomTags.StudyInstanceUid:
                             dataSet[DicomTags.StudyInstanceUid].SetStringValue(row.StudyInstanceUid);
@@ -351,8 +349,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                             dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("STUDY");
                             break;
                         default:
-                            if (!tag.IsPrivate)
-                                dataSet[tag].SetNullValue();
+                            dataSet[tag].SetNullValue();
                             break;
 
 						// Meta tags that should have not been in the RQ, but we've already set
@@ -366,8 +363,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 {
                     Platform.Log(LogLevel.Warn, e, "Unexpected error setting tag {0} in C-FIND-RSP",
                                  dataSet[tag].Tag.ToString());
-                    if (!tag.IsPrivate)
-                        dataSet[tag].SetNullValue();
+                    dataSet[tag].SetNullValue();
                 }
             }
         }
@@ -380,7 +376,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="response"></param>
         /// <param name="tagList"></param>
         /// <param name="row">The <see cref="Series"/> table to populate the row from.</param>
-        private void PopulateSeries(IPersistenceContext read, DicomMessageBase request, DicomMessageBase response, IEnumerable<DicomTag> tagList,
+        private void PopulateSeries(IPersistenceContext read, DicomMessageBase request, DicomMessageBase response, IEnumerable<uint> tagList,
                                     Series row)
         {
             DicomAttributeCollection dataSet = response.DataSet;
@@ -399,11 +395,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				dataSet.SpecificCharacterSet = theStudy.SpecificCharacterSet; // this will ensure the data is encoded using the specified character set
 			}
 
-            foreach (DicomTag tag in tagList)
+            foreach (uint tag in tagList)
             {
                 try
                 {
-                    switch (tag.TagValue)
+                    switch (tag)
                     {
                         case DicomTags.PatientId:
                             dataSet[DicomTags.PatientId].SetStringValue(request.DataSet[DicomTags.PatientId].ToString());
@@ -442,8 +438,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                             dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("SERIES");
                             break;
                         default:
-                            if (!tag.IsPrivate)
-                                dataSet[tag].SetNullValue();
+                            dataSet[tag].SetNullValue();
                             break;
 						// Meta tags that should have not been in the RQ, but we've already set
 						case DicomTags.RetrieveAeTitle:
@@ -456,8 +451,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 {
                     Platform.Log(LogLevel.Warn, e, "Unexpected error setting tag {0} in C-FIND-RSP",
                                  dataSet[tag].Tag.ToString());
-                    if (!tag.IsPrivate)
-                        dataSet[tag].SetNullValue();
+                    dataSet[tag].SetNullValue();
                 }
             }
         }
@@ -469,7 +463,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="response"></param>
         /// <param name="tagList"></param>
         /// <param name="theInstanceStream"></param>
-        private void PopulateInstance(DicomMessageBase request, DicomMessageBase response, IEnumerable<DicomTag> tagList,
+        private void PopulateInstance(DicomMessage request, DicomMessage response, List<uint> tagList,
                                       InstanceXml theInstanceStream)
         {
             DicomAttributeCollection dataSet = response.DataSet;
@@ -485,11 +479,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				dataSet.SpecificCharacterSet = sourceDataSet[DicomTags.SpecificCharacterSet].ToString(); // this will ensure the data is encoded using the specified character set
 			}
 
-            foreach (DicomTag tag in tagList)
+            foreach (uint tag in tagList)
             {
                 try
                 {
-                    switch (tag.TagValue)
+                    switch (tag)
                     {
                         case DicomTags.PatientId:
                             dataSet[DicomTags.PatientId].SetStringValue(request.DataSet[DicomTags.PatientId].ToString());
@@ -508,7 +502,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         default:
                             if (sourceDataSet.Contains(tag))
                                 dataSet[tag] = sourceDataSet[tag].Copy();
-                            else if (!tag.IsPrivate)                           
+                            else
                                 dataSet[tag].SetNullValue();
                             break;
 						// Meta tags that should have not been in the RQ, but we've already set
@@ -522,8 +516,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 {
                     Platform.Log(LogLevel.Warn, e, "Unexpected error setting tag {0} in C-FIND-RSP",
                                  dataSet[tag].Tag.ToString());
-                    if (!tag.IsPrivate)
-                        dataSet[tag].SetNullValue();
+                    dataSet[tag].SetNullValue();
                 }
             }
         }
@@ -630,7 +623,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns></returns>
         private void OnReceivePatientQuery(DicomServer server, byte presentationId, DicomMessage message)
         {
-            List<DicomTag> tagList = new List<DicomTag>();
+            List<uint> tagList = new List<uint>();
 
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
@@ -644,7 +637,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             	bool studySubSelect = false;
                 foreach (DicomAttribute attrib in message.DataSet)
                 {
-                    tagList.Add(attrib.Tag);
+                    tagList.Add(attrib.Tag.TagValue);
                     if (!attrib.IsNull)
                         switch (attrib.Tag.TagValue)
                         {
@@ -758,7 +751,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns></returns>
         private void OnReceiveStudyLevelQuery(DicomServer server, byte presentationId, DicomMessage message)
         {
-            List<DicomTag> tagList = new List<DicomTag>();
+            List<uint> tagList = new List<uint>();
 
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
@@ -770,7 +763,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 DicomAttributeCollection data = message.DataSet;
                 foreach (DicomAttribute attrib in message.DataSet)
                 {
-                    tagList.Add(attrib.Tag);
+                    tagList.Add(attrib.Tag.TagValue);
                     if (!attrib.IsNull)
                         switch (attrib.Tag.TagValue)
                         {
@@ -943,7 +936,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             //Read context for the query.
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                List<DicomTag> tagList = new List<DicomTag>();
+                List<uint> tagList = new List<uint>();
 
                 ISeriesEntityBroker selectSeries = read.GetBroker<ISeriesEntityBroker>();
 
@@ -953,7 +946,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 DicomAttributeCollection data = message.DataSet;
                 foreach (DicomAttribute attrib in message.DataSet)
                 {
-                    tagList.Add(attrib.Tag);
+                    tagList.Add(attrib.Tag.TagValue);
                     if (!attrib.IsNull)
                         switch (attrib.Tag.TagValue)
                         {
@@ -1117,7 +1110,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns></returns>
         private void OnReceiveImageLevelQuery(DicomServer server, byte presentationId, DicomMessage message)
         {
-            List<DicomTag> tagList = new List<DicomTag>();
+            List<uint> tagList = new List<uint>();
             List<uint> matchingTagList = new List<uint>();
 
             DicomAttributeCollection data = message.DataSet;
@@ -1146,87 +1139,69 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             	return;
             }
-            try
-            {
-                // Will always return a value, although it may be an empty StudyXml file
-                StudyXml studyXml = LoadStudyXml(location);
 
-                SeriesXml seriesXml = studyXml[seriesInstanceUid];
-                if (seriesXml == null)
-                {
-                    DicomMessage failureResponse = new DicomMessage();
-                    failureResponse.DataSet[DicomTags.QueryRetrieveLevel].SetStringValue("IMAGE");
-                    server.SendCFindResponse(presentationId, message.MessageId, failureResponse,
-                                             DicomStatuses.QueryRetrieveUnableToProcess);
-                    AuditLog(server.AssociationParams,
-                             EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, message);
-                    return;
-                }
+			// Will always return a value, although it may be an empty StudyXml file
+            StudyXml studyXml = LoadStudyXml(location);
 
-                foreach (DicomAttribute attrib in message.DataSet)
-                {
-                    tagList.Add(attrib.Tag);
-                    if (!attrib.IsNull)
-                        matchingTagList.Add(attrib.Tag.TagValue);
-                }
-
-                int resultCount = 0;
-
-                foreach (InstanceXml theInstanceStream in seriesXml)
-                {
-                    if (CompareInstanceMatch(message, matchingTagList, theInstanceStream))
-                    {
-                        if (CancelReceived)
-                        {
-                            DicomMessage failureResponse = new DicomMessage();
-                            failureResponse.DataSet[DicomTags.QueryRetrieveLevel].SetStringValue("IMAGE");
-                            server.SendCFindResponse(presentationId, message.MessageId, failureResponse,
-                                                     DicomStatuses.Cancel);
-
-                            AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success,
-                                     message);
-                            return;
-                        }
-                        resultCount++;
-                        if (DicomSettings.Default.MaxQueryResponses != -1
-                            && DicomSettings.Default.MaxQueryResponses < resultCount)
-                        {
-                            SendBufferedResponses(server, presentationId, message);
-                            Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: " + resultCount);
-                            break;
-                        }
-
-                        DicomMessage response = new DicomMessage();
-                        PopulateInstance(message, response, tagList, theInstanceStream);
-                        _responseQueue.Enqueue(response);
-
-                        if (_responseQueue.Count >= DicomSettings.Default.BufferedQueryResponses)
-                            SendBufferedResponses(server, presentationId, message);
-                    }
-                }
-
-                SendBufferedResponses(server, presentationId, message);
-
-                DicomMessage finalResponse = new DicomMessage();
-                server.SendCFindResponse(presentationId, message.MessageId, finalResponse, DicomStatuses.Success);
-
-                AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e, "Unexepected exception processing IMAGE level query for study {0}: {1}", studyInstanceUid, e.Message);
+            SeriesXml seriesXml = studyXml[seriesInstanceUid];
+			if (seriesXml == null)
+			{
                 DicomMessage failureResponse = new DicomMessage();
-                failureResponse.DataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
                 failureResponse.DataSet[DicomTags.QueryRetrieveLevel].SetStringValue("IMAGE");
-                failureResponse.DataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
-                failureResponse.DataSet[DicomTags.StudyInstanceUid].SetStringValue(studyInstanceUid);
-                failureResponse.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(seriesInstanceUid);
-                server.SendCFindResponse(presentationId, message.MessageId, failureResponse,
-                                         DicomStatuses.QueryRetrieveUnableToProcess);
+                server.SendCFindResponse(presentationId, message.MessageId, failureResponse, DicomStatuses.QueryRetrieveUnableToProcess);
+				AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, message);
+				return;
+			}
 
-                AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, message);
+            foreach (DicomAttribute attrib in message.DataSet)
+            {
+	            tagList.Add(attrib.Tag.TagValue);
+                if (!attrib.IsNull)
+                    matchingTagList.Add(attrib.Tag.TagValue);
             }
-            return;
+
+        	int resultCount = 0;
+
+            foreach (InstanceXml theInstanceStream in seriesXml)
+            {
+                if (CompareInstanceMatch(message, matchingTagList, theInstanceStream))
+                {
+					if (CancelReceived)
+					{
+                        DicomMessage failureResponse = new DicomMessage();
+                        failureResponse.DataSet[DicomTags.QueryRetrieveLevel].SetStringValue("IMAGE");
+                        server.SendCFindResponse(presentationId, message.MessageId, failureResponse,
+												 DicomStatuses.Cancel);
+
+						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
+						return;
+					}
+                	resultCount++;
+                	if (DicomSettings.Default.MaxQueryResponses != -1
+                	    && DicomSettings.Default.MaxQueryResponses < resultCount)
+                	{
+                		SendBufferedResponses(server, presentationId, message);
+                		Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: " + resultCount);
+                		break;
+                	}
+
+                	DicomMessage response = new DicomMessage();
+                	PopulateInstance(message, response, tagList, theInstanceStream);
+                	_responseQueue.Enqueue(response);
+
+                	if (_responseQueue.Count >= DicomSettings.Default.BufferedQueryResponses)
+                		SendBufferedResponses(server, presentationId, message);
+                }
+            }
+
+			SendBufferedResponses(server, presentationId, message);
+
+            DicomMessage finalResponse = new DicomMessage();
+            server.SendCFindResponse(presentationId, message.MessageId, finalResponse, DicomStatuses.Success);
+
+			AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success, message);
+
+        	return;
         }
 
         #endregion
@@ -1266,14 +1241,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					// the .NET Thread pool fills up.
                 	ThreadPool.QueueUserWorkItem(delegate
 													{
-													    try
-													    {
-                                                            OnReceiveStudyLevelQuery(server, presentationId, message);
-													    }
-													    catch (Exception x)
-													    {
-                                                            Platform.Log(LogLevel.Error, x, "Unexpected exception in OnReceiveStudyLevelQuery.");
-													    }
+														OnReceiveStudyLevelQuery(server, presentationId, message);
 													});
                 	return true;
                 }
@@ -1281,32 +1249,16 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             	{
             		ThreadPool.QueueUserWorkItem(delegate
             		                             	{
-                                                        try
-                                                        {
-                                                            OnReceiveSeriesLevelQuery(server, presentationId, message);
-                                                        }
-                                                        catch (Exception x)
-                                                        {
-                                                            Platform.Log(LogLevel.Error, x,
-                                                                         "Unexpected exception in OnReceiveSeriesLevelQuery.");
-                                                        }
+            		                             		OnReceiveSeriesLevelQuery(server, presentationId, message);
             		                             	});
             		return true;
             	}
             	if (level.Equals("IMAGE"))
             	{
-            	    ThreadPool.QueueUserWorkItem(delegate
-            	                                     {
-            	                                         try
-            	                                         {
-            	                                             OnReceiveImageLevelQuery(server, presentationId, message);
-            	                                         }
-            	                                         catch (Exception x)
-            	                                         {
-            	                                             Platform.Log(LogLevel.Error, x,
-            	                                                          "Unexpected exception in OnReceiveImageLevelQuery.");
-            	                                         }
-            	                                     });
+            		ThreadPool.QueueUserWorkItem(delegate
+            		                             	{
+            		                             		OnReceiveImageLevelQuery(server, presentationId, message);
+            		                             	});
             		return true;
             	}
             	Platform.Log(LogLevel.Error, "Unexpected Study Root Query/Retrieve level: {0}", level);
@@ -1319,67 +1271,35 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         	{
         		if (level.Equals("PATIENT"))
         		{
-        		    ThreadPool.QueueUserWorkItem(delegate
-        		                                     {
-        		                                         try
-        		                                         {
-        		                                             OnReceivePatientQuery(server, presentationId, message);
-        		                                         }
-        		                                         catch (Exception x)
-        		                                         {
-        		                                             Platform.Log(LogLevel.Error, x,
-        		                                                          "Unexpected exception in OnReceivePatientQuery.");
-        		                                         }
-        		                                     });
+        			ThreadPool.QueueUserWorkItem(delegate
+        			                             	{
+        			                             		OnReceivePatientQuery(server, presentationId, message);
+        			                             	});
 
         			return true;
         		}
         		if (level.Equals("STUDY"))
         		{
-        		    ThreadPool.QueueUserWorkItem(delegate
-        		                                     {
-        		                                         try
-        		                                         {
-        		                                             OnReceiveStudyLevelQuery(server, presentationId, message);
-        		                                         }
-        		                                         catch (Exception x)
-        		                                         {
-        		                                             Platform.Log(LogLevel.Error, x,
-        		                                                          "Unexpected exception in OnReceiveStudyLevelQuery.");
-        		                                         }
-        		                                     });
+        			ThreadPool.QueueUserWorkItem(delegate
+        			                             	{
+        			                             		OnReceiveStudyLevelQuery(server, presentationId, message);
+        			                             	});
         			return true;
         		}
         		if (level.Equals("SERIES"))
         		{
-        		    ThreadPool.QueueUserWorkItem(delegate
-        		                                     {
-        		                                         try
-        		                                         {
-        		                                             OnReceiveSeriesLevelQuery(server, presentationId, message);
-        		                                         }
-        		                                         catch (Exception x)
-        		                                         {
-        		                                             Platform.Log(LogLevel.Error, x,
-        		                                                          "Unexpected exception in OnReceiveSeriesLevelQuery.");
-        		                                         }
-        		                                     });
+        			ThreadPool.QueueUserWorkItem(delegate
+        			                             	{
+        			                             		OnReceiveSeriesLevelQuery(server, presentationId, message);
+        			                             	});
         			return true;
         		}
         		if (level.Equals("IMAGE"))
         		{
-        		    ThreadPool.QueueUserWorkItem(delegate
-        		                                     {
-        		                                         try
-        		                                         {
-        		                                             OnReceiveImageLevelQuery(server, presentationId, message);
-        		                                         }
-        		                                         catch (Exception x)
-        		                                         {
-        		                                             Platform.Log(LogLevel.Error, x,
-        		                                                          "Unexpected exception in OnReceiveImageLevelQuery.");
-        		                                         }
-        		                                     });
+        			ThreadPool.QueueUserWorkItem(delegate
+        			                             	{
+        			                             		OnReceiveImageLevelQuery(server, presentationId, message);
+        			                             	});
         			return true;
         		}
         		Platform.Log(LogLevel.Error, "Unexpected Patient Root Query/Retrieve level: {0}", level);

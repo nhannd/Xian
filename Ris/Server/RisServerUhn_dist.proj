@@ -1,0 +1,173 @@
+<Project DefaultTargets="CopyServerFiles;AppConfigs;ShredHostAppConfigs" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.FileReplaceText" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineAppConfigs" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.RegexIsMatch" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
+
+  <!-- RisClient specific postbuild step -->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+  </PropertyGroup>
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Oto.Executable'">
+    <RisServerBuild>false</RisServerBuild>
+    <OtoBuild>true</OtoBuild>
+    <ShredHostBuild>false</ShredHostBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Ris.Server.Executable'">
+    <RisServerBuild>true</RisServerBuild>
+    <OtoBuild>false</OtoBuild>
+    <ShredHostBuild>false</ShredHostBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Server.ShredHostService'">
+    <RisServerBuild>false</RisServerBuild>
+    <OtoBuild>false</OtoBuild>
+    <ShredHostBuild>true</ShredHostBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
+    <OtoScriptDirectory>$(DistributionDirectory)\oto\scripts</OtoScriptDirectory>
+    <JscriptDirectory>$(SolutionDir)..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
+    <SetupDirectory>$(SolutionDir)setup</SetupDirectory>
+    <EnterpriseDirectory>$(SolutionDir)..\..\Enterprise</EnterpriseDirectory>
+    <WorkflowDirectory>$(SolutionDir)..\..\Workflow</WorkflowDirectory>
+    <HealthcareDirectory>$(SolutionDir)..\..\Healthcare</HealthcareDirectory>
+    <HL7Directory>$(SolutionDir)..\..\HL7</HL7Directory>
+    <ReferencedAssembliesDirectory>$(SolutionDir)..\..\ReferencedAssemblies</ReferencedAssembliesDirectory>
+    <RisApplicationDirectory>$(SolutionDir)..\Application</RisApplicationDirectory>
+    <UhnModelDirectory>$(SolutionDir)..\..\Healthcare\Uhn</UhnModelDirectory>
+    <UhnApplicationDirectory>$(SolutionDir)..\Application\Uhn</UhnApplicationDirectory>
+    <FaxModelDirectory>$(SolutionDir)..\..\Healthcare\Fax</FaxModelDirectory>
+    <FaxApplicationDirectory>$(SolutionDir)..\Application\Fax</FaxApplicationDirectory>
+    <Hl7ApplicationDirectory>$(SolutionDir)..\Application\Hl7</Hl7ApplicationDirectory>
+    <MwlModelDirectory>$(SolutionDir)..\..\Healthcare\Mwl</MwlModelDirectory>
+    <ShredHostDirectory>$(SolutionDir)..\..\Server\ShredHost</ShredHostDirectory>
+    <ShredHostServiceDirectory>$(SolutionDir)..\..\Server\ShredHostService</ShredHostServiceDirectory>
+    <RisShredsDirectory>$(SolutionDir)..\Shreds</RisShredsDirectory>
+    <TrunkDirectory>$(SolutionDir)..\..</TrunkDirectory>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ConfigFiles Include="$(SolutionDir)\..\Client\Workflow\actionmodels.xml" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EnterprisePluginFiles Include="$(JscriptDirectory)\ClearCanvas.Jscript.dll" />
+
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\Iesi.Collections.dll" />
+
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Hibernate.dll" />
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Hibernate\DdlWriter\bin\$(Configuration)\ClearCanvas.Enterprise.Hibernate.DdlWriter.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\Castle.Core.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\Castle.DynamicProxy2.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\NHibernate.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\NHibernate.Caches.SysCache.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\Antlr3.Runtime.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate2.1\NHibernate.ByteCode.Castle.dll" />
+
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.dll" />
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.Hibernate.dll" />
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Authentication\bin\$(Configuration)\ClearCanvas.Enterprise.Authentication.dll" />
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Authentication\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Authentication.Hibernate.dll" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='DEBUG'">
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHProf\HibernatingRhinos.Profiler.Appender.dll" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$(ShredHostBuild)">
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Oto\bin\$(Configuration)\ClearCanvas.Enterprise.Oto.dll" />
+  </ItemGroup>	
+  
+  <ItemGroup>
+    <ModelFiles Include="$(WorkflowDirectory)\bin\$(Configuration)\ClearCanvas.Workflow.dll" />
+    <ModelFiles Include="$(WorkflowDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Workflow.Hibernate.dll" />
+    <ModelFiles Include="$(HealthcareDirectory)\bin\$(Configuration)\ClearCanvas.Healthcare.dll" />
+    <ModelFiles Include="$(HealthcareDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Healthcare.Hibernate.dll" />
+    <ModelFiles Include="$(HealthcareDirectory)\Owls\bin\$(Configuration)\ClearCanvas.Healthcare.Owls.dll" />
+    <ModelFiles Include="$(HealthcareDirectory)\Owls\Hibernate\bin\$(Configuration)\ClearCanvas.Healthcare.Owls.Hibernate.dll" />
+    <ModelFiles Include="$(MwlModelDirectory)\bin\$(Configuration)\ClearCanvas.Healthcare.Mwl.dll" />
+    <ModelFiles Include="$(MwlModelDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Healthcare.Mwl.Hibernate.dll" />
+    <ModelFiles Include="$(MwlModelDirectory)\Owls\bin\$(Configuration)\ClearCanvas.Healthcare.Mwl.Owls.dll" />
+    <ModelFiles Include="$(MwlModelDirectory)\Owls\Hibernate\bin\$(Configuration)\ClearCanvas.Healthcare.Mwl.Owls.Hibernate.dll" />
+    <ModelFiles Include="$(HL7Directory)\bin\$(Configuration)\ClearCanvas.HL7.dll" />
+    <ModelFiles Include="$(HL7Directory)\Hibernate\bin\$(Configuration)\ClearCanvas.HL7.Hibernate.dll" />
+    <ModelFiles Include="$(HL7Directory)\Hapi\bin\$(Configuration)\ClearCanvas.HL7.Hapi.dll" />
+    <ModelFiles Include="$(ReferencedAssembliesDirectory)\NHapi.*" />
+    <ModelFiles Include="$(UhnModelDirectory)\bin\$(Configuration)\ClearCanvas.Healthcare.Uhn.dll" />
+    <ModelFiles Include="$(UhnModelDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Healthcare.Uhn.Hibernate.dll" />
+    <ModelFiles Include="$(FaxModelDirectory)\bin\$(Configuration)\ClearCanvas.Healthcare.Fax.dll" />
+    <ModelFiles Include="$(FaxModelDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Healthcare.Fax.Hibernate.dll" />
+    <ModelFiles Include="$(ReferencedAssembliesDirectory)\PdfSharp.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <RisFiles Include="$(RisApplicationDirectory)\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Common.dll" />
+    <RisFiles Include="$(RisApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Services.dll" />
+    <RisFiles Include="$(SolutionDir)bin\$(Configuration)\ClearCanvas.Ris.Server.dll" />
+    <RisFiles Include="$(UhnApplicationDirectory)\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Uhn.Common.dll" />
+    <RisFiles Include="$(UhnApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Uhn.Services.dll" />
+    <RisFiles Include="$(FaxApplicationDirectory)\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Common.dll" />
+    <RisFiles Include="$(FaxApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Services.dll" />
+    <RisFiles Include="$(Hl7ApplicationDirectory)\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.HL7.Common.dll" />
+    <RisFiles Include="$(Hl7ApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.HL7.Services.dll" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$(ShredHostBuild)">
+    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Oto\bin\$(Configuration)\ClearCanvas.Oto.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <RisFiles Include="$(ShredHostDirectory)\bin\$(Configuration)\ClearCanvas.Server.ShredHost.dll" />
+    <RisFiles Include="$(RisShredsDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Shreds.dll" />
+    <RisFiles Include="$(RisShredsDirectory)\Fax\bin\$(Configuration)\ClearCanvas.Ris.Shreds.Fax.dll" />
+    <RisFiles Include="$(HealthcareDirectory)\Owls\Shreds\bin\$(Configuration)\ClearCanvas.Healthcare.Owls.Shreds.dll" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$(ShredHostBuild)">
+    <OtoScripts Include="$(EnterpriseDirectory)\Oto\scripts\*.js" />
+    <OtoScripts Include="$(TrunkDirectory)\Oto\scripts\*.js" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ShredHostAppConfigSourceFiles  Include="$(SolutionDir)\app.config" />
+    <ShredHostAppConfigSourceFiles  Include="$(ShredHostServiceDirectory)\app.config" />
+    <ShredHostAppConfigSourceFiles Include="$(HealthcareDirectory)\Hibernate\app.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AppConfigSourceFiles Include="$(TrunkDirectory)\Oto\app.config" />
+    <AppConfigSourceFiles Include="$(SolutionDir)\app.config" />
+    <AppConfigSourceFiles Include="$(SolutionDir)\Executable\app.config" />
+    <AppConfigSourceFiles Include="$(HealthcareDirectory)\Hibernate\app.config" />
+    <AppConfigSourceFiles Include="$(EnterpriseDirectory)\Hibernate\app.config" />
+  </ItemGroup>
+
+  <Target Name="AppConfigs" Condition="!$(ShredHostBuild)">
+    <CombineAppConfigs SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Ris.Server.Executable.exe.config" />
+    <CombineAppConfigs SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Oto.Executable.exe.config" />
+  </Target>
+
+  <Target Name="ShredHostAppConfigs" Condition="$(ShredHostBuild)">
+    <CombineAppConfigs SourceFiles="@(ShredHostAppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config" />
+  </Target>
+
+  <Target Name="CopyServerFiles" >
+    <!-- Copy Server Distribution files -->
+    <Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
+    
+    <!-- Copy Server Plugin files -->
+    <MakeDir Condition="!Exists('$(PluginsDirectory)')" Directories="$(PluginsDirectory)" ContinueOnError="true" />
+    <Copy SourceFiles="@(EnterprisePluginFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
+    <Copy SourceFiles="@(ModelFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
+    <Copy SourceFiles="@(RisFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
+    <Copy SourceFiles="@(OtoSharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
+    <Copy SourceFiles="@(OtoExecutableFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
+    <Copy SourceFiles="@(OtoScripts)" DestinationFolder="$(OtoScriptDirectory)" ContinueOnError="true" />
+  </Target>
+</Project>

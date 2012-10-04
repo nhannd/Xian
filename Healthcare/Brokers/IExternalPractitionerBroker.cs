@@ -15,7 +15,7 @@ namespace ClearCanvas.Healthcare.Brokers
 {
 	public partial interface IExternalPractitionerBroker
 	{
-		IList<ExternalPractitioner> GetMergeCandidates(ExternalPractitioner practitioner);
-		int CountMergeCandidates(ExternalPractitioner practitioner);
+		IList<ExternalPractitioner> GetDuplicates(ExternalPractitioner practitioner);
+		int GetDuplicatesCount(ExternalPractitioner practitioner);
 	}
 }

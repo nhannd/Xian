@@ -34,7 +34,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.ColumnHeader colName;
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GalleryComponentControl));
 			this._toolStrip = new System.Windows.Forms.ToolStrip();
 			this._listView = new ClearCanvas.Desktop.View.WinForms.GalleryComponentListViewControl();
 			this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -43,43 +42,49 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// colName
 			// 
-			resources.ApplyResources(colName, "colName");
+			colName.Text = "Name";
 			// 
 			// _toolStrip
 			// 
 			this._toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this._toolStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
-			resources.ApplyResources(this._toolStrip, "_toolStrip");
+			this._toolStrip.Location = new System.Drawing.Point(0, 0);
 			this._toolStrip.Name = "_toolStrip";
+			this._toolStrip.Size = new System.Drawing.Size(342, 25);
+			this._toolStrip.TabIndex = 0;
+			this._toolStrip.Text = "toolStrip1";
 			// 
 			// _listView
 			// 
 			this._listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             colName});
 			this._listView.ContextMenuStrip = this._contextMenu;
-			resources.ApplyResources(this._listView, "_listView");
+			this._listView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._listView.InsertionBoxIndex = -1;
+			this._listView.Location = new System.Drawing.Point(0, 25);
 			this._listView.Name = "_listView";
-			this._listView.ShowItemToolTips = true;
+			this._listView.Size = new System.Drawing.Size(342, 251);
+			this._listView.TabIndex = 1;
 			this._listView.UseCompatibleStateImageBehavior = false;
 			this._listView.ItemActivate += new System.EventHandler(this.OnItemActivate);
-			this._listView.Resize += new System.EventHandler(this.OnListViewResize);
-			this._listView.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.OnAfterLabelEdit);
 			this._listView.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
+			this._listView.Resize += new System.EventHandler(this.OnListViewResize);
 			this._listView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
+			this._listView.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.OnAfterLabelEdit);
 			// 
 			// _contextMenu
 			// 
 			this._contextMenu.Name = "_contextMenu";
-			resources.ApplyResources(this._contextMenu, "_contextMenu");
+			this._contextMenu.Size = new System.Drawing.Size(61, 4);
 			// 
 			// GalleryComponentControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._listView);
 			this.Controls.Add(this._toolStrip);
 			this.Name = "GalleryComponentControl";
+			this.Size = new System.Drawing.Size(342, 276);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

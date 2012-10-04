@@ -99,11 +99,6 @@ namespace ClearCanvas.Web.Services
 	
 		protected abstract Entity CreateEntity();
 		protected abstract void UpdateEntity(Entity entity);
-        
-        protected virtual string[] GetDebugInfo()
-        {
-            return null;
-        }
 
 		#endregion
 
@@ -120,8 +115,7 @@ namespace ClearCanvas.Web.Services
 				SenderId = Identifier,
 				Sender = Name,
 				PropertyName = propertyName,
-                Value = value,
-                DebugInfo = GetDebugInfo()
+                Value = value
             };
 
             // Only fire the event if the entity handler has not been disposed.
@@ -129,8 +123,7 @@ namespace ClearCanvas.Web.Services
                 ApplicationContext.FireEvent(@event);
 		}
 
-
-	    protected virtual void Dispose(bool disposing)
+		protected virtual void Dispose(bool disposing)
 		{
 			if (!disposing)
 				return;

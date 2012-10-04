@@ -14,34 +14,38 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-	[DataContract]
-	public class LocationDetail : DataContractBase
-	{
-		public LocationDetail(
+    [DataContract]
+    public class LocationDetail : DataContractBase
+    {
+        public LocationDetail(
 			EntityRef locationRef,
 			string id,
 			string name,
 			string description,
-			FacilitySummary facility,
-			string building,
-			string floor,
-			string pointOfCare,
+            FacilitySummary facility,
+            string building,
+            string floor,
+            string pointOfCare,
+            string room,
+            string bed, 
 			bool deactivated)
-		{
-			this.LocationRef = locationRef;
-			this.Id = id;
-			this.Name = name;
-			this.Description = description;
-			this.Facility = facility;
-			this.Building = building;
-			this.Floor = floor;
-			this.PointOfCare = pointOfCare;
-			this.Deactivated = deactivated;
-		}
+        {
+        	this.LocationRef = locationRef;
+        	this.Id = id;
+        	this.Name = name;
+        	this.Description = description;
+            this.Facility = facility;
+            this.Building = building;
+            this.Floor = floor;
+            this.PointOfCare = pointOfCare;
+            this.Room = room;
+            this.Bed = bed;
+        	this.Deactivated = deactivated;
+        }
 
-		public LocationDetail()
-		{
-		}
+        public LocationDetail()
+        {
+        }
 
 
 		[DataMember]
@@ -57,16 +61,22 @@ namespace ClearCanvas.Ris.Application.Common
 		public string Description;
 
 		[DataMember]
-		public FacilitySummary Facility;
+        public FacilitySummary Facility;
 
-		[DataMember]
-		public string Building;
+        [DataMember]
+        public string Building;
 
-		[DataMember]
-		public string Floor;
+        [DataMember]
+        public string Floor;
 
-		[DataMember]
-		public string PointOfCare;
+        [DataMember]
+        public string PointOfCare;
+
+        [DataMember]
+        public string Room;
+
+        [DataMember]
+        public string Bed;
 
 		[DataMember]
 		public bool Deactivated;

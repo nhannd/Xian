@@ -562,10 +562,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_documentationTabContainer.Pages.Add(new TabPage(page.Path, page.GetComponent()));
 			}
 
-			// For #7401.  Al the pages in this component are explicitly started so data for validation
-			// iill be readily available when user complete the documentation.
-			CollectionUtils.ForEach(_documentationTabContainer.Pages, p => p.LazyStart = false );
-
 			_documentationHost = new ChildComponentHost(this.Host, _documentationTabContainer);
 			_documentationHost.StartComponent();
 

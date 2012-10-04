@@ -1,0 +1,32 @@
+#region License
+
+// Copyright (c) 2011, ClearCanvas Inc.
+// All rights reserved.
+// http://www.clearcanvas.ca
+//
+// This software is licensed under the Open Software License v3.0.
+// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
+
+#endregion
+
+using System;
+using System.Configuration;
+using ClearCanvas.Common.Configuration;
+
+namespace ClearCanvas.Healthcare.Owls.Shreds.ViewMaintenance
+{
+
+	[SettingsGroupDescription("Settings that configure the shred that maintains the OWLS views.")]
+	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	internal sealed partial class MaintenanceShredSettings
+	{
+		///<summary>
+		/// Public constructor.  Server-side settings classes should be instantiated via constructor rather
+		/// than using the <see cref="MaintenanceShredSettings.Default"/> property to avoid creating a static instance.
+		///</summary>
+		public MaintenanceShredSettings()
+		{
+			// Note: server-side settings classes do not register in the <see cref="ApplicationSettingsRegistry"/>
+		}
+	}
+}

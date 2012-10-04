@@ -206,7 +206,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 		#endregion
 
 		#region Public Methods
-		protected override bool Initialize()
+		protected override void Initialize()
 		{
 			if (_partitions == null)
 			{
@@ -228,8 +228,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 
 				_partitions = new List<ServerPartition>(ServerPartitionMonitor.Instance);
 			}
-
-            return true;
 		}
 
 		/// <summary>

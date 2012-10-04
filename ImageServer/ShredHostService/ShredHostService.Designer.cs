@@ -29,8 +29,6 @@
 
 #endregion
 
-using ClearCanvas.Common;
-
 namespace ClearCanvas.ImageServer.ShredHostService
 {
     partial class ShredHostService
@@ -62,7 +60,7 @@ namespace ClearCanvas.ImageServer.ShredHostService
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            this.ServiceName = string.Format("{0} Shred Host Service", ProductInformation.Component); 
+            this.ServiceName = "Service1";
         }
 
         #endregion

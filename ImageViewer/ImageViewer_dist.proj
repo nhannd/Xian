@@ -17,14 +17,13 @@
     <DistributionShredHostConfig>$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config</DistributionShredHostConfig>
     <DistributionConsoleConfig>$(DistributionDirectory)\ClearCanvas.Executable.exe.config</DistributionConsoleConfig>
     <DistributionDesktopCriticalConfig>$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.critical.config</DistributionDesktopCriticalConfig>
-    <DistributionShredHostCriticalConfig>$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.critical.config</DistributionShredHostCriticalConfig>
+    <DistributionShredHostCriticalConfig>$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config</DistributionShredHostCriticalConfig>
     <DistributionConsoleCriticalConfig>$(DistributionDirectory)\ClearCanvas.Executable.exe.critical.config</DistributionConsoleCriticalConfig>
   </PropertyGroup>
 
   <Choose>
     <When Condition=" '$(ProjectOutDir)' != '$(DistributionDirectory)' ">
       <PropertyGroup>
-        <IsDistributionBuild>true</IsDistributionBuild>
         <DatabaseDirectory>$(DistributionDirectory)\dicom_datastore</DatabaseDirectory>
         <FileStoreDirectory>.\filestore</FileStoreDirectory>
         <DatabaseFile>$(DatabaseDirectory)\viewer.sdf</DatabaseFile>
@@ -33,7 +32,6 @@
     </When>
     <Otherwise>
       <PropertyGroup>
-        <IsDistributionBuild>false</IsDistributionBuild>
         <DatabaseDirectory>$(TrunkDirectory)\dicom_datastore</DatabaseDirectory>
         <FileStoreDirectory>$(TrunkDirectory)\dicom_datastore\filestore</FileStoreDirectory>
         <DatabaseFile>$(DatabaseDirectory)\viewer.sdf</DatabaseFile>
@@ -156,12 +154,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <LicenseFiles Include="$(TrunkDirectory)\..\Docs\Workstation\EULA.rtf" />
+    <LicenseFiles Include="$(TrunkDirectory)\Docs\ImageViewer\EULA.rtf" />
     <LicenseFiles Include="$(TrunkDirectory)\Docs\PrivacyNotice.rtf" />
   </ItemGroup>
 
   <ItemGroup>
-    <HelpFiles Include="$(TrunkDirectory)\..\Docs\Workstation\UsersGuide\CCWorkstationCommunityUsersGuide.chm" />
+    <HelpFiles Include="$(TrunkDirectory)\Docs\Workstation\UsersGuide\CCWorkstationUsersGuide.chm" />
   </ItemGroup>
 
   <ItemGroup>
@@ -267,15 +265,6 @@
     <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkVolumeRenderingDotNet.dll" />
     -->
   </ItemGroup>
-
-  <ItemGroup>
-    <FusionPluginFiles Include="$(TrunkDirectory)\ImageViewer\AdvancedImaging\Fusion\bin\$(Configuration)\ClearCanvas.ImageViewer.AdvancedImaging.Fusion.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <TestToolPluginFiles Include="$(TrunkDirectory)\ImageViewer\TestTools\bin\$(Configuration)\ClearCanvas.ImageViewer.TestTools.dll" />
-    <TestToolPluginFiles Include="$(TrunkDirectory)\ImageViewer\TestTools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.TestTools.View.WinForms.dll" />
-  </ItemGroup>
   
   <ItemGroup Condition="$(DesktopBuild)">
     <!-- Core Viewer -->
@@ -287,6 +276,9 @@
     <!-- Configuration -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.View.WinForms.dll" />
+
+    <!-- Fusion -->
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\AdvancedImaging\Fusion\bin\$(Configuration)\ClearCanvas.ImageViewer.AdvancedImaging.Fusion.dll" />
 
     <!-- Tools -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Measurement\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Measurement.dll" />
@@ -323,6 +315,7 @@
 
   <ItemGroup>
     <ExecutableBootstrapFiles Include="$(TrunkDirectory)\Executable\bin\$(Configuration)\ClearCanvas.Executable.exe" />
+    <ExecutableBootstrapFiles Include="$(DistributionConsoleConfig)" />
   </ItemGroup>
 
   <Target Name="Copy License Files">
@@ -330,7 +323,7 @@
   </Target>
 
   <Target Name="Copy Help Files">
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(HelpFiles)" DestinationFiles="$(DistributionDirectory)\CCWorkstationCommunityUsersGuide.chm" ContinueOnError="true"/>
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(HelpFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
   </Target>
 
   <Target Name="Copy ImageViewer App Config">
@@ -415,18 +408,9 @@
   <Target Name="Copy Mpr Files">
     <Copy SourceFiles="@(MprPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
-  <Target Name="Copy Fusion Files">
-    <Copy SourceFiles="@(FusionPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
-  </Target>
-  <Target Name="Copy Test Tool Files">
-    <Copy SourceFiles="@(TestToolPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
-  </Target>
 
   <Target Name="Copy Optional Viewer Plugins" Condition="$(DesktopBuild)">
 
-    <RegexIsMatch Pattern="ExcludeHelpFiles" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="ExcludeHelpFiles" />
-    </RegexIsMatch>
     <RegexIsMatch Pattern="ExcludeStudyBrowser" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeStudyBrowser" />
     </RegexIsMatch>
@@ -466,14 +450,7 @@
     <RegexIsMatch Pattern="ExcludeMpr" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeMpr" />
     </RegexIsMatch>
-    <RegexIsMatch Pattern="ExcludeFusion" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="ExcludeFusion" />
-    </RegexIsMatch>
-    <RegexIsMatch Pattern="IncludeTestTools" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="IncludeTestTools" />
-    </RegexIsMatch>
 
-    <CallTarget Condition="!$(ExcludeHelpFiles)" Targets="Copy Help Files" />
     <CallTarget Condition="!$(ExcludeStudyBrowser)" Targets="Copy Study Browser" />
     <CallTarget Condition="!$(ExcludeServiceTools)" Targets="Copy Service Tools" />
     <CallTarget Condition="!$(ExcludeDesktopServices)" Targets="Copy Desktop Services" />
@@ -486,9 +463,7 @@
     <CallTarget Condition="!$(ExcludeDicomRemote)" Targets="Copy Dicom Remote Client Files" />
     <CallTarget Condition="!$(ExcludeStreaming)" Targets="Copy Streaming Client Files" />
     <CallTarget Condition="!$(ExcludeMpr)" Targets="Copy Mpr Files" />
-    <CallTarget Condition="!$(ExcludeFusion)" Targets="Copy Fusion Files" />
     <CallTarget Condition="!$(ExcludeDatabase)" Targets="Copy Local DataStore Client Files" />
-    <CallTarget Condition="$(IncludeTestTools)" Targets="Copy Test Tool Files" />
 
   </Target>
 
@@ -526,19 +501,7 @@
     <Copy SourceFiles="@(ExecutableBootstrapFiles)" DestinationFolder="$(DistributionDirectory)" />
   </Target>
 
-  <Target Name="Copy Executable Bootstrap for Desktop">
-    <CallTarget Targets="Copy Executable Bootstrap" />
-    <Copy SourceFiles="$(DistributionDesktopConfig)" DestinationFiles="$(DistributionConsoleConfig)" />
-    <Copy SourceFiles="$(DistributionDesktopCriticalConfig)" DestinationFiles="$(DistributionConsoleCriticalConfig)" />
-  </Target>
-
-  <Target Name="Copy Executable Bootstrap for ShredHost">
-    <CallTarget Targets="Copy Executable Bootstrap" />
-    <Copy SourceFiles="$(DistributionShredHostConfig)" DestinationFiles="$(DistributionConsoleConfig)" />
-    <!--<Copy SourceFiles="$(DistributionShredHostCriticalConfig)" DestinationFiles="$(DistributionConsoleCriticalConfig)" />-->
-  </Target>
-
-  <Target Name="Copy Desktop Files" DependsOnTargets="Copy ImageViewer App Config;Copy JScript Files;Copy License Files">
+  <Target Name="Copy Desktop Files" DependsOnTargets="Copy ImageViewer App Config;Copy JScript Files;Copy License Files;Copy Help Files">
     <CallTarget Targets="Copy Project Files" />
 
     <RegexIsMatch Pattern="ExcludeHttpDesktopServices" Input="$(OptionsFlags)" >
@@ -547,22 +510,21 @@
 
     <CallTarget Condition="$(ExcludeHttpDesktopServices)" Targets="Exclude Http Desktop Services" />
 
-    <CallTarget Targets="Copy Executable Bootstrap for Desktop" />
+    <CallTarget Targets="Copy Executable Bootstrap" />
+    <Copy SourceFiles="$(DistributionDesktopConfig)" DestinationFiles="$(DistributionConsoleConfig)" />
+    <!--<Copy SourceFiles="$(DistributionDesktopCriticalConfig)" DestinationFiles="$(DistributionConsoleCriticalConfig)" />-->
 
   </Target>
 
   <Target Name="Copy ShredHost Files" DependsOnTargets="Copy ShredHost App Config;Copy License Files">
     <CallTarget Targets="Copy Project Files" />
-
-    <!--Only copy console executable to ShredHost folder if not doing distribution build-->
-    <CallTarget Condition="!$(IsDistributionBuild)" Targets="Copy Executable Bootstrap for ShredHost" />
   </Target>
 
   <Target Name ="Copy Files" >
     
     <CallTarget Condition="$(DesktopBuild)" Targets="Copy Desktop Files" />
     <CallTarget Condition="$(ShredHostBuild)" Targets="Copy ShredHost Files" />
-    
+
   </Target>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -120,6 +120,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	public class DeleteAllAnnotationsTool : ImageViewerTool
 	{
 		private bool _deleteAllVisible;
+		private IOverlayGraphicsProvider _currentOverlayProvider;
 
 		public DeleteAllAnnotationsTool()
 		{
@@ -149,45 +150,62 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override void Initialize()
 		{
 			base.Initialize();
-			UpdateDeleteAllVisible();
 
-			base.ImageViewer.EventBroker.ImageDrawing += OnImageDrawing;
+			SetCurrentOverlayGraphicsProvider(null);
+			UpdateDeleteAllVisible();
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			base.Context.Viewer.EventBroker.ImageDrawing -= OnImageDrawing;
+			SetCurrentOverlayGraphicsProvider(null);
 			base.Dispose(disposing);
 		}
 
-		private void OnImageDrawing(object sender, ImageDrawingEventArgs e)
+		private void OnOverlayGraphicsChanged(object sender, EventArgs e)
 		{
-			if (e.PresentationImage.Selected)
-				UpdateDeleteAllVisible();
+			UpdateDeleteAllVisible();
+		}
+
+		private void SetCurrentOverlayGraphicsProvider(IOverlayGraphicsProvider provider)
+		{
+			if (_currentOverlayProvider != provider)
+			{
+				if (_currentOverlayProvider != null)
+				{
+					_currentOverlayProvider.OverlayGraphics.ItemAdded -= OnOverlayGraphicsChanged;
+					_currentOverlayProvider.OverlayGraphics.ItemChanged -= OnOverlayGraphicsChanged;
+					_currentOverlayProvider.OverlayGraphics.ItemRemoved -= OnOverlayGraphicsChanged;
+				}
+
+				_currentOverlayProvider = provider;
+
+				if (_currentOverlayProvider != null)
+				{
+					_currentOverlayProvider.OverlayGraphics.ItemAdded += OnOverlayGraphicsChanged;
+					_currentOverlayProvider.OverlayGraphics.ItemChanged += OnOverlayGraphicsChanged;
+					_currentOverlayProvider.OverlayGraphics.ItemRemoved += OnOverlayGraphicsChanged;
+				}
+			}
 		}
 
 		private void UpdateDeleteAllVisible()
 		{
-			if (base.SelectedOverlayGraphicsProvider == null)
-			{
-				DeleteAllVisible = false;
-			}
-			else
-			{
-				//Check that there are no visible top-level overlay graphics.
-				DeleteAllVisible = CollectionUtils.Select(SelectedOverlayGraphicsProvider.OverlayGraphics, graphic => graphic.Visible).Count > 0;
-			}
+			DeleteAllVisible = _currentOverlayProvider != null && _currentOverlayProvider.OverlayGraphics.Count > 0;
 		}
 
 		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
+			SetCurrentOverlayGraphicsProvider(e.SelectedPresentationImage as IOverlayGraphicsProvider);
 			UpdateDeleteAllVisible();
+
 			base.OnPresentationImageSelected(sender, e);
 		}
 
 		protected override void OnTileSelected(object sender, TileSelectedEventArgs e)
 		{
+			SetCurrentOverlayGraphicsProvider(e.SelectedTile.PresentationImage as IOverlayGraphicsProvider);
 			UpdateDeleteAllVisible();
+
 			base.OnTileSelected(sender, e);
 		}
 

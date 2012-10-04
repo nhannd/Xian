@@ -56,7 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alert.cs" />
-    <Compile Include="ExceptionLogAdviceAttribute.cs" />
     <Compile Include="Exceptions\AutoReconcileException.cs" />
     <Compile Include="CommandProcessor\CopyDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\CreateDirectoryCommand.cs" />
@@ -142,7 +141,6 @@
     <Compile Include="Utilities\StringUtils.cs" />
     <Compile Include="Utilities\Test\DicomNameUtilsTest.cs" />
     <Compile Include="Utilities\XmlUtils.cs" />
-    <Compile Include="WindowsErrorCodes.cs" />
     <Compile Include="WSHttpConfiguration.cs" />
     <Compile Include="WebServicesSettings.Designer.cs">
       <AutoGen>True</AutoGen>

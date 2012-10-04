@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// This property will likely be removed in a future version due to thread-safety concerns.</remarks>
 		public DicomFile File
 		{
-			get { return (DicomFile)GetSourceMessage(true); }
+			get { return (DicomFile)SourceMessage; }
 		}
 
 		/// <summary>
@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string Filename
 		{
-			get { return ((DicomFile)GetSourceMessage(false)).Filename; }
+			get { return File.Filename; }
 		}
 
 		/// <summary>

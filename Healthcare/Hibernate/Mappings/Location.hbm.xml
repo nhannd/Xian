@@ -15,6 +15,8 @@
     <property name="Building" column="Building_" type="String" length="100" not-null="false"/>
     <property name="Floor" column="Floor_" type="String" length="100" not-null="false"/>
     <property name="PointOfCare" column="PointOfCare_" type="String" length="100" not-null="false"/>
+    <property name="Room" column="Room_" type="String" length="100" not-null="false"/>
+    <property name="Bed" column="Bed_" type="String" length="100" not-null="false"/>
     <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
   </class>
 </hibernate-mapping>

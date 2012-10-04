@@ -54,15 +54,6 @@ namespace ClearCanvas.Enterprise.Core
 		/// deferred result set is needed.
 		/// </remarks>
 		public bool Defer { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating whether pessimistic locking should be used.
-		/// </summary>
-		/// <remarks>
-		/// Implements pessimistic locking by instructing the database to acquire an update lock on selected entities.
-		/// This helps to reduce deadlocks in scenarios where a selected entity will likely be updated.
-		/// </remarks>
-		public bool LockForUpdate { get; set; }
 	}
 
 

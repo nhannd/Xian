@@ -77,10 +77,6 @@
       <Name>ClearCanvas.Common</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\Server\ShredHost\ClearCanvas.Server.ShredHost.csproj">
-      <Project>{8347B928-805E-42E7-B980-08D8AF1A0671}</Project>
-      <Name>ClearCanvas.Server.ShredHost</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Utilities\Manifest\ClearCanvas.Utilities.Manifest.csproj">
       <Project>{E2F1A5D4-73A4-4BA6-AA5A-87BBDEC727F8}</Project>
       <Name>ClearCanvas.Utilities.Manifest</Name>
@@ -112,6 +108,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>$(MSBuildBinPath)\Msbuild $(ProjectDir)\PostBuild_dist.proj /p:SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(ConfigurationName);ProjectName=$(ProjectName);ProjectDir=$(ProjectDir);OutDir=$(OutDir);DistributionDir=$(DistributionDir);Options=$(Options);Localizations=$(Localizations)</PostBuildEvent>
+    <PostBuildEvent>$(MSBuildBinPath)\Msbuild $(ProjectDir)\PostBuild_dist.proj /p:SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(ConfigurationName);ProjectName=$(ProjectName);ProjectDir=$(ProjectDir);OutDir=$(OutDir);DistributionDir=$(DistributionDir)</PostBuildEvent>
   </PropertyGroup>
 </Project>

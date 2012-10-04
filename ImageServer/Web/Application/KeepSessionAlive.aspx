@@ -1,5 +1,5 @@
 ﻿<%-- License
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //

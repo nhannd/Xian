@@ -30,7 +30,6 @@ namespace ClearCanvas.Ris.Application.Services
 				prac.IsVerified,
 				prac.LastVerifiedTime,
 				prac.LastEditedTime,
-				prac.IsMerged,
 				prac.Deactivated);
 
 			return summary;
@@ -62,8 +61,6 @@ namespace ClearCanvas.Ris.Application.Services
 				prac.LastEditedTime,
 				contactPointDetails,
 				ExtendedPropertyUtils.Copy(prac.ExtendedProperties),
-				CreateExternalPractitionerSummary(prac.GetUltimateMergeDestination(), context),
-				prac.IsMerged,
 				prac.Deactivated);
 
 			return detail;
@@ -81,7 +78,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 			prac.LicenseNumber = detail.LicenseNumber;
 			prac.BillingNumber = detail.BillingNumber;
-			prac.MarkDeactivated(detail.Deactivated);
+			prac.Deactivated = detail.Deactivated;
 
 			// update contact points collection
 			var syncHelper = new CollectionSynchronizeHelper<ExternalPractitionerContactPoint, ExternalPractitionerContactPointDetail>(
@@ -111,7 +108,6 @@ namespace ClearCanvas.Ris.Application.Services
 				contactPoint.Name,
 				contactPoint.Description,
 				contactPoint.IsDefaultContactPoint,
-				contactPoint.IsMerged,
 				contactPoint.Deactivated);
 		}
 
@@ -133,7 +129,6 @@ namespace ClearCanvas.Ris.Application.Services
 				contactPoint.Description,
 				contactPoint.IsDefaultContactPoint,
 				EnumUtils.GetEnumValueInfo(contactPoint.PreferredResultCommunicationMode, context),
-				EnumUtils.GetEnumValueInfo(contactPoint.InformationAuthority),
 				CollectionUtils.Map(contactPoint.TelephoneNumbers, (TelephoneNumber phone) => telephoneNumberAssembler.CreateTelephoneDetail(phone, context)),
 				CollectionUtils.Map(contactPoint.Addresses, (Address address) => addressAssembler.CreateAddressDetail(address, context)),
 				CollectionUtils.Map(contactPoint.EmailAddresses, (EmailAddress emailAddress) => emailAddressAssembler.CreateEmailAddressDetail(emailAddress, context)),
@@ -141,8 +136,6 @@ namespace ClearCanvas.Ris.Application.Services
 				currentFax == null ? null : telephoneNumberAssembler.CreateTelephoneDetail(currentFax, context),
 				currentAddress == null ? null : addressAssembler.CreateAddressDetail(currentAddress, context),
 				currentEmailAddress == null ? null : emailAddressAssembler.CreateEmailAddressDetail(currentEmailAddress, context),
-				CreateExternalPractitionerContactPointSummary(contactPoint.GetUltimateMergeDestination()),
-				contactPoint.IsMerged,
 				contactPoint.Deactivated);
 		}
 
@@ -151,9 +144,9 @@ namespace ClearCanvas.Ris.Application.Services
 			contactPoint.Name = detail.Name;
 			contactPoint.Description = detail.Description;
 			contactPoint.IsDefaultContactPoint = detail.IsDefaultContactPoint;
-			contactPoint.PreferredResultCommunicationMode = EnumUtils.GetEnumValue<ResultCommunicationMode>(detail.PreferredResultCommunicationMode);
-			contactPoint.InformationAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.InformationAuthority, context);
-			contactPoint.MarkDeactivated(detail.Deactivated);
+			contactPoint.PreferredResultCommunicationMode =
+				EnumUtils.GetEnumValue<ResultCommunicationMode>(detail.PreferredResultCommunicationMode);
+			contactPoint.Deactivated = detail.Deactivated;
 
 			var phoneAssembler = new TelephoneNumberAssembler();
 			var addressAssembler = new AddressAssembler();

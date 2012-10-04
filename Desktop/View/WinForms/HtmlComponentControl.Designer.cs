@@ -59,31 +59,34 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HtmlComponentControl));
-			this._webBrowser = new System.Windows.Forms.WebBrowser();
-			this._initialRefreshTimer = new System.Windows.Forms.Timer(this.components);
-			this.SuspendLayout();
-			// 
-			// _webBrowser
-			// 
-			resources.ApplyResources(this._webBrowser, "_webBrowser");
-			this._webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
-			this._webBrowser.Name = "_webBrowser";
-			// 
-			// _initialRefreshTimer
-			// 
-			this._initialRefreshTimer.Tick += new System.EventHandler(this._initialRefreshTimer_Tick);
-			// 
-			// HtmlComponentControl
-			// 
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._webBrowser);
-			this.Name = "HtmlComponentControl";
-			this.Load += new System.EventHandler(this.HtmlComponentControl_Load);
-			this.VisibleChanged += new System.EventHandler(this.HtmlComponentControl_VisibleChanged);
-			this.ResumeLayout(false);
+            this.components = new System.ComponentModel.Container();
+            this._webBrowser = new System.Windows.Forms.WebBrowser();
+            this._initialRefreshTimer = new System.Windows.Forms.Timer(this.components);
+            this.SuspendLayout();
+            // 
+            // _webBrowser
+            // 
+            this._webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._webBrowser.Location = new System.Drawing.Point(0, 0);
+            this._webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
+            this._webBrowser.Name = "_webBrowser";
+            this._webBrowser.Size = new System.Drawing.Size(531, 473);
+            this._webBrowser.TabIndex = 0;
+            // 
+            // _initialRefreshTimer
+            // 
+            this._initialRefreshTimer.Tick += new System.EventHandler(this._initialRefreshTimer_Tick);
+            // 
+            // HtmlComponentControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._webBrowser);
+            this.Name = "HtmlComponentControl";
+            this.Size = new System.Drawing.Size(531, 473);
+            this.VisibleChanged += new System.EventHandler(this.HtmlComponentControl_VisibleChanged);
+            this.Load += new System.EventHandler(this.HtmlComponentControl_Load);
+            this.ResumeLayout(false);
 
         }
 

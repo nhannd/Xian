@@ -304,7 +304,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             clone.HostName = _instance.HostName;
             clone.AETitle = _instance.AETitle;
             clone.Port = _instance.Port;
-			clone.AllowUnknownCaller = _instance.AllowUnknownCaller;
             
 			clone.InterimStorageDirectory = _instance.InterimStorageDirectory;
 			clone.StorageTransferSyntaxes = _instance.StorageTransferSyntaxes;
@@ -324,7 +323,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				case "AETitle":
 				case "Port":
 				case "InterimStorageDirectory":
-				case "AllowUnknownCaller":
 					migrationValues.CurrentValue = migrationValues.PreviousValue;
 					break;
 				default: //Don't migrate the storage sop classes or transfer syntaxes

@@ -1,0 +1,27 @@
+﻿<configuration>
+  <connectionStrings>
+    <connectionString name="ImageServerConnectString"/>
+  </connectionStrings>
+
+  <applicationSettings>
+    <ClearCanvas.Common.ProductSettings />
+    <ClearCanvas.Common.ExtensionSettings />
+    <ClearCanvas.Desktop.Help.UpdateTools.Settings />
+    
+    <ClearCanvas.ImageViewer.Services.Tools.ServiceControlSettings>
+      <setting name="ServiceName"/>
+    </ClearCanvas.ImageViewer.Services.Tools.ServiceControlSettings>
+  </applicationSettings>
+
+  <DiskspaceManagerSettings />
+  <!--<LocalDataStoreServiceSettings/>-->
+  
+  <DicomServerSettings>
+    <attributes>
+      <attribute name="InterimStorageDirectory" />
+    </attributes>
+    <elements>
+      <element name="ImageStorageSopClasses" />
+    </elements>
+  </DicomServerSettings>
+</configuration>

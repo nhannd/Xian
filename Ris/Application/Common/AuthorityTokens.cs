@@ -219,11 +219,8 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow replacement of existing Orders.")]
 				public const string Replace = "RIS/Workflow/Order/Replace";
 
-				[AuthorityToken(Description = "Allow merging of orders.")]
+				[AuthorityToken(Description = "Allow merging of two orders.")]
 				public const string Merge = "RIS/Workflow/Order/Merge";
-
-				[AuthorityToken(Description = "Allow un-merging of merged orders.")]
-				public const string Unmerge = "RIS/Workflow/Order/Unmerge";
 
 				[AuthorityToken(Description = "Allow cancellation of existing Orders.")]
 				public const string Cancel = "RIS/Workflow/Order/Cancel";

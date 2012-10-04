@@ -370,12 +370,11 @@
     <Compile Include="Network\Scp\DicomScpExtensionPoint.cs" />
     <Compile Include="Network\Scp\DicomScpHandler.cs" />
     <Compile Include="Network\Scp\IDicomScp.cs" />
+    <Compile Include="Network\Scu\BasicGrayscalePrintScu.cs" />
     <Compile Include="Network\Scu\FindScu.cs" />
     <Compile Include="Network\Scu\ModalityWorklistScu.cs" />
     <Compile Include="Network\Scu\MoveScu.cs" />
     <Compile Include="Network\Scu\PrinterStatusScu.cs" />
-    <Compile Include="Network\Scu\PrintScu.cs" />
-    <Compile Include="Network\Scu\PrintScu2.cs" />
     <Compile Include="Network\Scu\ScuBase.cs" />
     <Compile Include="Network\Scu\StorageCommitScu.cs" />
     <Compile Include="Network\Scu\StorageInstance.cs" />
@@ -422,12 +421,8 @@
     <Compile Include="ServiceModel\Streaming\StudyIsNearlineFault.cs" />
     <Compile Include="Tests\AttributeCollectionTest.cs" />
     <Compile Include="Tests\DicomOverlayTestHelper.cs" />
-    <Compile Include="Tests\DicomPixelDataTests.cs" />
-    <Compile Include="Tests\FilmSizeTests.cs" />
     <Compile Include="Tests\GlobalizedCultureAttributeTests.cs" />
     <Compile Include="Tests\DicomDirectoryTests.cs" />
-    <Compile Include="Tests\ImageDisplayFormatTests.cs" />
-    <Compile Include="Tests\PrintScuTests.cs" />
     <Compile Include="Tests\ScuTests.cs" />
     <Compile Include="Tests\UnknowVrTests.cs" />
     <Compile Include="Utilities\Anonymization\ValidationStrategy.cs" />

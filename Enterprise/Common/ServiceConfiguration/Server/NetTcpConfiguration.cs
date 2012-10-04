@@ -10,8 +10,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.IdentityModel.Policy;
+using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using System.ServiceModel.Security;
+using System.Text;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Server
@@ -62,8 +67,7 @@ namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Server
 
 			// set up the certificate - required for transmitting custom credentials
             host.Credentials.ServiceCertificate.SetCertificate(
-		        args.CertificateSearchDirective.StoreLocation, args.CertificateSearchDirective.StoreName,
-		        args.CertificateSearchDirective.FindType, args.CertificateSearchDirective.FindValue);
+                StoreLocation.LocalMachine, StoreName.My, X509FindType.FindBySubjectName, args.HostUri.Host);
 		}
 
 		#endregion

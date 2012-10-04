@@ -9,18 +9,21 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.BaseTools;
 using System;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	[DropDownAction("show", "global-toolbars/ToolbarStandard/ToolbarChangeLayout", "LayoutDropDownMenuModel")]
+	[MenuAction("show", "global-menus/MenuTools/MenuStandard/MenuLayoutManager", "Show")]
+	[DropDownButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarLayoutManager", "Show", "LayoutDropDownMenuModel")]
 	[IconSet("show", IconScheme.Colour, "Icons.LayoutToolSmall.png", "Icons.LayoutToolMedium.png", "Icons.LayoutToolLarge.png")]
-	[Tooltip("show", "TooltipChangeLayout")]
+	[Tooltip("show", "TooltipLayoutManager")]
 	[GroupHint("show", "Application.Workspace.Layout.Basic")]
 	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
 
@@ -32,8 +35,30 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class LayoutTool : Tool<IImageViewerToolContext>
 	{
+		[ThreadStatic]
+		private static Dictionary<IDesktopWindow, IShelf> _shelves;
+		
+		private IDesktopWindow _desktopWindow;
 		private ActionModelRoot _actionModel;
 		private bool _enabled;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public LayoutTool()
+		{
+			_desktopWindow = null;
+		}
+
+		public static Dictionary<IDesktopWindow, IShelf> Shelves
+		{
+			get
+			{
+				if (_shelves == null)
+					_shelves = new Dictionary<IDesktopWindow, IShelf>();
+				return _shelves;
+			}	
+		}
 
 		public bool Enabled
 		{
@@ -119,6 +144,46 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private void OnLockedChanged(object sender, System.EventArgs e)
 		{
 			Enabled = !base.Context.Viewer.PhysicalWorkspace.Locked;
+		}
+
+		public void Show()
+		{
+			// check if a layout component is already displayed
+			if (Shelves.ContainsKey(this.Context.DesktopWindow))
+			{
+				Shelves[this.Context.DesktopWindow].Activate();
+			}
+			else
+			{
+				_desktopWindow = this.Context.DesktopWindow;
+
+				LayoutComponent layoutComponent = new LayoutComponent(_desktopWindow);
+
+				IShelf shelf = ApplicationComponent.LaunchAsShelf(
+					_desktopWindow,
+					layoutComponent,
+					SR.TitleLayoutManager,
+					"Layout",
+					ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide);
+				Shelves[_desktopWindow] = shelf;
+
+				Shelves[_desktopWindow].Closed += OnShelfClosed;
+			}
+		}
+
+		private void OnShelfClosed(object sender, ClosedEventArgs e)
+		{
+			// We need to cache the owner DesktopWindow (_desktopWindow) because this tool is an 
+			// ImageViewer tool, disposed when the viewer component is disposed.  Shelves, however,
+			// exist at the DesktopWindow level and there can only be one of each type of shelf
+			// open at the same time per DesktopWindow (otherwise things look funny).  Because of 
+			// this, we need to allow this event handling method to be called after this tool has
+			// already been disposed (e.g. viewer workspace closed), which is why we store the 
+			// _desktopWindow variable.
+
+			Shelves[_desktopWindow].Closed -= OnShelfClosed;
+			Shelves.Remove(_desktopWindow);
+			_desktopWindow = null;
 		}
 	}
 }

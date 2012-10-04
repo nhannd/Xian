@@ -79,7 +79,6 @@
     <Compile Include="Allergy.cs" />
     <Compile Include="AttachedDocument.cs" />
     <Compile Include="Brokers\IPerformedProcedureStepBroker.cs" />
-    <Compile Include="Brokers\IProcedureNumberBroker.cs" />
     <Compile Include="Brokers\IProtocolWorklistItemBroker.cs" />
     <Compile Include="Brokers\IExternalPractitionerBroker.cs" />
     <Compile Include="Brokers\IExternalPractitionerContactPointBroker.cs" />
@@ -100,13 +99,8 @@
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
     <Compile Include="CannedText.cs" />
     <Compile Include="Department.cs" />
-    <Compile Include="FtpAttachedDocumentStore.cs" />
-    <Compile Include="IAttachedDocumentStore.cs" />
     <Compile Include="Imex\DepartmentImex.cs" />
-    <Compile Include="IOrderNoteProvider.cs" />
-    <Compile Include="OrderMergeHistoryVirtualOrderNoteProvider.cs" />
     <Compile Include="OrderMergeInfo.cs" />
-    <Compile Include="OrderRules.cs" />
     <Compile Include="ProtocolingWorklistItemSearchCriteria.cs" />
     <Compile Include="DicomSeries.cs" />
     <Compile Include="EmergencyWorklists.cs" />
@@ -178,11 +172,8 @@
     <Compile Include="StaffNotePosting.cs" />
     <Compile Include="PerformingWorklists.cs" />
     <Compile Include="Tests\DocumentationProcedureStepTests.cs" />
-    <Compile Include="Tests\ExternalPractitionerContactPointTests.cs" />
-    <Compile Include="Tests\ExternalPractitionerTests.cs" />
     <Compile Include="Tests\InterpretationStepTests.cs" />
     <Compile Include="Tests\ModalityProcedureStepTests.cs" />
-    <Compile Include="Tests\OrderTests.cs" />
     <Compile Include="Tests\ProcedureCheckInTests.cs" />
     <Compile Include="Tests\ProcedureStepTests.cs" />
     <Compile Include="Tests\ProcedureTests.cs" />
@@ -195,7 +186,6 @@
     <Compile Include="Tests\TestExtensionFactory.cs" />
     <Compile Include="Tests\TestLocationFactory.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />
-    <Compile Include="Tests\TestProcedureNumberBroker.cs" />
     <Compile Include="Tests\TranscriptionReviewStepTests.cs" />
     <Compile Include="Tests\TranscriptionStepTests.cs" />
     <Compile Include="Tests\VerificationStepTests.cs" />

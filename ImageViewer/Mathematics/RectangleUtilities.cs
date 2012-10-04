@@ -372,6 +372,8 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// </summary>
 		public static Rectangle CalculateSubRectangle(Rectangle parentRectangle, RectangleF normalizedRectangle)
 		{
+			VerifyNormalizedRectangle(normalizedRectangle);
+
 			int left = parentRectangle.Left + (int)(normalizedRectangle.Left * parentRectangle.Width);
 			int right = parentRectangle.Left + (int)(normalizedRectangle.Right * parentRectangle.Width);
 			int top = parentRectangle.Top + (int)(normalizedRectangle.Top * parentRectangle.Height);

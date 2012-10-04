@@ -1,0 +1,1 @@
+msxsl NewTestConfig.config ConfigurationUpgrade.xslt -o upgraded.config oldDocumentName=OldTestConfig.config outputDebugComments=True

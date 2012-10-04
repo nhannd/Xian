@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -79,7 +79,6 @@
     <Compile Include="Admin\UserAdmin\UserAssembler.cs" />
     <Compile Include="AuthenticationService.cs" />
     <Compile Include="AuthorityGroup.cs" />
-    <Compile Include="Brokers\IAuthorityGroupBroker.cs" />
     <Compile Include="Imex\AuthorityGroupImex.cs" />
     <Compile Include="Imex\AuthorityGroupImporter.cs" />
     <Compile Include="AuthorityToken.cs" />

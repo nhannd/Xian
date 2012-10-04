@@ -36,11 +36,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			_overlayFrameDataReference.FusionOverlayFrameData.Unloaded += HandleOverlayFrameDataUnloaded;
 			_voiLutManagerProxy = new VoiLutManagerProxy();
 			_colorMapManagerProxy = new ColorMapManagerProxy();
-
-			// install an initial VOI window if one is available in the overlay headers
-			var initialVoiWindow = CollectionUtils.FirstElement(overlayFrameData.OverlayData.VoiWindows);
-			if (initialVoiWindow != null)
-				VoiLutManager.InstallVoiLut(new BasicVoiLutLinear(initialVoiWindow.Width, initialVoiWindow.Center));
 		}
 
 		/// <summary>

@@ -111,7 +111,7 @@ namespace ClearCanvas.Desktop.Actions
 					if (action.Persistent)
 					{
 						if (AppendActionToXmlModel(_actionModelXmlDoc, xmlActionModel, action))
-							Platform.Log(LogLevel.Debug, "Inserted {0}", action.ActionID);
+							Console.WriteLine("Inserted {0}", action.ActionID);
 					}
 				}
 

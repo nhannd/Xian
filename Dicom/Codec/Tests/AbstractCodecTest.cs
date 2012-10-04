@@ -9,7 +9,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -88,24 +87,15 @@ namespace ClearCanvas.Dicom.Codec.Tests
 			theFile.ChangeTransferSyntax(syntax);
 
 			theFile.Save(DicomWriteOptions.ExplicitLengthSequence);
-	        saveCopy.Filename = "SCLosslessUncompressed.dcm";
-            saveCopy.Save(DicomWriteOptions.ExplicitLengthSequence);
 
 			DicomFile newFile = new DicomFile(theFile.Filename);
 
 			newFile.Load(DicomReadOptions.Default);
 
 			newFile.ChangeTransferSyntax(saveCopy.TransferSyntax);
-            newFile.Filename = "SCLosslessUncompressedPostCompression.dcm";
-            newFile.Save(DicomWriteOptions.ExplicitLengthSequence);
-
-	        string failureDescription;
-	        bool result = Compare(DicomPixelData.CreateFrom(newFile),
-	                              DicomPixelData.CreateFrom(saveCopy), out failureDescription);
-	        Assert.IsTrue(result, failureDescription);
 
 			List<DicomAttributeComparisonResult> list = new List<DicomAttributeComparisonResult>();
-			result = newFile.DataSet.Equals(saveCopy.DataSet, ref list);
+			bool result = newFile.DataSet.Equals(saveCopy.DataSet, ref list);
 
 			StringBuilder sb = new StringBuilder();
 			foreach (DicomAttributeComparisonResult compareResult in list)
@@ -130,11 +120,6 @@ namespace ClearCanvas.Dicom.Codec.Tests
 			newFile.Load(DicomReadOptions.Default);
 
 			newFile.ChangeTransferSyntax(saveCopy.TransferSyntax);
-
-            string failureDescription;
-            bool result = Compare(DicomPixelData.CreateFrom(newFile),
-                                  DicomPixelData.CreateFrom(saveCopy), out failureDescription);
-            Assert.IsTrue(result, failureDescription);
 
 			Assert.IsFalse(newFile.DataSet.Equals(saveCopy.DataSet));
 		}
@@ -207,250 +192,7 @@ namespace ClearCanvas.Dicom.Codec.Tests
 				return;
 			}
 
-			Assert.IsTrue(false, "Unexpected successful compression of object.");
+			Assert.IsTrue(false, "Unexpected successfull compression of object.");
 		}
-
-        public static bool Compare(DicomPixelData pixels1, DicomPixelData pixels2, out string failureDescription)
-        {
-            failureDescription = string.Empty;
-            if (pixels1.BitsAllocated != pixels2.BitsAllocated)
-            {
-                failureDescription = String.Format("Tag (7fe0,0010) Pixel Data: Bits Allocated varies: {0} , {1}", pixels1.BitsAllocated, pixels2.BitsAllocated);
-                return false;
-            }
-
-            if (pixels1.BitsStored != pixels2.BitsStored)
-            {
-                failureDescription = String.Format("Tag (7fe0,0010) Pixel Data: Bits Stored varies: {0} , {1}", pixels1.BitsStored, pixels2.BitsStored);
-                return false;
-            }
-
-            if (pixels1.ImageHeight != pixels2.ImageHeight)
-            {
-                failureDescription = String.Format("Tag (7fe0,0010) Pixel Data: Rows varies: {0} , {1}", pixels1.ImageHeight, pixels2.ImageHeight);
-                return false;
-            }
-
-            if (pixels1.ImageWidth != pixels2.ImageWidth)
-            {
-                failureDescription = String.Format("Tag (7fe0,0010) Pixel Data: Columns varies: {0} , {1}", pixels1.ImageWidth, pixels2.ImageWidth);
-                return false;
-            }
-
-            if (pixels1.SamplesPerPixel != pixels2.SamplesPerPixel)
-            {
-                failureDescription = String.Format("Tag (7fe0,0010) Pixel Data: Samples per pixel varies: {0} , {1}", pixels1.SamplesPerPixel, pixels2.SamplesPerPixel);
-                return false;
-            }
-
-            if (pixels1.NumberOfFrames != pixels2.NumberOfFrames)
-            {
-                failureDescription = String.Format("Tag (7fe0,0010) Pixel Data: Number of frames varies: {0} , {1}", pixels1.NumberOfFrames, pixels2.NumberOfFrames);
-                return false;
-            }
-
-            long pixelsVarying = 0;
-            long totalVariation = 0;
-
-            int pixels = pixels1.ImageHeight * pixels1.ImageWidth * pixels1.SamplesPerPixel;
-
-            if (pixels1.BitsAllocated == 8)
-            {
-                for (int frame = 0; frame < pixels1.NumberOfFrames; frame++)
-                {
-                    byte[] pixel1 = pixels1.GetFrame(frame);
-                    byte[] pixel2 = pixels2.GetFrame(frame);
-
-                    if (pixels1.HighBit != pixels2.HighBit)
-                    {
-                        // Justify the pixel, if needed
-                        if (DicomUncompressedPixelData.RightAlign(pixel1, pixels1.BitsAllocated, pixels1.BitsStored,
-                                                                  pixels1.HighBit))
-                        {
-                            //pixels1.HighBit = (ushort)(pixels1.BitsStored - 1);
-                            DicomUncompressedPixelData.ZeroUnusedBits(pixel1, pixels1.BitsAllocated, pixels1.BitsStored,
-                                                                      pixels1.BitsStored - 1);
-                        }
-                        if (DicomUncompressedPixelData.RightAlign(pixel2, pixels2.BitsAllocated, pixels2.BitsStored,
-                                                                  pixels2.HighBit))
-                        {
-                            //pixels2.HighBit = (ushort)(pixels2.BitsStored - 1);
-                            DicomUncompressedPixelData.ZeroUnusedBits(pixel2, pixels2.BitsAllocated, pixels2.BitsStored,
-                                                                      pixels2.BitsStored - 1);
-                        }
-                    }
-
-                    int[] intPixels1 = pixels1.IsSigned
-                                           ? Convert8BitSigned(pixel1, pixels, (DicomUncompressedPixelData)pixels1)
-                                           : Convert8BitUnsigned(pixel1, pixels, (DicomUncompressedPixelData)pixels1);
-
-                    int[] intPixels2 = pixels2.IsSigned
-                                           ? Convert8BitSigned(pixel2, pixels, (DicomUncompressedPixelData)pixels2)
-                                           : Convert8BitUnsigned(pixel2, pixels, (DicomUncompressedPixelData)pixels2);
-
-
-                    for (int i = 0; i < pixels; i++)
-                        if (intPixels1[i] != intPixels2[i])
-                        {
-                            pixelsVarying++;
-                            totalVariation += Math.Abs(intPixels1[i] - intPixels2[i]);
-                        }
-                }
-                if (pixelsVarying > 0)
-                {
-                    failureDescription = String.Format(
-                            "Tag (7fe0,0010) Pixel Data: {0} of {1} pixels varying, average difference: {2}",
-                            pixelsVarying, pixels * pixels1.NumberOfFrames, totalVariation / pixelsVarying);
-                    return false;
-                }
-            }
-            else
-            {
-                for (int frame = 0; frame < pixels1.NumberOfFrames; frame++)
-                {
-                    byte[] pixel1 = pixels1.GetFrame(frame);
-                    byte[] pixel2 = pixels2.GetFrame(frame);
-
-                    if (pixels1.HighBit != pixels2.HighBit)
-                    {
-                        // Justify the pixel, if needed
-                        if (DicomUncompressedPixelData.RightAlign(pixel1, pixels1.BitsAllocated, pixels1.BitsStored,
-                                                              pixels1.HighBit))
-                        {
-                            //pixels1.HighBit = (ushort) (pixels1.BitsStored - 1);
-                            DicomUncompressedPixelData.ZeroUnusedBits(pixel1, pixels1.BitsAllocated, pixels1.BitsStored,
-                                                                     pixels1.BitsStored - 1);
-                        }
-                        if (DicomUncompressedPixelData.RightAlign(pixel2, pixels2.BitsAllocated, pixels2.BitsStored,
-                                                              pixels2.HighBit))
-                        {
-                            //pixels2.HighBit = (ushort)(pixels2.BitsStored - 1);
-
-                            DicomUncompressedPixelData.ZeroUnusedBits(pixel2, pixels2.BitsAllocated, pixels2.BitsStored,
-                                                    pixels2.BitsStored - 1);
-                        }
-                    }
-
-
-                    int[] intPixels1 = pixels1.IsSigned
-                                           ? Convert16BitSigned(pixel1, pixels, (DicomUncompressedPixelData)pixels1)
-                                           : Convert16BitUnsigned(pixel1, pixels, (DicomUncompressedPixelData)pixels1);
-
-                    int[] intPixels2 = pixels2.IsSigned
-                                           ? Convert16BitSigned(pixel2, pixels, (DicomUncompressedPixelData)pixels2)
-                                           : Convert16BitUnsigned(pixel2, pixels, (DicomUncompressedPixelData)pixels2);
-
-
-                    for (int i = 0; i < pixels; i++)
-                        if (intPixels1[i] != intPixels2[i])
-                        {
-                            pixelsVarying++;
-                            totalVariation += Math.Abs(intPixels1[i] - intPixels2[i]);
-                        }
-                }
-
-
-                if (pixelsVarying > 0)
-                {
-                    failureDescription = String.Format("Tag (7fe0,0010) Pixel Data: {0} of {1} pixels varying, average difference: {2}", pixelsVarying, pixels, totalVariation / pixelsVarying);
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public static int[] Convert8BitSigned(byte[] byteInputData, int pixels, DicomUncompressedPixelData pd)
-        {
-            int shiftBits = 32 - pd.BitsStored;
-            bool bPixelRescale = !string.IsNullOrEmpty(pd.RescaleSlope) &&
-                                                      !string.IsNullOrEmpty(pd.RescaleIntercept)
-                                                      &&
-                                                      (pd.DecimalRescaleSlope != 1m ||
-                                                       pd.DecimalRescaleIntercept != 0m);
-            byte pixelMask = 0x00;
-            for (int x = 0; x < pd.BitsStored; x++)
-                pixelMask = (byte)((pixelMask << 1) | 0x0001);
-
-            int[] intPixels = new int[pixels];
-            for (int pixelCount = 0; pixelCount < byteInputData.Length; pixelCount++)
-            {
-                intPixels[pixelCount] = byteInputData[pixelCount] & pixelMask;
-
-                intPixels[pixelCount] = (((intPixels[pixelCount] << shiftBits)) >> shiftBits);
-
-                if (bPixelRescale)
-                    intPixels[pixelCount] = intPixels[pixelCount] * (int)pd.DecimalRescaleSlope +
-                                    (int)pd.DecimalRescaleIntercept;
-            }
-            return intPixels;
-        }
-
-        public static int[] Convert8BitUnsigned(byte[] byteInputData, int pixels, DicomUncompressedPixelData pd)
-        {
-            bool bPixelRescale = !string.IsNullOrEmpty(pd.RescaleSlope) &&
-                                                       !string.IsNullOrEmpty(pd.RescaleIntercept)
-                                                       &&
-                                                       (pd.DecimalRescaleSlope != 1m ||
-                                                        pd.DecimalRescaleIntercept != 0m);
-            byte pixelMask = 0x00;
-            for (int x = 0; x < pd.BitsStored; x++)
-                pixelMask = (byte)((pixelMask << 1) | 0x0001);
-
-            int[] intPixels = new int[pixels];
-
-            for (int pixelCount = 0; pixelCount < byteInputData.Length; pixelCount++)
-            {
-                intPixels[pixelCount] = (byte)(byteInputData[pixelCount] & pixelMask);
-
-                if (bPixelRescale)
-                    intPixels[pixelCount] = intPixels[pixelCount] * (int)pd.DecimalRescaleSlope +
-                                    (int)pd.DecimalRescaleIntercept;
-            }
-
-            return intPixels;
-        }
-
-        public static int[] Convert16BitSigned(byte[] byteInputData, int pixels, DicomUncompressedPixelData pd)
-        {
-            int shiftBits = 32 - pd.BitsStored;
-
-            int[] intPixels = new int[pixels];
-            for (int byteArrayCount = 0, pixelCount = 0;
-                 byteArrayCount < byteInputData.Length;
-                 byteArrayCount += 2, pixelCount++)
-            {
-                intPixels[pixelCount] = BitConverter.ToInt16(byteInputData, byteArrayCount);
-
-                intPixels[pixelCount] = (intPixels[pixelCount] << shiftBits) >> shiftBits;
-            }
-
-            return intPixels;
-        }
-
-        public static int[] Convert16BitUnsigned(byte[] byteInputData, int pixels, DicomUncompressedPixelData pd)
-        {
-            bool bPixelRescale = !string.IsNullOrEmpty(pd.RescaleSlope) &&
-                                                   !string.IsNullOrEmpty(pd.RescaleIntercept)
-                                                   &&
-                                                   (pd.DecimalRescaleSlope != 1m ||
-                                                    pd.DecimalRescaleIntercept != 0m);
-
-            ushort pixelMask = 0x0000;
-            for (int x = 0; x < pd.BitsStored; x++)
-                pixelMask = (ushort)((pixelMask << 1) | 0x0001);
-            int[] intPixels = new int[pixels];
-
-            for (int byteArrayCount = 0, pixelCount = 0; byteArrayCount < byteInputData.Length; byteArrayCount += 2, pixelCount++)
-            {
-                intPixels[pixelCount] = BitConverter.ToUInt16(byteInputData, byteArrayCount);
-
-                intPixels[pixelCount] = (ushort)(intPixels[pixelCount] & pixelMask);
-                if (bPixelRescale)
-                    intPixels[pixelCount] = intPixels[pixelCount] * (int)pd.DecimalRescaleSlope +
-                                    (int)pd.DecimalRescaleIntercept;
-            }
-            return intPixels;
-        }
 	}
 }

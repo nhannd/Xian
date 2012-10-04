@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Security.Principal;
 using System.Threading;
 using System.Web;
 using System.Web.Security;
@@ -22,7 +23,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
 {
     class CustomFormAuthenticationModule : IHttpModule
     {
-        private bool _contextDisposed;
+        private bool _contextDisposed = false;
 
         #region IHttpModule Members
 
@@ -46,7 +47,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
             _context.Disposed += ContextDisposed;
         }
 
-        static void CurrentDomain_DomainUnload(object sender, EventArgs e)
+        void CurrentDomain_DomainUnload(object sender, EventArgs e)
         {
             Platform.Log(LogLevel.Info, "App Domain Is Unloaded");
         }

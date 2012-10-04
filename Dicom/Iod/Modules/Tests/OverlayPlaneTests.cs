@@ -21,43 +21,6 @@ namespace ClearCanvas.Dicom.Iod.Modules.Tests
 	[TestFixture]
 	public class OverlayPlaneTests
 	{
-		#region Misc Tests
-
-		[Test]
-		public void TestIsValidMultiFrameOverlay()
-		{
-			const int size = 3;
-
-			var dataset = new DicomAttributeCollection();
-			SetOverlay(dataset, 0, new bool[size*size], OverlayType.R, new Point(0, 0), size, size, null, false, false);
-			SetOverlay(dataset, 1, new bool[size*size], OverlayType.R, new Point(0, 0), size, size, 1, false, false);
-			SetOverlay(dataset, 2, new bool[size*size*5], OverlayType.R, new Point(0, 0), size, size, 5, false, false);
-			SetOverlay(dataset, 3, new bool[size*size], OverlayType.R, new Point(0, 0), size, size, 1, 3, false, false);
-			SetOverlay(dataset, 4, new bool[size*size*5], OverlayType.R, new Point(0, 0), size, size, 5, 2, false, false);
-
-			var module = new OverlayPlaneModuleIod(dataset);
-
-			Assert.IsTrue(module[0].IsValidMultiFrameOverlay(1), "Single Frame Overlay / 1 Frame in Image");
-			Assert.IsTrue(module[0].IsValidMultiFrameOverlay(2), "Single Frame Overlay / 2 Frames in Image");
-
-			Assert.IsTrue(module[1].IsValidMultiFrameOverlay(1), "1 Frame in Overlay (origin null==1) / 1 Frame in Image");
-			Assert.IsTrue(module[1].IsValidMultiFrameOverlay(2), "1 Frame in Overlay (origin null==1) / 2 Frames in Image");
-
-			Assert.IsFalse(module[2].IsValidMultiFrameOverlay(4), "5 Frames in Overlay (origin null==1) / 4 Frames in Image");
-			Assert.IsTrue(module[2].IsValidMultiFrameOverlay(5), "5 Frames in Overlay (origin null==1) / 5 Frames in Image");
-			Assert.IsTrue(module[2].IsValidMultiFrameOverlay(6), "5 Frames in Overlay (origin null==1) / 6 Frames in Image");
-
-			Assert.IsFalse(module[3].IsValidMultiFrameOverlay(2), "1 Frames in Overlay (origin 3) / 2 Frames in Image");
-			Assert.IsTrue(module[3].IsValidMultiFrameOverlay(3), "1 Frames in Overlay (origin 3) / 3 Frames in Image");
-			Assert.IsTrue(module[3].IsValidMultiFrameOverlay(4), "1 Frames in Overlay (origin 3) / 4 Frames in Image");
-
-			Assert.IsFalse(module[4].IsValidMultiFrameOverlay(5), "5 Frames in Overlay (origin 2) / 5 Frames in Image");
-			Assert.IsTrue(module[4].IsValidMultiFrameOverlay(6), "5 Frames in Overlay (origin 2) / 6 Frames in Image");
-			Assert.IsTrue(module[4].IsValidMultiFrameOverlay(7), "5 Frames in Overlay (origin 2) / 7 Frames in Image");
-		}
-
-		#endregion
-
 		#region Basic Tests
 
 		[Test]
@@ -876,70 +839,6 @@ namespace ClearCanvas.Dicom.Iod.Modules.Tests
 			Assert.IsFalse(overlayPlane.TryComputeOverlayDataBitOffset(1, out actualBitOffset), "Should not be able to compute bit offset for frame number 1");
 			Assert.IsFalse(overlayPlane.TryComputeOverlayDataBitOffset(2, out actualBitOffset), "Should not be able to compute bit offset for frame number 2");
 		}
-
-        [Test]
-        public void TestConversion_MultiframeEmbedded()
-        {
-            const bool bigEndian = false;
-
-            // these parameters should be kept prime numbers so that we can exercise the overlay handling for rows/frames that cross byte boundaries
-            const int rows = 97;
-            const int columns = 101;
-            const int frames = 7;
-
-            const int overlayIndex = 0;
-
-            var overlayData = new bool[rows*columns*frames];
-            for (int i = 0; i < frames; i++)
-            {
-                overlayData[(i * rows*columns) + 1] = true;
-                overlayData[(i * rows * columns) + 10] = true;
-                overlayData[(i * rows * columns) + 100] = true;
-                overlayData[(i * rows * columns) + 225] = true;
-                overlayData[(i * rows * columns) + 1000] = true;
-                overlayData[(i * rows * columns) + 1001] = true;
-                overlayData[(i * rows * columns) + (rows * columns) - 1] = true;
-            }
-
-            var dataset = new DicomAttributeCollection();
-            SetImage(dataset, new byte[rows * columns * 2 * frames], rows, columns, frames, 16, 12, 11, false);
-            SetOverlay(dataset, overlayIndex, overlayData, OverlayType.G, new Point(1, 1), 12, bigEndian);
-
-            DicomUncompressedPixelData pd = new DicomUncompressedPixelData(dataset);
-
-            OverlayPlane overlayPlane = new OverlayPlane(overlayIndex, dataset);
-            Assert.IsTrue(overlayPlane.ConvertEmbeddedOverlay(pd),"Failed to convert to Non-Embedded overlay plane.");
-
-            
-            int actualOverlayFrame;
-
-            Assert.IsFalse(overlayPlane.TryGetRelevantOverlayFrame(-1, frames, out actualOverlayFrame), "Should not any matching overlay frame for image frame #-1");
-            Assert.IsFalse(overlayPlane.TryGetRelevantOverlayFrame(0, frames, out actualOverlayFrame), "Should not any matching overlay frame for image frame #0");
-            Assert.IsFalse(overlayPlane.TryGetRelevantOverlayFrame(8, frames, out actualOverlayFrame), "Should not any matching overlay frame for image frame #8");
-
-            // all valid image frame inputs should map 1-to-1 with the same numbered overlay frame
-
-            Assert.IsTrue(overlayPlane.TryGetRelevantOverlayFrame(1, frames, out actualOverlayFrame), "Should be able to match an overlay frame to image frame #1");
-            Assert.AreEqual(1, actualOverlayFrame, "Wrong overlay frame matched to image frame #1");
-
-            Assert.IsTrue(overlayPlane.TryGetRelevantOverlayFrame(2, frames, out actualOverlayFrame), "Should be able to match an overlay frame to image frame #2");
-            Assert.AreEqual(2, actualOverlayFrame, "Wrong overlay frame matched to image frame #2");
-
-            Assert.IsTrue(overlayPlane.TryGetRelevantOverlayFrame(3, frames, out actualOverlayFrame), "Should be able to match an overlay frame to image frame #3");
-            Assert.AreEqual(3, actualOverlayFrame, "Wrong overlay frame matched to image frame #3");
-
-            Assert.IsTrue(overlayPlane.TryGetRelevantOverlayFrame(4, frames, out actualOverlayFrame), "Should be able to match an overlay frame to image frame #4");
-            Assert.AreEqual(4, actualOverlayFrame, "Wrong overlay frame matched to image frame #4");
-
-            Assert.IsTrue(overlayPlane.TryGetRelevantOverlayFrame(5, frames, out actualOverlayFrame), "Should be able to match an overlay frame to image frame #5");
-            Assert.AreEqual(5, actualOverlayFrame, "Wrong overlay frame matched to image frame #5");
-
-            Assert.IsTrue(overlayPlane.TryGetRelevantOverlayFrame(6, frames, out actualOverlayFrame), "Should be able to match an overlay frame to image frame #6");
-            Assert.AreEqual(6, actualOverlayFrame, "Wrong overlay frame matched to image frame #6");
-
-            Assert.IsTrue(overlayPlane.TryGetRelevantOverlayFrame(7, frames, out actualOverlayFrame), "Should be able to match an overlay frame to image frame #7");
-            Assert.AreEqual(7, actualOverlayFrame, "Wrong overlay frame matched to image frame #7");
-        }
 
 		#endregion
 

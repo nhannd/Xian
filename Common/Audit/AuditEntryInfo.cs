@@ -10,7 +10,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace ClearCanvas.Common.Audit
 {
@@ -20,13 +22,6 @@ namespace ClearCanvas.Common.Audit
 	[DataContract]
 	public class AuditEntryInfo
 	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public AuditEntryInfo()
-		{
-		}
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>

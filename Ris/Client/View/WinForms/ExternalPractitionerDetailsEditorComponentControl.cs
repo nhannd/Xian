@@ -9,44 +9,46 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Text;
 using System.Windows.Forms;
+
+using ClearCanvas.Common;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-	/// <summary>
-	/// Provides a Windows Forms user-interface for <see cref="ExternalPractitionerDetailsEditorComponent"/>
-	/// </summary>
-	public partial class ExternalPractitionerDetailsEditorComponentControl : ApplicationComponentUserControl
-	{
-		private readonly ExternalPractitionerDetailsEditorComponent _component;
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="ExternalPractitionerDetailsEditorComponent"/>
+    /// </summary>
+    public partial class ExternalPractitionerDetailsEditorComponentControl : ApplicationComponentUserControl
+    {
+        private ExternalPractitionerDetailsEditorComponent _component;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public ExternalPractitionerDetailsEditorComponentControl(ExternalPractitionerDetailsEditorComponent component)
-			: base(component)
-		{
-			InitializeComponent();
-			_component = component;
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public ExternalPractitionerDetailsEditorComponentControl(ExternalPractitionerDetailsEditorComponent component)
+            : base(component)
+        {
+            InitializeComponent();
+            _component = component;
 
-			if (_component.HasWarning)
-			{
-				_warning.Text = _component.WarningMessage;
-				_warning.Visible = true;
-			}
+            _familyName.DataBindings.Add("Value", _component, "FamilyName", true, DataSourceUpdateMode.OnPropertyChanged);
+            _givenName.DataBindings.Add("Value", _component, "GivenName", true, DataSourceUpdateMode.OnPropertyChanged);
+            _middleName.DataBindings.Add("Value", _component, "MiddleName", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_familyName.DataBindings.Add("Value", _component, "FamilyName", true, DataSourceUpdateMode.OnPropertyChanged);
-			_givenName.DataBindings.Add("Value", _component, "GivenName", true, DataSourceUpdateMode.OnPropertyChanged);
-			_middleName.DataBindings.Add("Value", _component, "MiddleName", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			_licenseNumber.DataBindings.Add("Value", _component, "LicenseNumber", true, DataSourceUpdateMode.OnPropertyChanged);
-			_billingNumber.DataBindings.Add("Value", _component, "BillingNumber", true, DataSourceUpdateMode.OnPropertyChanged);
+            _licenseNumber.DataBindings.Add("Value", _component, "LicenseNumber", true, DataSourceUpdateMode.OnPropertyChanged);
+            _billingNumber.DataBindings.Add("Value", _component, "BillingNumber", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_isVerified.DataBindings.Add("Checked", _component, "MarkVerified", true, DataSourceUpdateMode.OnPropertyChanged);
 			_lastVerified.Text = _component.LastVerified;
 			_isVerified.Visible= _component.CanVerify;
 			_lastVerified.Visible = _component.CanVerify;
 		}
-	}
+    }
 }

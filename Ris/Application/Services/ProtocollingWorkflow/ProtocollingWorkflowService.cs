@@ -194,7 +194,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			var noteDetails = GetNoteDetails(assignmentStep.Procedure.Order, request.NoteCategory);
 
 			var orderAssembler = new OrderAssembler();
-			var orderDetailOptions = new OrderAssembler.CreateOrderDetailOptions {IncludeExtendedProperties = true};
+			var orderDetailOptions = new OrderAssembler.CreateOrderDetailOptions(false, false, false, null, false, false, true);
 			var orderDetail = orderAssembler.CreateOrderDetail(assignmentStep.Procedure.Order, orderDetailOptions, this.PersistenceContext);
 
 			this.PersistenceContext.SynchState();
@@ -518,7 +518,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			var noteAssembler = new OrderNoteAssembler();
 
 			return CollectionUtils.Map<OrderNote, OrderNoteDetail>(
-				OrderNote.GetNotesForOrder(order, new[]{category}, false),
+				OrderNote.GetNotesForOrder(order, category),
 				note => noteAssembler.CreateOrderNoteDetail(note, this.PersistenceContext));
 		}
 

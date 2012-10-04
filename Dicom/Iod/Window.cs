@@ -131,7 +131,6 @@ namespace ClearCanvas.Dicom.Iod
 		/// </summary>
 		public override string ToString()
 		{
-			// not meant to be a DICOM attribute value
 			return String.Format(@"{0:F2}/{1:F2}", _width, _center);
 		}
 

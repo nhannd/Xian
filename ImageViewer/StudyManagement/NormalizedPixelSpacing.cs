@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="pixelSpacingColumn">Pixel width.</param>
 		/// <remarks>
 		/// Using this method does not alter the original DICOM pixel spacing
-		/// contained in <see cref="Frame.PixelSpacing"/>.
+		/// contained in <see cref="ImageSop.PixelSpacing"/>.
 		/// </remarks>
 		public void Calibrate(double pixelSpacingRow, double pixelSpacingColumn)
 		{

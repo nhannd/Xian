@@ -236,135 +236,71 @@ namespace ClearCanvas.ImageServer.Core
 		/// <param name="retry">Flag telling if the item should be retried on failure.  Note that if the item is a duplicate, the WorkQueueUid item is not failed. </param>
 		/// <param name="uid">An optional WorkQueueUid associated with the entry, that will be deleted upon success or failed on failure.</param>
 		/// <param name="deleteFile">An option file to delete as part of the process</param>
-        /// <exception cref="Exception"/>
-        /// <exception cref="DicomDataException"/>
         public  ProcessingResult ProcessFile(string group, DicomFile file, StudyXml stream, bool compare, bool retry, WorkQueueUid uid, string deleteFile)
 		{
 		    Platform.CheckForNullReference(file, "file");
 
-            try
+			try
+			{
+            _instanceStats.ProcessTime.Start();
+				ProcessingResult result = new ProcessingResult
+				                          	{
+				                          		Status = ProcessingStatus.Success
+				                          	};
+
+		    using (ServerCommandProcessor processor = new ServerCommandProcessor("Process File"))
             {
-                CheckDataLength(file);
+                SopProcessingContext processingContext = new SopProcessingContext(processor, _context.StorageLocation, group);
 
-                _instanceStats.ProcessTime.Start();
-                ProcessingResult result = new ProcessingResult
-                                              {
-                                                  Status = ProcessingStatus.Success
-                                              };
-
-                using (ServerCommandProcessor processor = new ServerCommandProcessor("Process File"))
+                if (EnforceNameRules)
                 {
-                    SopProcessingContext processingContext = new SopProcessingContext(processor,
-                                                                                      _context.StorageLocation, group);
-
-                    if (EnforceNameRules)
-                    {
-                        _patientNameRules.Apply(file);
-                    }
-
-                    if (compare && ShouldReconcile(_context.StorageLocation, file))
-                    {
-                        ScheduleReconcile(processingContext, file, uid);
-                        result.Status = ProcessingStatus.Reconciled;
-                    }
-                    else
-                    {
-                        InsertInstance(file, stream, uid, deleteFile);
-                        result.Status = ProcessingStatus.Success;
-                    }
+                    _patientNameRules.Apply(file);
                 }
 
-                _instanceStats.ProcessTime.End();
+                if (compare && ShouldReconcile(_context.StorageLocation, file))
+                {
+                    ScheduleReconcile(processingContext, file, uid);
+                    result.Status = ProcessingStatus.Reconciled;
+                }
+                else
+                {
+                    InsertInstance(file, stream, uid, deleteFile);
+                    result.Status = ProcessingStatus.Success;
+                }
+            }            
 
-                if (_context.SopProcessedRulesEngine.Statistics.LoadTime.IsSet)
-                    _instanceStats.SopRulesLoadTime.Add(_context.SopProcessedRulesEngine.Statistics.LoadTime);
+			_instanceStats.ProcessTime.End();
 
-                if (_context.SopProcessedRulesEngine.Statistics.ExecutionTime.IsSet)
-                    _instanceStats.SopEngineExecutionTime.Add(_context.SopProcessedRulesEngine.Statistics.ExecutionTime);
+			if (_context.SopProcessedRulesEngine.Statistics.LoadTime.IsSet)
+				_instanceStats.SopRulesLoadTime.Add(_context.SopProcessedRulesEngine.Statistics.LoadTime);
 
-                _context.SopProcessedRulesEngine.Statistics.Reset();
+			if (_context.SopProcessedRulesEngine.Statistics.ExecutionTime.IsSet)
+				_instanceStats.SopEngineExecutionTime.Add(_context.SopProcessedRulesEngine.Statistics.ExecutionTime);
 
-                //TODO: Should throw exception if result is failed?
-                return result;
+			_context.SopProcessedRulesEngine.Statistics.Reset();
 
-            }
-            catch (Exception e)
-            {
-                // If its a duplicate, ignore the exception, and just throw it
-                if (deleteFile != null && (e is InstanceAlreadyExistsException
-                        || e.InnerException != null && e.InnerException is InstanceAlreadyExistsException))
-                    throw;
+            //TODO: Should throw exception if result is failed?
+		    return result;
 
-                if (uid != null)
-                    FailUid(uid, retry);
-                throw;
-            }
+			}
+			catch (Exception e)
+			{
+				// If its a duplicate, ignore the exception, and just throw it
+				if (deleteFile != null && (e is InstanceAlreadyExistsException
+						|| e.InnerException != null && e.InnerException is InstanceAlreadyExistsException))
+					throw;
+
+				if (uid != null)
+					FailUid(uid, retry);
+				throw;
+			}
 		}
+
+        
 
 	    #endregion
 
 		#region Private Methods
-
-        /// <summary>
-        /// Checks the data in the message and generates warning logs/alerts if
-        /// any of them exceeeds the max size allowed in the database
-        /// </summary>
-        /// <param name="file"></param>
-        private void CheckDataLength(DicomMessageBase file)
-        {
-            //TODO: Maybe this should be part of the model?
-
-            String studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].GetString(0, String.Empty);
-            
-            String patientId = file.DataSet[DicomTags.PatientId].GetString(0, String.Empty);
-            String issuerOfPatientId = file.DataSet[DicomTags.IssuerOfPatientId].GetString(0, String.Empty);
-            String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
-            String patientsBirthDate = file.DataSet[DicomTags.PatientsBirthDate].GetString(0, String.Empty);
-            String patientsSex = file.DataSet[DicomTags.PatientsSex].GetString(0, String.Empty);
-            String accessionNumber = file.DataSet[DicomTags.AccessionNumber].GetString(0, String.Empty);
-
-            bool alert = false;
-            if (!string.IsNullOrEmpty(patientId) && patientId.Length>64)
-            {
-                alert = true;
-                Platform.Log(LogLevel.Warn, "Patient ID ({0}) in the dicom message exceeeds 64 characters", patientId);
-            }
-
-            if (!string.IsNullOrEmpty(issuerOfPatientId) && issuerOfPatientId.Length > 64)
-            {
-                alert = true; 
-                Platform.Log(LogLevel.Warn, "Issuer Of Patient ID ({0}) in the dicom message exceeeds 64 characters", issuerOfPatientId);
-            }
-            if (!string.IsNullOrEmpty(patientsName) && patientsName.Length > 64)
-            {
-                alert = true; 
-                Platform.Log(LogLevel.Warn, "Patient's Name ({0}) in the dicom message exceeeds 64 characters", patientsName);
-            }
-            if (!string.IsNullOrEmpty(patientsBirthDate) && patientsBirthDate.Length > 8)
-            {
-                alert = true;
-                Platform.Log(LogLevel.Warn, "Patient's Birth Date ({0}) in the dicom message exceeeds 8 characters", patientsBirthDate);
-            }
-            if (!string.IsNullOrEmpty(patientsSex) && patientsSex.Length > 2)
-            {
-                alert = true; 
-                Platform.Log(LogLevel.Warn, "Patient's Sex ({0}) in the dicom message exceeeds 2 characters", patientsSex);
-            }
-            if (!string.IsNullOrEmpty(accessionNumber) && accessionNumber.Length > 16)
-            {
-                alert = true; 
-                Platform.Log(LogLevel.Warn, "Accession Number ({0}) in the dicom message exceeeds 16 characters", accessionNumber);
-            }
-
-            if (alert)
-            {
-                StudyAlertGenerator.Generate(
-                    new StudyAlert("Study Process", _context.Partition.AeTitle, studyInstanceUid, StudyAlertType.BadDicomData, 
-                        String.Format("Study {0} contains some bad data which may have been truncated. It may not appear when queried by remote devices.", 
-                        studyInstanceUid)));
-            }
-        }
-
 
 		public static void FailUid(WorkQueueUid sop, bool retry)
 		{

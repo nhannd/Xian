@@ -48,7 +48,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			remove { _richTextBox.TextChanged -= value; }
 		}
 
-		[Localizable(true)]
 		public string LabelText
 		{
 			get { return _label.Text; }

@@ -12,8 +12,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
@@ -23,90 +25,95 @@ using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-	/// <summary>
-	/// Extension point for views onto <see cref="LocationEditorComponent"/>
-	/// </summary>
-	[ExtensionPoint]
-	public class LocationEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-	{
-	}
+    /// <summary>
+    /// Extension point for views onto <see cref="LocationEditorComponent"/>
+    /// </summary>
+    [ExtensionPoint]
+    public class LocationEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    {
+    }
 
-	/// <summary>
-	/// LocationEditorComponent class
-	/// </summary>
-	[AssociateView(typeof(LocationEditorComponentViewExtensionPoint))]
-	public class LocationEditorComponent : ApplicationComponent
-	{
-		private List<FacilitySummary> _facilityChoices;
+    /// <summary>
+    /// LocationEditorComponent class
+    /// </summary>
+    [AssociateView(typeof(LocationEditorComponentViewExtensionPoint))]
+    public class LocationEditorComponent : ApplicationComponent
+    {
+        private List<FacilitySummary> _facilityChoices;
 
-		private LocationDetail _locationDetail;
-		private EntityRef _locationRef;
-		private readonly bool _isNew;
+        private LocationDetail _locationDetail;
+        private EntityRef _locationRef;
+        private bool _isNew;
 
-		private LocationSummary _locationSummary;
+        private LocationSummary _locationSummary;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public LocationEditorComponent()
-		{
-			_isNew = true;
-		}
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public LocationEditorComponent()
+        {
+            _isNew = true;
+        }
 
-		public LocationEditorComponent(EntityRef locationRef)
-		{
-			_isNew = false;
-			_locationRef = locationRef;
-		}
+        public LocationEditorComponent(EntityRef locationRef)
+        {
+            _isNew = false;
+            _locationRef = locationRef;
+        }
 
-		public LocationSummary LocationSummary
-		{
-			get { return _locationSummary; }
-		}
+        public LocationSummary LocationSummary
+        {
+            get { return _locationSummary; }
+        }
 
-		public override void Start()
-		{
-			if (_isNew)
-			{
-				_locationDetail = new LocationDetail();
-			}
-			else
-			{
-				Platform.GetService(
-					delegate(ILocationAdminService service)
-					{
-							var response = service.LoadLocationForEdit(new LoadLocationForEditRequest(_locationRef));
-							_locationRef = response.LocationDetail.LocationRef;
-							_locationDetail = response.LocationDetail;
-					});
-			}
-		
-			Platform.GetService(
-				delegate(IFacilityAdminService service)
-				{
-					var response = service.ListAllFacilities(new ListAllFacilitiesRequest());
-					_facilityChoices = response.Facilities;
+        public override void Start()
+        {
+            if (_isNew)
+            {
+                _locationDetail = new LocationDetail();
+            }
+            else
+            {
+                Platform.GetService<ILocationAdminService>(
+                    delegate(ILocationAdminService service)
+                    {
+                            LoadLocationForEditResponse response = service.LoadLocationForEdit(new LoadLocationForEditRequest(_locationRef));
+                            _locationRef = response.LocationDetail.LocationRef;
+                            _locationDetail = response.LocationDetail;
+                    });
+            }
+        
+            Platform.GetService<IFacilityAdminService>(
+                delegate(IFacilityAdminService service)
+                {
+                    ListAllFacilitiesResponse response = service.ListAllFacilities(new ListAllFacilitiesRequest());
+                    _facilityChoices = response.Facilities;
 
-					if (_isNew && _locationDetail.Facility == null && response.Facilities.Count > 0)
-					{
-						_locationDetail.Facility = response.Facilities[0];
-					}
-				});
-				
+                    if (_isNew && _locationDetail.Facility == null && response.Facilities.Count > 0)
+                    {
+                        _locationDetail.Facility = response.Facilities[0];
+                    }
+                });
+                
 
-			base.Start();
-		}
+            base.Start();
+        }
 
-		public LocationDetail LocationDetail
-		{
-			get { return _locationDetail; }
-			set { _locationDetail = value; }
-		}
+        public override void Stop()
+        {
+            base.Stop();
+        }
 
-		#region Presentation Model
+        public LocationDetail LocationDetail
+        {
+            get { return _locationDetail; }
+            set { _locationDetail = value; }
+        }
 
-		[ValidateNotNull]
-		public string Id
+        #region Presentation Model
+
+        [ValidateNotNull]
+        public string Id
 		{
 			get { return _locationDetail.Id; }
 			set
@@ -116,8 +123,8 @@ namespace ClearCanvas.Ris.Client.Admin
 			}
 		}
 
-		[ValidateNotNull]
-		public string Name
+        [ValidateNotNull]
+        public string Name
 		{
 			get { return _locationDetail.Name; }
 			set
@@ -138,124 +145,144 @@ namespace ClearCanvas.Ris.Client.Admin
 		}
 
 		public IList FacilityChoices
-		{
-			get { return _facilityChoices; }
-		}
+        {
+            get { return _facilityChoices; }
+        }
 
-		[ValidateNotNull]
-		public FacilitySummary Facility
-		{
-			get { return _locationDetail.Facility; }
-			set
-			{
-				_locationDetail.Facility = value;
-				this.Modified = true;
-			}
-		}
+        [ValidateNotNull]
+        public FacilitySummary Facility
+        {
+            get { return _locationDetail.Facility; }
+            set
+            {
+            	_locationDetail.Facility = value;
+                this.Modified = true;
+            }
+        }
 
 		public string FormatFacility(object item)
 		{
-			var f = (FacilitySummary) item;
+			FacilitySummary f = (FacilitySummary) item;
 			return f.Name;
 		}
 
-		public string Building
-		{
-			get { return _locationDetail.Building; }
-			set 
-			{ 
-				_locationDetail.Building = value;
-				this.Modified = true;
-			}
-		}
+        public string Building
+        {
+            get { return _locationDetail.Building; }
+            set 
+            { 
+                _locationDetail.Building = value;
+                this.Modified = true;
+            }
+        }
 
-		public string Floor
-		{
-			get { return _locationDetail.Floor; }
-			set 
-			{ 
-				_locationDetail.Floor = value;
-				this.Modified = true;
-			}
-		}
+        public string Floor
+        {
+            get { return _locationDetail.Floor; }
+            set 
+            { 
+                _locationDetail.Floor = value;
+                this.Modified = true;
+            }
+        }
 
-		public string PointOfCare
-		{
-			get { return _locationDetail.PointOfCare; }
-			set 
-			{ 
-				_locationDetail.PointOfCare = value;
-				this.Modified = true;
-			}
-		}
+        public string PointOfCare
+        {
+            get { return _locationDetail.PointOfCare; }
+            set 
+            { 
+                _locationDetail.PointOfCare = value;
+                this.Modified = true;
+            }
+        }
 
-		public void Accept()
-		{
-			if (this.HasValidationErrors)
-			{
-				this.ShowValidation(true);
-			}
-			else
-			{
-				try
-				{
-					SaveChanges();
+        public string Room
+        {
+            get { return _locationDetail.Room; }
+            set 
+            { 
+                _locationDetail.Room = value;
+                this.Modified = true;
+            }
+        }
 
-					this.Exit(ApplicationComponentExitCode.Accepted);
-				}
-				catch (Exception e)
-				{
-					ExceptionHandler.Report(e, SR.ExceptionSaveLocation, this.Host.DesktopWindow,
-						delegate
-						{
-							this.ExitCode = ApplicationComponentExitCode.Error;
-							this.Host.Exit();
-						});
-				}
-			}
-		}
+        public string Bed
+        {
+            get { return _locationDetail.Bed; }
+            set 
+            { 
+                _locationDetail.Bed = value;
+                this.Modified = true;
+            }
+        }
 
-		public void Cancel()
-		{
-			this.ExitCode = ApplicationComponentExitCode.None;
-			Host.Exit();
-		}
+        public void Accept()
+        {
+            if (this.HasValidationErrors)
+            {
+                this.ShowValidation(true);
+            }
+            else
+            {
+                try
+                {
+                    SaveChanges();
 
-		public bool AcceptEnabled
-		{
-			get { return this.Modified; }
-		}
+                    this.Exit(ApplicationComponentExitCode.Accepted);
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, SR.ExceptionSaveLocation, this.Host.DesktopWindow,
+                        delegate()
+                        {
+                            this.ExitCode = ApplicationComponentExitCode.Error;
+                            this.Host.Exit();
+                        });
+                }
+            }
+        }
 
-		#endregion
+        public void Cancel()
+        {
+            this.ExitCode = ApplicationComponentExitCode.None;
+            Host.Exit();
+        }
 
-		private void SaveChanges()
-		{
-			if (_isNew)
-			{
-				Platform.GetService(
-					delegate(ILocationAdminService service)
-					{
-						var response = service.AddLocation(new AddLocationRequest(_locationDetail));
-						_locationRef = response.Location.LocationRef;
-						_locationSummary = response.Location;
-					});
-			}
-			else
-			{
-				Platform.GetService(
-					delegate(ILocationAdminService service)
-					{
-						var response = service.UpdateLocation(new UpdateLocationRequest(_locationDetail));
-						_locationRef = response.Location.LocationRef;
-						_locationSummary = response.Location;
-					});
-			}
-		}
+        public bool AcceptEnabled
+        {
+            get { return this.Modified; }
+        }
 
-		public event EventHandler AcceptEnabledChanged
-		{
-			add { this.ModifiedChanged += value; }
-			remove { this.ModifiedChanged -= value; }
-		}
-	}
+        #endregion
+
+        private void SaveChanges()
+        {
+            if (_isNew)
+            {
+                Platform.GetService<ILocationAdminService>(
+                    delegate(ILocationAdminService service)
+                    {
+                        AddLocationResponse response = service.AddLocation(new AddLocationRequest(_locationDetail));
+                        _locationRef = response.Location.LocationRef;
+                        _locationSummary = response.Location;
+                    });
+            }
+            else
+            {
+                Platform.GetService<ILocationAdminService>(
+                    delegate(ILocationAdminService service)
+                    {
+                        UpdateLocationResponse response = service.UpdateLocation(new UpdateLocationRequest(_locationDetail));
+                        _locationRef = response.Location.LocationRef;
+                        _locationSummary = response.Location;
+                    });
+            }
+        }
+
+        public event EventHandler AcceptEnabledChanged
+        {
+            add { this.ModifiedChanged += value; }
+            remove { this.ModifiedChanged -= value; }
+        }
+    }
 }

@@ -52,8 +52,6 @@
     <Compile Include="Admin\DepartmentAdmin\AddDepartmentResponse.cs" />
     <Compile Include="Admin\DepartmentAdmin\DeleteDepartmentRequest.cs" />
     <Compile Include="Admin\DepartmentAdmin\DeleteDepartmentResponse.cs" />
-    <Compile Include="Admin\ExternalPractitionerAdmin\GetActiveOrdersCountsForContactPointsRequest.cs" />
-    <Compile Include="Admin\ExternalPractitionerAdmin\GetActiveOrdersCountsForContactPointsResponse.cs" />
     <Compile Include="Admin\ModalityAdmin\LoadModalityEditorFormDataRequest.cs" />
     <Compile Include="Admin\ModalityAdmin\LoadModalityEditorFormDataResponse.cs" />
     <Compile Include="DepartmentDetail.cs" />
@@ -181,8 +179,6 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\MergeOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\QueryCancelOrderWarningsRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\QueryCancelOrderWarningsResponse.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\UnmergeOrderRequest.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\UnmergeOrderResponse.cs" />
     <Compile Include="ReportingWorkflow\GetDocumentationStatusResponse.cs" />
     <Compile Include="ReportingWorkflow\GetDocumentationStatusRequest.cs" />
     <Compile Include="ReportingWorkflow\ReturnToInterpreterRequest.cs" />

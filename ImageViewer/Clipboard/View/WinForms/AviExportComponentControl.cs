@@ -69,6 +69,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			_imageHeight.DataBindings.Add("Minimum", _component, "MinimumDimension", true, DataSourceUpdateMode.Never);
 			_imageHeight.DataBindings.Add("Value", _component, "Height", true, DataSourceUpdateMode.OnPropertyChanged);
 			_backgroundColorSwatch.DataBindings.Add("BackColor", _component, "BackgroundColor", true, DataSourceUpdateMode.Never);
+        	_component.ShowTextOverlay = false;
 		}
 
     	private void DoDispose(bool disposing)

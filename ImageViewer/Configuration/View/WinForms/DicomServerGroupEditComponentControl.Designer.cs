@@ -59,7 +59,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DicomServerGroupEditComponentControl));
 			this.label1 = new System.Windows.Forms.Label();
 			this._serverGroupName = new System.Windows.Forms.TextBox();
 			this._btnAccept = new System.Windows.Forms.Button();
@@ -68,35 +67,48 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			// 
 			// label1
 			// 
-			resources.ApplyResources(this.label1, "label1");
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(23, 22);
 			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(101, 13);
+			this.label1.TabIndex = 0;
+			this.label1.Text = "Server Group Name";
 			// 
 			// _serverGroupName
 			// 
-			resources.ApplyResources(this._serverGroupName, "_serverGroupName");
+			this._serverGroupName.Location = new System.Drawing.Point(131, 22);
 			this._serverGroupName.Name = "_serverGroupName";
+			this._serverGroupName.Size = new System.Drawing.Size(153, 20);
+			this._serverGroupName.TabIndex = 1;
 			// 
 			// _btnAccept
 			// 
-			resources.ApplyResources(this._btnAccept, "_btnAccept");
+			this._btnAccept.Location = new System.Drawing.Point(80, 66);
 			this._btnAccept.Name = "_btnAccept";
+			this._btnAccept.Size = new System.Drawing.Size(75, 23);
+			this._btnAccept.TabIndex = 2;
+			this._btnAccept.Text = "OK";
 			this._btnAccept.UseVisualStyleBackColor = true;
 			// 
 			// _btnCancel
 			// 
-			resources.ApplyResources(this._btnCancel, "_btnCancel");
+			this._btnCancel.Location = new System.Drawing.Point(161, 66);
 			this._btnCancel.Name = "_btnCancel";
+			this._btnCancel.Size = new System.Drawing.Size(75, 23);
+			this._btnCancel.TabIndex = 3;
+			this._btnCancel.Text = "Cancel";
 			this._btnCancel.UseVisualStyleBackColor = true;
 			// 
 			// DicomServerGroupEditComponentControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._btnCancel);
 			this.Controls.Add(this._btnAccept);
 			this.Controls.Add(this._serverGroupName);
 			this.Controls.Add(this.label1);
 			this.Name = "DicomServerGroupEditComponentControl";
+			this.Size = new System.Drawing.Size(316, 108);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

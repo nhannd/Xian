@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="helpproject.xsl" ?>
+<topic template="Default" lasteditedby="Jonathan" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="helpproject.xsd">
+  <title translate="true">IIS Configuration</title>
+  <body>
+    <header>
+      <para styleclass="Heading1"><text styleclass="Heading1" translate="true">IIS Configuration</text></para>
+    </header>
+    <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><table rowcount="2" colcount="2" style="width:100%; cell-padding:0px; cell-spacing:0px; page-break-inside:auto; border-width:0px; border-spacing:0px; cell-border-width:0px; border-style:none; background-color:none; head-row-background-color:none; alt-row-background-color:none;">
+      <tr style="vertical-align:top">
+        <td style="vertical-align:bottom;">
+          <para><anchor id="idnav" styleclass="Normal text" style="font-family:Arial; font-size:10pt; font-weight:normal; font-style:normal; text-decoration:none; text-transform:none; vertical-align:baseline; color:#000000; background-color:transparent; letter-spacing:normal; letter-scaling:100%;"></anchor><text styleclass="Normal" style="font-size:8pt; font-weight:bold; text-decoration:none; vertical-align:baseline;" translate="true">Navigation:</text><text styleclass="crumbs" style="font-family:Arial; font-size:8pt; font-weight:normal; font-style:normal; text-decoration:none; text-transform:none; vertical-align:baseline; color:#000000; background-color:transparent; letter-spacing:normal; letter-scaling:100%;" translate="true"> &#160;»No topics above this level«</text></para>
+          <para styleclass="p_heading1" style="text-align:left; text-indent:0px; margin-top:3px; margin-right:0px; margin-bottom:0px; margin-left:0px; line-height:1.0; background-color:transparent; white-space:normal; page-break-inside:auto; page-break-after:auto; border:none; tabstops:none;"><text styleclass="f_heading1" style="font-family:Arial; font-size:16pt; font-weight:bold; font-style:normal; text-decoration:none; text-transform:none; vertical-align:baseline; color:#ffffff; background-color:transparent; letter-spacing:normal; letter-scaling:100%;" translate="true">IIS Configuration</text></para>
+        </td>
+        <td style="vertical-align:middle; width:120px;">
+          <para style="text-align:right;"><image src="btn_prev_d.gif" scale="100.00%" styleclass="Image Caption"></image><link displaytype="image" src="btn_home_n.gif" type="topiclink" href="Welcome"></link><image src="btn_next_d.gif" scale="100.00%" styleclass="Image Caption"></image></para>
+        </td>
+      </tr>
+      <tr style="vertical-align:top">
+        <td>
+        </td>
+        <td>
+        </td>
+      </tr>
+    </table></para>
+    <para styleclass="Normal" style="margin-bottom:10px; margin-left:10px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-size:11pt; text-decoration:none; vertical-align:baseline;" translate="true">Enter topic text here.</text></para>
+  </body>
+</topic>

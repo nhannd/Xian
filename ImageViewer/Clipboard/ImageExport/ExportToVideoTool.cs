@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 	[Tooltip("export", "TooltipExportToVideo")]
 	[IconSet("export", IconScheme.Colour, "Icons.ExportToVideoToolSmall.png", "Icons.ExportToVideoToolSmall.png", "Icons.ExportToVideoToolSmall.png")]
 	[EnabledStateObserver("export", "Enabled", "EnabledChanged")]
-	[ViewerActionPermission("export", AuthorityTokens.Clipboard.Export.AVI)]
+
 	[ExtensionOf(typeof(ClipboardToolExtensionPoint))]
 	public class ExportToVideoTool : ClipboardTool
 	{
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 			catch(Exception e)
 			{
-				ExceptionHandler.Report(e, SR.MessageExportToVideoFailed, Context.DesktopWindow);
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
 		}
 	}

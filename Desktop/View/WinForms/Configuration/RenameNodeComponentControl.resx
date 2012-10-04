@@ -121,9 +121,6 @@
   <data name="_txtName.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="_txtName.LabelText" xml:space="preserve">
-    <value>Name</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_txtName.Location" type="System.Drawing.Point, System.Drawing">
     <value>25, 10</value>
@@ -131,16 +128,10 @@
   <data name="_txtName.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
-  <data name="_txtName.Mask" xml:space="preserve">
-    <value />
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="_txtName.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
-    <value />
-  </data>
   <data name="_txtName.Size" type="System.Drawing.Size, System.Drawing">
     <value>179, 39</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="_txtName.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>

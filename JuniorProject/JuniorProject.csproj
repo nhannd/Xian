@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2BBAD8D5-0214-4441-88E1-4C8E2D755757}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>JuniorProject</RootNamespace>
+    <AssemblyName>JuniorProject</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ClearCanvas.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Common\bin\Debug\ClearCanvas.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ClearCanvas.Desktop, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Desktop\bin\Debug\ClearCanvas.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="ClearCanvas.Desktop.View.WinForms, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Desktop\View\WinForms\bin\Debug\ClearCanvas.Desktop.View.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="ClearCanvas.ImageViewer.Services, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ImageViewer\Services\bin\Debug\ClearCanvas.ImageViewer.Services.dll</HintPath>
+    </Reference>
+    <Reference Include="ClearCanvas.ImageViewer.Services.Tools, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ImageViewer\Services\Tools\bin\Debug\ClearCanvas.ImageViewer.Services.Tools.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetMagic2005, Version=5.2.2.0, Culture=neutral, PublicKeyToken=6cf6edec59e036ec, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferencedAssemblies\DotNetMagic2005.DLL</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EditQuery.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditQuery.Designer.cs">
+      <DependentUpon>EditQuery.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="EditQuery.resx">
+      <DependentUpon>EditQuery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\ViewerAutomationServiceClient\Automation.xsd" />
+    <None Include="Web References\ViewerAutomationServiceClient\Automation0.xsd" />
+    <None Include="Web References\ViewerAutomationServiceClient\Automation1.xsd" />
+    <None Include="Web References\ViewerAutomationServiceClient\GetActiveViewersResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\ViewerAutomationServiceClient\GetViewerInfoResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\ViewerAutomationServiceClient\OpenStudiesResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\ViewerAutomationServiceClient\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\ViewerAutomationServiceClient\ViewerAutomation.wsdl" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Web References\ViewerAutomationServiceClient\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Dicom\ClearCanvas.Dicom.csproj">
+      <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
+      <Name>ClearCanvas.Dicom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ImageViewer\ClearCanvas.ImageViewer.csproj">
+      <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
+      <Name>ClearCanvas.ImageViewer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ImageViewer\Clipboard\ClearCanvas.ImageViewer.Clipboard.csproj">
+      <Project>{8517089B-809E-4A62-9AB2-CFF8C72E1AEB}</Project>
+      <Name>ClearCanvas.ImageViewer.Clipboard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ImageViewer\Configuration\ClearCanvas.ImageViewer.Configuration.csproj">
+      <Project>{89DF567B-A0D1-456A-A28F-043FD57D7F9A}</Project>
+      <Name>ClearCanvas.ImageViewer.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ImageViewer\Explorer\Dicom\ClearCanvas.ImageViewer.Explorer.Dicom.csproj">
+      <Project>{14111EC7-C62E-4483-8573-7C04986D048F}</Project>
+      <Name>ClearCanvas.ImageViewer.Explorer.Dicom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ImageViewer\Externals\ClearCanvas.ImageViewer.Externals.csproj">
+      <Project>{B33560E9-4B0C-4B8A-AF6B-721A06DD407B}</Project>
+      <Name>ClearCanvas.ImageViewer.Externals</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ImageViewer\Services\Tools\View\WinForms\ClearCanvas.ImageViewer.Services.Tools.View.WinForms.csproj">
+      <Project>{109CD9CB-3A21-4D63-9B22-4FC9C3F38A52}</Project>
+      <Name>ClearCanvas.ImageViewer.Services.Tools.View.WinForms</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://127.0.0.1:51124/ClearCanvas/ImageViewer/Automation%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\ViewerAutomationServiceClient\</RelPath>
+      <UpdateFromURL>http://127.0.0.1:51124/ClearCanvas/ImageViewer/Automation%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>JuniorProject_ViewerAutomationServiceClient_ViewerAutomation</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="XMLFile1.xml" />
+    <Content Include="XMLFile2.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

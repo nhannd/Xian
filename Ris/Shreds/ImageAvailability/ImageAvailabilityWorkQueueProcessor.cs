@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			}
 		}
 
-		protected override bool ShouldReschedule(WorkQueueItem item, Exception error, out DateTime retryTime)
+		protected override bool ShouldRetry(WorkQueueItem item, Exception error, out DateTime retryTime)
 		{
 			// retry unless expired
 			retryTime = Platform.Time.AddSeconds(_settings.PollingIntervalForError);

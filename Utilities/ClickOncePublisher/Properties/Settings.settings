@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClickOncePublisher.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="PublishDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)">c:\</Value>
+    </Setting>
+    <Setting Name="BaseUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://</Value>
+    </Setting>
+    <Setting Name="CertificateFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">c:\</Value>
+    </Setting>
+    <Setting Name="CertificatePassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+  </Settings>
+</SettingsFile>

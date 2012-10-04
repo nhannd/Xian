@@ -1,0 +1,37 @@
+﻿DECLARE @tableName NVARCHAR(128)
+DECLARE @indexName NVARCHAR(128)
+DECLARE @dropIndexSql NVARCHAR(4000)
+
+SET @tableName = N'<%=tableName%>'
+
+DECLARE tableIndexes CURSOR FOR
+SELECT name FROM sysindexes
+WHERE id = OBJECT_ID(@tableName) AND
+indid > 1 AND indid < 255 AND	-- indid > 1 means that the PK index will not be dropped
+  INDEXPROPERTY(id, name, 'IsStatistics') = 0
+ORDER BY indid DESC
+
+OPEN tableIndexes
+FETCH NEXT FROM tableIndexes INTO @indexName
+WHILE @@fetch_status = 0
+BEGIN
+  SET @dropIndexSql = N'DROP INDEX ' + @tableName + '.' + @indexName
+  EXEC sp_executesql @dropIndexSql
+
+  FETCH NEXT FROM tableIndexes INTO @indexName
+END
+
+CLOSE tableIndexes
+DEALLOCATE tableIndexes
+
+-- drop PK
+DECLARE @pkName varchar(255)
+SET @pkName = (
+	SELECT [name] FROM sysobjects
+	WHERE [xtype] = 'PK' AND [parent_obj] = OBJECT_ID(@tableName)
+)
+
+SET @dropIndexSql=
+    'ALTER TABLE [dbo].['+@tableName+']
+        DROP CONSTRAINT ['+@pkName+']'
+EXEC sp_executesql @dropIndexSql

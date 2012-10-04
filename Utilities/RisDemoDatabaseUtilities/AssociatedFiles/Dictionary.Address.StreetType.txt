@@ -1,0 +1,11 @@
+Street
+Road
+Avenue
+Crescent
+Parkway
+Drive
+Boulevard
+Place
+Court
+Circle
+Lane

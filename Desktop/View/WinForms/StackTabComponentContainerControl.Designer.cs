@@ -59,7 +59,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StackTabComponentContainerControl));
 			this._stackTabControl = new Crownwood.DotNetMagic.Controls.TabbedGroups();
 			this.panel1 = new System.Windows.Forms.Panel();
 			((System.ComponentModel.ISupportInitialize)(this._stackTabControl)).BeginInit();
@@ -71,23 +70,30 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._stackTabControl.AllowDrop = true;
 			this._stackTabControl.AtLeastOneLeaf = false;
 			this._stackTabControl.DisplayTabMode = Crownwood.DotNetMagic.Controls.DisplayTabModes.HideAll;
-			resources.ApplyResources(this._stackTabControl, "_stackTabControl");
+			this._stackTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._stackTabControl.Location = new System.Drawing.Point(0, 0);
 			this._stackTabControl.Name = "_stackTabControl";
 			this._stackTabControl.ProminentLeaf = null;
 			this._stackTabControl.ResizeBarColor = System.Drawing.SystemColors.Control;
+			this._stackTabControl.Size = new System.Drawing.Size(222, 258);
+			this._stackTabControl.TabIndex = 0;
 			// 
 			// panel1
 			// 
 			this.panel1.Controls.Add(this._stackTabControl);
-			resources.ApplyResources(this.panel1, "panel1");
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(0, 0);
 			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(222, 258);
+			this.panel1.TabIndex = 5;
 			// 
 			// StackTabComponentContainerControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.panel1);
 			this.Name = "StackTabComponentContainerControl";
+			this.Size = new System.Drawing.Size(222, 258);
 			((System.ComponentModel.ISupportInitialize)(this._stackTabControl)).EndInit();
 			this.panel1.ResumeLayout(false);
 			this.ResumeLayout(false);

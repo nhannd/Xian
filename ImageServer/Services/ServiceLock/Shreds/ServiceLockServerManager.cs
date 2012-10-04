@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.Shreds
 		#endregion
 
 		#region Protected Methods
-		protected override bool Initialize()
+		protected override void Initialize()
 		{
 			if (_theProcessor == null)
 			{
@@ -67,8 +67,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.Shreds
 
 				_theProcessor = new ServiceLockProcessor(2, ThreadStop); // 2 threads for processor
 			}
-
-            return true;
 		}
 
 		protected override void Run()

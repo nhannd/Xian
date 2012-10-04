@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<SqlWorkbenchSqlProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="owls_sqlscripts">
+  <Items>
+    <LogicalFolder Name="Connections" Type="2">
+      <Items>
+        <ConnectionNode Name="kirkwood:sa">
+          <Created>2010-05-06T18:19:19.3625-04:00</Created>
+          <Type>SQL</Type>
+          <Server>kirkwood</Server>
+          <UserName>sa</UserName>
+          <Authentication>SQL</Authentication>
+          <InitialDB>Ris</InitialDB>
+          <LoginTimeout>15</LoginTimeout>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
+        </ConnectionNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="Queries" Type="0">
+      <Items>
+        <FileNode Name="owls_addindexes.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:kirkwood:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>kirkwood</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>owls_addindexes.sql</FullPath>
+        </FileNode>
+        <FileNode Name="owls_createtables.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:kirkwood:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>kirkwood</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>owls_createtables.sql</FullPath>
+        </FileNode>
+        <FileNode Name="owls_BuildModalityWorklistView.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:kirkwood:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>kirkwood</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>owls_BuildModalityWorklistView.sql</FullPath>
+        </FileNode>
+        <FileNode Name="owls_BuildProcedureSearchView.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:kirkwood:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>kirkwood</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>owls_BuildProcedureSearchView.sql</FullPath>
+        </FileNode>
+        <FileNode Name="owls_BuildProtocolWorklistView.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:kirkwood:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>kirkwood</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>owls_BuildProtocolWorklistView.sql</FullPath>
+        </FileNode>
+        <FileNode Name="owls_BuildRegistrationWorklistView.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:kirkwood:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>kirkwood</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>owls_BuildRegistrationWorklistView.sql</FullPath>
+        </FileNode>
+        <FileNode Name="owls_BuildReportingWorklistView.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:kirkwood:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>kirkwood</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>owls_BuildReportingWorklistView.sql</FullPath>
+        </FileNode>
+        <FileNode Name="owls_buildview.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:kirkwood:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>kirkwood</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>owls_buildview.sql</FullPath>
+        </FileNode>
+        <FileNode Name="owls_drop_sps.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:kirkwood:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>kirkwood</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>owls_drop_sps.sql</FullPath>
+        </FileNode>
+        <FileNode Name="owls_countviews.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:kirkwood:False:sa</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>kirkwood</AssociatedConnSrvName>
+          <AssociatedConnUserName>sa</AssociatedConnUserName>
+          <FullPath>owls_countviews.sql</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="Miscellaneous" Type="3">
+      <Items />
+    </LogicalFolder>
+  </Items>
+</SqlWorkbenchSqlProject>

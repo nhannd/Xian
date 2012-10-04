@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="helpproject.xsl" ?>
+<topic template="Default" lasteditedby="Jonathan" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="helpproject.xsd">
+  <title translate="true">Architecture</title>
+  <body>
+    <header>
+      <para styleclass="Heading1"><text styleclass="Heading1" translate="true">Architecture</text></para>
+    </header>
+    <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><table rowcount="2" colcount="2" style="width:100%; cell-padding:0px; cell-spacing:0px; page-break-inside:auto; border-width:0px; border-spacing:0px; cell-border-width:0px; border-style:none; background-color:none; head-row-background-color:none; alt-row-background-color:none;">
+      <tr style="vertical-align:top">
+        <td style="vertical-align:bottom;">
+          <para><anchor id="idnav" styleclass="Normal text" style="font-family:Arial; font-size:10pt; font-weight:normal; font-style:normal; text-decoration:none; text-transform:none; vertical-align:baseline; color:#000000; background-color:transparent; letter-spacing:normal; letter-scaling:100%;"></anchor><text styleclass="Normal" style="font-size:8pt; font-weight:bold; text-decoration:none; vertical-align:baseline;" translate="true">Navigation:</text><text styleclass="crumbs" style="font-family:Arial; font-size:8pt; font-weight:normal; font-style:normal; text-decoration:none; text-transform:none; vertical-align:baseline; color:#000000; background-color:transparent; letter-spacing:normal; letter-scaling:100%;" translate="true"> &#160;Introduction &gt;</text></para>
+          <para styleclass="p_heading1" style="text-align:left; text-indent:0px; margin-top:3px; margin-right:0px; margin-bottom:0px; margin-left:0px; line-height:1.0; background-color:transparent; white-space:normal; page-break-inside:auto; page-break-after:auto; border:none; tabstops:none;"><text styleclass="f_heading1" style="font-family:Arial; font-size:16pt; font-weight:bold; font-style:normal; text-decoration:none; text-transform:none; vertical-align:baseline; color:#ffffff; background-color:transparent; letter-spacing:normal; letter-scaling:100%;" translate="true">Architecture</text></para>
+        </td>
+        <td style="vertical-align:middle; width:120px;">
+          <para style="text-align:right;"><link displaytype="image" src="btn_prev_n.gif" type="topiclink" href="Technology"></link><link displaytype="image" src="btn_home_n.gif" type="topiclink" href="Welcome"></link><link displaytype="image" src="btn_next_n.gif" type="topiclink" href="Integration"></link></para>
+        </td>
+      </tr>
+      <tr style="vertical-align:top">
+        <td>
+        </td>
+        <td>
+        </td>
+      </tr>
+    </table></para>
+    <para styleclass="Normal" style="margin-left:10px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-size:11pt; text-decoration:none; vertical-align:baseline;" translate="true">Once the web page and Silverlight client have been loaded into the browser, no further communication with the web server occurs. &#160;All communication is now between the client and the application server. &#160;The diagram below is an example of the interaction between the client and the server to give you an idea of how the Web Viewer actually works. &#160;Some steps have been removed for the sake of simplicity, but what is important to note is that all the work is done on the server, even processing the user&apos;s mouse activity when they are working with images. &#160;In the example, the user is zooming the image, and the server is sending new images back to the client.</text></para>
+    <para styleclass="Normal" style="margin-top:10px; margin-left:10px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-size:11pt; text-decoration:none; vertical-align:baseline;" translate="true">The client and server are in constant communication via the application service, and the connection is maintained for the duration of the user&apos;s session. &#160;Simply put, the application service is a two-way messaging service that not only allows the client to talk to the server, but also allows the server to &quot;push&quot; updates to the client. &#160;There are two examples of this in the diagram: the &quot;Viewer Created&quot; and &quot;Image Updated&quot; events are pushed back to the client by the server. &#160;An important thing to note is that, although such events are often triggered by a message from the client, they are </text><text styleclass="Normal" style="font-size:11pt; font-weight:bold; text-decoration:none; vertical-align:baseline;" translate="true">not </text><text styleclass="Normal" style="font-size:11pt; text-decoration:none; vertical-align:baseline;" translate="true">simply responses to that message. &#160;A single message from the client can cause multiple updates to be pushed back from the server. &#160;For example, the spatial locator tool in the viewer is activated when the user clicks and drags in a tile, but that action can actually cause the images in all visible tiles to change/update.</text></para>
+    <para styleclass="Normal" style="margin-top:10px; margin-left:82px; line-height:1.0; tabstops:none;"><image src="webviewerarchitecture.png" scale="100.00%" styleclass="Image Caption"></image></para>
+    <para styleclass="Normal" style="margin-top:10px; margin-bottom:10px; margin-left:10px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-size:11pt; text-decoration:none; vertical-align:baseline;" translate="true">&#32;</text></para>
+  </body>
+</topic>

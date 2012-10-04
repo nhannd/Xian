@@ -59,91 +59,126 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DicomEditorCreateToolComponentControl));
-			this._accept = new System.Windows.Forms.Button();
-			this._cancel = new System.Windows.Forms.Button();
-			this._groupLabel = new System.Windows.Forms.Label();
-			this._group = new System.Windows.Forms.TextBox();
-			this._elementLabel = new System.Windows.Forms.Label();
-			this._element = new System.Windows.Forms.TextBox();
-			this._value = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._vr = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._tagName = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this.SuspendLayout();
-			// 
-			// _accept
-			// 
-			resources.ApplyResources(this._accept, "_accept");
-			this._accept.Name = "_accept";
-			this._accept.UseVisualStyleBackColor = true;
-			this._accept.Click += new System.EventHandler(this._accept_Click);
-			// 
-			// _cancel
-			// 
-			resources.ApplyResources(this._cancel, "_cancel");
-			this._cancel.Name = "_cancel";
-			this._cancel.UseVisualStyleBackColor = true;
-			this._cancel.Click += new System.EventHandler(this._cancel_Click);
-			// 
-			// _groupLabel
-			// 
-			resources.ApplyResources(this._groupLabel, "_groupLabel");
-			this._groupLabel.Name = "_groupLabel";
-			// 
-			// _group
-			// 
-			this._group.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
-			resources.ApplyResources(this._group, "_group");
-			this._group.Name = "_group";
-			// 
-			// _elementLabel
-			// 
-			resources.ApplyResources(this._elementLabel, "_elementLabel");
-			this._elementLabel.Name = "_elementLabel";
-			// 
-			// _element
-			// 
-			this._element.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
-			resources.ApplyResources(this._element, "_element");
-			this._element.Name = "_element";
-			// 
-			// _value
-			// 
-			resources.ApplyResources(this._value, "_value");
-			this._value.Name = "_value";
-			this._value.ToolTip = null;
-			this._value.Value = null;
-			// 
-			// _vr
-			// 
-			resources.ApplyResources(this._vr, "_vr");
-			this._vr.Name = "_vr";
-			this._vr.ToolTip = null;
-			this._vr.Value = null;
-			// 
-			// _tagName
-			// 
-			resources.ApplyResources(this._tagName, "_tagName");
-			this._tagName.Name = "_tagName";
-			this._tagName.ToolTip = null;
-			this._tagName.Value = null;
-			// 
-			// DicomEditorCreateToolComponentControl
-			// 
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._tagName);
-			this.Controls.Add(this._vr);
-			this.Controls.Add(this._value);
-			this.Controls.Add(this._elementLabel);
-			this.Controls.Add(this._element);
-			this.Controls.Add(this._groupLabel);
-			this.Controls.Add(this._group);
-			this.Controls.Add(this._cancel);
-			this.Controls.Add(this._accept);
-			this.Name = "DicomEditorCreateToolComponentControl";
-			this.ResumeLayout(false);
-			this.PerformLayout();
+            this._accept = new System.Windows.Forms.Button();
+            this._cancel = new System.Windows.Forms.Button();
+            this._groupLabel = new System.Windows.Forms.Label();
+            this._group = new System.Windows.Forms.TextBox();
+            this._elementLabel = new System.Windows.Forms.Label();
+            this._element = new System.Windows.Forms.TextBox();
+            this._value = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._vr = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._tagName = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this.SuspendLayout();
+            // 
+            // _accept
+            // 
+            this._accept.Location = new System.Drawing.Point(310, 111);
+            this._accept.Name = "_accept";
+            this._accept.Size = new System.Drawing.Size(83, 31);
+            this._accept.TabIndex = 9;
+            this._accept.Text = "Accept";
+            this._accept.UseVisualStyleBackColor = true;
+            this._accept.Click += new System.EventHandler(this._accept_Click);
+            // 
+            // _cancel
+            // 
+            this._cancel.Location = new System.Drawing.Point(405, 111);
+            this._cancel.Name = "_cancel";
+            this._cancel.Size = new System.Drawing.Size(83, 31);
+            this._cancel.TabIndex = 10;
+            this._cancel.Text = "Cancel";
+            this._cancel.UseVisualStyleBackColor = true;
+            this._cancel.Click += new System.EventHandler(this._cancel_Click);
+            // 
+            // _groupLabel
+            // 
+            this._groupLabel.AutoSize = true;
+            this._groupLabel.Location = new System.Drawing.Point(29, 12);
+            this._groupLabel.Name = "_groupLabel";
+            this._groupLabel.Size = new System.Drawing.Size(36, 13);
+            this._groupLabel.TabIndex = 12;
+            this._groupLabel.Text = "Group";
+            // 
+            // _group
+            // 
+            this._group.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
+            this._group.Location = new System.Drawing.Point(32, 32);
+            this._group.MaxLength = 4;
+            this._group.Name = "_group";
+            this._group.Size = new System.Drawing.Size(31, 20);
+            this._group.TabIndex = 11;
+            this._group.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // _elementLabel
+            // 
+            this._elementLabel.AutoSize = true;
+            this._elementLabel.Location = new System.Drawing.Point(75, 12);
+            this._elementLabel.Name = "_elementLabel";
+            this._elementLabel.Size = new System.Drawing.Size(45, 13);
+            this._elementLabel.TabIndex = 14;
+            this._elementLabel.Text = "Element";
+            // 
+            // _element
+            // 
+            this._element.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
+            this._element.Location = new System.Drawing.Point(78, 32);
+            this._element.MaxLength = 4;
+            this._element.Name = "_element";
+            this._element.Size = new System.Drawing.Size(31, 20);
+            this._element.TabIndex = 13;
+            this._element.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // _value
+            // 
+            this._value.LabelText = "Value";
+            this._value.Location = new System.Drawing.Point(32, 65);
+            this._value.Margin = new System.Windows.Forms.Padding(2);
+            this._value.Mask = "";
+            this._value.Name = "_value";
+            this._value.Size = new System.Drawing.Size(456, 41);
+            this._value.TabIndex = 16;
+            this._value.Value = null;
+            // 
+            // _vr
+            // 
+            this._vr.LabelText = "VR";
+            this._vr.Location = new System.Drawing.Point(452, 11);
+            this._vr.Margin = new System.Windows.Forms.Padding(2);
+            this._vr.Mask = "";
+            this._vr.Name = "_vr";
+            this._vr.Size = new System.Drawing.Size(36, 41);
+            this._vr.TabIndex = 15;
+            this._vr.Value = null;
+            // 
+            // _tagName
+            // 
+            this._tagName.Enabled = false;
+            this._tagName.LabelText = "Tag Name";
+            this._tagName.Location = new System.Drawing.Point(125, 12);
+            this._tagName.Margin = new System.Windows.Forms.Padding(2);
+            this._tagName.Mask = "";
+            this._tagName.Name = "_tagName";
+            this._tagName.Size = new System.Drawing.Size(323, 41);
+            this._tagName.TabIndex = 14;
+            this._tagName.Value = null;
+            // 
+            // DicomEditorCreateToolComponentControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._tagName);
+            this.Controls.Add(this._vr);
+            this.Controls.Add(this._value);
+            this.Controls.Add(this._elementLabel);
+            this.Controls.Add(this._element);
+            this.Controls.Add(this._groupLabel);
+            this.Controls.Add(this._group);
+            this.Controls.Add(this._cancel);
+            this.Controls.Add(this._accept);
+            this.Name = "DicomEditorCreateToolComponentControl";
+            this.Size = new System.Drawing.Size(517, 152);
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

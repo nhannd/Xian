@@ -15,7 +15,6 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,7 +45,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
@@ -65,16 +63,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_GlobalResources\ColumnHeaders.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ColumnHeaders.resx</DependentUpon>
-    </Compile>
-    <Compile Include="App_GlobalResources\DetailedViewFieldLabels.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DetailedViewFieldLabels.resx</DependentUpon>
-    </Compile>
     <Compile Include="App_GlobalResources\ErrorMessages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -85,30 +73,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GridPager.resx</DependentUpon>
     </Compile>
-    <Compile Include="App_GlobalResources\InputLabels.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>InputLabels.resx</DependentUpon>
-    </Compile>
-    <Compile Include="App_GlobalResources\InputValidation.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>InputValidation.resx</DependentUpon>
-    </Compile>
     <Compile Include="App_GlobalResources\Labels.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Labels.resx</DependentUpon>
-    </Compile>
-    <Compile Include="App_GlobalResources\SearchFieldLabels.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SearchFieldLabels.resx</DependentUpon>
-    </Compile>
-    <Compile Include="App_GlobalResources\SR.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="App_GlobalResources\Titles.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -241,8 +209,6 @@
     <Compile Include="GlobalMasterPage.master.designer.cs">
       <DependentUpon>GlobalMasterPage.master</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\DicomValueValidator.cs" />
-    <Compile Include="Helpers\ExceptionTranslator.cs" />
     <Compile Include="Helpers\SearchHelper.cs" />
     <Compile Include="KeepSessionAlive.aspx.cs">
       <DependentUpon>KeepSessionAlive.aspx</DependentUpon>
@@ -257,14 +223,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Alerts\AlertHoverPopupDetails.ascx.designer.cs">
       <DependentUpon>AlertHoverPopupDetails.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Admin\Alerts\IAlertPopupView.ascx.cs" />
-    <Compile Include="Pages\Admin\Alerts\StudyAlertContextInfoView.ascx.cs">
-      <DependentUpon>StudyAlertContextInfoView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Admin\Alerts\StudyAlertContextInfoView.ascx.designer.cs">
-      <DependentUpon>StudyAlertContextInfoView.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Admin\Alerts\WorkQueueAlertContextDataView.ascx.cs">
       <DependentUpon>WorkQueueAlertContextDataView.ascx</DependentUpon>
@@ -407,20 +365,6 @@
     <Compile Include="Pages\Error\CookiesRequired.aspx.designer.cs">
       <DependentUpon>CookiesRequired.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Error\SoftwareExpiredErrorPage.aspx.cs">
-      <DependentUpon>SoftwareExpiredErrorPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Error\SoftwareExpiredErrorPage.aspx.designer.cs">
-      <DependentUpon>SoftwareExpiredErrorPage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Error\LicenseErrorPage.aspx.cs">
-      <DependentUpon>LicenseErrorPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Error\LicenseErrorPage.aspx.designer.cs">
-      <DependentUpon>LicenseErrorPage.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Pages\Error\WebViewerMultipleStudiesTimeoutErrorPage.aspx.cs">
       <DependentUpon>WebViewerMultipleStudiesTimeoutErrorPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -467,6 +411,9 @@
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Pages\Login\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Error\AuthorizationErrorPage.aspx.cs">
       <DependentUpon>AuthorizationErrorPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -484,9 +431,6 @@
     <Compile Include="Helpers\DialogHelper.cs" />
     <Compile Include="Helpers\HtmlEncoder.cs" />
     <Compile Include="Helpers\ScriptHelper.cs" />
-    <Compile Include="Pages\Login\Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Pages\Login\PasswordExpiredDialog.ascx.cs">
       <DependentUpon>PasswordExpiredDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1434,6 +1378,11 @@
       <DependentUpon>PersistantImage.ashx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="App_GlobalResources\SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
     <Compile Include="Services\FilesystemInfoService.asmx.cs">
       <DependentUpon>FilesystemInfoService.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -1452,8 +1401,6 @@
     <Compile Include="Pages\Studies\View\WebViewerServerConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Themes\Default\images\AboutBackground.png" />
-    <Content Include="App_Themes\Default\images\Background.png" />
     <Content Include="App_Themes\Default\images\blank.gif" />
     <Content Include="App_Themes\Default\images\Buttons\AddDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\AddEnabled.png" />
@@ -1516,33 +1463,10 @@
     <Content Include="App_Themes\Default\images\Buttons\ViewStudyHover.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogBodyBackgroundTall.png" />
     <Content Include="Builds\SplashScreen\ClearCanvasWebViewerLogo.png" />
-    <Content Include="Pages\Admin\Alerts\StudyAlertContextInfoView.ascx" />
-    <Content Include="Pages\Error\SoftwareExpiredErrorPage.aspx" />
-    <Content Include="Pages\Error\LicenseErrorPage.aspx" />
     <Content Include="Pages\WebViewer\GridPager.ascx" />
     <Content Include="Pages\WebViewer\Images\Searching.gif" />
     <Content Include="Pages\WebViewer\JQuery.ascx" />
     <Content Include="Pages\WebViewer\SearchPanel.ascx" />
-    <EmbeddedResource Include="App_GlobalResources\ColumnHeaders.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>ColumnHeaders.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="App_GlobalResources\InputLabels.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>InputLabels.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="App_GlobalResources\SearchFieldLabels.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>SearchFieldLabels.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="App_GlobalResources\InputValidation.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>InputValidation.designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="App_GlobalResources\DetailedViewFieldLabels.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>DetailedViewFieldLabels.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="Pages\WebViewer\SearchPanel.js" />
     <Content Include="Pages\WebViewer\SessionTimeout.ascx" />
     <Content Include="Pages\WebViewer\StudyList.aspx" />
@@ -1658,7 +1582,7 @@
     <Content Include="App_Themes\Default\images\Indicators\usage.png" />
     <Content Include="App_Themes\Default\images\Indicators\Warning.png" />
     <Content Include="App_Themes\Default\images\Indicators\WarningSmall.png" />
-    <Content Include="Builds\SplashScreen\LoginSplash.png" />
+    <Content Include="App_Themes\Default\images\LoginSplash.png" />
     <Content Include="App_Themes\Default\images\MainContent\dropdown.gif" />
     <Content Include="App_Themes\Default\images\MainContent\Loading.gif" />
     <Content Include="App_Themes\Default\images\MainContent\Loading.png" />
@@ -1696,7 +1620,7 @@
     <Content Include="App_Themes\Default\StyleSheets\Controls\Tabs.css" />
     <EmbeddedResource Include="App_GlobalResources\ErrorMessages.resx">
       <SubType>Designer</SubType>
-      <Generator>GlobalResourceProxyGenerator</Generator>
+      <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ErrorMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Content Include="App_Themes\Default\images\Indicators\checked.png" />
@@ -1717,11 +1641,11 @@
     <Content Include="Controls\GridPager.ascx" />
     <Content Include="Controls\InvalidInputIndicator.ascx" />
     <Content Include="Controls\ModalDialog.ascx" />
-    <EmbeddedResource Include="App_GlobalResources\Tooltips.resx">
+    <Content Include="App_GlobalResources\Tooltips.resx">
       <SubType>Designer</SubType>
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>Tooltips.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    </Content>
     <EmbeddedResource Include="Controls\PersonNameInputPanel.js" />
     <Content Include="Controls\PersonNameInputPanel.ascx" />
     <Content Include="Controls\SectionPanel.ascx" />
@@ -1785,6 +1709,7 @@
     <Content Include="Pages\WebViewer\Images\StudiesPageLogo.png" />
     <Content Include="Pages\WebViewer\StudyListGridView.ascx" />
     <Content Include="Scripts\date.js" />
+    <Content Include="Scripts\jquery\jquery.scrollabletable.js" />
     <Content Include="Pages\Studies\View\silverlight.js" />
     <Content Include="Services\ApplicationService.svc" />
     <Content Include="Users.xml" />
@@ -1851,17 +1776,17 @@
     <Content Include="Pages\Admin\Configure\FileSystems\AddEditFileSystemDialog.ascx" />
     <EmbeddedResource Include="App_GlobalResources\GridPager.resx">
       <SubType>Designer</SubType>
-      <Generator>GlobalResourceProxyGenerator</Generator>
+      <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>GridPager.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\Titles.resx">
       <SubType>Designer</SubType>
-      <Generator>GlobalResourceProxyGenerator</Generator>
+      <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Titles.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\Labels.resx">
       <SubType>Designer</SubType>
-      <Generator>GlobalResourceProxyGenerator</Generator>
+      <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Labels.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\Admin\Configure\FileSystems\Filesystem.js" />
@@ -1985,8 +1910,8 @@
     <Content Include="App_Themes\Default\images\Indicators\HelpSmall.png" />
     <EmbeddedResource Include="App_GlobalResources\SR.resx">
       <SubType>Designer</SubType>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
-      <Generator>GlobalResourceProxyGenerator</Generator>
     </EmbeddedResource>
     <Content Include="Services\FilesystemInfoService.asmx" />
     <Content Include="Services\ValidationServices.asmx" />
@@ -2078,7 +2003,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" Condition="" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" Condition="" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <DistributionBuild>false</DistributionBuild>
@@ -2099,12 +2024,12 @@
   <Choose>
     <When Condition="$(DistributionBuild) AND '$(Configuration)'=='Release' And '$(KeyFile)' != ''">
       <PropertyGroup>
-        <ImageServerWebProperties>SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);ProjectDir=$(ProjectDir);Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile);Options=$(BuildOptions);Localizations=$(Localizations)</ImageServerWebProperties>
+        <ImageServerWebProperties>SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);ProjectDir=$(ProjectDir);Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile);Options=$(BuildOptions)</ImageServerWebProperties>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <ImageServerWebProperties>SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);ProjectDir=$(ProjectDir);Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionBuild=$(DistributionBuild);DistributionDir=$(DistributionDir);Options=$(BuildOptions);Localizations=$(Localizations)</ImageServerWebProperties>
+        <ImageServerWebProperties>SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);ProjectDir=$(ProjectDir);Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionBuild=$(DistributionBuild);DistributionDir=$(DistributionDir);Options=$(BuildOptions)</ImageServerWebProperties>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -2119,7 +2044,16 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>2234</DevelopmentServerPort>
+          <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
+          <IISUrl>http://localhost/ImageServer</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>

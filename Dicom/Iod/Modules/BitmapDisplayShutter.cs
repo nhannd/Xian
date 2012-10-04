@@ -70,7 +70,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				}
 				else
 				{
-					throw new ArgumentException("Only BITMAP is supported in this module.", "value");
+					throw new ArgumentException("Only bitmap is supported on this module.", "value");
 				}
 			}
 		}

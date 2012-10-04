@@ -52,6 +52,7 @@
     <Compile Include="Columns\FileDateCreatedColumn.cs" />
     <Compile Include="Columns\FileDateModifiedColumn.cs" />
     <Compile Include="Columns\FileDateTime.cs" />
+    <Compile Include="Columns\FileSize.cs" />
     <Compile Include="Columns\FloatingPointDicomTagColumn.cs" />
     <Compile Include="Columns\IntegerDicomTagColumn.cs" />
     <Compile Include="Columns\SpecialColumn.cs" />

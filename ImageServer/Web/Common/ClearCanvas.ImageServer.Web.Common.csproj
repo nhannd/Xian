@@ -129,7 +129,6 @@
     </Compile>
     <Compile Include="Exceptions\StudyInstanceUIDNotFoundException.cs" />
     <Compile Include="ImageServerConstants.cs" />
-    <Compile Include="ImageServerHttpApplication.cs" />
     <Compile Include="KeyedCollectionBase.cs" />
     <Compile Include="Modules\ErrorModule.cs" />
     <Compile Include="Modules\HttpContextDataManagementModule.cs" />
@@ -153,7 +152,6 @@
     <Compile Include="Utilities\HtmlUtility.cs" />
     <Compile Include="Utilities\NameFormatter.cs" />
     <Compile Include="Utilities\ServerUtility.cs" />
-    <Compile Include="HttpApplicationExtension.cs" />
     <Compile Include="WebControls\UI\Timer.cs" />
     <Compile Include="WebControls\UI\AJAXScriptControl.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -173,7 +171,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>UISettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="WebControls\UI\Warning.cs" />
     <Compile Include="WebControls\Validators\BaseValidator.cs" />
     <Compile Include="WebControls\Validators\ConditionalRequiredFieldValidator.cs" />
     <Compile Include="WebControls\Validators\DeviceValidator.cs" />
@@ -190,11 +187,6 @@
     <Compile Include="WebControls\Validators\ServerPartitionValidator.cs" />
     <Compile Include="WebControls\Validators\ServerRuleValidator.cs" />
     <Compile Include="WebControls\UI\ToolbarButton.cs" />
-    <Compile Include="WebControls\Validators\ValidationErrors.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ValidationErrors.resx</DependentUpon>
-    </Compile>
     <Compile Include="WebControls\Validators\ValidationResult.cs" />
     <Compile Include="WebControls\Validators\WebServiceValidator.cs" />
     <Compile Include="WebControls\Validators\RangeValidator.cs" />
@@ -304,10 +296,6 @@
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="WebControls\Validators\DateValidator.js" />
-    <EmbeddedResource Include="WebControls\Validators\ValidationErrors.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>ValidationErrors.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

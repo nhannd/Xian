@@ -10,7 +10,6 @@
 #endregion
 
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Brokers
 {
@@ -18,8 +17,7 @@ namespace ClearCanvas.Healthcare.Brokers
 	{
 		Order FindDocumentOwner(AttachedDocument document);
 
-		IList<Order> FindByResultRecipient(OrderSearchCriteria orderSearchCriteria, ResultRecipientSearchCriteria recipientSearchCriteria);
-		IList<Order> FindByResultRecipient(OrderSearchCriteria orderSearchCriteria, ResultRecipientSearchCriteria recipientSearchCriteria, SearchResultPage page);
-		long CountByResultRecipient(OrderSearchCriteria orderSearchCriteria, ResultRecipientSearchCriteria recipientSearchCriteria);
+		IList<Order> FindByOrderingPractitioner(ExternalPractitioner practitioner);
+		IList<Order> FindByResultRecipient(ResultRecipientSearchCriteria recipientSearchCriteria, OrderSearchCriteria orderSearchCriteria);
 	}
 }

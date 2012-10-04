@@ -394,7 +394,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (value < minimumValue || value > maximumValue)
 			{
 				if (!this.DesignMode)
-					throw new ArgumentOutOfRangeException("value", "The specified value is not consistent with the specified minimum and maximum values.");
+					throw new ArgumentOutOfRangeException("value", "value");
 
 				value = Math.Min(maximumValue, Math.Max(minimumValue, value));
 			}

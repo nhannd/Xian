@@ -61,30 +61,25 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClipboardComponentControl));
 			this._galleryView = new ClearCanvas.Desktop.View.WinForms.GalleryView();
 			this.SuspendLayout();
 			// 
 			// _galleryView
 			// 
-			this._galleryView.AllowRenaming = false;
 			this._galleryView.DataSource = null;
-			resources.ApplyResources(this._galleryView, "_galleryView");
-			this._galleryView.DragOutside = false;
-			this._galleryView.DragReorder = false;
-			this._galleryView.HideSelection = true;
-			this._galleryView.ImageSize = new System.Drawing.Size(100, 100);
-			this._galleryView.MaxDescriptionLines = 0;
-			this._galleryView.MultiSelect = true;
+			this._galleryView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._galleryView.Location = new System.Drawing.Point(0, 0);
 			this._galleryView.Name = "_galleryView";
-			this._galleryView.TileMode = false;
+			this._galleryView.Size = new System.Drawing.Size(346, 527);
+			this._galleryView.TabIndex = 0;
 			// 
 			// ClipboardComponentControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._galleryView);
 			this.Name = "ClipboardComponentControl";
+			this.Size = new System.Drawing.Size(346, 527);
 			this.ResumeLayout(false);
 
         }

@@ -59,36 +59,43 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SplitComponentContainerControl));
-			this._splitContainer = new System.Windows.Forms.SplitContainer();
-			this._splitContainer.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// _splitContainer
-			// 
-			this._splitContainer.BackColor = System.Drawing.SystemColors.ControlLightLight;
-			resources.ApplyResources(this._splitContainer, "_splitContainer");
-			this._splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			this._splitContainer.Name = "_splitContainer";
-			// 
-			// _splitContainer.Panel1
-			// 
-			this._splitContainer.Panel1.BackColor = System.Drawing.SystemColors.Control;
-			// 
-			// _splitContainer.Panel2
-			// 
-			this._splitContainer.Panel2.BackColor = System.Drawing.SystemColors.Control;
-			this._splitContainer.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this._splitContainer_SplitterMoved);
-			// 
-			// SplitComponentContainerControl
-			// 
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._splitContainer);
-			this.Name = "SplitComponentContainerControl";
-			this.SizeChanged += new System.EventHandler(this.SplitComponentContainerControl_SizeChanged);
-			this._splitContainer.ResumeLayout(false);
-			this.ResumeLayout(false);
+            this._splitContainer = new System.Windows.Forms.SplitContainer();
+            this._splitContainer.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // _splitContainer
+            // 
+            this._splitContainer.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this._splitContainer.Location = new System.Drawing.Point(0, 0);
+            this._splitContainer.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._splitContainer.Name = "_splitContainer";
+            // 
+            // _splitContainer.Panel1
+            // 
+            this._splitContainer.Panel1.BackColor = System.Drawing.SystemColors.Control;
+            // 
+            // _splitContainer.Panel2
+            // 
+            this._splitContainer.Panel2.BackColor = System.Drawing.SystemColors.Control;
+            this._splitContainer.Size = new System.Drawing.Size(993, 597);
+            this._splitContainer.SplitterDistance = 248;
+            this._splitContainer.SplitterWidth = 3;
+            this._splitContainer.TabIndex = 0;
+            this._splitContainer.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this._splitContainer_SplitterMoved);
+            // 
+            // SplitComponentContainerControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._splitContainer);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Name = "SplitComponentContainerControl";
+            this.Size = new System.Drawing.Size(993, 597);
+            this.SizeChanged += new System.EventHandler(this.SplitComponentContainerControl_SizeChanged);
+            this._splitContainer.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 

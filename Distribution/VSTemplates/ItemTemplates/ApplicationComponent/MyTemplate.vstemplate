@@ -1,0 +1,21 @@
+<VSTemplate Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Item">
+  <TemplateData>
+    <DefaultName>MyComponent.cs</DefaultName>
+    <Name>ClearCanvas ApplicationComponent</Name>
+    <Description>Creates a ClearCanvas ApplicationComponent</Description>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>10</SortOrder>
+    <Icon>__TemplateIcon.ico</Icon>
+  </TemplateData>
+  <TemplateContent>
+    <References />
+    <ProjectItem SubType="Code" TargetFileName="$fileinputname$.cs" ReplaceParameters="true">MyComponent.cs</ProjectItem>
+    <ProjectItem SubType="Code" TargetFileName="$fileinputname$View.cs" ReplaceParameters="false">MyComponentView.cs</ProjectItem>
+    <ProjectItem SubType="UserControl" TargetFileName="$fileinputname$Control.cs" ReplaceParameters="false">MyComponentControl.cs</ProjectItem>
+    <ProjectItem SubType="" TargetFileName="$fileinputname$Control.Designer.cs" ReplaceParameters="false">MyComponentControl.Designer.cs</ProjectItem>
+  </TemplateContent>
+  <WizardExtension>
+    <Assembly>ClearCanvas.VSWizards, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bc07f2f66e94d26b, Custom=null</Assembly>
+    <FullClassName>ClearCanvas.VSWizards.ApplicationComponentWizard</FullClassName>
+  </WizardExtension>
+</VSTemplate>

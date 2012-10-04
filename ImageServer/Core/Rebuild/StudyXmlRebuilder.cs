@@ -13,7 +13,6 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
@@ -84,23 +83,13 @@ namespace ClearCanvas.ImageServer.Core.Rebuild
 				Platform.Log(LogLevel.Error, e, "Unexpected error when rebuilding study XML for directory: {0}",
 				             _location.FilesystemPath);
 				StudyReprocessor reprocessor = new StudyReprocessor();
-                try
-                {
-                    WorkQueue reprocessEntry = reprocessor.ReprocessStudy("Rebuild StudyXml", _location, Platform.Time);
-                    if (reprocessEntry != null)
-                    {
-                        Platform.Log(LogLevel.Error, "Failure attempting to reprocess study: {0}",
-                                     _location.StudyInstanceUid);
-                    }
-                    else
-                        Platform.Log(LogLevel.Error, "Inserted reprocess request for study: {0}",
-                                     _location.StudyInstanceUid);
-                }
-                catch(InvalidStudyStateOperationException ex)
-                {
-                    Platform.Log(LogLevel.Error, "Failure attempting to reprocess study {0}: {1}",
-                                     _location.StudyInstanceUid, ex.Message);
-                }
+				WorkQueue reprocessEntry = reprocessor.ReprocessStudy("Rebuild StudyXml", _location, Platform.Time);
+				if (reprocessEntry != null)
+				{
+					Platform.Log(LogLevel.Error, "Failure attempting to reprocess study: {0}", _location.StudyInstanceUid);
+				}
+				else
+					Platform.Log(LogLevel.Error, "Inserted reprocess request for study: {0}", _location.StudyInstanceUid);
 			}
 		}
 	}

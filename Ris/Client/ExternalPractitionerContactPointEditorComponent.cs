@@ -31,29 +31,22 @@ namespace ClearCanvas.Ris.Client
 		private readonly List<EnumValueInfo> _addressTypeChoices;
 		private readonly List<EnumValueInfo> _phoneTypeChoices;
 		private readonly List<EnumValueInfo> _resultCommunicationModeChoices;
-		private readonly List<EnumValueInfo> _informationAuthorityChoices;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public ExternalPractitionerContactPointEditorComponent(
-			ExternalPractitionerContactPointDetail contactPoint,
-			List<EnumValueInfo> addressTypeChoices,
-			List<EnumValueInfo> phoneTypeChoices,
-			List<EnumValueInfo> resultCommunicationModeChoices,
-			List<EnumValueInfo> informationAuthorityChoices)
+		public ExternalPractitionerContactPointEditorComponent(ExternalPractitionerContactPointDetail contactPoint, List<EnumValueInfo> addressTypeChoices, List<EnumValueInfo> phoneTypeChoices, List<EnumValueInfo> resultCommunicationModeChoices)
 		{
 			_contactPointDetail = contactPoint;
 			_addressTypeChoices = addressTypeChoices;
 			_phoneTypeChoices = phoneTypeChoices;
 			_resultCommunicationModeChoices = resultCommunicationModeChoices;
-			_informationAuthorityChoices = informationAuthorityChoices;
 		}
 
 		public override void Start()
 		{
 			const string rootPath = "Contact Point";
-			this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new ExternalPractitionerContactPointDetailsEditorComponent(_contactPointDetail, _resultCommunicationModeChoices, _informationAuthorityChoices)));
+			this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new ExternalPractitionerContactPointDetailsEditorComponent(_contactPointDetail, _resultCommunicationModeChoices)));
 			this.Pages.Add(new NavigatorPage(rootPath + "/Addresses", _addressesSummary = new AddressesSummaryComponent(_addressTypeChoices)));
 			this.Pages.Add(new NavigatorPage(rootPath + "/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(_phoneTypeChoices)));
 			this.Pages.Add(new NavigatorPage(rootPath + "/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));

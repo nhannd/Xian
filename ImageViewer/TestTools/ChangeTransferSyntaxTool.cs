@@ -161,7 +161,8 @@ namespace ClearCanvas.ImageViewer.TestTools
 					}
 
 					int progressPercent = (int)Math.Floor((i + 1) / (float)numberOfSops * 100);
-					context.ReportProgress(new BackgroundTaskProgress(progressPercent, message));
+					string progressMessage = "Compressing Study J2K Lossless ...";
+					context.ReportProgress(new BackgroundTaskProgress(progressPercent, progressMessage));
 				}
 
 				//trigger an import of the anonymized files.

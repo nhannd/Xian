@@ -117,23 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExceptionAuditServiceNotReachableAndNoOfflineCache" xml:space="preserve">
-    <value>Audit service not reachable and the offline cache is either not configured, or not writable.</value>
-  </data>
-  <data name="ExceptionAuthorityGroupIsNotEmpty_MultipleUsers" xml:space="preserve">
-    <value>Authority group '{0}' could not be deleted. There are currently {1} users belonging to this group.</value>
-  </data>
-  <data name="ExceptionAuthorityGroupIsNotEmpty_OneUser" xml:space="preserve">
-    <value>Authority group '{0}' could not be deleted. There is currently one user belonging to this group.</value>
-  </data>
   <data name="ExceptionConcurrentModification" xml:space="preserve">
     <value>Object modified by another user or process</value>
   </data>
   <data name="ExceptionInvalidUserSession" xml:space="preserve">
     <value>Invalid or expired user session.</value>
-  </data>
-  <data name="ExceptionOfflineCacheNotFound" xml:space="preserve">
-    <value>Offline cache not found.</value>
   </data>
   <data name="ExceptionUserAccessDenied" xml:space="preserve">
     <value>Access denied.  The user credentials may be invalid or the account may be disabled.</value>

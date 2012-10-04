@@ -1,0 +1,19 @@
+<VSTemplate Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Item">
+  <TemplateData>
+    <DefaultName>Settings.settings</DefaultName>
+    <Name>ClearCanvas Settings</Name>
+    <Description>Creates a new Settings class for use with the ClearCanvas Framework</Description>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>10</SortOrder>
+    <Icon>__TemplateIcon.ico</Icon>
+  </TemplateData>
+  <TemplateContent>
+    <References>
+      <Reference>
+        <Assembly>System.configuration</Assembly>
+      </Reference>
+    </References>
+    <ProjectItem SubType="" TargetFileName="$fileinputname$.settings" ReplaceParameters="true">Settings.settings</ProjectItem>
+    <ProjectItem SubType="" TargetFileName="$fileinputname$.cs" ReplaceParameters="true">Settings.cs</ProjectItem>
+  </TemplateContent>
+</VSTemplate>

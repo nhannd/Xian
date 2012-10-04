@@ -44,7 +44,7 @@ namespace ClearCanvas.Desktop.Validation
 		{
 			try
 			{
-				_settingsStore = SettingsStore.Create();
+				_settingsStore = (ISettingsStore)(new SettingsStoreExtensionPoint()).CreateExtension();
 			}
 			catch (NotSupportedException e)
 			{

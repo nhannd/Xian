@@ -1,0 +1,135 @@
+﻿<project schemaVersion="1.6.0.7">
+    <assemblies>
+        <assembly assemblyPath="..\..\Common\bin\Release\ClearCanvas.Common.dll" xmlCommentsPath="..\..\Common\bin\Release\ClearCanvas.Common.xml" commentsOnly="False" />
+        <assembly assemblyPath="..\..\Desktop\bin\Release\ClearCanvas.Desktop.dll" xmlCommentsPath="..\..\Desktop\bin\Release\ClearCanvas.Desktop.xml" commentsOnly="False" />
+        <assembly assemblyPath="..\..\ImageViewer\Clipboard\bin\Release\ClearCanvas.ImageViewer.Clipboard.dll" xmlCommentsPath="..\..\ImageViewer\Clipboard\bin\Release\ClearCanvas.ImageViewer.Clipboard.XML" commentsOnly="False" />
+        <assembly assemblyPath="..\..\ImageViewer\bin\Release\ClearCanvas.ImageViewer.dll" xmlCommentsPath="..\..\ImageViewer\bin\Release\ClearCanvas.ImageViewer.xml" commentsOnly="False" />
+    </assemblies>
+    <namespaceSummaries>
+        <namespaceSummaryItem name="" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Codecs" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Common" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.Common.Actions" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.Common.Auditing" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Common.Auditing.Tests" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Common.Authorization" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Common.Configuration" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.Common.log4net" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Common.Scripting" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Common.Specifications" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Common.Statistics" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Common.Tests" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Common.Utilities" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.Common.Utilities.Tests" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Desktop" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.Desktop.Actions" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.Desktop.Actions.Tests" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Desktop.Tables" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.Desktop.Tests" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Desktop.Tests.CommandHistoryTest" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Desktop.Tools" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.Desktop.Trees" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.Desktop.Validation" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.Dicom" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Dicom.Network" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Dicom.OffisWrapper" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.Dicom.Tests" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Annotations" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Annotations.Dicom" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Annotations.Dicom.Tests" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Annotations.Tests" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.BaseTools" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Clipboard" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Clipboard.CopyToClipboard" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Clipboard.ImageExport" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Comparers" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Comparers.Tests" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Graphics" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Graphics.Tests" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Imaging" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Imaging.Tests" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.InputManagement" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.InteractiveGraphics" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Mathematics" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Mathematics.Tests" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Rendering" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Rendering.Tests" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.StudyManagement" isDocumented="True" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.StudyManagement.Tests" isDocumented="False" />
+        <namespaceSummaryItem name="ClearCanvas.ImageViewer.Tests" isDocumented="False" />
+    </namespaceSummaries>
+    <dependencies>
+        <dependencyItem depPath="..\..\ImageViewer\bin\Release\*.*" />
+        <dependencyItem depPath="..\..\ImageViewer\Services\bin\Release\*.*" />
+    </dependencies>
+    <apiFilter>
+        <filter entryType="Namespace" fullName="ClearCanvas.Common" isExposed="True">
+            <filter entryType="Class" fullName="ClearCanvas.Common.SR" filterName="SR" isExposed="False" />
+        </filter>
+        <filter entryType="Namespace" fullName="ClearCanvas.Common.Auditing" isExposed="False" />
+        <filter entryType="Namespace" fullName="ClearCanvas.Common.Authorization" isExposed="False" />
+        <filter entryType="Namespace" fullName="ClearCanvas.Common.log4net" isExposed="False" />
+        <filter entryType="Namespace" fullName="ClearCanvas.Common.Scripting" isExposed="False" />
+        <filter entryType="Namespace" fullName="ClearCanvas.Common.Specifications" isExposed="False" />
+        <filter entryType="Namespace" fullName="ClearCanvas.Common.Statistics" isExposed="False" />
+        <filter entryType="Namespace" fullName="ClearCanvas.Desktop" isExposed="True">
+            <filter entryType="Class" fullName="ClearCanvas.Desktop.SR" filterName="SR" isExposed="False" />
+        </filter>
+        <filter entryType="Namespace" fullName="ClearCanvas.ImageViewer" isExposed="True">
+            <filter entryType="Class" fullName="ClearCanvas.ImageViewer.SR" filterName="SR" isExposed="False" />
+        </filter>
+        <filter entryType="Namespace" fullName="ClearCanvas.ImageViewer.Clipboard" isExposed="True">
+            <filter entryType="Class" fullName="ClearCanvas.ImageViewer.Clipboard.ClipboardComponent" filterName="ClipboardComponent" isExposed="False" />
+            <filter entryType="Class" fullName="ClearCanvas.ImageViewer.Clipboard.ClipboardComponentViewExtensionPoint" filterName="ClipboardComponentViewExtensionPoint" isExposed="False" />
+            <filter entryType="Class" fullName="ClearCanvas.ImageViewer.Clipboard.DeleteAllClipboardItemsTool" filterName="DeleteAllClipboardItemsTool" isExposed="False" />
+            <filter entryType="Class" fullName="ClearCanvas.ImageViewer.Clipboard.DeleteClipboardItemTool" filterName="DeleteClipboardItemTool" isExposed="False" />
+            <filter entryType="Class" fullName="ClearCanvas.ImageViewer.Clipboard.ImageSelectionStrategy" filterName="ImageSelectionStrategy" isExposed="False" />
+            <filter entryType="Class" fullName="ClearCanvas.ImageViewer.Clipboard.ShowClipboardTool" filterName="ShowClipboardTool" isExposed="False" />
+        </filter>
+        <filter entryType="Namespace" fullName="ClearCanvas.ImageViewer.Clipboard.CopyToClipboard" isExposed="False" />
+        <filter entryType="Namespace" fullName="ClearCanvas.ImageViewer.Clipboard.ImageExport" isExposed="False" />
+        <filter entryType="Namespace" fullName="ClearCanvas.Dicom" isExposed="False" />
+    </apiFilter>
+    <ProjectSummary />
+    <MissingTags>AutoDocumentCtors</MissingTags>
+    <VisibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</VisibleItems>
+    <HtmlHelp1xCompilerPath path="" />
+    <HtmlHelp2xCompilerPath path="" />
+    <OutputPath>.\</OutputPath>
+    <SandcastlePath path="" />
+    <WorkingPath path="" />
+    <CleanIntermediates>True</CleanIntermediates>
+    <KeepLogFile>True</KeepLogFile>
+    <BuildLogFile path="" />
+    <HelpFileFormat>HtmlHelp1x</HelpFileFormat>
+    <CppCommentsFixup>False</CppCommentsFixup>
+    <FrameworkVersion>3.0</FrameworkVersion>
+    <IndentHtml>False</IndentHtml>
+    <Preliminary>False</Preliminary>
+    <RootNamespaceContainer>False</RootNamespaceContainer>
+    <RootNamespaceTitle />
+    <HelpTitle>ClearCanvas Framework 2.0 Reference</HelpTitle>
+    <HtmlHelpName>CCFrameworkReference</HtmlHelpName>
+    <Language>en-US</Language>
+    <CopyrightHref />
+    <CopyrightText>© 2010 ClearCanvas Inc.</CopyrightText>
+    <FeedbackEMailAddress>feedback@clearcanvas.ca</FeedbackEMailAddress>
+    <FeedbackEMailLinkText />
+    <HeaderText />
+    <FooterText />
+    <ProjectLinkType>Local</ProjectLinkType>
+    <SdkLinkType>None</SdkLinkType>
+    <SdkLinkTarget>Blank</SdkLinkTarget>
+    <PresentationStyle>vs2005</PresentationStyle>
+    <NamingMethod>Guid</NamingMethod>
+    <SyntaxFilters>Standard</SyntaxFilters>
+    <ShowFeedbackControl>False</ShowFeedbackControl>
+    <BinaryTOC>True</BinaryTOC>
+    <IncludeFavorites>True</IncludeFavorites>
+    <CollectionTocStyle>Hierarchical</CollectionTocStyle>
+    <IncludeStopWordList>True</IncludeStopWordList>
+    <PlugInNamespaces>ms.vsipcc+, ms.vsexpresscc+</PlugInNamespaces>
+    <HelpFileVersion>1.0.0.0</HelpFileVersion>
+    <ContentPlacement>AboveNamespaces</ContentPlacement>
+</project>

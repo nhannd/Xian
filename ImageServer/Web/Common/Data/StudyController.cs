@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Edit;
@@ -448,14 +447,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			Platform.CheckForNullReference(study, "Study");
 
 			return StudyStorage.Load(study.StudyStorageKey);
-		}
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="reason"></param>
-        /// <param name="key"></param>
-        /// <exception cref="InvalidStudyStateOperationException">Study is in a state that reprocessing is not allowed</exception>
+		}   
+
         public void ReprocessStudy(String reason, ServerEntityKey key)
         {
             StudyStorageAdaptor adaptor = new StudyStorageAdaptor();

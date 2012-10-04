@@ -347,7 +347,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			if (e is NotFoundLoadStudyException)
 				throw new FaultException<StudyNotFoundFault>(new StudyNotFoundFault(), "The study was not found.");
 			if (e is NearlineLoadStudyException)
-				throw new FaultException<StudyNearlineFault>(new StudyNearlineFault { IsStudyBeingRestored = ((NearlineLoadStudyException)e).IsStudyBeingRestored }, "The study is nearline.");
+				throw new FaultException<StudyNearlineFault>(new StudyNearlineFault(), "The study is nearline.");
 			if (e is OfflineLoadStudyException)
 				throw new FaultException<StudyOfflineFault>(new StudyOfflineFault(), "The study is offline.");
 			if (e is InUseLoadStudyException)

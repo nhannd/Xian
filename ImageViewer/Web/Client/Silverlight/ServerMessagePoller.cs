@@ -24,7 +24,7 @@ using ClearCanvas.ImageViewer.Web.Client.Silverlight.AppServiceReference;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
-    internal class MessagePollerEventReceivedEventArgs : EventArgs
+    internal class MessagePollerEventReceivedEventArgs:EventArgs
     {
         public EventSet EventSet { get; set; }
     }
@@ -40,7 +40,10 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         private ApplicationServiceClient _service;
         private Thread _pollingThread;
         private bool _stop;
-        private object _syncLock = new object();
+
+        private object _sync = new object();
+
+
         private long _lastPollTick = Environment.TickCount;
         private int _pendingPollingCount;
 
@@ -52,6 +55,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             _service.GetPendingEventCompleted += OnGetPendingEventCompleted;
         }
 
+        
         public void Start()
         {
             _pollingThread = new Thread(ThreadStart);
@@ -73,26 +77,23 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     continue;
                 }
 
-                long now = Environment.TickCount;
 
-                // TimeSpan used to deal with roll over of TickCount
-                // Note: Environment.TickCount unit is in ms
-                if (TimeSpan.FromMilliseconds(now - ApplicationActivityMonitor.Instance.LastActivityTick) < TimeSpan.FromMilliseconds(MinPollDelaySinceLastActivity))
+                // TODO: REVIEW THIS
+                // Per MSDN:
+                // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
+                // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
+                long now = Environment.TickCount;
+                if (now - ApplicationActivityMonitor.Instance.LastActivityTick < MinPollDelaySinceLastActivity)
                 {
-                    lock (_syncLock)
-                    {
-                        Monitor.Wait(_syncLock, 50);
-                        continue;
-                    }
+                    Thread.Sleep(50);
+                    continue;
                 }
 
                 if (!DoPoll())
                 {
-                    lock (_syncLock)
-                    {
-                        Monitor.Wait(_syncLock, 50);
-                    }
+                    Thread.Sleep(50);
                 }
+
             }
         }
 
@@ -101,10 +102,11 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             _lastPollTick = Environment.TickCount;
             Interlocked.Decrement(ref _pendingPollingCount);
 
-            lock (_syncLock)
+            lock (_sync)
             {
-                Monitor.PulseAll(_syncLock);
+                Monitor.PulseAll(_sync);
             }
+
 
             if (e.Error != null)
             {
@@ -114,13 +116,16 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             {
                 if (e.Result != null)
                 {
-                    if (e.Result.EventSet != null)
+
+                    if (e.Result.Events != null)
                     {
                         if (MessageReceived != null)
                         {
-                            MessageReceived(this, new MessagePollerEventReceivedEventArgs { EventSet = e.Result.EventSet });
+                            MessageReceived(this, new MessagePollerEventReceivedEventArgs { EventSet = e.Result });
                         }
+
                     }
+
                 }
             }
         }
@@ -129,48 +134,49 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             if (_pendingPollingCount == 0 && _service != null)
             {
-                Interlocked.Increment(ref _pendingPollingCount);
-
-                int maxWaitTime = 10000; //ms
-
-                try
+                lock (_sync)
                 {
-                    
-                    // TODO: the client may have disconnected
-                    // Note: do not call this inside a lock statement. It can cause deadlock
-                    _service.GetPendingEventAsync(new GetPendingEventRequest() { ApplicationId = ApplicationContext.Current.ID, MaxWaitTime = maxWaitTime });
+                    Interlocked.Increment(ref _pendingPollingCount);
 
-                    lock (_syncLock)
+                    int maxWaitTime = 10000;
+
+                    try
                     {
-                        Monitor.Wait(_syncLock, maxWaitTime - 100); // -100 so that another one will go out while the prev one is coming back. -100 = RTT/2
-                    } 
+                        // TODO: the client may have disconnected
+                        _service.GetPendingEventAsync(new GetPendingEventRequest() { ApplicationId = ApplicationContext.Current.ID, MaxWaitTime = maxWaitTime });
+
+                        Monitor.Wait(_sync, maxWaitTime - 100); // -100 so that another one will go out while the prev one is coming back. -100 = RTT/2
+                    }
+                    catch (Exception)
+                    {
+                        // catch exception to prevent crashing
+                    }
+                    finally
+                    {
+                        
+
+                        // TODO: REVIEW THIS
+                        // Per MSDN:
+                        // if the system runs continuously, TickCount will increment from zero to Int32.MaxValue for approximately 24.9 days, 
+                        // then jump to Int32.MinValue, which is a negative number, then increment back to zero during the next 24.9 days.
+                        _lastPollTick = Environment.TickCount;
+                    }
                 }
-                catch (Exception)
-                {
-                    // catch exception to prevent crashing
-                }
-                finally
-                {
-                    _lastPollTick = Environment.TickCount;
-                }
-                
                 return true;
             }
 
             return false;
+
         }
 
         #region IDisposable Members
 
         public void Dispose()
         {
-            _stop = true;
             if (_pollingThread != null)
             {
+                _stop = true;
                 _service.GetPendingEventCompleted -= OnGetPendingEventCompleted;
-
-                lock (_syncLock)
-                    Monitor.PulseAll(_syncLock);
             }
         }
 

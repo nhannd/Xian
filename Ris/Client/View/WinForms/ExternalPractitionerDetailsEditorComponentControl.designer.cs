@@ -66,17 +66,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._billingNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._isVerified = new System.Windows.Forms.CheckBox();
 			this._lastVerified = new System.Windows.Forms.Label();
-			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this._warning = new System.Windows.Forms.Label();
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.tableLayoutPanel1.SuspendLayout();
-			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _licenseNumber
 			// 
 			this._licenseNumber.LabelText = "License Number";
-			this._licenseNumber.Location = new System.Drawing.Point(20, 122);
+			this._licenseNumber.Location = new System.Drawing.Point(13, 129);
 			this._licenseNumber.Margin = new System.Windows.Forms.Padding(2);
 			this._licenseNumber.Mask = "";
 			this._licenseNumber.Name = "_licenseNumber";
@@ -89,7 +84,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _middleName
 			// 
 			this._middleName.LabelText = "Middle Name";
-			this._middleName.Location = new System.Drawing.Point(20, 68);
+			this._middleName.Location = new System.Drawing.Point(13, 75);
 			this._middleName.Margin = new System.Windows.Forms.Padding(2);
 			this._middleName.Mask = "";
 			this._middleName.Name = "_middleName";
@@ -102,7 +97,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _givenName
 			// 
 			this._givenName.LabelText = "Given Name";
-			this._givenName.Location = new System.Drawing.Point(186, 13);
+			this._givenName.Location = new System.Drawing.Point(179, 20);
 			this._givenName.Margin = new System.Windows.Forms.Padding(2);
 			this._givenName.Mask = "";
 			this._givenName.Name = "_givenName";
@@ -115,7 +110,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _familyName
 			// 
 			this._familyName.LabelText = "Family Name";
-			this._familyName.Location = new System.Drawing.Point(20, 13);
+			this._familyName.Location = new System.Drawing.Point(13, 20);
 			this._familyName.Margin = new System.Windows.Forms.Padding(2);
 			this._familyName.Mask = "";
 			this._familyName.Name = "_familyName";
@@ -128,7 +123,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _billingNumber
 			// 
 			this._billingNumber.LabelText = "Billing Number";
-			this._billingNumber.Location = new System.Drawing.Point(186, 122);
+			this._billingNumber.Location = new System.Drawing.Point(179, 129);
 			this._billingNumber.Margin = new System.Windows.Forms.Padding(2);
 			this._billingNumber.Mask = "";
 			this._billingNumber.Name = "_billingNumber";
@@ -141,7 +136,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _isVerified
 			// 
 			this._isVerified.AutoSize = true;
-			this._isVerified.Location = new System.Drawing.Point(24, 194);
+			this._isVerified.Location = new System.Drawing.Point(17, 201);
 			this._isVerified.Name = "_isVerified";
 			this._isVerified.Size = new System.Drawing.Size(61, 17);
 			this._isVerified.TabIndex = 6;
@@ -151,74 +146,27 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _lastVerified
 			// 
 			this._lastVerified.AutoSize = true;
-			this._lastVerified.Location = new System.Drawing.Point(92, 196);
+			this._lastVerified.Location = new System.Drawing.Point(85, 203);
 			this._lastVerified.Name = "_lastVerified";
 			this._lastVerified.Size = new System.Drawing.Size(64, 13);
 			this._lastVerified.TabIndex = 7;
 			this._lastVerified.Text = "Last verified";
 			// 
-			// tableLayoutPanel1
-			// 
-			this.tableLayoutPanel1.ColumnCount = 1;
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Controls.Add(this._warning, 0, 0);
-			this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 1);
-			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-			this.tableLayoutPanel1.RowCount = 2;
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(360, 254);
-			this.tableLayoutPanel1.TabIndex = 8;
-			// 
-			// _warning
-			// 
-			this._warning.AutoSize = true;
-			this._warning.BackColor = System.Drawing.Color.White;
-			this._warning.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.tableLayoutPanel1.SetColumnSpan(this._warning, 2);
-			this._warning.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._warning.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._warning.ForeColor = System.Drawing.Color.Red;
-			this._warning.Location = new System.Drawing.Point(3, 3);
-			this._warning.Margin = new System.Windows.Forms.Padding(3);
-			this._warning.Name = "_warning";
-			this._warning.Padding = new System.Windows.Forms.Padding(3, 3, 3, 1);
-			this._warning.Size = new System.Drawing.Size(354, 22);
-			this._warning.TabIndex = 2;
-			this._warning.Text = "Warning Message";
-			this._warning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this._warning.Visible = false;
-			// 
-			// panel1
-			// 
-			this.panel1.Controls.Add(this._familyName);
-			this.panel1.Controls.Add(this._lastVerified);
-			this.panel1.Controls.Add(this._licenseNumber);
-			this.panel1.Controls.Add(this._isVerified);
-			this.panel1.Controls.Add(this._givenName);
-			this.panel1.Controls.Add(this._billingNumber);
-			this.panel1.Controls.Add(this._middleName);
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(0, 28);
-			this.panel1.Margin = new System.Windows.Forms.Padding(0);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(360, 226);
-			this.panel1.TabIndex = 0;
-			// 
 			// ExternalPractitionerDetailsEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.tableLayoutPanel1);
+			this.Controls.Add(this._lastVerified);
+			this.Controls.Add(this._isVerified);
+			this.Controls.Add(this._billingNumber);
+			this.Controls.Add(this._middleName);
+			this.Controls.Add(this._givenName);
+			this.Controls.Add(this._familyName);
+			this.Controls.Add(this._licenseNumber);
 			this.Name = "ExternalPractitionerDetailsEditorComponentControl";
-			this.Size = new System.Drawing.Size(360, 254);
-			this.tableLayoutPanel1.ResumeLayout(false);
-			this.tableLayoutPanel1.PerformLayout();
-			this.panel1.ResumeLayout(false);
-			this.panel1.PerformLayout();
+			this.Size = new System.Drawing.Size(360, 237);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 
@@ -231,9 +179,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.TextField _billingNumber;
 		private System.Windows.Forms.CheckBox _isVerified;
 		private System.Windows.Forms.Label _lastVerified;
-		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.Label _warning;
 
     }
 }

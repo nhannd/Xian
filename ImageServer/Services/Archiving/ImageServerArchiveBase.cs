@@ -62,8 +62,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		}
 
 		public abstract ArchiveTypeEnum ArchiveType { get; }
-        public abstract PartitionArchive PartitionArchive { get; set; }
-	
+
 		/// <summary>
 		/// The persistent store.
 		/// </summary>

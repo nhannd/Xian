@@ -148,7 +148,6 @@ namespace ClearCanvas.Controls.WinForms
 		#region FileSizeFormat
 
 		[DefaultValue(FileSizeFormat.BinaryOctets)]
-		[Localizable(true)]
 		public FileSizeFormat FileSizeFormat
 		{
 			get { return _folderListView.FileSizeFormat; }

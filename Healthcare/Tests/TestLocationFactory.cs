@@ -9,6 +9,10 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Text;
+
 namespace ClearCanvas.Healthcare.Tests
 {
 	internal class TestLocationFactory
@@ -22,7 +26,9 @@ namespace ClearCanvas.Healthcare.Tests
 				TestFacilityFactory.CreateFacility(),
 				"Building 1",
 				"Floor 1",
-				"POC 1");
+				"POC 1",
+				"Rm 1",
+				"Bed 1");
 		}
 	}
 }

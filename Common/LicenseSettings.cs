@@ -195,15 +195,7 @@ namespace ClearCanvas.Common
                 }
 			}
 		}
-
-        /// <summary>
-        /// Forces license information to be reloaded when it is requested next time
-        /// </summary>
-        public static void Reset()
-        {
-            _machineIdentifier = null; // will force reload when requested
-        }
-    }
+	}
 
 	[SettingsGroupDescription("Settings that store the license information.")]
 	[SettingsProvider(typeof(LocalFileSettingsProvider))]

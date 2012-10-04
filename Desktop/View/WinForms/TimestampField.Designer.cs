@@ -28,43 +28,51 @@
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TimestampField));
-			this._datePicker = new System.Windows.Forms.DateTimePicker();
-			this._timePicker = new System.Windows.Forms.DateTimePicker();
-			this.label = new System.Windows.Forms.Label();
-			this.SuspendLayout();
-			// 
-			// _datePicker
-			// 
-			this._datePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-			resources.ApplyResources(this._datePicker, "_datePicker");
-			this._datePicker.Name = "_datePicker";
-			this._datePicker.ShowCheckBox = true;
-			this._datePicker.ValueChanged += new System.EventHandler(this.OnValueChanged);
-			this._datePicker.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnDatePickerMouseUp);
-			// 
-			// _timePicker
-			// 
-			this._timePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-			resources.ApplyResources(this._timePicker, "_timePicker");
-			this._timePicker.Name = "_timePicker";
-			this._timePicker.ShowUpDown = true;
-			// 
-			// label
-			// 
-			resources.ApplyResources(this.label, "label");
-			this.label.Name = "label";
-			// 
-			// TimestampField
-			// 
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._timePicker);
-			this.Controls.Add(this.label);
-			this.Controls.Add(this._datePicker);
-			this.Name = "TimestampField";
-			this.ResumeLayout(false);
-			this.PerformLayout();
+            this._datePicker = new System.Windows.Forms.DateTimePicker();
+            this._timePicker = new System.Windows.Forms.DateTimePicker();
+            this.label = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // _datePicker
+            // 
+            this._datePicker.Location = new System.Drawing.Point(3, 18);
+            this._datePicker.Name = "_datePicker";
+            this._datePicker.ShowCheckBox = true;
+            this._datePicker.Size = new System.Drawing.Size(144, 20);
+            this._datePicker.TabIndex = 0;
+            this._datePicker.ValueChanged += new System.EventHandler(this.OnValueChanged);
+            this._datePicker.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnDatePickerMouseUp);
+            // 
+            // _timePicker
+            // 
+            this._timePicker.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this._timePicker.Location = new System.Drawing.Point(153, 18);
+            this._timePicker.Name = "_timePicker";
+            this._timePicker.ShowUpDown = true;
+            this._timePicker.Size = new System.Drawing.Size(88, 20);
+            this._timePicker.TabIndex = 1;
+            // 
+            // label
+            // 
+            this.label.AutoSize = true;
+            this.label.Location = new System.Drawing.Point(3, 0);
+            this.label.Name = "label";
+            this.label.Size = new System.Drawing.Size(29, 13);
+            this.label.TabIndex = 2;
+            this.label.Text = "label";
+            // 
+            // TimestampField
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._timePicker);
+            this.Controls.Add(this.label);
+            this.Controls.Add(this._datePicker);
+            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Name = "TimestampField";
+            this.Size = new System.Drawing.Size(243, 41);
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

@@ -113,8 +113,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			Platform.CheckForNullReference(directory, "directory");
 			if (!Directory.Exists(directory))
 				throw new ArgumentException("Invalid directory path.", "directory");
-
-			FileProcessor.Process(directory, "*.*", _filenames.Add, recursive);
+			FileProcessor.Process(directory, "*.*", _filenames.Add, false);
 		}
 
 		/// <summary>
@@ -153,7 +152,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			catch (Exception e)
 			{
 				if (!cancelled) // silence any exceptions if the operation was cancelled
-					ExceptionHandler.Report(e, SR.MessageFailedToOpenImages, desktopWindow);
+					ExceptionHandler.Report(e, desktopWindow);
 			}
 
 			if (cancelled || (!AnySopsLoaded(viewer) && !AllowEmptyViewer))

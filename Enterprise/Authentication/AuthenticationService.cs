@@ -26,6 +26,7 @@ namespace ClearCanvas.Enterprise.Authentication
 	{
 		private AuthenticationSettings _settings;
 
+
 		#region IAuthenticationService Members
 
 		[UpdateOperation(ChangeSetAuditable = false)]
@@ -102,6 +103,7 @@ namespace ClearCanvas.Enterprise.Authentication
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.UserName, "UserName");
 			Platform.CheckMemberIsSet(request.SessionToken, "SessionToken");
+			Platform.CheckMemberIsSet(request.SessionToken.Id, "SessionToken.Id");
 
 			// get the session
 			var session = GetSession(request.SessionToken);
@@ -127,6 +129,7 @@ namespace ClearCanvas.Enterprise.Authentication
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.UserName, "UserName");
 			Platform.CheckMemberIsSet(request.SessionToken, "SessionToken");
+			Platform.CheckMemberIsSet(request.SessionToken.Id, "SessionToken.Id");
 
 			// get the session and user
 			var session = GetSession(request.SessionToken);
@@ -197,9 +200,6 @@ namespace ClearCanvas.Enterprise.Authentication
 		/// <returns></returns>
 		private UserSession GetSession(SessionToken sessionToken)
 		{
-			if (String.IsNullOrEmpty(sessionToken.Id))
-				return null; //we know this isn't valid, so don't go to the database.
-
 			var where = new UserSessionSearchCriteria();
 			where.SessionId.EqualTo(sessionToken.Id);
 
@@ -294,29 +294,10 @@ namespace ClearCanvas.Enterprise.Authentication
 				if (_settings == null)
 				{
 					_settings = new AuthenticationSettings();
-
-				    VerifySettings();
 				}
 				return _settings;
 			}
 		}
-
-        /// <summary>
-        /// Verify the settings are ok
-        /// </summary>
-        private void VerifySettings()
-        {
-            if (_settings.SessionTokenCachingEnabled)
-            {
-                // User session cache duration must be less than the session timeout duration so that client apps can renew the session.
-                if (TimeSpan.FromSeconds(_settings.SessionTokenCachingTimeToLiveSeconds)>=TimeSpan.FromMinutes(_settings.UserSessionTimeoutMinutes))
-                {
-                    string message = SR.ExceptionIncorrectApplicationSettings_CacheDuration;
-                    Platform.Log(LogLevel.Error, message);
-                    throw new Exception(message);
-                }
-            }
-        }
 
 
 	}

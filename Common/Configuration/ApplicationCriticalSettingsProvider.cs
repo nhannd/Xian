@@ -16,11 +16,6 @@ using System.IO;
 
 namespace ClearCanvas.Common.Configuration
 {
-	//TODO (CR February 2011) - Low: we should somehow make it clearer that critical settings
-	//cannot have user scoped settings.
-
-	//TODO (CR April 2011): Low: should we make it automatic that critical settings are never migrated?
-
 	/// <summary>
 	/// Provides local persistence for application-critical settings.
 	/// </summary>

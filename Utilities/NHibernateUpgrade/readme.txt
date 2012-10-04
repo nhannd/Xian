@@ -1,0 +1,3 @@
+-place the nh_update.* files in the Root directory of the source tree (typically Trunk)
+-adjust the nh_update.rb file based on the version of NH
+-run the bat file to update all .csproj and .proj (postbuild) files in the source tree

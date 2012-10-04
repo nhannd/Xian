@@ -43,7 +43,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         [Browsable(true)]
         [Category("Label")]
-		[Localizable(true)]
         public string TextLabel
         {
             get

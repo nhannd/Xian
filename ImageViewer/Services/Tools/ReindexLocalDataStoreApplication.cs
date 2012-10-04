@@ -19,33 +19,27 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	{
 		private class CommandLine : ClearCanvas.Common.Utilities.CommandLine
 		{
-			public CommandLine()
+			public CommandLine(string[] args)
+				: base(args)
 			{
-				TimeoutSeconds = 10;
-				Silent = NoWait = false;
 			}
 
 			[CommandLineParameter("silent", "s", "Specifies whether the application should be silent (e.g. console app).")]
 			public bool Silent { get; set; }
 
-			[CommandLineParameter("nowait", "n", "When true, the application will initiate the reindex and quit without waiting for it to complete.  Only works with 'silent' switch.")]
+			[CommandLineParameter("nowait", "n", "When true, the application will initiate the reindex and quit without waiting for it to complete.")]
 			public bool NoWait { get; set; }
-
-			[CommandLineParameter("timeout", "t", "The amount of time, in seconds, to wait for reindex activity to be detected before quitting.")]
-			public int TimeoutSeconds { get; set; }
 		}
 
 		#region IApplicationRoot Members
 
 		public void RunApplication(string[] args)
 		{
-			var commandLine = new CommandLine();
-			commandLine.Parse(args);
-
+			CommandLine commandLine = new CommandLine(args);
 			if (!commandLine.Silent)
-				((IApplicationRoot)new ReindexLocalDataStoreDesktopApplication{TimeoutSeconds = commandLine.TimeoutSeconds}).RunApplication(new string[0]);
+				((IApplicationRoot)new ReindexLocalDataStoreDesktopApplication()).RunApplication(args);
 			else
-				new ReindexLocalDataStoreConsoleApplication{NoWait = commandLine.NoWait, TimeoutSeconds = commandLine.TimeoutSeconds}.Run();
+				new ReindexLocalDataStoreConsoleApplication{ NoWait = commandLine.NoWait }.Run();
 		}
 
 		#endregion

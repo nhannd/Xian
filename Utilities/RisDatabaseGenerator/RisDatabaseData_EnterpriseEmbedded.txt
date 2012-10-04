@@ -1,0 +1,40 @@
+/*	Data file for creating a Ris database with embedded enterprise server
+	Note that the property names must be capitalized because the exact name is being used to replace
+	value in the JScript and Sqlscript templates.
+*/
+EMBEDDED_ENTERPRISE:	true,
+HOST: 		"kirkwood", 
+EXPRESS:	false, 
+ADMINID:	"sa", 
+ADMINPASS:	"c",
+DB: 		"Ris2", 
+DBFOLDER:	"g:\\sqldb", 
+LOGFOLDER:	"g:\\sqldb", 
+USERID:		"risuser", 
+USERPASS:	"rispass",
+TEMPFOLDER:	".\\temp",
+EXECUTABLE:	"..\\..\\Ris\\Server\\Executable\\bin\\Debug\\ClearCanvas.Ris.Server.Executable.exe",
+IMPORTACTIONS: 
+	[ 
+		{
+			Message: "Importing IHE Sample Data...",
+			Command: "CD ..\\..\\Ris\\SampleData\\ & ImportSampleData.bat", 
+			Argument: "..\\..\\Ris\\Server\\Executable\\bin\\Debug\\ClearCanvas.Ris.Server.Executable.exe"
+		},
+		{
+			Message: "Importing WCH Sample Data...",
+			Command: "CD ..\\..\\Ris\\SampleData\\WCH\\ & ImportSampleData.bat", 
+			Argument: "..\\..\\..\\Ris\\Server\\Executable\\bin\\Debug\\ClearCanvas.Ris.Server.Executable.exe"
+		},
+		{
+			Message: "Importing JDMI Sample Data...",
+			Command: "CD ..\\..\\Ris\\SampleData\\JDMI\\ & ImportSampleData.bat", 
+			Argument: "..\\..\\..\\Ris\\Server\\Executable\\bin\\Debug\\ClearCanvas.Ris.Server.Executable.exe"
+		},
+		{
+			Message: "Importing WCH Sample Configuration Data to Ris DB...",
+			Command: "CD ..\\..\\Ris\\SampleData\\WCH\\ & ImportSampleConfigurationData.bat", 
+			Argument: "..\\..\\..\\Ris\\Server\\Executable\\bin\\Debug\\ClearCanvas.Ris.Server.Executable.exe"
+		},
+
+	]

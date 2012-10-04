@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
     public static class SessionManager
     {
         #region Private Fields
-
+        private static TimeSpan _sessionTimeOut;
         #endregion
 
         static SessionManager()
@@ -51,7 +51,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                     return new SessionInfo(p);
                    
                 }
-                return null;
+                else
+                {
+                    return null;
+                }
             }
             set
             {
@@ -73,17 +76,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
             {
                 throw new Exception("This session is no longer valid");
             }
-            Current = session;
-
-            string loginId = session.User.Identity.Name;
-            CustomIdentity identity = session.User.Identity as CustomIdentity;
-            
-            if (identity == null)
-            {
-                Platform.CheckForNullReference(identity, "identity"); // throw exception
-            }
             else
             {
+                Current = session;
+
+                string loginId = session.User.Identity.Name;
+                CustomIdentity identity = session.User.Identity as CustomIdentity;
+                Platform.CheckForNullReference(identity, "identity");
+                
                 string displayName = identity.DisplayName;
                 SessionToken token = session.Credentials.SessionToken;
                 string[] authorities = session.Credentials.Authorities;
@@ -132,7 +132,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         /// </summary>
         /// <param name="username"></param>
         /// <param name="password"></param>
-        /// <param name="appName"></param>
         public static SessionInfo InitializeSession(string username, string password, string appName)
         {
                 return InitializeSession(username, password, ImageServerConstants.DefaultApplicationName, true);
@@ -143,8 +142,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         /// </summary>
         /// <param name="username"></param>
         /// <param name="password"></param>
-        /// <param name="appName"></param>
-        /// <param name="redirect"></param>
         public static SessionInfo InitializeSession(string username, string password, string appName, bool redirect)
         {
             using (LoginService service = new LoginService())
@@ -169,23 +166,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
             if (!String.IsNullOrEmpty(reason))
             {
                 Platform.Log(LogLevel.Info, "Terminate session because {0}", reason);
-                Platform.Log(LogLevel.Info, Environment.StackTrace);
             }
-
-            // Redirect to the login page
-            // That's a catch: if this happens on the timeout page and 
-            // FormsAuthentication.RedirectToLoginPage is used, the return url will point to the timeout page,
-            // causing immediate timeout when users log in again.
-            if (HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath.IndexOf(ImageServerConstants.PageURLs.DefaultTimeoutPage)==0)
-            {
-                // Redirect to login page but don't include the ReturnUrl
-                var baseUrl = VirtualPathUtility.ToAbsolute(FormsAuthentication.LoginUrl);
-                string loginUrl = string.Format("{0}?error={1}", baseUrl, reason);
-                HttpContext.Current.Response.Redirect(loginUrl, true);
-            }
-            else
-                FormsAuthentication.RedirectToLoginPage(queryString);
-            
+            FormsAuthentication.RedirectToLoginPage(queryString);
         }
 
         /// <summary>
@@ -240,7 +222,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         /// <summary>
         /// Gets or sets the session time out in minutes.
         /// </summary>
-        public static TimeSpan SessionTimeout { get; set; }
+        public static TimeSpan SessionTimeout
+        {
+            get
+            {
+                return _sessionTimeOut;
+            }
+            set
+            {
+                // no thread-safety check here, assuming it's almost the same even if it's changed.
+                _sessionTimeOut = value;
+            }
+        }
 
         public static string LoginUrl
         {

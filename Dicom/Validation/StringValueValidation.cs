@@ -25,7 +25,7 @@ namespace ClearCanvas.Dicom.Validation
     /// can share the same validator if they belong to the same collection.
     /// All "stand-alone" attributes can also share the same validator.
     /// 
-    /// <para>Note:Because of this sharing, all methods are written to ensure they are thread-safe</para>
+    /// <P>Note:Because of this sharing, all methods are written to ensure they are thread-safe
     /// 
     /// </remarks>
     public static class DAStringValidator
@@ -58,7 +58,7 @@ namespace ClearCanvas.Dicom.Validation
     /// can share the same validator if they belong to the same collection.
     /// All "stand-alone" attributes can also share the same validator.
     /// 
-    /// <para>Note:Because of this sharing, all methods are written to ensure they are thread-safe</para>
+    /// <P>Note:Because of this sharing, all methods are written to ensure they are thread-safe
     /// 
     /// </remarks>
     public static class DSStringValidator
@@ -90,7 +90,7 @@ namespace ClearCanvas.Dicom.Validation
     /// can share the same validator if they belong to the same collection.
     /// All "stand-alone" attributes can also share the same validator.
     /// 
-    /// <para>Note:Because of this sharing, all methods are written to ensure they are thread-safe</para>
+    /// <P>Note:Because of this sharing, all methods are written to ensure they are thread-safe
     /// 
     /// </remarks>
     public static class DTStringValidator
@@ -121,7 +121,7 @@ namespace ClearCanvas.Dicom.Validation
     /// can share the same validator if they belong to the same collection.
     /// All "stand-alone" attributes can also share the same validator.
     /// 
-    /// <para>Note:Because of this sharing, all methods are written to ensure they are thread-safe</para>
+    /// <P>Note:Because of this sharing, all methods are written to ensure they are thread-safe
     /// 
     /// </remarks>
     public class ISStringValidator
@@ -154,7 +154,7 @@ namespace ClearCanvas.Dicom.Validation
     /// can share the same validator if they belong to the same collection.
     /// All "stand-alone" attributes can also share the same validator.
     /// 
-    /// <para>Note:Because of this sharing, all methods are written to ensure they are thread-safe</para>
+    /// <P>Note:Because of this sharing, all methods are written to ensure they are thread-safe
     /// 
     /// </remarks>
     public class TMStringValidator

@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	public class ColorBarGraphic : CompositeGraphic, IColorMapProvider, IColorMapInstaller
 	{
 		[CloneIgnore]
-		private readonly ColorMapManager _colorMapManagerProxy;
+		private readonly ColorMapManager _colorMapManagerProxy = new ColorMapManager(new ColorMapInstallerProxy());
 
 		[CloneIgnore]
 		private GrayscaleImageGraphic _colorBar;
@@ -91,9 +91,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			context.CloneFields(source, this);
 
-			_colorMapManagerProxy = new ColorMapManager(new ColorMapInstallerProxy());
-			if (source._colorMapManagerProxy.ColorMap != null)
-				_colorMapManagerProxy.SetMemento(source._colorMapManagerProxy.CreateMemento());
+			_colorMapManagerProxy.SetMemento(source._colorMapManagerProxy.CreateMemento());
 
 			if (source._gradientPixelData != null)
 				_gradientPixelData = source._gradientPixelData.Clone();

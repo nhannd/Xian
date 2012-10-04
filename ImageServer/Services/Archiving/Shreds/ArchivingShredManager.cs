@@ -43,11 +43,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Shreds
 			public PartitionArchive PartitionArchive
 			{
 				get { return _partitionArchive; }
-                set
-                {
-                    _partitionArchive = value;
-                    _archive.PartitionArchive = value;
-                }
+				set { _partitionArchive = value; }
 			}
 
 			public IImageServerArchivePlugin ArchivePlugin
@@ -232,7 +228,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Shreds
 		#endregion
 
 		#region Protected Methods
-		protected override bool Initialize()
+		protected override void Initialize()
 		{
 			_archiveServiceList.Clear();
 
@@ -281,7 +277,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Shreds
 					}
 				}
 			}
-            return true;
 		}
 
 		protected override void Run()

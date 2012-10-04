@@ -9,11 +9,11 @@
 
 #endregion
 
-using System;
 using System.Reflection;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client.Formatting;
+using System;
 
 namespace ClearCanvas.Ris.Client
 {

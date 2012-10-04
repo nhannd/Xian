@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 			var reportAssembler = new ReportAssembler();
 			var orderAssembler = new OrderAssembler();
 
-			var orderDetailOptions = new OrderAssembler.CreateOrderDetailOptions {IncludeExtendedProperties = true};
+			var orderDetailOptions = new OrderAssembler.CreateOrderDetailOptions(false, false, false, null, false, false, true);
 			return new LoadTranscriptionForEditResponse(
 				reportAssembler.CreateReportDetail(step.ReportPart.Report, false, this.PersistenceContext),
 				step.ReportPart.Index,

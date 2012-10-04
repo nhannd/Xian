@@ -11,13 +11,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using ClearCanvas.Ris.Client.Formatting;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -32,13 +32,44 @@ namespace ClearCanvas.Ris.Client
 
 		public override object FormatItem(object p)
 		{
-			var cp = (ExternalPractitionerContactPointDetail)p;
+			var cp = (ExternalPractitionerContactPointDetail) p;
 			return ExternalPractitionerContactPointFormat.Format(cp);
 		}
 
 		protected override bool IsSameItem(ExternalPractitionerContactPointDetail x, ExternalPractitionerContactPointDetail y)
 		{
 			return x == null || y == null ? false : x.ContactPointRef.Equals(y.ContactPointRef, true);
+		}
+
+		protected override string GenerateReport(ExternalPractitionerContactPointDetail duplicate, ExternalPractitionerContactPointDetail original)
+		{
+			List<OrderSummary> affectedOrders = null;
+
+			Platform.GetService<IExternalPractitionerAdminService>(service =>
+			{
+				var response = service.LoadMergeDuplicateContactPointFormData(
+					new LoadMergeDuplicateContactPointFormDataRequest(duplicate.GetSummary()));
+				affectedOrders = response.AffectedOrders;
+			});
+
+			var reportBuilder = new StringBuilder();
+			reportBuilder.AppendFormat("Replace {0} ({1})", duplicate.Name, duplicate.Description);
+			reportBuilder.AppendLine();
+			reportBuilder.AppendFormat("with {0} ({1})", original.Name, original.Description);
+			reportBuilder.AppendLine();
+
+			reportBuilder.AppendLine();
+			if (affectedOrders.Count == 0)
+			{
+				reportBuilder.AppendLine("No affected orders");
+			}
+			else
+			{
+				reportBuilder.AppendLine("The following orders have result recipients that will be modified to use the replacement contact point.");
+				affectedOrders.ForEach(order => reportBuilder.AppendLine(AccessionFormat.Format(order.AccessionNumber)));
+			}
+
+			return reportBuilder.ToString();
 		}
 
 		public override void Accept()
@@ -51,18 +82,9 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
-				var cost = CalculateMergeCost(this.SelectedOriginalSummary, this.SelectedDuplicateSummary);
-
-                var msg = string.Format("Merge operation will affect {0} orders.", cost);
-				msg += "\n\nPress 'Cancel' to cancel the operation.\nPress 'OK' to continue. The merge operation cannot be undone.";
-				var action = this.Host.ShowMessageBox(msg, MessageBoxActions.OkCancel);
-				if (action == DialogBoxAction.Cancel)
-				{
-					return;
-				}
-
-				// perform the merge
-				PerformMergeOperation(this.SelectedOriginalSummary, this.SelectedDuplicateSummary);
+				Platform.GetService<IExternalPractitionerAdminService>(service => 
+					service.MergeDuplicateContactPoint(
+						new MergeDuplicateContactPointRequest(this.SelectedDuplicateSummary.GetSummary(), this.SelectedOriginalSummary.GetSummary())));
 
 				base.Accept();
 			}
@@ -70,47 +92,6 @@ namespace ClearCanvas.Ris.Client
 			{
 				ExceptionHandler.Report(e, SR.ExceptionFailedToMergeDuplicateContactPoints, this.Host.DesktopWindow);
 			}
-		}
-
-		private long CalculateMergeCost(ExternalPractitionerContactPointDetail original, ExternalPractitionerContactPointDetail duplicate)
-		{
-			return ShowProgress("Calculating number of records affected...",
-					  service => service.MergeDuplicateContactPoint(new MergeDuplicateContactPointRequest(
-										original.ContactPointRef, duplicate.ContactPointRef) { EstimateCostOnly = true }).CostEstimate);
-		}
-
-		private static void PerformMergeOperation(ExternalPractitionerContactPointDetail original, ExternalPractitionerContactPointDetail duplicate)
-		{
-			Platform.GetService<IExternalPractitionerAdminService>(
-				service => service.MergeDuplicateContactPoint(new MergeDuplicateContactPointRequest(
-										original.ContactPointRef, duplicate.ContactPointRef)));
-		}
-
-		private T ShowProgress<T>(
-			string message,
-			Converter<IExternalPractitionerAdminService, T> action)
-		{
-			var result = default(T);
-			var task = new BackgroundTask(
-				delegate(IBackgroundTaskContext context)
-				{
-					context.ReportProgress(new BackgroundTaskProgress(0, message));
-
-					try
-					{
-						Platform.GetService<IExternalPractitionerAdminService>(service =>
-									{
-										result = action(service);
-									});
-					}
-					catch (Exception e)
-					{
-						context.Error(e);
-					}
-				}, false);
-
-			ProgressDialog.Show(task, this.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
-			return result;
 		}
 	}
 }

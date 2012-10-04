@@ -34,7 +34,7 @@ namespace ClearCanvas.Utilities.Manifest
                         string reason;
                         _verificationStatus = verifier.Verify(out reason);
                         if (!_verificationStatus)
-                            Platform.Log(LogLevel.Debug, "Application failed verification: {0}", reason);
+                            Platform.Log(LogLevel.Info, "Application failed verification: {0}", reason);
 
                         _verificationRun = true;
                     }
@@ -54,8 +54,8 @@ namespace ClearCanvas.Utilities.Manifest
         private ClearCanvasManifest _productManifest;
         private ClearCanvasManifest[] _manifests;
         private readonly List<ManifestFile> _ignoredDirectories = new List<ManifestFile>();
-        private readonly Dictionary<string, string> _installedFileDictionary = new Dictionary<string,string>(StringComparer.InvariantCultureIgnoreCase);
-        private readonly Dictionary<string, ManifestFile> _manifestFileDictionary = new Dictionary<string, ManifestFile>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly Dictionary<string, string> _installedFileDictionary = new Dictionary<string,string>();
+        private readonly Dictionary<string, ManifestFile> _manifestFileDictionary = new Dictionary<string, ManifestFile>();
 
         #endregion Private Members
 
@@ -115,12 +115,7 @@ namespace ClearCanvas.Utilities.Manifest
                 try
                 {
                     XmlDocument doc = new XmlDocument();
-
-                    // must open stream manually in case file is read-only
-                    using (var fileStream = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    {
-                        doc.Load(fileStream);
-                    }
+                    doc.Load(file);
 
                     XmlElement modulusNode =
                         (XmlElement) CollectionUtils.FirstElement(doc.GetElementsByTagName("Modulus"));
@@ -238,17 +233,17 @@ namespace ClearCanvas.Utilities.Manifest
 
         private bool CheckIgnored(string path)
         {
-            if (path.StartsWith(Platform.ManifestDirectory, StringComparison.InvariantCultureIgnoreCase))
+            if (path.StartsWith(Platform.ManifestDirectory))
                 return true;
 
-            if (path.StartsWith(Platform.LogDirectory, StringComparison.InvariantCultureIgnoreCase))
+            if (path.StartsWith(Platform.LogDirectory))
                 return true;
 
             string relativePath = path.Substring(Platform.InstallDirectory.Length);
 
             foreach (ManifestFile dir in _ignoredDirectories)
             {
-                if (relativePath.StartsWith(dir.Filename, StringComparison.InvariantCultureIgnoreCase))
+                if (relativePath.StartsWith(dir.Filename))
                     return true;
             }
 

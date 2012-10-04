@@ -64,39 +64,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			return null;
 		}
 
-		[Cloneable(false)]
 		private class CompositeScaleGraphic : CompositeGraphic
 		{
-			private const string _horizontalName = "Horizontal scale";
-			private const string _verticalName = "Vertical scale";
-
-			[CloneIgnore]
-			private ScaleGraphic _horizontalScale;
-			[CloneIgnore]
-			private ScaleGraphic _verticalScale;
+			private readonly ScaleGraphic _horizontalScale;
+			private readonly ScaleGraphic _verticalScale;
 
 			public CompositeScaleGraphic()
 			{
-				base.Graphics.Add(_horizontalScale = new ScaleGraphic {Name = _horizontalName });
-				base.Graphics.Add(_verticalScale = new ScaleGraphic { Name = _verticalName });
+				base.Graphics.Add(_horizontalScale = new ScaleGraphic());
+				base.Graphics.Add(_verticalScale = new ScaleGraphic());
 
 				_horizontalScale.Visible = false;
 				_horizontalScale.IsMirrored = true;
 
 				_verticalScale.Visible = false;
 				_verticalScale.IsMirrored = true;
-			}
-
-			protected CompositeScaleGraphic(CompositeScaleGraphic source, ICloningContext context)
-			{
-				context.CloneFields(source, this);
-			}
-
-			[OnCloneComplete]
-			private void OnCloneComplete()
-			{
-				_horizontalScale = (ScaleGraphic)CollectionUtils.SelectFirst(Graphics, graphic => graphic is ScaleGraphic && graphic.Name == _horizontalName);
-				_verticalScale = (ScaleGraphic)CollectionUtils.SelectFirst(Graphics, graphic => graphic is ScaleGraphic && graphic.Name == _verticalName);
 			}
 
 			/// <summary>

@@ -37,6 +37,8 @@
     <ReplaceExistingVirtualDirectory>true</ReplaceExistingVirtualDirectory>
     <ContentAssemblyName>
     </ContentAssemblyName>
+    <AssemblyPrefixName>
+    </AssemblyPrefixName>
     <UseFixedNames>true</UseFixedNames>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -49,7 +51,7 @@
   </PropertyGroup>
   <ItemGroup>
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WebDeployment\v9.0\Microsoft.WebDeployment.targets"/>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WebDeployment\v9.0\Microsoft.WebDeployment.targets"/>
   <ItemGroup>
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\.svn\**\*.*;$(SourceWebPhysicalPath)\**\.svn\**\*.*"/>
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\*.pdb"/>

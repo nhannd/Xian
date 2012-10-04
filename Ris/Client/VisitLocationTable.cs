@@ -9,32 +9,45 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-	public class VisitLocationTable : Table<VisitLocationDetail>
-	{
-		public VisitLocationTable()
-		{
-			this.Columns.Add(new TableColumn<VisitLocationDetail, string>(
-				SR.ColumnRole, vl => vl.Role.Value, 0.8f));
-			this.Columns.Add(new TableColumn<VisitLocationDetail, string>(
-				SR.ColumnLocation, FormatVisitLocation, 2.5f));
-			this.Columns.Add(new TableColumn<VisitLocationDetail, string>(
-				SR.ColumnRoom, vl => vl.Room, 0.2f));
-			this.Columns.Add(new TableColumn<VisitLocationDetail, string>(
-				SR.ColumnBed, vl => vl.Bed, 0.2f));
-			this.Columns.Add(new DateTimeTableColumn<VisitLocationDetail>(
-				SR.ColumnStartTime, vl => vl.StartTime, 0.8f));
-			this.Columns.Add(new DateTimeTableColumn<VisitLocationDetail>(
-				SR.ColumnEndTime, vl => vl.EndTime, 0.8f));
-		}
-
-		private static string FormatVisitLocation(VisitLocationDetail vl)
-		{
-			return string.Format("{0}, {1}, {2}, {3}, {4}", vl.Bed, vl.Room, vl.Location.Floor, vl.Location.Building, vl.Location.Facility.Name);
-		}
-	}
+    public class VisitLocationTable : Table<VisitLocationDetail>
+    {
+        public VisitLocationTable()
+        {
+            this.Columns.Add(new TableColumn<VisitLocationDetail, string>(
+                SR.ColumnRole,
+                delegate(VisitLocationDetail vl)
+                {
+                    return vl.Role.Value;
+                },
+                0.8f));
+            this.Columns.Add(new TableColumn<VisitLocationDetail, string>(
+                SR.ColumnLocation,
+                delegate(VisitLocationDetail vl)
+                {
+                    //TODO: LocationSummary formatting
+                    //return vl.Location.ToString();
+                    return string.Format("{0}, {1}, {2}, {3}, {4}", vl.Location.Bed, vl.Location.Room, vl.Location.Floor, vl.Location.Building, vl.Location.Facility.Name);
+                },
+                2.5f));
+            this.Columns.Add(new DateTimeTableColumn<VisitLocationDetail>(
+                SR.ColumnStartTime,
+                delegate(VisitLocationDetail vl) { return vl.StartTime; },
+                0.8f));
+            this.Columns.Add(new DateTimeTableColumn<VisitLocationDetail>(
+                SR.ColumnEndTime,
+                delegate(VisitLocationDetail vl) { return vl.EndTime; },
+                0.8f));
+        }
+    }
 }

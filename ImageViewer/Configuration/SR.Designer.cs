@@ -180,15 +180,6 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to update action models.
-        /// </summary>
-        internal static string MessageActionModelUpdateFailure {
-            get {
-                return ResourceManager.GetString("MessageActionModelUpdateFailure", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to C-ECHO Verification:.
         /// </summary>
         internal static string MessageCEchoVerificationPrefix {

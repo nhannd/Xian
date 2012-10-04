@@ -321,19 +321,4 @@
   <data name="LogLicenseProviderNotFound" xml:space="preserve">
     <value>License provider not found - defaulting to local license provider.</value>
   </data>
-  <data name="FormatFileSizeBytes" xml:space="preserve">
-    <value>{0} Bytes</value>
-  </data>
-  <data name="FormatFileSizeGB" xml:space="preserve">
-    <value>{0:f2} GB</value>
-  </data>
-  <data name="FormatFileSizeKB" xml:space="preserve">
-    <value>{0:f2} KB</value>
-  </data>
-  <data name="FormatFileSizeMB" xml:space="preserve">
-    <value>{0:f2} MB</value>
-  </data>
-  <data name="FormatFileSizeTB" xml:space="preserve">
-    <value>{0:f2} TB</value>
-  </data>
 </root>

@@ -69,13 +69,6 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public SessionStatus SessionStatus
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged;
-
 		#endregion
 
 		#region Internal methods

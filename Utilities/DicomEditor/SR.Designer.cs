@@ -205,15 +205,6 @@ namespace ClearCanvas.Utilities.DicomEditor {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Accession Number must be between 0 and 16 characters..
-        /// </summary>
-        internal static string MessageAccessionNumberInvalidLength {
-            get {
-                return ResourceManager.GetString("MessageAccessionNumberInvalidLength", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Anonymizing Study ....
         /// </summary>
         internal static string MessageAnonymizingStudy {
@@ -284,26 +275,6 @@ namespace ClearCanvas.Utilities.DicomEditor {
         internal static string MessageConfirmSaveAllFiles {
             get {
                 return ResourceManager.GetString("MessageConfirmSaveAllFiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The changes will be saved to the loaded file and the original file will be overwritten. Are you sure you want to continue?
-        ///
-        ///NOTE: the edited file is from the local data store so it should be reindexed, otherwise the edited values may appear unchanged..
-        /// </summary>
-        internal static string MessageConfirmSaveSingleLocalFile {
-            get {
-                return ResourceManager.GetString("MessageConfirmSaveSingleLocalFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The changes will be saved to the loaded file and the original file will be overwritten. Are you sure you want to continue?.
-        /// </summary>
-        internal static string MessageConfirmSaveSingleRemoteFile {
-            get {
-                return ResourceManager.GetString("MessageConfirmSaveSingleRemoteFile", resourceCulture);
             }
         }
         

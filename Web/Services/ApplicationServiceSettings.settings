@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Web.Services" GeneratedClassName="ApplicationServiceSettings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Web.Services" GeneratedClassName="WebServicesSettings">
   <Profiles />
   <Settings>
     <Setting Name="MaximumSimultaneousApplications" Type="System.Int32" Scope="Application">
@@ -7,6 +7,15 @@
     </Setting>
     <Setting Name="MinimumFreeMemoryMB" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">256</Value>
+    </Setting>
+    <Setting Name="MaxBufferPoolSize" Type="System.Int64" Scope="Application">
+      <Value Profile="(Default)">1048576</Value>
+    </Setting>
+    <Setting Name="MaxReceivedMessageSize" Type="System.Int64" Scope="Application">
+      <Value Profile="(Default)">262144</Value>
+    </Setting>
+    <Setting Name="InactivityTimeoutMinutes" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="SessionPollingIntervalSeconds" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">20</Value>

@@ -1,0 +1,24 @@
+/*	Data file for creating an Enterprise database.
+	Note that the property names must be capitalized because the exact name is being used to replace
+	value in the JScript and Sqlscript templates.
+*/
+EMBEDDED_ENTERPRISE:	true,
+HOST: 		"172.16.10.167", 
+EXPRESS:	"true", 
+ADMINID:	"sa", 
+ADMINPASS:	"redhat5.1", 
+DB: 		"Enterprise1", 
+DBFOLDER:	"D:\\sqldb", 
+LOGFOLDER:	"D:\\sqldb", 
+USERID:		"entuser", 
+USERPASS:	"entpass",
+TEMPFOLDER:	".\\temp",
+EXECUTABLE:	"..\\..\\Enterprise\\Server\\Executable\\bin\\Debug\\ClearCanvas.Enterprise.Server.Executable.exe",
+IMPORTACTIONS: 
+	[ 
+		{
+			Message: "Importing Enterprise Sample Data...",
+			Command: "CD ..\\..\\Enterprise\\SampleData\\ & ImportSampleData.bat", 
+			Argument: "..\\..\\Enterprise\\Server\\Executable\\bin\\Debug\\ClearCanvas.Enterprise.Server.Executable.exe"
+		}
+	]

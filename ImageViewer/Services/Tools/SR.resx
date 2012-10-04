@@ -132,8 +132,11 @@
   <data name="DiskspaceManagerConfiguration" xml:space="preserve">
     <value>Diskspace Manager</value>
   </data>
-  <data name="MessageFailedToRetrieveDicomServerConfiguration" xml:space="preserve">
-    <value>Failed to retrieve the DICOM Server configuration.  Please ensure sure the ClearCanvas Service is running and try again.</value>
+  <data name="ExceptionDicomServerConfigurationRefreshFailed" xml:space="preserve">
+    <value>Failed to retrieve the Dicom Server configuration.  Please ensure the service is running and try again.</value>
+  </data>
+  <data name="ExceptionDicomServerConfigurationUpdateFailed" xml:space="preserve">
+    <value>Failed to update the Dicom Server configuration.  Please ensure the service is running and try again.</value>
   </data>
   <data name="ExceptionIdentifiersMustMatch" xml:space="preserve">
     <value>The identifiers must match.</value>
@@ -317,7 +320,7 @@ Please ensure the ClearCanvas server is running or contact your system administr
     <value>Reindex already running ...</value>
   </data>
   <data name="MessageReindexWillContinue" xml:space="preserve">
-    <value>The reindex operation will continue to run in the background, however you will NOT be informed of any errors that may have occurred.</value>
+    <value>The reindex operation will continue to run in the background.</value>
   </data>
   <data name="MessageRetrieveDicomServerServiceNotRunning" xml:space="preserve">
     <value>Failed to retrieve the selected studies because the Dicom Server service is not running.
@@ -462,31 +465,4 @@ Please ensure the ClearCanvas server is running or contact your system administr
   <data name="MessageFailedToDeleteOneOrMoreStudies" xml:space="preserve">
     <value>Failed to delete one or more studies. Please see the service log for more details. You may need to reindex the local data store after manually removing the affected studies.</value>
   </data>
-  <data name="MessageDeterminingReindexState" xml:space="preserve">
-    <value>Determining reindex state ...</value>
-  </data>
-  <data name="ReindexApplicationName" xml:space="preserve">
-    <value>Reindex</value>
-  </data>
-  <data name="MessageReindexCompleted" xml:space="preserve">
-    <value>The reindex has completed successfully.</value>
-  </data>
-  <data name="MessageControlServiceAccessDenied" xml:space="preserve">
-    <value>You don't have the appropriate permissions to start/stop the service.</value>
-  </data>
-  <data name="MessageControlServiceTimeout" xml:space="preserve">
-    <value>A timeout has occurred while attempting to control the service.</value>
-  </data>
-  <data name="MessageFailedToDeleteStudy" xml:space="preserve">
-    <value>Failed to delete the selected items.</value>
-  </data>
-  <data name="MessageFailedToOpenStudy" xml:space="preserve">
-    <value>Failed to open the selected study.</value>
-  </data>
-  <data name="MessageFailedToUpdateDicomServerConfiguration" xml:space="preserve">
-    <value>Failed to update the DICOM Server configuration.  Please ensure sure the ClearCanvas Service is running and try again.</value>
-  </data>
-	<data name="FormatProgressUpdate">
-		<value xml:space="preserve">... {0:F1}%</value>
-	</data>
 </root>

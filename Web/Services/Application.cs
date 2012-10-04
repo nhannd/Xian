@@ -17,11 +17,18 @@ using ClearCanvas.Web.Common;
 using ClearCanvas.Common;
 using ClearCanvas.Web.Common.Events;
 using ClearCanvas.Common.Utilities;
-using System.Globalization;
 
 namespace ClearCanvas.Web.Services
 {
-	
+	internal static class SR
+	{
+		public const string MessageAccessDenied = "You are not authorized to view images.";
+		public const string MessagePasswordExpired = "Your password has expired.";
+		public const string MessageSessionEnded  = "Your session has ended.";
+		public const string MessageUnexpectedError = "An unexpected error has occurred on the server.";
+        public const string MessageNoCommunicationFromClientError = "No communication has been received from the client since {0}";
+	}
+
 	[ExtensionOf(typeof(ExceptionTranslatorExtensionPoint))]
 	internal class UserSessionExceptionTranslator : IExceptionTranslator
 	{
@@ -29,6 +36,7 @@ namespace ClearCanvas.Web.Services
 
 		public string Translate(Exception e)
 		{
+			//TODO (CR May 2010): string resources
 			if (e.GetType().Equals(typeof(UserAccessDeniedException)))
 				return SR.MessageAccessDenied;
 			if (e.GetType().Equals(typeof(PasswordExpiredException)))
@@ -74,57 +82,20 @@ namespace ClearCanvas.Web.Services
 		IPrincipal Principal { get; }
 		IApplicationContext Context { get; }
 
-        /// <summary>
-        /// Starts the application
-        /// </summary>
-        void Start(StartApplicationRequest request);
-
-        /// <summary>
-        /// Processes the specific <see cref="MessageSet"/>
-        /// </summary>
+		void Start(StartApplicationRequest request);
         ProcessMessagesResult ProcessMessages(MessageSet messages);
-
-        /// <summary>
-        /// Stops the application. <see cref="Shutdown"/> will be called later
-        /// </summary>
-        void Stop();
-
-        /// <summary>
-        /// Stops the application. <see cref="Shutdown"/> will be called later
-        /// </summary>
-        void Stop(string message);
-
-        /// <summary>
-        /// Gets pending events
-        /// </summary>
+		void Stop();
+		void Stop(string message);
 	    EventSet GetPendingOutboundEvent(int wait);
 
-        /// <summary>
-        /// Updates property
-        /// </summary>
-        void SetProperty(string key, object value);
+	    void SetProperty(string key, object value);
 
-        /// <summary>
-        /// Shuts down the application
-        /// </summary>
         void Shutdown();
-
-        /// <summary>
-        /// Name of the application instance for logging purpose.
-        /// </summary>
-        string InstanceName { get; }
 	}
 
     public enum MessageBatchMode
     {
-        /// <summary>
-        /// Allow only one single message of the same type to be sent in a batch
-        /// </summary>
         PerType,
-        
-        /// <summary>
-        /// Allow messages of the same type to be sent in the same batch if they are sent by different entities.
-        /// </summary>
         PerTarget
     }
 
@@ -137,11 +108,11 @@ namespace ClearCanvas.Web.Services
 
 		private string _userName;
 	    private volatile UserSessionInfo _session;
-		private const int SessionRenewalOffsetMinutes = 1; // renew the session 1 min before it is expired.
+		private const int _sessionRenewalOffsetMinutes = 1; // renew the session 1 min before it is expired.
 		private TimeSpan _sessionPollingIntervalSeconds;
 		private volatile int _lastSessionCheckTicks;
 
-        private DateTime _lastClientMessage = DateTime.Now;
+        private DateTime _lastGetPendingTimestamp = DateTime.Now;
 		private volatile bool _timedOut;
 
 		private readonly object _syncLock = new object();
@@ -151,20 +122,12 @@ namespace ClearCanvas.Web.Services
 
 		private readonly IncomingMessageQueue _incomingMessageQueue;
 
-		private static readonly TimeSpan TimerInterval = TimeSpan.FromSeconds(5);
+		private static readonly TimeSpan _timerInterval = TimeSpan.FromSeconds(5);
 		private System.Threading.Timer _timer;
 		private bool _timerMethodExecuting;
 
-        public CultureInfo Culture
-        {
-            private set;
-            get;
-        }
-
 		protected Application()
 		{
-		    BatchMode = MessageBatchMode.PerTarget;
-
 		    Identifier = Guid.NewGuid();
 			_incomingMessageQueue = new IncomingMessageQueue(
 				messageSet => _synchronizationContext.Send(nothing => DoProcessMessages(messageSet), null));
@@ -193,9 +156,6 @@ namespace ClearCanvas.Web.Services
 		public IPrincipal Principal { get; private set; }
 
 		private bool IsSessionShared { get; set; }
-
-
-        public abstract string InstanceName { get;  }
 
         public MessageBatchMode BatchMode { get; protected set; }
 
@@ -229,7 +189,7 @@ namespace ClearCanvas.Web.Services
             if (_session == null)
 				return;
 
-            bool nearExpiry = Platform.Time.Add(TimeSpan.FromMinutes(SessionRenewalOffsetMinutes)) > _session.SessionToken.ExpiryTime;
+            bool nearExpiry = Platform.Time.Add(TimeSpan.FromMinutes(_sessionRenewalOffsetMinutes)) > _session.SessionToken.ExpiryTime;
 			TimeSpan timeSinceLastCheck = TimeSpan.FromMilliseconds(Environment.TickCount - _lastSessionCheckTicks);
 			if (nearExpiry || timeSinceLastCheck > _sessionPollingIntervalSeconds)
 			{
@@ -239,14 +199,17 @@ namespace ClearCanvas.Web.Services
 			}
 		}
 
+
         protected void CheckIfSessionIsStillValid()
         {
             _session = UserAuthentication.ValidateSession(_session.Principal.Identity.Name, _session.SessionToken.Id);
             _lastSessionCheckTicks = Environment.TickCount;
             
             if (Platform.IsLogLevelEnabled(LogLevel.Debug))
-                Platform.Log(LogLevel.Debug, "Session {0} for user {1} is still valid. Will expire on {2}", _session.SessionToken.Id, _session.Principal.Identity.Name, _session.SessionToken.ExpiryTime);                
+                Platform.Log(LogLevel.Debug, "Session {0} for user {1} is still valid. Will expire on {2}", _session.SessionToken.Id, _session.Principal.Identity.Name, _session.SessionToken.ExpiryTime);
+                
         }
+
 
 		private void OnSessionRenewed()
 		{
@@ -271,44 +234,22 @@ namespace ClearCanvas.Web.Services
 			throw new InvalidOperationException("Start must be called internally.");
 		}
 
-        protected void ProcessMetaInfo(MetaInformation info)
-        {
-            if (info == null)
-            {
-                return;
-            }
-
-            if (false == string.IsNullOrEmpty(info.Language))
-            {
-                try
-                {
-                    Culture = new CultureInfo(info.Language);
-                    if (Culture.IsNeutralCulture)
-                        Culture = CultureInfo.CreateSpecificCulture(info.Language);
-
-                    Thread.CurrentThread.CurrentCulture = Culture;
-                    Thread.CurrentThread.CurrentUICulture = Culture;
-                }
-                catch (ArgumentException ex)
-                {
-                    Platform.Log(LogLevel.Warn, "Unable to use language ({0}) requested by the client : {1}", info.Language, ex.Message);
-                }
-            }
-        }
-
 		internal void InternalStart(StartApplicationRequest request)
 		{
             try
 			{
-                ProcessMetaInfo(request.MetaInformation);
+				//TODO: do this here (which will fault the channel), or inside DoStart and stop the app?
 				AuthenticateUser(request);
-                _synchronizationContext = new WebSynchronizationContext(this);
+				_synchronizationContext = new WebSynchronizationContext(this);
 				_synchronizationContext.Send(nothing => DoStart(request), null);
 			}
 			catch (Exception)
 			{
 				Logout();
-				DisposeMembers();
+
+				// need to dispose _context.				
+				// DisposeMembers(); // Commented out for non-duplex binding since app is ow managed by the cache
+                
 				throw;
 			}
 
@@ -319,32 +260,41 @@ namespace ClearCanvas.Web.Services
 					return;
 			}
 
-			_timer = new System.Threading.Timer(OnTimer, null, TimerInterval, TimerInterval);
+			_timer = new System.Threading.Timer(OnTimer, null, _timerInterval, _timerInterval);
 		}
 
-        private void DoStart(StartApplicationRequest request)
-        {
-            _context.FireEvent(new ApplicationStartedEvent
-                                   {
-                                       Identifier = Guid.NewGuid(),
-                                       SenderId = Identifier,
-                                       StartRequestId = request.Identifier
-                                   });
+		private void DoStart(StartApplicationRequest request)
+		{
+            //_context.SuspendEvents = true;
 
-            OnStart(request);
+			try
+			{
+				_context.FireEvent(new ApplicationStartedEvent
+				{
+					Identifier = Guid.NewGuid(),
+					SenderId = Identifier,
+					StartRequestId = request.Identifier
+				});
 
-            string logMessage = _session == null
-                                    ? String.Format("Application {0} has started.", Identifier)
-                                    : String.Format("Application {0} has started (user={1}, session={2}, expiry={3}).",
-                                                    Identifier, _userName, _session.SessionToken.Id,
-                                                    _session.SessionToken.ExpiryTime);
+				OnStart(request);
 
-            ConsoleHelper.Log(LogLevel.Info, ConsoleColor.Green, logMessage);
+				string logMessage;
+                if (_session == null)
+					logMessage = String.Format("Application {0} has started.", Identifier);
+				else
+					logMessage = String.Format("Application {0} has started (user={1}, session={2}, expiry={3}).", Identifier, _userName, _session.SessionToken.Id, _session.SessionToken.ExpiryTime);
+				
+				ConsoleHelper.Log(LogLevel.Info, ConsoleColor.Green, logMessage);
 
-            OnSessionRenewed();
-        }
+				OnSessionRenewed();
+			}
+			finally
+			{
+				//_context.SuspendEvents = false;
+			}
+		}
 
-	    public void Stop()
+		public void Stop()
 		{
 			Stop("");
 		}
@@ -355,7 +305,6 @@ namespace ClearCanvas.Web.Services
             DisposeMembers();
             //TODO: Remove from cache immediately?
         }
-
 
 	    public void Stop(string message)
 		{
@@ -383,7 +332,7 @@ namespace ClearCanvas.Web.Services
 
 			Logout();
 
-			// DisposeMembers(); // Commented out for non-duplex binding since app is now managed by the cache
+			// DisposeMembers(); // Commented out for non-duplex binding since app is ow managed by the cache
 		}
         
 	    public void SetProperty(string key, object value)
@@ -394,50 +343,47 @@ namespace ClearCanvas.Web.Services
 
 	    internal void Stop(Exception e)
 		{
-            Platform.Log(LogLevel.Error, e, "An error has occurred and the application is stopping");
+            Platform.Log(LogLevel.Error, e);
 			Stop(ExceptionTranslator.Translate(e));
 		}
 
 		private void DoStop(string message)
 		{
-            try
-            {
-                OnStop();
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Debug, e);
-            }
-            finally
-            {
-                _context.FireEvent(new ApplicationStoppedEvent
-                                       {
-                                           Identifier = Guid.NewGuid(),
-                                           SenderId = Identifier,
-                                           Message = message,
-                                           IsTimedOut = _timedOut
-                                       });
+			try
+			{
+				OnStop();
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Debug, e);
+			}
+			finally
+			{
+				_context.FireEvent(new ApplicationStoppedEvent
+				{
+					Identifier = Guid.NewGuid(),
+					SenderId = Identifier,
+					Message = message,
+                    IsTimedOut = _timedOut
+				});
 
-                var stopMessage = String.IsNullOrEmpty(message) ? "<none>" : message;
-                if (_session == null)
-                {
-                    Platform.Log(LogLevel.Info, "Application {0} has stopped (message={1}).", Identifier, stopMessage);
-                }
-                else
-                    Platform.Log(LogLevel.Info, "Application {0} has stopped (user={1}, session={2}, message={3}).",
-                                      Identifier, _userName, _session.SessionToken.Id, stopMessage);
-            }
+				//TODO (CR May 2010): just use the ConsoleHelper's formatting
+				string logMessage;
+				string stopMessage = String.IsNullOrEmpty(message) ? "<none>" : message;
+				if (_session == null)
+					logMessage = String.Format("Application {0} has stopped (message={1}).", Identifier, stopMessage);
+				else
+					logMessage = String.Format("Application {0} has stopped (user={1}, session={2}, message={3}).",
+                        Identifier, _userName, _session.SessionToken.Id, stopMessage);
+
+				ConsoleHelper.Log(LogLevel.Info, ConsoleColor.Red, logMessage);
+			}
 		}
 
 		private void OnTimer(object nothing)
 		{
 			try
 			{
-                if (String.IsNullOrEmpty(Thread.CurrentThread.Name))
-                {
-                    Thread.CurrentThread.Name = String.Format("{0} [{1}]", InstanceName, Thread.CurrentThread.ManagedThreadId);
-                }
-
 				lock (_syncLock)
 				{
 					if (_stop || _timerMethodExecuting)
@@ -446,10 +392,7 @@ namespace ClearCanvas.Web.Services
 					_timerMethodExecuting = true;
 				}
 
-                Thread.CurrentThread.CurrentCulture = Culture;
-                Thread.CurrentThread.CurrentUICulture = Culture;
-                
-                CheckIfSessionIsStillValid();
+				CheckIfSessionIsStillValid();
 
                 // TODO: REVIEW THIS
                 // This is a temporary workaround to ensure the app shuts down when the connection is lost.
@@ -462,9 +405,9 @@ namespace ClearCanvas.Web.Services
                 // it is idle. Assume max waiting time for GetPendingEvent is 10 seconds,
                 // we can assume the client browser is closed or connection is lost if we don't receive 
                 // one for 20 seconds
-                if (DateTime.Now - _lastClientMessage > TimeSpan.FromSeconds(20))
+                if (DateTime.Now - _lastGetPendingTimestamp > TimeSpan.FromSeconds(20))
                 {
-                    Stop(String.Format(SR.MessageNoCommunicationFromClientError, _lastClientMessage));
+                    Stop(String.Format(SR.MessageNoCommunicationFromClientError, _lastGetPendingTimestamp));
                 }
 			}
             catch(SessionDoesNotExistException)
@@ -491,7 +434,7 @@ namespace ClearCanvas.Web.Services
 		}
 
 
-	    internal void DisposeMembers()
+	    private void DisposeMembers()
 		{
 			//NOTE: This class has purposely been designed such that this method (and these members) do not need to be synchronized.
             //If you were to synchronize this method, it could deadlock with the other objects that can call
@@ -561,7 +504,7 @@ namespace ClearCanvas.Web.Services
 
         public EventSet GetPendingOutboundEvent(int wait)
         {
-            _lastClientMessage = DateTime.Now;
+            _lastGetPendingTimestamp = DateTime.Now;
             EventSet result = OnGetPendingOutboundEvent(wait);
             return result;
         }
@@ -572,8 +515,7 @@ namespace ClearCanvas.Web.Services
 			if (handler != null)
 			{
 				handler.ProcessMessage(message);
-                _lastClientMessage = DateTime.Now;
-            }
+			}
 			else
 			{
 				string msg = String.Format("Invalid message target: {0}", message.TargetId);
@@ -619,13 +561,7 @@ namespace ClearCanvas.Web.Services
 
 		public static Application Find(Guid identifier)
 		{
-            var application = Cache.Instance.Find(identifier);
-            if (String.IsNullOrEmpty(Thread.CurrentThread.Name))
-            {
-                Thread.CurrentThread.Name = String.Format("{0} [{1}]", application.InstanceName, Thread.CurrentThread.ManagedThreadId);
-            }
-
-		    return application;
+			return Cache.Instance.Find(identifier);
 		}
 
 		public static void StopAll(string message)

@@ -59,7 +59,6 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SummaryComponentBaseControl));
 			this._summaryTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
@@ -71,48 +70,68 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 			// 
 			// _summaryTableView
 			// 
-			this._summaryTableView.ColumnHeaderTooltip = null;
-			resources.ApplyResources(this._summaryTableView, "_summaryTableView");
+			this._summaryTableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._summaryTableView.FilterTextBoxVisible = true;
+			this._summaryTableView.Location = new System.Drawing.Point(3, 3);
 			this._summaryTableView.Name = "_summaryTableView";
 			this._summaryTableView.ReadOnly = false;
-			this._summaryTableView.SortButtonTooltip = null;
+			this._summaryTableView.Size = new System.Drawing.Size(644, 451);
+			this._summaryTableView.TabIndex = 0;
 			this._summaryTableView.ItemDoubleClicked += new System.EventHandler(this._staffGroupTableView_ItemDoubleClicked);
 			// 
 			// _cancelButton
 			// 
-			resources.ApplyResources(this._cancelButton, "_cancelButton");
+			this._cancelButton.Location = new System.Drawing.Point(566, 3);
 			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
+			this._cancelButton.TabIndex = 2;
+			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
 			// _okButton
 			// 
-			resources.ApplyResources(this._okButton, "_okButton");
+			this._okButton.Location = new System.Drawing.Point(485, 3);
 			this._okButton.Name = "_okButton";
+			this._okButton.Size = new System.Drawing.Size(75, 23);
+			this._okButton.TabIndex = 1;
+			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
 			// 
 			// tableLayoutPanel1
 			// 
-			resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+			this.tableLayoutPanel1.ColumnCount = 1;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.Controls.Add(this._buttonsPanel, 0, 1);
 			this.tableLayoutPanel1.Controls.Add(this._summaryTableView, 0, 0);
+			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 2;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(650, 492);
+			this.tableLayoutPanel1.TabIndex = 3;
 			// 
 			// _buttonsPanel
 			// 
 			this._buttonsPanel.Controls.Add(this._cancelButton);
 			this._buttonsPanel.Controls.Add(this._okButton);
-			resources.ApplyResources(this._buttonsPanel, "_buttonsPanel");
+			this._buttonsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._buttonsPanel.Location = new System.Drawing.Point(3, 460);
 			this._buttonsPanel.Name = "_buttonsPanel";
+			this._buttonsPanel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+			this._buttonsPanel.Size = new System.Drawing.Size(644, 29);
+			this._buttonsPanel.TabIndex = 0;
 			// 
 			// SummaryComponentBaseControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "SummaryComponentBaseControl";
+			this.Size = new System.Drawing.Size(650, 492);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this._buttonsPanel.ResumeLayout(false);
 			this.ResumeLayout(false);

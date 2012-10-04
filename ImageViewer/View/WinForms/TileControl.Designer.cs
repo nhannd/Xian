@@ -88,7 +88,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         private void InitializeComponent()
         {
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TileControl));
 			this._contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.SuspendLayout();
@@ -97,7 +96,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			// 
 			this._contextMenuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._contextMenuStrip.Name = "_contextMenuStrip";
-			resources.ApplyResources(this._contextMenuStrip, "_contextMenuStrip");
+			this._contextMenuStrip.Size = new System.Drawing.Size(153, 26);
 			// 
 			// _toolTip
 			// 

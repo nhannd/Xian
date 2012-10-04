@@ -49,7 +49,6 @@
     <Compile Include="*.gen.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Brokers\AccessionNumberBroker.cs" />
-    <Compile Include="Brokers\ProcedureNumberBroker.cs" />
     <Compile Include="Brokers\PerformedProcedureStepBroker.cs" />
     <Compile Include="Brokers\ProtocolWorklistItemBroker.cs" />
     <Compile Include="Brokers\DefaultWorklistItemSearchExecutionStrategy.cs" />
@@ -70,7 +69,6 @@
     <Compile Include="Brokers\QueryBuilders\QueryBuilderArgs.cs" />
     <Compile Include="Brokers\QueryBuilders\ReportingWorklistItemQueryBuilder.cs" />
     <Compile Include="Brokers\QueryBuilders\QueryBuilderBase2.cs" />
-    <Compile Include="Brokers\SequenceBroker.cs" />
     <Compile Include="Brokers\VisitBroker.cs" />
     <Compile Include="Brokers\WorklistItemSearchExecutionStrategy.cs" />
     <Compile Include="Brokers\OptimizedWorklistItemSearchExecutionStrategy.cs" />

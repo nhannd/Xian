@@ -21,7 +21,6 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
@@ -32,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             InitializeComponent();
 
             ProductInfoTextBlock.Text = ApplicationContext.Current.ViewerVersion;
-            ProductInfoTextBlock.Text += "\n" + SR.PartOfClearCanvasRISPACS;
+            ProductInfoTextBlock.Text += "\nPart of the ClearCanvas RIS/PACS";
             CompanyAddressTextBlock.Text = SR.CompanyAddress;
             CompanyWebAddressTextBlock.Text = SR.CompanyWebAddress;
             CopyrightTextBlock.Text = SR.Copyright;

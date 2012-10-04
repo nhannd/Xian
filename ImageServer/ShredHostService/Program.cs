@@ -12,49 +12,34 @@
 using System;
 using System.ServiceProcess;
 using System.Threading;
-using ClearCanvas.Common.Configuration;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Server.ShredHost;
+using ClearCanvas.Common.UsageTracking;
 using ClearCanvas.Utilities.Manifest;
 
 namespace ClearCanvas.ImageServer.ShredHostService
 {
     static class Program
     {
-        private class CommandLine : ClearCanvas.Common.Utilities.CommandLine
-        {
-            public CommandLine(string[] args)
-                : base(args)
-            { }
-
-            [CommandLineParameter("service", "s", "Instructs the application that it is to run as a service.", Required = false)]
-            public bool RunAsService { get; set; }
-
-            [CommandLineParameter("migrate", "m", "Migrates settings from a previous version of the application, given the previous config filename.", Required = false)]
-            public string PreviousExeConfigurationFilename { get; private set; }
-        }
- 
+        
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         static void Main(string[] args)
         {
-            var commandLine = new CommandLine(args);
-
-            if (commandLine.RunAsService)
+            if (args.Length > 0 && String.Compare(args[0], "-service", true) == 0)
             {
-                ServiceBase[] servicesToRun = new ServiceBase[] {new ShredHostService()};
-                ServiceBase.Run(servicesToRun);
-            }
-            else if (!String.IsNullOrEmpty(commandLine.PreviousExeConfigurationFilename))
-			{
-				var groups = SettingsGroupDescriptor.ListInstalledLocalSettingsGroups();
-				foreach (var group in groups)
-					SettingsMigrator.MigrateSharedSettings(group, commandLine.PreviousExeConfigurationFilename);
+                ServiceBase[] ServicesToRun;
 
-				ShredSettingsMigrator.MigrateAll(commandLine.PreviousExeConfigurationFilename);
-			}
-			else		
+                // More than one user Service may run within the same process. To add
+                // another service to this process, change the following line to
+                // create a second service object. For example,
+                //
+                //   ServicesToRun = new ServiceBase[] {new Service1(), new MySecondUserService()};
+                //
+                ServicesToRun = new ServiceBase[] {new ShredHostService()};
+
+                ServiceBase.Run(ServicesToRun);
+            }
+            else
             {
                 Thread.CurrentThread.Name = "Main thread";
                 if (!ManifestVerification.Valid)

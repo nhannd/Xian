@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 					return;
 
 				if (value < 0 || FloatComparer.AreEqual(value, 0F))
-					throw new ArgumentOutOfRangeException("value", "Cannot set Scale to zero.");
+					throw new ArgumentOutOfRangeException("Cannot set Scale to zero.");
 
 				_scale = value;
 				this.RecalculationRequired = true;
@@ -153,7 +153,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 					return;
 
 				if (value < 0 || FloatComparer.AreEqual(value, 0F))
-					throw new ArgumentOutOfRangeException("value", "Cannot set ScaleX to zero.");
+					throw new ArgumentOutOfRangeException("Cannot set ScaleX to zero.");
 
 				_scaleX = value;
 				this.RecalculationRequired = true;
@@ -180,7 +180,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 					return;
 
 				if (value < 0 || FloatComparer.AreEqual(value, 0F))
-					throw new ArgumentOutOfRangeException("value", "Cannot set ScaleY to zero.");
+					throw new ArgumentOutOfRangeException("Cannot set ScaleY to zero.");
 
 				_scaleY = value;
 				this.RecalculationRequired = true;

@@ -17,21 +17,21 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 	{
 		#region IExternalPractitionerBroker Members
 
-		public IList<ExternalPractitioner> GetMergeCandidates(ExternalPractitioner practitioner)
+		public IList<ExternalPractitioner> GetDuplicates(ExternalPractitioner practitioner)
 		{
-			var criteria = GetMergeCandidatesCriteria(practitioner);
+			var criteria = GetDuplicatesCriteria(practitioner);
 			return Find(criteria);
 		}
 
-		public int CountMergeCandidates(ExternalPractitioner practitioner)
+		public int GetDuplicatesCount(ExternalPractitioner practitioner)
 		{
-			var criteria = GetMergeCandidatesCriteria(practitioner);
+			var criteria = GetDuplicatesCriteria(practitioner);
 			return (int) Count(criteria);
 		}
 
 		#endregion
 
-		private static ExternalPractitionerSearchCriteria[] GetMergeCandidatesCriteria(ExternalPractitioner practitioner)
+		private static ExternalPractitionerSearchCriteria[] GetDuplicatesCriteria(ExternalPractitioner practitioner)
 		{
 			var criteria = new List<ExternalPractitionerSearchCriteria>();
 

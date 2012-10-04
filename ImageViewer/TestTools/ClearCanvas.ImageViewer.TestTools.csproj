@@ -32,7 +32,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -42,8 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExtractEmbeddedOverlaysTool.cs" />
-    <Compile Include="FixPixelDataTool.cs" />
     <Compile Include="PixelAspectRatioChanger.cs" />
     <Compile Include="ChangeFileTransferSyntaxTool.cs" />
     <Compile Include="ChangePixelAspectRatioComponent.cs" />
@@ -63,7 +60,6 @@
     <Compile Include="StreamingAnalysisComponent.cs" />
     <Compile Include="StreamingAnalysisTool.cs" />
     <Compile Include="StudyXmlTestTool.cs" />
-    <Compile Include="TextDicomDumpTool.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

@@ -25,10 +25,6 @@ using System.Net.Browser;
 using System.Windows.Media;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
 using System.Windows.Input;
-using System.Linq;
-using System.Globalization;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
-using System.ComponentModel.Composition.Hosting;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
@@ -54,44 +50,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         {
             ApplicationLog.Initialize();
 
-            if (!String.IsNullOrEmpty(ApplicationStartupParameters.Current.Language) && 
-                !ApplicationStartupParameters.Current.Language.StartsWith("EN", StringComparison.InvariantCultureIgnoreCase))
-            {
-                var culture = new CultureInfo(ApplicationStartupParameters.Current.Language);
-
-                DeploymentCatalog catalog = new DeploymentCatalog(
-                    new Uri(String.Format("{0}.{1}.xap", "Silverlight", culture.TwoLetterISOLanguageName), UriKind.Relative));
-
-                CompositionHost.Initialize(catalog);
-
-                catalog.DownloadCompleted += (s, args) =>
-                {
-                    if (null == args.Error)
-                    {
-                        Thread.CurrentThread.CurrentCulture = culture;
-                        Thread.CurrentThread.CurrentUICulture = culture;
-                        Start();
-                    }
-                    else
-                    {
-                        // cannot download resources for specific language, continue with default language
-                        Start();
-                    }
-
-                };
-
-                catalog.DownloadAsync();
-
-            }
-            else
-            {
-                Start();
-            }
-            
-		}
-
-        private void Start()
-        {
             // Initialize the communication channel with the host
             ApplicationBridge.Initialize();
 
@@ -100,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 
             // Test the connection speed and launch the webviewer once it's completed
             TestConnection();
-        }
+		}
 
         private void TestConnection()
         {
@@ -111,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     // TODO: Should we continue if the speed is too low? It won't be useful for the user anyway.
                     if (result.SpeedInMbps < 1)
                     {
-                        PopupHelper.PopupMessage(DialogTitles.Warning, SR.SlowConnection, Labels.ButtonContinue, false);
+                        PopupHelper.PopupMessage("Warning", "Your current connection speed seems too slow.", "Continue");
                     }
 
                     SelectThrottleSettings(result);
@@ -119,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 }
                 else
                 {
-                    PopupHelper.PopupMessage(DialogTitles.Warning, SR.SpeedTestFailed, Labels.ButtonContinue, false);
+                    PopupHelper.PopupMessage("Warning", "Unable to determine your connection speed.", "Continue");
                 }
 
             });
@@ -157,6 +115,8 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 ThrottleSettings.Default.EnableDynamicImageQuality = true;
                 ThrottleSettings.Default.MaxPendingMouseMoveMsgAllowed = 1;
             }
+
+            
         }
 
         private void StartWebViewer()

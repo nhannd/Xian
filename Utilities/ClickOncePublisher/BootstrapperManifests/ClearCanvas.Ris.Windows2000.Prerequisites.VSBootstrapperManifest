@@ -1,0 +1,22 @@
+<VSBootstrapperManifest>
+  <ProjectProperties ProjectName="ClearCanvas.Ris.Windows2000.Prerequisites" BuildLocation="PackagesDir" BuildDirectory="C:\Program Files\Microsoft Visual Studio 8\SDK\v2.0\Bootstrapper\Packages\New Project" DefaultLanguage="en" />
+  <UIPackage ProductCode="ClearCanvas.Ris.Windows2000.Prerequisites">
+    <UIChecks />
+    <Relationships />
+    <CustomSchedules />
+  </UIPackage>
+  <UIInstallFile FileName="C:\Documents and Settings\Norman\My Documents\My Downloads\CCSparrowRisWin2KPrerequisitesR8120.exe" DisplayName="ClearCanvas Windows 2000 Prerequisites" Arguments="" Reboot="None" PublicKey="&lt;&lt;File is not Digitally Signed&gt;&gt;" FileHash="CFEAEBCD6DC662635C88E885F6B93FF82D428428" IncludeHash="True" Locale="en">
+    <UIChecks>
+      <FileCheck Property="Win2KPrereqsInstalled" FileName="mdeploy.registry" Depth="0" StartInSpecialFolder="True" SpecialFolder="ProgramFilesFolder" SearchPath=".\ClearCanvas\RisWin2KPreReq" />
+    </UIChecks>
+    <UIInstallConditions>
+      <UIInstallCondition Type="ByPassIf" Property="Win2KPrereqsInstalled" Operator="=" Value="true" Message="" />
+      <UIInstallCondition Type="FailIf" Property="AdminUser" Operator="=" Value="false" Message="You must be an administrator to install ClearCanavs Windows 2000 Prerequisites" />
+    </UIInstallConditions>
+    <UIExitCodes>
+      <UIExitCode ExitCode="0" Result="Success" Message="" />
+      <DefaultExitCode Result="Fail" FormatMessageFromSystem="True" Message="An unexpected exit code was returned from the installer. The installation failed." />
+    </UIExitCodes>
+    <LooseFiles />
+  </UIInstallFile>
+</VSBootstrapperManifest>

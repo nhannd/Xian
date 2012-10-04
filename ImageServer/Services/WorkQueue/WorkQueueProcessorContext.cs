@@ -42,14 +42,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 if (storages == null || storages.Count == 0)
                 {
                     // ???
-                    return base.GetTemporaryPath();
+                    return base.TempDirectory;
                 }
 
                 ServerFilesystemInfo filesystem = FilesystemMonitor.Instance.GetFilesystemInfo(storages[0].FilesystemKey);
                 if (filesystem == null)
                 {
                     // not ready?
-                    return base.GetTemporaryPath();
+                    return base.TempDirectory;
                 }
                 else
                 {

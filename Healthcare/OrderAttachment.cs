@@ -9,6 +9,10 @@
 
 #endregion
 
+using System;
+using System.Collections;
+using System.Text;
+
 
 namespace ClearCanvas.Healthcare {
 
@@ -18,13 +22,6 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class OrderAttachment
 	{
-		public OrderAttachment CreateGhostCopy()
-		{
-			var clone = (OrderAttachment)Clone();
-			clone.Document = _document.CreateGhostCopy();
-			return clone;
-		}
-
 		/// <summary>
 		/// Shifts the object in time by the specified number of minutes, which may be negative or positive.
 		/// </summary>

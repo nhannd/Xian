@@ -1,0 +1,1 @@
+<%@ WebService Language="C#" CodeBehind="UpdateInformationService.asmx.cs" Class="ClearCanvas.Distribution.Update.Services.UpdateInformationService" %>

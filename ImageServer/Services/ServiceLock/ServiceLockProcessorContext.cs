@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             if (filesystem == null)
             {
                 // not ready?
-                return base.GetTemporaryPath();
+                return base.TempDirectory;
             }
             else
             {

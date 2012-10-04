@@ -26,7 +26,6 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
 		private readonly HqlAnd _where;
 		private readonly List<HqlSort> _sorts;
 		private SearchResultPage _page;
-		private readonly Dictionary<string, LockMode> _lockHints = new Dictionary<string, LockMode>();
 
 		private bool _cacheable;
 		private string _cacheRegion;
@@ -119,11 +118,6 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
 			set { _cacheRegion = value; }
 		}
 
-		public void SetLockMode(string alias, LockMode lockMode)
-		{
-			_lockHints[alias] = lockMode;
-		}
-
 		/// <summary>
 		/// Returns the HQL text of this query.
 		/// </summary>
@@ -195,12 +189,6 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
 			q.SetCacheable(_cacheable);
 			if (!string.IsNullOrEmpty(_cacheRegion))
 				q.SetCacheRegion(_cacheRegion);
-
-			// apply lock hints
-			foreach (var kvp in _lockHints)
-			{
-				q.SetLockMode(kvp.Key, kvp.Value);
-			}
 
 			return q;
 		}

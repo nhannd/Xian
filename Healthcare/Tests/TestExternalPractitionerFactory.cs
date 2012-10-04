@@ -30,8 +30,7 @@ namespace ClearCanvas.Healthcare.Tests
 				null,
 				Platform.Time,
                 new HashedSet<ExternalPractitionerContactPoint>(),
-				new Dictionary<string, string>(),
-				null);
+				new Dictionary<string, string>());
         }
     }
 }

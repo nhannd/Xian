@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Healthcare.Owls" namespace="ClearCanvas.Healthcare.Owls">
+  <union-subclass name="ProcedureStepWorklistViewItem" extends="WorklistViewItemBase" abstract="true" table="owls_ProcedureStepWorklistViewItem_notused">
+
+    <!-- ProcedureCheckIn Info -->
+    <component name="ProcedureCheckIn" class="WorklistViewItemProcedureCheckInInfo">
+      <many-to-one name="Instance" class="ClearCanvas.Healthcare.ProcedureCheckIn, ClearCanvas.Healthcare" column="ProcedureCheckInOID_"/>
+      <property name="Version" column="ProcedureCheckInVersion_" type="int"/>
+      <property name="CheckInTime" column="ProcedureCheckInTime_" type="DateTime"/>
+      <property name="CheckOutTime" column="ProcedureCheckOutTime_" type="DateTime"/>
+    </component>
+    
+    <!-- ProcedureStep Info -->
+    <component name="ProcedureStep" class="WorklistViewItemProcedureStepInfo">
+      <many-to-one name="Instance" class="ClearCanvas.Healthcare.ProcedureStep, ClearCanvas.Healthcare" column="ProcedureStepOID_"/>
+      <property name="Version" column="ProcedureStepVersion_" type="int"/>
+      <property name="ClassName" column="ProcedureStepClassName_" type="String" length="100"/>
+      <property name="Name" column="ProcedureStepName_" type="String"/>
+      <property name="State" column="ProcedureStepState_" type="ClearCanvas.Workflow.Hibernate.ActivityStatusEnumHbm, ClearCanvas.Workflow.Hibernate"/>
+      <property name="CreationTime" column="ProcedureStepCreationTime_" type="DateTime"/>
+      <component name="Scheduling" class="WorklistViewItemProcedureStepSchedulingInfo">
+        <property name="StartTime" column="ProcedureStepScheduledStartTime_" type="DateTime"/>
+        <component name="Performer" class="WorklistViewItemProcedureStepPerformerInfo">
+          <many-to-one name="Staff" class="ClearCanvas.Healthcare.Staff, ClearCanvas.Healthcare" column="ProcedureStepScheduledPerformerStaffOID_"/>
+        </component>
+      </component>
+      <component name="Performer" class="WorklistViewItemProcedureStepPerformerInfo">
+        <many-to-one name="Staff" class="ClearCanvas.Healthcare.Staff, ClearCanvas.Healthcare" column="ProcedureStepPerformerStaffOID_"/>
+      </component>
+      <property name="StartTime" column="ProcedureStepStartTime_" type="DateTime"/>
+      <property name="EndTime" column="ProcedureStepEndTime_" type="DateTime"/>
+      <property name="HasErrors" column="ProcedureStepHasErrors_" type="Boolean"/>
+    </component>
+    
+  </union-subclass>
+</hibernate-mapping>

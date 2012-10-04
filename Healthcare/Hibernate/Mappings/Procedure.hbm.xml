@@ -8,7 +8,7 @@
 
     <many-to-one name="Order" class="Order" column="OrderOID_" not-null="true"/>
     <many-to-one name="Type" class="ProcedureType" column="ProcedureTypeOID_" not-null="true" fetch="join"/>
-    <property name="Number" column="Number_" type="String" length="20" not-null="true"/>
+    <property name="Index" column="Index_" type="String" length="10" not-null="true"/>
     <set name="ProcedureSteps" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
       <key column="ProcedureOID_"/>
       <one-to-many class="ProcedureStep"/>
@@ -42,7 +42,6 @@
       <key column="ProcedureOID_"/>
       <many-to-many column="ProtocolOID_" class="Protocol" fetch="join"/>
     </set>
-    <!-- if this procedure is a ghost, this references the live procedure that it is a ghost of -->
-    <many-to-one name="GhostOf" class="Procedure" column="GhostOfOID_"/>
+    
   </class>
 </hibernate-mapping>

@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 	public interface ILocalDataStoreReindexer : INotifyPropertyChanged, IDisposable
 	{
-		bool Start();
+		void Start();
 		void Cancel();
 
 		RunningState RunningState { get; }
@@ -134,10 +134,10 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			RunningState = CanStart ? RunningState.NotRunning : RunningState.Running;
 		}
 
-		public bool Start()
+		public void Start()
 		{
 			if (!CanStart)
-				return false;
+				return;
 
 			LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
 			try
@@ -150,7 +150,6 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				CanCancel = false;
 
 				AuditHelper.LogImportStudies(new AuditedInstances(), EventSource.CurrentUser, EventResult.Success);
-				return true;
 			}
 			catch (EndpointNotFoundException)
 			{
@@ -163,8 +162,6 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				client.Abort();
 				OnReindexFailed();
 			}
-			
-			return false;
 		}
 
 		public void Cancel()

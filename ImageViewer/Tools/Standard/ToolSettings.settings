@@ -20,6 +20,20 @@
     <Setting Name="InvertedZoomToolOperation" Description="Inverts the operation of the Zoom tool such that moving the mouse up zooms out, and moving down zooms in." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="ToolSettingsProfile" Description="Per modality setting profiles for certain tools." Type="ClearCanvas.ImageViewer.Tools.Standard.ToolSettingsProfile" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ToolSettingsProfile&gt;
+  &lt;Setting Modality="US"&gt;
+    &lt;AutoCineMultiframes&gt;True&lt;/AutoCineMultiframes&gt;
+  &lt;/Setting&gt;
+  &lt;Setting Modality="CT"&gt;
+    &lt;AutoCineMultiframes&gt;True&lt;/AutoCineMultiframes&gt;
+  &lt;/Setting&gt;
+  &lt;Setting Modality="NM"&gt;
+    &lt;AutoCineMultiframes&gt;True&lt;/AutoCineMultiframes&gt;
+  &lt;/Setting&gt;
+&lt;/ToolSettingsProfile&gt;</Value>
+    </Setting>
     <Setting Name="MatchScaleForNonParallelImages" Description="Enables match scale tool for non-parallel images." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>

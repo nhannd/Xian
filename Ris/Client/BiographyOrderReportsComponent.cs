@@ -429,7 +429,7 @@ namespace ClearCanvas.Ris.Client
 				},
 				response =>
 				{
-					var procedure = CollectionUtils.FirstElement(response.GetOrderDetailResponse.Order.Procedures);
+					var procedure = response.GetOrderDetailResponse.Order.Procedures[0];
 					if (procedure != null)
 					{
 						var facilityCode = procedure.PerformingFacility.InformationAuthority.Code;

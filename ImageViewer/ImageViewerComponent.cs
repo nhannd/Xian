@@ -556,7 +556,7 @@ namespace ClearCanvas.ImageViewer
 			get
 			{
 				IActionSet actions = _toolSet.Actions.Select(_contextMenuFilter.Evaluate);
-                return ActionModelRoot.CreateModel(ActionsNamespace, ContextMenuSite, actions);
+				return ActionModelRoot.CreateModel(typeof(ImageViewerComponent).FullName, ContextMenuSite, actions);
 			}
 		}
 
@@ -564,7 +564,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-                return ActionModelRoot.CreateModel(ActionsNamespace, KeyboardSite, _toolSet.Actions);
+				return ActionModelRoot.CreateModel(typeof(ImageViewerComponent).FullName, KeyboardSite, _toolSet.Actions);
 			}
 		}
 
@@ -572,7 +572,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-			    return ActionModelRoot.CreateModel(GlobalActionsNamespace, "global-toolbars", _toolSet.Actions);     
+				return ActionModelRoot.CreateModel(typeof(DesktopWindow).FullName, "global-toolbars", _toolSet.Actions);     
 			}
 		}
 

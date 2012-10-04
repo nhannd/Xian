@@ -10,19 +10,15 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using ClearCanvas.Common;
-using System.Xml;
 
 namespace ClearCanvas.Server.ShredHost
 {
 	//TODO (CR Sept 2010): Turn these into ApplicationSettingsBase classes and use the ApplicationSettingsExtensions to set the shared property values.
     public abstract class ShredConfigSection : ConfigurationSection, ICloneable
     {
-    	private Dictionary<string, string> _removedProperties;
-
-		//[ConfigurationProperty("sampleProperty", DefaultValue="test")]
+        //[ConfigurationProperty("sampleProperty", DefaultValue="test")]
         //public string SampleProperty
         //{
         //    get { return (string)this["sampleProperty"]; }
@@ -31,49 +27,7 @@ namespace ClearCanvas.Server.ShredHost
 
         // Need to implement a clone to fix a .Net bug in ConfigurationSectionCollection.Add
         public abstract object Clone();
-
-		public string GetRemovedPropertyValue(string name)
-		{
-			if (_removedProperties == null)
-				return null;
-
-			string value;
-			return _removedProperties.TryGetValue(name, out value) ? value : null;
-		}
-
-		private void AddRemovedProperty(string name, string value)
-		{
-			if (_removedProperties == null)
-				_removedProperties = new Dictionary<string, string>();
-
-			_removedProperties[name] = value;
-		}
-
-    	protected sealed override bool OnDeserializeUnrecognizedAttribute(string name, string value)
-    	{
-			if (!ShredSettingsMigrator.IsMigrating)
-				return false;
-
-    		AddRemovedProperty(name, value);
-			return true;
-    	}
-
-    	protected sealed override bool OnDeserializeUnrecognizedElement(string elementName, XmlReader reader)
-		{
-			if (!ShredSettingsMigrator.IsMigrating)
-				return false;
-
-			if (!reader.IsEmptyElement)
-			{
-				var subTreeReader = reader.ReadSubtree();
-				subTreeReader.MoveToContent();
-				AddRemovedProperty(elementName, subTreeReader.ReadOuterXml());
-				subTreeReader.Close();
-			}
-
-			return true;
-		}
-	}
+    }
     
     public static class ShredConfigManager
     {

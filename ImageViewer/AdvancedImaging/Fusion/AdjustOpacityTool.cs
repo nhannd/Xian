@@ -19,8 +19,8 @@ using ClearCanvas.ImageViewer.InputManagement;
 namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 {
 	[MenuAction("activate", "imageviewer-contextmenu/MenuAdjustOpacity", "Select", Flags = ClickActionFlags.CheckAction)]
-	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuAdjustOpacity", "Select", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarAdjustOpacity", "Select", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "global-menus/MenuTools/MenuAdvanced/MenuAdjustOpacity", "Select", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("activate", "global-toolbars/ToolbarAdvanced/ToolbarAdjustOpacity", "Select", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]

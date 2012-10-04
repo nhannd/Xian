@@ -151,7 +151,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 					return;
 
 				if (value == null)
-					throw new ArgumentNullException("value", "StudyData prototype cannot be null.");
+					throw new ArgumentNullException("StudyData prototype cannot be null.");
 
 				_studyDataPrototype = value;
 			}
@@ -176,7 +176,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 					return;
 
 				if (value == null)
-					throw new ArgumentNullException("value", "SeriesData prototype cannot be null.");
+					throw new ArgumentNullException("SeriesData prototype cannot be null.");
 
 				_seriesDataPrototype = value;
 			}
@@ -200,7 +200,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 					return;
 
 				if (value == null)
-					throw new ArgumentNullException("value", "AnonymizeStudyDataDelegate cannot be null.");
+					throw new ArgumentNullException("AnonymizeStudyDataDelegate cannot be null.");
 
 				_anonymizeStudyDataDelegate = value;
 			}
@@ -224,7 +224,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 					return;
 
 				if (value == null)
-					throw new ArgumentNullException("value", "AnonymizeSeriesDataDelegate cannot be null.");
+					throw new ArgumentNullException("AnonymizeSeriesDataDelegate cannot be null.");
 
 				_anonymizeSeriesDataDelegate = value;
 			}
@@ -237,7 +237,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 		public virtual void Anonymize(DicomFile dicomFile)
 		{
 			if (dicomFile == null)
-				throw new ArgumentNullException("dicomFile", "The input DicomFile cannot be null.");
+				throw new ArgumentNullException("The input DicomFile cannot be null.");
 
 			if (dicomFile.DataSet.IsEmpty())
 				dicomFile.Load();

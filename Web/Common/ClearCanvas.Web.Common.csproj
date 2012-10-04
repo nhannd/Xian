@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="Application.cs" />
     <Compile Include="Events\ApplicationStoppedEvent.cs" />
-    <Compile Include="Events\SessionUpdatedEvent.cs" />
     <Compile Include="IKnownTypeProvider.cs" />
     <Compile Include="Events\ApplicationNotFoundEvent.cs" />
     <Compile Include="Entity.cs" />

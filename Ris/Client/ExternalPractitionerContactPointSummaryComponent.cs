@@ -70,7 +70,6 @@ namespace ClearCanvas.Ris.Client
 		private readonly List<EnumValueInfo> _addressTypeChoices;
 		private readonly List<EnumValueInfo> _phoneTypeChoices;
 		private readonly List<EnumValueInfo> _resultCommunicationModeChoices;
-		private readonly List<EnumValueInfo> _informationAuthorityChoices;
 		private readonly string _practitionerName;
 
 		/// <summary>
@@ -81,7 +80,6 @@ namespace ClearCanvas.Ris.Client
 			List<EnumValueInfo> addressTypeChoices,
 			List<EnumValueInfo> phoneTypeChoices,
 			List<EnumValueInfo> resultCommunicationModeChoices,
-			List<EnumValueInfo> informationAuthorityChoices,
 			string practitionerName)
 			: base(false)
 		{
@@ -89,7 +87,6 @@ namespace ClearCanvas.Ris.Client
 			_addressTypeChoices = addressTypeChoices;
 			_phoneTypeChoices = phoneTypeChoices;
 			_resultCommunicationModeChoices = resultCommunicationModeChoices;
-			_informationAuthorityChoices = informationAuthorityChoices;
 			_practitionerName = practitionerName;
 		}
 
@@ -103,7 +100,6 @@ namespace ClearCanvas.Ris.Client
 			_addressTypeChoices = new List<EnumValueInfo>();
 			_phoneTypeChoices = new List<EnumValueInfo>();
 			_resultCommunicationModeChoices = new List<EnumValueInfo>();
-			_informationAuthorityChoices = new List<EnumValueInfo>();
 		}
 
 		public override void Start()
@@ -176,8 +172,7 @@ namespace ClearCanvas.Ris.Client
 					contactPoint,
 					_addressTypeChoices,
 					_phoneTypeChoices,
-					_resultCommunicationModeChoices,
-					_informationAuthorityChoices);
+					_resultCommunicationModeChoices);
 
 				exitCode = LaunchAsDialog(
 					this.Host.DesktopWindow, editor, SR.TitleAddContactPoint + " - " + _practitionerName);
@@ -223,8 +218,7 @@ namespace ClearCanvas.Ris.Client
 					contactPoint,
 					_addressTypeChoices,
 					_phoneTypeChoices,
-					_resultCommunicationModeChoices,
-					_informationAuthorityChoices);
+					_resultCommunicationModeChoices);
 
 				exitCode = LaunchAsDialog(
 					this.Host.DesktopWindow,
@@ -287,13 +281,6 @@ namespace ClearCanvas.Ris.Client
 		/// <returns>True if items were edited, false otherwise.</returns>
 		protected override bool UpdateItemsActivation(IList<ExternalPractitionerContactPointDetail> items, out IList<ExternalPractitionerContactPointDetail> editedItems)
 		{
-			if (CollectionUtils.Contains(items, item => item.Deactivated && item.IsMerged))
-			{
-				this.Host.ShowMessageBox(SR.MessageCannotActivateSelectedContactPoints, MessageBoxActions.Ok);
-				editedItems = new List<ExternalPractitionerContactPointDetail>();
-				return false;
-			}
-
 			editedItems = new List<ExternalPractitionerContactPointDetail>();
 			foreach (var item in items)
 			{

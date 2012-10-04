@@ -48,8 +48,6 @@ namespace ClearCanvas.Ris.Client
 		private ExternalPractitionerSummary _selectedOrderingPractitioner;
 		private ExternalPractitionerLookupHandler _orderingPractitionerLookupHandler;
 
-		private bool _includeDeactivatedChoices;
-
 		private static readonly SearchComponentManager<SearchComponent> _componentManager = new SearchComponentManager<SearchComponent>();
 
 		public SearchComponent()
@@ -192,18 +190,6 @@ namespace ClearCanvas.Ris.Client
 			{
 				this.SearchParams.SearchFields.UntilDate = value;
 				NotifyPropertyChanged("UntilDate");
-			}
-		}
-
-		public bool IncludeDeactivatedChoices
-		{
-			get { return _includeDeactivatedChoices; }
-			set
-			{
-				_includeDeactivatedChoices = value;
-				_procedureTypeLookupHandler.IncludeDeactivatedItems = _includeDeactivatedChoices;
-				_diagnosticServiceLookupHandler.IncludeDeactivatedItems = _includeDeactivatedChoices;
-				_orderingPractitionerLookupHandler.IncludeDeactivatedItems = _includeDeactivatedChoices;
 			}
 		}
 

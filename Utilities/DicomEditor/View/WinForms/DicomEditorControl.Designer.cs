@@ -60,35 +60,46 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DicomEditorControl));
+			ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
 			this._dicomTagTable = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._dicomEditorTitleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
 			this.SuspendLayout();
 			// 
 			// _dicomTagTable
 			// 
-			this._dicomTagTable.ColumnHeaderTooltip = null;
-			resources.ApplyResources(this._dicomTagTable, "_dicomTagTable");
+			this._dicomTagTable.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._dicomTagTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._dicomTagTable.Location = new System.Drawing.Point(0, 23);
+			this._dicomTagTable.MenuModel = null;
 			this._dicomTagTable.Name = "_dicomTagTable";
 			this._dicomTagTable.ReadOnly = false;
-			this._dicomTagTable.SortButtonTooltip = null;
+			this._dicomTagTable.Selection = selection1;
+			this._dicomTagTable.Size = new System.Drawing.Size(701, 444);
+			this._dicomTagTable.TabIndex = 0;
+			this._dicomTagTable.Table = null;
+			this._dicomTagTable.ToolbarModel = null;
 			// 
 			// _dicomEditorTitleBar
 			// 
-			resources.ApplyResources(this._dicomEditorTitleBar, "_dicomEditorTitleBar");
+			this._dicomEditorTitleBar.Dock = System.Windows.Forms.DockStyle.Top;
+			this._dicomEditorTitleBar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._dicomEditorTitleBar.ForeColor = System.Drawing.SystemColors.WindowText;
 			this._dicomEditorTitleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
+			this._dicomEditorTitleBar.Location = new System.Drawing.Point(0, 0);
 			this._dicomEditorTitleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._dicomEditorTitleBar.Name = "_dicomEditorTitleBar";
+			this._dicomEditorTitleBar.Size = new System.Drawing.Size(701, 23);
 			this._dicomEditorTitleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
+			this._dicomEditorTitleBar.TabIndex = 4;
 			// 
 			// DicomEditorControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._dicomTagTable);
 			this.Controls.Add(this._dicomEditorTitleBar);
 			this.Name = "DicomEditorControl";
+			this.Size = new System.Drawing.Size(701, 467);
 			this.ResumeLayout(false);
 
         }

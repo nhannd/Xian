@@ -9,7 +9,6 @@
 
 #endregion
 
-using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.Desktop;
 
@@ -42,7 +41,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 		private readonly IRenderingSurface _renderingSurface;
 		private CompositeGraphic _sceneGraph;
 		private readonly Screen _screen;
-		private float _dpi = 96;
 		private object _tag;
 
 		#endregion
@@ -97,25 +95,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 		public Screen Screen
 		{
 			get { return _screen; }
-		}
-
-		/// <summary>
-		/// Gets or sets the resolution of the output device in DPI to be used in scaling vector graphics appropriately.
-		/// </summary>
-		/// <remarks>
-		/// The vector graphics are drawn for display at a nominal screen resolution (usually 96 DPI). If the destination
-		/// output device has a significantly larger DPI, setting this value will allow font sizes and line widths
-		/// to be scaled appropriately so that the size of the vector graphics relative to the rest of the image remains
-		/// relatively constant.
-		/// </remarks>
-		public float Dpi
-		{
-			get { return _dpi; }
-			set
-			{
-				Platform.CheckPositive(value, "Dpi");
-				_dpi = value;
-			}
 		}
 
 		/// <summary>

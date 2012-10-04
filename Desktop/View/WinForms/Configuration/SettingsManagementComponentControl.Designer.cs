@@ -59,7 +59,6 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsManagementComponentControl));
 			this._valueTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._settingsGroupTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -70,27 +69,33 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 			// 
 			// _valueTableView
 			// 
-			this._valueTableView.ColumnHeaderTooltip = null;
-			resources.ApplyResources(this._valueTableView, "_valueTableView");
+			this._valueTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._valueTableView.Location = new System.Drawing.Point(0, 0);
+			this._valueTableView.Margin = new System.Windows.Forms.Padding(4);
 			this._valueTableView.MultiSelect = false;
 			this._valueTableView.Name = "_valueTableView";
 			this._valueTableView.ReadOnly = false;
-			this._valueTableView.SortButtonTooltip = null;
+			this._valueTableView.Size = new System.Drawing.Size(879, 304);
+			this._valueTableView.TabIndex = 1;
 			// 
 			// _settingsGroupTableView
 			// 
-			this._settingsGroupTableView.ColumnHeaderTooltip = null;
-			resources.ApplyResources(this._settingsGroupTableView, "_settingsGroupTableView");
+			this._settingsGroupTableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._settingsGroupTableView.FilterTextBoxVisible = true;
+			this._settingsGroupTableView.Location = new System.Drawing.Point(0, 0);
+			this._settingsGroupTableView.Margin = new System.Windows.Forms.Padding(4);
 			this._settingsGroupTableView.MultiSelect = false;
 			this._settingsGroupTableView.Name = "_settingsGroupTableView";
 			this._settingsGroupTableView.ReadOnly = false;
-			this._settingsGroupTableView.SortButtonTooltip = null;
+			this._settingsGroupTableView.Size = new System.Drawing.Size(879, 307);
+			this._settingsGroupTableView.TabIndex = 2;
 			// 
 			// splitContainer1
 			// 
-			resources.ApplyResources(this.splitContainer1, "splitContainer1");
+			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.splitContainer1.Location = new System.Drawing.Point(0, 0);
 			this.splitContainer1.Name = "splitContainer1";
+			this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
 			// splitContainer1.Panel1
 			// 
@@ -99,13 +104,17 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.Controls.Add(this._valueTableView);
+			this.splitContainer1.Size = new System.Drawing.Size(879, 615);
+			this.splitContainer1.SplitterDistance = 307;
+			this.splitContainer1.TabIndex = 3;
 			// 
 			// SettingsManagementComponentControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.splitContainer1);
 			this.Name = "SettingsManagementComponentControl";
+			this.Size = new System.Drawing.Size(879, 615);
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			this.splitContainer1.ResumeLayout(false);

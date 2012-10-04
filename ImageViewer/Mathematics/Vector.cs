@@ -86,7 +86,6 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return new PointF(x, y);
 		}
 
-		//TODO (CR February 2011) - Low: Not used except in unit tests.  Deprecate and recommend using the Vector3D class.
 		/// <summary>
 		/// Computes the unit vector of the vector defined by <paramref name="vector"/>.
 		/// </summary>
@@ -135,7 +134,6 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			float dx = pt2.X - pt1.X;
 			float dy = pt2.Y - pt1.Y;
 
-			//TODO (CR February 2011) - Low: use FloatComparer?
 			// It's a point, not a line
 			if (dx == 0 && dy == 0)
 			{
@@ -224,8 +222,6 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// <param name="q2">The other endpoint of the other line segment.</param>
 		/// <param name="intersection">The intersection between the two line segments, if a solution exists.</param>
 		/// <returns>True if the intersection exists; False otherwise.</returns>
-
-		//TODO (CR February 2011) - High (SDK release): Name? GetLineSegmentIntersection : Nullable<Point>
 		public static bool IntersectLineSegments(PointF p1, PointF p2, PointF q1, PointF q2, out PointF intersection)
 		{
 			// find the solution to the line equations in matrix form
@@ -260,8 +256,6 @@ namespace ClearCanvas.ImageViewer.Mathematics
 				double s = v11*r1 + v12*r2;
 				double t = v21*r1 + v22*r2;
 
-				//TODO (CR February 2011) - Medium (SDK release): tolerance seems arbitrary.  Should add an overload that accepts the tolerance.
-
 				// the solution {s,t} represents the intersection of the lines
 				// for line segments, we must therefore further restrict the valid range of {s,t} to [0,1]
 				const int tolerance = 100000; // allow additional tolerance due to amount of floating-point computation
@@ -286,13 +280,8 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// <param name="q2">The other endpoint of the other line.</param>
 		/// <param name="intersection">The intersection between the two lines, if a solution exists.</param>
 		/// <returns>True if the intersection exists and is distinct; False otherwise.</returns>
-
-		//TODO (CR February 2011) - High (SDK release): Name? GetLineIntersection : Nullable<Point>
 		public static bool IntersectLines(PointF p1, PointF p2, PointF q1, PointF q2, out PointF intersection)
 		{
-			//TODO (CR February 2011) - Medium (SDK release): I remember talking about it, but looking at these 2 very similar
-			//methods, I think it makes sense to combine them.
-
 			// find the solution to the line equations in matrix form
 			// P1 + s(P2-P1) = Q1 + t(Q2-Q1)
 			// => P1 + s(P2-P1) = Q1 - t(Q1-Q2)
@@ -344,7 +333,6 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// <returns>True if the lines are parallel; False otherwise.</returns>
 		public static bool AreParallel(PointF p1, PointF p2, PointF q1, PointF q2)
 		{
-			//TODO (CR February 2011) - Medium (SDK release): same determinant computed in 3 places; should make it a method (ComputeDeterminant?)
 			// find the solution to the line equations in matrix form
 			// P1 + s(P2-P1) = Q1 + t(Q2-Q1)
 			// => P1 + s(P2-P1) = Q1 - t(Q1-Q2)

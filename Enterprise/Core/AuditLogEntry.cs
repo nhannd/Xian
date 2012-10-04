@@ -69,10 +69,5 @@ namespace ClearCanvas.Enterprise.Core
             get { return _category; }
             set { _category = value; }
         }
-
-		/// <summary>
-		/// Gets or sets the time this entry was received by the audit service.
-		/// </summary>
-		public DateTime ServerReceivedTimeStamp { get; set; }
     }
 }

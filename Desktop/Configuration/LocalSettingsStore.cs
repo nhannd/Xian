@@ -111,14 +111,6 @@ namespace ClearCanvas.Desktop.Configuration
             return SettingsPropertyDescriptor.ListSettingsProperties(group);
         }
 
-		/// <summary>
-		/// Local store does not support import.
-		/// </summary>
-		public bool IsOnline
-		{
-			get { return true; }
-		}
-
         /// <summary>
         /// Local store does not support import.
         /// </summary>

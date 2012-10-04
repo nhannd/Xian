@@ -10,169 +10,63 @@
 #endregion
 
 using System.Collections.Generic;
-using ClearCanvas.Common;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Core;
-using Iesi.Collections.Generic;
-using ClearCanvas.Common.Utilities;
-using System;
 
 
-namespace ClearCanvas.Healthcare
-{
-	[ExtensionPoint]
-	public class VirtualOrderNoteProviderExtensionPoint : ExtensionPoint<IOrderNoteProvider>
-	{
-	}
+namespace ClearCanvas.Healthcare {
 
 
-
-	/// <summary>
-	/// OrderNote component
-	/// </summary>
+    /// <summary>
+    /// OrderNote component
+    /// </summary>
 	public partial class OrderNote
 	{
-		public static class Categories
-		{
-			public const string General = "General";
-		}
-
-
 		/// <summary>
-		/// Gets all categories of notes associated with the specified order, excluding virtual notes.
+		/// Gets all order notes associated with the specified order.
 		/// </summary>
 		/// <param name="order"></param>
 		/// <returns></returns>
 		public static IList<OrderNote> GetNotesForOrder(Order order)
 		{
-			return GetNotesForOrder(order, new string[0], false);
-		}
-
-		public static IList<OrderNote> GetNotesForOrder(Order order, string category, bool includeVirtual)
-		{
-			return GetNotesForOrder(order, new[] {category}, includeVirtual);
+			return GetNotesForOrder(order, null);
 		}
 
 		/// <summary>
-		/// Gets all order notes of the specified categories associated with the specified order,
-		/// optionally including virtual notes.
+		/// Gets all order notes of the specified category associated with the specified order.
 		/// </summary>
 		/// <param name="order"></param>
-		/// <param name="categories"></param>
-		/// <param name="includeVirtual"></param>
+		/// <param name="category"></param>
 		/// <returns></returns>
-		public static IList<OrderNote> GetNotesForOrder(Order order, IList<string> categories, bool includeVirtual)
+		public static IList<OrderNote> GetNotesForOrder(Order order, string category)
 		{
-			var virtualNotes = new List<OrderNote>();
-			if(includeVirtual)
-			{
-				foreach (IOrderNoteProvider virtualNoteProvider in new VirtualOrderNoteProviderExtensionPoint().CreateExtensions())
-				{
-					virtualNotes.AddRange(virtualNoteProvider.GetNotes(order, categories, PersistenceScope.CurrentContext));
-				}
-			}
-			
 			var where = new OrderNoteSearchCriteria();
 			where.Order.EqualTo(order);
 			where.PostTime.IsNotNull(); // only posted notes
-			if (categories != null && categories.Count > 0)
+			if(!string.IsNullOrEmpty(category))
 			{
-				where.Category.In(categories);
+				where.Category.EqualTo(category);
 			}
 
 			//run a query to find order notes
 			//TODO: using PersistenceScope is maybe not ideal but no other option right now (fix #3472)
-			var persistentNotes = PersistenceScope.CurrentContext.GetBroker<IOrderNoteBroker>().Find(where);
-
-			return CollectionUtils.Concat(persistentNotes, virtualNotes);
+			return PersistenceScope.CurrentContext.GetBroker<IOrderNoteBroker>().Find(where);
 		}
 
-		/// <summary>
-		/// Constructs a new General order note with the specified properties.
-		/// </summary>
-		/// <param name="order"></param>
-		/// <param name="author"></param>
-		/// <param name="body"></param>
-		/// <returns></returns>
-		public static OrderNote CreateGeneralNote(Order order, Staff author, string body)
-		{
-			return new OrderNote(
-				Categories.General,
-				body,
-				false,
-				Platform.Time,
-				author,
-				null,
-				Platform.Time,
-				false,
-				false,
-				new HashedSet<NotePosting>(),
-				null,
-				order);
-		}
-
-		/// <summary>
-		/// Creates a new virtual note with the specified properties.
-		/// </summary>
-		/// <param name="order"></param>
-		/// <param name="category"></param>
-		/// <param name="author"></param>
-		/// <param name="body"></param>
-		/// <param name="postTime"></param>
-		/// <returns></returns>
-		public static OrderNote CreateVirtualNote(Order order, string category, Staff author, string body, DateTime postTime)
-		{
-			return new OrderNote(
-				category,
-				body,
-				false,
-				postTime,
-				author,
-				null,
-				postTime,
-				false,
-				false,
-				new HashedSet<NotePosting>(),
-				null,
-				order);
-		}
-
-		/// <summary>
-		/// Constructor for creating a new unposted note.
-		/// </summary>
-		/// <param name="order"></param>
-		/// <param name="category"></param>
-		/// <param name="author"></param>
-		/// <param name="onBehalfOf"></param>
-		/// <param name="body"></param>
-		/// <param name="urgent"></param>
-		public OrderNote(Order order, string category, Staff author, StaffGroup onBehalfOf, string body, bool urgent)
-			: base(category, author, onBehalfOf, body, urgent)
-		{
-			_order = order;
-		}
-
-		/// <summary>
-		/// Creates a ghost copy of this order note.
-		/// </summary>
-		/// <returns></returns>
-		public virtual OrderNote CreateGhostCopy()
-		{
-			return new OrderNote(
-				this.Category,
-				this.Body,
-				this.Urgent,
-				this.CreationTime,
-				this.Author,
-				this.OnBehalfOfGroup,
-				this.PostTime,
-				this.IsFullyAcknowledged,
-				false,							// ghost copies do not have postings
-				new HashedSet<NotePosting>(),	// ghost copies do not have postings
-				this,
-				_order);
-		}
-
+        /// <summary>
+        /// Constructor for creating a new note with recipients.
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="category"></param>
+        /// <param name="author"></param>
+        /// <param name="onBehalfOf"></param>
+        /// <param name="body"></param>
+        /// <param name="urgent"></param>
+        public OrderNote(Order order, string category, Staff author, StaffGroup onBehalfOf, string body, bool urgent)
+            :base(category, author, onBehalfOf, body, urgent)
+        {
+            _order = order;
+        }
 
 		/* Commented out for ticket #3709, where it is explicitly requested that user can post new notes without acknowledging previous notes. */
 		///// <summary>

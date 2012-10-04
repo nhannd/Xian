@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Healthcare.Owls" namespace="ClearCanvas.Healthcare.Owls">
+  <union-subclass name="ProtocolWorklistViewItem" extends="ProcedureStepWorklistViewItem" table="owls_ProtocolWorklistViewItem_">
+    <!-- Protocol Info -->
+    <component name="Protocol" class="WorklistViewItemProtocolInfo">
+      <many-to-one name="Instance" class="ClearCanvas.Healthcare.Protocol, ClearCanvas.Healthcare" column="ProtocolOID_"/>
+      <property name="Version" column="ProtocolVersion_" type="int"/>
+      <property name="Status" column="ProtocolStatus_" type="ClearCanvas.Healthcare.Hibernate.ProtocolStatusEnumHbm, ClearCanvas.Healthcare.Hibernate"/>
+      <many-to-one name="Author" class="ClearCanvas.Healthcare.Staff, ClearCanvas.Healthcare" column="ProtocolAuthorStaffOID_"/>
+      <many-to-one name="Supervisor" class="ClearCanvas.Healthcare.Staff, ClearCanvas.Healthcare" column="ProtocolSupervisorStaffOID_"/>
+    </component>
+  </union-subclass>
+</hibernate-mapping>

@@ -297,28 +297,4 @@
   <data name="DescriptionAvi" xml:space="preserve">
     <value>AVI Video Files</value>
   </data>
-  <data name="MessageClipboardDescription" xml:space="preserve">
-    <value>Patient Id: {0}
-Patient Name: {1}
-Study Date: {2}
-Study Description: {3}
-Accession Number: {4}
-Modality: {5}
-Text Overlay: {6}</value>
-  </data>
-  <data name="MessageClipboardNameMultiframeImage" xml:space="preserve">
-    <value>{0} - Image #{1}, Frame #{2}</value>
-  </data>
-  <data name="MessageClipboardNameSingleImage" xml:space="preserve">
-    <value>{0} - Image #{1}</value>
-  </data>
-  <data name="LabelOff" xml:space="preserve">
-    <value>OFF</value>
-  </data>
-  <data name="LabelOn" xml:space="preserve">
-    <value>ON</value>
-  </data>
-  <data name="MessageClipboardCopyFailed" xml:space="preserve">
-    <value>Failed to add item(s) to clipboard</value>
-  </data>
 </root>

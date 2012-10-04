@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -9,7 +9,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
@@ -61,8 +60,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		#region Private Fields
 
-		[ThreadStatic]
-		private static Dictionary<IImageViewer, SynchronizationToolCoordinator> _coordinators;
+		private static readonly Dictionary<IImageViewer, SynchronizationToolCoordinator> _coordinators;
 
 		private readonly IImageViewer _viewer;
 		
@@ -74,19 +72,14 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		#endregion
 
+		static SynchronizationToolCoordinator()
+		{
+			_coordinators = new Dictionary<IImageViewer, SynchronizationToolCoordinator>();
+		}
+
 		private SynchronizationToolCoordinator(IImageViewer viewer)
 		{
 			_viewer = viewer;
-		}
-
-		private static Dictionary<IImageViewer, SynchronizationToolCoordinator> Coordinators
-		{
-			get
-			{
-				if (_coordinators == null)
-					_coordinators = new Dictionary<IImageViewer, SynchronizationToolCoordinator>();
-				return _coordinators;
-			}
 		}
 
 		public void SetStackingSynchronizationTool(StackingSynchronizationTool tool)
@@ -170,20 +163,20 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		public static SynchronizationToolCoordinator Get(IImageViewer viewer)
 		{
-			if (!Coordinators.ContainsKey(viewer))
+			if (!_coordinators.ContainsKey(viewer))
 			{
 				SynchronizationToolCoordinator coordinator = new SynchronizationToolCoordinator(viewer);
 
 				viewer.EventBroker.PresentationImageSelected += coordinator.OnPresentationImageSelected;
 				viewer.EventBroker.TileSelected += coordinator.OnTileSelected;
 			
-				Coordinators.Add(viewer, coordinator);
+				_coordinators.Add(viewer, coordinator);
 			}
 
 			DicomImagePlane.InitializeCache();
 
-			++Coordinators[viewer]._referenceCount;
-			return Coordinators[viewer];
+			++_coordinators[viewer]._referenceCount;
+			return _coordinators[viewer];
 		}
 
 		public void Release()
@@ -196,7 +189,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				_viewer.EventBroker.PresentationImageSelected -= OnPresentationImageSelected;
 				_viewer.EventBroker.TileSelected -= OnTileSelected;
 
-				Coordinators.Remove(_viewer);
+				_coordinators.Remove(_viewer);
 			}
 		}
 

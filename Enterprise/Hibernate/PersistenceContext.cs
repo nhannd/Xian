@@ -11,12 +11,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 using NHibernate;
-using NHibernate.Exceptions;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -291,15 +289,8 @@ namespace ClearCanvas.Enterprise.Hibernate
 				throw e;
 			}
 
-			// see if we can determine a SQL-specific error
-			e = TranslateSqlException(e);
-
-			if(e is LockAcquisitionException)
-			{
-				throw new DeadlockException(e);
-			}
-
 			//TODO any other specific kinds of exceptions we need to consider?
+			
 
 			throw new PersistenceException(message, e);
 		}
@@ -383,28 +374,5 @@ namespace ClearCanvas.Enterprise.Hibernate
 		}
 
 		#endregion
-
-		private static Exception TranslateSqlException(Exception e)
-		{
-			// code here is based on ideas found in the following blog post:
-			// http://fabiomaulo.blogspot.com/2009/06/improving-ado-exception-management-in.html
-
-			var sqle = ADOExceptionHelper.ExtractDbException(e) as SqlException;
-
-			// sqle is non-null only for MSSQL (SqlClient driver)
-			if (sqle != null)
-			{
-				switch (sqle.Number)
-				{
-					case 547:
-						return new ConstraintViolationException(e.Message, sqle.InnerException, null);
-					case 208:
-						return new SQLGrammarException(e.Message, sqle.InnerException);
-					case 1205:
-						return new LockAcquisitionException(e.Message, sqle.InnerException);
-				}
-			}
-			return e;
-		}
 	}
 }

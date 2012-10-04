@@ -1112,25 +1112,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public void ValidateAllowableTransferSyntax()
-		{
-			var mySyntax = this.TransferSyntaxUid;
-			foreach (var syntax in GetAllowableTransferSyntaxes())
-			{
-				if (mySyntax == syntax.UidString)
-					return;
-			}
-
-			throw new SopValidationException(String.Format(SR.ExceptionInvalidTransferSyntaxUID, this.TransferSyntaxUid));
-		}
-
-		protected virtual IEnumerable<TransferSyntax> GetAllowableTransferSyntaxes()
-		{
-			yield return TransferSyntax.ImplicitVrLittleEndian;
-			yield return TransferSyntax.ExplicitVrLittleEndian;
-			yield return TransferSyntax.ExplicitVrBigEndian;
-		}
-
 		/// <summary>
 		/// Validates the <see cref="Sop"/> object.
 		/// </summary>
@@ -1147,6 +1128,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			DicomValidator.ValidateSOPInstanceUID(this.SopInstanceUid);
 			DicomValidator.ValidateSeriesInstanceUID(this.SeriesInstanceUid);
 			DicomValidator.ValidateStudyInstanceUID(this.StudyInstanceUid);
+
+			ValidatePatientId();
+		}
+
+		private void ValidatePatientId()
+		{
+			//Patient ID is a Type 2 tag, so this is our own restriction, not a Dicom Restriction.
+			if (String.IsNullOrEmpty(this.PatientId) || this.PatientId.TrimEnd(' ').Length == 0)
+				throw new SopValidationException(SR.ExceptionInvalidPatientID);
 		}
 
 		#endregion

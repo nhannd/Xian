@@ -92,7 +92,7 @@ namespace ClearCanvas.Healthcare
 			var queueItem = CreateBaseWorkQueueItem(logicalHL7EventType, procedure.Order);
 
 			queueItem.ExtendedProperties.Add("ProcedureOID", procedure.OID.ToString());
-			queueItem.ExtendedProperties.Add("ProcedureNumber", procedure.Number);
+			queueItem.ExtendedProperties.Add("ProcedureIndex", procedure.Index);
 
 			return new LogicalHL7EventWorkQueueItem(queueItem);
 		}

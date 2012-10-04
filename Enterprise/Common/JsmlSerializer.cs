@@ -241,7 +241,7 @@ namespace ClearCanvas.Enterprise.Common
             }
             else if (IsDataContract(dataType))
             {
-                dataObject = Activator.CreateInstance(dataType, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance, null, null, null);
+                dataObject = Activator.CreateInstance(dataType);
 
 				foreach (var context in GetDataMemberFields(dataObject, delegate { return true; }))
                 {

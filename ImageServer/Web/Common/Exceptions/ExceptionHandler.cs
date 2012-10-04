@@ -12,7 +12,6 @@
 using System;
 using System.Web;
 using ClearCanvas.Common;
-using System.Text;
 
 namespace ClearCanvas.ImageServer.Web.Common.Exceptions
 {
@@ -41,10 +40,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Exceptions
 			if (context.Items.Contains(ImageServerConstants.ContextKeys.StackTrace))
 				context.Items.Remove(ImageServerConstants.ContextKeys.StackTrace);
 
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(e.Message);
-
-			context.Items.Add(ImageServerConstants.ContextKeys.ErrorMessage, sb.ToString());
+			context.Items.Add(ImageServerConstants.ContextKeys.ErrorMessage, e.Message);
 			context.Items.Add(ImageServerConstants.ContextKeys.StackTrace, e.StackTrace);
 			context.Server.Transfer(ImageServerConstants.PageURLs.ErrorPage);
 		}

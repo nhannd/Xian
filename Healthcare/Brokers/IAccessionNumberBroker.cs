@@ -9,6 +9,9 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Brokers
@@ -19,15 +22,15 @@ namespace ClearCanvas.Healthcare.Brokers
     public interface IAccessionNumberBroker : IPersistenceBroker
     {
 		/// <summary>
-		/// Peeks at the next number in the sequence, but does not advance the sequence.
+		/// Peeks at the next accession number in the sequence, but does not advance the sequence.
 		/// </summary>
 		/// <returns></returns>
-    	string PeekNext();
+    	string PeekNextAccessionNumber();
 
 		/// <summary>
-		/// Gets the next number in the sequence, advancing the sequence by 1.
+		/// Gets the next accession number in the sequence, advancing the sequence by 1.
 		/// </summary>
 		/// <returns></returns>
-		string GetNext();
+		string GetNextAccessionNumber();
     }
 }

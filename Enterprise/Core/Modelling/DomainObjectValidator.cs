@@ -26,15 +26,16 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 	/// </remarks>
 	public class DomainObjectValidator
 	{
-		[Flags]
-		enum RuleLevel
+		private static readonly Type[] _lowLevelRuleClasses = new[]
 		{
-			Low = 0x01,
-			High = 0x10
-		}
+			typeof(LengthSpecification),
+			typeof(RequiredSpecification),
+			typeof(UniqueKeySpecification),
+			typeof(UniqueSpecification),
+			typeof(EmbeddedValueRuleSet)
+		};
 
-		private readonly Dictionary<Type, ValidationRuleSet> _lowLevelRuleSets = new Dictionary<Type, ValidationRuleSet>();
-		private readonly Dictionary<Type, ValidationRuleSet> _highLevelRuleSets = new Dictionary<Type, ValidationRuleSet>();
+		private readonly Dictionary<Type, ValidationRuleSet> _ruleSets = new Dictionary<Type, ValidationRuleSet>();
 
 		#region Public API
 
@@ -59,7 +60,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		public void Validate(DomainObject obj)
 		{
 			// validate all rules
-			Validate(obj, RuleLevel.Low|RuleLevel.High, rule => true);
+			Validate(obj, rule => true);
 		}
 
 		/// <summary>
@@ -85,7 +86,10 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		/// <param name="ruleFilter"></param>
 		public void ValidateLowLevel(DomainObject obj, Predicate<ISpecification> ruleFilter)
 		{
-			Validate(obj, RuleLevel.Low, ruleFilter);
+			// construct a predicate which says:
+			// 1. if the rule is a low-level rule class, let the caller's ruleFilter decide
+			// 2. if the rule is a rule-set (but not an embedded-value ruleset which has already been covered in 1), then evaluate it
+			Validate(obj, rule => IsLowLevelRule(rule)? ruleFilter(rule) : rule is IValidationRuleSet);
 		}
 
 		/// <summary>
@@ -97,7 +101,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		/// <param name="obj"></param>
 		public void ValidateHighLevel(DomainObject obj)
 		{
-			Validate(obj, RuleLevel.High, r => true);
+			Validate(obj, r => !IsLowLevelRule(r));
 		}
 
 		#endregion
@@ -106,50 +110,25 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		/// Validates the specified domain object, ignoring any rules that do not satisfy the filter.
 		/// </summary>
 		/// <param name="obj"></param>
-		/// <param name="level"></param>
 		/// <param name="ruleFilter"></param>
 		/// <exception cref="EntityValidationException">Validation failed.</exception>
-		private void Validate(DomainObject obj, RuleLevel level, Predicate<ISpecification> ruleFilter)
+		private void Validate(DomainObject obj, Predicate<ISpecification> ruleFilter)
 		{
 			var domainClass = obj.GetClass();
 
-			var ruleSets = new List<ISpecification>();
+			ValidationRuleSet rules;
 
-			if (CheckLevel(level, RuleLevel.Low))
-			{
-				// first check for a cached rule-set
-				ValidationRuleSet lowLevelRules;
-				if (!_lowLevelRuleSets.TryGetValue(domainClass, out lowLevelRules))
-				{
-					// otherwise build it
-					lowLevelRules = IsValidationEnabled(domainClass) ?
-						ValidationRuleSetCache.GetLowLevelRules(domainClass)
-						: new ValidationRuleSet();
-
-					// cache for future use
-					_lowLevelRuleSets.Add(domainClass, lowLevelRules);
-				}
-				ruleSets.Add(lowLevelRules);
-			}
-
-			if (CheckLevel(level, RuleLevel.High))
-			{
 			// first check for a cached rule-set
-				ValidationRuleSet highLevelRules;
-				if (!_highLevelRuleSets.TryGetValue(domainClass, out highLevelRules))
+			if (!_ruleSets.TryGetValue(domainClass, out rules))
 			{
 				// otherwise build it
-					highLevelRules = IsValidationEnabled(domainClass) ?
-						ValidationRuleSetCache.GetHighLevelRules(domainClass)
+				rules = IsValidationEnabled(domainClass) ?
+					ValidationRuleSetCache.GetInvariantRules(domainClass).Add(ValidationRuleSetCache.GetCustomRules(domainClass))
 					: new ValidationRuleSet();
 
-					// cache for future use
-					_highLevelRuleSets.Add(domainClass, highLevelRules);
-				}
-				ruleSets.Add(highLevelRules);
+				_ruleSets.Add(domainClass, rules);
 			}
 
-			var rules = new ValidationRuleSet(ruleSets);
 			var result = rules.Test(obj, ruleFilter);
 			if (result.Fail)
 			{
@@ -158,9 +137,14 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 			}
 		}
 
-		private static bool CheckLevel(RuleLevel level, RuleLevel refLevel)
+		/// <summary>
+		/// Checks if the specified rule is considered a low-level rule.
+		/// </summary>
+		/// <param name="rule"></param>
+		/// <returns></returns>
+		private static bool IsLowLevelRule(ISpecification rule)
 		{
-			return (level & refLevel) == refLevel;
+			return CollectionUtils.Contains(_lowLevelRuleClasses, t => t.Equals(rule.GetType()));
 		}
 	}
 }

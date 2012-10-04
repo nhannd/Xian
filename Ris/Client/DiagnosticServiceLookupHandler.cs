@@ -65,7 +65,6 @@ namespace ClearCanvas.Ris.Client
 			{
 				// default
 				DiagnosticServiceSummaryComponent summaryComponent = new DiagnosticServiceSummaryComponent(true);
-				summaryComponent.IncludeDeactivatedItems = this.IncludeDeactivatedItems;
 				if (!string.IsNullOrEmpty(query))
 				{
 					summaryComponent.Name = query;

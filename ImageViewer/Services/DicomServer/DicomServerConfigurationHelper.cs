@@ -300,7 +300,7 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 			catch (Exception e)
 			{
 				client.Abort();
-				throw new RefreshException("Failed to get the DICOM server configuration; the service may not be running.", e);
+				throw new RefreshException("Failed to get the Dicom server configuration; the service may not be running.", e);
 			}
 			finally
 			{
@@ -325,7 +325,7 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 			catch (Exception e)
 			{
 				client.Abort();
-				throw new UpdateException("Failed to update the DICOM server configuration; the service may not be running.", e);
+				throw new UpdateException("Failed to update the Dicom server configuration; the service may not be running.", e);
 			}
 			finally
 			{ 

@@ -18,21 +18,22 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
+using ClearCanvas.Ris.Client;
 
 namespace ClearCanvas.Ris.Client
 {
-	/// <summary>
-	/// VisitSummaryComponent class
-	/// </summary>
-	public class VisitSummaryComponent : SummaryComponentBase<VisitSummary, VisitSummaryTable>
-	{
-		private readonly EntityRef _patientRef;
+    /// <summary>
+    /// VisitSummaryComponent class
+    /// </summary>
+    public class VisitSummaryComponent : SummaryComponentBase<VisitSummary, VisitSummaryTable>
+    {
+        private readonly EntityRef _patientRef;
 
-		public VisitSummaryComponent(EntityRef patientRef, bool dialogMode)
+        public VisitSummaryComponent(EntityRef patientRef, bool dialogMode)
 			:base(dialogMode)
-		{
-			_patientRef = patientRef;
-		}
+        {
+            _patientRef = patientRef;
+        }
 
 		/// <summary>
 		/// Override this method to perform custom initialization of the action model,
@@ -56,7 +57,7 @@ namespace ClearCanvas.Ris.Client
 		protected override IList<VisitSummary> ListItems(int firstItem, int maxItems)
 		{
 			ListVisitsForPatientResponse listResponse = null;
-			Platform.GetService(
+			Platform.GetService<IVisitAdminService>(
 				delegate(IVisitAdminService service)
 				{
 					listResponse = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef));
@@ -73,9 +74,10 @@ namespace ClearCanvas.Ris.Client
 		protected override bool AddItems(out IList<VisitSummary> addedItems)
 		{
 			addedItems = new List<VisitSummary>();
-			var editor = new VisitEditorComponent(_patientRef);
-			if (ApplicationComponentExitCode.Accepted == 
-				LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddVisit))
+			VisitEditorComponent editor = new VisitEditorComponent(_patientRef);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleAddVisit);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				addedItems.Add(editor.VisitSummary);
 				return true;
@@ -92,11 +94,12 @@ namespace ClearCanvas.Ris.Client
 		protected override bool EditItems(IList<VisitSummary> items, out IList<VisitSummary> editedItems)
 		{
 			editedItems = new List<VisitSummary>();
-			var item = CollectionUtils.FirstElement(items);
+			VisitSummary item = CollectionUtils.FirstElement(items);
 
-			var editor = new VisitEditorComponent(item);
-			if (ApplicationComponentExitCode.Accepted == 
-				LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateVisit))
+			VisitEditorComponent editor = new VisitEditorComponent(item);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Host.DesktopWindow, editor, SR.TitleUpdateVisit);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				editedItems.Add(editor.VisitSummary);
 				return true;

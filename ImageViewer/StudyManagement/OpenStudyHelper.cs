@@ -197,7 +197,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, SR.MessageFailedToOpenStudy, desktopWindow);
+				ExceptionHandler.Report(e, desktopWindow);
 			}
 
 			if (!AnySopsLoaded(viewer) && !AllowEmptyViewer)

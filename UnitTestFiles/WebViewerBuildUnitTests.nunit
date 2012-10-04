@@ -1,0 +1,28 @@
+﻿<NUnitProject>
+  <Settings activeconfig="Debug" appbase="E:\workspace\Projects\ClearCanvas\Branches\thanh\WebViewer\ImageServer\ShredHostService\bin\Debug" />
+  <Config name="Debug" configfile="ClearCanvas.ImageServer.ShredHostService.exe.config" binpathtype="Auto">
+    <assembly path="ClearCanvas.ImageServer.ShredHostService.exe" />
+    <assembly path="common\ClearCanvas.Common.dll" />
+    <assembly path="common\ClearCanvas.Dicom.dll" />
+    <assembly path="plugins\ClearCanvas.ImageServer.Enterprise.dll" />
+    <assembly path="plugins\ClearCanvas.Desktop.Configuration.dll" />
+    <assembly path="plugins\ClearCanvas.Desktop.dll" />
+    <assembly path="plugins\ClearCanvas.Dicom.Codec.Jpeg.dll" />
+    <assembly path="plugins\ClearCanvas.Dicom.Codec.Rle.dll" />
+    <assembly path="plugins\ClearCanvas.ImageViewer.AnnotationProviders.dll" />
+    <assembly path="plugins\ClearCanvas.ImageViewer.Configuration.dll" />
+    <assembly path="plugins\ClearCanvas.ImageViewer.dll" />
+    <assembly path="plugins\ClearCanvas.ImageViewer.Layout.Basic.dll" />
+    <assembly path="plugins\ClearCanvas.ImageViewer.Services.dll" />
+    <assembly path="plugins\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" />
+    <assembly path="plugins\ClearCanvas.ImageViewer.Tools.Measurement.dll" />
+    <assembly path="plugins\ClearCanvas.ImageViewer.Tools.Standard.dll" />
+    <assembly path="plugins\ClearCanvas.ImageViewer.Tools.Synchronization.dll" />
+    <assembly path="plugins\ClearCanvas.ImageViewer.Web.Server.ImageServer.dll" />
+    <assembly path="plugins\ClearCanvas.ImageViewer.Web.Common.dll" />
+    <assembly path="plugins\ClearCanvas.ImageViewer.Web.dll" />
+    <assembly path="plugins\ClearCanvas.Web.Common.dll" />
+    <assembly path="plugins\ClearCanvas.Web.Services.dll" />
+  </Config>
+  <Config name="Release" binpathtype="Auto" />
+</NUnitProject>

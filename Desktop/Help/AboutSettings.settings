@@ -81,13 +81,13 @@
       <Value Profile="(Default)">214, 13</Value>
     </Setting>
     <Setting Name="ManifestAutoSize" Description="Specifies whether or not the manifest message should be auto-sized." Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="ManifestForeColor" Description="Forecolor of the manifest message." Type="System.Drawing.Color" Scope="Application">
       <Value Profile="(Default)">Firebrick</Value>
     </Setting>
     <Setting Name="ManifestFontBold" Description="Manifest message bolded." Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="ManifestTextAlign" Description="Manifest message text alignment." Type="System.Drawing.ContentAlignment" Scope="Application">
       <Value Profile="(Default)">TopLeft</Value>

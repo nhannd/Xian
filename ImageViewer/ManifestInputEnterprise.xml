@@ -3,8 +3,10 @@
   <Files>
     <File name="plugins\ClearCanvas.Enterprise.Desktop.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Enterprise.Desktop.View.WinForms.dll" checksum="true" />
+    <File name="plugins\ClearCanvas.ImageViewer.EnterpriseDesktop.dll" checksum="true" />
+    <File name="plugins\ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms.dll" checksum="true" />
     <File name="common\Castle.Core.dll" checksum="true" />
     <File name="common\Castle.DynamicProxy2.dll" checksum="true" />
-    <File name="plugins\ClearCanvas.Enterprise.Common.dll" checksum="true" />
+    <File name="common\ClearCanvas.Enterprise.Common.dll" checksum="true" />
   </Files>
 </ManifestInput>

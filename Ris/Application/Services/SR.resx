@@ -229,10 +229,4 @@
     <value>The following contact points cannot be deactivated because there are active orders for which the contact point is a result recipient: {0}.
 Please use the "Merge Contact Points" tool to merge the contact point(s) with an alternate active contact point instead.</value>
   </data>
-  <data name="MessageDestinationMergeOrderNote" xml:space="preserve">
-    <value>Auto-generated note.  {0} were merged into this order.</value>
-  </data>
-  <data name="MessageSourceMergeOrderNote" xml:space="preserve">
-    <value>Auto-generated note.  This order was merged into {0}.</value>
-  </data>
 </root>

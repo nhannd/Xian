@@ -158,14 +158,12 @@ public class ImageServerConstants
 
         public class PageURLs
         {
-            public const string AboutPage = "~/Pages/Help/About.aspx";
             public const string AdminUserPage = "~/Pages/Admin/UserManagement/Users/Default.aspx";
             public const string ApplicationLog = "~/Pages/Admin/ApplicationLog/Default.aspx";
             public const string ArchiveQueuePage = "~/Pages/Queues/ArchiveQueue/Default.aspx";
             public const string AuthorizationErrorPage = "~/Pages/Error/AuthorizationErrorPage.aspx";
             public const string BarChartPage = "~/Pages/Common/BarChart.aspx?pct={0}&high={1}&low={2}";
             public const string CookiesErrorPage = "~/Pages/Error/CookiesRequired.aspx";
-            public const string DashboardPage = "~/Pages/Admin/Dashboard/Default.aspx";
             public const string ErrorPage = "~/Pages/Error/ErrorPage.aspx";
             public const string JavascriptErrorPage = "~/Pages/Error/JavascriptRequired.aspx";
             public const string LoginPage = "~/Pages/Login/Default.aspx";
@@ -241,7 +239,6 @@ public class ImageServerConstants
             public const string ListStudies = "liststudies";
             public const string AeTitle = "aetitle";
             public const string ApplicationName = "application";
-            public const string Language = "Language";
         }
         	
         #endregion

@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="_imageExporters.LabelText" xml:space="preserve">
-    <value>Export As</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_imageExporters.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 11</value>
@@ -219,6 +216,54 @@
   <data name="&gt;&gt;_buttonCancel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="&gt;&gt;_checkOptionCompleteImage.Name" xml:space="preserve">
+    <value>_checkOptionCompleteImage</value>
+  </data>
+  <data name="&gt;&gt;_checkOptionCompleteImage.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_checkOptionCompleteImage.Parent" xml:space="preserve">
+    <value>_groupFieldOfView</value>
+  </data>
+  <data name="&gt;&gt;_checkOptionCompleteImage.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;_checkOptionWysiwyg.Name" xml:space="preserve">
+    <value>_checkOptionWysiwyg</value>
+  </data>
+  <data name="&gt;&gt;_checkOptionWysiwyg.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_checkOptionWysiwyg.Parent" xml:space="preserve">
+    <value>_groupFieldOfView</value>
+  </data>
+  <data name="&gt;&gt;_checkOptionWysiwyg.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="_groupFieldOfView.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 86</value>
+  </data>
+  <data name="_groupFieldOfView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>315, 49</value>
+  </data>
+  <data name="_groupFieldOfView.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="_groupFieldOfView.Text" xml:space="preserve">
+    <value>Field of View</value>
+  </data>
+  <data name="&gt;&gt;_groupFieldOfView.Name" xml:space="preserve">
+    <value>_groupFieldOfView</value>
+  </data>
+  <data name="&gt;&gt;_groupFieldOfView.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_groupFieldOfView.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;_groupFieldOfView.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
   <data name="_checkOptionCompleteImage.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -273,30 +318,6 @@
   <data name="&gt;&gt;_checkOptionWysiwyg.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="_groupFieldOfView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 86</value>
-  </data>
-  <data name="_groupFieldOfView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>315, 49</value>
-  </data>
-  <data name="_groupFieldOfView.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="_groupFieldOfView.Text" xml:space="preserve">
-    <value>Field of View</value>
-  </data>
-  <data name="&gt;&gt;_groupFieldOfView.Name" xml:space="preserve">
-    <value>_groupFieldOfView</value>
-  </data>
-  <data name="&gt;&gt;_groupFieldOfView.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_groupFieldOfView.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_groupFieldOfView.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <data name="_scale.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
@@ -347,21 +368,6 @@
   </data>
   <data name="&gt;&gt;_pnlDialogButtons.ZOrder" xml:space="preserve">
     <value>1</value>
-  </data>
-  <data name="_lblScalePercent.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="_lblScalePercent.Location" type="System.Drawing.Point, System.Drawing">
-    <value>74, 5</value>
-  </data>
-  <data name="_lblScalePercent.Size" type="System.Drawing.Size, System.Drawing">
-    <value>15, 13</value>
-  </data>
-  <data name="_lblScalePercent.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="_lblScalePercent.Text" xml:space="preserve">
-    <value>%</value>
   </data>
   <data name="&gt;&gt;_lblScalePercent.Name" xml:space="preserve">
     <value>_lblScalePercent</value>
@@ -662,6 +668,33 @@
   </data>
   <data name="&gt;&gt;_groupOutputSize.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="_lblScalePercent.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="_lblScalePercent.Location" type="System.Drawing.Point, System.Drawing">
+    <value>74, 5</value>
+  </data>
+  <data name="_lblScalePercent.Size" type="System.Drawing.Size, System.Drawing">
+    <value>15, 13</value>
+  </data>
+  <data name="_lblScalePercent.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="_lblScalePercent.Text" xml:space="preserve">
+    <value>%</value>
+  </data>
+  <data name="&gt;&gt;_lblScalePercent.Name" xml:space="preserve">
+    <value>_lblScalePercent</value>
+  </data>
+  <data name="&gt;&gt;_lblScalePercent.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_lblScalePercent.Parent" xml:space="preserve">
+    <value>_pnlScale</value>
+  </data>
+  <data name="&gt;&gt;_lblScalePercent.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

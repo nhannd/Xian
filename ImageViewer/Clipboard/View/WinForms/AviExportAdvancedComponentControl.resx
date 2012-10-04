@@ -171,9 +171,6 @@
   <data name="&gt;&gt;_quality.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="_comboCodec.LabelText" xml:space="preserve">
-    <value>Codec</value>
-  </data>
   <data name="_comboCodec.Location" type="System.Drawing.Point, System.Drawing">
     <value>11, 11</value>
   </data>

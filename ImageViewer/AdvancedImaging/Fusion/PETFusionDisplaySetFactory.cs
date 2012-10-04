@@ -59,27 +59,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				var fuseableBaseSeries = new List<Series>(FindFuseableBaseSeries(series));
 				if (fuseableBaseSeries.Count > 0)
 				{
-					string error;
-					if (!CheckPETFusionSeries(series, out error))
-					{
-						// if there is an error with the PET series, avoid trying to generate the volume entirely
-						// instead, generate a placeholder series for each base series
-						foreach (var baseSeries in fuseableBaseSeries)
-							displaySets.Add(CreateFusionErrorDisplaySet(baseSeries, series, error));
-						return displaySets;
-					}
-
 					using (var fusionOverlayData = new FusionOverlayData(GetFrames(series.Sops)))
 					{
 						foreach (var baseSeries in fuseableBaseSeries)
 						{
-							if (!CheckBaseSeries(baseSeries, out error))
-							{
-								// if there is an error with a single base series, generate a placeholder series
-								displaySets.Add(CreateFusionErrorDisplaySet(baseSeries, series, error));
-								continue;
-							}
-
 							var descriptor = new PETFusionDisplaySetDescriptor(baseSeries.GetIdentifier(), series.GetIdentifier(), IsAttenuationCorrected(series.Sops[0]));
 							var displaySet = new DisplaySet(descriptor);
 							foreach (var baseFrame in GetFrames(baseSeries.Sops))
@@ -90,23 +73,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 									displaySet.PresentationImages.Add(fus);
 								}
 							}
-							displaySet.PresentationImages.Sort();
 							displaySets.Add(displaySet);
 						}
 					}
 				}
 			}
 			return displaySets;
-		}
-
-		private static DisplaySet CreateFusionErrorDisplaySet(Series baseSeries, Series fusionSeries, string error)
-		{
-			// create a basic descriptor that's templated from the real PET fusion display descriptor
-			var baseDescriptor = new PETFusionDisplaySetDescriptor(baseSeries.GetIdentifier(), fusionSeries.GetIdentifier(), IsAttenuationCorrected(fusionSeries.Sops[0]));
-			var descriptor = new BasicDisplaySetDescriptor {Description = baseDescriptor.Description, Name = baseDescriptor.Name, Number = baseDescriptor.Number, Uid = baseDescriptor.Uid};
-			var displaySet = new DisplaySet(descriptor);
-			displaySet.PresentationImages.Add(new ErrorPresentationImage(SR.MessageFusionError + Environment.NewLine + string.Format(SR.FormatReason, error)));
-			return displaySet;
 		}
 
 		public bool IsValidBaseSeries(Series series)
@@ -120,45 +92,19 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 					var frames = GetFrames(series.Sops);
 					if (frames.Count < 5)
 						return false;
+					if (!AssertSameSeriesFrameOfReference(frames))
+						return false;
+					foreach (Frame frame in frames)
+					{
+						if (frame.ImageOrientationPatient.IsNull)
+							return false;
+						//TODO (CR Sept 2010): ImagePositionPatient?
+						if (frame.NormalizedPixelSpacing.IsNull)
+							return false;
+					}
 					return true;
 			}
 			return false;
-		}
-
-		public bool CheckBaseSeries(Series series, out string error)
-		{
-			if (!IsValidBaseSeries(series))
-			{
-				error = SR.MessageInvalidSeries;
-				return false;
-			}
-
-			var frames = GetFrames(series.Sops);
-
-			if (!AssertSameSeriesFrameOfReference(frames))
-			{
-				error = SR.MessageInconsistentFramesOfReference;
-				return false;
-			}
-
-			foreach (Frame frame in frames)
-			{
-				if (frame.ImageOrientationPatient.IsNull)
-				{
-					error = SR.MessageMissingImageOrientation;
-					return false;
-				}
-
-				//TODO (CR Sept 2010): ImagePositionPatient?
-				if (frame.NormalizedPixelSpacing.IsNull)
-				{
-					error = SR.MessageMissingPixelSpacing;
-					return false;
-				}
-			}
-
-			error = null;
-			return true;
 		}
 
 		public bool IsValidPETFusionSeries(Series series)
@@ -169,25 +115,8 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			var frames = GetFrames(series.Sops);
 			if (frames.Count < 5)
 				return false;
-
-			return true;
-		}
-
-		public bool CheckPETFusionSeries(Series series, out string error)
-		{
-			if (!IsValidPETFusionSeries(series))
-			{
-				error = SR.MessageInvalidSeries;
-				return false;
-			}
-
-			var frames = GetFrames(series.Sops);
-
 			if (!AssertSameSeriesFrameOfReference(frames))
-			{
-				error = SR.MessageInconsistentFramesOfReference;
 				return false;
-			}
 
 			// ensure all frames have the same orientation
 			ImageOrientationPatient orient = frames[0].ImageOrientationPatient;
@@ -196,23 +125,13 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			foreach (Frame frame in frames)
 			{
 				if (frame.ImageOrientationPatient.IsNull)
-				{
-					error = SR.MessageMissingImageOrientation;
 					return false;
-				}
-
 				if (!frame.ImageOrientationPatient.EqualsWithinTolerance(orient, _orientationTolerance))
-				{
-					error = SR.MessageInconsistentImageOrientation;
 					return false;
-				}
 
 				PixelSpacing pixelSpacing = frame.NormalizedPixelSpacing;
 				if (pixelSpacing.IsNull)
-				{
-					error = SR.MessageMissingPixelSpacing;
 					return false;
-				}
 
 				minColumnSpacing = Math.Min(minColumnSpacing, pixelSpacing.Column);
 				maxColumnSpacing = Math.Max(maxColumnSpacing, pixelSpacing.Column);
@@ -220,14 +139,9 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 				maxRowSpacing = Math.Max(maxRowSpacing, pixelSpacing.Row);
 			}
 
-			//Aren't many of these rules taken from MPR?  If so, we should create a rule object.
-
 			// ensure all frames have consistent pixel spacing
 			if (maxColumnSpacing - minColumnSpacing > _sliceSpacingTolerance || maxRowSpacing - minRowSpacing > _sliceSpacingTolerance)
-			{
-				error = SR.MessageInconsistentPixelSpacing;
 				return false;
-			}
 
 			// ensure all frames are sorted by slice location
 			frames.Sort(new SliceLocationComparer().Compare);
@@ -238,28 +152,17 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			{
 				float currentSpacing = CalcSpaceBetweenPlanes(frames[i], frames[i - 1]);
 				if (currentSpacing < _minimumSliceSpacing)
-				{
-					error = SR.MessageInconsistentImageSpacing;
 					return false;
-				}
-
 				if (!nominalSpacing.HasValue)
 					nominalSpacing = currentSpacing;
 				if (!FloatComparer.AreEqual(currentSpacing, nominalSpacing.Value, _sliceSpacingTolerance))
-				{
-					error = SR.MessageInconsistentImageSpacing;
 					return false;
-				}
 			}
 
 			// ensure frames are not tilted about unsupposed axis combinations (the gantry correction algorithm only supports rotations about X)
 			if (!IsSupportedGantryTilt(frames)) // suffices to check first one... they're all co-planar now!!
-			{
-				error = SR.MessageUnsupportedGantryTilt;
 				return false;
-			}
 
-			error = null;
 			return true;
 		}
 

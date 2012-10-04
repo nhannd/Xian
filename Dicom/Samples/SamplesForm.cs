@@ -322,8 +322,6 @@ namespace ClearCanvas.Dicom.Samples
 								 textBoxQueryScuRemoteAe.Text,
 								 textBoxQueryScuRemoteHost.Text,
 								 int.Parse(textBoxQueryScuRemotePort.Text), queryMessage);
-                    if (findScu.Status != ScuOperationStatus.NotRunning)
-                        Logger.LogError("Unexpected error from Find SCU: {0}",findScu.FailureDescription);
 					findScu.Dispose();
 				}
 				else
@@ -334,9 +332,7 @@ namespace ClearCanvas.Dicom.Samples
 								 textBoxQueryScuRemoteAe.Text,
 								 textBoxQueryScuRemoteHost.Text,
 								 int.Parse(textBoxQueryScuRemotePort.Text), queryMessage);
-                    if (findScu.Status != ScuOperationStatus.NotRunning)
-                        Logger.LogError("Unexpected error from Find SCU: {0}", findScu.FailureDescription);
-                    findScu.Dispose();
+					findScu.Dispose();
 				}
 
 				foreach (DicomAttributeCollection msg in resultsList)

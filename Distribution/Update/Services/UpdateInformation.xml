@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<LatestComponents xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Components>
+    <Component Name="ClearCanvas Workstation">
+      <Editions>
+        <Edition Name="Community" Version="2.0.12729.37986" VersionSuffix="SP1" DownloadUrl="http://www.google.ca">
+          <UpgradeRules>
+            <UpgradeRule>
+              <Test xsi:type="FalseTest" />
+            </UpgradeRule>
+          </UpgradeRules>
+        </Edition>
+        <Edition Name="Clinical" Version="3.0.15000.50000" VersionSuffix="" DownloadUrl="http://www.clearcanvas.ca/dnn/Downloads/tabid/70/Default.aspx">
+          <UpgradeRules>
+            <UpgradeRule>
+              <Test xsi:type="AndTest">
+                <InnerTests>
+                  <InnerTest xsi:type="IsSameComponentTest" />
+                  <InnerTest xsi:type="IsCommunityEditionTest" Target="Installed" />
+                  <InnerTest xsi:type="IsLatestVersionNewerTest" />
+                </InnerTests>
+              </Test>
+              <ReturnVersionHack>3.0 Clinical</ReturnVersionHack>
+            </UpgradeRule>
+            <UpgradeRule>
+              <Test xsi:type="StandardUpgradeTest" />
+            </UpgradeRule>
+          </UpgradeRules>
+        </Edition>
+      </Editions>
+    </Component>
+  </Components>
+</LatestComponents>

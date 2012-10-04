@@ -17,6 +17,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -40,8 +41,7 @@ namespace ClearCanvas.Ris.Client
 	[IconSet("apply", IconScheme.Colour, "Icons.VerifyPractitionerToolSmall.png", "Icons.VerifyPractitionerToolMedium.png", "Icons.VerifyPractitionerToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner)]
-	// Bug #7342: disabling this tool because it has been deemed too accessible and error prone, but leaving the code here just in case
-	//[ExtensionOf(typeof(ExternalPractitionerItemToolExtensionPoint))]
+	[ExtensionOf(typeof(ExternalPractitionerItemToolExtensionPoint))]
 	public class ExternalPractitionerVerifyTool : ExternalPractitionerTool
 	{
 		public override bool Enabled
@@ -89,16 +89,6 @@ namespace ClearCanvas.Ris.Client
 	[ExtensionOf(typeof(ExternalPractitionerItemToolExtensionPoint))]
 	public class ExternalPractitionerEditTool : ExternalPractitionerTool
 	{
-		public override void Initialize()
-		{
-			base.Initialize();
-
-			this.Context.RegisterDoubleClickHandler(
-				(IClickAction)CollectionUtils.SelectFirst(
-					this.Actions,
-					a => a is IClickAction && a.ActionID.EndsWith("apply")));
-		}
-
 		public void Apply()
 		{
 			var item = (ExternalPractitionerSummary)this.Context.Selection.Item;

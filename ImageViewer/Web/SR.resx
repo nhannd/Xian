@@ -117,16 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MessageAccessionStudiesNotFound" xml:space="preserve">
-    <value>Studies matching the specified accession number could not be found.</value>
-  </data>
   <data name="MessageLoadPriorsFindErrors" xml:space="preserve">
     <value>An unexpected error has occurred while searching for priors. Please contact your PACS administrator.</value>
-  </data>
-  <data name="MessagePatientStudiesNotFound" xml:space="preserve">
-    <value>No studies could be found for the specified patient.</value>
-  </data>
-  <data name="MessageStudyCouldNotBeLoaded" xml:space="preserve">
-    <value>The study could not be loaded.</value>
   </data>
 </root>

@@ -184,7 +184,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 this._manifest.Size = SplashScreenSettings.Default.ManifestSize;
                 this._manifest.AutoSize = SplashScreenSettings.Default.ManifestAutoSize;
                 this._manifest.ForeColor = SplashScreenSettings.Default.ManifestForeColor;
-				this._manifest.Font = SplashScreenSettings.Default.ManifestFontBold ? new Font(this._manifest.Font, FontStyle.Bold) : this._manifest.Font;
+                this._manifest.Font = SplashScreenSettings.Default.ManifestFontBold ? new Font(this._manifest.Font, FontStyle.Bold) : this._license.Font;
                 this._manifest.TextAlign = SplashScreenSettings.Default.ManifestTextAlign;
 
 				this._pluginIconsRectangle = SplashScreenSettings.Default.PluginIconsRectangle;

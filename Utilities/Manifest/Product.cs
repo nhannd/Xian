@@ -45,8 +45,5 @@ namespace ClearCanvas.Utilities.Manifest
         /// </summary>
         [DefaultValue(null)]
         public string Manifest { get; set; }
-
-    	//TODO (CR February 2011) - Low: Does not check Release.
-		//We should just remove the product settings check from here, since it's done using critical.config now anyway.
     }
 }

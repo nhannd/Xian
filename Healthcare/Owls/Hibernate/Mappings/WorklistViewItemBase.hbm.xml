@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Healthcare.Owls" namespace="ClearCanvas.Healthcare.Owls">
+  <class name="WorklistViewItemBase" abstract="true" table="owls_WorklistViewItemBase_notused">
+    <id name="OID" column="OID_" type="Guid">
+      <generator class="guid.comb"/>
+    </id>
+    <version name="Version" column="Version_"/>
+
+    <!-- PatientProfile Info -->
+    <component name="PatientProfile" class="WorklistViewItemPatientProfileInfo">
+      <many-to-one name="Instance" class="ClearCanvas.Healthcare.PatientProfile, ClearCanvas.Healthcare" column="PatientProfileOID_"/>
+      <property name="Version" column="PatientProfileVersion_" type="int"/>
+      <many-to-one name="Patient" class="ClearCanvas.Healthcare.Patient, ClearCanvas.Healthcare" column="PatientOID_"/>
+      <property name="PatientVersion" column="PatientVersion_" type="int"/>
+      <component name="Mrn" class="WorklistViewItemPatientIdentifierInfo">
+        <property name="Id" type="String" column="PatientProfileMrnId_" length="50"/>
+        <many-to-one name="AssigningAuthority" class="ClearCanvas.Healthcare.InformationAuthorityEnum, ClearCanvas.Healthcare" column="PatientProfileMrnAssigningAuthority_"/>
+      </component>
+      <component name="Healthcard" class="WorklistViewItemHealthcardNumberInfo">
+        <property name="Id" type="String" column="PatientProfileHealthcardId_" length="30"/>
+        <many-to-one name="AssigningAuthority" class="ClearCanvas.Healthcare.InsuranceAuthorityEnum, ClearCanvas.Healthcare" column="PatientProfileHealthcardAssigningAuthority_"/>
+      </component>
+      <component name="Name" class="WorklistViewItemPatientNameInfo">
+        <property name="FamilyName" column="PatientProfileFamilyName_" type="String"/>
+        <property name="GivenName" column="PatientProfileGivenName_" type="String"/>
+        <property name="MiddleName" column="PatientProfileMiddleName_" type="String"/>
+      </component>
+    </component>
+    
+    <!-- Visit Info -->
+    <component name="Visit" class="WorklistViewItemVisitInfo">
+      <many-to-one name="Instance" class="ClearCanvas.Healthcare.Visit, ClearCanvas.Healthcare" column="VisitOID_"/>
+      <property name="Version" column="VisitVersion_" type="int"/>
+      <many-to-one name="PatientClass" class="ClearCanvas.Healthcare.PatientClassEnum, ClearCanvas.Healthcare" column="VisitPatientClass_"/>
+      <many-to-one name="CurrentLocation" class="ClearCanvas.Healthcare.Location, ClearCanvas.Healthcare" column="VisitCurrentLocationOID_"/>
+    </component>
+
+
+    <!-- Order Info -->
+    <component name="Order" class="WorklistViewItemOrderInfo">
+      <many-to-one name="Instance" class="ClearCanvas.Healthcare.Order, ClearCanvas.Healthcare" column="OrderOID_"/>
+      <property name="Version" column="OrderVersion_" type="int"/>
+      <property name="AccessionNumber" column="OrderAccessionNumber_" type="String"/>
+      <property name="Priority" column="OrderPriority_" type="ClearCanvas.Healthcare.Hibernate.OrderPriorityEnumHbm, ClearCanvas.Healthcare.Hibernate"/>
+      <property name="SchedulingRequestTime" column="OrderSchedulingRequestTime_" type="DateTime"/>
+      <property name="ScheduledStartTime" column="OrderScheduledStartTime_" type="DateTime"/>
+      <property name="StartTime" column="OrderStartTime_" type="DateTime"/>
+      <property name="EndTime" column="OrderEndTime_" type="DateTime"/>
+      <component name="DiagnosticService" class="WorklistViewItemDiagnosticServiceInfo">
+        <many-to-one name="Instance" class="ClearCanvas.Healthcare.DiagnosticService, ClearCanvas.Healthcare" column="DiagnosticServiceOID_"/>
+        <property name="Id" column="DiagnosticServiceId_" type="String" length="30"/>
+        <property name="Name" column="DiagnosticServiceName_" type="String" length="100"/>
+      </component>
+      <many-to-one name="OrderingPractitioner" class="ClearCanvas.Healthcare.ExternalPractitioner, ClearCanvas.Healthcare" column="OrderOrderingPractitionerOID_"/>
+    </component>
+
+    <!-- Procedure Info -->
+    <component name="Procedure" class="WorklistViewItemProcedureInfo">
+      <many-to-one name="Instance" class="ClearCanvas.Healthcare.Procedure, ClearCanvas.Healthcare" column="ProcedureOID_"/>
+      <property name="Version" column="ProcedureVersion_" type="int"/>
+      <many-to-one name="PerformingFacility" class="ClearCanvas.Healthcare.Facility, ClearCanvas.Healthcare" column="ProcedurePerformingFacilityOID_"/>
+      <many-to-one name="PerformingDepartment" class="ClearCanvas.Healthcare.Department, ClearCanvas.Healthcare" column="ProcedurePerformingDepartmentOID_"/>
+      <component name="Type" class="WorklistViewItemProcedureTypeInfo">
+        <many-to-one name="Instance" class="ClearCanvas.Healthcare.ProcedureType, ClearCanvas.Healthcare" column="ProcedureTypeOID_"/>
+        <property name="Id" column="ProcedureTypeId_" type="String" length="30"/>
+        <property name="Name" column="ProcedureTypeName_" type="String" length="100"/>
+      </component>
+      <property name="Portable" type="Boolean" column="ProcedurePortable_"/>
+      <property name="Laterality" column="ProcedureLaterality_" type="ClearCanvas.Healthcare.Hibernate.LateralityEnumHbm, ClearCanvas.Healthcare.Hibernate"/>
+      <property name="ScheduledStartTime" column="ProcedureScheduledStartTime_" type="DateTime"/>
+      <property name="StartTime" column="ProcedureStartTime_" type="DateTime"/>
+      <property name="EndTime" column="ProcedureEndTime_" type="DateTime"/>
+      <property name="Status" column="ProcedureStatus_" type="ClearCanvas.Healthcare.Hibernate.ProcedureStatusEnumHbm, ClearCanvas.Healthcare.Hibernate"/>
+      <property name="DowntimeRecoveryMode" column="ProcedureDowntimeRecoveryMode_" type="Boolean"/>
+    </component>
+  </class>
+</hibernate-mapping>

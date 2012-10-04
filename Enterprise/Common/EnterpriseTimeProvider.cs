@@ -16,113 +16,96 @@ using ClearCanvas.Enterprise.Common.Time;
 
 namespace ClearCanvas.Enterprise.Common
 {
-	[ExtensionPoint]
-	public class EnterpriseTimeProviderOfflineCacheExtensionPoint : ExtensionPoint<IOfflineCache<string, string>>
-	{
-	}
+    /// <summary>
+    /// Provides a consistent time to the application from the enterprise datasource specified in the nHibernate configuration
+    /// 
+    /// The initial call to CurrentTime will query the database to calculate an offset from the local machine time.  If the database query fails, the local time
+    /// is returned, and subsequent calls to CurrentTime will attempt to re-query the database.  If the database query is successful, subsequent calls CurrentTime will 
+    /// calculate the appropriate enterprise time from the local machine time using this offset.  The offset will be periodically re-calculated from 
+    /// the database (by default, every 60 seconds).
+    /// 
+    /// If we are unable to syncronize the time for 10 minutes, a warning will be logged every 60 seconds when attempting to resynchronize.   
+    /// </summary>    
+    [ExtensionOf(typeof(TimeProviderExtensionPoint))]
+    public class EnterpriseTimeProvider : ITimeProvider
+    {
+        private TimeSpan _localToEnterpriseOffset;
+        private DateTime _lastResyncInLocalTime;
+        private DateTime _lastSyncTime;
+        private TimeSpan _resyncThreshold;
+        private readonly TimeSpan _maxTimeBetweenSync;
+        
+        public EnterpriseTimeProvider()
+        {
+            _lastResyncInLocalTime = DateTime.MinValue;
+            _resyncThreshold = new TimeSpan(0, 0, 60);
+            _maxTimeBetweenSync = new TimeSpan(0, 10, 0);
+        }
 
-	/// <summary>
-	/// Provides a consistent time to the application from the enterprise server.
-	/// </summary>
-	[ExtensionOf(typeof(TimeProviderExtensionPoint))]
-	public class EnterpriseTimeProvider : ITimeProvider
-	{
-		// this key could be anything, as long as it's unique
-		private const string TimeOffsetCacheKey = "{92E55B13-96A5-4a03-A669-B22D5D29E95B}";
+        #region ITimeProvider Members
 
-		private TimeSpan _localToEnterpriseOffset;
-		private DateTime _lastResyncInLocalTime;
-		private DateTime _lastSyncTime;
-		private readonly TimeSpan _resyncPeriod;
-		private readonly TimeSpan _maxTimeBetweenSync;
-		private readonly IOfflineCache<string, string> _offlineCache;
+        public DateTime CurrentTime
+        {
+            get 
+            {
+                if (ResyncRequired())
+                {
+                    ReSyncLocalToEnterpriseTime();
+                }
+                return EnterpriseTimeFromLocal(DateTime.Now); 
+            }
+        }
 
-		public EnterpriseTimeProvider()
-		{
-			_lastResyncInLocalTime = DateTime.MinValue;
-			_resyncPeriod = new TimeSpan(0, 0, 60);
-			_maxTimeBetweenSync = new TimeSpan(0, 10, 0);
+        public TimeSpan ResyncThreshold
+        {
+            get { return _resyncThreshold; }
+            set { _resyncThreshold = value; }
+        }
 
-			try
-			{
-				_offlineCache = (IOfflineCache<string, string>)(new EnterpriseTimeProviderOfflineCacheExtensionPoint()).CreateExtension();
-			}
-			catch (NotSupportedException)
-			{
-				Platform.Log(LogLevel.Debug, SR.ExceptionOfflineCacheNotFound);
+        #endregion
 
-				_offlineCache = new NullOfflineCache<string, string>();
-			}
-		}
+        private DateTime EnterpriseTimeFromLocal(DateTime localTime)
+        {
+            return localTime - _localToEnterpriseOffset;
+        }
 
-		#region ITimeProvider Members
+        private bool ResyncRequired()
+        {
+            if ( DateTime.Now - _lastResyncInLocalTime > _resyncThreshold)
+            {
+                return true;
+            }
+            return false;
+        }
 
-		public DateTime CurrentTime
-		{
-			get
-			{
-				if (ResyncRequired())
-				{
-					ResyncLocalToEnterpriseTime();
-				}
-				return EnterpriseTimeFromLocal(DateTime.Now);
-			}
-		}
+        private void ReSyncLocalToEnterpriseTime()
+        {
+            try
+            {
+                DateTime eTime = CurrentEnterpriseTime();
+                _lastSyncTime = DateTime.Now;
+                _localToEnterpriseOffset = _lastSyncTime - eTime;
+            }
+            catch (Exception)
+            {
+                if ((DateTime.Now - _lastSyncTime) > _maxTimeBetweenSync)
+                    Platform.Log(LogLevel.Warn, "Unable to contact time server for synchronization");
+            }
+        }
 
-		#endregion
+        private DateTime CurrentEnterpriseTime()
+        {
+            DateTime time = default(DateTime);
 
-		private DateTime EnterpriseTimeFromLocal(DateTime localTime)
-		{
-			return localTime - _localToEnterpriseOffset;
-		}
-
-		private bool ResyncRequired()
-		{
-			return (DateTime.Now - _lastResyncInLocalTime) > _resyncPeriod;
-		}
-
-		private void ResyncLocalToEnterpriseTime()
-		{
-			using (var client = _offlineCache.CreateClient())
-			{
-				try
-				{
-					var eTime = CurrentEnterpriseTime();
-					_lastSyncTime = DateTime.Now;
-					_localToEnterpriseOffset = _lastSyncTime - eTime;
-
-					// update offline cache
-					client.Put(TimeOffsetCacheKey, _localToEnterpriseOffset.TotalMilliseconds.ToString());
-				}
-				catch (Exception)
-				{
-					if ((DateTime.Now - _lastSyncTime) > _maxTimeBetweenSync)
-						Platform.Log(LogLevel.Warn, "Unable to contact time server for synchronization");
-
-					// if the process has just started up, and we have not yet been able to connect to the server,
-					// attempt to read last known value from the offline cache
-					if (_localToEnterpriseOffset == TimeSpan.Zero)
-					{
-						var s = client.Get(TimeOffsetCacheKey);
-						_localToEnterpriseOffset = (s == null) ? TimeSpan.Zero : TimeSpan.FromMilliseconds(double.Parse(s));
-					}
-				}
-			}
-		}
-
-		private DateTime CurrentEnterpriseTime()
-		{
-			var time = default(DateTime);
-
-			Platform.GetService(
+            Platform.GetService(
 				delegate(ITimeService service)
-				{
-					time = service.GetTime(new GetTimeRequest()).Time;
-				});
+                {
+                    time = service.GetTime(new GetTimeRequest()).Time;
+                });
 
-			_lastResyncInLocalTime = DateTime.Now;
+            _lastResyncInLocalTime = DateTime.Now;
 
-			return time;
-		}
-	}
+            return time;
+        }
+    }
 }

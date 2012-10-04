@@ -47,11 +47,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			if (e is DicomServerConfigurationHelper.RefreshException)
 			{
-				exceptionHandlingContext.ShowMessageBox(SR.MessageFailedToRetrieveDicomServerConfiguration);
+				exceptionHandlingContext.ShowMessageBox(SR.ExceptionDicomServerConfigurationRefreshFailed);
 			}
 			else if (e is DicomServerConfigurationHelper.UpdateException)
 			{
-				exceptionHandlingContext.ShowMessageBox(SR.MessageFailedToUpdateDicomServerConfiguration);
+				exceptionHandlingContext.ShowMessageBox(SR.ExceptionDicomServerConfigurationUpdateFailed);
 			}
 		}
 

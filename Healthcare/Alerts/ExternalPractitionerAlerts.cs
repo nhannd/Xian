@@ -150,7 +150,7 @@ namespace ClearCanvas.Healthcare.Alerts
 			public override AlertNotification Test(ExternalPractitioner entity, IPersistenceContext context)
 			{
 				var broker = context.GetBroker<IExternalPractitionerBroker>();
-				var count = broker.CountMergeCandidates(entity);
+				var count = broker.GetDuplicatesCount(entity);
 				return count > 0 ? new AlertNotification(this.Id, new string[] { }) : null;
 			}
 		}

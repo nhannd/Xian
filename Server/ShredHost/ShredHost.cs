@@ -222,12 +222,12 @@ namespace ClearCanvas.Server.ShredHost
         public static void PrintAllAssembliesInAppDomain(AppDomain ad)
         {
             Assembly[] loadedAssemblies = ad.GetAssemblies();
-            Console.WriteLine(@"***** Here are the assemblies loaded in {0} *****\n",
+            Console.WriteLine("***** Here are the assemblies loaded in {0} *****\n",
                 ad.FriendlyName);
             foreach (Assembly a in loadedAssemblies)
             {
-                Console.WriteLine(@"-> Name: {0}", a.GetName().Name);
-                Console.WriteLine(@"-> Version: {0}", a.GetName().Version);
+                Console.WriteLine("-> Name: {0}", a.GetName().Name);
+                Console.WriteLine("-> Version: {0}", a.GetName().Version);
             }
         }
         #endregion

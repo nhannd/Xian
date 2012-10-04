@@ -39,6 +39,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_targetItem.DataSource = _component.TargetItems;
 			_targetItem.DataBindings.Add("Value", _component, "SelectedOriginal", true, DataSourceUpdateMode.OnPropertyChanged);
 			_targetItem.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatItem(e.ListItem); };
+
+			_report.DataBindings.Add("Value", _component, "MergeReport", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		private void _acceptButton_Click(object sender, EventArgs e)

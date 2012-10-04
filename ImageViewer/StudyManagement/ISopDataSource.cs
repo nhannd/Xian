@@ -71,11 +71,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	public interface ISopDataSource : IDicomAttributeProvider, IDisposable
 	{
 		/// <summary>
-		/// Gets the Patient ID.
-		/// </summary>
-		string PatientId { get; }
-
-		/// <summary>
 		/// Gets the study instance UID.
 		/// </summary>
 		string StudyInstanceUid { get; }

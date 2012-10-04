@@ -789,16 +789,4 @@ Please check the log for more details.</value>
   <data name="TooltipShowHideColorBar" xml:space="preserve">
     <value>Show/Hide Colour Bar</value>
   </data>
-  <data name="FormatCoordinates" xml:space="preserve">
-    <value>x={0}, y={1}</value>
-  </data>
-  <data name="FormatProbeInfo" xml:space="preserve">
-    <value>{0}: {1}</value>
-  </data>
-  <data name="FormatValueUnits" xml:space="preserve">
-    <value>{0} ({1})</value>
-  </data>
-  <data name="LabelLocation" xml:space="preserve">
-    <value>LOC</value>
-  </data>
 </root>

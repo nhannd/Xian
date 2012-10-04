@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -140,7 +140,6 @@
       <DependentUpon>ConfigurationDialogSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Configuration\SettingsManagementComponent.cs" />
-    <Compile Include="Configuration\SettingsStoreWatcher.cs" />
     <Compile Include="Configuration\Standard\CustomDateFormatSettings.cs" />
     <Compile Include="Configuration\Standard\CustomDateFormatSettings.designer.cs">
       <DependentUpon>CustomDateFormatSettings.settings</DependentUpon>
@@ -185,12 +184,6 @@
     <Compile Include="IWorkspaceDialogBoxView.cs" />
     <Compile Include="IPagingController.cs" />
     <Compile Include="Configuration\IUserUpgradeProgressDialogView.cs" />
-    <Compile Include="LocaleSettings.cs" />
-    <Compile Include="LocaleSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>LocaleSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="ModifierFlags.cs" />
     <Compile Include="ModifierFlagsConverter.cs" />
     <Compile Include="PagingActionModel.cs" />
@@ -207,7 +200,7 @@
     <Compile Include="GalleryComponent.cs" />
     <Compile Include="IGalleryToolContext.cs" />
     <Compile Include="IGuiToolkit.cs" />
-    <Compile Include="SessionManager.cs" />
+    <Compile Include="ISessionManager.cs" />
     <Compile Include="IShelfHost.cs" />
     <Compile Include="ISuggestionProvider.cs" />
     <Compile Include="IWorkspaceHost.cs" />
@@ -462,10 +455,6 @@
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ClassDiagrams\Tools.cd" />
-    <None Include="LocaleSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>LocaleSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="ToolStripSettings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>ToolStripSettings.Designer.cs</LastGenOutput>

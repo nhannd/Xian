@@ -75,11 +75,11 @@ namespace ClearCanvas.ImageViewer.Annotations
 			set { _visible = value; }
 		}
 
-		public IAnnotationLayout Clone()
+		#endregion
+
+		public StoredAnnotationLayout Clone()
 		{
 			return new StoredAnnotationLayout(this, null);
 		}
-
-		#endregion
 	}
 }

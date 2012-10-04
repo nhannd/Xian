@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Controls
 {
@@ -186,7 +185,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 case MessageTypeEnum.ERROR:
                     OKButton.Visible = true;
                     if (String.IsNullOrEmpty(Title))
-                        Title = SR.ConfirmDialogError;
+                        Title = App_GlobalResources.SR.ConfirmDialogError;
                     break;
 
                 case MessageTypeEnum.INFORMATION:
@@ -197,14 +196,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                     OKButton.Visible = true;
                     CancelButton.Visible = true;
                     if (String.IsNullOrEmpty(Title))
-                        Title = SR.ConfirmDialogDefault;
+                        Title = App_GlobalResources.SR.ConfirmDialogDefault;
                     break;
 
                 case MessageTypeEnum.YESNO:
                     YesButton.Visible = true;
                     NoButton.Visible = true;
                     if (String.IsNullOrEmpty(Title))
-                        Title = SR.ConfirmDialogDefault;
+                        Title = App_GlobalResources.SR.ConfirmDialogDefault;
                     break;
 
                 default:

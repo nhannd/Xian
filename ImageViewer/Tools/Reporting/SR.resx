@@ -141,9 +141,6 @@
   <data name="MessageCannotPublishKeyImagesServersNotRunning" xml:space="preserve">
     <value>Key Images cannot be published because the local services are not running.  Please start the service and click OK to continue with publishing.  To discard the Key Images, click Cancel.</value>
   </data>
-  <data name="MessageCreateKeyImageFailed" xml:space="preserve">
-    <value>Failed to create a key image from the current selection.</value>
-  </data>
   <data name="MessageInvalidSeriesDescription" xml:space="preserve">
     <value>The SeriesDescription must be between 1 and 64 characters.</value>
   </data>

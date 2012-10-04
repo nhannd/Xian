@@ -472,17 +472,17 @@ namespace ClearCanvas.Dicom.Network
         /// Defines an event handler  when an association has been aborted.
         /// </summary>
         /// <param name="assoc"></param>
-        /// <param name="reason"></param>
+        /// <param name="reason></param>
         public delegate void AssociationAbortedEventHandler(AssociationParameters assoc, DicomAbortReason reason);
 
         /// <summary>
         /// Defines an event handler  when a Dimse message is being sent.
         /// </summary>
-        /// <param name="assoc"></param>
-        /// <param name="presentationContextID"></param>
-        /// <param name="command"></param>
-        /// <param name="dataset"></param>
-        /// <param name="tranferStats"></param>
+        /// <param name="assoc>"</param>
+        /// <param name="presentationContextID>"</param>
+        /// <param name="command>"</param>
+        /// <param name="dataset>"</param>
+        /// <param name="tranferStats>"</param>
         public delegate void DimseMessageSendingEventHandler(
             AssociationParameters assoc, byte presentationContextID, DicomAttributeCollection command,
             DicomAttributeCollection dataset);
@@ -490,36 +490,36 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// Defines an event handler  when a Dimse message is being received.
         /// </summary>
-        /// <param name="assoc"></param>
-        /// <param name="presentationContextID"></param>
-        /// <param name="tranferStats"></param>
+        /// <param name="assoc>"</param>
+        /// <param name="presentationContextID>"</param>
+        /// <param name="tranferStats>"</param>
         public delegate void DimseMessageReceivingEventHandler(AssociationParameters assoc, byte presentationContextID);
 
         /// <summary>
         /// Defines an event handler  when a Dicom message has been sent.
         /// </summary>
-        /// <param name="assoc"></param>
+        /// <param name="assoc>"</param>
         /// <param name="msg"/>
         public delegate void MessageSentEventHandler(AssociationParameters assoc, DicomMessage msg);
 
         /// <summary>
         /// Defines an event handler  when a Dicom message has been received.
         /// </summary>
-        /// <param name="assoc"></param>
+        /// <param name="assoc>"</param>
         /// <param name="msg"/>
         public delegate void MessageReceivedEventHandler(AssociationParameters assoc, DicomMessage msg);
 
         /// <summary>
         /// Defines an event handler  when the network stream has been closed.
         /// </summary>
-        /// <param name="assoc"></param>
+        /// <param name="assoc>"</param>
         /// <param name="data"></param>
         public delegate void NetworkClosedEventHandler(object data);
 
         /// <summary>
         /// Defines an event handler  when a network error occurs
         /// </summary>
-        /// <param name="assoc"></param>
+        /// <param name="assoc>"</param>
         /// <param name="data"/>
         public delegate void NetworkErrorEventHandler(object data);
 
@@ -1114,7 +1114,10 @@ namespace ClearCanvas.Dicom.Network
 			message.AffectedSopClassUid = affectedClass.UID;
 			message.MessageId = messageID;
 			message.CommandField = DicomCommandField.NGetRequest;
-			message.DataSetType = 0x0102;
+
+			if (!message.CommandSet.Contains(DicomTags.Priority))
+				message.Priority = DicomPriority.Medium;
+			message.DataSetType = 0x0202;
 
 			message.CommandSet[DicomTags.RequestedSopClassUid].SetStringValue(affectedClass.UID);
 			message.CommandSet[DicomTags.RequestedSopInstanceUid].SetStringValue(requestedSopInstanceUid.UID);
@@ -1151,13 +1154,15 @@ namespace ClearCanvas.Dicom.Network
 			if (affectedClass == null)
 				affectedClass = _assoc.GetAbstractSyntax(presentationID);
 
-			message.CommandSet[DicomTags.AffectedSopClassUid].SetStringValue(affectedClass.UID);
-			message.CommandSet[DicomTags.MessageId].SetUInt16(0, messageID);
-			message.CommandSet[DicomTags.CommandField].SetUInt16(0, (ushort) DicomCommandField.NCreateRequest);
-			message.CommandSet[DicomTags.DataSetType].SetUInt16(0, 0x0102);
+			message.AffectedSopClassUid = affectedClass.UID;
+			message.MessageId = messageID;
+			message.CommandField = DicomCommandField.NCreateRequest;
+			if (!message.CommandSet.Contains(DicomTags.Priority))
+				message.Priority = DicomPriority.Medium;
+			message.DataSetType = 0x0202;
 
 			if (affectedSopInstanceUid != null)
-				message.CommandSet[DicomTags.AffectedSopInstanceUid].SetStringValue(affectedSopInstanceUid.UID);
+				message.AffectedSopInstanceUid = affectedSopInstanceUid.UID;
 
 			SendDimse(presentationID, message.CommandSet, message.DataSet);
 		}
@@ -1186,9 +1191,12 @@ namespace ClearCanvas.Dicom.Network
 			if (message.DataSet.IsEmpty())
 				throw new DicomException("Unexpected empty DataSet when sending N-SET-RQ.");
 
-			message.CommandSet[DicomTags.MessageId].SetUInt16(0, messageID);
-			message.CommandSet[DicomTags.CommandField].SetUInt16(0, (ushort)DicomCommandField.NSetRequest);
-			message.CommandSet[DicomTags.DataSetType].SetUInt16(0, 0x0102);
+			message.MessageId = messageID;
+			message.CommandField = DicomCommandField.NSetRequest;
+			if (!message.CommandSet.Contains(DicomTags.Priority))
+				message.Priority = DicomPriority.Medium;
+
+			message.DataSetType = 0x0202;
 
 			SendDimse(presentationID, message.CommandSet, message.DataSet);
 		}
@@ -1213,11 +1221,11 @@ namespace ClearCanvas.Dicom.Network
 		/// <param name="message">The message.</param>
 		public void SendNActionRequest(byte presentationID, ushort messageID, DicomMessage message)
 		{
-			message.CommandSet[DicomTags.MessageId].SetUInt16(0, messageID);
-			message.CommandSet[DicomTags.CommandField].SetUInt16(0, (ushort)DicomCommandField.NActionRequest);
+			message.MessageId = messageID;
+			message.CommandField = DicomCommandField.NActionRequest;
 
 			//if (message.DataSet != null && !message.DataSet.IsEmpty())
-			message.CommandSet[DicomTags.DataSetType].SetUInt16(0, 0x101);
+			message.DataSetType = 257;
 
 			SendDimse(presentationID, message.CommandSet, message.DataSet);
 		}
@@ -1242,13 +1250,15 @@ namespace ClearCanvas.Dicom.Network
 		/// <param name="message">The message.</param>
 		public void SendNDeleteRequest(byte presentationID, ushort messageID, DicomMessage message)
 		{
-			message.CommandSet[DicomTags.MessageId].SetUInt16(0, messageID);
-			message.CommandSet[DicomTags.CommandField].SetUInt16(0, (ushort)DicomCommandField.NDeleteRequest);
+			message.MessageId = messageID;
+			message.CommandField = DicomCommandField.NDeleteRequest;
+			if (!message.CommandSet.Contains(DicomTags.Priority))
+				message.Priority = DicomPriority.Medium;
 
 			if (message.DataSet == null || message.DataSet.IsEmpty())
-				message.CommandSet[DicomTags.DataSetType].SetUInt16(0, 0x101);
+				message.DataSetType = 0x0101;
 			else
-				message.CommandSet[DicomTags.DataSetType].SetUInt16(0, 0x102);
+				message.DataSetType = 0x202;
 
 			SendDimse(presentationID, message.CommandSet, message.DataSet);
 		}
@@ -1737,9 +1747,6 @@ namespace ClearCanvas.Dicom.Network
                 // the error reported to them through the OnNetworkError routine, and throwing an exception here
                 // might cause us to call OnNetworkError a second time, because the exception may be caught at a higher
                 // level
-                // Note, when fixing defect #8184, realized that throwing an exception here would cause
-                // failures in the ImageServer, because there are places where we wouldn't catch the 
-                // exception.  Should be careful if this is ever introduced back in.
                 //throw new DicomException("Unexpected exception when sending a DIMSE message",e);
             }
         }
@@ -1757,35 +1764,17 @@ namespace ClearCanvas.Dicom.Network
 			message.CommandField = commandField;
 			message.MessageIdBeingRespondedTo = messageId;
 			message.AffectedSopClassUid = message.AffectedSopClassUid;
+			if (!message.CommandSet.Contains(DicomTags.Priority))
+				message.Priority = DicomPriority.Medium;
 
 			if (message.DataSet == null || message.DataSet.IsEmpty())
 				message.DataSetType = 0x0101;
 			else
-				message.DataSetType = 0x0102;
+				message.DataSetType = 0x202;
 			message.Status = status;
 			SendDimse(presentationId, message.CommandSet, message.DataSet);
 		}
-
-		/// <summary>
-		/// Sends an N-Event-Report Response.
-		/// </summary>
-		/// <param name="presentationID">The presentation context ID</param>
-		/// <param name="requestMessage">The message being responsed to.</param>
-		/// <param name="message">The response message to send.</param>
-		/// <param name="status">The status to send.</param>
-		public void SendNEventReportResponse(byte presentationID, DicomMessage requestMessage, DicomMessage message, DicomStatus status)
-		{
-			message.CommandSet[DicomTags.CommandField].SetUInt16(0, (ushort)DicomCommandField.NEventReportResponse);
-			message.CommandSet[DicomTags.MessageIdBeingRespondedTo].SetUInt16(0, requestMessage.MessageId);
-			message.CommandSet[DicomTags.EventTypeId].SetUInt16(0, requestMessage.EventTypeId);
-			message.CommandSet[DicomTags.AffectedSopClassUid].SetStringValue(requestMessage.AffectedSopClassUid);
-			message.CommandSet[DicomTags.AffectedSopInstanceUid].SetStringValue(requestMessage.AffectedSopInstanceUid);
-			message.CommandSet[DicomTags.Status].SetUInt16(0, status.Code);
-			message.CommandSet[DicomTags.DataSetType].SetUInt16(0, 0x0101);
-
-			SendDimse(presentationID, message.CommandSet, message.DataSet);
-		}
-
+      
         private static void LogSendReceive(bool receive, DicomAttributeCollection metaInfo, DicomAttributeCollection dataSet)
         {
 			if (Platform.IsLogLevelEnabled(LogLevel.Debug))

@@ -34,14 +34,15 @@ namespace ClearCanvas.Ris.Application.Services.Login
 		[ReadOperation]
 		public GetWorkingFacilityChoicesResponse GetWorkingFacilityChoices(GetWorkingFacilityChoicesRequest request)
 		{
-			// load all facilities and sort by code
-			var facilities = PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false);
-			facilities = CollectionUtils.Sort(facilities, (x, y) => x.Code.CompareTo(y.Code));
-
+			// facility choices - for now, just return all facilities
+			// conceivably this list could be filtered for various reasons
+			// (ie inactive facilities, etc) 
 			var facilityAssembler = new FacilityAssembler();
-			return new GetWorkingFacilityChoicesResponse(
-				CollectionUtils.Map(facilities,
-					(Facility input) => facilityAssembler.CreateFacilitySummary(input)));
+			var facilities = CollectionUtils.Map(
+				PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
+				(Facility input) => facilityAssembler.CreateFacilitySummary(input));
+
+			return new GetWorkingFacilityChoicesResponse(facilities);
 		}
 
 		[UpdateOperation]

@@ -59,7 +59,6 @@ namespace ClearCanvas.Desktop.Explorer.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExplorerConfigurationComponentControl));
 			this._launchAsGroupBox = new System.Windows.Forms.GroupBox();
 			this._launchAsShelf = new System.Windows.Forms.RadioButton();
 			this._launchAsWorkspace = new System.Windows.Forms.RadioButton();
@@ -72,41 +71,61 @@ namespace ClearCanvas.Desktop.Explorer.View.WinForms
 			// 
 			this._launchAsGroupBox.Controls.Add(this._launchAsShelf);
 			this._launchAsGroupBox.Controls.Add(this._launchAsWorkspace);
-			resources.ApplyResources(this._launchAsGroupBox, "_launchAsGroupBox");
+			this._launchAsGroupBox.Location = new System.Drawing.Point(12, 35);
 			this._launchAsGroupBox.Name = "_launchAsGroupBox";
+			this._launchAsGroupBox.Size = new System.Drawing.Size(133, 74);
+			this._launchAsGroupBox.TabIndex = 1;
 			this._launchAsGroupBox.TabStop = false;
+			this._launchAsGroupBox.Text = "Launch as:";
 			// 
 			// _launchAsShelf
 			// 
-			resources.ApplyResources(this._launchAsShelf, "_launchAsShelf");
+			this._launchAsShelf.AutoSize = true;
+			this._launchAsShelf.Location = new System.Drawing.Point(13, 45);
 			this._launchAsShelf.Name = "_launchAsShelf";
+			this._launchAsShelf.Size = new System.Drawing.Size(107, 17);
+			this._launchAsShelf.TabIndex = 1;
+			this._launchAsShelf.Text = "Docking Window";
 			this._launchAsShelf.UseVisualStyleBackColor = true;
 			// 
 			// _launchAsWorkspace
 			// 
-			resources.ApplyResources(this._launchAsWorkspace, "_launchAsWorkspace");
+			this._launchAsWorkspace.AutoSize = true;
+			this._launchAsWorkspace.Location = new System.Drawing.Point(13, 22);
 			this._launchAsWorkspace.Name = "_launchAsWorkspace";
+			this._launchAsWorkspace.Size = new System.Drawing.Size(80, 17);
+			this._launchAsWorkspace.TabIndex = 0;
+			this._launchAsWorkspace.Text = "Workspace";
 			this._launchAsWorkspace.UseVisualStyleBackColor = true;
 			// 
 			// _launchAtStartup
 			// 
-			resources.ApplyResources(this._launchAtStartup, "_launchAtStartup");
+			this._launchAtStartup.AutoSize = true;
+			this._launchAtStartup.Location = new System.Drawing.Point(12, 12);
 			this._launchAtStartup.Name = "_launchAtStartup";
+			this._launchAtStartup.Size = new System.Drawing.Size(111, 17);
+			this._launchAtStartup.TabIndex = 0;
+			this._launchAtStartup.Text = "Launch at Startup";
 			this._launchAtStartup.UseVisualStyleBackColor = true;
 			// 
 			// label1
 			// 
-			resources.ApplyResources(this.label1, "label1");
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(9, 121);
 			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(306, 13);
+			this.label1.TabIndex = 2;
+			this.label1.Text = "Note: you must close the Explorer for the change to take effect.";
 			// 
 			// ExplorerConfigurationComponentControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this._launchAtStartup);
 			this.Controls.Add(this._launchAsGroupBox);
 			this.Name = "ExplorerConfigurationComponentControl";
+			this.Size = new System.Drawing.Size(338, 157);
 			this._launchAsGroupBox.ResumeLayout(false);
 			this._launchAsGroupBox.PerformLayout();
 			this.ResumeLayout(false);

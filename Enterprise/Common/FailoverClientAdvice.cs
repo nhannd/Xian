@@ -64,8 +64,6 @@ namespace ClearCanvas.Enterprise.Common
 			}
 		}
 
-		#endregion
-
 		private bool DoFailover(IInvocation invocation)
 		{
 			object channel;
@@ -133,5 +131,7 @@ namespace ClearCanvas.Enterprise.Common
 			// any other exception should not prompt fail over
 			return false;
 		}
+
+		#endregion
 	}
 }

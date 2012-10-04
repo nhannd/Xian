@@ -10,37 +10,19 @@
 #endregion
 
 using System;
-using System.ServiceModel;
+using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common.Audit;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Common.Audit
 {
-	[ExtensionPoint]
-	public class EnterpriseAuditSinkOfflineCacheExtensionPoint : ExtensionPoint<IOfflineCache<Guid, AuditEntryInfo>>
-	{
-	}
-
 	/// <summary>
 	/// An implementation of <see cref="IAuditSink"/> that sinks to the <see cref="IAuditService"/>.
 	/// </summary>
 	[ExtensionOf(typeof(AuditSinkExtensionPoint))]
 	public class AuditSink : IAuditSink
 	{
-		private readonly IOfflineCache<Guid, AuditEntryInfo> _offlineCache;
-
-		public AuditSink()
-		{
-			try
-			{
-				_offlineCache = (IOfflineCache<Guid, AuditEntryInfo>)(new EnterpriseAuditSinkOfflineCacheExtensionPoint()).CreateExtension();
-			}
-			catch (NotSupportedException)
-			{
-				Platform.Log(LogLevel.Debug, SR.ExceptionOfflineCacheNotFound);
-			}
-		}
-
 		#region IAuditSink Members
 
 		/// <summary>
@@ -49,36 +31,13 @@ namespace ClearCanvas.Enterprise.Common.Audit
 		/// <param name="entry"></param>
 		public void WriteEntry(AuditEntryInfo entry)
 		{
-			try
-			{
-				Platform.GetService<IAuditService>(service => service.WriteEntry(new WriteEntryRequest(entry)));
-			}
-			catch (EndpointNotFoundException e)
-			{
-				if(_offlineCache == null)
-					throw new AuditException(SR.ExceptionAuditServiceNotReachableAndNoOfflineCache, e);
-
-				StoreOffline(entry);
-			}
+			Platform.GetService<IAuditService>(
+				delegate(IAuditService service)
+				{
+					service.WriteEntry(new WriteEntryRequest(entry));
+				});
 		}
 
 		#endregion
-
-		private void StoreOffline(AuditEntryInfo entry)
-		{
-			try
-			{
-				using (var client = _offlineCache.CreateClient())
-				{
-					// stick it in the offline cache
-					// any unique value can be used as a key, because it will never be accessed by key again
-					client.Put(Guid.NewGuid(), entry);
-				}
-			}
-			catch (Exception e)
-			{
-				throw new AuditException(SR.ExceptionAuditServiceNotReachableAndNoOfflineCache, e);
-			}
-		}
 	}
 }

@@ -120,9 +120,6 @@
   <data name="HelpNotFound" xml:space="preserve">
     <value>Could not find help file.</value>
   </data>
-  <data name="LabelClose" xml:space="preserve">
-    <value>Close</value>
-  </data>
   <data name="LicenseNotFound" xml:space="preserve">
     <value>Could not find license file.</value>
   </data>

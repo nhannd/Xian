@@ -72,6 +72,11 @@
   <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
     <SharedLibraryFiles Include="$(ProjectDir)\..\..\ReferencedAssemblies\nunit.framework.dll" />
   </ItemGroup>
+  
+  <!-- License files -->
+  <ItemGroup>
+    <LicenseFiles Include="$(ProjectDir)\..\..\License.rtf" />
+  </ItemGroup>
 
   <!-- Execution files -->
   <ItemGroup>

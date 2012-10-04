@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 			}
 			catch(Exception e)
 			{
-				ExceptionHandler.Report(e, SR.MessageClipboardCopyFailed, Context.DesktopWindow);
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
 		}
 
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, SR.MessageClipboardCopyFailed, Context.DesktopWindow);
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
 		}
 
@@ -196,7 +196,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, SR.MessageClipboardCopyFailed, Context.DesktopWindow);
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
 		}
 

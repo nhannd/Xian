@@ -48,7 +48,6 @@ namespace ClearCanvas.Web.Services
 
 		public static string Translate(Exception e, bool returnExceptionMessage)
 		{
-            //TODO: returnExceptionMessage is always false
 		    Platform.Log(LogLevel.Error, e, "Exception has occurred");
 			return DoTranslate(e) ?? (returnExceptionMessage ? e.Message : SR.MessageUnexpectedError);
 		}

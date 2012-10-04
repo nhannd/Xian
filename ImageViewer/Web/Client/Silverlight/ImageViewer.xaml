@@ -1,12 +1,4 @@
-﻿<!-- 
-// Copyright (c) 2011, ClearCanvas Inc.
-// All rights reserved.
-// http://www.clearcanvas.ca
-//
-// This software is licensed under the Open Software License v3.0.
-// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
--->
-<UserControl x:Class="ClearCanvas.ImageViewer.Web.Client.Silverlight.ImageViewer"
+﻿<UserControl x:Class="ClearCanvas.ImageViewer.Web.Client.Silverlight.ImageViewer"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
              

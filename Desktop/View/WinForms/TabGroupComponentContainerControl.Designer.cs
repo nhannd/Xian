@@ -59,30 +59,33 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TabGroupComponentContainerControl));
-			this._tabbedGroupsControl = new Crownwood.DotNetMagic.Controls.TabbedGroups();
-			((System.ComponentModel.ISupportInitialize)(this._tabbedGroupsControl)).BeginInit();
-			this.SuspendLayout();
-			// 
-			// _tabbedGroupsControl
-			// 
-			this._tabbedGroupsControl.AllowDrop = true;
-			this._tabbedGroupsControl.AtLeastOneLeaf = false;
-			resources.ApplyResources(this._tabbedGroupsControl, "_tabbedGroupsControl");
-			this._tabbedGroupsControl.Name = "_tabbedGroupsControl";
-			this._tabbedGroupsControl.ProminentLeaf = null;
-			this._tabbedGroupsControl.ResizeBarColor = System.Drawing.SystemColors.Control;
-			this._tabbedGroupsControl.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
-			this._tabbedGroupsControl.TabControlCreated += new Crownwood.DotNetMagic.Controls.TabbedGroups.TabControlCreatedHandler(this.OnTabControlCreated);
-			// 
-			// TabGroupComponentContainerControl
-			// 
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._tabbedGroupsControl);
-			this.Name = "TabGroupComponentContainerControl";
-			((System.ComponentModel.ISupportInitialize)(this._tabbedGroupsControl)).EndInit();
-			this.ResumeLayout(false);
+            this._tabbedGroupsControl = new Crownwood.DotNetMagic.Controls.TabbedGroups();
+            ((System.ComponentModel.ISupportInitialize)(this._tabbedGroupsControl)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // _tabbedGroupsControl
+            // 
+            this._tabbedGroupsControl.AllowDrop = true;
+            this._tabbedGroupsControl.AtLeastOneLeaf = false;
+            this._tabbedGroupsControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._tabbedGroupsControl.Location = new System.Drawing.Point(0, 0);
+            this._tabbedGroupsControl.Name = "_tabbedGroupsControl";
+            this._tabbedGroupsControl.ProminentLeaf = null;
+            this._tabbedGroupsControl.ResizeBarColor = System.Drawing.SystemColors.Control;
+            this._tabbedGroupsControl.Size = new System.Drawing.Size(434, 348);
+            this._tabbedGroupsControl.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
+            this._tabbedGroupsControl.TabIndex = 0;
+            this._tabbedGroupsControl.TabControlCreated += new Crownwood.DotNetMagic.Controls.TabbedGroups.TabControlCreatedHandler(this.OnTabControlCreated);
+            // 
+            // TabbedGroupsComponentContainerControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._tabbedGroupsControl);
+            this.Name = "TabbedGroupsComponentContainerControl";
+            this.Size = new System.Drawing.Size(434, 348);
+            ((System.ComponentModel.ISupportInitialize)(this._tabbedGroupsControl)).EndInit();
+            this.ResumeLayout(false);
 
         }
 

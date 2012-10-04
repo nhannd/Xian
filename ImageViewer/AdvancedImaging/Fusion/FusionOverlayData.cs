@@ -17,7 +17,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -35,7 +34,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 	public partial class FusionOverlayData : IDisposable, ILargeObjectContainer, IProgressGraphicProgressProvider
 	{
 		private readonly object _syncVolumeDataLock = new object();
-		private readonly IList<VoiWindow> _voiWindows;
 		private IList<IFrameReference> _frames;
 		private VolumeData _volume;
 
@@ -45,9 +43,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 			foreach (Frame frame in overlaySource)
 				frames.Add(frame.CreateTransientReference());
 			_frames = frames.AsReadOnly();
-
-			if (frames.Count > 0)
-				_voiWindows = new List<VoiWindow>(VoiWindow.GetWindows(frames[0].Sop.DataSource)).AsReadOnly();
 		}
 
 		protected virtual void Dispose(bool disposing)
@@ -80,11 +75,6 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion
 		public IList<Frame> Frames
 		{
 			get { return CollectionUtils.Map<IFrameReference, Frame>(_frames, f => f.Frame).AsReadOnly(); }
-		}
-
-		public IList<VoiWindow> VoiWindows
-		{
-			get { return _voiWindows; }
 		}
 
 		protected VolumeData Volume

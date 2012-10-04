@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -23,7 +22,6 @@ namespace ClearCanvas.Desktop.View.WinForms
     public class GuiToolkit : IGuiToolkit
     {
         private event EventHandler _started;
-    	private Thread _guiThread;
 
         /// <summary>
         /// No-args constructor required by extension point framework.
@@ -59,10 +57,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         public void Run()
         {
-        	_guiThread = Thread.CurrentThread;
-
-        	Application.CurrentUICultureChanged += Application_CurrentUICultureChanged;
-
             // this must be called before any GUI objects are created - otherwise we get problems with icons not showing up
             System.Windows.Forms.Application.EnableVisualStyles();
 
@@ -87,15 +81,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         public void Terminate()
         {
             System.Windows.Forms.Application.Exit();
-
-			Application.CurrentUICultureChanged -= Application_CurrentUICultureChanged;
         }
-
-    	private void Application_CurrentUICultureChanged(object sender, EventArgs e)
-    	{
-			// update the culture on the main GUI thread
-    		_guiThread.CurrentUICulture = Application.CurrentUICulture;
-    	}
 
         #endregion
     }

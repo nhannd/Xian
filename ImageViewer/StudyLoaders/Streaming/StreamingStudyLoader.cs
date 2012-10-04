@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.ServiceModel;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.Dicom.Utilities.Xml;
@@ -25,9 +24,7 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
-	//TODO (CR February 2011) - Low: this is not ideal, but at the moment I can't think of a better way to do it.
-
-	public interface IStreamingStudyLoaderConfiguration
+    public interface IStreamingStudyLoaderConfiguration
     {
         string GetClientAETitle();
     }
@@ -50,33 +47,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
     [ExtensionOf(typeof(StudyLoaderExtensionPoint))]
     public class StreamingStudyLoader : StudyLoader
     {
-        private const string _loaderName = "CC_STREAMING";
-
         private IEnumerator<InstanceXml> _instances;
         private ApplicationEntity _serverAe;
 
         public StreamingStudyLoader()
-            : this(_loaderName)
+            : base("CC_STREAMING")
         {
-        }
-
-        public StreamingStudyLoader(string name):
-            base(name)
-        {
-            InitStrategy();
-        }
-
-        protected virtual void InitStrategy()
-        {
-            PrefetchingStrategy = new WeightedWindowPrefetchingStrategy(new StreamingCorePrefetchingStrategy(), _loaderName, SR.DescriptionPrefetchingStrategy)
-                                      {
-                                          Enabled = StreamingSettings.Default.RetrieveConcurrency > 0,
-                                          RetrievalThreadConcurrency = Math.Max(StreamingSettings.Default.RetrieveConcurrency, 1),
-                                          DecompressionThreadConcurrency = Math.Max(StreamingSettings.Default.DecompressConcurrency, 1),
-                                          FrameLookAheadCount = StreamingSettings.Default.ImageWindow >= 0 ? (int?) StreamingSettings.Default.ImageWindow : null,
-                                          SelectedImageBoxWeight = Math.Max(StreamingSettings.Default.SelectedWeighting, 1),
-                                          UnselectedImageBoxWeight = Math.Max(StreamingSettings.Default.UnselectedWeighting, 0)
-                                      };
+            PrefetchingStrategy = new StreamingPrefetchingStrategy();
         }
 
         protected override int OnStart(StudyLoaderArgs studyLoaderArgs)
@@ -145,6 +122,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                 client.Open();
                 XmlDocument headerXmlDocument;
 
+                // TODO: REVIEW THIS
+                // StreamingStudyLoader now users a plugin to determine the client ae title.
+                // The default behaviour is to use the server tree.
                 using (Stream stream = client.GetStudyHeader(GetClientAETitle(), headerParams))
                 {
                     headerXmlDocument = DecompressHeaderStreamToXml(stream);
@@ -159,8 +139,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
             }
             catch (FaultException<StudyIsNearlineFault> e)
             {
-				throw new NearlineLoadStudyException(studyLoaderArgs.StudyInstanceUid, e)
-					{ IsStudyBeingRestored = e.Detail.IsStudyBeingRestored };
+                throw new NearlineLoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
             }
             catch (FaultException<StudyNotFoundFault> e)
             {
@@ -168,12 +147,10 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
             }
             catch (FaultException e)
             {
-                //TODO: Some versions (pre-Team) of the ImageServer
-				//throw a generic fault when a study is nearline, instead of the more specialized one.
+                //TODO: remove this hack.  Not sure why the ImageServer throws a generic fault when there's a more specialized one.
                 string message = e.Message.ToLower();
                 if (message.Contains("nearline"))
-					throw new NearlineLoadStudyException(studyLoaderArgs.StudyInstanceUid, e)
-						{ IsStudyBeingRestored = true }; //assume true in legacy case.
+                    throw new NearlineLoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
 
                 throw new LoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
             }
@@ -181,7 +158,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
             {
                 if (client != null)
                     client.Abort();
-
                 throw new LoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
             }
         }

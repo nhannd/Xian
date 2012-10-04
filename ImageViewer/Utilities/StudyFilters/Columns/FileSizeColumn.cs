@@ -11,7 +11,6 @@
 
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 {
@@ -31,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 
 		public override bool Parse(string input, out FileSize output)
 		{
-			return FileSize.TryParse(input, out output);
+			return Columns.FileSize.TryParse(input, out output);
 		}
 
 		public override int Compare(IStudyItem x, IStudyItem y)

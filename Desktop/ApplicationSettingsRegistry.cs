@@ -16,8 +16,6 @@ using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Desktop
 {
-	//TODO (CR March 2011): Move to Common, or remove altogether
-
 	/// <summary>
 	/// A Singleton class that provides a way for <see cref="ApplicationSettingsBase"/>-derived objects
 	/// to be updated when a setting value was modified externally.

@@ -22,8 +22,6 @@ using System.Windows.Shapes;
 using ClearCanvas.ImageViewer.Web.Client.Silverlight.Helpers;
 using System.ServiceModel.Channels;
 using System.Windows.Browser;
-using ClearCanvas.ImageViewer.Web.Client.Silverlight.Resources;
-using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
 {
@@ -44,7 +42,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
         public string LocalIPAddress { get; private set; }
         public ServerConfiguration ServerSettings { get; set; }
         public ApplicationServiceMode Mode { get; set; }
-        public string Language { get; private set; }
 
         private ApplicationStartupParameters(System.Collections.Generic.IDictionary<string, string> initParams)
         {
@@ -63,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                 LocalIPAddress = initParams[Constants.SilverlightInitParameters.LocalIPAddress];
             else
             {
-                LocalIPAddress = SR.Unknown;
+                LocalIPAddress = "UNKNOWN";
             }
 
             bool logPerformance;
@@ -93,12 +90,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
                     Mode = mode;
             }
 
-            if (initParams.ContainsKey(Constants.SilverlightInitParameters.Language))
-                Language = initParams[Constants.SilverlightInitParameters.Language];
-            else
-            {
-                Language = Thread.CurrentThread.CurrentUICulture.Name;
-            }
 
             ServerSettings = new ServerConfiguration
             {

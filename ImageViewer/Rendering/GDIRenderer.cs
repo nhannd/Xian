@@ -53,9 +53,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 #pragma warning restore 1591
 
-		private const float _nominalScreenDpi = 96;
-		private const string _defaultFont = "Arial";
-
 		private Pen _pen;
 		private SolidBrush _brush;
 
@@ -197,11 +194,11 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			// Draw drop shadow
 			_pen.Color = Color.Black;
-			_pen.Width = CalculateScaledPenWidth(curve, 1, Dpi);
+			_pen.Width = CalculateScaledPenWidth(curve, 1);
 
 			SetDashStyle(curve);
 
-			SizeF dropShadowOffset = GetDropShadowOffset(curve, Dpi);
+			SizeF dropShadowOffset = GetDropShadowOffset(curve);
 			PointF[] pathPoints = GetCurvePoints(curve.Points, dropShadowOffset);
 
 			if (curve.Points.IsClosed)
@@ -268,11 +265,11 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			RectangleF rectangle = new RectangleF(arc.TopLeft.X, arc.TopLeft.Y, arc.Width, arc.Height);
 			rectangle = RectangleUtilities.ConvertToPositiveRectangle(rectangle);
-			SizeF dropShadowOffset = GetDropShadowOffset(arc, Dpi);
+			SizeF dropShadowOffset = GetDropShadowOffset(arc);
 
 			// Draw drop shadow
 			_pen.Color = Color.Black;
-			_pen.Width = CalculateScaledPenWidth(arc, 1, Dpi);
+			_pen.Width = CalculateScaledPenWidth(arc, 1);
 
 			SetDashStyle(arc);
 
@@ -310,28 +307,14 @@ namespace ClearCanvas.ImageViewer.Rendering
 			Surface.FinalBuffer.Graphics.Transform = pointPrimitive.SpatialTransform.CumulativeTransform;
 			pointPrimitive.CoordinateSystem = CoordinateSystem.Source;
 
-			SizeF dropShadowOffset = GetDropShadowOffset(pointPrimitive, Dpi);
-			var width = CalculateScaledPenWidth(pointPrimitive, 1, Dpi);
-
-			// Draw drop shadow
-			_brush.Color = Color.Black;
-
-			Surface.FinalBuffer.Graphics.FillRectangle(
-				_brush,
-				pointPrimitive.Point.X + dropShadowOffset.Width,
-				pointPrimitive.Point.Y + dropShadowOffset.Height,
-				width,
-				width);
-
-			// Draw point
 			_brush.Color = pointPrimitive.Color;
 
 			Surface.FinalBuffer.Graphics.FillRectangle(
 				_brush,
 				pointPrimitive.Point.X,
 				pointPrimitive.Point.Y,
-				width,
-				width);
+				1,
+				1);
 
 			pointPrimitive.ResetCoordinateSystem();
 			Surface.FinalBuffer.Graphics.ResetTransform();
@@ -346,8 +329,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			// We adjust the font size depending on the scale so that it's the same size
 			// irrespective of the zoom
-			var fontSize = CalculateScaledFontPoints(textPrimitive.SizeInPoints, Dpi);
-			Font font = CreateFont(textPrimitive.Font, fontSize, FontStyle.Regular, GraphicsUnit.Point, _defaultFont);
+			Font font = new Font(textPrimitive.Font, textPrimitive.SizeInPoints);
 
 			// Calculate how big the text will be so we can set the bounding box
 			textPrimitive.Dimensions = Surface.FinalBuffer.Graphics.MeasureString(textPrimitive.Text, font);
@@ -383,10 +365,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// </summary>
 		protected override void DrawAnnotationBox(string annotationText, AnnotationBox annotationBox)
 		{
-			// if there's nothing to draw, there's nothing to do. go figure.
-			if (string.IsNullOrEmpty(annotationText))
-				return;
-
 			Rectangle clientRectangle = ClearCanvas.ImageViewer.Mathematics.RectangleUtilities.CalculateSubRectangle(Surface.ClientRectangle,
 				                                                                                annotationBox.NormalizedRectangle);
 			//Deflate the client rectangle by 4 pixels to allow some space 
@@ -439,48 +417,60 @@ namespace ClearCanvas.ImageViewer.Rendering
 			if (fontSize < MinimumFontSizeInPixels)
 				return;
 
-			Font font = CreateFont(annotationBox.Font, fontSize, style, GraphicsUnit.Pixel, AnnotationBox.DefaultFont);
+			Font font;
 			try
 			{
-				SizeF layoutArea = new SizeF(clientRectangle.Width, clientRectangle.Height);
-				SizeF size = Surface.FinalBuffer.Graphics.MeasureString(annotationText, font, layoutArea, format);
-				if (annotationBox.FitWidth && size.Width > clientRectangle.Width)
-				{
-					fontSize = (int) (Math.Round(fontSize*clientRectangle.Width/(double) size.Width - 0.5));
-
-					//don't draw it if it's too small to read, anyway.
-					if (fontSize < MinimumFontSizeInPixels)
-						return;
-
-					font.Dispose();
-					font = CreateFont(annotationBox.Font, fontSize, style, GraphicsUnit.Pixel, AnnotationBox.DefaultFont);
-				}
-
-				// Draw drop shadow
-				_brush.Color = Color.Black;
-				clientRectangle.Offset(1, 1);
-
-				Surface.FinalBuffer.Graphics.DrawString(
-					annotationText,
-					font,
-					_brush,
-					clientRectangle,
-					format);
-
-				_brush.Color = Color.FromName(annotationBox.Color);
-				clientRectangle.Offset(-1, -1);
-
-				Surface.FinalBuffer.Graphics.DrawString(
-					annotationText,
-					font,
-					_brush,
-					clientRectangle,
-					format);
+				font = new Font(annotationBox.Font, fontSize, style, GraphicsUnit.Pixel);
 			}
-			finally
+			catch (Exception e)
 			{
-				font.Dispose();
+				Platform.Log(LogLevel.Error, e);
+				font = new Font(AnnotationBox.DefaultFont, fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
 			}
+
+			SizeF layoutArea = new SizeF(clientRectangle.Width, clientRectangle.Height);
+			SizeF size = Surface.FinalBuffer.Graphics.MeasureString(annotationText, font, layoutArea, format);
+			if (annotationBox.FitWidth && size.Width > clientRectangle.Width)
+			{
+				fontSize = (int)(Math.Round(fontSize * clientRectangle.Width / (double)size.Width - 0.5));
+
+				//don't draw it if it's too small to read, anyway.
+				if (fontSize < MinimumFontSizeInPixels)
+					return;
+
+				try
+				{
+					font = new Font(annotationBox.Font, fontSize, style, GraphicsUnit.Pixel);
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
+					font = new Font(AnnotationBox.DefaultFont, fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
+				}
+			}
+
+			// Draw drop shadow
+			_brush.Color = Color.Black;
+			clientRectangle.Offset(1, 1);
+
+			Surface.FinalBuffer.Graphics.DrawString(
+				annotationText,
+				font,
+				_brush,
+				clientRectangle,
+				format);
+
+			_brush.Color = Color.FromName(annotationBox.Color);
+			clientRectangle.Offset(-1, -1);
+
+			Surface.FinalBuffer.Graphics.DrawString(
+				annotationText,
+				font,
+				_brush,
+				clientRectangle,
+				format);
+
+			font.Dispose();
 		}
 
 		/// <summary>
@@ -489,7 +479,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		[Obsolete("Renderer implementations are no longer responsible for handling render pipeline errors.")]
 		protected override void ShowErrorMessage(string message)
 		{
-			Font font = new Font(_defaultFont, 12.0f);
+			Font font = new Font("Arial", 12.0f);
 
 			StringFormat format = new StringFormat();
 			format.Trimming = StringTrimming.EllipsisCharacter;
@@ -511,11 +501,11 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			// Draw drop shadow
 			_pen.Color = Color.Black;
-			_pen.Width = CalculateScaledPenWidth(line, 1, Dpi);
+			_pen.Width = CalculateScaledPenWidth(line, 1);
 
 			SetDashStyle(line);
 
-			SizeF dropShadowOffset = GetDropShadowOffset(line, Dpi);
+			SizeF dropShadowOffset = GetDropShadowOffset(line);
 			Surface.FinalBuffer.Graphics.DrawLine(
 				_pen,
 				line.Point1 + dropShadowOffset,
@@ -544,11 +534,11 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			RectangleF rectangle = new RectangleF(rect.TopLeft.X, rect.TopLeft.Y, rect.Width, rect.Height);
 			rectangle = RectangleUtilities.ConvertToPositiveRectangle(rectangle);
-			SizeF dropShadowOffset = GetDropShadowOffset(rect, Dpi);
+			SizeF dropShadowOffset = GetDropShadowOffset(rect);
 
 			// Draw drop shadow
 			_pen.Color = Color.Black;
-			_pen.Width = CalculateScaledPenWidth(rect, 1, Dpi);
+			_pen.Width = CalculateScaledPenWidth(rect, 1);
 
 			SetDashStyle(rect);
 
@@ -582,11 +572,11 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			RectangleF rectangle = new RectangleF(ellipse.TopLeft.X, ellipse.TopLeft.Y, ellipse.Width, ellipse.Height);
 			rectangle = RectangleUtilities.ConvertToPositiveRectangle(rectangle);
-			SizeF dropShadowOffset = GetDropShadowOffset(ellipse, Dpi);
+			SizeF dropShadowOffset = GetDropShadowOffset(ellipse);
 
 			// Draw drop shadow
 			_pen.Color = Color.Black;
-			_pen.Width = CalculateScaledPenWidth(ellipse, 1, Dpi);
+			_pen.Width = CalculateScaledPenWidth(ellipse, 1);
 
 			SetDashStyle(ellipse);
 
@@ -628,32 +618,14 @@ namespace ClearCanvas.ImageViewer.Rendering
 			}
 		}
 
-		private static Font CreateFont(string fontName, float fontSize, FontStyle fontStyle, GraphicsUnit graphicsUnit, string defaultFontName)
+		private static float CalculateScaledPenWidth(IGraphic graphic, int penWidth)
 		{
-			try
-			{
-				return new Font(fontName, fontSize, fontStyle, graphicsUnit);
-			}
-			catch (Exception ex)
-			{
-				Platform.Log(LogLevel.Error, ex);
-				return new Font(defaultFontName, fontSize, FontStyle.Regular, graphicsUnit);
-			}
+			return penWidth / graphic.SpatialTransform.CumulativeScale;
 		}
 
-		private static float CalculateScaledFontPoints(float fontPoints, float dpi)
+		private static SizeF GetDropShadowOffset(IGraphic graphic)
 		{
-			return fontPoints*dpi/_nominalScreenDpi;
-		}
-
-		private static float CalculateScaledPenWidth(IGraphic graphic, int penWidth, float dpi)
-		{
-			return penWidth/graphic.SpatialTransform.CumulativeScale*dpi/_nominalScreenDpi;
-		}
-
-		private static SizeF GetDropShadowOffset(IGraphic graphic, float dpi)
-		{
-			float offset = CalculateScaledPenWidth(graphic, 1, dpi);
+			float offset = CalculateScaledPenWidth(graphic, 1);
 			return new SizeF(offset, offset);
 		}
 

@@ -606,7 +606,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 			}
 			catch(Exception e)
 			{
-				ExceptionHandler.Report(e, SR.MessageClipboardCopyFailed, Host.DesktopWindow);
+				ExceptionHandler.Report(e, Host.DesktopWindow);
 				this.Host.Exit();
 			}
 		}

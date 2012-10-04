@@ -82,8 +82,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			try
 			{
-				foreach (IStudyLoader studyLoader in StudyLoader.CreateAll())
+				StudyLoaderExtensionPoint xp = new StudyLoaderExtensionPoint();
+				object[] studyLoaders = xp.CreateExtensions();
+
+				foreach (IStudyLoader studyLoader in studyLoaders)
 					_studyLoaderMap.Add(studyLoader.Name, studyLoader);
+			}
+			catch (NotSupportedException e)
+			{
+				Platform.Log(LogLevel.Info, e);
 			}
 			catch (Exception e)
 			{

@@ -106,6 +106,7 @@ namespace ClearCanvas.Enterprise.Common
 
 		#endregion
 
+        private readonly TimeSpan _blackoutPeriod = TimeSpan.FromSeconds(30);
         private readonly RemoteServiceProviderArgs _args;
         private readonly List<Node> _nodes = new List<Node>();
 
@@ -154,7 +155,7 @@ namespace ClearCanvas.Enterprise.Common
     		{
 				// find the failed node and marked it as blacked out
 				var failedNode = CollectionUtils.SelectFirst(_nodes, n => Equals(failedEndpoint.Uri, GetFullUri(serviceContract, n.Url)));
-				failedNode.Blackout(_args.FailedEndpointBlackoutTime);
+				failedNode.Blackout(_blackoutPeriod);
 			}
 
             // get the first live node

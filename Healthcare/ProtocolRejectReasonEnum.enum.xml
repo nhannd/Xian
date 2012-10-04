@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<enum class="ProtocolRejectReason">
+<enum class="OrderCancelReason">
   <enum-value code="IO">
     <value>Innappriate order</value>
     <description></description>

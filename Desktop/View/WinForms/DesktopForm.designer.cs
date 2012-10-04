@@ -111,17 +111,25 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _mainMenu
 			// 
-			resources.ApplyResources(this._mainMenu, "_mainMenu");
+			this._mainMenu.Dock = System.Windows.Forms.DockStyle.None;
 			this._mainMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
+			this._mainMenu.Location = new System.Drawing.Point(0, 0);
 			this._mainMenu.Name = "_mainMenu";
+			this._mainMenu.Size = new System.Drawing.Size(792, 24);
+			this._mainMenu.TabIndex = 4;
+			this._mainMenu.Text = "menuStrip1";
 			// 
 			// _toolbar
 			// 
 			this._toolbar.AllowItemReorder = true;
-			resources.ApplyResources(this._toolbar, "_toolbar");
+			this._toolbar.Dock = System.Windows.Forms.DockStyle.None;
 			this._toolbar.ImageScalingSize = new System.Drawing.Size(48, 48);
+			this._toolbar.Location = new System.Drawing.Point(0, 24);
 			this._toolbar.Name = "_toolbar";
+			this._toolbar.Size = new System.Drawing.Size(792, 25);
 			this._toolbar.Stretch = true;
+			this._toolbar.TabIndex = 4;
+			this._toolbar.Text = "toolStrip1";
 			// 
 			// _toolStripContainer
 			// 
@@ -130,9 +138,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this._toolStripContainer.ContentPanel.BackColor = System.Drawing.SystemColors.ControlDark;
 			this._toolStripContainer.ContentPanel.Controls.Add(this._tabbedGroups);
-			resources.ApplyResources(this._toolStripContainer.ContentPanel, "_toolStripContainer.ContentPanel");
-			resources.ApplyResources(this._toolStripContainer, "_toolStripContainer");
+			this._toolStripContainer.ContentPanel.Size = new System.Drawing.Size(792, 512);
+			this._toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._toolStripContainer.Location = new System.Drawing.Point(0, 0);
 			this._toolStripContainer.Name = "_toolStripContainer";
+			this._toolStripContainer.Size = new System.Drawing.Size(792, 561);
+			this._toolStripContainer.TabIndex = 5;
+			this._toolStripContainer.Text = "toolStripContainer1";
 			// 
 			// _toolStripContainer.TopToolStripPanel
 			// 
@@ -144,23 +156,30 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._tabbedGroups.AllowDrop = true;
 			this._tabbedGroups.AtLeastOneLeaf = true;
 			this._tabbedGroups.BackColor = System.Drawing.Color.Black;
-			resources.ApplyResources(this._tabbedGroups, "_tabbedGroups");
+			this._tabbedGroups.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+			this._tabbedGroups.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._tabbedGroups.Location = new System.Drawing.Point(0, 0);
 			this._tabbedGroups.Name = "_tabbedGroups";
 			this._tabbedGroups.OfficeStyleNormal = Crownwood.DotNetMagic.Controls.OfficeStyle.Light;
 			this._tabbedGroups.OfficeStyleProminent = Crownwood.DotNetMagic.Controls.OfficeStyle.Light;
 			this._tabbedGroups.OfficeStyleSelected = Crownwood.DotNetMagic.Controls.OfficeStyle.Light;
 			this._tabbedGroups.ProminentLeaf = null;
 			this._tabbedGroups.ResizeBarColor = System.Drawing.SystemColors.Control;
+			this._tabbedGroups.Size = new System.Drawing.Size(792, 512);
 			this._tabbedGroups.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
+			this._tabbedGroups.TabIndex = 0;
 			// 
 			// DesktopForm
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.ClientSize = new System.Drawing.Size(792, 561);
 			this.Controls.Add(this._toolStripContainer);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.IsMdiContainer = true;
 			this.MainMenuStrip = this._mainMenu;
 			this.Name = "DesktopForm";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			this._toolStripContainer.ContentPanel.ResumeLayout(false);
 			this._toolStripContainer.TopToolStripPanel.ResumeLayout(false);

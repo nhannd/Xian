@@ -10,6 +10,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
@@ -39,7 +41,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		protected DicomMessageSopDataSource(DicomMessageBase sourceMessage)
 		{
 			_dummy = new DicomAttributeCollection();
-			SetSourceMessage(sourceMessage);
+			_sourceMessage = sourceMessage;
 		}
 
 		/// <summary>
@@ -55,32 +57,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			get
 			{
-				return GetSourceMessage(true);
+				lock (SyncLock)
+				{
+					Load();
+					return _sourceMessage;
+				}
 			}
 			protected set
 			{
 				lock (SyncLock)
 				{
-					SetSourceMessage(value);
+					_sourceMessage = value;
 				}
 			}
-		}
-
-		protected DicomMessageBase GetSourceMessage(bool requireLoad)
-		{
-			lock (SyncLock)
-			{
-				if (requireLoad)
-					Load();
-
-				return _sourceMessage;
-			}
-		}
-
-		private void SetSourceMessage(DicomMessageBase sourceMessage)
-		{
-			_sourceMessage = sourceMessage;
-			_loaded = !_sourceMessage.DataSet.IsEmpty();
 		}
 
 		/// <summary>
@@ -462,11 +451,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			unsafe
 			{
-				//TODO (CR May 2011): this is not as efficient as it could be, and more confusing than it needs to be.
-				//It could mostly be done with bit-wise operators if we cast the pixel data pointer to the correct type
-				//right off the bat (short* or byte*), and we could optimize for the case where no right shift is necessary (high bit = bits stored - 1).
-				//For signed data, there is also a trick that can be done where you left shift the value, then immediately
-				//right shift it again in order to fill the high order bits with 1s.
 				int shift = highBit + 1 - bitsStored;
 				if (bitsAllocated == 16)
 				{

@@ -16,7 +16,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Desktop;
-using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Clipboard;
 using ClearCanvas.ImageViewer.KeyObjects;
@@ -67,34 +66,31 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 					_seriesIndex = new Dictionary<string, SeriesInfo>();
 					foreach (IClipboardItem item in _sourceInformation.ClipboardItems)
 					{
-						var image = item.Item as IPresentationImage;
-						if (image == null)
-							continue;
+						IImageSopProvider provider = item.Item as IImageSopProvider;
+						if (provider != null)
+						{
+							string key = provider.ImageSop.StudyInstanceUid;
+							if (!_seriesIndex.ContainsKey(key))
+							{
+								_seriesIndex.Add(key, new SeriesInfo(provider));
+							}
 
-						if (!DicomSoftcopyPresentationState.IsSupported(image))
-							continue;
-
-						var provider = image as IImageSopProvider;
-						if (provider == null)
-							continue;
-
-						SeriesInfo seriesInfo;
-						string key = provider.ImageSop.StudyInstanceUid;
-						if (!_seriesIndex.TryGetValue(key, out seriesInfo))
-							_seriesIndex.Add(key, seriesInfo = new SeriesInfo(provider));
-
-						var presentationState = DicomSoftcopyPresentationState.Create
-							(image, delegate(DicomSoftcopyPresentationState ps)
-							 	{
-							 		ps.SpecificCharacterSet = provider.ImageSop[DicomTags.SpecificCharacterSet].ToString();
-									ps.PresentationSeriesInstanceUid = seriesInfo.PresentationSeriesUid;
-									ps.PresentationSeriesNumber = seriesInfo.PresentationSeriesNumber;
-									ps.PresentationSeriesDateTime = seriesInfo.PresentationSeriesDateTime;
-									ps.PresentationInstanceNumber = seriesInfo.GetNextPresentationInstanceNumber();
-							 		ps.SourceAETitle = DicomServerConfigurationHelper.GetOfflineAETitle(false);
-							 	});
-
-						_framePresentationStates.Add(new KeyValuePair<Frame, DicomSoftcopyPresentationState>(provider.Frame, presentationState));
+							DicomSoftcopyPresentationState presentationState = null;
+							if (item.Item is IPresentationImage && DicomSoftcopyPresentationState.IsSupported((IPresentationImage)item.Item))
+							{
+								presentationState = DicomSoftcopyPresentationState.Create
+									((IPresentationImage) item.Item,
+									 delegate(DicomSoftcopyPresentationState ps)
+									 	{
+									 		ps.PresentationSeriesInstanceUid = _seriesIndex[key].PresentationSeriesUid;
+									 		ps.PresentationSeriesNumber = _seriesIndex[key].PresentationSeriesNumber;
+									 		ps.PresentationSeriesDateTime = _seriesIndex[key].PresentationSeriesDateTime;
+									 		ps.PresentationInstanceNumber = _seriesIndex[key].GetNextPresentationInstanceNumber();
+									 		ps.SourceAETitle = DicomServerConfigurationHelper.GetOfflineAETitle(false);
+									 	});
+							}
+							_framePresentationStates.Add(new KeyValuePair<Frame, DicomSoftcopyPresentationState>(provider.Frame, presentationState));
+						}
 					}
 				}
 

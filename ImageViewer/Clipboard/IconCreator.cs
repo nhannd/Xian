@@ -12,8 +12,6 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Annotations.Utilities;
-using ClearCanvas.ImageViewer.Graphics.Utilities;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -91,12 +89,6 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		private static Bitmap DrawToIcon(IPresentationImage image, int width, int height)
 		{
-			//We just hide the text overlay and application graphics because it creates ugly icons.
-			var textOverlayHider = new TextOverlayVisibilityHelper(image);
-			var applicationGraphicsHider = GraphicsVisibilityHelper.CreateForApplicationGraphics(image);
-			textOverlayHider.Hide();
-			applicationGraphicsHider.HideAll();
-			
 			try
 			{
 				return image.DrawToBitmap(width, height);
@@ -113,11 +105,6 @@ namespace ClearCanvas.ImageViewer.Clipboard
 					graphics.DrawLine(Pens.WhiteSmoke, 0, height, width, 0);
 				}
 				return bitmap;
-			}
-			finally
-			{
-				textOverlayHider.Restore();
-				applicationGraphicsHider.RestoreAll();
 			}
 		}
 

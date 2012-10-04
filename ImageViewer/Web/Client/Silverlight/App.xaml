@@ -1,5 +1,5 @@
 ﻿<!-- 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2010, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -964,7 +964,6 @@
                             <vsm:VisualStateManager.VisualStateGroups>
                                 <vsm:VisualStateGroup x:Name="CommonStates">
                                     <vsm:VisualState x:Name="Normal">
-                                        
                                     </vsm:VisualState>
                                     <vsm:VisualState x:Name="Highlighted">
                                         <Storyboard>
@@ -1033,11 +1032,6 @@
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="Yellow"/>
                                             </ObjectAnimationUsingKeyFrames>
 
-                                        </Storyboard>
-                                    </vsm:VisualState>
-                                    <vsm:VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <DoubleAnimation Duration="0" Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Opacity" To="0.35"/>
                                         </Storyboard>
                                     </vsm:VisualState>
                                 </vsm:VisualStateGroup>
@@ -1328,11 +1322,11 @@
                                         <TranslateTransform />
                                     </TransformGroup>
                                 </Grid.RenderTransform>
-                                <Border BorderThickness="1" CornerRadius="10" BorderBrush="#14000000" Background="#14000000" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-1" />
-                                <Border BorderThickness="1" CornerRadius="10" BorderBrush="#0F000000" Background="#0F000000" HorizontalAlignment="Stretch" Margin="-2" VerticalAlignment="Stretch" />
-                                <Border BorderThickness="1" CornerRadius="10" BorderBrush="#0C000000" Background="#0C000000" HorizontalAlignment="Stretch" Margin="-3" VerticalAlignment="Stretch" />
-                                <Border BorderThickness="1" CornerRadius="10" BorderBrush="#0A000000" Background="#0A000000" HorizontalAlignment="Stretch" Margin="-4" VerticalAlignment="Stretch" />
-                                <Border Background="Black" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="7">
+                                <Border BorderThickness="1" CornerRadius="2" BorderBrush="#14000000" Background="#14000000" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-1" />
+                                <Border BorderThickness="1" CornerRadius="2.25" BorderBrush="#0F000000" Background="#0F000000" HorizontalAlignment="Stretch" Margin="-2" VerticalAlignment="Stretch" />
+                                <Border BorderThickness="1" CornerRadius="2.5" BorderBrush="#0C000000" Background="#0C000000" HorizontalAlignment="Stretch" Margin="-3" VerticalAlignment="Stretch" />
+                                <Border BorderThickness="1" CornerRadius="2.75" BorderBrush="#0A000000" Background="#0A000000" HorizontalAlignment="Stretch" Margin="-4" VerticalAlignment="Stretch" />
+                                <Border Background="Black" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="2">
                                     <Border.BorderBrush>
                                         <LinearGradientBrush StartPoint="0,0" EndPoint="0.5,1" Opacity="1">
                                             <GradientStop Offset="0" Color="#E0000000"></GradientStop>
@@ -1344,7 +1338,7 @@
                                         <DropShadowEffect Color="#7F444444" BlurRadius="10" Opacity="1"/>
                                     </Border.Effect>-->
 
-                                    <Border CornerRadius="7" Margin="1">
+                                    <Border CornerRadius="5" Margin="1">
                                         <Border.Background>
                                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                                 <GradientStop Color="#883A3A3A" Offset="1" />
@@ -1356,7 +1350,7 @@
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition />
                                             </Grid.RowDefinitions>
-                                            <Border x:Name="Chrome" Width="Auto" MinHeight="30" BorderBrush="Gray" BorderThickness="0,0,0,1" CornerRadius="6,6,0,0">
+                                            <Border x:Name="Chrome" Width="Auto" BorderBrush="Gray" BorderThickness="0,0,0,1">
                                                 <Border.Background>
                                                     <LinearGradientBrush EndPoint="0.5,0.528" StartPoint="0.5,0">
                                                         <GradientStop Color="#AA444444" Offset="1" />
@@ -1368,12 +1362,11 @@
                                                         <ColumnDefinition />
                                                         <!--<ColumnDefinition Width="30" />-->
                                                     </Grid.ColumnDefinitions>
-                                                    <ContentControl Content="{TemplateBinding Title}" FontSize="14" IsTabStop="False" FontWeight="Bold" Foreground="White" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5,2,2,5">
-                                                    </ContentControl>
+                                                    <ContentControl Content="{TemplateBinding Title}" FontSize="14" IsTabStop="False" FontWeight="Bold" Foreground="White" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5,2,2,5"  />
                                                     <!--<Button x:Name="CloseButton" Grid.Column="1" IsTabStop="False" HorizontalAlignment="Center" VerticalAlignment="Center" Width="15" Height="14" Style="{StaticResource ButtonStyle}" />-->
                                                 </Grid>
                                             </Border>
-                                            <Border  Grid.Row="1"  CornerRadius="0,0,6,6">
+                                            <Border  Grid.Row="1">
                                                 <Border.Background>
                                                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" Opacity="1">
                                                         <GradientStop Color="#33444444"/>

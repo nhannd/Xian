@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map xmlns:xsi="http://www.w3.org/2001/XInclude">
+  <topicref type="topic" id="402808026566017" build="ALL" modified="2010-04-12T14:50:12.843Z" icon="0" href="Welcome">
+    <caption translate="true">Welcome</caption>
+  </topicref>
+  <topicref type="topic" id="402806788539853" build="ALL" modified="2010-04-12T14:50:12.843Z" icon="0" href="Bienvenue">
+    <caption translate="true">Bienvenue</caption>
+  </topicref>
+  <topicref type="topic" id="402807531597373" build="ALL" modified="2010-04-12T14:50:12.843Z" icon="0" href="System_requirements">
+    <caption translate="true">System Requirements</caption>
+  </topicref>
+  <topicref type="topic" id="402806503707861" build="ALL" modified="2010-04-12T14:50:12.843Z" icon="0">
+    <caption translate="true">Introduction</caption>
+    <topicref type="topic" id="402805049861203" build="ALL" modified="2010-04-12T14:50:12.843Z" icon="0" href="Technology">
+      <caption translate="true">Technology</caption>
+    </topicref>
+    <topicref type="topic" id="402807115194687" build="ALL" modified="2010-04-12T14:50:12.843Z" icon="0" href="Architecture">
+      <caption translate="true">Architecture</caption>
+    </topicref>
+  </topicref>
+  <topicref type="topic" id="402807867734007" build="ALL" modified="2010-04-12T14:50:12.843Z" icon="0">
+    <caption translate="true">Configuration</caption>
+    <topicref type="topic" id="402805631059465" build="ALL" modified="2010-04-12T14:50:12.843Z" icon="0" href="Integration">
+      <caption translate="true">Integration</caption>
+    </topicref>
+  </topicref>
+</map>

@@ -59,7 +59,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServerTreeConfigurationComponentControl));
 			this._splitContainer = new System.Windows.Forms.SplitContainer();
 			this._description = new System.Windows.Forms.Label();
 			this._splitContainer.Panel1.SuspendLayout();
@@ -68,25 +67,34 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			// 
 			// _splitContainer
 			// 
-			resources.ApplyResources(this._splitContainer, "_splitContainer");
+			this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+			this._splitContainer.Location = new System.Drawing.Point(0, 0);
 			this._splitContainer.Name = "_splitContainer";
+			this._splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
 			// _splitContainer.Panel1
 			// 
 			this._splitContainer.Panel1.Controls.Add(this._description);
+			this._splitContainer.Size = new System.Drawing.Size(473, 354);
+			this._splitContainer.SplitterDistance = 33;
+			this._splitContainer.TabIndex = 0;
 			// 
 			// _description
 			// 
-			resources.ApplyResources(this._description, "_description");
+			this._description.Location = new System.Drawing.Point(3, 10);
 			this._description.Name = "_description";
+			this._description.Size = new System.Drawing.Size(456, 22);
+			this._description.TabIndex = 0;
+			this._description.Text = "<set the Description property>";
 			// 
 			// ServerTreeConfigurationComponentControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._splitContainer);
 			this.Name = "ServerTreeConfigurationComponentControl";
+			this.Size = new System.Drawing.Size(473, 354);
 			this._splitContainer.Panel1.ResumeLayout(false);
 			this._splitContainer.ResumeLayout(false);
 			this.ResumeLayout(false);

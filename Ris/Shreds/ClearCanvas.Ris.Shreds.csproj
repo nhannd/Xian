@@ -55,19 +55,6 @@
     <Compile Include="ImageAvailability\ImageAvailabilityShred.cs" />
     <Compile Include="ImageAvailability\ImageAvailabilityWorkQueue.cs" />
     <Compile Include="ImageAvailability\ImageAvailabilityWorkQueueProcessor.cs" />
-    <Compile Include="Merge\ExternalPractitionerContactPointMergeHandler.cs" />
-    <Compile Include="Merge\ExternalPractitionerMergeHandler.cs" />
-    <Compile Include="Merge\IMergeHandler.cs" />
-    <Compile Include="Merge\MergeHandlerBase.cs" />
-    <Compile Include="Merge\MergeProcessor.cs" />
-    <Compile Include="Merge\MergeShred.cs" />
-    <Compile Include="Merge\MergeShredSettings.cs" />
-    <Compile Include="Merge\MergeShredSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>MergeShredSettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="Merge\MigrationPriority.cs" />
     <Compile Include="Publication\CreateLogicalHL7EventAction.cs" />
     <Compile Include="Publication\PublicationProcessor.cs" />
     <Compile Include="Publication\PublicationShred.cs" />
@@ -123,10 +110,6 @@
     <None Include="ImageAvailability\ImageAvailabilityShredSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ImageAvailabilityShredSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="Merge\MergeShredSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>MergeShredSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Publication\PublicationShredSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

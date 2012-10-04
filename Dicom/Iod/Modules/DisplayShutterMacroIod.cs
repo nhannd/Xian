@@ -85,7 +85,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				}
 				else if ((value & ShutterShape.Bitmap) == ShutterShape.Bitmap)
 				{
-					throw new ArgumentException("BITMAP is not supported in this module.", "value");
+					throw new ArgumentException("Bitmap is not supported on this module.", "value");
 				}
 				else
 				{

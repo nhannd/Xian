@@ -11,7 +11,6 @@
 
 using System;
 using System.Drawing;
-using System.Text;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
@@ -79,21 +78,14 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 		//TODO (CR Sept 2010): remove or call InnerExceptionMessage.
 		/// <summary>
-		/// Gets a message describing the exception suitable for presentation to the end-user.
+		/// Gets the message of the actual exception that was thrown.
 		/// </summary>
-		public string UserMessage
+		/// <remarks>
+		/// This property is the same as accessing the <see cref="Exception.Message"/> property on <see cref="Exception.InnerException"/>.
+		/// </remarks>
+		public string SpecificMessage
 		{
-			get
-			{
-				var message = new StringBuilder(SR.MessageRenderingPipelineFailure);
-				var specificMessage = InnerException.Message;
-				if (!string.IsNullOrEmpty(specificMessage))
-				{
-					message.AppendLine();
-					message.AppendFormat(SR.FormatReason, specificMessage);
-				}
-				return message.ToString();
-			}
+			get { return InnerException.Message; }
 		}
 	}
 }

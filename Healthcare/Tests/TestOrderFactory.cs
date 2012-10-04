@@ -13,15 +13,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Healthcare.Tests
 {
 	public static class TestOrderFactory
     {
-
-
 		public static Order CreateOrder(int numProcedures, int numMpsPerProcedure, bool createProcedureSteps)
         {
             return CreateOrder(numProcedures, numMpsPerProcedure, createProcedureSteps, true);
@@ -30,25 +26,16 @@ namespace ClearCanvas.Healthcare.Tests
 		{
 			Patient patient = TestPatientFactory.CreatePatient();
 			Visit visit = TestVisitFactory.CreateVisit(patient);
-			var facility = TestFacilityFactory.CreateFacility();
-			return CreateOrder(patient, visit, facility, "10000001", numProcedures, numMpsPerProcedure, createProcedureSteps, schedule);
+			return CreateOrder(patient, visit, "10000001", numProcedures, numMpsPerProcedure, createProcedureSteps, schedule);
 		}
-
 		public static Order CreateOrder(Patient patient, Visit visit, string accession, int numProcedures, int numMpsPerProcedure, bool createProcedureSteps, bool schedule)
-		{
-			var facility = TestFacilityFactory.CreateFacility();
-			return CreateOrder(patient, visit, facility, accession, numProcedures, numMpsPerProcedure, createProcedureSteps,
-			                   schedule);
-		}
-
-		public static Order CreateOrder(Patient patient, Visit visit, Facility facility, string accession, int numProcedures, int numMpsPerProcedure, bool createProcedureSteps, bool schedule)
         {
-			var procedureNumberBroker = new TestProcedureNumberBroker();
-			DateTime? scheduleTime = DateTime.Now;
+            DateTime? scheduleTime = DateTime.Now;
 
             DiagnosticService ds = TestDiagnosticServiceFactory.CreateDiagnosticService(numProcedures);
             string reasonForStudy = "Test";
             ExternalPractitioner orderingPrac = TestExternalPractitionerFactory.CreatePractitioner();
+            Facility facility = TestFacilityFactory.CreateFacility();
 
             Order order =  Order.NewOrder(new OrderCreationArgs(
 				Platform.Time,
@@ -64,7 +51,7 @@ namespace ClearCanvas.Healthcare.Tests
                 facility,
                 scheduleTime,
                 orderingPrac,
-                new List<ResultRecipient>()), procedureNumberBroker);
+                new List<ResultRecipient>()));
 
             if(createProcedureSteps)
             {

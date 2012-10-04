@@ -35,13 +35,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
 		/// </summary>
 		public void Save()
 		{
-			var message = this.Context.DumpManagement.LoadedFileCount > 1 
-				? SR.MessageConfirmSaveAllFiles
-				: this.Context.IsLocalFile
-					? SR.MessageConfirmSaveSingleLocalFile
-					: SR.MessageConfirmSaveSingleRemoteFile;
-
-			if (this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+			if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmSaveAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
 			{
 				this.Context.DumpManagement.SaveAll();
 				this.Context.UpdateDisplay();

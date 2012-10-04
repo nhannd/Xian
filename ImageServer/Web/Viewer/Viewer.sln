@@ -3,12 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Web.Client.Silverlight", "..\..\..\ImageViewer\Web\Client\Silverlight\ClearCanvas.ImageViewer.Web.Client.Silverlight.csproj", "{9F16A639-E160-4931-AE0D-A1643A3EF45E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Web.Client.Silverlight", "..\..\..\Web\Client\Silverlight\ClearCanvas.Web.Client.Silverlight.csproj", "{1CAF9ABD-C8ED-4EF7-BDCF-C9FB3C23FA17}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{3FBAD04C-4E48-417E-BE9F-028D80C62B1F}"
-	ProjectSection(SolutionItems) = preProject
-		
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Web.Viewer.SilverlightHost", "SilverlightHost\ClearCanvas.ImageServer.Web.Viewer.SilverlightHost.csproj", "{8A181C0C-810F-4A71-862F-7D6B58B202F6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9F16A639-E160-4931-AE0D-A1643A3EF45E} = {9F16A639-E160-4931-AE0D-A1643A3EF45E}
+		{1CAF9ABD-C8ED-4EF7-BDCF-C9FB3C23FA17} = {1CAF9ABD-C8ED-4EF7-BDCF-C9FB3C23FA17}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Web.Client.Silverlight", "..\..\..\Web\Client\Silverlight\ClearCanvas.Web.Client.Silverlight.csproj", "{1CAF9ABD-C8ED-4EF7-BDCF-C9FB3C23FA17}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +21,10 @@ Global
 		{9F16A639-E160-4931-AE0D-A1643A3EF45E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F16A639-E160-4931-AE0D-A1643A3EF45E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F16A639-E160-4931-AE0D-A1643A3EF45E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A181C0C-810F-4A71-862F-7D6B58B202F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A181C0C-810F-4A71-862F-7D6B58B202F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A181C0C-810F-4A71-862F-7D6B58B202F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A181C0C-810F-4A71-862F-7D6B58B202F6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1CAF9ABD-C8ED-4EF7-BDCF-C9FB3C23FA17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1CAF9ABD-C8ED-4EF7-BDCF-C9FB3C23FA17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CAF9ABD-C8ED-4EF7-BDCF-C9FB3C23FA17}.Release|Any CPU.ActiveCfg = Release|Any CPU

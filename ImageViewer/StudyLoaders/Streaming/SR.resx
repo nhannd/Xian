@@ -120,9 +120,6 @@
   <data name="DescriptionPrefetchingStrategy" xml:space="preserve">
     <value>ClearCanvas Streaming</value>
   </data>
-  <data name="DescriptionWebStationPrefetchingStrategy" xml:space="preserve">
-    <value>ClearCanvas WebStation Streaming</value>
-  </data>
   <data name="MessageStreamingAccessException" xml:space="preserve">
     <value>An access error has occurred while streaming the image. The server may be currently processing the image. If the error persists, please contact your system administrator.</value>
   </data>

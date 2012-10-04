@@ -151,7 +151,6 @@ namespace Clifton.Windows.Forms
         /// </summary>
         [Category("Nullable Masked Edit")]
         [Description("The string to display when the control's value is null.")]
-		[Localizable(true)]
         public string NullTextDisplayValue
         {
             get { return nullTextDisplayValue; }

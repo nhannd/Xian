@@ -10,10 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
@@ -125,35 +121,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		#endregion
-
-		/// <summary>
-		/// Creates all available study loaders.
-		/// </summary>
-		/// <returns>All the loaders, or an empty array if none exist.</returns>
-		public static List<IStudyLoader> CreateAll()
-		{
-			var studyLoaders = new List<IStudyLoader>();
-
-			try
-			{
-				var xp = new StudyLoaderExtensionPoint();
-				foreach (IStudyLoader loader in xp.CreateExtensions())
-					studyLoaders.Add(loader);
-			}
-			catch (NotSupportedException)
-			{
-			}
-
-			return studyLoaders;
-		}
-
-		/// <summary>
-		/// Creates a single study loader, if it exists.
-		/// </summary>
-		/// <returns>The loader, or null if it doesn't exist.</returns>
-		public static IStudyLoader Create(string name)
-		{
-			return CollectionUtils.SelectFirst(CreateAll(), loader => loader.Name == name);
-		}
 	}
 }

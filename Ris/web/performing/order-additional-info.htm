@@ -131,10 +131,10 @@
 							setValue: function(item, value) { item.heartRate = parseInt(value) || null; item.heartRateUnit = "bpm"; },
 							getError: function(item) { return null; }
 						},
-						{	label: "Temperature (&deg;C)",
+						{	label: "Temperature (°C)",
 							cellType: "text",
 							getValue: function(item) { return item.temperature; },
-							setValue: function(item, value) { item.temperature = parseInt(value) || null; item.temperatureUnit = "&deg;C"; },
+							setValue: function(item, value) { item.temperature = parseInt(value) || null; item.temperatureUnit = "°C"; },
 							getError: function(item) { return null; }
 						},
 						{	label: "Body Surface Area",

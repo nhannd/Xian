@@ -22,7 +22,6 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Process;
@@ -32,7 +31,6 @@ using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ExecutionContext=ClearCanvas.ImageServer.Common.CommandProcessor.ExecutionContext;
-using System.Text;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
@@ -343,18 +341,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             Platform.Log(LogLevel.Error, "Unable to recover from previous failure. Failing the entry.");
                             PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
                         }
-                    }
-                    catch(InvalidStudyStateOperationException ex)
-                    {
-                        // unable to recover.. fail it now
-                        Platform.Log(LogLevel.Error, ex, "Unable to recover from previous failure. Failing the entry.");
-
-                        StringBuilder sb = new StringBuilder();
-                        sb.AppendLine(item.FailureDescription);
-                        sb.AppendLine(String.Format("Auto-Recovery failed: {0}", ex.Message));
-                        item.FailureDescription = sb.ToString();
-
-                        PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
                     }
                     catch (Exception ex)
                     {
@@ -1299,13 +1285,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         }
 
         
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="reason"></param>
-        /// <returns></returns>
-        /// <exception cref="InvalidStudyStateOperationException">Study is in a state that reprocessing is not allowed</exception>
+
         protected static AutoRecoveryResult PerformAutoRecovery(Model.WorkQueue item, string reason)
         {
             AutoRecoveryResult result;

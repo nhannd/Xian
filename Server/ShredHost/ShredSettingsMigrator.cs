@@ -21,8 +21,6 @@ namespace ClearCanvas.Server.ShredHost
 {
 	public class ShredSettingsMigrator
 	{
-		public static bool IsMigrating { get; private set; }
-
 		private class ConfigurationSectionEntry
 		{
 			public ConfigurationSectionEntry(ConfigurationSectionGroupPath parentPath, ConfigurationSection section)
@@ -125,25 +123,16 @@ namespace ClearCanvas.Server.ShredHost
 
 		public static void MigrateAll(string previousExeConfigFilename)
 		{
-			IsMigrating = true;
+			Configuration previousConfiguration = SystemConfigurationHelper.GetExeConfiguration(previousExeConfigFilename);
+			Configuration currentConfiguration = SystemConfigurationHelper.GetExeConfiguration();
 
-			try
+			foreach (var sectionEntry in GetConfigurationSections(previousConfiguration))
 			{
-				Configuration previousConfiguration = SystemConfigurationHelper.GetExeConfiguration(previousExeConfigFilename);
-				Configuration currentConfiguration = SystemConfigurationHelper.GetExeConfiguration();
-
-				foreach (var sectionEntry in GetConfigurationSections(previousConfiguration))
-				{
-					if (IsShredSettingsClass(sectionEntry.Section))
-						MigrateSection(sectionEntry.Section, sectionEntry.ParentPath, currentConfiguration);
-				}
-
-				currentConfiguration.Save(ConfigurationSaveMode.Full);
+				if (IsShredSettingsClass(sectionEntry.Section))
+					MigrateSection(sectionEntry.Section, sectionEntry.ParentPath, currentConfiguration);
 			}
-			finally
-			{
-				IsMigrating = false;
-			}
+
+			currentConfiguration.Save(ConfigurationSaveMode.Full);
 		}
 	}
 }

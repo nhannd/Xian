@@ -62,7 +62,6 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DateFormatApplicationComponentControl));
 			this._dateSample = new System.Windows.Forms.TextBox();
 			this._radioCustom = new System.Windows.Forms.RadioButton();
 			this._comboCustomDateFormat = new System.Windows.Forms.ComboBox();
@@ -73,46 +72,71 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 			// _dateSample
 			// 
 			this._dateSample.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			resources.ApplyResources(this._dateSample, "_dateSample");
+			this._dateSample.Enabled = false;
+			this._dateSample.Location = new System.Drawing.Point(92, 91);
+			this._dateSample.Margin = new System.Windows.Forms.Padding(2);
 			this._dateSample.Name = "_dateSample";
 			this._dateSample.ReadOnly = true;
+			this._dateSample.Size = new System.Drawing.Size(232, 20);
+			this._dateSample.TabIndex = 4;
 			this._dateSample.TabStop = false;
 			// 
 			// _radioCustom
 			// 
-			resources.ApplyResources(this._radioCustom, "_radioCustom");
+			this._radioCustom.AutoSize = true;
+			this._radioCustom.Location = new System.Drawing.Point(26, 60);
+			this._radioCustom.Margin = new System.Windows.Forms.Padding(2);
 			this._radioCustom.Name = "_radioCustom";
+			this._radioCustom.Size = new System.Drawing.Size(60, 17);
+			this._radioCustom.TabIndex = 2;
+			this._radioCustom.Text = "Custom";
 			this._radioCustom.UseVisualStyleBackColor = true;
 			// 
 			// _comboCustomDateFormat
 			// 
 			this._comboCustomDateFormat.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
 			this._comboCustomDateFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			resources.ApplyResources(this._comboCustomDateFormat, "_comboCustomDateFormat");
+			this._comboCustomDateFormat.Enabled = false;
+			this._comboCustomDateFormat.Location = new System.Drawing.Point(92, 60);
+			this._comboCustomDateFormat.Margin = new System.Windows.Forms.Padding(2);
 			this._comboCustomDateFormat.Name = "_comboCustomDateFormat";
+			this._comboCustomDateFormat.Size = new System.Drawing.Size(232, 21);
+			this._comboCustomDateFormat.TabIndex = 3;
 			// 
 			// _radioSystemShortDate
 			// 
-			resources.ApplyResources(this._radioSystemShortDate, "_radioSystemShortDate");
+			this._radioSystemShortDate.AutoSize = true;
+			this._radioSystemShortDate.Location = new System.Drawing.Point(26, 14);
+			this._radioSystemShortDate.Margin = new System.Windows.Forms.Padding(2);
 			this._radioSystemShortDate.Name = "_radioSystemShortDate";
+			this._radioSystemShortDate.Size = new System.Drawing.Size(119, 17);
+			this._radioSystemShortDate.TabIndex = 0;
+			this._radioSystemShortDate.Text = "Short Date (System)";
 			this._radioSystemShortDate.UseVisualStyleBackColor = true;
 			// 
 			// _radioSystemLongDate
 			// 
-			resources.ApplyResources(this._radioSystemLongDate, "_radioSystemLongDate");
+			this._radioSystemLongDate.AutoSize = true;
+			this._radioSystemLongDate.Location = new System.Drawing.Point(26, 37);
+			this._radioSystemLongDate.Margin = new System.Windows.Forms.Padding(2);
 			this._radioSystemLongDate.Name = "_radioSystemLongDate";
+			this._radioSystemLongDate.Size = new System.Drawing.Size(118, 17);
+			this._radioSystemLongDate.TabIndex = 1;
+			this._radioSystemLongDate.Text = "Long Date (System)";
 			this._radioSystemLongDate.UseVisualStyleBackColor = true;
 			// 
 			// DateFormatApplicationComponentControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._comboCustomDateFormat);
 			this.Controls.Add(this._radioCustom);
 			this.Controls.Add(this._radioSystemLongDate);
 			this.Controls.Add(this._radioSystemShortDate);
 			this.Controls.Add(this._dateSample);
+			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "DateFormatApplicationComponentControl";
+			this.Size = new System.Drawing.Size(333, 122);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

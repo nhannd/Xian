@@ -33,14 +33,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		#region ISopDataSource Members
 
 		/// <summary>
-		/// Gets the Patient ID.
-		/// </summary>
-		public virtual string PatientId
-		{
-			get { return this[DicomTags.PatientId].GetString(0, null); }
-		}
-
-		/// <summary>
 		/// Gets the study instance UID.
 		/// </summary>
 		public virtual string StudyInstanceUid

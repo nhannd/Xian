@@ -128,7 +128,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StackTab));
 			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
 			this._panel = new System.Windows.Forms.Panel();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -138,33 +137,52 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// _titleBar
 			// 
 			this._titleBar.ArrowButton = Crownwood.DotNetMagic.Controls.ArrowButton.DownArrow;
-			resources.ApplyResources(this._titleBar, "_titleBar");
+			this._titleBar.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
 			this._titleBar.ImageAlignment = Crownwood.DotNetMagic.Controls.ImageAlignment.Far;
+			this._titleBar.Location = new System.Drawing.Point(0, 0);
+			this._titleBar.Margin = new System.Windows.Forms.Padding(0);
 			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._titleBar.Name = "_titleBar";
+			this._titleBar.Size = new System.Drawing.Size(368, 24);
 			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black;
+			this._titleBar.TabIndex = 0;
+			this._titleBar.Text = "titleBar1";
 			this._titleBar.Click += new System.EventHandler(this.OnTitleClicked);
 			this._titleBar.ButtonClick += new System.EventHandler(this.OnButtonClick);
 			this._titleBar.DoubleClick += new System.EventHandler(this.OnTitleDoubleClick);
 			// 
 			// _panel
 			// 
-			resources.ApplyResources(this._panel, "_panel");
+			this._panel.AutoScroll = true;
+			this._panel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._panel.Location = new System.Drawing.Point(0, 24);
+			this._panel.Margin = new System.Windows.Forms.Padding(0);
 			this._panel.Name = "_panel";
+			this._panel.Size = new System.Drawing.Size(368, 192);
+			this._panel.TabIndex = 1;
 			// 
 			// tableLayoutPanel1
 			// 
-			resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+			this.tableLayoutPanel1.ColumnCount = 1;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.Controls.Add(this._titleBar, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this._panel, 0, 1);
+			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 2;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(368, 216);
+			this.tableLayoutPanel1.TabIndex = 2;
 			// 
 			// StackTab
 			// 
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "StackTab";
-			resources.ApplyResources(this, "$this");
+			this.Size = new System.Drawing.Size(368, 216);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 

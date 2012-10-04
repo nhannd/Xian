@@ -24,17 +24,19 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 	{
 		private ImageViewerComponent _viewer;
 
-	    private readonly ToolStripSettings _toolStripSettings = new ToolStripSettings();
 		private readonly List<ImageBoxEntityHandler> _imageBoxHandlers = new List<ImageBoxEntityHandler>();
 		private readonly List<ActionNodeEntityHandler> _actionHandlers = new List<ActionNodeEntityHandler>();
+		
+		public ViewerEntityHandler()
+		{}
 
-	    private Common.Entities.ImageBox[] GetImageBoxEntities()
+		private Common.Entities.ImageBox[] GetImageBoxEntities()
 		{
 			return CollectionUtils.Map(_imageBoxHandlers, 
 				(ImageBoxEntityHandler handler) => handler.GetEntity()).ToArray();
 		}
 
-		private WebActionNode[] GetToolbarActionEntities()
+		private Common.Entities.WebActionNode[] GetToolbarActionEntities()
 		{
 			var toolbarActions = CollectionUtils.Map(_actionHandlers,
 										 (ActionNodeEntityHandler handler) => (WebActionNode)handler.GetEntity());
@@ -78,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 		{
 		}
 
-		private void OnLayoutCompleted(object sender, EventArgs e)
+		private void OnLayoutCompleted(object sender, System.EventArgs e)
 		{
 			RefreshImageBoxHandlers(true);
 		}
@@ -106,12 +108,11 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
             NotifyEntityPropertyChanged("ToolbarActions", GetToolbarActionEntities());
 		}
-
-        private WebIconSize LoadToolbarIconSizeFromSettings()
+        private static WebIconSize LoadToolbarIconSizeFromSettings()
         {
             try
             {
-                switch (_toolStripSettings.IconSize)
+                switch (ToolStripSettings.Default.IconSize)
                 {
                     case IconSize.Large:
                         return WebIconSize.Large;

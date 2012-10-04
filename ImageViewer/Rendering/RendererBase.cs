@@ -67,11 +67,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
-		/// Gets the resolution of the intended output device in DPI.
-		/// </summary>
-		protected float Dpi { get; private set; }
-
-		/// <summary>
 		/// Renders the specified scene graph to the graphics surface.
 		/// </summary>
 		/// <remarks>
@@ -122,7 +117,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 			_drawMode = drawArgs.DrawMode;
 			_sceneGraph = drawArgs.SceneGraph;
 			_surface = drawArgs.RenderingSurface;
-			Dpi = drawArgs.Dpi;
 		}
 
 		/// <summary>

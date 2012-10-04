@@ -126,21 +126,11 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                 Platform.GetService(
                 delegate(IAuthenticationService service)
                     {
-                        DateTime originalExpiryTime = sessionInfo.Credentials.SessionToken.ExpiryTime;
                         ValidateSessionResponse response = service.ValidateSession(request);
                         // update session info
                         string id = response.SessionToken.Id;
                         newToken= SessionCache.Instance.Renew(id, response.SessionToken.ExpiryTime);
-
-                        if (Platform.IsLogLevelEnabled(LogLevel.Debug))
-                        {
-                            Platform.Log(LogLevel.Debug, "Session {0} for {1} is renewed. Valid until {2}", id, sessionInfo.Credentials.UserName, newToken.ExpiryTime);
-
-                            if (originalExpiryTime == newToken.ExpiryTime)
-                            {
-                                Platform.Log(LogLevel.Warn, "Session expiry time is not changed. Is it cached?");
-                            }
-                        }
+                        Platform.Log(LogLevel.Info, "Session {0} for {1} is renewed. Valid until {2}", id, sessionInfo.Credentials.UserName, newToken.ExpiryTime);
                     });
 
                 return newToken;
@@ -228,7 +218,7 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                     if (Platform.Time - session.Credentials.SessionToken.ExpiryTime > TimeSpan.FromSeconds(10))
                     {
                         CleanupSession(session);
-                        Platform.Log(LogLevel.Debug, "Removed expired idle session: {0} for user {1}",
+                        Platform.Log(LogLevel.Info, "Removed expired idle session: {0} for user {1}",
                                      session.Credentials.SessionToken.Id, session.Credentials.UserName);
                     }
                     else
@@ -247,10 +237,9 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                 }
             }
             if (activeCount > 0)
-                Platform.Log(LogLevel.Debug, active.ToString());
+                Platform.Log(LogLevel.Info, active.ToString());
             if (inactiveCount > 0)
-                Platform.Log(LogLevel.Debug, inactive.ToString());
-            
+                Platform.Log(LogLevel.Info, inactive.ToString());
         }
 
         public void AddSession(string id, SessionInfo session)
@@ -275,15 +264,7 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                 {
                     try
                     {
-                        try
-                        {
-                            service.Logout(session.Credentials.SessionToken.Id);
-                        }
-                        catch(Exception ex)
-                        {
-                            Platform.Log(LogLevel.Warn, ex, "Unable to terminate session {0} gracefully",
-                                         session.Credentials.SessionToken.Id);
-                        }
+                        service.Logout(session.Credentials.SessionToken.Id);
                     }
                     finally
                     {

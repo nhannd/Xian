@@ -147,7 +147,7 @@ namespace ClearCanvas.Ris.Client
 			model.ToggleActivation.SetPermissibility(Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner);
 
 			_mergePractitionerAction = model.AddAction("mergePractitioner", SR.TitleMergePractitioner, "Icons.MergePersonToolMedium.png",
-				SR.TitleMergePractitioner, MergePractitioners);
+				SR.TitleMergePractitioner, MergePractitioner);
 			_mergePractitionerAction.Enabled = false;
 			_mergePractitionerAction.SetPermissibility(
 				OrPermissions(
@@ -269,13 +269,6 @@ namespace ClearCanvas.Ris.Client
 		/// <returns>True if items were edited, false otherwise.</returns>
 		protected override bool UpdateItemsActivation(IList<ExternalPractitionerSummary> items, out IList<ExternalPractitionerSummary> editedItems)
 		{
-			if (CollectionUtils.Contains(items, item => item.Deactivated && item.IsMerged))
-			{
-				this.Host.ShowMessageBox(SR.MessageCannotActivateMergedPractitioners, MessageBoxActions.Ok);
-				editedItems = new List<ExternalPractitionerSummary>();
-				return false;
-			}
-
 			var results = new List<ExternalPractitionerSummary>();
 			foreach (var item in items)
 			{
@@ -328,32 +321,16 @@ namespace ClearCanvas.Ris.Client
 			return or;
 		}
 
-		private void MergePractitioners()
+		private void MergePractitioner()
 		{
-			try
-			{
-				var firstItem = CollectionUtils.FirstElement(this.SelectedItems);
-				var secondItem = this.SelectedItems.Count > 1 ? CollectionUtils.LastElement(this.SelectedItems) : null;
+			var firstItem = CollectionUtils.FirstElement(this.SelectedItems);
+			var secondItem = this.SelectedItems.Count > 1 ? CollectionUtils.LastElement(this.SelectedItems) : null;
+			var editor = new ExternalPractitionerMergeNavigatorComponent(firstItem.PractitionerRef, secondItem == null ? null : secondItem.PractitionerRef);
 
-				if (firstItem != null && !CanMerge(firstItem) || 
-					secondItem != null && !CanMerge(secondItem))
-				{
-					this.Host.ShowMessageBox(SR.MessageCannotMergeSelectedPractitioners, MessageBoxActions.Ok);
-					return;
-				}
+			var title = SR.TitleMergePractitioner + " - " + Formatting.PersonNameFormat.Format(firstItem.Name);
+			var creationArg = new DialogBoxCreationArgs(editor, title, null, DialogSizeHint.Large);
 
-				var editor = new ExternalPractitionerMergeNavigatorComponent(firstItem.PractitionerRef, secondItem == null ? null : secondItem.PractitionerRef);
-
-				var title = SR.TitleMergePractitioner + " - " + Formatting.PersonNameFormat.Format(firstItem.Name);
-				var creationArg = new DialogBoxCreationArgs(editor, title, null, DialogSizeHint.Large);
-
-				LaunchAsDialog(this.Host.DesktopWindow, creationArg);
-			}
-			catch (Exception e)
-			{
-				// failed to launch editor
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
+			LaunchAsDialog(this.Host.DesktopWindow, creationArg);
 		}
 
 		private void MergeContactPoint()
@@ -387,11 +364,6 @@ namespace ClearCanvas.Ris.Client
 				detail = forEditResponse.PractitionerDetail;
 			});
 			return detail;
-		}
-
-		private static bool CanMerge(ExternalPractitionerSummary practitioner)
-		{
-			return !practitioner.Deactivated && !practitioner.IsMerged;
 		}
 	}
 }

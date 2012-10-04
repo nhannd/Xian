@@ -269,8 +269,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manifest Items", "Manifest 
 		ManifestInputDicomEditor.xml = ManifestInputDicomEditor.xml
 		ManifestInputDicomRemote.xml = ManifestInputDicomRemote.xml
 		ManifestInputEnterprise.xml = ManifestInputEnterprise.xml
-		ManifestInputFusion.xml = ManifestInputFusion.xml
-		ManifestInputHelpFiles.xml = ManifestInputHelpFiles.xml
 		ManifestInputHelpUpdate.xml = ManifestInputHelpUpdate.xml
 		ManifestInputMpr.xml = ManifestInputMpr.xml
 		ManifestInputReporting.xml = ManifestInputReporting.xml
@@ -283,6 +281,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manifest Items", "Manifest 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Executable", "..\Executable\ClearCanvas.Executable.csproj", "{EA26AAB0-85FE-4ECC-BB9A-D99374869AA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JuniorProjectWeb", "..\JuniorProjectWeb\JuniorProjectWeb.csproj", "{37356B79-3145-44D3-8410-B50766DAEA7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JuniorProject", "..\JuniorProject\JuniorProject.csproj", "{2BBAD8D5-0214-4441-88E1-4C8E2D755757}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -550,6 +552,14 @@ Global
 		{EA26AAB0-85FE-4ECC-BB9A-D99374869AA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA26AAB0-85FE-4ECC-BB9A-D99374869AA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA26AAB0-85FE-4ECC-BB9A-D99374869AA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37356B79-3145-44D3-8410-B50766DAEA7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37356B79-3145-44D3-8410-B50766DAEA7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37356B79-3145-44D3-8410-B50766DAEA7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37356B79-3145-44D3-8410-B50766DAEA7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BBAD8D5-0214-4441-88E1-4C8E2D755757}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BBAD8D5-0214-4441-88E1-4C8E2D755757}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BBAD8D5-0214-4441-88E1-4C8E2D755757}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BBAD8D5-0214-4441-88E1-4C8E2D755757}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
-using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Helpers
 {
@@ -29,9 +28,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Helpers
 			string message;
 
 			message =
-				string.Format("<table cellpadding=\"3\" cellspacing=\"0\" width=\"100%\" class=\"ConfirmDialogTable\"><tr class=\"ConfirmDialogHeadingText\"><td colspan=\"2\">{0}</td><td colspan=\"2\">{1}</td><td>{2}</td></tr>",
-                    ColumnHeaders.PatientName, ColumnHeaders.AccessionNumber, ColumnHeaders.StudyDescription);
-
+				"<table cellpadding=\"3\" cellspacing=\"0\" width=\"100%\" class=\"ConfirmDialogTable\"><tr class=\"ConfirmDialogHeadingText\"><td colspan=\"2\">Patient</td><td colspan=\"2\">Accession</td><td>Description</td></tr>";
 
 			int i = 0;
 			foreach (Study study in studies)
@@ -47,15 +44,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Helpers
 			return message;
 		}
 
-        // TODO: this looks very bad. Fix it
         public static string createSeriesTable(IList<Series> series)
         {
             string message;
 
             message =
-                string.Format("<table cellpadding=\"3\" cellspacing=\"0\" width=\"100%\" class=\"ConfirmDialogTable\"><tr class=\"ConfirmDialogHeadingText\"><td colspan=\"2\">{0}</td><td colspan=\"2\">{1}</td><td colspan=\"2\">{2}</td><td colspan=\"2\">{3}</td></tr>",
-                    ColumnHeaders.Modality, ColumnHeaders.SeriesDescription, ColumnHeaders.SeriesCount, ColumnHeaders.SeriesInstanceUID);
-            
+                "<table cellpadding=\"3\" cellspacing=\"0\" width=\"100%\" class=\"ConfirmDialogTable\"><tr class=\"ConfirmDialogHeadingText\"><td colspan=\"2\">Modality</td><td colspan=\"2\">Description</td><td colspan=\"2\">Related Instances</td><td colspan=\"2\">Instance UID</td></tr>";
+
             int i = 0;
             foreach (Series s in series)
             {
@@ -70,14 +65,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Helpers
             return message;
         }
 
-        // TODO: this looks very bad. Fix it
-        public static string createStudyTable(IList<StudySummary> studies)
+		public static string createStudyTable(IList<StudySummary> studies)
 		{
 			string message;
 
 			message =
-				string.Format("<table cellpadding=\"3\" cellspacing=\"0\" width=\"100%\" class=\"ConfirmDialogTable\"><tr class=\"ConfirmDialogHeadingText\"><td colspan=\"2\">{0}</td><td colspan=\"2\">{1}</td><td>{2}</td></tr>",
-                    ColumnHeaders.PatientName, ColumnHeaders.AccessionNumber, ColumnHeaders.StudyDescription);
+				"<table cellpadding=\"3\" cellspacing=\"0\" width=\"100%\" class=\"ConfirmDialogTable\"><tr class=\"ConfirmDialogHeadingText\"><td colspan=\"2\">Patient</td><td colspan=\"2\">Accession</td><td>Description</td></tr>";
 
 			int i = 0;
 			foreach (StudySummary study in studies)

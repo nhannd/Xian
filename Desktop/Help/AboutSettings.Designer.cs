@@ -368,7 +368,7 @@ namespace ClearCanvas.Desktop.Help {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether or not the manifest message should be auto-sized.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ManifestAutoSize {
             get {
                 return ((bool)(this["ManifestAutoSize"]));
@@ -394,7 +394,7 @@ namespace ClearCanvas.Desktop.Help {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Manifest message bolded.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ManifestFontBold {
             get {
                 return ((bool)(this["ManifestFontBold"]));

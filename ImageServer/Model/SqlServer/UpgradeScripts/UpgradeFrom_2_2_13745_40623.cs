@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer.UpgradeScripts
     public class UpgradeFrom_2_2_13745_40623 : BaseUpgradeScript
     {
         public UpgradeFrom_2_2_13745_40623()
-            : base(new Version(2, 2, 13745, 40623), new Version(2, 2, 14734, 44343), "UpgradeFrom_2_2_13745_40623.sql")
+            : base(new Version(2, 2, 13745, 40623), null, "UpgradeFrom_2_2_13745_40623.sql")
         {
         }
     }

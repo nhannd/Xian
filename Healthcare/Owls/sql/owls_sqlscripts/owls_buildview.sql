@@ -1,0 +1,18 @@
+declare @startAfter uniqueidentifierdeclare @minEndTimeWorklist datetimedeclare @minEndTimeSearch datetimeset @minEndTimeWorklist = '2009-04-28'set @minEndTimeSearch = '2005-04-28'print cast(getdate() as nvarchar) + ' Starting...'-- Registrationset @startAfter = null
+while(1 = 1)	begin		exec owls_BuildRegistrationWorklistView 'REGISTRATION', @startAfter output, @minEndTimeWorklist		if(@startAfter is null) break	endprint cast(getdate() as nvarchar) + ' Completed REGISTRATION'-- Modalityset @startAfter = null
+while(1 = 1)	begin		exec owls_BuildModalityWorklistView 'MODALITY', @startAfter output, @minEndTimeWorklist		if(@startAfter is null) break	endprint cast(getdate() as nvarchar) + ' Completed MODALITY'set @startAfter = null
+while(1 = 1)	begin		exec owls_BuildModalityWorklistView 'DOCUMENTATION', @startAfter output, @minEndTimeWorklist		if(@startAfter is null) break	endprint cast(getdate() as nvarchar) + ' Completed DOCUMENTATION'-- Protocolset @startAfter = null
+while(1 = 1)	begin		exec owls_BuildProtocolWorklistView 'PROTOCOL_ASSIGNMENT', @startAfter output, @minEndTimeWorklist		if(@startAfter is null) break	endprint cast(getdate() as nvarchar) + ' Completed PROTOCOL_ASSIGNMENT'set @startAfter = null
+while(1 = 1)	begin		exec owls_BuildProtocolWorklistView 'PROTOCOL_RESOLUTION', @startAfter output, @minEndTimeWorklist		if(@startAfter is null) break	endprint cast(getdate() as nvarchar) + ' Completed PROTOCOL_RESOLUTION'-- Reportingset @startAfter = null
+while(1 = 1)	begin		exec owls_BuildReportingWorklistView 'INTERPRETATION', @startAfter output, @minEndTimeWorklist		if(@startAfter is null) break	endprint cast(getdate() as nvarchar) + ' Completed INTERPRETATION'set @startAfter = null
+while(1 = 1)	begin		exec owls_BuildReportingWorklistView 'VERIFICATION', @startAfter output, @minEndTimeWorklist		if(@startAfter is null) break	endprint cast(getdate() as nvarchar) + ' Completed VERIFICATION'set @startAfter = null
+while(1 = 1)	begin		exec owls_BuildReportingWorklistView 'PUBLICATION', @startAfter output, @minEndTimeWorklist		if(@startAfter is null) break	endprint cast(getdate() as nvarchar) + ' Completed PUBLICATION'set @startAfter = null
+while(1 = 1)	begin		exec owls_BuildReportingWorklistView 'TRANSCRIPTION', @startAfter output, @minEndTimeWorklist		if(@startAfter is null) break	endprint cast(getdate() as nvarchar) + ' Completed TRANSCRIPTION'set @startAfter = null
+while(1 = 1)	begin		exec owls_BuildReportingWorklistView 'TRANSCRIPTION_REVIEW', @startAfter output, @minEndTimeWorklist		if(@startAfter is null) break	endprint cast(getdate() as nvarchar) + ' Completed TRANSCRIPTION_REVIEW'-- Procedure Searchset @startAfter = null
+while(1 = 1)	begin		exec owls_BuildProcedureSearchView @startAfter output, @minEndTimeSearch		if(@startAfter is null) break	endprint cast(getdate() as nvarchar) + ' Completed ProcedureSearch'--primary keys
+alter table Ris.dbo.owls_ModalityWorklistViewItem_ add primary key clustered (OID_ asc)
+alter table Ris.dbo.owls_ProcedureSearchViewItem_ add primary key clustered (OID_ asc)
+alter table Ris.dbo.owls_ProtocolWorklistViewItem_ add primary key clustered (OID_ asc)
+alter table Ris.dbo.owls_RegistrationWorklistViewItem_ add primary key clustered (OID_ asc)
+alter table Ris.dbo.owls_ReportingWorklistViewItem_ add primary key clustered (OID_ asc)
+print cast(getdate() as nvarchar) + ' Added primary keys'

@@ -230,7 +230,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		[Category("Appearance")]
 		[Description("The separator used to delimit individual modifiers and the pressed key in the textbox display.")]
 		[DefaultValue("+")]
-		[Localizable(true)]
 		public virtual string KeySeparator
 		{
 			get { return _keySeparator; }
@@ -343,7 +342,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		[Category("Appearance")]
 		[Description("The alignment of text in the textbox.")]
 		[DefaultValue(HorizontalAlignment.Center)]
-		[Localizable(true)]
 		public virtual HorizontalAlignment TextAlign
 		{
 			get { return _textBox.TextAlign; }
@@ -674,7 +672,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <returns>
 		/// An ordered pair of type <see cref="Size"/> representing the width and height of a rectangle.
 		/// </returns>
-		/// <param name="proposedSize">The custom-sized area for a control.</param>
+		/// <param name="proposedSize">The custom-sized area for a control.
 		public override Size GetPreferredSize(Size proposedSize)
 		{
 			return _textBox.GetPreferredSize(proposedSize);

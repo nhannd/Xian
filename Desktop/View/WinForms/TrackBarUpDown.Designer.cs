@@ -59,7 +59,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TrackBarUpDown));
 			this._numericUpDown = new System.Windows.Forms.NumericUpDown();
 			this._trackBar = new System.Windows.Forms.TrackBar();
 			((System.ComponentModel.ISupportInitialize)(this._numericUpDown)).BeginInit();
@@ -68,8 +67,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _numericUpDown
 			// 
-			resources.ApplyResources(this._numericUpDown, "_numericUpDown");
+			this._numericUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this._numericUpDown.Location = new System.Drawing.Point(201, 3);
 			this._numericUpDown.Name = "_numericUpDown";
+			this._numericUpDown.Size = new System.Drawing.Size(76, 20);
+			this._numericUpDown.TabIndex = 1;
 			this._numericUpDown.Value = new decimal(new int[] {
             99,
             0,
@@ -78,16 +80,24 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _trackBar
 			// 
-			resources.ApplyResources(this._trackBar, "_trackBar");
+			this._trackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._trackBar.AutoSize = false;
+			this._trackBar.Location = new System.Drawing.Point(0, 0);
 			this._trackBar.Name = "_trackBar";
+			this._trackBar.Size = new System.Drawing.Size(193, 164);
+			this._trackBar.TabIndex = 0;
 			// 
 			// TrackBarUpDown
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoSize = true;
 			this.Controls.Add(this._trackBar);
 			this.Controls.Add(this._numericUpDown);
 			this.Name = "TrackBarUpDown";
+			this.Size = new System.Drawing.Size(280, 150);
 			((System.ComponentModel.ISupportInitialize)(this._numericUpDown)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._trackBar)).EndInit();
 			this.ResumeLayout(false);

@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			catch (Exception ex)
 			{
 				Platform.Log(LogLevel.Error, ex, "Failed to add item to the key image clipboard.");
-				ExceptionHandler.Report(ex, SR.MessageCreateKeyImageFailed, base.Context.DesktopWindow);
+				ExceptionHandler.Report(ex, base.Context.DesktopWindow);
 			}
 		}
 		

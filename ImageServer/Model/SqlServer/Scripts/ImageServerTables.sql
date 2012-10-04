@@ -735,7 +735,7 @@ CREATE TABLE [dbo].[Device](
 	[AllowAutoRoute] [bit] NOT NULL CONSTRAINT [DF_Device_AllowAutoRoute]  DEFAULT ((1)),
 	[ThrottleMaxConnections] [smallint] NOT NULL CONSTRAINT [DF_Device_MaxConnections]  DEFAULT ((-1)),
     [LastAccessedTime] [datetime] NOT NULL CONSTRAINT [DF_Device_LastAccessedTime]  DEFAULT (getdate()),
-	[DeviceTypeEnum] [smallint] NOT NULL CONSTRAINT [DF_Device_DeviceTypeEnum]  DEFAULT ((100)),
+	[DeviceTypeEnum] [smallint] NOT NULL CONSTRAINT [DF_Device_DeviceTYpeEnum]  DEFAULT ((100)),
 CONSTRAINT [PK_Device] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
@@ -1440,8 +1440,8 @@ CREATE TABLE [dbo].[ApplicationLog](
 	[Timestamp] [datetime] NOT NULL,
 	[LogLevel] [varchar](5) NOT NULL,
 	[Thread] [varchar](50) NOT NULL,
-	[Message] [nvarchar](2000) NOT NULL,
-	[Exception] [nvarchar](2000) NULL,
+	[Message] [varchar](3000) NOT NULL,
+	[Exception] [varchar](2000) NULL,
  CONSTRAINT [PK_ApplicationLog] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
@@ -1644,7 +1644,7 @@ IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[Wo
 CREATE NONCLUSTERED INDEX [IX_WorkQueueTypeProperties_QueueStudyStateEnum] ON [dbo].[WorkQueueTypeProperties] 
 (
 	[QueueStudyStateEnum] ASC
-)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [INDEXES]
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
 GO
 
 /****** Object:  Index [IX_WorkQueueTypeProperties_QueueStudyStateOrder]    Script Date: 10/26/2009 16:50:02 ******/
@@ -1652,7 +1652,7 @@ IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[Wo
 CREATE NONCLUSTERED INDEX [IX_WorkQueueTypeProperties_QueueStudyStateOrder] ON [dbo].[WorkQueueTypeProperties] 
 (
 	[QueueStudyStateOrder] ASC
-)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [INDEXES]
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
 
 /****** Object:  ForeignKey [FK_ArchiveQueue_ArchiveQueueStatusEnum]    Script Date: 07/17/2008 00:49:15 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ArchiveQueue_ArchiveQueueStatusEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[ArchiveQueue]'))

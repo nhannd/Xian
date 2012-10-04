@@ -53,7 +53,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			set
 			{
 				if (value != Modality.KO)
-					throw new ArgumentOutOfRangeException("value", "Modality must be KO.");
+					throw new ArgumentOutOfRangeException("value", "KO is the only supported modality value.");
 				SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.Modality], value);
 			}
 		}

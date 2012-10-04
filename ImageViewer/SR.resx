@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ApplicationName" xml:space="preserve">
+    <value>ClearCanvas Workstation</value>
+  </data>
+  <data name="ApplicationVersion" xml:space="preserve">
+    <value>1.0</value>
+  </data>
   <data name="BoolNo" xml:space="preserve">
     <value>No</value>
   </data>
@@ -360,7 +366,7 @@
     <value>Show Analysis</value>
   </data>
   <data name="MessageContactPacsAdmin" xml:space="preserve">
-    <value>Please contact your PACS administrator for assistance.</value>
+    <value>Please contact your PACS administrator, or check the log.</value>
   </data>
   <data name="MessageErrorCloningDisplaySet" xml:space="preserve">
     <value>An error has occured while attempting to clone a display set.  Please check the log for more details.</value>
@@ -411,7 +417,7 @@
     <value>No renderer plugins exist; defaulting to GDI renderer.</value>
   </data>
   <data name="MessageNoVisibleDisplaySets" xml:space="preserve">
-    <value>No images could be loaded for display.</value>
+    <value>No images could be found to display.  The viewer cannot be opened.</value>
   </data>
   <data name="MessageOneStudyIncomplete" xml:space="preserve">
     <value>One study was only partially loaded.</value>
@@ -445,16 +451,19 @@
 Please check the log for more details.</value>
   </data>
   <data name="MessageStudyInUse" xml:space="preserve">
-    <value>The study is being processed by the server and cannot be loaded at this time.  Please try again later.</value>
+    <value>The study is currently in use and cannot be loaded.  Try waiting a few minutes and load the study again.</value>
   </data>
-  <data name="MessageStudyNearlineNoRestore" xml:space="preserve">
-    <value>The study is nearline and cannot be restored at this time.  Please contact your PACS administrator to restore the study.</value>
+  <data name="MessageStudyNearline" xml:space="preserve">
+    <value>The study is nearline and cannot be loaded.  If your PACS is a ClearCanvas ImageServer, try waiting a few minutes and load the study again.  Otherwise, the study must be restored by a PACS administrator.</value>
   </data>
   <data name="MessageStudyNotFound" xml:space="preserve">
     <value>The study could not be found.</value>
   </data>
   <data name="MessageStudyOffline" xml:space="preserve">
-    <value>The study cannot be loaded because it is offline. Please contact your PACS administrator to restore the study.</value>
+    <value>The study is offline and cannot be loaded until it has been restored by a PACS administrator.</value>
+  </data>
+  <data name="MessageStudyUnavailable" xml:space="preserve">
+    <value>The study is unavailable.</value>
   </data>
   <data name="NamePrefetchingStrategyVisibleDisplaySet" xml:space="preserve">
     <value>Visible Display Set</value>
@@ -517,20 +526,5 @@ Please check the log for more details.</value>
     <value>One or more overlays
 cannot be displayed.
 Use image with caution.</value>
-  </data>
-  <data name="MessageStudyNearline" xml:space="preserve">
-    <value>The study is currently being restored from archive and cannot be loaded at this time.  Please try again later.</value>
-  </data>
-  <data name="MessageFailedToOpenImages" xml:space="preserve">
-    <value>Failed to open the selected images.</value>
-  </data>
-  <data name="MessageFailedToOpenStudy" xml:space="preserve">
-    <value>Failed to open the selected studies.</value>
-  </data>
-  <data name="FormatReason" xml:space="preserve">
-    <value>Reason: {0}</value>
-  </data>
-  <data name="MessageRenderingPipelineFailure" xml:space="preserve">
-    <value>An error has occurred in the rendering pipeline.</value>
   </data>
 </root>

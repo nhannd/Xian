@@ -16,10 +16,12 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Web.Services
 {
-	internal class Cache
+	public abstract partial class Application
+	{
+		private class Cache
 		{
-		    private const int CheckIntervalInSeconds = 15;
-            private const int ApplicationShutdownDelayInSeconds = 5;
+		    private const int CheckIntervalInSeconds = 30;
+            private const int ApplicationShutdownDelayInSeconds = 10;
 
 			public static readonly Cache Instance;
 
@@ -34,69 +36,52 @@ namespace ClearCanvas.Web.Services
 		    
             private Timer _cleanupTimer;
 
-		    internal object SyncLock
-		    {
-                get { return _syncLock; }
-		    }
-
-		    internal int Count
-		    {
-		        get{
-                    lock (_syncLock)
-                    {
-                        return _applications.Count;
-                    }
-		        }
-		    }
 
             private Cache()
             {
                 // TODO: Cleanup ther timer?
                 _cleanupTimer = new Timer(OnCleanupTimerCallback, null, TimeSpan.FromSeconds(CheckIntervalInSeconds),
                                           TimeSpan.FromSeconds(CheckIntervalInSeconds));
+                
             }
 
             private void OnCleanupTimerCallback(object ignore)
             {
                 try
                 {
-                    lock (_syncLock)
+                    if (_appsToBeRemoved.Count > 0)
                     {
-                        if (_appsToBeRemoved.Count > 0)
+                        
+                        List<Guid> removalList = new List<Guid>();
+                        foreach (Guid appId in _appsToBeRemoved.Keys)
                         {
-
-                            List<Guid> removalList = new List<Guid>();
-                            foreach (Guid appId in _appsToBeRemoved.Keys)
+                            if (DateTime.Now - _appsToBeRemoved[appId] > TimeSpan.FromSeconds(ApplicationShutdownDelayInSeconds))
                             {
-                                if (DateTime.Now - _appsToBeRemoved[appId] >
-                                    TimeSpan.FromSeconds(ApplicationShutdownDelayInSeconds))
-                                {
-                                    removalList.Add(appId);
-                                }
+                                removalList.Add(appId);
                             }
+                        }
 
-                            if (removalList.Count > 0)
+                        if (removalList.Count>0)
+                        {
+                            foreach(Guid appId in removalList)
                             {
-                                string appInstanceName = null;
-                                foreach (Guid appId in removalList)
+                                Application app = null;
+                                try
                                 {
-                                    Application app = null;
-                                    try
+                                    lock (_syncLock)
                                     {
-
                                         app = _applications[appId];
-                                        appInstanceName = app.InstanceName;
                                         _applications.Remove(appId);
-                                        _appsToBeRemoved.Remove(appId);
                                     }
-                                    finally
+                                    _appsToBeRemoved.Remove(appId);
+                                }
+                                finally
+                                {
+                                    if (app != null)
                                     {
-                                        if (app != null)
-                                        {
-                                            app.DisposeMembers();
-                                        }
-                                        Platform.Log(LogLevel.Info, "{0} removed from cache.", appInstanceName);
+                                        app.DisposeMembers();
                                     }
+                                    Platform.Log(LogLevel.Info, "Application {0} removed from cache.", appId);
                                 }
                             }
                         }
@@ -113,8 +98,7 @@ namespace ClearCanvas.Web.Services
 				lock (_syncLock)
 				{
 					_applications.Add(application.Identifier, application);
-				    var identifier = application.Identifier;
-                    application.Stopped += delegate { Remove(identifier); };
+                    application.Stopped += delegate { Remove(application.Identifier); };
 				}
 			}
 
@@ -127,20 +111,27 @@ namespace ClearCanvas.Web.Services
 				}
 			}
 
-		    private void Remove(Guid applicationId)
+			public void Remove(Guid applicationId)
 			{
 				lock (_syncLock)
 				{
 					if (!_applications.ContainsKey(applicationId))
 						return;
 
+					// NOTE: For non-duplex binding we can't remove the app right away
+					// because the client still hasn't received the last event. If the app 
+					// is removed from the cache here, the client won't be able to poll
+					// the remaining messages beause the app id is no longer valid.
+					// 
 					// App shutdown must be delayed to give the client some time to poll the remaining events.
-                    if (!_appsToBeRemoved.ContainsKey(applicationId))
-                        _appsToBeRemoved.Add(applicationId, DateTime.Now);            
+					//
+                    _appsToBeRemoved.Add(applicationId, DateTime.Now);
+                    
+					// _applications.Remove(applicationId);
+					// Platform.Log(LogLevel.Debug, "Application {0} removed from cache.", applicationId);
 				}
 			}
 
-            // CR 3-22-2011, This is no longer used now that we're hosted in IIS.
 			public void StopAndClearAll(string message)
 			{
 				lock (_syncLock)
@@ -154,5 +145,6 @@ namespace ClearCanvas.Web.Services
 					_applications.Clear();
 				}
 			}
-		}	
+		}
+	}
 }

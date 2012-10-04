@@ -59,7 +59,6 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AnonymizeStudyComponentControl));
 			this._okButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._studyDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
@@ -73,73 +72,115 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 			// 
 			// _okButton
 			// 
-			resources.ApplyResources(this._okButton, "_okButton");
+			this._okButton.Location = new System.Drawing.Point(93, 322);
 			this._okButton.Name = "_okButton";
+			this._okButton.Size = new System.Drawing.Size(75, 23);
+			this._okButton.TabIndex = 6;
+			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this.OnOkButtonClicked);
 			// 
 			// _cancelButton
 			// 
-			resources.ApplyResources(this._cancelButton, "_cancelButton");
+			this._cancelButton.Location = new System.Drawing.Point(174, 322);
 			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
+			this._cancelButton.TabIndex = 7;
+			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this.OnCancelButtonClicked);
 			// 
 			// _studyDate
 			// 
-			resources.ApplyResources(this._studyDate, "_studyDate");
+			this._studyDate.LabelText = "Study Date";
+			this._studyDate.Location = new System.Drawing.Point(20, 242);
+			this._studyDate.Margin = new System.Windows.Forms.Padding(2);
 			this._studyDate.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._studyDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._studyDate.Name = "_studyDate";
 			this._studyDate.Nullable = true;
+			this._studyDate.Size = new System.Drawing.Size(150, 41);
+			this._studyDate.TabIndex = 5;
 			this._studyDate.Value = new System.DateTime(2008, 4, 21, 9, 14, 8, 984);
 			// 
 			// _dateOfBirth
 			// 
-			resources.ApplyResources(this._dateOfBirth, "_dateOfBirth");
+			this._dateOfBirth.LabelText = "Date of Birth";
+			this._dateOfBirth.Location = new System.Drawing.Point(20, 107);
+			this._dateOfBirth.Margin = new System.Windows.Forms.Padding(2);
 			this._dateOfBirth.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._dateOfBirth.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._dateOfBirth.Name = "_dateOfBirth";
 			this._dateOfBirth.Nullable = true;
+			this._dateOfBirth.Size = new System.Drawing.Size(150, 41);
+			this._dateOfBirth.TabIndex = 2;
 			this._dateOfBirth.Value = new System.DateTime(2008, 4, 21, 9, 11, 13, 140);
 			// 
 			// _patientsName
 			// 
-			resources.ApplyResources(this._patientsName, "_patientsName");
+			this._patientsName.LabelText = "Patient\'s Name";
+			this._patientsName.Location = new System.Drawing.Point(20, 62);
+			this._patientsName.Margin = new System.Windows.Forms.Padding(2);
+			this._patientsName.Mask = "";
 			this._patientsName.Name = "_patientsName";
+			this._patientsName.PasswordChar = '\0';
+			this._patientsName.Size = new System.Drawing.Size(229, 41);
+			this._patientsName.TabIndex = 1;
 			this._patientsName.ToolTip = null;
 			this._patientsName.Value = null;
 			// 
 			// _accessionNumber
 			// 
-			resources.ApplyResources(this._accessionNumber, "_accessionNumber");
+			this._accessionNumber.LabelText = "Accession Number";
+			this._accessionNumber.Location = new System.Drawing.Point(20, 197);
+			this._accessionNumber.Margin = new System.Windows.Forms.Padding(2);
+			this._accessionNumber.Mask = "";
 			this._accessionNumber.Name = "_accessionNumber";
+			this._accessionNumber.PasswordChar = '\0';
+			this._accessionNumber.Size = new System.Drawing.Size(150, 41);
+			this._accessionNumber.TabIndex = 4;
 			this._accessionNumber.ToolTip = null;
 			this._accessionNumber.Value = null;
 			// 
 			// _patientId
 			// 
-			resources.ApplyResources(this._patientId, "_patientId");
+			this._patientId.LabelText = "Patient Id";
+			this._patientId.Location = new System.Drawing.Point(20, 17);
+			this._patientId.Margin = new System.Windows.Forms.Padding(2);
+			this._patientId.Mask = "";
 			this._patientId.Name = "_patientId";
+			this._patientId.PasswordChar = '\0';
+			this._patientId.Size = new System.Drawing.Size(229, 41);
+			this._patientId.TabIndex = 0;
 			this._patientId.ToolTip = null;
 			this._patientId.Value = null;
 			// 
 			// _studyDescription
 			// 
-			resources.ApplyResources(this._studyDescription, "_studyDescription");
+			this._studyDescription.LabelText = "Study Description";
+			this._studyDescription.Location = new System.Drawing.Point(20, 152);
+			this._studyDescription.Margin = new System.Windows.Forms.Padding(2);
+			this._studyDescription.Mask = "";
 			this._studyDescription.Name = "_studyDescription";
+			this._studyDescription.PasswordChar = '\0';
+			this._studyDescription.Size = new System.Drawing.Size(229, 41);
+			this._studyDescription.TabIndex = 3;
 			this._studyDescription.ToolTip = null;
 			this._studyDescription.Value = null;
 			// 
-			// _preserveSeriesData
+			// _preserveSeriesDescription
 			// 
-			resources.ApplyResources(this._preserveSeriesData, "_preserveSeriesData");
-			this._preserveSeriesData.Name = "_preserveSeriesData";
+			this._preserveSeriesData.AutoSize = true;
+			this._preserveSeriesData.Location = new System.Drawing.Point(26, 288);
+			this._preserveSeriesData.Name = "_preserveSeriesDescription";
+			this._preserveSeriesData.Size = new System.Drawing.Size(161, 17);
+			this._preserveSeriesData.TabIndex = 8;
+			this._preserveSeriesData.Text = "Preserve Series Data";
 			this._preserveSeriesData.UseVisualStyleBackColor = true;
 			// 
 			// AnonymizeStudyComponentControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._preserveSeriesData);
 			this.Controls.Add(this._studyDescription);
@@ -151,6 +192,7 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._okButton);
 			this.Name = "AnonymizeStudyComponentControl";
+			this.Size = new System.Drawing.Size(266, 361);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

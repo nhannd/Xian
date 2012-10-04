@@ -10,11 +10,9 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 {
@@ -56,17 +54,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
 			_highWatermark = DiskspaceManagerSettings.HighWaterMarkDefault;
 			_lowWatermark = DiskspaceManagerSettings.LowWaterMarkDefault;
-
-			const long watermarkMinDifferenceBytes = 5*1024*1024;
-			
-			var clock = new CodeClock();
-			clock.Start();
-			
-			// despite warning in PerformRefresh, TotalSize executes in less than a millisecond so is fine for the constructor
-			_watermarkMinDifference = (float)watermarkMinDifferenceBytes / _driveInfo.TotalSize * 100f;
-			
-			clock.Stop();
-			//Trace.WriteLine(String.Format("DriveInfo.TotalSize: {0}", clock));
+			_watermarkMinDifference = 5;
 		}
 
 		/// <summary>

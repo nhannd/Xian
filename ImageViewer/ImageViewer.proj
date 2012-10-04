@@ -121,8 +121,20 @@
 
   <Target Name="BuildSolution" >
     <RemoveDir Condition="$(DistributionBuild)" Directories="$(DistributionDir)" />
+    
+    <!-- This makes platform specific builds of the bootstrapper exe for distribution (by default, it is AnyCPU for ease of developer use) -->
+    <FileReplaceText Condition="$(DistributionBuild) And '$(PlatformName)' != ''" FilePath="$(MSBuildProjectDirectory)\..\Desktop\Executable\ClearCanvas.Desktop.Executable.csproj" TextToReplace="&lt;PlatformTarget&gt;AnyCPU&lt;/PlatformTarget&gt;" ReplacementText="&lt;PlatformTarget&gt;$(PlatformName)&lt;/PlatformTarget&gt;"/>
+    
+    <!-- This modifies the bootstrapper exe to be /LargeAddressAware for x86 distribution builds (in case the target user has the /3GB switch enabled) -->
+    <FileReplaceText Condition="$(DistributionBuild) And '$(PlatformName)' == 'x86'" FilePath="$(MSBuildProjectDirectory)\..\Desktop\Executable\ClearCanvas.Desktop.Executable.csproj" TextToReplace="&lt;PostBuildEvent&gt;" ReplacementText="&lt;PostBuildEvent&gt;editbin /LargeAddressAware %24%28ProjectDir%29\%24%28OutDir%29\ClearCanvas.Desktop.Executable.exe&#x0D;&#x0A;"/>
 
     <MSBuild Projects="ImageViewer.sln" Properties="$(ImageViewerProperties)" />
+
+    <!-- This reverts the change for a /LargeAddressAware bootstrapper exe - developers building this shouldn't have to manually revert the changes!! -->
+    <FileReplaceText Condition="$(DistributionBuild) And '$(PlatformName)' == 'x86'" FilePath="$(MSBuildProjectDirectory)\..\Desktop\Executable\ClearCanvas.Desktop.Executable.csproj" ReplacementText="&lt;PostBuildEvent&gt;" TextToReplace="&lt;PostBuildEvent&gt;editbin /LargeAddressAware %24%28ProjectDir%29\%24%28OutDir%29\ClearCanvas.Desktop.Executable.exe&#x0D;&#x0A;"/>
+
+    <!-- This reverts the change for platform specific bootstrapper exe builds - developers building this shouldn't have to manually revert the changes!! -->
+    <FileReplaceText Condition="$(DistributionBuild) And '$(PlatformName)' != ''" FilePath="$(MSBuildProjectDirectory)\..\Desktop\Executable\ClearCanvas.Desktop.Executable.csproj" ReplacementText="&lt;PlatformTarget&gt;AnyCPU&lt;/PlatformTarget&gt;" TextToReplace="&lt;PlatformTarget&gt;$(PlatformName)&lt;/PlatformTarget&gt;"/>
   </Target>
 
 </Project>

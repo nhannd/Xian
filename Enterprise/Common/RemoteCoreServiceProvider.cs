@@ -9,7 +9,11 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -25,16 +29,13 @@ namespace ClearCanvas.Enterprise.Common
 		{
 			return new RemoteServiceProviderArgs(
 				RemoteCoreServiceSettings.Default.BaseUrl,
-				RemoteCoreServiceSettings.Default.FailoverBaseUrl,
+                RemoteCoreServiceSettings.Default.FailoverBaseUrl,
 				RemoteCoreServiceSettings.Default.ConfigurationClass,
 				RemoteCoreServiceSettings.Default.MaxReceivedMessageSize,
 				RemoteCoreServiceSettings.Default.CertificateValidationMode,
 				RemoteCoreServiceSettings.Default.RevocationMode,
-				RemoteCoreServiceSettings.Default.UserCredentialsProviderClass
-				)
-					{
-						FailedEndpointBlackoutTime = RemoteCoreServiceSettings.Default.FailedEndpointBlackoutTime
-					};
+                RemoteCoreServiceSettings.Default.UserCredentialsProviderClass
+				);
 		}
 	}
 }

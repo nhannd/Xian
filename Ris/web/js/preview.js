@@ -1,30 +1,3 @@
-// Copyright (c) 2010, ClearCanvas Inc.
-// All rights reserved.
-
-// Redistribution and use in source and binary forms, with or without modification,
-// are permitted provided that the following conditions are met:
-
-//     * Redistributions of source code must retain the above copyright notice,
-//       this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright notice,
-//       this list of conditions and the following disclaimer in the documentation
-//       and/or other materials provided with the distribution.
-//     * Neither the name of ClearCanvas Inc. nor the names of its contributors
-//       may be used to endorse or promote products derived from this software without
-//       specific prior written permission.
-
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
-// OF SUCH DAMAGE.
-
 /*
  *	Provides several genaral methods for formatting data for preview pages.
  */
@@ -201,8 +174,8 @@ var Preview = function () {
 			if (!visit || !visit.CurrentLocation)
 				return null;
 			
-			if (visit.CurrentRoom || visit.CurrentBed)
-				return visit.CurrentLocation.Name + ", " + (visit.CurrentRoom || "Room Not Specified") + (visit.CurrentBed ? "/" + visit.CurrentBed : "");
+			if (visit.CurrentLocation.Room || visit.CurrentLocation.Bed)
+				return visit.CurrentLocation.Name + ", " + (visit.CurrentLocation.Room || "") + (visit.CurrentLocation.Bed ? "/" + visit.CurrentLocation.Bed : "");
 			else
 				return visit.CurrentLocation.Name;
 		}
@@ -2052,14 +2025,8 @@ Preview.VisitDetailsSection = function () {
 		'		<tr>'+
 		'			<td width="120" class="propertyname">Patient Class</td>'+
 		'			<td width="200"><div id="PatientClass"/></td>'+
-		'			<td width="120" class="propertyname">Current Room</td>'+
-		'			<td width="200"><div id="CurrentRoom"/></td>'+
-		'		</tr>'+
-		'		<tr>'+
 		'			<td width="120" class="propertyname">Patient Type</td>'+
 		'			<td width="200"><div id="PatientType"/></td>'+
-		'			<td width="120" class="propertyname">Current Bed</td>'+
-		'			<td width="200"><div id="CurrentBed"/></td>'+
 		'		</tr>'+
 		'		<tr>'+
 		'			<td width="120" class="propertyname">Admission Type</td>'+
@@ -2106,8 +2073,6 @@ Preview.VisitDetailsSection = function () {
 			Field.setValue($("AdmissionType"), visitDetail.AdmissionType.Value);
 			Field.setValue($("DischargeDisposition"), visitDetail.DischargeDisposition);
 			Field.setValue($("CurrentLocation"), visitDetail.CurrentLocation ? visitDetail.CurrentLocation.Name : null);
-			Field.setValue($("CurrentRoom"), visitDetail.CurrentRoom ? visitDetail.CurrentRoom : null);
-			Field.setValue($("CurrentBed"), visitDetail.CurrentBed ? visitDetail.CurrentBed : null);
 			Field.setValue($("PreAdmitNumber"), visitDetail.PreadmitNumber);
 			Field.setValue($("VipFlag"), visitDetail.VipIndicator ? "Yes" : "No");
 			
@@ -2358,7 +2323,7 @@ Preview.ResultRecipientsSection = function() {
 			Preview.ProceduresTableHelper.addHeading(parentElement, title, 'subsectionheading');
 		}
 
-		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
+		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, null, true);
 		htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 		[
 			{   label: "Practitioner",

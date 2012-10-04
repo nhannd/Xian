@@ -59,7 +59,6 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingEditorComponentControl));
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -80,15 +79,27 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 			// 
 			// tableLayoutPanel1
 			// 
-			resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+			this.tableLayoutPanel1.ColumnCount = 1;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.Controls.Add(this.splitContainer1, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 1);
+			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 2;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 521F));
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 9F));
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(638, 552);
+			this.tableLayoutPanel1.TabIndex = 0;
 			// 
 			// splitContainer1
 			// 
-			resources.ApplyResources(this.splitContainer1, "splitContainer1");
+			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.splitContainer1.Location = new System.Drawing.Point(2, 2);
+			this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
 			this.splitContainer1.Name = "splitContainer1";
+			this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
 			// splitContainer1.Panel1
 			// 
@@ -97,64 +108,101 @@ namespace ClearCanvas.Desktop.View.WinForms.Configuration
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.Controls.Add(this.groupBox2);
+			this.splitContainer1.Size = new System.Drawing.Size(634, 517);
+			this.splitContainer1.SplitterDistance = 252;
+			this.splitContainer1.SplitterWidth = 3;
+			this.splitContainer1.TabIndex = 0;
 			// 
 			// groupBox1
 			// 
 			this.groupBox1.Controls.Add(this._defaultValue);
-			resources.ApplyResources(this.groupBox1, "groupBox1");
+			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.groupBox1.Location = new System.Drawing.Point(0, 0);
 			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(634, 252);
+			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Default Value";
 			// 
 			// _defaultValue
 			// 
 			this._defaultValue.AcceptsTab = true;
 			this._defaultValue.AutoWordSelection = true;
 			this._defaultValue.DetectUrls = false;
-			resources.ApplyResources(this._defaultValue, "_defaultValue");
+			this._defaultValue.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._defaultValue.Location = new System.Drawing.Point(3, 16);
 			this._defaultValue.Name = "_defaultValue";
 			this._defaultValue.ReadOnly = true;
+			this._defaultValue.Size = new System.Drawing.Size(628, 233);
+			this._defaultValue.TabIndex = 0;
+			this._defaultValue.Text = "";
+			this._defaultValue.WordWrap = false;
 			// 
 			// groupBox2
 			// 
 			this.groupBox2.Controls.Add(this._currentValue);
-			resources.ApplyResources(this.groupBox2, "groupBox2");
+			this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.groupBox2.Location = new System.Drawing.Point(0, 0);
 			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.Size = new System.Drawing.Size(634, 262);
+			this.groupBox2.TabIndex = 1;
 			this.groupBox2.TabStop = false;
+			this.groupBox2.Text = "Current Value";
 			// 
 			// _currentValue
 			// 
 			this._currentValue.AcceptsTab = true;
 			this._currentValue.DetectUrls = false;
-			resources.ApplyResources(this._currentValue, "_currentValue");
+			this._currentValue.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._currentValue.Location = new System.Drawing.Point(3, 16);
 			this._currentValue.Name = "_currentValue";
+			this._currentValue.Size = new System.Drawing.Size(628, 243);
+			this._currentValue.TabIndex = 0;
+			this._currentValue.Text = "";
+			this._currentValue.WordWrap = false;
 			// 
 			// flowLayoutPanel1
 			// 
 			this.flowLayoutPanel1.Controls.Add(this._cancelButton);
 			this.flowLayoutPanel1.Controls.Add(this._okButton);
-			resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
+			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(2, 523);
+			this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(634, 27);
+			this.flowLayoutPanel1.TabIndex = 1;
 			// 
 			// _cancelButton
 			// 
-			resources.ApplyResources(this._cancelButton, "_cancelButton");
+			this._cancelButton.Location = new System.Drawing.Point(576, 2);
+			this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
 			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
+			this._cancelButton.TabIndex = 1;
+			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
 			// _okButton
 			// 
-			resources.ApplyResources(this._okButton, "_okButton");
+			this._okButton.Location = new System.Drawing.Point(516, 2);
+			this._okButton.Margin = new System.Windows.Forms.Padding(2);
 			this._okButton.Name = "_okButton";
+			this._okButton.Size = new System.Drawing.Size(75, 23);
+			this._okButton.TabIndex = 1;
+			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
 			// 
 			// SettingEditorComponentControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.tableLayoutPanel1);
+			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "SettingEditorComponentControl";
+			this.Size = new System.Drawing.Size(638, 552);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);

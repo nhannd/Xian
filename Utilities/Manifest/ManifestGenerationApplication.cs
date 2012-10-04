@@ -57,7 +57,7 @@ namespace ClearCanvas.Utilities.Manifest
             try
             {
                 _cmdLine.Parse(args);
-              
+
                 List<ManifestInput> list = new List<ManifestInput>();
                 foreach (string filename in _cmdLine.Positional)
                 {
@@ -94,7 +94,7 @@ namespace ClearCanvas.Utilities.Manifest
                                                     };
                     _manifest.ProductManifest.Product.Manifest = _cmdLine.Manifest;
                 }
-              
+                
                 ProcessFiles(list);
 
                 ProcessConfiguration(list);
@@ -146,11 +146,11 @@ namespace ClearCanvas.Utilities.Manifest
                 foreach(ManifestInput.InputFile inputFile in input.Files)
                 {
                     string fullPath = Path.Combine(_cmdLine.DistributionDirectory, inputFile.Name);
-                   
+
                     if (!File.Exists(fullPath))
                     {
                         if (!Directory.Exists(fullPath) && !inputFile.Ignore)
-                            throw new ApplicationException("File in manifest not in distribution: " + inputFile.Name + " (" + fullPath +")");
+                            throw new ApplicationException("File in manifest not in distribution: " + inputFile.Name);
 
                         ManifestFile directory = new ManifestFile
                                                      {

@@ -15,7 +15,6 @@ using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
-using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
@@ -92,15 +91,15 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
                 throw new FaultException<StudyNotFoundFault>(
                             new StudyNotFoundFault(), String.Format(SR.FaultNotExists, parameters.StudyInstanceUID, parameters.ServerAETitle));
             }
-            catch (StudyIsNearlineException e)
+            catch (StudyNotOnlineException)
             {
-				throw new FaultException<StudyIsNearlineFault>(
-							new StudyIsNearlineFault() { IsStudyBeingRestored = e.RestoreRequested },
-							String.Format(SR.FaultStudyIsNearline, parameters.StudyInstanceUID));
+                throw new FaultException<StudyIsNearlineFault>(
+                            new StudyIsNearlineFault(),
+                            String.Format(SR.FaultStudyIsNearline,parameters.StudyInstanceUID));
             }
             catch (StudyAccessException e)
             {
-                if (e.InnerException != null)
+                if (e.InnerException !=null)
                 {
                     if (e.InnerException is FileNotFoundException)
                     {
@@ -114,18 +113,13 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
                                 new StudyIsInUseFault(e.StudyState.Description),
                                 String.Format(SR.FaultFaultStudyTemporarilyNotAccessible, parameters.StudyInstanceUID, e.StudyState));
             }
-			catch (FilesystemNotReadableException e)
-			{
-				//interpret as generic fault
-				throw new FaultException(e.Message);
-			}
-			catch (FileNotFoundException e)
+            catch(FileNotFoundException e)
             {
                 // OOPS.. the header is missing
                 Platform.Log(LogLevel.Error, e, "Unable to process study header request from {0}", callingAETitle);
                 throw new FaultException(SR.FaultHeaderIsNotAvailable);
             }
-			catch (Exception e)
+            catch (Exception e)
             {
                 if (!(e is FaultException))
                     Platform.Log(LogLevel.Error, e, "Unable to process study header request from {0}", callingAETitle);

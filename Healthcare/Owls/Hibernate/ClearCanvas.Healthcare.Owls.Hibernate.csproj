@@ -1,0 +1,176 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D04B9037-5363-426E-9342-F1B7853740DA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ClearCanvas.Healthcare.Owls.Hibernate</RootNamespace>
+    <AssemblyName>ClearCanvas.Healthcare.Owls.Hibernate</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;UNIT_TESTS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ReferencedAssemblies\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate, Version=2.1.2.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ReferencedAssemblies\NHibernate2.1\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="*.gen.cs" />
+    <Compile Include="Brokers\*.gen.cs" />
+    <Compile Include="Brokers\ViewDdlBroker.cs" />
+    <Compile Include="Brokers\OwlsProtocolWorklistItemBroker.cs" />
+    <Compile Include="Brokers\OwlsRegistrationWorklistItemBroker.cs" />
+    <Compile Include="Brokers\OwlsReportingWorklistItemBroker.cs" />
+    <Compile Include="Brokers\ProcedureSearchViewSourceBroker.cs" />
+    <Compile Include="Brokers\QueryBuilders\OwlsModalityWorklistItemQueryBuilder.cs" />
+    <Compile Include="Brokers\QueryBuilders\OwlsPatientQueryBuilder.cs" />
+    <Compile Include="Brokers\QueryBuilders\OwlsProcedureQueryBuilder.cs" />
+    <Compile Include="Brokers\QueryBuilders\OwlsProtocolWorklistItemQueryBuilder.cs" />
+    <Compile Include="Brokers\QueryBuilders\OwlsQueryBuilderBase.cs" />
+    <Compile Include="Brokers\QueryBuilders\OwlsRegistrationWorklistItemQueryBuilder.cs" />
+    <Compile Include="Brokers\QueryBuilders\OwlsReportingWorklistItemQueryBuilder.cs" />
+    <Compile Include="Brokers\QueryBuilders\OwlsWorklistItemQueryBuilder.cs" />
+    <Compile Include="Brokers\OwlsModalityWorklistItemBroker.cs" />
+    <Compile Include="Brokers\ProcedureStepViewSourceBroker.cs" />
+    <Compile Include="Brokers\ViewSourceBrokerBase.cs" />
+    <Compile Include="Brokers\ViewSourceBrokers.cs" />
+    <Compile Include="Brokers\ObjectAccessor.cs" />
+    <Compile Include="ClassHierarchyUtils.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Brokers\ViewItemDataReader.cs" />
+    <Compile Include="Brokers\ViewItemTableMapping.cs" />
+    <Compile Include="Tests\ClassHierarchyUtilsTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
+      <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
+      <Name>ClearCanvas.Enterprise.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
+      <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
+      <Name>ClearCanvas.Enterprise.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Enterprise\Hibernate\ClearCanvas.Enterprise.Hibernate.csproj">
+      <Project>{4CED35C2-4659-492D-8F85-F560E469BE11}</Project>
+      <Name>ClearCanvas.Enterprise.Hibernate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Workflow\ClearCanvas.Workflow.csproj">
+      <Project>{576C4A35-B314-49D0-BF53-4BD43D8D1F31}</Project>
+      <Name>ClearCanvas.Workflow</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClearCanvas.Healthcare.csproj">
+      <Project>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</Project>
+      <Name>ClearCanvas.Healthcare</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Hibernate\ClearCanvas.Healthcare.Hibernate.csproj">
+      <Project>{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}</Project>
+      <Name>ClearCanvas.Healthcare.Hibernate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClearCanvas.Healthcare.Owls.csproj">
+      <Project>{EEB7F9BB-813F-43D9-A48C-AA3211DC48FF}</Project>
+      <Name>ClearCanvas.Healthcare.Owls</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ProcedureStepWorklistViewItem.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ReportingWorklistViewItem.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ModalityWorklistViewItem.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\WorklistViewItemBase.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ProcedureSearchViewItem.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\RegistrationWorklistViewItem.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ProtocolWorklistViewItem.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ProcedureSearchViewItem.dbi.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ModalityWorklistViewItem.dbi.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ProtocolWorklistViewItem.dbi.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\RegistrationWorklistViewItem.dbi.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ReportingWorklistViewItem.dbi.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Brokers\drop_all_indexes_from_table.sql.template" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+</Project>

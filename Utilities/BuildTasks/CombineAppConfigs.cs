@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Microsoft.Build.Framework;
@@ -193,8 +192,7 @@ namespace ClearCanvas.Utilities.BuildTasks
 						{
 							elementPath = string.Format("{0}/{1}", sectionGroupName, typeElement.Name);
 							XmlElement newTypeElement = CreateElement(newConfigurationElement, elementPath, null, null);
-
-							var removeChars = new [] {'\t', '\r', '\n'};
+							
 							foreach (XmlNode childNode in typeElement)
 							{
 								if (childNode is XmlElement)
@@ -205,24 +203,7 @@ namespace ClearCanvas.Utilities.BuildTasks
 								}
 								else if (childNode is XmlComment)
 								{
-									bool found = false;
-									string v1 = (childNode.Value ?? "").Trim().Replace("\r", "").Replace("\n", "").Replace("\t", "");
-									foreach (var newElementNode in newTypeElement)
-									{
-										var commentNode = newElementNode as XmlComment;
-										if (commentNode == null)
-											continue;
-
-										string v2 = (commentNode.Value ?? "").Trim().Replace("\r", "").Replace("\n", "").Replace("\t", "");
-										if (v1==v2)
-										{
-											found = true;
-											break;
-										}
-									}
-
-									if (!found)
-										newTypeElement.InsertBefore(newTypeElement.OwnerDocument.ImportNode(childNode, true), newTypeElement.ChildNodes[0]);
+									newTypeElement.AppendChild(newTypeElement.OwnerDocument.ImportNode(childNode, true));
 								}
 							}
 						}

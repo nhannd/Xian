@@ -71,7 +71,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-    	[Localizable(true)]
         public string LabelText
         {
             get { return _label.Text; }

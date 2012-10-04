@@ -178,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, SR.MessageFailedToOpenStudy, this.Context.DesktopWindow);
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
 		}
 	}

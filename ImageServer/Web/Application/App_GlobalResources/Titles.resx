@@ -166,7 +166,7 @@
     <value>Study Integrity Queue</value>
   </data>
   <data name="StudyIntegrityQueuePageTitle" xml:space="preserve">
-    <value>Study Integrity Queue | {0}</value>
+    <value>Study Integrity Queue |  {0}</value>
   </data>
   <data name="ReconcileStudyDialog" xml:space="preserve">
     <value>Reconcile Study</value>
@@ -235,7 +235,7 @@
     <value>Alerts</value>
   </data>
   <data name="AlertsPageTitle" xml:space="preserve">
-    <value>Alerts | {0}</value>
+    <value>Alerts | Admin | {0}</value>
   </data>
   <data name="ApplicationLog" xml:space="preserve">
     <value>Application Log</value>
@@ -244,7 +244,7 @@
     <value>User Management</value>
   </data>
   <data name="UserManagementPageTitle" xml:space="preserve">
-    <value>Users | {0}</value>
+    <value>Users | User Management | Admin | {0}</value>
   </data>
   <data name="AuthorityTokens" xml:space="preserve">
     <value>Authority Tokens</value>
@@ -262,31 +262,31 @@
     <value>About | {0}</value>
   </data>
   <data name="ApplicationLogPageTitle" xml:space="preserve">
-    <value>Application Log | {0}</value>
+    <value>Application Log | Admin | {0}</value>
   </data>
   <data name="DeletedStudiesPageTitle" xml:space="preserve">
     <value>Deleted Studies | {0}</value>
   </data>
   <data name="UserGroupsPageTitle" xml:space="preserve">
-    <value>User Groups | {0}</value>
+    <value>User Groups | User Management | Admin | {0}</value>
   </data>
   <data name="DevicesPageTitle" xml:space="preserve">
-    <value>Devices | {0}</value>
+    <value>Devices | Configure | {0}</value>
   </data>
   <data name="FileSystemsPageTitle" xml:space="preserve">
-    <value>File Systems | {0}</value>
+    <value>File Systems | Configure | {0}</value>
   </data>
   <data name="PartitionArchivesPageTitle" xml:space="preserve">
-    <value>Partition Archives | {0}</value>
+    <value>Partition Archives | Configure | {0}</value>
   </data>
   <data name="ServerPartitionsPageTitle" xml:space="preserve">
-    <value>Server Partitions | {0}</value>
+    <value>Server Partitions | Configure | {0}</value>
   </data>
   <data name="ServerRulesPageTitle" xml:space="preserve">
-    <value>Server Rules | {0}</value>
+    <value>Server Rules | Configure | {0}</value>
   </data>
   <data name="ServiceSchedulingPageTitle" xml:space="preserve">
-    <value>Service Scheduling | {0}</value>
+    <value>Service Scheduling | Configure | {0}</value>
   </data>
   <data name="AuthorizationErrorPageTitle" xml:space="preserve">
     <value>Authorization Error</value>
@@ -326,89 +326,5 @@
   </data>
   <data name="ViewImagesPageTitle" xml:space="preserve">
     <value>Webstation | {0}</value>
-  </data>
-  <data name="MoveSeries" xml:space="preserve">
-    <value>Move Series</value>
-  </data>
-  <data name="MoveSeries_Dialog_Confirmation" xml:space="preserve">
-    <value>Move Series Confirmation</value>
-  </data>
-  <data name="DeleteWorkQueueConfirmationDialogTitle" xml:space="preserve">
-    <value>Please confirm</value>
-  </data>
-  <data name="ScheduleWorkQueueDialogTitle" xml:space="preserve">
-    <value>Reschedule Work Queue Item</value>
-  </data>
-  <data name="WorkQueueItemDetails" xml:space="preserve">
-    <value>WorkQueue Item Details</value>
-  </data>
-  <data name="AdminDeletedStudies_DeleteConfirmationDialogTitle" xml:space="preserve">
-    <value>Please confirm</value>
-  </data>
-  <data name="AdminDeleteStudies_DetailsDialog_ArchiveInfoTabTitle" xml:space="preserve">
-    <value>Archive Information</value>
-  </data>
-  <data name="AdminDeleteStudies_DetailsDialog_StudyInfoTabTitle" xml:space="preserve">
-    <value>Study Information</value>
-  </data>
-  <data name="AdminDevices_AddEditDialog_FeaturesTabTitle" xml:space="preserve">
-    <value>Features</value>
-  </data>
-  <data name="AdminDevices_AddEditDialog_GeneralTabTitle" xml:space="preserve">
-    <value>General</value>
-  </data>
-  <data name="AdminDevices_AddEditDialog_ThrottleTabTitle" xml:space="preserve">
-    <value>Throttle</value>
-  </data>
-  <data name="AdminFilesystem_AddEditDialog_GeneralTabTitle" xml:space="preserve">
-    <value>General</value>
-  </data>
-  <data name="AdminFilesystem_AddEditDialog_WatermarksTabTitle" xml:space="preserve">
-    <value>Watermarks</value>
-  </data>
-  <data name="AdminPartition_AddEditDialog_DeleteManagementTabTitle" xml:space="preserve">
-    <value>Delete Management</value>
-  </data>
-  <data name="AdminPartition_AddEditDialog_GeneralTabTitle" xml:space="preserve">
-    <value>General</value>
-  </data>
-  <data name="AdminPartition_AddEditDialog_RemoteDevicesTabTitle" xml:space="preserve">
-    <value>Remote Devices</value>
-  </data>
-  <data name="AdminPartition_AddEditDialog_StudyMatchingTabTitle" xml:space="preserve">
-    <value>Study Matching</value>
-  </data>
-  <data name="AdminServerRules_AddEditDialog_GeneralTabTitle" xml:space="preserve">
-    <value>General</value>
-  </data>
-  <data name="AdminServerRules_AddEditDialog_RuleXMLTabTitle" xml:space="preserve">
-    <value>Rule XML</value>
-  </data>
-  <data name="AdminServices_EditDialogTitle" xml:space="preserve">
-    <value>Edit Service Schedule</value>
-  </data>
-  <data name="AdminUser_PasswordResetDialogTitle" xml:space="preserve">
-    <value>Password Reset</value>
-  </data>
-  <data name="SIQ_ReconcileDialog_AdditionalInfoTabTitle" xml:space="preserve">
-    <value>Additional Info</value>
-  </data>
-  <data name="SIQ_ReconcileDialog_OverviewTabTitle" xml:space="preserve">
-    <value>Overview</value>
-  </data>
-  <data name="ReconcileDuplicateSOPDialog" xml:space="preserve">
-    <value>Duplicate SOP Reconciliation</value>
-  </data>
-  <data name="ChangePasswordDialogTitle" xml:space="preserve">
-    <value>Change Password</value>
-  </data>
-  <data name="PasswordExpiredDialogTitle" xml:space="preserve">
-    <value>Password Expired</value>
-  </data>
-  <data name="MoveStudy_Dialog_Confirmation" xml:space="preserve">
-    <value>Move Confirmation</value>
-  </data>
-  <data name="LabelNotForDiagnosticUse" xml:space="preserve">
-    <value>Not for Diagnostic Use</value>
   </data>
 </root>

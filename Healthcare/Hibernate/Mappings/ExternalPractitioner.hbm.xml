@@ -30,7 +30,6 @@
       <index column="Name_" type="String"/>
       <element type="String" column="Value_" length="65000"/>
     </map>
-    <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true" access="nosetter.camelcase-underscore"/>
-    <many-to-one name="MergedInto" class="ExternalPractitioner" column="MergedIntoOID_" access="nosetter.camelcase-underscore"/>
+    <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
   </class>
 </hibernate-mapping>

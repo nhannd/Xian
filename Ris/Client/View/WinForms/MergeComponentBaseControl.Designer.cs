@@ -31,6 +31,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._duplicateGroupBox = new System.Windows.Forms.GroupBox();
 			this._targetItem = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._sourceItem = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._report = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
 			this._switchButton = new System.Windows.Forms.Button();
 			this._acceptButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
@@ -44,20 +45,21 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._duplicateGroupBox.Controls.Add(this._targetItem);
 			this._duplicateGroupBox.Controls.Add(this._sourceItem);
+			this._duplicateGroupBox.Controls.Add(this._report);
 			this._duplicateGroupBox.Controls.Add(this._switchButton);
 			this._duplicateGroupBox.Location = new System.Drawing.Point(3, 3);
 			this._duplicateGroupBox.Name = "_duplicateGroupBox";
-			this._duplicateGroupBox.Size = new System.Drawing.Size(644, 120);
+			this._duplicateGroupBox.Size = new System.Drawing.Size(644, 360);
 			this._duplicateGroupBox.TabIndex = 0;
 			this._duplicateGroupBox.TabStop = false;
-			this._duplicateGroupBox.Text = "Select items to merge";
+			this._duplicateGroupBox.Text = "Select items to merge:";
 			// 
 			// _targetItem
 			// 
 			this._targetItem.DataSource = null;
 			this._targetItem.DisplayMember = "";
 			this._targetItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._targetItem.LabelText = "and replace usages with this:";
+			this._targetItem.LabelText = "With this:";
 			this._targetItem.Location = new System.Drawing.Point(8, 69);
 			this._targetItem.Margin = new System.Windows.Forms.Padding(2);
 			this._targetItem.Name = "_targetItem";
@@ -70,13 +72,27 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._sourceItem.DataSource = null;
 			this._sourceItem.DisplayMember = "";
 			this._sourceItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._sourceItem.LabelText = "De-activate this:";
+			this._sourceItem.LabelText = "Replace this:";
 			this._sourceItem.Location = new System.Drawing.Point(7, 24);
 			this._sourceItem.Margin = new System.Windows.Forms.Padding(2);
 			this._sourceItem.Name = "_sourceItem";
 			this._sourceItem.Size = new System.Drawing.Size(565, 41);
 			this._sourceItem.TabIndex = 4;
 			this._sourceItem.Value = null;
+			// 
+			// _report
+			// 
+			this._report.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._report.LabelText = "Proposed Changes:";
+			this._report.Location = new System.Drawing.Point(7, 114);
+			this._report.Margin = new System.Windows.Forms.Padding(2);
+			this._report.Name = "_report";
+			this._report.ReadOnly = true;
+			this._report.Size = new System.Drawing.Size(620, 241);
+			this._report.TabIndex = 3;
+			this._report.Value = null;
 			// 
 			// _switchButton
 			// 
@@ -91,7 +107,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _acceptButton
 			// 
 			this._acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._acceptButton.Location = new System.Drawing.Point(491, 129);
+			this._acceptButton.Location = new System.Drawing.Point(491, 369);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 1;
@@ -102,7 +118,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _cancelButton
 			// 
 			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._cancelButton.Location = new System.Drawing.Point(572, 129);
+			this._cancelButton.Location = new System.Drawing.Point(572, 369);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 2;
@@ -120,7 +136,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._acceptButton);
 			this.Name = "MergeComponentBaseControl";
-			this.Size = new System.Drawing.Size(653, 160);
+			this.Size = new System.Drawing.Size(653, 400);
 			this._duplicateGroupBox.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -132,6 +148,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.Button _acceptButton;
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.Button _switchButton;
+		private ClearCanvas.Desktop.View.WinForms.TextAreaField _report;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _targetItem;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _sourceItem;
     }

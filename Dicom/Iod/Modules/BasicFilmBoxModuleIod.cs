@@ -10,18 +10,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
+using System.Globalization;
 using ClearCanvas.Dicom.Iod.Sequences;
-using System.ComponentModel;
-using System.Text;
-using System.Xml.Serialization;
 
 namespace ClearCanvas.Dicom.Iod.Modules
 {
-	//TODO (CR March 2011): Just generally, it might be better to use regular expressions
-	//for a lot of the parsing that's done in these classes.
-
     /// <summary>
     /// Basic Film Box Presentation and Relationship Module as per Part 3, C.13-3 (pg 862) and C.13.4 (pg 869)
     /// </summary>
@@ -32,13 +25,14 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// Initializes a new instance of the <see cref="FilmBoxModuleIod"/> class.
         /// </summary>
         public BasicFilmBoxModuleIod()
+            :base()
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FilmBoxModuleIod"/> class.
         /// </summary>
-        public BasicFilmBoxModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
+		public BasicFilmBoxModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -69,10 +63,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// </para>
         /// </summary>
         /// <value></value>
-        public ImageDisplayFormat ImageDisplayFormat
+        public string ImageDisplayFormat
         {
-            get { return ImageDisplayFormat.FromDicomString(base.DicomAttributeProvider[DicomTags.ImageDisplayFormat].GetString(0, String.Empty)); }
-            set { base.DicomAttributeProvider[DicomTags.ImageDisplayFormat].SetStringValue(value.DicomString); }
+            get { return base.DicomAttributeProvider[DicomTags.ImageDisplayFormat].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ImageDisplayFormat].SetStringValue(value); }
         }
 
         /// <summary>
@@ -103,8 +97,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The film size id.</value>
         public FilmSize FilmSizeId
         {
-            get { return FilmSize.FromDicomString(base.DicomAttributeProvider[DicomTags.FilmSizeId].GetString(0, String.Empty)); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.FilmSizeId], value.DicomString, false); }
+			get { return GetFilmSizeEnumFromString(base.DicomAttributeProvider[DicomTags.FilmSizeId].GetString(0, String.Empty)); }
+			set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.FilmSizeId], GetFilmSizeStringFromEnum(value), false); }
         }
 
         /// <summary>
@@ -140,10 +134,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// </para>
         /// </summary>
         /// <value>The border density.</value>
-        public BorderDensity BorderDensity
+        public string BorderDensity
         {
-            get { return IodBase.ParseEnum<BorderDensity>(base.DicomAttributeProvider[DicomTags.BorderDensity].GetString(0, String.Empty), BorderDensity.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.BorderDensity], value, false); }
+            get { return base.DicomAttributeProvider[DicomTags.BorderDensity].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.BorderDensity].SetString(0, value); }
         }
 
         /// <summary>
@@ -158,11 +152,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// </para>
         /// </summary>
         /// <value>The empty image density.</value>
-        public EmptyImageDensity EmptyImageDensity
+        public string EmptyImageDensity
         {
-            get { return IodBase.ParseEnum<EmptyImageDensity>(base.DicomAttributeProvider[DicomTags.EmptyImageDensity].GetString(0, String.Empty), EmptyImageDensity.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.EmptyImageDensity], value, false); }
+            get { return base.DicomAttributeProvider[DicomTags.EmptyImageDensity].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.EmptyImageDensity].SetString(0, value); }
         }
+
 
         /// <summary>
         /// Gets or sets the min density.  Minimum density of the images on the film, expressed in hundredths of OD. If Min Density is lower than minimum printer density than Min Density 
@@ -203,7 +198,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         public string ConfigurationInformation
         {
             get { return base.DicomAttributeProvider[DicomTags.ConfigurationInformation].GetString(0, String.Empty); }
-            set { base.DicomAttributeProvider[DicomTags.ConfigurationInformation].SetStringValue(value); }
+            set { base.DicomAttributeProvider[DicomTags.ConfigurationInformation].SetString(0, value); }
         }
 
         /// <summary>
@@ -279,7 +274,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         public static void SetCommonTags(IDicomAttributeProvider dicomAttributeProvider)
         {
             if (dicomAttributeProvider == null)
-                throw new ArgumentNullException("dicomAttributeProvider");
+				throw new ArgumentNullException("dicomAttributeProvider");
 
             //dicomAttributeProvider[DicomTags.NumberOfCopies].SetNullValue();
             //dicomAttributeProvider[DicomTags.PrintPriority].SetNullValue();
@@ -289,26 +284,91 @@ namespace ClearCanvas.Dicom.Iod.Modules
             //dicomAttributeProvider[DicomTags.MemoryAllocation].SetNullValue();
             //dicomAttributeProvider[DicomTags.OwnerId].SetNullValue();
         }
+
+        /// <summary>
+        /// Gets the film size string from enum.  Note, have to do this because can't make enum values that start with a number...
+        /// </summary>
+        /// <param name="filmSizeId">The film size id.</param>
+        /// <returns></returns>
+        public static string GetFilmSizeStringFromEnum(FilmSize filmSizeId)
+        {
+            string result = String.Empty;
+            if (filmSizeId != FilmSize.None)
+            {
+                if (filmSizeId == FilmSize.A3 || filmSizeId == FilmSize.A4)
+                    result = filmSizeId.ToString();
+                else if (filmSizeId.ToString().Length > 2)
+                {
+                    string filmSizeString = filmSizeId.ToString();
+                    // Format is INYxZ or CMYxZ - where Y is first dimension and Z is second dimension - ie, IN10x14 - need to turn it into 10INX14IN
+                    string inOrCm = filmSizeString.Substring(0, 2);
+                    string[] numbers = filmSizeString.Substring(2).Split("x".ToCharArray());
+                    if (numbers.Length == 2)
+                        result = String.Format(CultureInfo.InvariantCulture, "{0}{1}X{2}{1}", numbers[0], inOrCm, numbers[1]);
+                    else
+                    {
+                        // TODO: put warning somewhere...
+                        result = String.Empty;
+                    }
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the film size enum from string.  Note, have to do this because can't make enum values that start with a number...
+        /// </summary>
+        /// <param name="filmSizeString">The film size string.</param>
+        /// <returns></returns>
+        public static FilmSize GetFilmSizeEnumFromString(string filmSizeString)
+        {
+            FilmSize result = FilmSize.None;
+            if (!String.IsNullOrEmpty(filmSizeString) && String.Compare(filmSizeString, FilmSize.None.ToString(), StringComparison.OrdinalIgnoreCase) != 0)
+            {
+                string stringToParse = String.Empty;
+                if (String.Compare(filmSizeString, FilmSize.A3.ToString(), StringComparison.OrdinalIgnoreCase) == 0 || String.Compare(filmSizeString, FilmSize.A4.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    stringToParse = filmSizeString;
+                }
+                else if (filmSizeString.ToString().Length > 3)
+                {
+                    // Format is YINXZIN or YCMXZCM - where Y is first dimension and Z is second dimension - ie, 10INX14IN - need to turn it into IN10x14 (enum format)
+                    string inOrCm = filmSizeString.Substring(filmSizeString.Length - 2, 2);
+                    string[] numbers = filmSizeString.Split("X".ToCharArray());
+                    if (numbers.Length == 2)
+                    {
+                        if (numbers[0].Length > 2)
+                        {
+                            // remove CM or IN from end of each number
+                            for (int i = 0; i < 2; i++)
+                            {
+                                numbers[i] = numbers[i].Substring(0, numbers[i].Length - 2).Trim();
+                            }
+                            stringToParse = String.Format(CultureInfo.InvariantCulture, "{0}{1}x{2}", inOrCm, numbers[0], numbers[1]);
+                        }
+                    }
+                }
+                if (!String.IsNullOrEmpty(stringToParse))
+                {
+                    try
+                    {
+                        result = (FilmSize) Enum.Parse(typeof(FilmSize), stringToParse);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+            }
+            return result;
+        }
+
         #endregion
     }
-
-	//TODO (CR March 2011): Useful as a class in Common (eventually)?
-
-	/// <summary>
-	/// Defines various length in millimeters.
-	/// </summary>
-	public static class LengthInMillimeter
-	{
-		public const float Inch = 25.4f;		// 1 inch = 25.4 mm exactly.  There is no more decimal places to follow
-		public const float Foot = 12*Inch;
-		public const float Yard = 3*Foot;
-	}
 
     #region FilmOrientation Enum
     /// <summary>
     /// enumeration for the Film Orientation
     /// </summary>
-    [TypeConverter(typeof(BasicPrintEnumConverter<FilmOrientation>))]
     public enum FilmOrientation
     {
         /// <summary>
@@ -326,12 +386,70 @@ namespace ClearCanvas.Dicom.Iod.Modules
     }
     #endregion
 
+    #region FilmSizeId Enum
+    /// <summary>
+    /// Enumeration for Film size identification.
+    /// </summary>
+    public enum FilmSize
+    {
+        None,
+        /// <summary>
+        /// 8INX10IN
+        /// </summary>
+        IN8x10,
+        /// <summary>
+        /// 8_5INX11IN
+        /// </summary>
+        IN8_5x11,
+
+        /// <summary>
+        /// 10INX12IN
+        /// </summary>
+        IN10x12,
+        /// <summary>
+        /// 10INX14IN, corresponds with 25.7CMX36.4CM
+        /// </summary>
+        IN10x14,
+        /// <summary>
+        /// 11INX14IN
+        /// </summary>
+        IN11x14,
+        /// <summary>
+        /// 11INX17IN
+        /// </summary>
+        IN11x17,
+        /// <summary>
+        /// 14INX14IN
+        /// </summary>
+        IN14x14,
+        /// <summary>
+        /// 14INX17IN
+        /// </summary>
+        IN14x17,
+        /// <summary>
+        /// 24CMX24CM
+        /// </summary>
+        CM24x24,
+        /// <summary>
+        /// 24CMX30CM
+        /// </summary>
+        CM24x30,
+        /// <summary>
+        /// A4 corresponds with 210 x 297 millimeters
+        /// </summary>
+        A4,
+        /// <summary>
+        /// A3 corresponds with 297 x 420 millimeters
+        /// </summary>
+        A3
+    }
+    #endregion
+
     #region MagnificationType Enum
     /// <summary>
     /// Magnification type enum.  Interpolation type by which the printer magnifies or decimates the image in order to fit the image in the
     /// image box on film.
     /// </summary>
-    [TypeConverter(typeof(BasicPrintEnumConverter<MagnificationType>))]
     public enum MagnificationType
     {
         /// <summary>
@@ -353,40 +471,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
     }
     #endregion
 
-	#region BorderDensity
-
-	/// <summary>
-	/// Defines the border density.  Density of the film areas surrounding and between images on the film.
-	/// Defined Terms: Black, White or i, where i represents the desired density in hundreds of OD.
-	/// </summary>
-	[TypeConverter(typeof(BasicPrintEnumConverter<BorderDensity>))]
-	public enum BorderDensity
-	{
-		None,
-		Black,
-		White
-	}
-	#endregion
-
-	#region EmptyImageDensity Enum
-	/// <summary>
-	/// Defines the empty image density.  Density of the image box area on the film that contains no image.
-	/// Defined Terms: Black, White or i, where i represents the desired density in hundreds of OD.
-	/// </summary>
-	[TypeConverter(typeof(BasicPrintEnumConverter<EmptyImageDensity>))]
-	public enum EmptyImageDensity
-	{
-		None,
-		Black,
-		White
-	}
-	#endregion
-
     #region SmoothingType Enum
     /// <summary>
     /// Further specifies the type of the interpolation function. Values are defined in Conformance Statement.
     /// </summary>
-    [TypeConverter(typeof(BasicPrintEnumConverter<SmoothingType>))]
     public enum SmoothingType
     {
         /// <summary>
@@ -413,7 +501,6 @@ namespace ClearCanvas.Dicom.Iod.Modules
     /// <summary>
     /// Specifies the resolution at which images in this Film Box are to be printed.
     /// </summary>
-    [TypeConverter(typeof(BasicPrintEnumConverter<RequestedResolution>))]
     public enum RequestedResolution
     {
         /// <summary>
@@ -430,519 +517,5 @@ namespace ClearCanvas.Dicom.Iod.Modules
         High
     }
     #endregion
-
-    #region ImageDisplayFormat class
-    [TypeConverter(typeof(ImageDisplayFormat.DisplayValueConverter))]
-    public class ImageDisplayFormat
-	{
-		#region Type Converter
-
-		public class DisplayValueConverter : TypeConverter
-        {
-            public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-            {
-                if (destinationType == typeof(string))
-                    return true;
-
-                return base.CanConvertTo(context, destinationType);
-            }
-
-            public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
-            {
-                if (value is ImageDisplayFormat && destinationType == typeof(string))
-                    return GetDisplayString(value as ImageDisplayFormat);
-
-                return base.ConvertTo(context, culture, value, destinationType);
-            }
-
-            public string GetDisplayString(ImageDisplayFormat imageDisplayFormat)
-            {
-				var formatProperCase = GetProperCasing(imageDisplayFormat.Format.ToString());
-				switch (imageDisplayFormat.Format)
-                {
-                    case FormatEnum.STANDARD:
-						return string.Format(SR.FormatImageDisplayFormatStandard,
-                            imageDisplayFormat.Modifiers[0],
-                            imageDisplayFormat.Modifiers[1]);
-
-                    case FormatEnum.ROW:
-                        return string.Format(SR.FormatImageDisplayFormatRow,
-                            StringUtilities.Combine(imageDisplayFormat.Modifiers, ", "));
-
-                    case FormatEnum.COL:
-                        return string.Format(SR.FormatImageDisplayFormatColumn,
-                            StringUtilities.Combine(imageDisplayFormat.Modifiers, ", "));
-
-                    case FormatEnum.SLIDE:
-                    case FormatEnum.SUPERSLIDE:
-                    case FormatEnum.CUSTOM:
-                    default:
-						return formatProperCase;
-                }
-            }
-
-            private static string GetProperCasing(string input)
-            {
-                if (string.IsNullOrEmpty(input))
-                    return input;
-
-                if (input.Length == 1)
-                    return input.ToUpper();
-
-                return string.Format("{0}{1}",
-                    input[0].ToString().ToUpper(),
-                    input.Substring(1).ToLower());
-            }
-		}
-
-		#endregion
-
-		public class InvalidFormatException : Exception
-		{
-			public InvalidFormatException (string dicomString)
-				: base(string.Format(SR.ExceptionInvalidImageDisplayFormat, dicomString))
-			{
-			}
-
-			public InvalidFormatException (string dicomString, Exception exception)
-				: base(string.Format(SR.ExceptionInvalidImageDisplayFormat, dicomString), exception)
-			{
-			}
-		}
-
-		/// <summary>
-        /// Type of image display format. Enumerated Values:
-        /// <para>
-        /// STANDARD\C,R : film contains equal size rectangular image boxes with R rows of image boxes and C columns of image boxes; C and R are integers.
-        /// </para>
-        /// <para>
-        /// ROW\R1,R2,R3, etc. : film contains rows with equal size rectangular image boxes with R1 image boxes in the first row, R2 image boxes in second row, 
-        /// R3 image boxes in third row, etc.; R1, R2, R3, etc. are integers.
-        /// </para>
-        /// <para>
-        /// COL\C1,C2,C3, etc.: film contains columns with equal size rectangular image boxes with C1 image boxes in the first column, C2 image boxes in second
-        ///  column, C3 image boxes in third column, etc.; C1, C2, C3, etc. are integers.
-        /// </para>
-        /// <para>
-        /// SLIDE : film contains 35mm slides; the number of slides for a particular film size is configuration dependent.
-        /// </para>
-        /// <para>
-        /// SUPERSLIDE : film contains 40mm slides; the number of slides for a particular film size is configuration dependent.
-        /// </para>
-        /// <para>
-        /// CUSTOM\i : film contains a customized ordering of rectangular image boxes; i identifies the image display format; the definition of the image display
-        /// formats is defined in the Conformance Statement; i is an integer.
-        /// </para>
-        /// </summary>
-        /// <value></value>
-
-		public enum FormatEnum
-        {
-            STANDARD,
-            ROW,
-			COL,
-			SLIDE,
-            SUPERSLIDE,
-            CUSTOM
-        }
-
-		// Predefined formats
-    	public static ImageDisplayFormat Standard_1x1 = FromDicomString(@"STANDARD\1,1");
-		public static ImageDisplayFormat Standard_1x2 = FromDicomString(@"STANDARD\1,2");
-		public static ImageDisplayFormat Standard_2x1 = FromDicomString(@"STANDARD\2,1");
-		public static ImageDisplayFormat Standard_2x2 = FromDicomString(@"STANDARD\2,2");
-		public static ImageDisplayFormat Standard_2x4 = FromDicomString(@"STANDARD\2,4");
-		public static ImageDisplayFormat Standard_4x1 = FromDicomString(@"STANDARD\4,1");
-		public static ImageDisplayFormat Standard_4x2 = FromDicomString(@"STANDARD\4,2");
-		public static ImageDisplayFormat Standard_4x4 = FromDicomString(@"STANDARD\4,4");
-		public static ImageDisplayFormat Row_1_2 = FromDicomString(@"ROW\1,2");
-		public static ImageDisplayFormat COL_1_2 = FromDicomString(@"COL\1,2");
-
-		// A list of standard formats that is supported by CC DICOM Print
-        public static List<ImageDisplayFormat> StandardFormats = new List<ImageDisplayFormat>
-            {
-    			Standard_1x1, Standard_1x2,
-				Standard_2x1, Standard_2x2, Standard_2x4,
-				Standard_4x1, Standard_4x2, Standard_4x4,
-				Row_1_2,
-				COL_1_2
-            };
-
-		public static ImageDisplayFormat FromDicomString(string dicomString)
-		{
-			try
-			{
-				if (string.IsNullOrEmpty(dicomString))
-					return null;
-
-				var indexOfSeparator = dicomString.IndexOf(@"\");
-				var formatString = indexOfSeparator >= 0
-								? dicomString.Substring(0, indexOfSeparator)
-								: dicomString;
-				var format = (FormatEnum)Enum.Parse(typeof(FormatEnum), formatString);
-				if (format == FormatEnum.SLIDE || format == FormatEnum.SUPERSLIDE || format == FormatEnum.CUSTOM)
-					throw new NotSupportedException(string.Format(SR.ExceptionNotSupportedImageDisplayFormat, formatString));
-
-				var commaSeparatedModifiers = indexOfSeparator >= 0
-								? dicomString.Substring(indexOfSeparator + 1)
-								: "";
-				var modifierTokens = StringUtilities.SplitQuoted(commaSeparatedModifiers, ",");
-
-				if (format == FormatEnum.STANDARD && modifierTokens.Length != 2 ||
-					format == FormatEnum.ROW && modifierTokens.Length < 2 ||
-					format == FormatEnum.COL && modifierTokens.Length < 2)
-					throw new InvalidFormatException(dicomString);
-
-				var imageDisplayFormat = new ImageDisplayFormat
-				{
-					_dicomString = dicomString,
-					Format = format,
-					Modifiers = CollectionUtils.Map<string, int>(modifierTokens, m => int.Parse(m))
-				};
-
-				return imageDisplayFormat;
-			}
-			catch (NotSupportedException) { throw; }
-			catch (InvalidFormatException) { throw; }
-			catch (Exception e)
-			{
-				throw new InvalidFormatException(dicomString, e);
-			}
-		}
-
-        private string _dicomString;
-
-		#region Serialization
-
-		/// <summary>
-        /// Constructor for serialization.
-        /// </summary>
-        public ImageDisplayFormat()
-        {
-        }
-
-		/// <summary>
-		/// For serialization purpose, the is the only public property.  The setter should not be used.
-		/// Instead, use <see cref="FromDicomString"/> to create a new/different FilmSize object.
-		/// </summary>
-		public string DicomString
-		{
-			get { return _dicomString; }
-			set
-			{
-				var imageDisplayFormat = FromDicomString(value);
-				_dicomString = imageDisplayFormat._dicomString;
-				this.Format = imageDisplayFormat.Format;
-				this.Modifiers = imageDisplayFormat.Modifiers;
-			}
-		}
-
-		#endregion
-
-        [XmlIgnore]
-        public FormatEnum Format { get; private set; }
-
-        [XmlIgnore]
-        public List<int> Modifiers { get; private set; }
-
-        [XmlIgnore]
-        public int MaximumImageBoxes
-        {
-            get
-            {
-                if (this.Modifiers.Count == 0)
-                    return 1;
-
-				switch (this.Format)
-                {
-                    case FormatEnum.STANDARD:
-                        return this.Modifiers[0] * this.Modifiers[1];
-                    case FormatEnum.ROW:
-                    case FormatEnum.COL:
-                        return CollectionUtils.Reduce<int, int>(this.Modifiers, 0, (m, sum) => sum + m);
-
-                    case FormatEnum.SLIDE:
-                    case FormatEnum.SUPERSLIDE:
-                    case FormatEnum.CUSTOM:
-                    default:
-						throw new NotSupportedException(string.Format("{0} image display format is not supported", this.Format));
-                }
-            }
-        }
-    }
-    #endregion
-
-    #region FilmSize
-
-    /// <summary>
-    /// Film size identification.
-    /// </summary>
-    [TypeConverter(typeof(FilmSize.DisplayValueConverter))]
-    public class FilmSize
-	{
-		#region TypeConverter
-
-		public class DisplayValueConverter : TypeConverter
-        {
-            public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-            {
-                if (destinationType == typeof(string))
-                    return true;
-
-                return base.CanConvertTo(context, destinationType);
-            }
-
-            public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
-            {
-                if (value is FilmSize && destinationType == typeof(string))
-                    return GetDisplayString(value as FilmSize);
-
-                return base.ConvertTo(context, culture, value, destinationType);
-            }
-
-            private static string GetDisplayString(FilmSize filmSize)
-            {
-                var builder = new StringBuilder();
-                builder.AppendFormat(SR.FormatFilmSize,
-                    filmSize._width,
-                    filmSize._height,
-					filmSize._sizeUnit == FilmSizeUnit.Inch ? SR.LabelFilmSizeUnitInch : SR.LabelFilmSizeUnitCentimeter);
-
-                return filmSize.DicomString == "A3" || filmSize.DicomString == "A4"
-                    ? string.Format("{0} ({1})", filmSize.DicomString, builder)
-                    : builder.ToString();
-            }
-		}
-
-		#endregion
-
-		public class InvalidFilmSizeException : Exception
-		{
-			public InvalidFilmSizeException(string dicomString)
-				: base(string.Format(SR.ExceptionInvalidFilmSize, dicomString))
-			{
-			}
-
-			public InvalidFilmSizeException(string dicomString, Exception exception)
-				: base(string.Format(SR.ExceptionInvalidFilmSize, dicomString), exception)
-			{
-			}
-		}
-
-		// Predefined formats
-    	public static FilmSize Dimension_8in_x_10in = FromDicomString("8INX10IN");
-		public static FilmSize Dimension_8_5in_x_11in = FromDicomString("8_5INX11IN");
-		public static FilmSize Dimension_10in_x_12in = FromDicomString("10INX12IN");
-		public static FilmSize Dimension_10in_x_14in = FromDicomString("10INX14IN"); //  corresponds with 25.7CMX36.4CM
-		public static FilmSize Dimension_11in_x_14in = FromDicomString("11INX14IN");
-		public static FilmSize Dimension_11in_x_17in = FromDicomString("11INX17IN");
-		public static FilmSize Dimension_14in_x_14in = FromDicomString("14INX14IN");
-		public static FilmSize Dimension_14in_x_17in = FromDicomString("14INX17IN");
-		public static FilmSize Dimension_24cm_x_24cm = FromDicomString("24CMX24CM");
-		public static FilmSize Dimension_24cm_x_30cm = FromDicomString("24CMX30CM");
-		public static FilmSize A3 = FromDicomString("A3");	// 297mm x 420mm
-		public static FilmSize A4 = FromDicomString("A4");	// 210mm x 297mm
-
-		// A list of standard film sizes that is defined by the DICOM Standard
-		public static List<FilmSize> StandardFilmSizes = new List<FilmSize>
-            {
-    			Dimension_8in_x_10in, Dimension_8_5in_x_11in,
-    			Dimension_10in_x_12in, Dimension_10in_x_14in,
-    			Dimension_11in_x_14in, Dimension_11in_x_17in,
-    			Dimension_14in_x_14in, Dimension_14in_x_17in,
-    			Dimension_24cm_x_24cm, Dimension_24cm_x_30cm,
-    			A3, A4
-            };
-
-		public static FilmSize FromDicomString(string dicomString)
-		{
-			try
-			{
-				if (string.IsNullOrEmpty(dicomString))
-					return null;
-
-				if (dicomString == "A3")
-					return new FilmSize
-					{
-						_dicomString = dicomString,
-						_sizeUnit = FilmSizeUnit.Centimeter,
-						_width = 29.7f,
-						_height = 42.0f
-					};
-
-				if (dicomString == "A4")
-					return new FilmSize
-					{
-						_dicomString = dicomString,
-						_sizeUnit = FilmSizeUnit.Centimeter,
-						_width = 21.0f,
-						_height = 29.7f
-					};
-
-				var indexOfX = dicomString.IndexOf('X');
-				if (indexOfX < 3) // at least one char for width, and 2 chars for units
-					throw new InvalidFilmSizeException(dicomString);
-
-				var firstUnit = dicomString.Substring(indexOfX - 2, 2);
-				var secondUnit = dicomString.Substring(dicomString.Length - 2);
-				if (firstUnit != "CM" && firstUnit != "IN")
-					throw new InvalidFilmSizeException(dicomString);
-				if (firstUnit != secondUnit)
-					throw new InvalidFilmSizeException(dicomString);
-
-				var xSeparatedDimension = dicomString.Replace("IN", "").Replace("CM", "").Replace('_', '.');
-				var dimensions = StringUtilities.SplitQuoted(xSeparatedDimension, "X");
-
-				var filmSize = new FilmSize
-				{
-					_dicomString = dicomString,
-					_sizeUnit = firstUnit == "IN" ? FilmSizeUnit.Inch : FilmSizeUnit.Centimeter,
-					_width = float.Parse(dimensions[0]),
-					_height = float.Parse(dimensions[1]),
-				};
-				return filmSize;
-			}
-			catch (NotSupportedException) { throw; }
-			catch (InvalidFilmSizeException) { throw; }
-			catch (Exception e)
-			{
-				throw new InvalidFilmSizeException(dicomString, e);
-			}
-		}
-
-        public enum FilmSizeUnit
-        {
-            Inch,
-            Centimeter,
-        }
-
-        private string _dicomString;
-        private FilmSizeUnit _sizeUnit;
-        private float _width;
-        private float _height;
-
-		#region Serialization
-
-		/// <summary>
-		/// Empty constructor for serialization
-		/// </summary>
-        public FilmSize()
-        {
-        }
-
-		/// <summary>
-		/// For serialization purpose, the is the only public property.  The setter should not be used.
-		/// Instead, use <see cref="FromDicomString"/> to create a new/different FilmSize object.
-		/// </summary>
-		public string DicomString
-        {
-            get { return _dicomString; }
-            set
-            {
-            	var filmSize = FromDicomString(value);
-				_dicomString = filmSize._dicomString;
-				_sizeUnit = filmSize._sizeUnit;
-				_width = filmSize._width;
-				_height = filmSize._height;
-            }
-		}
-
-		#endregion
-
-		#region Public Methods
-
-		public float GetHeight(FilmSizeUnit desiredUnit)
-        {
-            if (_sizeUnit == desiredUnit)
-                return _height;
-
-            return desiredUnit == FilmSizeUnit.Inch
-                ? ConvertToInches(_height)
-				: ConvertToCentimeters(_height);
-        }
-
-        public float GetWidth(FilmSizeUnit desiredUnit)
-        {
-            if (_sizeUnit == desiredUnit)
-                return _width;
-
-            return desiredUnit == FilmSizeUnit.Inch
-                ? ConvertToInches(_width)
-                : ConvertToCentimeters(_width);
-		}
-
-		#endregion
-
-		#region Private Methods
-
-		private static float ConvertToCentimeters(float inches)
-        {
-            return (inches * LengthInMillimeter.Inch) / 10.0f;
-        }
-
-        private static float ConvertToInches(float cm)
-        {
-            return 10.0f * cm / LengthInMillimeter.Inch;
-		}
-
-		#endregion
-	}
-
-    public class BasicPrintEnumConverter<TEnumType> : TypeConverter
-    {
-        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-        {
-            if (destinationType == typeof(string))
-                return true;
-
-            return base.CanConvertTo(context, destinationType);
-        }
-
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
-        {
-            if (value is TEnumType && destinationType == typeof(string))
-            {
-                if (value.ToString() == "None")
-                    return SR.LabelDefault;
-
-                if (value is MediumType)
-                    return ConvertMediumType((MediumType)value);
-
-                if (value is FilmDestination)
-                    return ConvertFilmDestination((FilmDestination) value);
-            }
-
-            return base.ConvertTo(context, culture, value, destinationType);
-        }
-
-        private static string ConvertMediumType(MediumType mediumType)
-        {
-            switch (mediumType)
-            {
-                case MediumType.Paper:
-                    return SR.LabelFilmMediumTypePaper;
-                case MediumType.ClearFilm:
-                    return SR.LabelFilmMediumTypeClearFilm;
-                case MediumType.BlueFilm:
-                    return SR.LabelFilmMediumTypeBlueFilm;
-                case MediumType.MammoClearFilm:
-                    return SR.LabelFilmMediumTypeMammoClearFilm;
-                case MediumType.MammoBlueFilm:
-                    return SR.LabelFilmMediumTypeMammoBlueFilm;
-                default:
-                    return mediumType.ToString();
-            }
-        }
-
-        private static string ConvertFilmDestination(FilmDestination filmDestination)
-        {
-            var destinationString = filmDestination.ToString();
-            return destinationString.StartsWith("Bin_")
-                ? destinationString.Replace('_', ' ')
-                : destinationString;
-        }
-    }
-
-    #endregion
-
+    
 }

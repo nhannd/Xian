@@ -126,6 +126,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// <exception cref="ArgumentException">Thrown when the input <paramref name="normalizedRectangle"/> is not normalized.</exception>
 		public AnnotationBox(RectangleF normalizedRectangle, IAnnotationItem annotationItem)
 		{
+			RectangleUtilities.VerifyNormalizedRectangle(normalizedRectangle); 
 			this.NormalizedRectangle = normalizedRectangle;
 			_annotationItem = annotationItem;
 		}
@@ -174,7 +175,11 @@ namespace ClearCanvas.ImageViewer.Annotations
 		public RectangleF NormalizedRectangle
 		{
 			get { return _normalizedRectangle; }
-			set { _normalizedRectangle = value; }
+			set 
+			{
+				RectangleUtilities.VerifyNormalizedRectangle(value);
+				_normalizedRectangle = value;
+			}
 		}
 
 		/// <summary>
@@ -350,21 +355,16 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// <summary>
 		/// Gets or sets whether or not the item is visible.
 		/// </summary>
-		/// <remarks>Takes into account the value of <see cref="AlwaysVisible"/> when returning a value;
-		/// however, internally, the value is always set.</remarks>
 		public bool Visible
 		{
-			get { return _alwaysVisible ? true : _visible; }
-			set{ _visible = value; }
-		}
+			get { return _visible; }
+			set
+			{
+				if (_alwaysVisible)
+					value = true;
 
-		/// <summary>
-		/// Gets the internal value of <see cref="Visible"/>.
-		/// </summary>
-		/// <returns>Returns the true value of <see cref="Visible"/> regardless of the value of <see cref="AlwaysVisible"/>.</returns>
-		public bool VisibleInternal
-		{
-			get { return _visible; }	
+				_visible = value;
+			}
 		}
 
 		/// <summary>

@@ -97,24 +97,6 @@ namespace ClearCanvas.Ris.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Performs asynchronous merge operations as long-running background tasks..
-        /// </summary>
-        internal static string MergeShredDescription {
-            get {
-                return ResourceManager.GetString("MergeShredDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Merge Shred.
-        /// </summary>
-        internal static string MergeShredName {
-            get {
-                return ResourceManager.GetString("MergeShredName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Connection failed ({0})..
         /// </summary>
         internal static string MessageFormatDicomConnectionFailed {

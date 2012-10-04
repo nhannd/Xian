@@ -16,12 +16,10 @@ using System.ComponentModel;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.ImageViewer.Annotations.Utilities;
-using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Annotations;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -421,14 +419,11 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		{
 			Rectangle clientRectangle = image.ClientRectangle;
 
-			// Must build description from the source image because the ParentDisplaySet info is lost in the cloned image.
-			var name = BuildClipboardItemName(image);
-			var description = BuildClipboardItemDescription(image);
-
 			image = image.Clone();
-			Bitmap bmp = IconCreator.CreatePresentationImageIcon(image);
+			HideTextOverlay(image);
 
-			return new ClipboardItem(image, bmp, name, description, clientRectangle);
+			Bitmap bmp = IconCreator.CreatePresentationImageIcon(image);
+			return new ClipboardItem(image, bmp, "", clientRectangle);
 		}
 
 		public static IClipboardItem CreateDisplaySetItem(IDisplaySet displaySet)
@@ -478,56 +473,22 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		private static IClipboardItem CreateDisplaySetItem(IDisplaySet displaySet, Rectangle clientRectangle)
 		{
+			HideTextOverlay(displaySet.PresentationImages);
+
 			Bitmap bmp = IconCreator.CreateDisplaySetIcon(displaySet, clientRectangle);
-			return new ClipboardItem(displaySet, bmp, displaySet.Name, BuildClipboardItemDescription(displaySet), clientRectangle);
+			return new ClipboardItem(displaySet, bmp, displaySet.Name, clientRectangle);
 		}
 
-		private static string BuildClipboardItemName(IPresentationImage image)
+		private static void HideTextOverlay(IEnumerable<IPresentationImage> images)
 		{
-			if (!(image is IImageSopProvider))
-				return string.Empty;
-
-			var imageSopProvider = (IImageSopProvider)image;
-
-			// This is unlikely to happen
-			if (image.ParentDisplaySet == null)
-				return string.Format(SR.MessageClipboardNameSingleImage, imageSopProvider.ImageSop.SeriesDescription, imageSopProvider.ImageSop.InstanceNumber);
-
-			// Multi-frame image, display image and frame number
-			if (imageSopProvider.ImageSop.NumberOfFrames > 1)
-				return string.Format(SR.MessageClipboardNameMultiframeImage, image.ParentDisplaySet.Name, imageSopProvider.ImageSop.InstanceNumber, imageSopProvider.Frame.FrameNumber);
-
-			// Single frame image in a display set of multiple images, display image number
-			if (image.ParentDisplaySet.PresentationImages.Count > 1)
-				return string.Format(SR.MessageClipboardNameSingleImage, image.ParentDisplaySet.Name, imageSopProvider.ImageSop.InstanceNumber);
-
-			// Only one image in the displayset, no need for image number
-			return image.ParentDisplaySet.Name;
+			foreach (IPresentationImage image in images)
+				HideTextOverlay(image);
 		}
 
-		private static string BuildClipboardItemDescription(IPresentationImage image)
+		private static void HideTextOverlay(IPresentationImage image)
 		{
-			if (!(image is IImageSopProvider))
-				return string.Empty;
-
-			var imageSopProvider = (IImageSopProvider)image;
-			var sop = imageSopProvider.ImageSop;
-
-			return string.Format(SR.MessageClipboardDescription
-				, sop.PatientId
-				, sop.PatientsName == null ? null : sop.PatientsName.FormattedName
-				, Format.Date(DateParser.Parse(sop.StudyDate))
-				, sop.StudyDescription
-				, sop.AccessionNumber
-				, sop.Modality
-				, TextOverlayVisibilityHelper.IsVisible(image, true) ? SR.LabelOn : SR.LabelOff);
-		}
-
-		private static string BuildClipboardItemDescription(IDisplaySet displaySet)
-		{
-			return displaySet.PresentationImages.Count == 0
-				? string.Empty
-				: BuildClipboardItemDescription(displaySet.PresentationImages[0]);
+			if (image is IAnnotationLayoutProvider)
+				((IAnnotationLayoutProvider)image).AnnotationLayout.Visible = false;
 		}
 
 		#endregion

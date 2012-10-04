@@ -10,16 +10,18 @@
 #endregion
 
 using System;
+using System.IO;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Web.Common;
+using Binding=System.ServiceModel.Channels.Binding;
+using Message=System.ServiceModel.Channels.Message;
 
 namespace ClearCanvas.Web.Services
 {
-    // (CR 3-22-2011) - This could be removed, not used any longer with the change to IIS hosting 
-    // of the service.
     public class ApplicationServiceHost:ServiceHost
     {
         public ApplicationServiceHost(params Uri[] addresses)
@@ -38,11 +40,9 @@ namespace ClearCanvas.Web.Services
 
             if (MexHttpUrl != null)
             {
-                ServiceMetadataBehavior mexBehaviour = new ServiceMetadataBehavior
-                                                           {
-                                                               HttpGetEnabled = true,
-                                                               HttpGetUrl = MexHttpUrl
-                                                           };
+                ServiceMetadataBehavior mexBehaviour = new ServiceMetadataBehavior();
+                mexBehaviour.HttpGetEnabled = true;
+                mexBehaviour.HttpGetUrl = MexHttpUrl;
                 Description.Behaviors.Add(mexBehaviour);
             }
             base.InitializeRuntime();
@@ -79,7 +79,18 @@ namespace ClearCanvas.Web.Services
             
         }
 
-        private static void LogSettings(NetTcpBinding binding)
+        private void LogSettings(NetTcpBinding binding)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Web viewer service settings:");
+            sb.AppendLine(String.Format("\t{0}\t: {1}", "Maximum Simultaneous Applications", ApplicationServiceSettings.Default.MaximumSimultaneousApplications));
+            sb.AppendLine(String.Format("\t{0}\t: {1}", "Inactivity Timeout", binding.ReceiveTimeout));
+            sb.AppendLine(String.Format("\t{0}\t: {1}", "MaxBufferPoolSize", binding.MaxBufferPoolSize));
+            sb.AppendLine(String.Format("\t{0}\t: {1}", "MaxReceivedMessageSize", binding.MaxReceivedMessageSize));
+            Platform.Log(LogLevel.Info, sb.ToString());
+        }
+
+        private void LogHttpSettings(BasicHttpBinding binding)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Web viewer service settings:");

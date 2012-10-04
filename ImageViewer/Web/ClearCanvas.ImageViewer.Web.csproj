@@ -77,6 +77,7 @@
     <Compile Include="EntityHandlers\ImageBoxEntityHandler.cs" />
     <Compile Include="EntityHandlers\TileEntityHandler.cs" />
     <Compile Include="Layout\WebLayoutTool.cs" />
+    <Compile Include="PerformanceLogger.cs" />
     <Compile Include="PriorStudyLoaderExceptionPolicy.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

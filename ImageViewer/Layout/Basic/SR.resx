@@ -220,14 +220,14 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   <data name="TitleLayoutManager" xml:space="preserve">
     <value>Layout Manager</value>
   </data>
-  <data name="ToolbarChangeLayout" xml:space="preserve">
-    <value>Change Layout</value>
-  </data>
   <data name="ToolbarExplodeImageBox" xml:space="preserve">
     <value>Survey/Explode</value>
   </data>
   <data name="ToolbarLayoutBoxesChooser" xml:space="preserve">
     <value>Image Box Layout</value>
+  </data>
+  <data name="ToolbarLayoutManager" xml:space="preserve">
+    <value>Layout Manager</value>
   </data>
   <data name="ToolbarLayoutTilesChooser" xml:space="preserve">
     <value>Tile Layout</value>
@@ -238,11 +238,11 @@ Alternately, the study can be brought back online by a PACS administrator.</valu
   <data name="ToolbarPreviousDisplaySet" xml:space="preserve">
     <value>Previous Display Set</value>
   </data>
-  <data name="TooltipChangeLayout" xml:space="preserve">
-    <value>Change Layout</value>
-  </data>
   <data name="TooltipExplodeImageBox" xml:space="preserve">
     <value>Survey/Explode</value>
+  </data>
+  <data name="TooltipLayoutManager" xml:space="preserve">
+    <value>Layout Manager</value>
   </data>
   <data name="TooltipNextDisplaySet" xml:space="preserve">
     <value>Next Display Set</value>

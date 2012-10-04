@@ -62,10 +62,6 @@
   <ItemGroup>
     <Compile Include="AssembliesHbmOrderer.cs" />
     <Compile Include="Broker.cs" />
-    <Compile Include="PersistentStoreVersion.cs" />
-    <Compile Include="PersistentStoreVersionBroker.cs" />
-    <Compile Include="PersistentStoreVersionSearchCriteria.cs" />
-    <Compile Include="IPersistentStoreVersionBroker.cs" />
     <Compile Include="ChangeRecord.cs" />
     <Compile Include="ChangeTracker.cs" />
     <Compile Include="Ddl\AdditionalIndexProcessor.cs" />
@@ -183,7 +179,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Ddl\AdditionalIndexProcessor.dbi.xml" />
-    <EmbeddedResource Include="Mappings\PersistentStoreVersion.hbm.xml" />
     <EmbeddedResource Include="Mappings\AuditLogEntry.dbi.xml" />
     <EmbeddedResource Include="Mappings\ExceptionLogEntry.hbm.xml" />
     <EmbeddedResource Include="Mappings\AuditLogEntry.hbm.xml" />

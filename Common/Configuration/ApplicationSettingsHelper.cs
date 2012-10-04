@@ -17,28 +17,6 @@ namespace ClearCanvas.Common.Configuration
 {
 	internal static class ApplicationSettingsHelper
 	{
-		internal static bool IsLocal(Type settingsClass)
-		{
-			var attributes = settingsClass.GetCustomAttributes(typeof(SettingsProviderAttribute), true);
-			if (attributes.Length == 0)
-				return true;
-
-			var attribute = (SettingsProviderAttribute)attributes[0];
-			if (attribute.ProviderTypeName == typeof(LocalFileSettingsProvider).AssemblyQualifiedName)
-				return true;
-
-			if (attribute.ProviderTypeName == typeof(ExtendedLocalFileSettingsProvider).AssemblyQualifiedName)
-				return true;
-
-			if (attribute.ProviderTypeName == typeof(ApplicationCriticalSettingsProvider).AssemblyQualifiedName)
-				return true;
-
-			if (!SettingsStore.IsSupported && attribute.ProviderTypeName == typeof(StandardSettingsProvider).AssemblyQualifiedName)
-				return true;
-
-			return false;
-		}
-
 		public static bool IsUserSettingsMigrationEnabled(Type settingsClass)
 		{
 			CheckType(settingsClass);

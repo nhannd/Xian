@@ -29,10 +29,5 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// Gets or sets whether the <see cref="IAnnotationLayout"/> is visible.
 		/// </summary>
 		bool Visible { get; set; }
-
-		/// <summary>
-		/// Gets a deep clone of the annotation layout.
-		/// </summary>
-		IAnnotationLayout Clone();
 	}
 }

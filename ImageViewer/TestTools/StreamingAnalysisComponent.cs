@@ -12,7 +12,6 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.StudyLoaders.Streaming;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System;
@@ -38,8 +37,8 @@ namespace ClearCanvas.ImageViewer.TestTools
 		private readonly IStudyBrowserToolContext _browserToolContext;
 		private BlockingCollection<IFrameReference> _framesToRetrieve;
 		private BlockingCollection<IFrameReference> _framesToDecompress;
-		private ImageViewer.Common.BlockingThreadPool<IFrameReference> _retrievePool;
-		private ImageViewer.Common.BlockingThreadPool<IFrameReference> _decompressPool;
+		private StudyLoaders.Streaming.BlockingThreadPool<IFrameReference> _retrievePool;
+		private StudyLoaders.Streaming.BlockingThreadPool<IFrameReference> _decompressPool;
 
 		public StreamingAnalysisComponent(IStudyBrowserToolContext browserToolContext)
 		{
@@ -233,11 +232,11 @@ namespace ClearCanvas.ImageViewer.TestTools
 			_synchronizationContext = SynchronizationContext.Current;
 			_browserToolContext.SelectedStudyChanged += new EventHandler(OnSelectedStudyChanged);
 			_framesToRetrieve = new BlockingCollection<IFrameReference>();
-			_retrievePool = new ImageViewer.Common.BlockingThreadPool<IFrameReference>(_framesToRetrieve, RetrieveFrame);
+			_retrievePool = new StudyLoaders.Streaming.BlockingThreadPool<IFrameReference>(_framesToRetrieve, RetrieveFrame);
 			_retrievePool.Concurrency = _retrieveConcurrency;
 
-			_framesToDecompress = new ImageViewer.Common.BlockingCollection<IFrameReference>();
-			_decompressPool = new ImageViewer.Common.BlockingThreadPool<IFrameReference>(_framesToDecompress, DecompressFrame);
+			_framesToDecompress = new BlockingCollection<IFrameReference>();
+			_decompressPool = new StudyLoaders.Streaming.BlockingThreadPool<IFrameReference>(_framesToDecompress, DecompressFrame);
 			_decompressPool.Concurrency = _decompressConcurrency;
 
 			base.Start();

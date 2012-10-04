@@ -54,7 +54,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <para>Defined Terms when the Execution Status is FAILURE: </para>
         /// <para>INVALID PAGE DES = The specified page layout cannot be printed or other page description errors have been detected.</para>
         /// <para>INSUFFIC MEMORY = There is not enough memory available to complete this job.</para>
-		/// <para>See Section C.13.9.1 for additional Defined Terms when the Execution Status is PENDING or FAILURE.</para>
+        /// See Section C.13.9.1 for additional Defined Terms when the Execution Status is PENDING or FAILURE.</para>
         /// </summary>
         /// <value>The execution status info.</value>
         public string ExecutionStatusInfo
@@ -125,12 +125,13 @@ namespace ClearCanvas.Dicom.Iod.Modules
             if (dicomAttributeProvider == null)
 				throw new ArgumentNullException("dicomAttributeProvider");
 
-			dicomAttributeProvider[DicomTags.CreationDate].SetNullValue();
-			dicomAttributeProvider[DicomTags.PrinterName].SetNullValue();
-			dicomAttributeProvider[DicomTags.Originator].SetNullValue();
-			dicomAttributeProvider[DicomTags.PrintPriority].SetNullValue();
-			dicomAttributeProvider[DicomTags.ExecutionStatus].SetNullValue();
-			dicomAttributeProvider[DicomTags.ExecutionStatusInfo].SetNullValue();
+            //dicomAttributeProvider[DicomTags.NumberOfCopies].SetNullValue();
+            //dicomAttributeProvider[DicomTags.PrintPriority].SetNullValue();
+            //dicomAttributeProvider[DicomTags.MediumType].SetNullValue();
+            //dicomAttributeProvider[DicomTags.FilmDestination].SetNullValue();
+            //dicomAttributeProvider[DicomTags.FilmSessionLabel].SetNullValue();
+            //dicomAttributeProvider[DicomTags.MemoryAllocation].SetNullValue();
+            //dicomAttributeProvider[DicomTags.OwnerId].SetNullValue();
         }
         #endregion
     }

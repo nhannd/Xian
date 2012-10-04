@@ -1,0 +1,40 @@
+/*	Data file for creating a Ris database with a remote enterprise server
+	Note that the property names must be capitalized because the exact name is being used to replace
+	value in the JScript and Sqlscript templates.
+	
+	Note:  Make sure the Ris Server or Shredhost app.config are configured properly before running the database generation script
+		1. Ris Server is setup to connect to the Enterprise Server
+		2. The ClearCanvas.Common.ExtensionSettings is configured to use RemoteCoreServiceProvider
+			<extension class="ClearCanvas.Enterprise.Core.InProcessCoreServiceProvider, ClearCanvas.Enterprise.Core" enabled="false" />
+			<extension class="ClearCanvas.Enterprise.Common.RemoteCoreServiceProvider, ClearCanvas.Enterprise.Common" enabled="true" />
+*/
+EMBEDDED_ENTERPRISE:	false,
+HOST: 		"172.16.10.167", 
+EXPRESS:	"true", 
+ADMINID:	"sa", 
+ADMINPASS:	"redhat5.1", 
+DB: 		"Ris_EnterpriseRemote", 
+DBFOLDER:	"D:\\sqldb", 
+LOGFOLDER:	"D:\\sqldb", 
+USERID:		"risuser", 
+USERPASS:	"rispass",
+TEMPFOLDER:	".\\temp",
+EXECUTABLE:	"..\\..\\Ris\\Server\\Executable\\bin\\Debug\\ClearCanvas.Ris.Server.Executable.exe",
+IMPORTACTIONS: 
+	[ 
+		{
+			Message: "Importing IHE Sample Data...",
+			Command: "CD ..\\..\\Ris\\SampleData\\ & ImportSampleData.bat", 
+			Argument: "..\\..\\Ris\\Server\\Executable\\bin\\Debug\\ClearCanvas.Ris.Server.Executable.exe"
+		},
+		{
+			Message: "Importing WCH Sample Data...",
+			Command: "CD ..\\..\\Ris\\SampleData\\WCH\\ & ImportSampleData.bat", 
+			Argument: "..\\..\\..\\Ris\\Server\\Executable\\bin\\Debug\\ClearCanvas.Ris.Server.Executable.exe"
+		},
+		{
+			Message: "Importing WCH Angio & Interventional Sample Data...",
+			Command: "CD ..\\..\\Ris\\SampleData\\WCH\\Angio_Interventional\\ & ImportSampleData.bat", 
+			Argument: "..\\..\\..\\..\\Ris\\Server\\Executable\\bin\\Debug\\ClearCanvas.Ris.Server.Executable.exe"
+		},
+	]

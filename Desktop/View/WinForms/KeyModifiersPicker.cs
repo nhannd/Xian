@@ -129,7 +129,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		[Category("Appearance")]
 		[Description("The alignment of the checkbox in the control.")]
 		[DefaultValue(ContentAlignment.MiddleLeft)]
-		[Localizable(true)]
 		public virtual ContentAlignment CheckAlign
 		{
 			get { return _checkBoxCtrl.CheckAlign; }
@@ -196,7 +195,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		[Category("Appearance")]
 		[Description("The alignment of text in the control.")]
 		[DefaultValue(ContentAlignment.MiddleLeft)]
-		[Localizable(true)]
 		public virtual ContentAlignment TextAlign
 		{
 			get { return _checkBoxCtrl.TextAlign; }

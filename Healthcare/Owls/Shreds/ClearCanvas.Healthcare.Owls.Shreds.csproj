@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B4643F08-BB48-4B8D-BA66-0A759DAA081D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ClearCanvas.Healthcare.Owls.Shreds</RootNamespace>
+    <AssemblyName>ClearCanvas.Healthcare.Owls.Shreds</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ViewMaintenance\MaintenanceProcessor.cs" />
+    <Compile Include="ViewMaintenance\MaintenanceShred.cs" />
+    <Compile Include="ViewMaintenance\MaintenanceShredSettings.cs" />
+    <Compile Include="ViewMaintenance\MaintenanceShredSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>MaintenanceShredSettings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="ViewMaintenance\MaintenanceShredSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>MaintenanceShredSettings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
+      <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
+      <Name>ClearCanvas.Enterprise.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
+      <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
+      <Name>ClearCanvas.Enterprise.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClearCanvas.Healthcare.csproj">
+      <Project>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</Project>
+      <Name>ClearCanvas.Healthcare</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClearCanvas.Healthcare.Owls.csproj">
+      <Project>{EEB7F9BB-813F-43D9-A48C-AA3211DC48FF}</Project>
+      <Name>ClearCanvas.Healthcare.Owls</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

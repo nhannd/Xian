@@ -63,34 +63,50 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DialogBoxForm));
-			this._contentPanel = new System.Windows.Forms.Panel();
-			this.SuspendLayout();
-			// 
-			// _contentPanel
-			// 
-			resources.ApplyResources(this._contentPanel, "_contentPanel");
-			this._contentPanel.Name = "_contentPanel";
-
-			// 
-			// DialogBoxForm
-			// 
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._contentPanel);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.Name = "DialogBoxForm";
-			this.ShowInTaskbar = false;
-			this.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
-			this.ResumeLayout(false);
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DialogBoxForm));
+            this._contentPanel = new System.Windows.Forms.Panel();
+            this._delayedCloseTimer = new System.Windows.Forms.Timer(this.components);
+            this.SuspendLayout();
+            // 
+            // _contentPanel
+            // 
+            this._contentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._contentPanel.Location = new System.Drawing.Point(0, 0);
+            this._contentPanel.Margin = new System.Windows.Forms.Padding(2);
+            this._contentPanel.Name = "_contentPanel";
+            this._contentPanel.Size = new System.Drawing.Size(296, 169);
+            this._contentPanel.TabIndex = 0;
+            // 
+            // _delayedCloseTimer
+            // 
+            this._delayedCloseTimer.Interval = 50;
+            this._delayedCloseTimer.Tick += new System.EventHandler(this._delayedCloseTimer_Tick);
+            // 
+            // DialogBoxForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(296, 169);
+            this.Controls.Add(this._contentPanel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(2);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "DialogBoxForm";
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
+            this.Text = "ApplicationComponentHostDialogForm";
+            this.ResumeLayout(false);
 
         }
 
         #endregion
 
         private System.Windows.Forms.Panel _contentPanel;
+        private System.Windows.Forms.Timer _delayedCloseTimer;
         private System.ComponentModel.IContainer components;
     }
 }

@@ -11,33 +11,43 @@
 
 using System;
 using System.Web;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Web.Common.Modules
 {
-    class HttpContextDataManagementModule:  IHttpModule
+    class HttpContextDataManagementModule: IHttpModule
     {
+        private HttpApplication _application;
+
         #region IHttpModule Members
 
         public void Dispose()
         {
-            // Per MSDN: we don't need to unregister events attached to HttpApplication here
+            if (_application!=null)
+            {
+                try
+                {
+                    _application.EndRequest -= context_EndRequest;
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error,e);
+                }
+            }
         }
 
         public void Init(HttpApplication context)
         {
-            // Apparently we don't need to unregister events added to HttpApplication.
-            // IHttpModule.Dispose() is called when HttpApplication is dispose(). HttpApplication disposes
-            // all events itself.
-            context.EndRequest += EndRequest;
+            _application = context;
+            context.EndRequest += new EventHandler(context_EndRequest);
             
         }
 
-        static void EndRequest(object sender, EventArgs e)
+        static void context_EndRequest(object sender, EventArgs e)
         {
-            var contextData = HttpContextData.Current;
-            if (contextData != null)
+            if (HttpContextData.Current!=null)
             {
-                contextData.Dispose();
+                HttpContextData.Current.Dispose();
             } 
         }
 

@@ -1,0 +1,118 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EFD45416-2C24-4022-A565-5C85765BA6F3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ClearCanvas.Utilities.RisDemoDatabaseUtilities</RootNamespace>
+    <AssemblyName>ClearCanvas.Utilities.RisDemoDatabaseUtilities</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EntityGeneratorSettingsList.cs" />
+    <Compile Include="EntityGeneratorSetting.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IEntityGeneratorSettingsList.cs" />
+    <Compile Include="InsertionStatistic.cs" />
+    <Compile Include="OrderGeneratorSettings.cs" />
+    <Compile Include="PatientGeneratorSettings.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RandomDictionaryHelper.cs" />
+    <Compile Include="RisRandomDataGenerator.cs" />
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="VisitGeneratorSettings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Desktop\ClearCanvas.Desktop.csproj">
+      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
+      <Name>ClearCanvas.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Enterprise\ClearCanvas.Enterprise.csproj">
+      <Project>{3AC2BCC0-2549-49AF-97D3-4A403556C097}</Project>
+      <Name>ClearCanvas.Enterprise</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Healthcare\ClearCanvas.Healthcare.csproj">
+      <Project>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</Project>
+      <Name>ClearCanvas.Healthcare</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Ris\Services\ClearCanvas.Ris.Services.csproj">
+      <Project>{11548867-F0DC-4142-82E8-59EBC36B8980}</Project>
+      <Name>ClearCanvas.Ris.Services</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AssociatedFiles\blank.sqb" />
+    <None Include="AssociatedFiles\Copy of demo-fresh with just the manually entered data.sqb" />
+    <None Include="AssociatedFiles\demo-fresh.sqb" />
+    <None Include="AssociatedFiles\DemoStudyList.xls" />
+    <None Include="AssociatedFiles\ris.sqb" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AssociatedFiles\Dictionary.Address.Street.txt" />
+    <Content Include="AssociatedFiles\Dictionary.Address.StreetType.txt" />
+    <Content Include="AssociatedFiles\Dictionary.Name.Family.txt" />
+    <Content Include="AssociatedFiles\Dictionary.Name.Female.txt" />
+    <Content Include="AssociatedFiles\Dictionary.Name.Male.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>::mkdir  "$(SolutionDir)..\Desktop\Executable\bin\$(ConfigurationName)\plugins"
+::mkdir "$(SolutionDir)..\Desktop\Executable\bin\$(ConfigurationName)\datastore"
+copy "$(TargetPath)" "$(SolutionDir)..\Desktop\Executable\bin\$(ConfigurationName)\plugins"
+copy "$(ProjectDir)AssociatedFiles\demo-fresh.sqb" "$(SolutionDir)..\Desktop\Executable\bin\$(ConfigurationName)\datastore"
+copy "$(ProjectDir)AssociatedFiles\ris.sqb" "$(SolutionDir)..\Desktop\Executable\bin\$(ConfigurationName)\datastore"
+copy "$(ProjectDir)AssociatedFiles\blank.sqb" "$(SolutionDir)..\Desktop\Executable\bin\$(ConfigurationName)\datastore"
+copy "$(ProjectDir)AssociatedFiles\Dictionary.Address.Street.txt" "$(SolutionDir)..\Desktop\Executable\bin\$(ConfigurationName)\plugins"
+copy "$(ProjectDir)AssociatedFiles\Dictionary.Address.StreetType.txt" "$(SolutionDir)..\Desktop\Executable\bin\$(ConfigurationName)\plugins"
+copy "$(ProjectDir)AssociatedFiles\Dictionary.Name.Family.txt" "$(SolutionDir)..\Desktop\Executable\bin\$(ConfigurationName)\plugins"
+copy "$(ProjectDir)AssociatedFiles\Dictionary.Name.Female.txt" "$(SolutionDir)..\Desktop\Executable\bin\$(ConfigurationName)\plugins"
+copy "$(ProjectDir)AssociatedFiles\Dictionary.Name.Male.txt" "$(SolutionDir)..\Desktop\Executable\bin\$(ConfigurationName)\plugins"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

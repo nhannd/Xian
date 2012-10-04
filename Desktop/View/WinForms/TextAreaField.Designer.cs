@@ -59,7 +59,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TextAreaField));
 			this._textBox = new System.Windows.Forms.TextBox();
 			this._label = new System.Windows.Forms.Label();
 			this.SuspendLayout();
@@ -68,23 +67,37 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this._textBox.AcceptsReturn = true;
 			this._textBox.AllowDrop = true;
-			resources.ApplyResources(this._textBox, "_textBox");
+			this._textBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._textBox.Location = new System.Drawing.Point(2, 16);
+			this._textBox.Margin = new System.Windows.Forms.Padding(2);
+			this._textBox.Multiline = true;
 			this._textBox.Name = "_textBox";
+			this._textBox.Size = new System.Drawing.Size(184, 105);
+			this._textBox.TabIndex = 0;
 			this._textBox.DragDrop += new System.Windows.Forms.DragEventHandler(this._textBox_DragDrop);
 			this._textBox.DragEnter += new System.Windows.Forms.DragEventHandler(this._textBox_DragEnter);
 			// 
 			// _label
 			// 
-			resources.ApplyResources(this._label, "_label");
+			this._label.AutoSize = true;
+			this._label.Location = new System.Drawing.Point(2, 0);
+			this._label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this._label.Name = "_label";
+			this._label.Size = new System.Drawing.Size(29, 13);
+			this._label.TabIndex = 1;
+			this._label.Text = "label";
 			// 
 			// TextAreaField
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._textBox);
 			this.Controls.Add(this._label);
+			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "TextAreaField";
+			this.Size = new System.Drawing.Size(188, 123);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

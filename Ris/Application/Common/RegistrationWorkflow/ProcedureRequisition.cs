@@ -23,7 +23,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 		/// </summary>
 		public ProcedureRequisition(
 			ProcedureTypeSummary procedureType,
-			string procedureNumber,
+			string procedureIndex,
 			DateTime? scheduledTime,
 			EnumValueInfo schedulingCode,
 			FacilitySummary performingFacility,
@@ -36,7 +36,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 			bool cancelled)
 		{
 			this.ProcedureType = procedureType;
-			this.ProcedureNumber = procedureNumber;
+			this.ProcedureIndex = procedureIndex;
 			this.ScheduledTime = scheduledTime;
 			this.SchedulingCode = schedulingCode;
 			this.PerformingFacility = performingFacility;
@@ -67,10 +67,11 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 		public ProcedureTypeSummary ProcedureType;
 
 		/// <summary>
-		/// Procedure number.  Will be set by the server. Clients should not set or modify this field.
+		/// Procedure index.  Will be set by the server if this requisition represents an existing procedure.
+		/// Clients should not set or modify this field.
 		/// </summary>
 		[DataMember]
-		public string ProcedureNumber;
+		public string ProcedureIndex;
 
 		/// <summary>
 		/// Time at which this procedure is scheduled to occur. May be null, indicating that

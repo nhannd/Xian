@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Security.Principal;
 using System.Threading;
 using ClearCanvas.Common.Utilities;
 
@@ -33,7 +32,6 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	internal class LocalDataStoreEventBroker : ILocalDataStoreEventBroker
 	{
 		private readonly SynchronizationContext _synchronizationContext;
-		private readonly IPrincipal _threadPrincipal;
 		private bool _disposed = false;
 		private event EventHandler<ItemEventArgs<SendProgressItem>> _sendProgressUpdate;
 		private event EventHandler<ItemEventArgs<ReceiveProgressItem>> _receiveProgressUpdate;
@@ -45,10 +43,9 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		private event EventHandler _lostConnection;
 		private event EventHandler _connected;
 
-		public LocalDataStoreEventBroker(SynchronizationContext synchronizationContext, IPrincipal threadPrincipal)
+		public LocalDataStoreEventBroker(SynchronizationContext synchronizationContext)
 		{
 			_synchronizationContext = synchronizationContext;
-			_threadPrincipal = threadPrincipal;
 		}
 
 		#region ILocalDataStoreActivityMonitorProxy Members
@@ -286,31 +283,11 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		{
 			if (_synchronizationContext != null && _synchronizationContext != SynchronizationContext.Current)
 			{
-				_synchronizationContext.Post(delegate { DoFireEvent(del, e); }, null);
+				_synchronizationContext.Post(delegate { EventsHelper.Fire(del, this, e); }, null);
 			}
 			else
 			{
-				DoFireEvent(del, e);
-			}
-		}
-
-		private void DoFireEvent(Delegate del, EventArgs e)
-		{
-			IPrincipal oldPrincipal = null;
-			if (_threadPrincipal != null)
-			{
-				oldPrincipal = Thread.CurrentPrincipal;
-				Thread.CurrentPrincipal = _threadPrincipal;
-			}
-
-			try
-			{
 				EventsHelper.Fire(del, this, e);
-			}
-			finally
-			{
-				if (oldPrincipal != null)
-					Thread.CurrentPrincipal = oldPrincipal;
 			}
 		}
 

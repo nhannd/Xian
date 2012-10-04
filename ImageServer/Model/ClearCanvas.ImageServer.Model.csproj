@@ -98,7 +98,6 @@
     </Compile>
     <Compile Include="DatabaseVersion.cs" />
     <Compile Include="DatabaseVersion.gen.cs" />
-    <Compile Include="DataLengthValidation.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="Device.gen.cs" />
     <Compile Include="DevicePreferredTransferSyntax.cs" />
@@ -244,6 +243,7 @@
     <Compile Include="FilesystemQueue.gen.cs" />
     <Compile Include="FilesystemQueueTypeEnum.gen.cs" />
     <Compile Include="FilesystemTierEnum.gen.cs" />
+    <Compile Include="ImageServerServerEnumExtension.cs" />
     <Compile Include="InconsistentDataSIQEntry.cs" />
     <Compile Include="InstanceKeys.cs" />
     <Compile Include="Parameters\PostponeWorkQueueParameters.cs" />
@@ -292,7 +292,6 @@
     <Compile Include="RestoreQueue.gen.cs" />
     <Compile Include="RestoreQueueStatusEnum.gen.cs" />
     <Compile Include="Series.gen.cs" />
-    <Compile Include="ServerEnumDescription.cs" />
     <Compile Include="ServerPartition.cs" />
     <Compile Include="ServerPartition.gen.cs" />
     <Compile Include="ServerRule.gen.cs" />
@@ -330,7 +329,6 @@
     <Compile Include="Parameters\UpdateWorkQueueParameters.cs" />
     <Compile Include="Parameters\PartitionSopClassQueryParameters.cs" />
     <Compile Include="Parameters\ServerPartitionInsertParameters.cs" />
-    <Compile Include="StudyAlertContextInfo.cs" />
     <Compile Include="StudyDeleteRecord.cs" />
     <Compile Include="StudyDeleteRecord.gen.cs" />
     <Compile Include="StudyHistory.gen.cs" />

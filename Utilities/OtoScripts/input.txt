@@ -1,0 +1,17 @@
+//	createPatients,
+//	createVisits,
+//	createOrders,
+//	toBeScheduled,
+//	scheduled,
+//	checkIn,
+//	perform,
+//	report,
+//	verify
+/////////////////////////////////////////
+patientNumber	:1
+upto		:checkIn
+infoAuth	:UHN,WCH
+AdmissionType	:E
+modality	:MRI
+Date		:2008-06-24
+FacilityCode	:WCH

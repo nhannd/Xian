@@ -63,7 +63,6 @@ namespace ClearCanvas.Ris.Client
 			result = null;
 
 			var staffComponent = new StaffSummaryComponent(true, _staffTypesFilter);
-			staffComponent.IncludeDeactivatedItems = this.IncludeDeactivatedItems;
 			if (!string.IsNullOrEmpty(query))
 			{
 				var names = query.Split(',');

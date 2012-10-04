@@ -19,31 +19,37 @@ namespace ClearCanvas.Ris.Application.Services
 {
 	public class OrderAssembler
 	{
+		/// <summary>
+		/// Creates fully verbose order detail document.
+		/// </summary>
+		/// <param name="order"></param>
+		/// <param name="context"></param>
+		/// <returns></returns>
+		public OrderDetail CreateOrderDetail(Order order, IPersistenceContext context)
+		{
+			return CreateOrderDetail(order, new CreateOrderDetailOptions(true, true, true, null, true, true, true), context);
+		}
+
 		public class CreateOrderDetailOptions
 		{
-			public static CreateOrderDetailOptions GetVerboseOptions()
+			public CreateOrderDetailOptions(bool includeVisit, bool includeProcedures, bool includeNotes, IList<string> noteCategoriesFilter, bool includeAttachments, bool includeResultRecipients, bool includeExtendedProperties)
 			{
-				return new CreateOrderDetailOptions
-					{
-						IncludeVisit = true,
-						IncludeProcedures = true,
-						IncludeNotes = true,
-						IncludeVirtualNotes = false, // even verbose does not include virtual notes by default
-						NoteCategoriesFilter = null,
-						IncludeAttachments = true,
-						IncludeResultRecipients = true,
-						IncludeExtendedProperties = true,
-					};
+				IncludeVisit = includeVisit;
+				IncludeProcedures = includeProcedures;
+				IncludeNotes = includeNotes;
+				NoteCategoriesFilter = noteCategoriesFilter;
+				IncludeAttachments = includeAttachments;
+				IncludeResultRecipients = includeResultRecipients;
+				IncludeExtendedProperties = includeExtendedProperties;
 			}
 
-			public bool IncludeVisit { get; set; }
-			public bool IncludeProcedures { get; set; }
-			public bool IncludeNotes { get; set; }
-			public bool IncludeVirtualNotes { get; set; }
-			public IList<string> NoteCategoriesFilter { get; set; }
-			public bool IncludeAttachments { get; set; }
-			public bool IncludeResultRecipients { get; set; }
-			public bool IncludeExtendedProperties { get; set; }
+			public bool IncludeVisit { get; private set; }
+			public bool IncludeProcedures { get; private set; }
+			public bool IncludeNotes { get; private set; }
+			public IList<string> NoteCategoriesFilter { get; private set; }
+			public bool IncludeAttachments { get; private set; }
+			public bool IncludeResultRecipients { get; private set; }
+			public bool IncludeExtendedProperties { get; private set; }
 		}
 
 		/// <summary>
@@ -93,14 +99,23 @@ namespace ClearCanvas.Ris.Application.Services
 
 			if (options.IncludeProcedures)
 			{
-				orderDetail.Procedures = CollectionUtils.Map(order.Procedures,
-					(Procedure p) => procedureAssembler.CreateProcedureDetail(p, context));
+				orderDetail.Procedures = CollectionUtils.Map<Procedure, ProcedureDetail>(
+					order.Procedures,
+					procedure => procedureAssembler.CreateProcedureDetail(procedure, context));
 			}
 
 			if (options.IncludeNotes)
 			{
 				var orderNoteAssembler = new OrderNoteAssembler();
-				var orderNotes = new List<OrderNote>(OrderNote.GetNotesForOrder(order, options.NoteCategoriesFilter, options.IncludeVirtualNotes));
+				var orderNotes = new List<OrderNote>(OrderNote.GetNotesForOrder(order));
+
+				// apply category filter, if provided
+				if (options.NoteCategoriesFilter != null && options.NoteCategoriesFilter.Count > 0)
+				{
+					orderNotes = CollectionUtils.Select(
+						orderNotes,
+						n => options.NoteCategoriesFilter.Contains(n.Category));
+				}
 
 				// sort notes by post-time (guaranteed non-null because only "posted" notes are in this collection)
 				orderNotes.Sort((x, y) => x.PostTime.Value.CompareTo(y.PostTime.Value));

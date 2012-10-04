@@ -105,28 +105,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // TODO: this is a very odd way to initialize the control, the "child" is subscribing to databound events on the "parent". 
-            // Yet, it is forcing the parent to load the data on initial rendering. Decision to load or not to load data 
-            // should belong to the target gridview or page control (by overriding the DataBind() method).
-            // In addition, here DataBind is called BEFORE databound event is attached.
-            //
             if (!IsPostBack)
             {
-                //TODO: Override GridView.Databind method and move this code into there?
                 if(!Target.IsDataBound)
                 {
-                    Target.DataBind();
+                    Target.DataBind();    
                 }
-
-                // TODO: UpdateUI may fail if the DataBind has not been called on the target. 
-                // Should this be moved inside IsDataBound condition?
-                UpdateUI();
             }
-            
-            // Listens to DataBound event. When DataBind is called
-            // on the target, the pager will refresh its UI contents.
             Target.DataBound += DataBoundHandler;
-        }
+            UpdateUI();
+         }
 
         protected override void OnInit(EventArgs e)
         {
@@ -225,73 +213,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
         #region Public methods
 
-        
-
-        public void InitializeGridPager(string singleItemLabel, string multipleItemLabel, GridView grid, GetRecordCountMethodDelegate recordCount, ImageServerConstants.GridViewPagerPosition position)
-        {
-            _position = position;
-            ItemName = singleItemLabel;
-            PluralItemName = multipleItemLabel;
-            Target = grid;
-            GetRecordCountMethod = recordCount;
-
-            // TODO: add this code so that the pager is updated automatically whenever the grid is updated
-            //      Target.DataBound += delegate { GridPagerTop.Refresh(); };
-            //
-            // Becareful though, because the pager is calling Databind() in Page_Load(),
-            // some pages may be end up in an infinite loop with this change. 
-        }
-
-        
-        public void Reset()
-        {
-            // TODO: Why do we need this method beside Refresh() and UpdateUI()
-            // In other words, was it necessary to store the count in viewstate? 
-            ViewState[ImageServerConstants.PagerItemCount] = null;
-        }
-
-        /// <summary>
-        /// Refresh the pager based on the latest data of the associated gridview control.
-        /// This should be called whenever the gridview is databound.
-        /// Note: this method will move the page
-        /// </summary>
-        /// 
-        public void Refresh()
-        {
-            if (Target.Rows.Count == 0 && ItemCount > 0)
-            {
-                // This happens when the last item on the current page is removed
-                Target.Refresh();
-                // Note: if this method is called on DataBound event, it will be called again when the target is updated
-                // However, we shoud have not have infinite loop because the the if condition
-            }
-            else
-            {
-                UpdateUI();
-            }   
-        }
-
-        #endregion Public methods
-
-        #region Private Methods
-
         /// <summary>
         /// Update the UI contents
         /// </summary>
-        private void UpdateUI()
+        public void UpdateUI()
         {
             if (_target != null && _target.DataSource != null)
-            {
-                ItemCountLabel.Text = string.Format("{0} {1}", ItemCount, ItemCount == 1 ? ItemName : PluralItemName);
-
+            {                
                 CurrentPage.Text = AdjustCurrentPageForDisplay(_target.PageIndex).ToString();
                 EnableCurrentPage(_target.PageCount > 1);
 
                 PageCountLabel.Text =
-                    string.Format(" {0} {1}", Resources.GridPager.PageOf, AdjustCurrentPageForDisplay(_target.PageCount));
+                    string.Format(" of {0}", AdjustCurrentPageForDisplay(_target.PageCount));
 
                 SetPageContainerWidth(_target.PageCount);
-
+               
                 if (_target.PageIndex > 0)
                 {
                     PrevPageButton.Enabled = true;
@@ -327,8 +263,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                     LastPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerLastDisabled;
 
                 }
-            }
-            else
+            } else
             {
                 ItemCountLabel.Text = string.Format("0 {0}", PluralItemName);
                 CurrentPage.Text = "0";
@@ -346,6 +281,58 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
             }
         }
+
+        public void InitializeGridPager(string singleItemLabel, string multipleItemLabel, GridView grid, GetRecordCountMethodDelegate recordCount, ImageServerConstants.GridViewPagerPosition position)
+        {
+            _position = position;
+            ItemName = singleItemLabel;
+            PluralItemName = multipleItemLabel;
+            Target = grid;
+            GetRecordCountMethod = recordCount;
+
+            // TODO: add this code so that the pager is updated automatically whenever the grid is updated
+            //      Target.DataBound += delegate { GridPagerTop.Refresh(); };
+            //
+            // Becareful though, because the pager is calling Databind() in Page_Load(),
+            // some pages may be end up in an infinite loop with this change. 
+        }
+
+        
+
+        public void Reset()
+        {
+            ViewState[ImageServerConstants.PagerItemCount] = null;
+        }
+
+        /// <summary>
+        /// Refresh the pager based on the latest data of the associated gridview control.
+        /// This should be called whenever the gridview is databound.
+        /// Note: this method will move the page
+        /// </summary>
+        /// 
+        public void Refresh()
+        {
+            if (Target.Rows.Count == 0 && ItemCount > 0)
+            {
+                // This happens when the last item on the current page is removed
+                Target.Refresh();
+                // Note: if this method is called on DataBound event, it will be called again when the target is updated
+                // However, we shoud have not have infinite loop because the the if condition
+            }
+            else
+            {
+                UpdateUI();
+                // Set the label here.  The datasource has been bound and ItemCount is set.This was done in UpdateUI, which is
+                // called on Page_Load and from here, causing the ItemCount to be calculated on Page_Load when it didn't need to be
+                // for some tabs that were not being searched on.
+                if (_target != null && _target.DataSource != null)
+                    ItemCountLabel.Text = string.Format("{0} {1}", ItemCount, ItemCount == 1 ? ItemName : PluralItemName);            
+            }   
+        }
+
+        #endregion Public methods
+
+        #region Private Methods
 
         private void SetPageContainerWidth(int pageCount)
         {

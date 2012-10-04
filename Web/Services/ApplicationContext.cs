@@ -35,14 +35,14 @@ namespace ClearCanvas.Web.Services
 	public class ApplicationContext : IApplicationContext, IDisposable
     {
 		private readonly Application _application;
-		internal EventQueue _eventBroker;
+		internal EventBroker _eventBroker;
 	    private readonly Dictionary<string, object> _properties;
 
         internal ApplicationContext(Application application)
         {
             _properties = new Dictionary<string, object>();
 			_application = application;
-			_eventBroker = new EventQueue(application);
+			_eventBroker = new EventBroker(application);
 			EntityHandlers = new EntityHandlerStore();
         }
 
@@ -79,7 +79,7 @@ namespace ClearCanvas.Web.Services
             
             if (_eventBroker == null)
                 return null;
-	        return _eventBroker.GetPendingEvent(wait);
+	        return _eventBroker.GetPendingOutboundEvent(wait);
 	    }
 
         public bool TryGetValue<T>(string key, out T value)

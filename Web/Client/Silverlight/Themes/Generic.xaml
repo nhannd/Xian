@@ -135,12 +135,6 @@
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </vsm:VisualState>
-
-                                <vsm:VisualState x:Name="Disabled">
-                                    <Storyboard>
-                                        <DoubleAnimation Duration="0" Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Opacity" To="0.5"/>
-                                    </Storyboard>
-                                </vsm:VisualState>
                             </vsm:VisualStateGroup>
                             <vsm:VisualStateGroup x:Name="CheckStates">
                                 <vsm:VisualState x:Name="UnChecked">

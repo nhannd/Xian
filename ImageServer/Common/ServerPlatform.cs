@@ -361,26 +361,24 @@ namespace ClearCanvas.ImageServer.Common
 	    {
 	        get
 	        {
-                if (_manifestVerified == null)
+                lock (_syncLock)
                 {
-                    lock (_syncLock)
+                    if (_manifestVerified==null)
                     {
-                        if (_manifestVerified == null)
+                        lock (_syncLock)
                         {
                             try
                             {
                                 Platform.GetService(delegate(IProductVerificationService service)
-                                {
-                                    var result = service.Verify(new ProductVerificationRequest());
-                                    _manifestVerified = result.IsManifestValid;
-                                }
+                                                        {
+                                                            var result = service.Verify(new ProductVerificationRequest());
+                                                            _manifestVerified = result.IsManifestValid;
+                                                        }
                                     );
                             }
-                            catch (Exception ex)
+                            catch(Exception ex)
                             {
-                                // This is called on every page. We don't want to fill up the log.
-                                if (Platform.IsLogLevelEnabled(LogLevel.Debug))
-                                    Platform.Log(LogLevel.Error, "Error occurred when trying to communicate with shred host manifest service :{0}", ex.Message);
+                                Platform.Log(LogLevel.Error, ex, "Unable to verify shred host service manifest");
                             }
                         }
                     }

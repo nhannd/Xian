@@ -11,7 +11,7 @@
 
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="MessageBox.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Controls.MessageBox" %>
-<%@ Import Namespace="Resources" %>
+
 <%@ Register Src="ModalDialog.ascx" TagName="ModalDialog" TagPrefix="localAsp" %>
 
 <localAsp:ModalDialog ID="ModalDialog" runat="server" Title="" >

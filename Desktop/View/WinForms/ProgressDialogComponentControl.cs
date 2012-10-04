@@ -21,7 +21,6 @@ namespace ClearCanvas.Desktop.View.WinForms
     {
         private ProgressDialogComponent _component;
         private int _defaultProgressBarWidth;
-        private bool _cancelButtonOriginallyVisible;
 
         /// <summary>
         /// Constructor
@@ -32,8 +31,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             InitializeComponent();
             _component = component;
 
-            base.CancelButton = _cancelButton;
-            base.AcceptButton = _cancelButton;
+			base.CancelButton = _cancelButton;
+			base.AcceptButton = _cancelButton;
 
             _cancelButton.Visible = _component.ShowCancel;
             _cancelButton.Text = _component.ButtonText;
@@ -46,7 +45,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             _component.ProgressUpdateEvent += OnProgressUpdate;
             _component.ProgressTerminateEvent += OnProgressTerminate;
 
-            _cancelButtonOriginallyVisible = _cancelButton.Visible;
             _defaultProgressBarWidth = _progressBar.Width;
             UpdateProgressBarLength();
         }
@@ -61,7 +59,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             _message.Text = _component.ProgressMessage;
             _progressBar.Value = _component.ProgressBar;
-            _progressBar.Style = (System.Windows.Forms.ProgressBarStyle)_component.ProgressBarStyle;
         }
 
         private void OnProgressTerminate(object sender, EventArgs e)
@@ -79,11 +76,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void UpdateProgressBarLength()
         {
             if (_cancelButton.Visible)
-            {
-                // Resotre progressBar width if the cancel button becomes visible
-                if (!_cancelButtonOriginallyVisible)
-                    _progressBar.Width = _defaultProgressBarWidth;
-            }
+                _progressBar.Width = _defaultProgressBarWidth;
             else
                 _progressBar.Width = _cancelButton.Right - _progressBar.Left;
         }

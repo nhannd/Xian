@@ -110,6 +110,8 @@
     <Compile Include="CineApplicationComponent.cs" />
     <Compile Include="CineTool.cs" />
     <Compile Include="ColorBarTool.cs" />
+    <Compile Include="Configuration\ConfigurationPageProvider.cs" />
+    <Compile Include="Configuration\ToolConfigurationComponent.cs" />
     <Compile Include="ImageProperties\ImagePropertyProvider.cs" />
     <Compile Include="ImageProperties\ImagePropertiesApplicationComponent.cs" />
     <Compile Include="ImageProperties\ImagePropertiesSettings.cs" />
@@ -144,6 +146,7 @@
     <Compile Include="ShowHideOverlaysTool.cs" />
     <Compile Include="ShutterOverlayTool.cs" />
     <Compile Include="TextCalloutTool.cs" />
+    <Compile Include="ToolSettingsProfile.cs" />
     <Compile Include="ToolSettings.cs" />
     <Compile Include="ToolSettings.Designer.cs">
       <AutoGen>True</AutoGen>

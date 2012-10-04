@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Healthcare.Owls" namespace="ClearCanvas.Healthcare.Owls">
+  <union-subclass name="ReportingWorklistViewItem" extends="ProcedureStepWorklistViewItem" table="owls_ReportingWorklistViewItem_">
+    
+    <!-- ReportPart Info -->
+    <component name="ReportPart" class="WorklistViewItemReportPartInfo">
+      <many-to-one name="Instance" class="ClearCanvas.Healthcare.ReportPart, ClearCanvas.Healthcare" column="ReportPartOID_"/>
+      <property name="Version" column="ReportPartVersion_" type="int"/>
+      <many-to-one name="Interpreter" class="ClearCanvas.Healthcare.Staff, ClearCanvas.Healthcare" column="ReportPartInterpreterOID_"/>
+      <many-to-one name="Verifier" class="ClearCanvas.Healthcare.Staff, ClearCanvas.Healthcare" column="ReportPartVerifierOID_"/>
+      <many-to-one name="Supervisor" class="ClearCanvas.Healthcare.Staff, ClearCanvas.Healthcare" column="ReportPartSupervisorOID_"/>
+      <many-to-one name="Transcriber" class="ClearCanvas.Healthcare.Staff, ClearCanvas.Healthcare" column="ReportPartTranscriberOID_"/>
+      <property name="CompletedTime" column="ReportPartCompletedTime_" type="DateTime"/>
+      <property name="PreliminaryTime" column="ReportPartPreliminaryTime_" type="DateTime"/>
+      <property name="Index" column="ReportPartIndex_" type="int" access="nosetter.camelcase-underscore"/>
+      <property name="Status" column="ReportPartStatus_" type="ClearCanvas.Healthcare.Hibernate.ReportPartStatusEnumHbm, ClearCanvas.Healthcare.Hibernate"/>
+    </component>
+
+    <!-- Report Info -->
+    <component name="Report" class="WorklistViewItemReportInfo">
+      <many-to-one name="Instance" class="ClearCanvas.Healthcare.Report, ClearCanvas.Healthcare" column="ReportOID_"/>
+      <property name="Version" column="ReportVersion_" type="int"/>
+      <property name="Status" column="ReportStatus_" type="ClearCanvas.Healthcare.Hibernate.ReportStatusEnumHbm, ClearCanvas.Healthcare.Hibernate"/>
+    </component>
+
+  </union-subclass>
+</hibernate-mapping>

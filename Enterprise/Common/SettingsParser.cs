@@ -23,9 +23,7 @@ namespace ClearCanvas.Enterprise.Common
         {
             if (xml != null)
             {
-                var settings = new XmlReaderSettings() {IgnoreWhitespace = true};
-
-                using (XmlReader reader = XmlReader.Create(new StringReader(xml), settings))
+                using (XmlReader reader = XmlReader.Create(new StringReader(xml)))
                 {
                     ReadXml(reader, values);
                 }

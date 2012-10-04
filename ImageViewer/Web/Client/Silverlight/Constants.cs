@@ -36,8 +36,6 @@ namespace ClearCanvas.ImageViewer.Web.Client.Silverlight
             public static string LogPerformance = "LogPerformance";
             public static string LocalIPAddress = "LocalIPAddress";
             public static string Mode = "Mode"; // see ApplicationServiceMode for the acceptable values
-            public static string Language = "Language";
-			
         }
     }
 }

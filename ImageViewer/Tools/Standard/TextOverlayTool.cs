@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 		}
 
-		protected override void UpdateVisibility(IPresentationImage image, bool visible)
+		protected override void  UpdateVisibility(IPresentationImage image, bool visible)
 		{
 			if (image is IAnnotationLayoutProvider)
 			{

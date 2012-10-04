@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageServer.Common
 		#endregion
 
 		#region Protected Abstract Methods
-		protected abstract bool Initialize();
+		protected abstract void Initialize();
 		protected abstract void Run();
 		protected abstract void Stop();
 		#endregion
@@ -111,7 +111,8 @@ namespace ClearCanvas.ImageServer.Common
 												{
 													try
 													{
-														bInit = Initialize();
+														Initialize();
+														bInit = true;
 													}
 													catch (Exception e)
 													{
@@ -143,12 +144,6 @@ namespace ClearCanvas.ImageServer.Common
 			}
 		}
 
-        public void StopService(string reason)
-        {
-            Platform.Log(LogLevel.Info, "{0} service is stopping : {1}", Name, reason);
-            StopService();
-        }
-		
 		/// <summary>
 		/// Stop the service.
 		/// </summary>

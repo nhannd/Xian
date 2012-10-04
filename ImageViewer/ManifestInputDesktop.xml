@@ -7,6 +7,7 @@
     <File name="install.log" ignore="true" />
     <File name="uninst.exe" ignore="true" />
     <File name="uninstall.log" ignore="true" />
+    <File name="CCWorkstationUsersGuide.chm" />
     <File name="ClearCanvas.Desktop.Executable.exe" checksum="true" />
     <File name="ClearCanvas.Desktop.Executable.exe.config" config="true" />
     <File name="ClearCanvas.Dicom.DataStore.cfg.xml" />
@@ -16,6 +17,7 @@
     <File name="ClearCanvas.Executable.exe.config" config="false" />
     <File name="DicomAEServers.xml" ignore="true"/>
     <File name="EULA.rtf" />
+    <File name="License.rtf" />
     <File name="PrivacyNotice.rtf" />
     <File name="Logging.config" />
     <File name="common\ClearCanvas.Common.dll" checksum="true" />
@@ -49,6 +51,7 @@
     <File name="plugins\ClearCanvas.Desktop.View.WinForms.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Dicom.Codec.Jpeg.dll" checksum="true" />
     <File name="plugins\ClearCanvas.Dicom.Codec.Rle.dll" checksum="true" />
+    <File name="plugins\ClearCanvas.ImageViewer.AdvancedImaging.Fusion.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.AnnotationProviders.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Clipboard.dll" checksum="true" />
     <File name="plugins\ClearCanvas.ImageViewer.Clipboard.View.WinForms.dll" checksum="true" />

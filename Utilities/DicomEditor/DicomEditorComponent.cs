@@ -40,7 +40,6 @@ namespace ClearCanvas.Utilities.DicomEditor
 
     	void Anonymize(bool applyToAll);
 
-		int LoadedFileCount { get; }
 		void SaveAll();
 
         bool TagExists(uint tag);
@@ -202,14 +201,14 @@ namespace ClearCanvas.Utilities.DicomEditor
                 for (int i = 0; i < _loadedFiles.Count; i++)
                 {
                     _loadedFiles[i] = new DicomFile(_loadedFiles[i].Filename);
-                    _loadedFiles[i].Load(DicomReadOptions.Default);
+                    _loadedFiles[i].Load(DicomReadOptions.KeepGroupLengths);
                     _dirtyFlags[i] = false;
                 }
             }
             else
             {
                 _loadedFiles[_position] = new DicomFile(_loadedFiles[_position].Filename);
-                _loadedFiles[_position].Load(DicomReadOptions.Default);
+                _loadedFiles[_position].Load(DicomReadOptions.KeepGroupLengths);
                 _dirtyFlags[_position] = false;
             }
         }
@@ -228,11 +227,6 @@ namespace ClearCanvas.Utilities.DicomEditor
                 }
             }
         }
-
-    	public int LoadedFileCount
-    	{
-    		get { return _loadedFiles.Count; }
-    	}
 
 		public void SaveAll()
 		{

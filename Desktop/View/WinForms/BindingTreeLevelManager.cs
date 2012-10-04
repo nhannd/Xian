@@ -90,9 +90,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="item"></param>
         private void AddNode(object item)
         {
-            var node = new BindingTreeNode(_tree, item, _bindingTreeView);
-            _nodeCollection.Add(node);
-            node.UpdateDisplay();
+			_nodeCollection.Add(new BindingTreeNode(_tree, item, _bindingTreeView));
         }
 
         /// <summary>

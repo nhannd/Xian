@@ -19,51 +19,37 @@ namespace ClearCanvas.ImageViewer.Annotations
 {
 	public static class AnnotationLayoutFactory 
 	{
-        [Cloneable(false)]
+        [Cloneable(true)]
         private class StoredAnnotationLayoutProxy : IAnnotationLayout
         {
-        	private readonly string _layoutId;
-			//This works with cloning because, when this is null, it means it hasn't been initialized/touched yet,
-			//so we get it from the store, just as the source one would do.  If it's not null, it gets cloned.
-            private IAnnotationLayout _realLayout;
+            //TODO: later, we may want to just get the annotation boxes directly from the factory (so that settings changes are reflected right away).
+            [CloneCopyReference]
+            private StoredAnnotationLayout _layout;
             private bool _visible = true;
             
-            public StoredAnnotationLayoutProxy(string layoutId)
+            private StoredAnnotationLayoutProxy()
             {
-            	_layoutId = layoutId;
             }
 
-			private StoredAnnotationLayoutProxy(StoredAnnotationLayoutProxy source, ICloningContext context)
-			{
-				_layoutId = source._layoutId;
-				_visible = source.Visible;
-				_realLayout = source._realLayout == null ? null : source._realLayout.Clone();
-			}
+            public StoredAnnotationLayoutProxy(StoredAnnotationLayout layout)
+            {
+                _layout = layout;
+            }
 
-        	private IAnnotationLayout RealLayout
-			{
-				get { return _realLayout ?? (_realLayout = CreateRealLayout(_layoutId)); }
-			}
-
-			#region IAnnotationLayout Members
+            #region IAnnotationLayout Members
 
             public IEnumerable<AnnotationBox> AnnotationBoxes
             {
-                get { return RealLayout.AnnotationBoxes; }
+                get { return _layout.AnnotationBoxes; }
             }
 
-        	public bool Visible
+            public bool Visible
             {
                 get { return _visible;}
                 set { _visible = value; }
             }
 
-			public IAnnotationLayout Clone()
-			{
-				return new StoredAnnotationLayoutProxy(this, null);
-			}
-
-        	#endregion
+            #endregion
         }
 
 		private static readonly List<IAnnotationItemProvider> _providers;
@@ -142,7 +128,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 			return null;
 		}
 
-		private static IAnnotationLayout CreateRealLayout(string storedLayoutId)
+		public static IAnnotationLayout CreateLayout(string storedLayoutId)
 		{
 			try
 			{
@@ -153,30 +139,22 @@ namespace ClearCanvas.ImageViewer.Annotations
 				//just return an empty layout.
 				return new AnnotationLayout();
 			}
-			catch (Exception e)
+			catch(Exception e)
 			{
 				Platform.Log(LogLevel.Error, e);
 
-				var layout = new AnnotationLayout();
-				var item = new BasicTextAnnotationItem("errorbox", "errorbox", SR.LabelError,
-				                                                   SR.MessageErrorLoadingAnnotationLayout);
-				var box = new AnnotationBox(new RectangleF(0.5F, 0.90F, 0.5F, 0.10F), item)
-				          	{
-				          		Bold = true,
-				          		Color = "Red",
-				          		Justification = AnnotationBox.JustificationBehaviour.Right,
-				          		NumberOfLines = 5,
-				          		VerticalAlignment = AnnotationBox.VerticalAlignmentBehaviour.Bottom
-				          	};
+				AnnotationLayout layout = new AnnotationLayout();
+				IAnnotationItem item = new BasicTextAnnotationItem("errorbox", "errorbox", SR.LabelError, SR.MessageErrorLoadingAnnotationLayout);
+				AnnotationBox box = new AnnotationBox(new RectangleF(0.5F,0.90F, 0.5F, 0.10F), item);
+				box.Bold = true;
+				box.Color = "Red";
+				box.Justification = AnnotationBox.JustificationBehaviour.Right;
+				box.NumberOfLines = 5;
+				box.VerticalAlignment = AnnotationBox.VerticalAlignmentBehaviour.Bottom;
 
 				layout.AnnotationBoxes.Add(box);
 				return layout;
 			}
-		}
-
-		public static IAnnotationLayout CreateLayout(string storedLayoutId)
-		{
-			return new StoredAnnotationLayoutProxy(storedLayoutId);
 		}
 
 		#region Unit Test Support

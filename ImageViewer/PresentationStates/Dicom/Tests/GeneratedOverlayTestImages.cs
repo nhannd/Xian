@@ -20,40 +20,9 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.IO;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.Dicom.Tests;
-using ClearCanvas.Common;
-using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 {
-	[ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-	internal class GenerateOverlayTestImagesApplication : IApplicationRoot
-	{
-		private class CommandLine : ClearCanvas.Common.Utilities.CommandLine
-		{
-			[CommandLineParameter(0, "Output Directory")]
-			public string OutputDirectory { get; set; }
-		}
-
-		#region IApplicationRoot Members
-
-		public void RunApplication(string[] args)
-		{
-			var cmdLine = new CommandLine();
-			cmdLine.Parse(args);
-
-			string path = !String.IsNullOrEmpty(cmdLine.OutputDirectory)
-							? cmdLine.OutputDirectory
-			              	: Path.Combine(Environment.CurrentDirectory, "OverlayTestImages");
-
-			var testImages = new GeneratedOverlayTestImages(path);
-			foreach (var file in testImages.GetAll())
-				Console.WriteLine(file.Filename);
-		}
-
-		#endregion
-	}
-
 	internal class GeneratedOverlayTestImages
 	{
 		private readonly string _path;
@@ -71,28 +40,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 		private DicomFile _multiframeImageDataOverlayMidSubrange;
 		private DicomFile _multiframeImageDataOverlayHighSubrange;
 
-		private DicomFile _imageEmbeddedOverlaySigned;
-		private DicomFile _imageDataOverlaySigned;
-		private DicomFile _imageDataOverlayDifferentSizeSigned;
-		private DicomFile _imageDataOverlayMultiframeSigned;
-		private DicomFile _multiframeImageEmbeddedOverlaySigned;
-		private DicomFile _multiframeImageDataOverlaySigned;
-		private DicomFile _multiframeImageDataOverlayDifferentSizeSigned;
-		private DicomFile _multiframeImageDataOverlayNotMultiframeSigned;
-		private DicomFile _multiframeImageDataOverlayLowSubrangeImplicitOriginSigned;
-		private DicomFile _multiframeImageDataOverlayLowSubrangeSigned;
-		private DicomFile _multiframeImageDataOverlayMidSubrangeSigned;
-		private DicomFile _multiframeImageDataOverlayHighSubrangeSigned;
-
 		private DicomFile _imageEmbeddedOverlay8Bit;
 		private DicomFile _imageDataOverlayOWAttribute;
 		private DicomFile _multiframeImageEmbeddedOverlay8Bit;
 		private DicomFile _multiframeImageDataOverlayOWAttribute;
-
-		private DicomFile _imageEmbeddedOverlay8BitSigned;
-		private DicomFile _imageDataOverlayOWAttributeSigned;
-		private DicomFile _multiframeImageEmbeddedOverlay8BitSigned;
-		private DicomFile _multiframeImageDataOverlayOWAttributeSigned;
 
 		public DicomFile ImageEmbeddedOverlay
 		{
@@ -101,7 +52,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_imageEmbeddedOverlay == null)
 				{
 					const int number = 1;
-					const string description = "(unsigned) image with embedded overlay";
+					const string description = "image with embedded overlay";
 
 					var dcf = CreateInstance(number, description, SopClass.SecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -116,28 +67,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile ImageEmbeddedOverlaySigned
-		{
-			get
-			{
-				if (_imageEmbeddedOverlaySigned == null)
-				{
-					const int number = 1;
-					const string description = "(signed) image with embedded overlay";
-
-					var dcf = CreateInstance(number, description, SopClass.SecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 1, 16, 12, 11, true),
-														  257, 263, 1, 16, 12, 11, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateLargeOverlayFrame, 1),
-														   OverlayType.G, new Point(1, 1), 13, false);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_imageEmbeddedOverlaySigned = dcf;
-				}
-				return _imageEmbeddedOverlaySigned;
-			}
-		}
-
 		public DicomFile ImageDataOverlay
 		{
 			get
@@ -145,7 +74,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_imageDataOverlay == null)
 				{
 					const int number = 2;
-					const string description = "(unsigned) image with data overlay";
+					const string description = "image with data overlay";
 
 					var dcf = CreateInstance(number, description, SopClass.SecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -160,28 +89,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile ImageDataOverlaySigned
-		{
-			get
-			{
-				if (_imageDataOverlaySigned == null)
-				{
-					const int number = 2;
-					const string description = "(signed) image with data overlay";
-
-					var dcf = CreateInstance(number, description, SopClass.SecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 1, 16, 12, 11, true),
-														  257, 263, 1, 16, 12, 11, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateLargeOverlayFrame, 1),
-														   OverlayType.G, new Point(1, 1), 257, 263, false, false);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_imageDataOverlaySigned = dcf;
-				}
-				return _imageDataOverlaySigned;
-			}
-		}
-
 		public DicomFile ImageDataOverlayDifferentSize
 		{
 			get
@@ -189,7 +96,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_imageDataOverlayDifferentSize == null)
 				{
 					const int number = 3;
-					const string description = "(unsigned) image with data overlay (different size)";
+					const string description = "image with data overlay (different size)";
 
 					var dcf = CreateInstance(number, description, SopClass.SecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -204,28 +111,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile ImageDataOverlayDifferentSizeSigned
-		{
-			get
-			{
-				if (_imageDataOverlayDifferentSizeSigned == null)
-				{
-					const int number = 3;
-					const string description = "(signed) image with data overlay (different size)";
-
-					var dcf = CreateInstance(number, description, SopClass.SecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 1, 16, 12, 11, true),
-														  257, 263, 1, 16, 12, 11, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateSmallOverlayFrame, 1),
-														   OverlayType.G, new Point(64, 64), 131, 137, false, false);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_imageDataOverlayDifferentSizeSigned = dcf;
-				}
-				return _imageDataOverlayDifferentSizeSigned;
-			}
-		}
-
 		public DicomFile ImageDataOverlayMultiframe
 		{
 			get
@@ -233,7 +118,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_imageDataOverlayMultiframe == null)
 				{
 					const int number = 4;
-					const string description = "(unsigned) image with data overlay (multiframe)";
+					const string description = "image with data overlay (multiframe)";
 
 					var dcf = CreateInstance(number, description, SopClass.SecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -248,28 +133,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile ImageDataOverlayMultiframeSigned
-		{
-			get
-			{
-				if (_imageDataOverlayMultiframeSigned == null)
-				{
-					const int number = 4;
-					const string description = "(signed) image with data overlay (multiframe)";
-
-					var dcf = CreateInstance(number, description, SopClass.SecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 1, 16, 12, 11, true),
-														  257, 263, 1, 16, 12, 11, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateSmallOverlayFrame, 17),
-														   OverlayType.G, new Point(64, 64), 131, 137, 17, null, false, false);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_imageDataOverlayMultiframeSigned = dcf;
-				}
-				return _imageDataOverlayMultiframeSigned;
-			}
-		}
-
 		public DicomFile MultiframeImageEmbeddedOverlay
 		{
 			get
@@ -277,7 +140,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_multiframeImageEmbeddedOverlay == null)
 				{
 					const int number = 5;
-					const string description = "(unsigned) multiframe image with embedded overlay";
+					const string description = "multiframe image with embedded overlay";
 
 					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -292,28 +155,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile MultiframeImageEmbeddedOverlaySigned
-		{
-			get
-			{
-				if (_multiframeImageEmbeddedOverlaySigned == null)
-				{
-					const int number = 5;
-					const string description = "(signed) multiframe image with embedded overlay";
-
-					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 17, 16, 12, 11, true),
-														  257, 263, 17, 16, 12, 11, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateLargeOverlayFrame, 17),
-														   OverlayType.G, new Point(1, 1), 13, false);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_multiframeImageEmbeddedOverlaySigned = dcf;
-				}
-				return _multiframeImageEmbeddedOverlaySigned;
-			}
-		}
-
 		public DicomFile MultiframeImageDataOverlay
 		{
 			get
@@ -321,7 +162,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_multiframeImageDataOverlay == null)
 				{
 					const int number = 6;
-					const string description = "(unsigned) multiframe image with data overlay";
+					const string description = "multiframe image with data overlay";
 
 					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -336,28 +177,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile MultiframeImageDataOverlaySigned
-		{
-			get
-			{
-				if (_multiframeImageDataOverlaySigned == null)
-				{
-					const int number = 6;
-					const string description = "(signed) multiframe image with data overlay";
-
-					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 17, 16, 12, 11, true),
-														  257, 263, 17, 16, 12, 11, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateLargeOverlayFrame, 17),
-														   OverlayType.G, new Point(1, 1), 257, 263, 17, null, false, false);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_multiframeImageDataOverlaySigned = dcf;
-				}
-				return _multiframeImageDataOverlaySigned;
-			}
-		}
-
 		public DicomFile MultiframeImageDataOverlayDifferentSize
 		{
 			get
@@ -365,7 +184,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_multiframeImageDataOverlayDifferentSize == null)
 				{
 					const int number = 7;
-					const string description = "(unsigned) multiframe image with data overlay (different size)";
+					const string description = "multiframe image with data overlay (different size)";
 
 					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -380,28 +199,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile MultiframeImageDataOverlayDifferentSizeSigned
-		{
-			get
-			{
-				if (_multiframeImageDataOverlayDifferentSizeSigned == null)
-				{
-					const int number = 7;
-					const string description = "(signed) multiframe image with data overlay (different size)";
-
-					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 17, 16, 12, 11, true),
-														  257, 263, 17, 16, 12, 11, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateSmallOverlayFrame, 17),
-														   OverlayType.G, new Point(64, 64), 131, 137, 17, null, false, false);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_multiframeImageDataOverlayDifferentSizeSigned = dcf;
-				}
-				return _multiframeImageDataOverlayDifferentSizeSigned;
-			}
-		}
-
 		public DicomFile MultiframeImageDataOverlayNotMultiframe
 		{
 			get
@@ -409,7 +206,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_multiframeImageDataOverlayNotMultiframe == null)
 				{
 					const int number = 8;
-					const string description = "(unsigned) multiframe image with data overlay (non-multiframe)";
+					const string description = "multiframe image with data overlay (non-multiframe)";
 
 					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -424,28 +221,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile MultiframeImageDataOverlayNotMultiframeSigned
-		{
-			get
-			{
-				if (_multiframeImageDataOverlayNotMultiframeSigned == null)
-				{
-					const int number = 8;
-					const string description = "(signed) multiframe image with data overlay (non-multiframe)";
-
-					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 17, 16, 12, 11, true),
-														  257, 263, 17, 16, 12, 11, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateSmallOverlayFrame, 1),
-														   OverlayType.G, new Point(64, 64), 131, 137, null, null, false, false);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_multiframeImageDataOverlayNotMultiframeSigned = dcf;
-				}
-				return _multiframeImageDataOverlayNotMultiframeSigned;
-			}
-		}
-
 		public DicomFile MultiframeImageDataOverlayLowSubrangeImplicitOrigin
 		{
 			get
@@ -453,7 +228,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_multiframeImageDataOverlayLowSubrangeImplicitOrigin == null)
 				{
 					const int number = 9;
-					const string description = "(unsigned) multiframe image with data overlay (start-7)";
+					const string description = "multiframe image with data overlay (subrange start-7 only)";
 
 					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -468,28 +243,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile MultiframeImageDataOverlayLowSubrangeImplicitOriginSigned
-		{
-			get
-			{
-				if (_multiframeImageDataOverlayLowSubrangeImplicitOriginSigned == null)
-				{
-					const int number = 9;
-					const string description = "(signed) multiframe image with data overlay (start-7)";
-
-					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 17, 16, 12, 11, true),
-														  257, 263, 17, 16, 12, 11, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateSmallOverlayFrame, 7),
-														   OverlayType.G, new Point(64, 64), 131, 137, 7, null, false, false);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_multiframeImageDataOverlayLowSubrangeImplicitOriginSigned = dcf;
-				}
-				return _multiframeImageDataOverlayLowSubrangeImplicitOriginSigned;
-			}
-		}
-
 		public DicomFile MultiframeImageDataOverlayLowSubrange
 		{
 			get
@@ -497,7 +250,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_multiframeImageDataOverlayLowSubrange == null)
 				{
 					const int number = 10;
-					const string description = "(unsigned) multiframe image with data overlay (1-7)";
+					const string description = "multiframe image with data overlay (subrange 1-7 only)";
 
 					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -512,28 +265,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile MultiframeImageDataOverlayLowSubrangeSigned
-		{
-			get
-			{
-				if (_multiframeImageDataOverlayLowSubrangeSigned == null)
-				{
-					const int number = 10;
-					const string description = "(signed) multiframe image with data overlay (1-7)";
-
-					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 17, 16, 12, 11, true),
-														  257, 263, 17, 16, 12, 11, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateSmallOverlayFrame, 7),
-														   OverlayType.G, new Point(64, 64), 131, 137, 7, 1, false, false);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_multiframeImageDataOverlayLowSubrangeSigned = dcf;
-				}
-				return _multiframeImageDataOverlayLowSubrangeSigned;
-			}
-		}
-
 		public DicomFile MultiframeImageDataOverlayMidSubrange
 		{
 			get
@@ -541,7 +272,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_multiframeImageDataOverlayMidSubrange == null)
 				{
 					const int number = 11;
-					const string description = "(unsigned) multiframe image with data overlay (6-12)";
+					const string description = "multiframe image with data overlay (subrange 6-12 only)";
 
 					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -556,28 +287,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile MultiframeImageDataOverlayMidSubrangeSigned
-		{
-			get
-			{
-				if (_multiframeImageDataOverlayMidSubrangeSigned == null)
-				{
-					const int number = 11;
-					const string description = "(signed) multiframe image with data overlay (6-12)";
-
-					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 17, 16, 12, 11, true),
-														  257, 263, 17, 16, 12, 11, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateSmallOverlayFrame, 7),
-														   OverlayType.G, new Point(64, 64), 131, 137, 7, 6, false, false);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_multiframeImageDataOverlayMidSubrangeSigned = dcf;
-				}
-				return _multiframeImageDataOverlayMidSubrangeSigned;
-			}
-		}
-
 		public DicomFile MultiframeImageDataOverlayHighSubrange
 		{
 			get
@@ -585,7 +294,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_multiframeImageDataOverlayHighSubrange == null)
 				{
 					const int number = 12;
-					const string description = "(unsigned) multiframe image with data overlay (11-17)";
+					const string description = "multiframe image with data overlay (subrange 11-17 only)";
 
 					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -600,28 +309,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile MultiframeImageDataOverlayHighSubrangeSigned
-		{
-			get
-			{
-				if (_multiframeImageDataOverlayHighSubrangeSigned == null)
-				{
-					const int number = 12;
-					const string description = "(signed) multiframe image with data overlay (11-17)";
-
-					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 17, 16, 12, 11, true),
-														  257, 263, 17, 16, 12, 11, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateSmallOverlayFrame, 7),
-														   OverlayType.G, new Point(64, 64), 131, 137, 7, 11, false, false);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_multiframeImageDataOverlayHighSubrangeSigned = dcf;
-				}
-				return _multiframeImageDataOverlayHighSubrangeSigned;
-			}
-		}
-
 		public DicomFile ImageEmbeddedOverlay8Bit
 		{
 			get
@@ -629,7 +316,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_imageEmbeddedOverlay8Bit == null)
 				{
 					const int number = 13;
-					const string description = "(unsigned) 8-bit image with embedded overlay";
+					const string description = "8-bit image with embedded overlay";
 
 					var dcf = CreateInstance(number, description, SopClass.SecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -644,28 +331,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile ImageEmbeddedOverlay8BitSigned
-		{
-			get
-			{
-				if (_imageEmbeddedOverlay8BitSigned == null)
-				{
-					const int number = 13;
-					const string description = "(signed) 8-bit image with embedded overlay";
-
-					var dcf = CreateInstance(number, description, SopClass.SecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 1, 8, 7, 7, true),
-														  257, 263, 1, 8, 7, 7, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateLargeOverlayFrame, 1),
-														   OverlayType.G, new Point(1, 1), 0, false);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_imageEmbeddedOverlay8BitSigned = dcf;
-				}
-				return _imageEmbeddedOverlay8BitSigned;
-			}
-		}
-
 		public DicomFile ImageDataOverlayOWAttribute
 		{
 			get
@@ -673,7 +338,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_imageDataOverlayOWAttribute == null)
 				{
 					const int number = 14;
-					const string description = "(unsigned) image with OW data overlay";
+					const string description = "image with OW data overlay";
 
 					var dcf = CreateInstance(number, description, SopClass.SecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -688,28 +353,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile ImageDataOverlayOWAttributeSigned
-		{
-			get
-			{
-				if (_imageDataOverlayOWAttributeSigned == null)
-				{
-					const int number = 14;
-					const string description = "(signed) image with OW data overlay";
-
-					var dcf = CreateInstance(number, description, SopClass.SecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 1, 16, 12, 11, true),
-														  257, 263, 1, 16, 12, 11, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateLargeOverlayFrame, 1),
-														   OverlayType.G, new Point(1, 1), 257, 263, false, true);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_imageDataOverlayOWAttributeSigned = dcf;
-				}
-				return _imageDataOverlayOWAttributeSigned;
-			}
-		}
-
 		public DicomFile MultiframeImageEmbeddedOverlay8Bit
 		{
 			get
@@ -717,7 +360,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_multiframeImageEmbeddedOverlay8Bit == null)
 				{
 					const int number = 15;
-					const string description = "(unsigned) 8-bit multiframe image with embedded overlay";
+					const string description = "8-bit multiframe image with embedded overlay";
 
 					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -732,28 +375,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile MultiframeImageEmbeddedOverlay8BitSigned
-		{
-			get
-			{
-				if (_multiframeImageEmbeddedOverlay8BitSigned == null)
-				{
-					const int number = 15;
-					const string description = "(signed) 8-bit multiframe image with embedded overlay";
-
-					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 17, 8, 7, 7, true),
-														  257, 263, 17, 8, 7, 7, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateLargeOverlayFrame, 17),
-														   OverlayType.G, new Point(1, 1), 0, false);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_multiframeImageEmbeddedOverlay8BitSigned = dcf;
-				}
-				return _multiframeImageEmbeddedOverlay8BitSigned;
-			}
-		}
-
 		public DicomFile MultiframeImageDataOverlayOWAttribute
 		{
 			get
@@ -761,7 +382,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				if (_multiframeImageDataOverlayOWAttribute == null)
 				{
 					const int number = 16;
-					const string description = "(unsigned) multiframe image with OW data overlay";
+					const string description = "multiframe image with OW data overlay";
 
 					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
 					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
@@ -776,78 +397,14 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			}
 		}
 
-		public DicomFile MultiframeImageDataOverlayOWAttributeSigned
-		{
-			get
-			{
-				if (_multiframeImageDataOverlayOWAttributeSigned == null)
-				{
-					const int number = 16;
-					const string description = "(signed) multiframe image with OW data overlay";
-
-					var dcf = CreateInstance(number, description, SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage, _baseDataset);
-					DicomOverlayTestHelper.SetImagePixels(dcf.DataSet,
-														  CreatePixelData(CreateImageFrame, 17, 16, 12, 11, true),
-														  257, 263, 17, 16, 12, 11, true);
-					DicomOverlayTestHelper.AddOverlayPlane(dcf.DataSet, 0, CreateOverlayData(CreateLargeOverlayFrame, 17),
-														   OverlayType.G, new Point(1, 1), 257, 263, 17, null, false, true);
-					dcf.Save(Path.Combine(_path, string.Format("{0}.dcm", description.Replace(' ', '_'))));
-					_multiframeImageDataOverlayOWAttributeSigned = dcf;
-				}
-				return _multiframeImageDataOverlayOWAttributeSigned;
-			}
-		}
-
 		public GeneratedOverlayTestImages()
-			: this(Path.Combine(Environment.CurrentDirectory, typeof(GeneratedOverlayTestImages).FullName))
 		{
-		}
-
-		public GeneratedOverlayTestImages(string path)
-		{
-			_path = path;
+			_path = Path.Combine(Environment.CurrentDirectory, GetType().FullName);
 			if (Directory.Exists(_path))
 				Directory.Delete(_path, true);
 			Directory.CreateDirectory(_path);
 
 			_baseDataset = CreateBaseDataSet();
-		}
-
-		public IEnumerable<DicomFile> GetAll()
-		{
-			yield return ImageDataOverlay;
-			yield return ImageDataOverlayDifferentSize;
-			yield return ImageDataOverlayMultiframe;
-			yield return ImageDataOverlayOWAttribute;
-			yield return ImageEmbeddedOverlay;
-			yield return ImageEmbeddedOverlay8Bit;
-			yield return MultiframeImageDataOverlay;
-			yield return MultiframeImageDataOverlayDifferentSize;
-			yield return MultiframeImageDataOverlayHighSubrange;
-			yield return MultiframeImageDataOverlayLowSubrange;
-			yield return MultiframeImageDataOverlayLowSubrangeImplicitOrigin;
-			yield return MultiframeImageDataOverlayMidSubrange;
-			yield return MultiframeImageDataOverlayNotMultiframe;
-			yield return MultiframeImageDataOverlayOWAttribute;
-			yield return MultiframeImageEmbeddedOverlay;
-			yield return MultiframeImageEmbeddedOverlay8Bit;
-
-			yield return ImageDataOverlaySigned;
-			yield return ImageDataOverlayDifferentSizeSigned;
-			yield return ImageDataOverlayMultiframeSigned;
-			yield return ImageDataOverlayOWAttributeSigned;
-			yield return ImageEmbeddedOverlaySigned;
-			yield return ImageEmbeddedOverlay8BitSigned;
-			yield return MultiframeImageDataOverlaySigned;
-			yield return MultiframeImageDataOverlayDifferentSizeSigned;
-			yield return MultiframeImageDataOverlayHighSubrangeSigned;
-			yield return MultiframeImageDataOverlayLowSubrangeSigned;
-			yield return MultiframeImageDataOverlayLowSubrangeImplicitOriginSigned;
-			yield return MultiframeImageDataOverlayMidSubrangeSigned;
-			yield return MultiframeImageDataOverlayNotMultiframeSigned;
-			yield return MultiframeImageDataOverlayOWAttributeSigned;
-			yield return MultiframeImageEmbeddedOverlaySigned;
-			yield return MultiframeImageEmbeddedOverlay8BitSigned;
 		}
 
 		private delegate float[] FrameDataGetter(int frameNumber);
@@ -866,17 +423,15 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 					pixelData = new byte[frameData.Length*frameCount*bitsAllocated/8];
 				}
 
-				int min = DicomPixelData.GetMinPixelValue(bitsStored, isSigned);
-				int max = DicomPixelData.GetMaxPixelValue(bitsStored, isSigned);
-
 				if (bitsAllocated == 16)
 				{
+					var min = isSigned ? (int) short.MinValue : ushort.MinValue;
+					var max = isSigned ? short.MaxValue : (int) ushort.MaxValue;
 					var cursor = frameData.Length*n*2;
 					for (int i = 0; i < frameData.Length; i++)
 					{
-						var value = Math.Max(min, Math.Min(max, (int)(min + (max - min) * frameData[i])));
+						var value = Math.Max(min, Math.Min(max, (int) (min + 65535*frameData[i])));
 						value = value << (highBit - bitsStored + 1);
-
 						if (ByteBuffer.LocalMachineEndian == Endian.Little)
 						{
 							pixelData[cursor++] = (byte) (value & 0x00FF);
@@ -891,19 +446,17 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 				}
 				else if (bitsAllocated == 8)
 				{
+					var min = isSigned ? (int) sbyte.MinValue : byte.MinValue;
+					var max = isSigned ? sbyte.MaxValue : (int) byte.MaxValue;
 					var cursor = frameData.Length*n;
 					for (int i = 0; i < frameData.Length; i++)
 					{
-						var value = Math.Max(min, Math.Min(max, (int)(min + (max - min) * frameData[i])));
+						var value = Math.Max(min, Math.Min(max, (int) (min + 255*frameData[i])));
 						value = value << (highBit - bitsStored + 1);
 						pixelData[cursor++] = (byte) (value & 0x00FF);
 					}
 				}
 			}
-
-			//just in case, we'll clean the pixel data up.  This also (cheaply) removes the 
-			//higher order 1s that shouldn't be there for the signed case.
-			DicomUncompressedPixelData.ZeroUnusedBits(pixelData, bitsAllocated, bitsStored, highBit);
 			return pixelData;
 		}
 

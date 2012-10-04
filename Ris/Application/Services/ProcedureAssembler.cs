@@ -88,6 +88,7 @@ namespace ClearCanvas.Ris.Application.Services
 							{
 								OrderRef = rp.Order.GetRef(),
 								ProcedureRef = rp.GetRef(),
+								Index = rp.Index,
 								ScheduledStartTime = rp.ScheduledStartTime,
 								SchedulingCode = EnumUtils.GetEnumValueInfo(rp.SchedulingCode),
 								PerformingFacility = new FacilityAssembler().CreateFacilitySummary(rp.PerformingFacility),

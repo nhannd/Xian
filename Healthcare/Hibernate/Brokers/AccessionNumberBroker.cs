@@ -9,24 +9,144 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Data;
+
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Hibernate.Ddl;
+using ClearCanvas.Enterprise.Core;
+using NHibernate.Cfg;
+using NHibernate.Dialect;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
-	[ExtensionOf(typeof(BrokerExtensionPoint))]
-	[ExtensionOf(typeof(DdlScriptGeneratorExtensionPoint))]
-	public class AccessionNumberBroker : SequenceBroker, IAccessionNumberBroker, IDdlScriptGenerator
-	{
-		private const string TableName = "AccessionSequence_";
-		private const string ColumnName = "NextValue_";
-		private const long InitialValue = 100000000;
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
+    public class AccessionNumberBroker : Broker, IAccessionNumberBroker
+    {
+        private static readonly string TABLE_NAME = "AccessionSequence_";
+        private static readonly string COLUMN_NAME = "NextValue_";
+        private static readonly long INITIAL_VALUE = 100000000;
 
-		public AccessionNumberBroker()
-			: base(TableName, ColumnName, InitialValue)
+        /// <summary>
+        /// Extension to generate DDL to create and initialize the Accession Sequence table
+        /// </summary>
+        [ExtensionOf(typeof(DdlScriptGeneratorExtensionPoint))]
+        public class AccessionSequenceDdlScriptGenerator : DdlScriptGenerator
+        {
+            #region IDdlScriptGenerator Members
+
+            public override string[] GenerateCreateScripts(Configuration config)
+            {
+                string defaultSchema = config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
+                string tableName = !string.IsNullOrEmpty(defaultSchema) ? defaultSchema + "." + TABLE_NAME : TABLE_NAME;
+                    
+                return new string[]
+				{
+                    string.Format("create table {0} ( {1} {2} );", tableName, COLUMN_NAME, GetDialect(config).GetTypeName( NHibernate.SqlTypes.SqlTypeFactory.Int64 )),
+					string.Format("insert into {0} values ( {1} )", tableName, INITIAL_VALUE)
+				};
+            }
+
+        	public override string[] GenerateUpgradeScripts(Configuration config, RelationalModelInfo baselineModel)
+        	{
+				return new string[] { };    // nothing to do
+			}
+
+        	public override string[] GenerateDropScripts(Configuration config)
+            {
+				return new string[] { GetDialect(config).GetDropTableString(TABLE_NAME) };
+            }
+
+            #endregion
+        }
+
+
+
+        #region IAccessionNumberBroker Members
+
+    	/// <summary>
+    	/// Peeks at the next accession number in the sequence, but does not advance the sequence.
+    	/// </summary>
+    	/// <returns></returns>
+		public string PeekNextAccessionNumber()
 		{
+			// try to read the next accession number
+			try
+			{
+				IDbCommand select = this.CreateSqlCommand(string.Format("SELECT * from {0}", TABLE_NAME));
+				return select.ExecuteScalar().ToString();
+			}
+			catch (Exception e)
+			{
+				throw new PersistenceException(SR.ErrorFailedReadNextSequenceNumber, e);
+			}
 		}
-	}
+
+    	/// <summary>
+    	/// Gets the next accession number in the sequence, advancing the sequence by 1.
+    	/// </summary>
+    	/// <returns></returns>
+		public string GetNextAccessionNumber()
+        {
+            int updatedRows = 0;
+            long accNum = 0;
+
+            // the loop is necessary to ensure that we succeed in obtaining an accession number
+            // It is possible that another process is trying to do this at the same time,
+            // hence there is an inevitable race condition which may cause the operation to occassionally fail
+            // can we avoid the need for a loop by using Serializable transaction isolation for this operation???
+            do
+            {
+                // try to read the next accession number
+                try
+                {
+                    IDbCommand select = this.CreateSqlCommand(string.Format("SELECT * from {0}", TABLE_NAME));
+                    accNum = (long)select.ExecuteScalar();
+                }
+                catch (Exception e)
+                {
+                    throw new PersistenceException(SR.ErrorFailedReadNextSequenceNumber, e);
+                }
+
+                if (accNum == 0)
+                {
+                    throw new HealthcareWorkflowException(SR.ErrorSequenceNotInitialized);
+                }
+
+                // update the sequence, by trying to update a row containing the previous number
+                // this may fail if another process has updated in the meantime, in which case
+                // the loop will just try again
+                try
+                {
+                    string updateSql = string.Format("UPDATE {0} SET {1} = @next WHERE {2} = @prev", TABLE_NAME, COLUMN_NAME, COLUMN_NAME);
+                    IDbCommand update = this.CreateSqlCommand(updateSql);
+                    AddParameter(update, "next", accNum + 1);
+                    AddParameter(update, "prev", accNum);
+
+                    updatedRows = update.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    throw new PersistenceException(SR.ErrorFailedUpdateNextSequenceNumber, e);
+                }
+            }
+            while (updatedRows == 0);
+
+            return accNum.ToString();
+        }
+
+        private void AddParameter(IDbCommand cmd, string name, object value)
+        {
+            IDbDataParameter p = cmd.CreateParameter();
+            p.ParameterName = name;
+            p.Value = value;
+            cmd.Parameters.Add(p);
+        }
+
+        #endregion
+    }
 }

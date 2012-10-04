@@ -62,7 +62,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		private string _manufacturersModelName;
 		private string _deviceSerialNumber;
 		private string _softwareVersions;
-		private string _specificCharacterSet;
 
 		/// <summary>
 		/// Constructs a serialization-capable DICOM softcopy presentation state object.
@@ -106,7 +105,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			_dicomFile = dicomFile;
 
 			_serialized = true;
-			_specificCharacterSet = _dicomFile.DataSet.SpecificCharacterSet;
 			_sourceAETitle = _dicomFile.SourceApplicationEntityTitle;
 			_stationName = _dicomFile.DataSet[DicomTags.StationName].ToString();
 			_institution = Institution.GetInstitution(_dicomFile);
@@ -156,23 +154,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		}
 
 		/// <summary>
-		/// Gets the specific character set for the presentation state's data set.
-		/// </summary>
-		/// <remarks>
-		/// This property may only be set if the presentation state has not yet been serialized to a file.
-		/// </remarks>
-		/// <exception cref="InvalidOperationException">Thrown if the presentation state has already been serialized to a file.</exception>
-		public string SpecificCharacterSet
-		{
-			get { return _specificCharacterSet; }
-			set
-			{
-				CheckSerialized(false);
-				_specificCharacterSet = value;
-			}
-		}
-
-		/// <summary>
 		/// Gets or sets the presentation state series instance UID.
 		/// </summary>
 		/// <remarks>
@@ -184,7 +165,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _presentationSeriesInstanceUid; }
 			set
 			{
-				CheckSerialized(false);
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
 				_presentationSeriesInstanceUid = value;
 			}
 		}
@@ -201,7 +183,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _presentationSopInstanceUid; }
 			set
 			{
-				CheckSerialized(false);
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
 				_presentationSopInstanceUid = value;
 			}
 		}
@@ -218,7 +201,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _presentationInstanceNumber; }
 			set
 			{
-				CheckSerialized(false); 
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
 				_presentationInstanceNumber = value;
 			}
 		}
@@ -235,7 +219,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _presentationSeriesNumber; }
 			set
 			{
-				CheckSerialized(false);
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
 				_presentationSeriesNumber = value;
 			}
 		}
@@ -253,7 +238,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _presentationSeriesDateTime; }
 			set
 			{
-				CheckSerialized(false);
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
 				_presentationSeriesDateTime = value;
 			}
 		}
@@ -270,7 +256,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _presentationLabel; }
 			set
 			{
-				CheckSerialized(false); 
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
 				_presentationLabel = value;
 			}
 		}
@@ -287,7 +274,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _sourceAETitle; }
 			set
 			{
-				CheckSerialized(false); 
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
 				_sourceAETitle = value;
 			}
 		}
@@ -304,7 +292,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _stationName; }
 			set
 			{
-				CheckSerialized(false); 
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
 				_stationName = value;
 			}
 		}
@@ -321,7 +310,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _institution; }
 			set
 			{
-				CheckSerialized(false); 
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
 				_institution = value;
 			}
 		}
@@ -338,7 +328,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _manufacturer; }
 			protected set
 			{
-				CheckSerialized(false); 
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
 				_manufacturer = value;
 			}
 		}
@@ -355,7 +346,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _manufacturersModelName; }
 			protected set
 			{
-				CheckSerialized(false); 
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
 				_manufacturersModelName = value;
 			}
 		}
@@ -372,7 +364,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _deviceSerialNumber; }
 			protected set
 			{
-				CheckSerialized(false);
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
 				_deviceSerialNumber = value;
 			}
 		}
@@ -389,7 +382,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _softwareVersions; }
 			protected set
 			{
-				CheckSerialized(false); 
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
 				_softwareVersions = value;
 			}
 		}
@@ -402,7 +396,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		{
 			get
 			{
-				CheckSerialized(true);
+				if (!_serialized)
+					throw new InvalidOperationException(_messageNotYetSerialized);
+
 				return _dicomFile;
 			}
 		}
@@ -410,15 +406,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <summary>
 		/// Gets the underlying DICOM data set.
 		/// </summary>
-		protected DicomAttributeCollection DataSet
+		protected IDicomAttributeProvider DataSet
 		{
 			get { return _dicomFile.DataSet; }
-		}
-
-		private void CheckSerialized(bool expectedValue)
-		{
-			if (_serialized != expectedValue)
-				throw new InvalidOperationException(_serialized  ? _messageAlreadySerialized : _messageNotYetSerialized);
 		}
 
 		/// <summary>
@@ -428,24 +418,14 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <exception cref="InvalidOperationException">Thrown if the presentation state has already been serialized to a file.</exception>
 		public override void Serialize(IEnumerable<IPresentationImage> images)
 		{
-			CheckSerialized(false);
+			if (_serialized)
+				throw new InvalidOperationException(_messageAlreadySerialized);
 
 			// create UIDs if needed now
 			this.PresentationSeriesInstanceUid = CreateUid(this.PresentationSeriesInstanceUid);
 			this.PresentationSopInstanceUid = CreateUid(this.PresentationSopInstanceUid);
 
 			_serialized = true;
-
-			if (String.IsNullOrEmpty(_specificCharacterSet))
-			{
-				DataSet.SpecificCharacterSet = String.Empty;
-				DataSet[DicomTags.SpecificCharacterSet].SetNullValue();
-			}
-			else
-			{
-				DataSet.SpecificCharacterSet = _specificCharacterSet;
-				DataSet[DicomTags.SpecificCharacterSet].SetStringValue(_specificCharacterSet);
-			}
 
 			GeneralEquipmentModuleIod generalEquipmentModule = new GeneralEquipmentModuleIod(this.DataSet);
 			generalEquipmentModule.Manufacturer = this.Manufacturer ?? string.Empty; // this one is type 2 - all other GenEq attributes are type 3
@@ -492,7 +472,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <exception cref="InvalidOperationException">Thrown if the presentation state has not yet been serialized to a file.</exception>
 		public override void Deserialize(IEnumerable<IPresentationImage> images)
 		{
-			CheckSerialized(true);
+			if (!_serialized)
+				throw new InvalidOperationException(_messageNotYetSerialized);
+
 			PerformDeserialization(images);
 		}
 
@@ -507,7 +489,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <exception cref="InvalidOperationException">Thrown if the presentation state has not yet been serialized to a file.</exception>
 		public override void Clear(IEnumerable<IPresentationImage> image)
 		{
-			CheckSerialized(true);
+			if (!_serialized)
+				throw new InvalidOperationException(_messageNotYetSerialized);
 		}
 
 		/// <summary>

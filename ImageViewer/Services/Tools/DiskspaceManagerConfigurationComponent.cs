@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
     {
 		private static readonly int _minCheckFrequency = 1;
 		private static readonly int _maxCheckFrequency = 10;
-    	private static readonly long _watermarkMinDifferenceBytes = 5*1024*1024;
+		private static readonly float _watermarkMinDifference = 5.0F;
 
 		private string _driveName;
 		private long _driveSize;
@@ -47,7 +47,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
         private float _highWatermark;
 		private string _lowWatermarkBytesDisplay;
 		private string _highWatermarkBytesDisplay;
-		private float _watermarkMinDifference;
 		
 		private long _spaceUsed;
 		private float _spaceUsedPercent;
@@ -100,8 +99,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				_driveName = serviceInformation.DriveName;
 				_driveSize = serviceInformation.DriveSize;
 				_driveDisplay = String.Format("{0} ({1})", _driveName, GetSpaceDescription(1F));
-
-				_watermarkMinDifference = (float)_watermarkMinDifferenceBytes/_driveSize * 100F;
 
 				_lowWatermark = serviceInformation.LowWatermark;
 				LowWatermarkChanged();

@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     /// <summary>
     /// Engine for acquiring WorkQueue items and finding plugins to process them.
     /// </summary>
-    sealed public class WorkQueueProcessor
+    public class WorkQueueProcessor
     {
         #region Members
 
@@ -181,11 +181,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					if ((lastLog.AddMinutes(60) < Platform.Time) && !memoryAvailable)
 					{
 						lastLog = Platform.Time;
-						Platform.Log(LogLevel.Error, "Unable to process WorkQueue entries, Minimum memory not available, minimum MB required: {0}, current MB available:{1}",
+						Platform.Log(LogLevel.Warn, "Unable to process WorkQueue entries, Minimum memory not available, minimum MB required: {0}, current MB available:{1}",
 											 WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB,
 											 SystemResources.GetAvailableMemory(SizeUnits.Megabytes));
 
-						ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, "WorkQueue", AlertTypeCodes.NoResources,
+						ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Warning, "WorkQueue", AlertTypeCodes.NoResources,
                                              null, TimeSpan.Zero,
 						                     "Unable to process WorkQueue entries, Minimum memory not available, minimum MB required: {0}, current MB available:{1}",
 						                     WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB,

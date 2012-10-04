@@ -36,13 +36,7 @@ namespace ClearCanvas.Common.Configuration
 
 		internal static bool IsUserUpgradeEnabled()
 		{
-			if (Default.UnitTesting)
-				return true;
-
-			if (SettingsStore.IsSupported && !SettingsStore.IsStoreOnline)
-				return false;
-
-			return Default.UserUpgradeEnabled;
+			return Default.UnitTesting || Default.UserUpgradeEnabled;
 		}
 
 		public override void Upgrade()

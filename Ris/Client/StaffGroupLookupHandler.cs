@@ -33,7 +33,6 @@ namespace ClearCanvas.Ris.Client
 			result = null;
 
 			var staffComponent = new StaffGroupSummaryComponent(true, query, _electiveGroupsOnly);
-			staffComponent.IncludeDeactivatedItems = this.IncludeDeactivatedItems;
 			var exitCode = ApplicationComponent.LaunchAsDialog(
 				_desktopWindow, staffComponent, SR.TitleStaffGroups);
 

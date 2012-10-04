@@ -1,0 +1,37 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Utilities.ProductSettingsGenerator.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="StandardSuffixes" Type="System.Collections.Specialized.StringCollection" Scope="Application">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string /&gt;
+  &lt;string&gt;RC1&lt;/string&gt;
+  &lt;string&gt;RC2&lt;/string&gt;
+  &lt;string&gt;RC3&lt;/string&gt;
+  &lt;string&gt;SP1&lt;/string&gt;
+  &lt;string&gt;SP2&lt;/string&gt;
+  &lt;string&gt;SP3&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="TextEditorCommand" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">%WINDIR%\notepad.exe</Value>
+    </Setting>
+    <Setting Name="TextEditorArgs" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">{0}</Value>
+    </Setting>
+    <Setting Name="StandardReleases" Type="System.Collections.Specialized.StringCollection" Scope="Application">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string /&gt;
+  &lt;string&gt;Alpha&lt;/string&gt;
+  &lt;string&gt;Beta&lt;/string&gt;
+  &lt;string&gt;Development&lt;/string&gt;
+  &lt;string&gt;Pre-Release&lt;/string&gt;
+  &lt;string&gt;Daily Build&lt;/string&gt;
+  &lt;string&gt;Experimental&lt;/string&gt;
+  &lt;string&gt;Source&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

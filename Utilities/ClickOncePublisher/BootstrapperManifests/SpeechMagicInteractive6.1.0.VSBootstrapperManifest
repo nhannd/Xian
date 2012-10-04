@@ -1,0 +1,22 @@
+<VSBootstrapperManifest>
+  <ProjectProperties ProjectName="SpeechMagicInteractive6.1.0" BuildLocation="PackagesDir" BuildDirectory="C:\Program Files\Microsoft Visual Studio 8\SDK\v2.0\Bootstrapper\Packages\New Project" DefaultLanguage="en" />
+  <UIPackage ProductCode="Speech.Magic.Interactive.6.1.0">
+    <UIChecks />
+    <Relationships />
+    <CustomSchedules />
+  </UIPackage>
+  <UIInstallFile FileName="C:\Documents and Settings\Norman\My Documents\My Downloads\InterActiveSetup_v61sp2hf1.exe" DisplayName="Speech Magic Interactive" Arguments="" Reboot="None" InstallingSize="28776737" PublicKey="&lt;&lt;File is not Digitally Signed&gt;&gt;" FileHash="04C4FA8914BAFAD4A23B1AC8F3B025CEC339142D" IncludeHash="True" Locale="en">
+    <UIChecks>
+      <RegistryCheck RegKey="HKEY_LOCAL_MACHINE\SOFTWARE\Philips Speech\SpeechMagic\InterActive\6.1.0\Diskcache" RegValue="SpeechMagicVersion" Property="SpeechMagicInstalled" />
+    </UIChecks>
+    <UIInstallConditions>
+      <UIInstallCondition Type="ByPassIf" Property="SpeechMagicInstalled" Operator="Exists" Value="N/A for ValueExists and ValueNotExists" Message="" />
+      <UIInstallCondition Type="FailIf" Property="AdminUser" Operator="=" Value="false" Message="You must be an administrator to install SpeechMagic" />
+    </UIInstallConditions>
+    <UIExitCodes>
+      <UIExitCode ExitCode="0" Result="Success" Message="" />
+      <DefaultExitCode Result="Fail" FormatMessageFromSystem="True" Message="An unexpected exit code was returned from the installer. The installation failed." />
+    </UIExitCodes>
+    <LooseFiles />
+  </UIInstallFile>
+</VSBootstrapperManifest>

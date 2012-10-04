@@ -99,6 +99,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._imageExporters.DataSource = null;
 			this._imageExporters.DisplayMember = "";
 			this._imageExporters.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._imageExporters.LabelText = "Export As";
 			resources.ApplyResources(this._imageExporters, "_imageExporters");
 			this._imageExporters.Name = "_imageExporters";
 			this._imageExporters.Value = null;

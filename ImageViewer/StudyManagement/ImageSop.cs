@@ -491,15 +491,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return this.Frames[1].GetNormalizedPixelData();
 		}
 
-		protected override IEnumerable<TransferSyntax> GetAllowableTransferSyntaxes()
-		{
-			foreach (var syntax in base.GetAllowableTransferSyntaxes())
-				yield return syntax;
-
-			foreach (var syntax in DicomCodecRegistry.GetCodecTransferSyntaxes())
-				yield return syntax;
-		}
-
 		/// <summary>
 		/// Factory method to create the frame with the specified frame number.
 		/// </summary>
@@ -547,6 +538,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 						_frames = null;
 					}
 				}
+			}
+		}
+		
+		private void ValidateAllowableTransferSyntax()
+		{
+			// If it isn't one of the regular uncompressed transfer syntaxes, or if a codec does not
+			// exist to decompress one of the compressed syntaxes, then fail.
+			if (TransferSyntax.GetTransferSyntax(this.TransferSyntaxUid) != TransferSyntax.ImplicitVrLittleEndian &&
+				TransferSyntax.GetTransferSyntax(this.TransferSyntaxUid) != TransferSyntax.ExplicitVrLittleEndian &&
+				TransferSyntax.GetTransferSyntax(this.TransferSyntaxUid) != TransferSyntax.ExplicitVrBigEndian &&
+				DicomCodecRegistry.GetCodec(TransferSyntax.GetTransferSyntax(this.TransferSyntaxUid)) == null)
+			{
+				throw new SopValidationException(String.Format(SR.ExceptionInvalidTransferSyntaxUID, this.TransferSyntaxUid));
 			}
 		}
 	}

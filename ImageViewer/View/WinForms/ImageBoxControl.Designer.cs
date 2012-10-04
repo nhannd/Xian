@@ -66,7 +66,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImageBoxControl));
 			this._imageScroller = new ClearCanvas.ImageViewer.View.WinForms.TrackSlider();
 			this.SuspendLayout();
 			// 
@@ -74,9 +73,14 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			// 
 			this._imageScroller.AutoHide = true;
 			this._imageScroller.BackColor = System.Drawing.Color.Transparent;
-			resources.ApplyResources(this._imageScroller, "_imageScroller");
+			this._imageScroller.Dock = System.Windows.Forms.DockStyle.Right;
+			this._imageScroller.Location = new System.Drawing.Point(118, 0);
 			this._imageScroller.MinimumAlpha = 128;
 			this._imageScroller.Name = "_imageScroller";
+			this._imageScroller.Padding = new System.Windows.Forms.Padding(0, 4, 4, 4);
+			this._imageScroller.Size = new System.Drawing.Size(16, 150);
+			this._imageScroller.TabIndex = 0;
+			this._imageScroller.Visible = false;
 			// 
 			// ImageBoxControl
 			// 

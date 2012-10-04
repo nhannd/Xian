@@ -49,13 +49,6 @@
     <Compile Include="CancelOrdersTool.cs" />
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
-    <Compile Include="OrderMergeSettings.cs" />
-    <Compile Include="OrderMergeSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>OrderMergeSettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="UnmergeOrdersTool.cs" />
     <Compile Include="DicomSeriesEditorComponent.cs" />
     <Compile Include="DowntimePrintFormsComponent.cs" />
     <Compile Include="DowntimeReportEntryComponent.cs" />
@@ -250,10 +243,6 @@
     <None Include="DowntimeSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DowntimeSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="OrderMergeSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>OrderMergeSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="PreliminaryDiagnosisSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -472,9 +461,6 @@
     <Content Include="Icons\ImportAuthorityTokensLarge.png" />
     <Content Include="Icons\ImportAuthorityTokensMedium.png" />
     <Content Include="Icons\ImportAuthorityTokensSmall.png" />
-    <EmbeddedResource Include="Icons\UnmergeOrdersLarge.png" />
-    <EmbeddedResource Include="Icons\UnmergeOrdersMedium.png" />
-    <EmbeddedResource Include="Icons\UnmergeOrdersSmall.png" />
     <EmbeddedResource Include="PreliminaryDiagnosisFromRadiologyTemplates.xml" />
     <EmbeddedResource Include="Icons\RejectProtocolLarge.png" />
     <EmbeddedResource Include="Icons\RejectProtocolMedium.png" />

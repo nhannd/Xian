@@ -1,0 +1,211 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4873C5B9-76D3-4433-ADD3-0C03A34C2F72}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MyPlugin</RootNamespace>
+    <AssemblyName>ClearCanvas.Docs.DevelopersGuide.ViewerExamples</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Basics\DropDownFilterTool.cs" />
+    <Compile Include="Basics\MyComponent.cs" />
+    <Compile Include="Basics\MyComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Basics\MyComponentControl.Designer.cs">
+      <DependentUpon>MyComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Basics\MyComponentView.cs" />
+    <Compile Include="Basics\MyDialogBoxTool.cs" />
+    <Compile Include="Basics\MyImageViewerTool.cs" />
+    <Compile Include="Basics\MyDesktopTool.cs" />
+    <Compile Include="Basics\MyMouseImageViewerTool.cs" />
+    <Compile Include="Basics\IconToggleTool.cs" />
+    <Compile Include="Basics\MyShelfTool.cs" />
+    <Compile Include="Basics\MyWorkspaceTool.cs" />
+    <Compile Include="DicomImaging\AddBitmapShutterTool.cs" />
+    <Compile Include="DicomImaging\AddBitmapOverlayTool.cs" />
+    <Compile Include="DicomImaging\AddGeometricShutterTool.cs" />
+    <Compile Include="DicomImaging\LoadPresentationStateTool.cs" />
+    <Compile Include="DicomImaging\SavePresentationStateTool.cs" />
+    <Compile Include="Imaging\AddMeasurementTool.cs" />
+    <Compile Include="Imaging\AddDisplaySetTool.cs" />
+    <Compile Include="Imaging\AddInteractiveVectorGraphicTool.cs" />
+    <Compile Include="Imaging\AddVectorGraphicTool.cs" />
+    <Compile Include="Imaging\ContextMenuTool.cs" />
+    <Compile Include="Imaging\GeneratePixelDataTool.cs" />
+    <Compile Include="Basics\LoadDicomFilesTool.cs" />
+    <Compile Include="Basics\LoadDicomStudiesTool.cs" />
+    <Compile Include="Imaging\ManipulatePixelDataTool.cs" />
+    <Compile Include="Imaging\MyLayoutManager.cs" />
+    <Compile Include="Imaging\MyPresentationImage.cs" />
+    <Compile Include="Imaging\MyRenderer.cs" />
+    <Compile Include="Imaging\RenderToBitmapTool.cs" />
+    <Compile Include="Imaging\SpatialTransformTool.cs" />
+    <Compile Include="Imaging\VolumePresentationImage.cs" />
+    <Compile Include="Miscellaneous\ExportToImageTool.cs" />
+    <Compile Include="Miscellaneous\MemoryManagedBitmap.cs" />
+    <Compile Include="Miscellaneous\MyExternalApplicationLauncher.cs">
+    </Compile>
+    <Compile Include="Miscellaneous\MyExternalApplicationLauncherView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Miscellaneous\MyStudyBrowserTool.cs" />
+    <Compile Include="Miscellaneous\PerformBackgroundOperationTool.cs" />
+    <Compile Include="Miscellaneous\ShowProgressBarTool.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TextEditor\ConfigPageProvider.cs" />
+    <Compile Include="TextEditor\PigLatinTool.cs" />
+    <Compile Include="TextEditor\TextEditorComponent.cs">
+    </Compile>
+    <Compile Include="TextEditor\TextEditorComponentView.cs" />
+    <Compile Include="TextEditor\TextEditorConfigComponent.cs" />
+    <Compile Include="TextEditor\TextEditorConfigControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TextEditor\TextEditorConfigControl.Designer.cs">
+      <DependentUpon>TextEditorConfigControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TextEditor\TextEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TextEditor\TextEditorControl.Designer.cs">
+      <DependentUpon>TextEditorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TextEditor\TextEditorSettings.cs" />
+    <Compile Include="TextEditor\TextEditorSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>TextEditorSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="TextEditor\TextEditorConfigComponentView.cs">
+    </Compile>
+    <Compile Include="TextEditor\TextEditorLaunchTool.cs" />
+    <Compile Include="TextEditor\TextEditorTool.cs" />
+    <Compile Include="TextEditor\ValidateFilenameAttribute.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Desktop\ClearCanvas.Desktop.csproj">
+      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
+      <Name>ClearCanvas.Desktop</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Desktop\Configuration\ClearCanvas.Desktop.Configuration.csproj">
+      <Project>{223DFDC9-B1F5-441D-B659-33F9E55E74A5}</Project>
+      <Name>ClearCanvas.Desktop.Configuration</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj">
+      <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
+      <Name>ClearCanvas.Desktop.View.WinForms</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
+      <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
+      <Name>ClearCanvas.Dicom</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\ImageViewer\ClearCanvas.ImageViewer.csproj">
+      <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
+      <Name>ClearCanvas.ImageViewer</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\ImageViewer\Clipboard\ClearCanvas.ImageViewer.Clipboard.csproj">
+      <Project>{8517089B-809E-4A62-9AB2-CFF8C72E1AEB}</Project>
+      <Name>ClearCanvas.ImageViewer.Clipboard</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\ImageViewer\Configuration\ClearCanvas.ImageViewer.Configuration.csproj">
+      <Project>{89DF567B-A0D1-456A-A28F-043FD57D7F9A}</Project>
+      <Name>ClearCanvas.ImageViewer.Configuration</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\ImageViewer\Explorer\Dicom\ClearCanvas.ImageViewer.Explorer.Dicom.csproj">
+      <Project>{14111EC7-C62E-4483-8573-7C04986D048F}</Project>
+      <Name>ClearCanvas.ImageViewer.Explorer.Dicom</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\ImageViewer\Externals\ClearCanvas.ImageViewer.Externals.csproj">
+      <Project>{B33560E9-4B0C-4B8A-AF6B-721A06DD407B}</Project>
+      <Name>ClearCanvas.ImageViewer.Externals</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\MyToolLarge.png" />
+    <EmbeddedResource Include="Icons\MyToolMedium.png" />
+    <EmbeddedResource Include="Icons\MyToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\FalseLarge.png" />
+    <EmbeddedResource Include="Icons\FalseMedium.png" />
+    <EmbeddedResource Include="Icons\FalseSmall.png" />
+    <EmbeddedResource Include="Icons\TrueLarge.png" />
+    <EmbeddedResource Include="Icons\TrueMedium.png" />
+    <EmbeddedResource Include="Icons\TrueSmall.png" />
+    <EmbeddedResource Include="TextEditor\TextEditorConfigControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TextEditorConfigControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextEditor\TextEditorControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TextEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="TextEditor\TextEditorSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>TextEditorSettings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Readme.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

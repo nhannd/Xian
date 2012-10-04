@@ -89,8 +89,6 @@ namespace ClearCanvas.Web.Services
             _application = application;
             _queue = new BlockingQueue<Command>();
             _thread = new Thread(RunThread);
-            _thread.CurrentCulture = application.Culture;
-            _thread.CurrentUICulture = application.Culture;
             _thread.Name = String.Format("Web Simulated UI Thread [{0}]", _thread.ManagedThreadId);
             _thread.Start();
         }

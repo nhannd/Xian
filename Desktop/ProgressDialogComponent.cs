@@ -152,7 +152,7 @@ namespace ClearCanvas.Desktop
             // if task is running, the component cannot exit
             if (_task != null && _task.IsRunning)
             {
-                if (_task.SupportsCancel && !_task.CancelRequestPending)
+                if (_task.SupportsCancel)
                 {
                     if (this.Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmCancelTask, MessageBoxActions.OkCancel) == DialogBoxAction.Ok)
                     {
@@ -212,7 +212,6 @@ namespace ClearCanvas.Desktop
         public ProgressBarStyle ProgressBarStyle
         {
             get { return _progressBarStyle; }
-            set { _progressBarStyle = value; }
         }
 
 		/// <summary>

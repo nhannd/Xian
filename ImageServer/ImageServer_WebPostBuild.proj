@@ -1,4 +1,4 @@
-<Project DefaultTargets="CopyPlugins;CopyBin;CopyConfigFiles;Build Web Viewer;AddSplashScreen" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="CopyPlugins;CopyBin;CopyConfigFiles;Build Web Viewer" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<Choose>
 		<When Condition=" '$(PROCESSOR_ARCHITEW6432)' == 'IA64' Or '$(PROCESSOR_ARCHITEW6432)' == 'AMD64' Or '$(PROCESSOR_ARCHITECTURE)' == 'IA64' Or '$(PROCESSOR_ARCHITECTURE)' == 'AMD64'">
@@ -27,12 +27,7 @@
 		<SilverlightBinFolder>$(ProjectDir)ClientBin</SilverlightBinFolder>
 	</PropertyGroup>
 
-	<PropertyGroup>
-		<ImageViewerWebClientSilverlightXAPOutputDir>$(TrunkDirectory)\ImageViewer\Web\Client\Silverlight\bin\$(Configuration)</ImageViewerWebClientSilverlightXAPOutputDir>
-	</PropertyGroup>
-
-
-	<Choose>
+  <Choose>
     <When Condition=" '$(BuildPlatform)' == 'x64' ">
       <PropertyGroup>
         <PlatformSubFolder>$(BuildPlatform)</PlatformSubFolder>
@@ -70,6 +65,7 @@
 	<ItemGroup>
 		<WebViewerPlugins Include="$(TrunkDirectory)\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll"/>
 		
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageServer\Services\WebViewer\bin\$(Configuration)\ClearCanvas.ImageServer.Services.WebViewer.dll"/>
 		<WebViewerPlugins Include="$(TrunkDirectory)\ImageServer\Utilities\bin\$(Configuration)\ClearCanvas.ImageServer.Utilities.dll"/>
 		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\AnnotationProviders\bin\$(Configuration)\ClearCanvas.ImageViewer.AnnotationProviders.dll"/>
 		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll"/>
@@ -95,24 +91,18 @@
 		<WebViewerPlugins Include="$(TrunkDirectory)\Web\Services\bin\$(Configuration)\ClearCanvas.Web.Services.dll"/>
 
 		<WebViewerPlugins Include="$(TrunkDirectory)\ReferencedAssemblies\Interpolators\$(PlatformSubFolder)\BilinearInterpolation.dll"/>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <CodecPlugins Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
-    <CodecPlugins Include="$(TrunkDirectory)\Dicom\Codec\Rle\bin\$(Configuration)\ClearCanvas.Dicom.Codec.Rle.dll"/>
-  </ItemGroup>
+		<WebViewerPlugins Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\Dicom\Codec\Rle\bin\$(Configuration)\ClearCanvas.Dicom.Codec.Rle.dll" />
 
+  </ItemGroup>
 
 	<Target Name="CopyPlugins">
 		<Message Text="Copying plugin assemblies into plugins folder (ASP.NET Development Server must not be running)"/>
 		<Message Text="$(ProjectDir)"/>
 		<Message Text="@(PluginFiles)"/>
 		<Message Text="@(WebViewerPlugins)"/>
-		<Message Text="$(CodecPlugins)"/>
-		
 		<Copy SkipUnchangedFiles="false" SourceFiles="@(PluginFiles)" DestinationFolder="$(ProjectDir)\bin"/>
 		<Copy SkipUnchangedFiles="true" SourceFiles="@(WebViewerPlugins)" DestinationFolder="$(ProjectDir)\bin"/>
-		<Copy SkipUnchangedFiles="false" SourceFiles="@(CodecPlugins)" DestinationFolder="$(ProjectDir)\bin"/>    
 	</Target>
 	<Target Name="CopyBin">
 		<Message Text="Copying common assemblies into bin folder (ASP.NET Development Server must not be running)"/>
@@ -135,12 +125,6 @@
 		<MSBuild Projects="$(WebViewerSolutionDir)\Viewer.sln"  Properties="ProjectDir=$(ProjectDir);Configuration=$(Configuration);"/>
 		<Message Text="Updating Silverlight Package"/>
 		<Delete Files="$(SilverlightBinFolder)\Silverlight.xap" />
-		<Copy SourceFiles="$(ImageViewerWebClientSilverlightXAPOutputDir)\Silverlight.xap"  DestinationFolder="$(SilverlightBinFolder)"/>
-	</Target>
-
-	<Target Name="AddSplashScreen">
-		<Message Text="Adding ImageServer splash screen"/>
-		<Copy SourceFiles="$(ProjectDir)\Builds\SplashScreen\LoginSplash.png"
-			  DestinationFolder="$(ProjectDir)\App_Themes\Default\images"/>
+		<Copy SourceFiles="$(WebViewerSolutionDir)\SilverlightHost\ClientBin\Silverlight.xap"  DestinationFolder="$(SilverlightBinFolder)"/>
 	</Target>
 </Project>

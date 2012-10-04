@@ -51,17 +51,14 @@ namespace ClearCanvas.ImageServer.Web.Common
         {
             get
             {
-                if (_readContext == null)
+                lock (_syncRoot)
                 {
-                    lock (_syncRoot)
+                    if (_readContext == null)
                     {
-                        if (_readContext == null)
-                        {
-                            _readContext = _store.OpenReadContext();
-                        }
+                        _readContext = _store.OpenReadContext();
                     }
+                    return _readContext;
                 }
-                return _readContext;
                 
             }
         }
@@ -70,16 +67,9 @@ namespace ClearCanvas.ImageServer.Web.Common
 
         public void Dispose()
         {
-            if (_readContext != null)
+            if (_readContext!=null)
             {
-                lock (_syncRoot)
-                {
-                    if (_readContext != null)
-                    {
-                        _readContext.Dispose();
-                        _readContext = null;
-                    }
-                }
+                _readContext.Dispose();
             }
         }
 

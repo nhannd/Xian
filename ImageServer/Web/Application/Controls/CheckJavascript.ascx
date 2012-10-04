@@ -6,7 +6,6 @@ Include the control in the MasterPage.
 --%>
 
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CheckJavascript.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Controls.CheckJavascript" %>
-<%@ Import Namespace="Resources" %>
 
 <asp:HiddenField ID="hfClientJSEnabled" runat="server" Value="False" />
 

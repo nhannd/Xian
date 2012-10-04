@@ -1,0 +1,24 @@
+<Project DefaultTargets="BuildSolution" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="BuildSolution" >
+    <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\Enterprise\Authentication" ContinueOnError="true" />
+    <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\Enterprise\Authentication" />
+    <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\Enterprise\Configuration" ContinueOnError="true" />
+    <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\Enterprise\Configuration" />
+    <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\Workflow" ContinueOnError="true" />
+    <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\Workflow" />
+    <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\Healthcare" ContinueOnError="true" />
+    <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\Healthcare" />
+    <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\Healthcare\Owls" ContinueOnError="true" />
+    <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\Healthcare\Owls" />
+    <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\Healthcare\Uhn" ContinueOnError="true" />
+    <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\Healthcare\Uhn" />
+    <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\Healthcare\Fax" ContinueOnError="true" />
+    <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\Healthcare\Fax" />
+    <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\HL7" ContinueOnError="true" />
+    <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\HL7" />
+    <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\Healthcare\Mwl" ContinueOnError="true" />
+    <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\Healthcare\Mwl" />
+    <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\Healthcare\Mwl\Owls" ContinueOnError="true" />
+    <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\Healthcare\Mwl\Owls" />
+  </Target>
+</Project>

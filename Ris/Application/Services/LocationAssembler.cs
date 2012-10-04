@@ -15,47 +15,55 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-	public class LocationAssembler
-	{
-		public LocationSummary CreateLocationSummary(Location location)
-		{
-			return new LocationSummary(
-				location.GetRef(),
+    public class LocationAssembler
+    {
+        public LocationSummary CreateLocationSummary(Location location)
+        {
+            FacilitySummary facility = new FacilityAssembler().CreateFacilitySummary(location.Facility);
+            return new LocationSummary(
+                location.GetRef(),
 				location.Id,
 				location.Name,
-				new FacilityAssembler().CreateFacilitySummary(location.Facility),
-				location.Building,
-				location.Floor,
-				location.PointOfCare,
+                facility,
+                location.Building,
+                location.Floor,
+                location.PointOfCare,
+                location.Room,
+                location.Bed,
 				location.Deactivated);
-		}
+        }
 
-		public LocationDetail CreateLocationDetail(Location location)
-		{
-			return new LocationDetail(
+        public LocationDetail CreateLocationDetail(Location location)
+        {
+            FacilitySummary facility = new FacilityAssembler().CreateFacilitySummary(location.Facility);
+            return new LocationDetail(
 				location.GetRef(),
 				location.Id,
 				location.Name,
 				location.Description,
-				new FacilityAssembler().CreateFacilitySummary(location.Facility),
-				location.Building,
-				location.Floor,
-				location.PointOfCare,
+                facility,
+                location.Building,
+                location.Floor,
+                location.PointOfCare,
+                location.Room,
+                location.Bed,
 				location.Deactivated);
-		}
+        }
 
-		public void UpdateLocation(LocationDetail detail, Location location, IPersistenceContext context)
-		{
-			location.Name = detail.Name;
+        public void UpdateLocation(LocationDetail detail, Location location, IPersistenceContext context)
+        {
+        	location.Name = detail.Name;
 			location.Id = detail.Id;
 			location.Description = detail.Description;
 
-			location.Facility = context.Load<Facility>(detail.Facility.FacilityRef, EntityLoadFlags.Proxy);
-			location.Building = detail.Building;
-			location.Floor = detail.Floor;
-			location.PointOfCare = detail.PointOfCare;
-			location.Deactivated = detail.Deactivated;
-		}
+            location.Facility = context.Load<Facility>(detail.Facility.FacilityRef, EntityLoadFlags.Proxy);
+            location.Building = detail.Building;
+            location.Floor = detail.Floor;
+            location.PointOfCare = detail.PointOfCare;
+            location.Room = detail.Room;
+            location.Bed = detail.Bed;
+        	location.Deactivated = detail.Deactivated;
+        }
 
-	}
+    }
 }

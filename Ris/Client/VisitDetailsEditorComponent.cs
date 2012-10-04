@@ -331,26 +331,6 @@ namespace ClearCanvas.Ris.Client
 			return l.Name;
 		}
 
-		public string CurrentRoom
-		{
-			get { return _visit.CurrentRoom; }
-			set
-			{
-				_visit.CurrentRoom = value;
-				this.Modified = true;
-			}
-		}
-
-		public string CurrentBed
-		{
-			get { return _visit.CurrentBed; }
-			set
-			{
-				_visit.CurrentBed = value;
-				this.Modified = true;
-			}
-		}
-
 		#endregion
 	}
 }

@@ -60,7 +60,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-		[Localizable(true)]
         public char PasswordChar
         {
             get { return _textBox.PasswordChar; }
@@ -68,7 +67,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         [DefaultValue("")]
-		[Localizable(true)]
         public string ToolTip
         {
             get
@@ -87,7 +85,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             remove { _textBox.TextChanged -= value; }
         }
 
-		[Localizable(true)]
         public string LabelText
         {
             get { return _label.Text; }
@@ -100,7 +97,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <seealso cref="System.Windows.Forms.MaskedTextBox.Mask"/>
         [Category("Masked Text Field")]
         [Description("See System.Windows.Forms.MaskedTextBox.Mask Property")]
-		[Localizable(true)]
         public string Mask
         {
             get { return _textBox.EditMask; }

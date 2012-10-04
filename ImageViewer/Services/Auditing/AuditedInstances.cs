@@ -187,9 +187,6 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <summary>
 		/// Enumerates all the file paths in the collection.
 		/// </summary>
-		/// <remarks>
-		/// If the audited instances are not files on the file system, then this method returns an empty enumeration.
-		/// </remarks>
 		internal IEnumerable<string> EnumerateFiles()
 		{
 			foreach (Patient patient in _studies.Keys)
@@ -199,16 +196,11 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		}
 
 		/// <summary>
-		/// Enumerates the unique file system volumes in the collection.
+		/// Enumerates the unique file system volumnes in the collection.
 		/// </summary>
 		/// <remarks>
-		/// <para>
 		/// This enumeration returns the volume labels of each device; If the label is empty,
 		/// then the name of the device is returned instead.
-		/// </para>
-		/// <para>
-		/// If the audited instances are not files on the file system, then this method returns an empty enumeration.
-		/// </para>
 		/// </remarks>
 		internal IEnumerable<string> EnumerateFileVolumes()
 		{
@@ -220,7 +212,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 				{
 					DriveInfo drive = new DriveInfo(root[0].ToString());
 					if (!drives.ContainsKey(drive.Name))
-						drives.Add(drive.Name, !drive.IsReady || string.IsNullOrEmpty(drive.VolumeLabel) ? drive.Name : drive.VolumeLabel);
+						drives.Add(drive.Name, string.IsNullOrEmpty(drive.VolumeLabel) ? drive.Name : drive.VolumeLabel);
 				}
 			}
 			return drives.Values;

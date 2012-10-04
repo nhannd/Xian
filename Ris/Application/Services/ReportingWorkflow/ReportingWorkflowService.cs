@@ -356,7 +356,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			var reportDetail = reportAssembler.CreateReportDetail(step.ReportPart.Report, false, this.PersistenceContext);
 
 			var orderAssembler = new OrderAssembler();
-			var orderDetailOptions = new OrderAssembler.CreateOrderDetailOptions {IncludeExtendedProperties = true};
+			var orderDetailOptions = new OrderAssembler.CreateOrderDetailOptions(false, false, false, null, false, false, true);
 			var orderDetail = orderAssembler.CreateOrderDetail(step.Procedure.Order, orderDetailOptions, this.PersistenceContext);
 
 			return new LoadReportForEditResponse(

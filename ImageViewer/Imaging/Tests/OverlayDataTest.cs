@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -12,7 +12,6 @@
 #if	UNIT_TESTS
 #pragma warning disable 1591,0419,1574,1587
 
-using System;
 using System.Text;
 using NUnit.Framework;
 
@@ -22,109 +21,6 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 	public class OverlayDataTest
 	{
 		#region OverlayData Tests
-
-		[Test]
-		public void TestCreateOverlayData_8BitsAllocated()
-		{
-			// 1 frame, 5x3
-			// 11111
-			// 10010
-			// 00000
-			// continuous bit stream: 11111100 1000000x
-			// continuous LE byte stream: 00111111 x0000001
-
-			const string expectedResult = "111111001000000";
-			var overlayPixels = new byte[]
-			                    	{
-			                    		0x10, 0x10, 0x10, 0x10, 0x10,
-			                    		0x10, 0x00, 0x00, 0x10, 0x00,
-			                    		0x00, 0x00, 0x00, 0x00, 0x00
-			                    	};
-
-			// little endian test
-			{
-				var packedBits = OverlayData.CreateOverlayData(3, 5, false, overlayPixels).Raw;
-				var actualResult = FormatBits(packedBits, false).Substring(0, 15);
-				Assert.AreEqual(expectedResult, actualResult, "Error in packed bits for 8-bit case (little endian)");
-			}
-
-			// big endian test
-			{
-				var packedBits = OverlayData.CreateOverlayData(3, 5, true, overlayPixels).Raw;
-				var actualResult = FormatBits(packedBits, true).Substring(0, 15);
-				Assert.AreEqual(expectedResult, actualResult, "Error in packed bits for 8-bit case (big endian)");
-			}
-		}
-
-		[Test]
-		public void TestCreateOverlayData_16BitsAllocated()
-		{
-			// 1 frame, 5x3
-			// 11111
-			// 10010
-			// 00000
-			// continuous bit stream: 11111100 1000000x
-			// continuous LE byte stream: 00111111 x0000001
-
-			const string expectedResult = "111111001000000";
-			var overlayPixels = SwapBytes(new byte[]
-			                              	{
-			                              		// column1 |   column2 |   column3 |   column4 |   column5
-			                              		0x00, 0x10, 0x00, 0x10, 0x00, 0x10, 0x00, 0x10, 0x00, 0x10,
-			                              		0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00,
-			                              		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-			                              	}); // written here in big endian for easy reading
-
-			// little endian test
-			{
-				var packedBits = OverlayData.CreateOverlayData(3, 5, 12, 16, 15, false, overlayPixels).Raw;
-				var actualResult = FormatBits(packedBits, false).Substring(0, 15);
-				Assert.AreEqual(expectedResult, actualResult, "Error in packed bits for 16-bit case (little endian)");
-			}
-
-			// big endian test
-			{
-				var packedBits = OverlayData.CreateOverlayData(3, 5, 12, 16, 15, true, overlayPixels).Raw;
-				var actualResult = FormatBits(packedBits, true).Substring(0, 15);
-				Assert.AreEqual(expectedResult, actualResult, "Error in packed bits for 16-bit case (big endian)");
-			}
-		}
-
-		[Test]
-		public void TestCreateOverlayData_16BitsAllocatedWithJunk()
-		{
-			// 1 frame, 5x3
-			// 11111
-			// 10010
-			// 00000
-			// continuous bit stream: 11111100 1000000x
-			// continuous LE byte stream: 00111111 x0000001
-
-			const string expectedResult = "111111001000000";
-
-			// simulating the junk by specifying that we're using the middle 8 bits and the first and last 4 bits are to be ignored
-			var overlayPixels = SwapBytes(new byte[]
-			                              	{
-			                              		// column1 |   column2 |   column3 |   column4 |   column5
-			                              		0x09, 0x10, 0x09, 0x00, 0x03, 0x00, 0x00, 0x10, 0x00, 0x10,
-			                              		0x00, 0x10, 0x80, 0x03, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00,
-			                              		0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x0F, 0x00, 0x00
-			                              	}); // written here in big endian for easy reading
-
-			// little endian test
-			{
-				var packedBits = OverlayData.CreateOverlayData(3, 5, 8, 16, 11, false, overlayPixels).Raw;
-				var actualResult = FormatBits(packedBits, false).Substring(0, 15);
-				Assert.AreEqual(expectedResult, actualResult, "Error in packed bits for 16-bit w/junk case (little endian)");
-			}
-
-			// big endian test
-			{
-				var packedBits = OverlayData.CreateOverlayData(3, 5, 8, 16, 11, true, overlayPixels).Raw;
-				var actualResult = FormatBits(packedBits, true).Substring(0, 15);
-				Assert.AreEqual(expectedResult, actualResult, "Error in packed bits for 16-bit w/junk case (big endian)");
-			}
-		}
 
 		[Test]
 		public void TestUnpack_SingleFrameA()
@@ -311,224 +207,6 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		#region Algorithm Tests
 
 		[Test]
-		public void TestBitPacking_Single8BitFrame()
-		{
-			// 1 frame, 5x3
-			// 11111
-			// 10010
-			// 00000
-			// continuous bit stream: 11111100 1000000x
-			// continuous LE byte stream: 00111111 x0000001
-
-			const string expectedResult = "111111001000000";
-			var overlayPixels = new byte[]
-			                    	{
-			                    		0x10, 0x10, 0x10, 0x10, 0x10,
-			                    		0x10, 0x00, 0x00, 0x10, 0x00,
-			                    		0x00, 0x00, 0x00, 0x00, 0x00
-			                    	};
-
-			// little endian test
-			{
-				const int pixelCount = 3*5;
-				byte[] packedBits = new byte[(int) (Math.Ceiling(pixelCount/8.0))];
-				OverlayData.TestPack(overlayPixels, packedBits, 0, pixelCount, 0xFF, false);
-				var actualResult = FormatBits(packedBits, false).Substring(0, pixelCount);
-				Assert.AreEqual(expectedResult, actualResult, "Error in packed bits for 8-bit case (little endian)");
-			}
-
-			// big endian test
-			{
-				const int pixelCount = 3*5;
-				byte[] packedBits = new byte[(int) (Math.Ceiling(pixelCount/8.0))];
-				OverlayData.TestPack(overlayPixels, packedBits, 0, pixelCount, 0xFF, true);
-				var actualResult = FormatBits(packedBits, true).Substring(0, pixelCount);
-				Assert.AreEqual(expectedResult, actualResult, "Error in packed bits for 8-bit case (big endian)");
-			}
-		}
-
-		[Test]
-		public void TestBitPacking_Single16BitFrame()
-		{
-			// 1 frame, 5x3
-			// 11111
-			// 10010
-			// 00000
-			// continuous bit stream: 11111100 1000000x
-			// continuous LE byte stream: 00111111 x0000001
-
-			const string expectedResult = "111111001000000";
-			var overlayPixels = SwapBytes(new byte[] // written in big endian for ease of reading
-			                              	{
-			                              		0x00, 0x10, 0x00, 0x10, 0x00, 0x10, 0x00, 0x10, 0x00, 0x10,
-			                              		0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00,
-			                              		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-			                              	});
-
-			// little endian test
-			{
-				const int pixelCount = 3*5;
-				byte[] packedBits = new byte[(int) (Math.Ceiling(pixelCount/8.0))];
-				OverlayData.TestPack(overlayPixels, packedBits, 0, pixelCount, (ushort) 0x00FF, false);
-				var actualResult = FormatBits(packedBits, false).Substring(0, pixelCount);
-				Assert.AreEqual(expectedResult, actualResult, "Error in packed bits for 16-bit case (little endian)");
-			}
-
-			// big endian test
-			{
-				const int pixelCount = 3*5;
-				byte[] packedBits = new byte[(int) (Math.Ceiling(pixelCount/8.0))];
-				OverlayData.TestPack(overlayPixels, packedBits, 0, pixelCount, (ushort) 0x00FF, true);
-				var actualResult = FormatBits(packedBits, true).Substring(0, pixelCount);
-				Assert.AreEqual(expectedResult, actualResult, "Error in packed bits for 16-bit case (big endian)");
-			}
-		}
-
-		[Test]
-		public void TestBitPacking_Multiple8BitFrames()
-		{
-			// 7 frames, each 3x2 (cols, rows) = 42 bits = 6 bytes
-			// 111 111 111 111 111 111 111
-			// 000 001 010 011 100 101 110
-			// continuous bit stream: 11100011 10011110 10111011 11110011 11011111 10xxxxxx
-			// continuous LE byte stream: 11000111 01111001 11011101 11001111 11111011 xxxxxx01
-
-			const string expectedResult = "111000111001111010111011111100111101111110";
-			var overlayPixels = new byte[]
-			                    	{
-			                    		// frame 1
-			                    		0x10, 0x10, 0x10,
-			                    		0x00, 0x00, 0x00,
-			                    		// frame 2
-			                    		0x10, 0x10, 0x10,
-			                    		0x00, 0x00, 0x10,
-			                    		// frame 3
-			                    		0x10, 0x10, 0x10,
-			                    		0x00, 0x10, 0x00,
-			                    		// frame 4
-			                    		0x10, 0x10, 0x10,
-			                    		0x00, 0x10, 0x10,
-			                    		// frame 5
-			                    		0x10, 0x10, 0x10,
-			                    		0x10, 0x00, 0x00,
-			                    		// frame 6
-			                    		0x10, 0x10, 0x10,
-			                    		0x10, 0x00, 0x10,
-			                    		// frame 7
-			                    		0x10, 0x10, 0x10,
-			                    		0x10, 0x10, 0x00,
-			                    	};
-
-			// little endian test
-			{
-				const bool bigEndian = false;
-				const int frames = 7;
-				const int pixelCount = 2*3;
-				byte[] packedBits = new byte[(int) (Math.Ceiling(frames*pixelCount/8.0))];
-				// pack the individual frames in no specific order
-				OverlayData.TestPack(Subarray(overlayPixels, 0*pixelCount, pixelCount), packedBits, 0*pixelCount, pixelCount, 0xFF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 4*pixelCount, pixelCount), packedBits, 4*pixelCount, pixelCount, 0xFF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 1*pixelCount, pixelCount), packedBits, 1*pixelCount, pixelCount, 0xFF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 5*pixelCount, pixelCount), packedBits, 5*pixelCount, pixelCount, 0xFF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 2*pixelCount, pixelCount), packedBits, 2*pixelCount, pixelCount, 0xFF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 6*pixelCount, pixelCount), packedBits, 6*pixelCount, pixelCount, 0xFF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 3*pixelCount, pixelCount), packedBits, 3*pixelCount, pixelCount, 0xFF, bigEndian);
-				var actualResult = FormatBits(packedBits, bigEndian).Substring(0, frames*pixelCount);
-				Assert.AreEqual(expectedResult, actualResult, "Error in packed bits for multiframe 8-bit case (little endian)");
-			}
-
-			// big endian test
-			{
-				const bool bigEndian = true;
-				const int frames = 7;
-				const int pixelCount = 2*3;
-				byte[] packedBits = new byte[(int) (Math.Ceiling(frames*pixelCount/8.0))];
-				// pack the individual frames in no specific order
-				OverlayData.TestPack(Subarray(overlayPixels, 0*pixelCount, pixelCount), packedBits, 0*pixelCount, pixelCount, 0xFF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 4*pixelCount, pixelCount), packedBits, 4*pixelCount, pixelCount, 0xFF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 1*pixelCount, pixelCount), packedBits, 1*pixelCount, pixelCount, 0xFF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 5*pixelCount, pixelCount), packedBits, 5*pixelCount, pixelCount, 0xFF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 2*pixelCount, pixelCount), packedBits, 2*pixelCount, pixelCount, 0xFF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 6*pixelCount, pixelCount), packedBits, 6*pixelCount, pixelCount, 0xFF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 3*pixelCount, pixelCount), packedBits, 3*pixelCount, pixelCount, 0xFF, bigEndian);
-				var actualResult = FormatBits(packedBits, bigEndian).Substring(0, frames*pixelCount);
-				Assert.AreEqual(expectedResult, actualResult, "Error in packed bits for multiframe 8-bit case (big endian)");
-			}
-		}
-
-		[Test]
-		public void TestBitPacking_Multiple16BitFrames()
-		{
-			// 7 frames, each 3x2 (cols, rows) = 42 bits = 6 bytes
-			// 111 111 111 111 111 111 111
-			// 000 001 010 011 100 101 110
-			// continuous bit stream: 11100011 10011110 10111011 11110011 11011111 10xxxxxx
-			// continuous LE byte stream: 11000111 01111001 11011101 11001111 11111011 xxxxxx01
-
-			const string expectedResult = "111000111001111010111011111100111101111110";
-			var overlayPixels = SwapBytes(new byte[] // written in big endian for convenience
-			                              	{
-			                              		// frame 1
-			                              		0x00, 0x10, 0x00, 0x10, 0x00, 0x10,
-			                              		0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			                              		// frame 2
-			                              		0x00, 0x10, 0x00, 0x10, 0x00, 0x10,
-			                              		0x00, 0x00, 0x00, 0x00, 0x00, 0x10,
-			                              		// frame 3
-			                              		0x00, 0x10, 0x00, 0x10, 0x00, 0x10,
-			                              		0x00, 0x00, 0x00, 0x10, 0x00, 0x00,
-			                              		// frame 4
-			                              		0x00, 0x10, 0x00, 0x10, 0x00, 0x10,
-			                              		0x00, 0x00, 0x00, 0x10, 0x00, 0x10,
-			                              		// frame 5
-			                              		0x00, 0x10, 0x00, 0x10, 0x00, 0x10,
-			                              		0x00, 0x10, 0x00, 0x00, 0x00, 0x00,
-			                              		// frame 6
-			                              		0x00, 0x10, 0x00, 0x10, 0x00, 0x10,
-			                              		0x00, 0x10, 0x00, 0x00, 0x00, 0x10,
-			                              		// frame 7
-			                              		0x00, 0x10, 0x00, 0x10, 0x00, 0x10,
-			                              		0x00, 0x10, 0x00, 0x10, 0x00, 0x00,
-			                              	});
-
-			// little endian test
-			{
-				const bool bigEndian = false;
-				const int frames = 7;
-				const int pixelCount = 2*3;
-				byte[] packedBits = new byte[(int) (Math.Ceiling(frames*pixelCount/8.0))];
-				// pack the individual frames in no specific order
-				OverlayData.TestPack(Subarray(overlayPixels, 2*0*pixelCount, 2*pixelCount), packedBits, 0*pixelCount, pixelCount, (ushort) 0x00FF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 2*4*pixelCount, 2*pixelCount), packedBits, 4*pixelCount, pixelCount, (ushort) 0x00FF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 2*1*pixelCount, 2*pixelCount), packedBits, 1*pixelCount, pixelCount, (ushort) 0x00FF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 2*5*pixelCount, 2*pixelCount), packedBits, 5*pixelCount, pixelCount, (ushort) 0x00FF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 2*2*pixelCount, 2*pixelCount), packedBits, 2*pixelCount, pixelCount, (ushort) 0x00FF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 2*6*pixelCount, 2*pixelCount), packedBits, 6*pixelCount, pixelCount, (ushort) 0x00FF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 2*3*pixelCount, 2*pixelCount), packedBits, 3*pixelCount, pixelCount, (ushort) 0x00FF, bigEndian);
-				var actualResult = FormatBits(packedBits, bigEndian).Substring(0, frames*pixelCount);
-				Assert.AreEqual(expectedResult, actualResult, "Error in packed bits for multiframe 8-bit case (little endian)");
-			}
-
-			// big endian test
-			{
-				const bool bigEndian = true;
-				const int frames = 7;
-				const int pixelCount = 2*3;
-				byte[] packedBits = new byte[(int) (Math.Ceiling(frames*pixelCount/8.0))];
-				// pack the individual frames in no specific order
-				OverlayData.TestPack(Subarray(overlayPixels, 2*0*pixelCount, 2*pixelCount), packedBits, 0*pixelCount, pixelCount, (ushort) 0x00FF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 2*4*pixelCount, 2*pixelCount), packedBits, 4*pixelCount, pixelCount, (ushort) 0x00FF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 2*1*pixelCount, 2*pixelCount), packedBits, 1*pixelCount, pixelCount, (ushort) 0x00FF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 2*5*pixelCount, 2*pixelCount), packedBits, 5*pixelCount, pixelCount, (ushort) 0x00FF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 2*2*pixelCount, 2*pixelCount), packedBits, 2*pixelCount, pixelCount, (ushort) 0x00FF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 2*6*pixelCount, 2*pixelCount), packedBits, 6*pixelCount, pixelCount, (ushort) 0x00FF, bigEndian);
-				OverlayData.TestPack(Subarray(overlayPixels, 2*3*pixelCount, 2*pixelCount), packedBits, 3*pixelCount, pixelCount, (ushort) 0x00FF, bigEndian);
-				var actualResult = FormatBits(packedBits, bigEndian).Substring(0, frames*pixelCount);
-				Assert.AreEqual(expectedResult, actualResult, "Error in packed bits for multiframe 8-bit case (big endian)");
-			}
-		}
-
-		[Test]
 		public void TestBitUnpacking_SingleFrame()
 		{
 			byte[] testData;
@@ -576,24 +254,17 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		private static void TestFrame(byte[] packedData, int outBufferSize, int frameNum, string expectedConcat, string datamsg)
 		{
 			byte[] result = new byte[outBufferSize];
-			OverlayData.TestUnpack(packedData, result, frameNum*outBufferSize, outBufferSize, false);
+			OverlayData.TestUnpack(packedData, result, frameNum*outBufferSize, false);
 			Assert.AreEqual(expectedConcat, FormatNonZeroBytes(result), "LittleEndianWords Frame {0} of {1}", frameNum, datamsg);
 
 			// you should get the exact same frame data (scanning horizontally from top left to bottom right) if you had packed data in little endian or big endian
 			byte[] swappedPackedData = SwapBytes(packedData);
 			result = new byte[outBufferSize];
-			OverlayData.TestUnpack(swappedPackedData, result, frameNum*outBufferSize, outBufferSize, true);
+			OverlayData.TestUnpack(swappedPackedData, result, frameNum*outBufferSize, true);
 			Assert.AreEqual(expectedConcat, FormatNonZeroBytes(result), "BigEndianWords Frame {0} of {1}", frameNum, datamsg);
 		}
 
 		#endregion
-
-		private static byte[] Subarray(byte[] array, int start, int length)
-		{
-			var subarray = new byte[length];
-			Array.Copy(array, start, subarray, 0, length);
-			return subarray;
-		}
 
 		private static byte[] SwapBytes(byte[] swapBytes)
 		{

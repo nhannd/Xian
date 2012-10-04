@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -72,8 +72,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <returns>The unpacked, 8-bit overlay pixel data buffer.</returns>
 		public byte[] Unpack()
 		{
-			byte[] unpackedPixelData = MemoryManager.Allocate<byte>(_rows*_columns);
-			Unpack(_rawOverlayData, unpackedPixelData, _offset, unpackedPixelData.Length, _bigEndianWords);
+			byte[] unpackedPixelData = MemoryManager.Allocate<byte>(_rows * _columns);
+			Unpack(_rawOverlayData, unpackedPixelData, _offset, _bigEndianWords);
 			return unpackedPixelData;
 		}
 
@@ -82,55 +82,84 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		/// <remarks>
 		/// <para>
+		/// This method processes all pixel allocations in the pixel data buffer. If the pixel data contains mutliple image frames,
+		/// the unpacked overlay data buffer will also be multi-frame (with the key difference that the overlay data will always
+		/// be 8 bits per pixel, rather than potentially 16 bits per pixel).
+		/// </para>
+		/// <para>
 		/// Embedded overlays were last defined in the 2004 DICOM Standard. Since then, their usage has been retired.
 		/// As such, there is no mechanism to directly read or encode embedded overlays. This method may be used as a
 		/// helper to extract overlays in images encoded with a previous version of the standard for display in compatibility
 		/// mode or storage as packed bit data.
 		/// </para>
-		/// <para>
-		/// This overload processes all pixel allocations in the pixel data buffer. If the pixel data contains mutliple image frames,
-		/// the unpacked overlay data buffer will also be multi-frame (with the key difference that the overlay data will always
-		/// be 8 bits per pixel, rather than potentially 16 bits per pixel).
-		/// </para>
 		/// </remarks>
-		/// <param name="bitPosition">The bit position of the overlay plane within the pixel data buffer.</param>
+		/// <param name="bitPosition">The bit position the the overlay is embedded at within the DICOM Pixel Data buffer.</param>
 		/// <param name="bitsAllocated">The number of bits allocated per pixel. Must be 8 or 16.</param>
 		/// <param name="bigEndianWords">A value indicating if the pixel data buffer is stored as 16-bit words with big endian byte ordering.</param>
 		/// <param name="pixelData">The DICOM Pixel Data buffer containing an embedded overlay.</param>
 		/// <returns>The unpacked, 8-bit overlay pixel data buffer.</returns>
 		public static byte[] UnpackFromPixelData(int bitPosition, int bitsAllocated, bool bigEndianWords, byte[] pixelData)
 		{
-			return UnpackFromPixelData(bitPosition, bitsAllocated, 0, pixelData.Length, bigEndianWords, pixelData);
+			//TODO (CR December 2010): sanity check on bitPosition vs bitsAllocated?
+			const byte ONE = 0xff;
+			const byte ZERO = 0x00;
+
+			if(bitsAllocated != 8 && bitsAllocated != 16)
+				throw new ArgumentException("BitsAllocated must be either 8 or 16 bits.", "bitsAllocated");
+
+			int inLen = pixelData.Length;
+			int outLen = inLen/(bitsAllocated/8);
+			int outPos = 0;
+			byte[] extractedPixels = MemoryManager.Allocate<byte>(outLen);
+
+			unsafe
+			{
+
+				fixed(byte* input = pixelData)
+				{
+					fixed(byte* output = extractedPixels)
+					{
+						if(bitsAllocated == 16)
+						{
+							if (inLen % 2 != 0)
+								throw new ArgumentException("Pixel data length must be even.", "pixelData");
+
+							int mask = 1 << bitPosition;
+							if (bigEndianWords)
+							{
+								for (int inPos = 0; inPos < inLen; inPos += 2)
+								{
+									int value = (input[inPos] << 8) + input[inPos + 1];
+									output[outPos++] = ((value & mask) > 0) ? ONE : ZERO;
+								}
+							}
+							else
+							{
+								for (int inPos = 0; inPos < inLen; inPos += 2)
+								{
+									int value = (input[inPos + 1] << 8) + input[inPos];
+									output[outPos++] = ((value & mask) > 0) ? ONE : ZERO;
+								}
+							}
+						}
+						else
+						{
+							byte mask = (byte) (1 << bitPosition);
+							for (int inPos = 0; inPos < inLen; inPos++)
+							{
+								output[outPos++] = ((input[inPos] & mask) > 0) ? ONE : ZERO;
+							}
+						}
+
+					}
+				}
+			}
+
+			return extractedPixels;
 		}
 
-		/// <summary>
-		/// Extracts an overlay embedded in a DICOM Pixel Data buffer and unpacks it to form an 8-bit overlay pixel data buffer.
-		/// </summary>
-		/// <remarks>
-		/// <para>
-		/// Embedded overlays were last defined in the 2004 DICOM Standard. Since then, their usage has been retired.
-		/// As such, there is no mechanism to directly read or encode embedded overlays. This method may be used as a
-		/// helper to extract overlays in images encoded with a previous version of the standard for display in compatibility
-		/// mode or storage as packed bit data.
-		/// </para>
-		/// </remarks>
-		/// <param name="bitPosition">The bit position of the overlay plane within the pixel data buffer.</param>
-		/// <param name="bitsAllocated">The number of bits allocated per pixel. Must be 8 or 16.</param>
-		/// <param name="frameIndex">The 0-based index of the image frame from which an overlay plane is to be extracted.</param>
-		/// <param name="frameLength">The size of an image frame in bytes.</param>
-		/// <param name="bigEndianWords">A value indicating if the pixel data buffer is stored as 16-bit words with big endian byte ordering.</param>
-		/// <param name="pixelData">The DICOM Pixel Data buffer containing an embedded overlay.</param>
-		/// <returns>The unpacked, 8-bit overlay pixel data buffer.</returns>
-		public static byte[] UnpackFromPixelData(int bitPosition, int bitsAllocated, int frameIndex, int frameLength, bool bigEndianWords, byte[] pixelData)
-		{
-			if (bitsAllocated != 8 && bitsAllocated != 16)
-				throw new ArgumentException("bitsAllocated must be either 8 or 16.", "bitsAllocated");
-
-			var bytesNeeded = frameLength/(bitsAllocated/8);
-			var extractedOverlay = MemoryManager.Allocate<byte>(bytesNeeded);
-			Extract(pixelData, extractedOverlay, frameIndex*frameLength, bytesNeeded, bitsAllocated, bitPosition, bigEndianWords);
-			return extractedOverlay;
-		}
+		//TODO (CR December 2010): The API of these 2 methods isn't entirely clear, especially this overload.
+		//TODO (CR December 2010): there are no unit tests for this code even though our presentation state code uses it.
 
 		/// <summary>
 		/// Creates a packed overlay data object using the specified 8-bit pixel data buffer.
@@ -165,408 +194,126 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <returns>A packed overlay data object representing the overlay contents.</returns>
 		public static OverlayData CreateOverlayData(int rows, int columns, int bitsStored, int bitsAllocated, int highBit, bool bigEndianWords, byte[] overlayPixelData)
 		{
-			if (bitsAllocated != 8 && bitsAllocated != 16)
-				throw new ArgumentException("bitsAllocated must be either 8 or 16.", "bitsAllocated");
+			int minBytesNeeded = (int) Math.Ceiling(rows*columns/8d);
+			if (minBytesNeeded % 2 == 1)
+				minBytesNeeded++;
+			byte[] packedOverlayData = MemoryManager.Allocate<byte>(minBytesNeeded);
 
-			var bytesNeeded = (int) Math.Ceiling(rows*columns/8d);
-			var packedOverlayData = MemoryManager.Allocate<byte>(bytesNeeded + (bytesNeeded%2)); // the %2 term rounds up to even length
-			var inputMask = ((1 << bitsStored) - 1) << (highBit - bitsStored + 1);
-			if (bitsAllocated == 8)
-				Pack(overlayPixelData, packedOverlayData, 0, rows*columns, (byte) inputMask, bigEndianWords);
-			else if (bitsAllocated == 16)
-				Pack(overlayPixelData, packedOverlayData, 0, rows*columns, (ushort) inputMask, bigEndianWords);
+			uint mask = (uint) ((1 << bitsStored) - 1) << (bitsAllocated - highBit - 1);
+			Pack(overlayPixelData, packedOverlayData, 0, mask, bigEndianWords);
 			return new OverlayData(rows, columns, bigEndianWords, packedOverlayData);
 		}
 
-		#region Overlay Data Algorithms
+		#region Private Bit Packing Code
 
-		/// <summary>
-		/// Converts an 8-bit byte buffer into a packed bit stream (zero and non-zero bytes mapping to bits 0 and 1 respectively).
-		/// </summary>
-		/// <param name="unpackedData">The buffer containing the unpacked data.</param>
-		/// <param name="packedBits">A buffer to which the bits will be packed.</param>
-		/// <param name="offset">The bit offset in <paramref name="packedBits"/> to which conversion will start.</param>
-		/// <param name="length">The number of bits to be converted.</param>
-		/// <param name="inputMask">The input mask for each 8-bit input window of the <paramref name="unpackedData"/>.</param>
-		/// <param name="bigEndianWords">Whether or not <paramref name="packedBits"/> is in 16-bit big endian words.</param>
-		private static void Pack(byte[] unpackedData, byte[] packedBits, int offset, int length, byte inputMask, bool bigEndianWords)
+		private static void Pack(byte[] unpackedBits, byte[] packedBits, int start, uint inputMask, bool bigEndianWords) 
 		{
-			if (inputMask == 0)
-				throw new ArgumentException("Input mask was not specified.", "inputMask");
-			if (unpackedData.Length < length)
-				throw new ArgumentException("Input byte array does not contain sufficient information.", "unpackedData");
-			if (bigEndianWords && packedBits.Length%2 == 1)
-				throw new ArgumentException("Output byte array must be even-length.", "packedBits");
-			if (packedBits.Length*8 < offset + length)
-				throw new ArgumentException("Output byte array does not have sufficient room to store results.", "packedBits");
+			if (bigEndianWords && packedBits.Length % 2 == 1)
+				throw new ArgumentException("Output byte length must be even-length.", "packedBits");
 
-			var outLen = packedBits.Length;
-			var inPos = 0;
-			unsafe
+			int length = packedBits.Length;
+			int outPos = 0;
+			int inLen = unpackedBits.Length;
+
+			byte[] input = unpackedBits;
 			{
-				// buffer overrun declaration: <input> is indexed using <inPos> which is checked against <length>
-				fixed (byte* input = unpackedData)
+				byte[] output = packedBits;
 				{
-					// buffer overrun declaration: <output> is indexed using <outPos> which is checked against <outLen>
-					fixed (byte* output = packedBits)
+					if(bigEndianWords)
 					{
-						if (bigEndianWords) // when the output is 16-bit big endian, we must write 16 bits at a time
+						ushort window = 0x00;
+						ushort mask = 0x01;
+						for (int inPos = 0; inPos < inLen; inPos++)
 						{
-							// initialize the bit mask to the correct bit offset (relative to each output window)
-							var bitMask = (ushort) (1 << (offset%16));
+							if ((input[inPos] & inputMask) > 0)
+								window |= mask;
 
-							// compute the starting write cursor based on byte offset
-							var outPos = 2*(offset/16);
-
-							// write until we've converted the requested bits
-							while (inPos < length && outPos < outLen - 1)
+							mask = (ushort) (mask << 1);
+							if (mask == 0)
 							{
-								// initialize the output window from the bytes at the write cursor
-								var window = (ushort) ((output[outPos] << 8) + output[outPos + 1]);
-
-								// loop until we've set all bits in the current output window or we've set all we needed
-								while (bitMask > 0 && inPos < length)
-								{
-									// convert the input in question and either set or clear the bit
-									window = (ushort) ((input[inPos++] & inputMask) > 0 ? window | bitMask : window & ~bitMask);
-
-									// shift the bit mask (eventually, the mask rolls over to 0, which will break the loop)
-									bitMask = (ushort) (bitMask << 1);
-								}
-
-								// write the output window back to the buffer
-								output[outPos] = (byte) ((window >> 8) & 0x00FF);
-								output[outPos + 1] = (byte) (window & 0x00FF);
-
-								// reset the bit mask
-								bitMask = 0x01;
-
-								// advance the write cursor
+								output[outPos] = (byte) (window >> 8);
+								output[outPos + 1] = (byte) (window);
 								outPos += 2;
+								window = 0x00;
+								mask = 0x01;
 							}
 						}
-						else // when output is 8-bit or 16-bit little endian, we can write 8 bits at a time
+
+						//TODO (CR December 2010): just do this unconditionally?  What if the passed in buffer
+						//weren't initialized to zeros?
+						if (window > 0)
 						{
-							// initialize the bit mask to the correct bit offset (relative to each output window)
-							var bitMask = (byte) (1 << (offset%8));
+							output[outPos] = (byte)(window >> 8);
+							output[outPos + 1] = (byte)(window);
+						}
+					}
+					else
+					{
+						byte window = 0x00;
+						byte mask = 0x01;
+						for (int inPos = 0; inPos < inLen; inPos++)
+						{
+							if ((input[inPos] & inputMask) > 0)
+								window |= mask;
 
-							// compute the starting write cursor based on byte offset
-							var outPos = (offset/8);
-
-							// write until we've converted the requested bits
-							while (inPos < length && outPos < outLen)
+							mask = (byte) (mask << 1);
+							if (mask == 0)
 							{
-								// initialize the output window from the bytes at the write cursor
-								var window = output[outPos];
-
-								// loop until we've set all bits in the current output window or we've set all we needed
-								while (bitMask > 0 && inPos < length)
-								{
-									// convert the input in question and either set or clear the bit
-									window = (byte) ((input[inPos++] & inputMask) > 0 ? window | bitMask : window & ~bitMask);
-
-									// shift the bit mask (eventually, the mask rolls over to 0, which will break the loop)
-									bitMask = (byte) (bitMask << 1);
-								}
-
-								// write the output window back to the buffer
 								output[outPos] = window;
-
-								// reset the bit mask
-								bitMask = 0x01;
-
-								// advance the write cursor
-								++outPos;
+								outPos++;
+								window = 0x00;
+								mask = 0x01;
 							}
 						}
+						//TODO (CR December 2010): just do this unconditionally?  What if the passed in buffer
+						//weren't initialized to zeros?
+						if (window > 0)
+							output[outPos] = window;
 					}
 				}
 			}
 		}
 
-		/// <summary>
-		/// Converts a 16-bit byte buffer into a packed bit stream (zero and non-zero words mapping to bits 0 and 1 respectively).
-		/// </summary>
-		/// <param name="unpackedData">The buffer containing the unpacked data in local machine endianess.</param>
-		/// <param name="packedBits">A buffer to which the bits will be packed.</param>
-		/// <param name="offset">The bit offset in <paramref name="packedBits"/> to which conversion will start.</param>
-		/// <param name="length">The number of bits to be converted.</param>
-		/// <param name="inputMask">The input mask for each 16-bit input window of the <paramref name="unpackedData"/>.</param>
-		/// <param name="bigEndianWords">Whether or not <paramref name="packedBits"/> is in 16-bit big endian words.</param>
-		private static void Pack(byte[] unpackedData, byte[] packedBits, int offset, int length, ushort inputMask, bool bigEndianWords)
-		{
-			if (inputMask == 0)
-				throw new ArgumentException("Input mask was not specified.", "inputMask");
-			if (unpackedData.Length < length*2)
-				throw new ArgumentException("Input byte array does not contain sufficient information.", "unpackedData");
-			if (bigEndianWords && packedBits.Length%2 == 1)
-				throw new ArgumentException("Output byte array must be even-length.", "packedBits");
-			if (packedBits.Length*8 < offset + length)
-				throw new ArgumentException("Output byte array does not have sufficient room to store results.", "packedBits");
-
-			var outLen = packedBits.Length;
-			var inPos = 0;
-			unsafe
-			{
-				// buffer overrun declaraction: <input> is indexed using <inPos> which is checked against <length>
-				fixed (byte* inputBytes = unpackedData)
-				{
-					ushort* input = (ushort*) inputBytes;
-
-					// buffer overrun declaration: <output> is indexed using <outPos> which is checked against <outLen>
-					fixed (byte* output = packedBits)
-					{
-						if (bigEndianWords) // when the output is 16-bit big endian, we must write 16 bits at a time
-						{
-							// initialize the bit mask to the correct bit offset (relative to each output window)
-							var bitMask = (ushort) (1 << (offset%16));
-
-							// compute the starting write cursor based on byte offset
-							var outPos = 2*(offset/16);
-
-							// write until we've converted the requested bits
-							while (inPos < length && outPos < outLen - 1)
-							{
-								// initialize the output window from the bytes at the write cursor
-								var window = (ushort) ((output[outPos] << 8) + output[outPos + 1]);
-
-								// loop until we've set all bits in the current output window or we've set all we needed
-								while (bitMask > 0 && inPos < length)
-								{
-									// convert the input in question and either set or clear the bit
-									window = (ushort) ((input[inPos++] & inputMask) > 0 ? window | bitMask : window & ~bitMask);
-
-									// shift the bit mask (eventually, the mask rolls over to 0, which will break the loop)
-									bitMask = (ushort) (bitMask << 1);
-								}
-
-								// write the output window back to the buffer
-								output[outPos] = (byte) ((window >> 8) & 0x00FF);
-								output[outPos + 1] = (byte) (window & 0x00FF);
-
-								// reset the bit mask
-								bitMask = 0x01;
-
-								// advance the write cursor
-								outPos += 2;
-							}
-						}
-						else // when output is 8-bit or 16-bit little endian, we can write 8 bits at a time
-						{
-							// initialize the bit mask to the correct bit offset (relative to each output window)
-							var bitMask = (byte) (1 << (offset%8));
-
-							// compute the starting write cursor based on byte offset
-							var outPos = (offset/8);
-
-							// write until we've converted the requested bits
-							while (inPos < length && outPos < outLen)
-							{
-								// initialize the output window from the bytes at the write cursor
-								var window = output[outPos];
-
-								// loop until we've set all bits in the current output window or we've set all we needed
-								while (bitMask > 0 && inPos < length)
-								{
-									// convert the input in question and either set or clear the bit
-									window = (byte) ((input[inPos++] & inputMask) > 0 ? window | bitMask : window & ~bitMask);
-
-									// shift the bit mask (eventually, the mask rolls over to 0, which will break the loop)
-									bitMask = (byte) (bitMask << 1);
-								}
-
-								// write the output window back to the buffer
-								output[outPos] = window;
-
-								// reset the bit mask
-								bitMask = 0x01;
-
-								// advance the write cursor
-								++outPos;
-							}
-						}
-					}
-				}
-			}
-		}
-
-		/// <summary>
-		/// Converts a packed bit stream into an 8-bit byte buffer (bits 0 and 1 mapping to bytes 0x00 and 0xFF respectively).
-		/// </summary>
-		/// <param name="packedBits">The buffer containing the packed bits.</param>
-		/// <param name="unpackedData">A buffer to which the bits will be unpacked.</param>
-		/// <param name="offset">The bit offset in <paramref name="packedBits"/> from which conversion will start.</param>
-		/// <param name="length">The number of bits to be converted.</param>
-		/// <param name="bigEndianWords">Whether or not the <paramref name="packedBits"/> is in 16-bit big endian words.</param>
-		private static void Unpack(byte[] packedBits, byte[] unpackedData, int offset, int length, bool bigEndianWords)
+		private unsafe static void Unpack(byte[] packedBits, byte[] unpackedBits, int start, bool bigEndianWords)
 		{
 			const byte ONE = 0xff;
 			const byte ZERO = 0x00;
 
-			if (bigEndianWords && packedBits.Length%2 == 1)
+			if (bigEndianWords && packedBits.Length % 2 == 1)
 				throw new ArgumentException("Input byte array must be even-length.", "packedBits");
-			if (packedBits.Length*8 < offset + length)
-				throw new ArgumentException("Input byte array does not contain sufficient information.", "packedBits");
-			if (unpackedData.Length < length)
-				throw new ArgumentException("Output byte array does not have sufficient room to store results.", "unpackedData");
 
-			var inLen = packedBits.Length;
-			var outPos = 0;
-			unsafe
+			int length = unpackedBits.Length;
+			int outPos = 0;
+			int inLen = packedBits.Length;
+
+			fixed (byte* input = packedBits)
 			{
-				// buffer overrun declaration: <input> is indexed using <inPos> which is checked against <inLen>
-				fixed (byte* input = packedBits)
+				fixed (byte* output = unpackedBits)
 				{
-					// buffer overrun declaration: <output> is indexed using <outPos> which is checked against <length>
-					fixed (byte* output = unpackedData)
+					if (bigEndianWords)
 					{
-						if (bigEndianWords) // when the input is 16-bit big endian, we must read 16 bits at a time
+						ushort initMask = (ushort) (1 << (start%16));
+						for (int inPos = 2*(start/16); inPos < inLen; inPos += 2)
 						{
-							// initialize the bit mask to the correct bit offset (relative to each input window)
-							var bitMask = (ushort) (1 << (offset%16));
-
-							// compute the starting read cursor based on byte offset
-							var inPos = 2*(offset/16);
-
-							// read until we've converted the requested bits
-							while (outPos < length && inPos < inLen - 1)
+							ushort window = (ushort) ((input[inPos] << 8) + input[inPos + 1]);
+							for (ushort mask = initMask; mask > 0 && outPos < length; mask = (ushort) (mask << 1))
 							{
-								// create the input window from the bytes at the read cursor
-								var window = (ushort) ((input[inPos] << 8) + input[inPos + 1]);
-
-								// loop until we've got all bits in the current input window or we've got all we came for
-								while (bitMask > 0 && outPos < length)
-								{
-									// convert the bit in question into a byte
-									output[outPos++] = (window & bitMask) > 0 ? ONE : ZERO;
-
-									// shift the bit mask (eventually, the mask rolls over to 0, which will break the loop)
-									bitMask = (ushort) (bitMask << 1);
-								}
-
-								// reset the bit mask
-								bitMask = 0x01;
-
-								// advance the read cursor
-								inPos += 2;
+								output[outPos++] = (window & mask) > 0 ? ONE : ZERO;
 							}
-						}
-						else // when input is 8-bit or 16-bit little endian, we can read 8 bits at a time
-						{
-							// initialize the bit mask to the correct bit offset (relative to each input window)
-							var bitMask = (byte) (1 << (offset%8));
-
-							// compute the starting read cursor based on byte offset
-							var inPos = (offset/8);
-
-							// read until we've converted the requested bits
-							while (outPos < length && inPos < inLen)
-							{
-								// create the input window from the bytes at the read cursor
-								var window = input[inPos];
-
-								// loop until we've got all bits in the current input window or we've got all we came for
-								while (bitMask > 0 && outPos < length)
-								{
-									// convert the bit in question into a byte
-									output[outPos++] = (window & bitMask) > 0 ? ONE : ZERO;
-
-									// shift the bit mask (eventually, the mask rolls over to 0, which will break the loop)
-									bitMask = (byte) (bitMask << 1);
-								}
-
-								// reset the bit mask
-								bitMask = 0x01;
-
-								// advance the read cursor
-								++inPos;
-							}
+							initMask = 0x01;
 						}
 					}
-				}
-			}
-		}
-
-		/// <summary>
-		/// Extracts a specified bit from a pixel data buffer into an 8-bit byte buffer (bits 0 and 1 mapping to bytes 0x00 and 0xFF respectively).
-		/// </summary>
-		/// <param name="pixelData">The buffer containing the pixel data.</param>
-		/// <param name="extractedData">A buffer to which the bits will be extracted.</param>
-		/// <param name="offset">The byte offset in <paramref name="pixelData"/> from which extraction will start.</param>
-		/// <param name="length">The number of pixels from which a bit will be extracted.</param>
-		/// <param name="bitsAllocated">The number of bits allocated per pixel in the <paramref name="pixelData"/>.</param>
-		/// <param name="bitPosition">The 0-based bit position within a pixel allocation which is to be extracted.</param>
-		/// <param name="bigEndianWords">Whether or not the <paramref name="pixelData"/> is in 16-bit big endian words.</param>
-		private static void Extract(byte[] pixelData, byte[] extractedData, int offset, int length, int bitsAllocated, int bitPosition, bool bigEndianWords)
-		{
-			const byte ONE = 0xff;
-			const byte ZERO = 0x00;
-
-			if (bitsAllocated != 8 && bitsAllocated != 16)
-				throw new ArgumentException("Bits Allocated must be either 8 or 16 bits.", "bitsAllocated");
-			if (bitPosition < 0 || bitPosition >= bitsAllocated)
-				throw new ArgumentOutOfRangeException("bitPosition", "Bit Position must be between 0 and Bits Allocated - 1, inclusive.");
-			if (bitsAllocated == 16 && bigEndianWords && pixelData.Length%2 == 1)
-				throw new ArgumentException("Input byte array must be even-length.", "pixelData");
-			if (pixelData.Length < offset + length/(bitsAllocated/8))
-				throw new ArgumentException("Input byte array does not contain sufficient information.", "pixelData");
-			if (extractedData.Length < length)
-				throw new ArgumentException("Output byte array does not have sufficient room to store results.", "extractedData");
-
-			var inLen = pixelData.Length;
-			var outPos = 0;
-			unsafe
-			{
-				// buffer overrun declaration: <input> is indexed using <inPos> which is checked against <inLen>
-				fixed (byte* input = pixelData)
-				{
-					// buffer overrun declaration: <output> is indexed using <outPos> which is checked against <length>
-					fixed (byte* output = extractedData)
+					else
 					{
-						if (bitsAllocated == 16) // when the pixel data is in 16-bit word allocations, we must read 16 bits at a time
+						byte initMask = (byte) (1 << start%8);
+						for (int inPos = start/8; inPos < inLen; inPos++)
 						{
-							// initialize the bit mask to the correct bit offset (relative to each input window)
-							var bitMask = (ushort) (1 << bitPosition);
-
-							// compute the starting read cursor based on byte offset
-							var inPos = offset;
-
-							// in a big endian word, the most significant byte is the first one
-							var msb = bigEndianWords ? 0 : 1;
-
-							// read until we've extracted the requested bits
-							while (outPos < length && inPos < inLen - 1)
+							byte window = input[inPos];
+							for (byte mask = initMask; mask > 0 && outPos < length; mask = (byte) (mask << 1))
 							{
-								// create the input window from the bytes at the read cursor
-								var window = (ushort) ((input[inPos + msb] << 8) + input[inPos + 1 - msb]);
-
-								// convert the bit in question into a byte
-								output[outPos++] = (window & bitMask) > 0 ? ONE : ZERO;
-
-								// advance the read cursor
-								inPos += 2;
+								output[outPos++] = (window & mask) > 0 ? ONE : ZERO;
 							}
-						}
-						else
-						{
-							// initialize the bit mask to the correct bit offset (relative to each input window)
-							var bitMask = (byte) (1 << bitPosition);
-
-							// compute the starting read cursor based on byte offset
-							var inPos = offset;
-
-							// read until we've extracted the requested bits
-							while (outPos < length && inPos < inLen)
-							{
-								// create the input window from the bytes at the read cursor
-								var window = input[inPos];
-
-								// convert the bit in question into a byte
-								output[outPos++] = (window & bitMask) > 0 ? ONE : ZERO;
-
-								// advance the read cursor
-								inPos++;
-							}
+							initMask = 0x01;
 						}
 					}
 				}
@@ -577,36 +324,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 #if UNIT_TESTS
 
-		/// <summary>
-		/// bigEndianWords affects only <paramref name="packedBits"/>, *NOT* unpackedData, which is in machine endian
-		/// </summary>
-		internal static void TestUnpack(byte[] packedBits, byte[] unpackedData, int offset, int length, bool bigEndianWords)
+		internal static void TestUnpack(byte[] packedBits, byte[] unpackedBits, int start, bool bigEndianWords)
 		{
-			Unpack(packedBits, unpackedData, offset, length, bigEndianWords);
+			Unpack(packedBits, unpackedBits, start, bigEndianWords);
 		}
 
-		/// <summary>
-		/// bigEndianWords affects only <paramref name="packedBits"/>, *NOT* unpackedData, which is in machine endian
-		/// </summary>
-		internal static void TestPack(byte[] unpackedData, byte[] packedBits, int offset, int length, byte inputMask, bool bigEndianWords)
+		internal static void TestPack()
 		{
-			Pack(unpackedData, packedBits, offset, length, inputMask, bigEndianWords);
-		}
-
-		/// <summary>
-		/// bigEndianWords affects only <paramref name="packedBits"/>, *NOT* unpackedData, which is in machine endian
-		/// </summary>
-		internal static void TestPack(byte[] unpackedData, byte[] packedBits, int offset, int length, ushort inputMask, bool bigEndianWords)
-		{
-			Pack(unpackedData, packedBits, offset, length, inputMask, bigEndianWords);
-		}
-
-		/// <summary>
-		/// bigEndianWords affects only <paramref name="pixelData"/>, *NOT* extractedData, which is in machine endian
-		/// </summary>
-		internal static void TestExtract(byte[] pixelData, byte[] extractedData, int offset, int length, int bitsAllocated, int bitPosition, bool bigEndianWords)
-		{
-			Extract(pixelData, extractedData, offset, length, bitsAllocated, bitPosition, bigEndianWords);
+			//Pack()
 		}
 
 #endif

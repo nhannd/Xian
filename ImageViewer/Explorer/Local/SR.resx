@@ -129,9 +129,6 @@
   <data name="MessagePermissionToOpenFilesDenied" xml:space="preserve">
     <value>You do not have permission to open images in the viewer.</value>
   </data>
-  <data name="MessageUnableToOpenImages" xml:space="preserve">
-    <value>Unable to open images.</value>
-  </data>
   <data name="MyComputer" xml:space="preserve">
     <value>My Computer</value>
   </data>

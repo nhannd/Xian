@@ -1,0 +1,23 @@
+<VSTemplate Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Item">
+  <TemplateData>
+    <DefaultName>Tool.cs</DefaultName>
+    <Name>ClearCanvas Tool</Name>
+    <Description>Creates a ClearCanvas Tool</Description>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>10</SortOrder>
+    <Icon>__TemplateIcon.ico</Icon>
+  </TemplateData>
+  <TemplateContent>
+    <References />
+    <ProjectItem SubType="Code" TargetFileName="$fileinputname$.cs" ReplaceParameters="true">GeneralTool.cs</ProjectItem>
+    <ProjectItem SubType="Code" TargetFileName="$fileinputname$.cs" ReplaceParameters="true">ImageViewerTool.cs</ProjectItem>
+    <ProjectItem SubType="Code" TargetFileName="$fileinputname$.cs" ReplaceParameters="true">MouseImageViewerTool.cs</ProjectItem>
+    <ProjectItem ReplaceParameters="false" TargetFileName="$fileinputname$Large.png">MyToolLarge.png</ProjectItem>
+    <ProjectItem ReplaceParameters="false" TargetFileName="$fileinputname$Medium.png">MyToolMedium.png</ProjectItem>
+    <ProjectItem ReplaceParameters="false" TargetFileName="$fileinputname$Small.png">MyToolSmall.png</ProjectItem>
+  </TemplateContent>
+  <WizardExtension>
+    <Assembly>ClearCanvas.VSWizards, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bc07f2f66e94d26b, Custom=null</Assembly>
+    <FullClassName>ClearCanvas.VSWizards.ToolWizard</FullClassName>
+  </WizardExtension>
+</VSTemplate>

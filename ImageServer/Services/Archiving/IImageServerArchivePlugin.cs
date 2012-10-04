@@ -16,7 +16,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 	public interface IImageServerArchivePlugin
 	{
 		ArchiveTypeEnum ArchiveType { get;}
-        PartitionArchive PartitionArchive { get; set; }		
 		void Start(PartitionArchive archive);
 		void Stop();
 	}

@@ -86,6 +86,11 @@
     <SharedLibraryFiles Include="$(ProjectDir)\..\..\ReferencedAssemblies\nunit.framework.dll" />
   </ItemGroup>
 
+  <!-- License files -->
+  <ItemGroup>
+    <LicenseFiles Include="$(ProjectDir)\..\..\License.rtf" />
+  </ItemGroup>
+
   <!-- Shared plugin files, to be placed in plugin directory -->
   <ItemGroup>
     <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll" />
@@ -112,31 +117,6 @@
     <PluginDeleteFiles Include="$(PluginsDirectory)\*.*" />
   </ItemGroup>
 
-  <!-- Flags the CIL desktop executable as requiring 32-bit execution even on a 64-bit machine -->
-  <Target Name="SetExeX86Flag">
-    <GetFrameworkSdkPath>
-      <Output TaskParameter="Path" PropertyName="SdkPath" />
-    </GetFrameworkSdkPath>
-    <Exec Command="corflags /32BIT+ &quot;$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe&quot;" WorkingDirectory="$(SdkPath)\bin\" />
-  </Target>
-
-  <!-- Flags the CIL desktop executable as capable of handling extended process memory space ("large addresses") if the OS is configured to do so -->
-  <Target Name="SetExeLAAFlag">
-    <!-- The 64-bit version of editbin can be run directly from VC\bin\amd64 -->
-    <Exec Condition="'$(BuildPlatform)' == 'x64'"
-          Command="editbin /LARGEADDRESSAWARE &quot;$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe&quot;"
-          WorkingDirectory="$(VS90COMNTOOLS)\..\..\VC\bin\amd64" />
-    <!-- The 32-bit version of editbin has a dependency in Common7\IDE, hence the weird use of both WorkdingDirectory and a full command path -->
-    <Exec Condition="'$(BuildPlatform)' != 'x64'"
-          Command="&quot;$(VS90COMNTOOLS)..\..\VC\bin\editbin&quot; /LARGEADDRESSAWARE &quot;$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe&quot;"
-          WorkingDirectory="$(VS90COMNTOOLS)\..\IDE" />
-  </Target>
-
-  <Target Name="Copy App Icon">
-    <!-- Copy icon file -->
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(IconFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
-  </Target>
-  
   <Target Name="Copy Files">
 
     <!-- Make required directories -->
@@ -154,31 +134,14 @@
     <!-- Copy shared plugins -->
     <Copy SourceFiles="@(SharedPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
 
+    <!-- Copy license file -->
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
+
+    <!-- Copy icon file -->
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(IconFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
+
     <!-- Copy execution files -->
     <Copy SkipUnchangedFiles="true" SourceFiles="@(ExecutionFiles)" DestinationFolder="$(DistributionDirectory)" />
-  </Target>
-  
-  <Target Name="Copy Desktop Executable Files">
-    <!-- Evaluate desktop executable specific build options -->
-    <RegexIsMatch Pattern="IncludeApplicationIcon" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="IncludeApplicationIcon" />
-    </RegexIsMatch>
-    <RegexIsMatch Pattern="SetDesktopExecutableX86Flag" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="SetDesktopExecutableX86Flag" />
-    </RegexIsMatch>
-    <RegexIsMatch Pattern="SetDesktopExecutableLAAFlag" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="SetDesktopExecutableLAAFlag" />
-    </RegexIsMatch>
-    
-    <!-- Copy core desktop executable files -->
-    <CallTarget Targets="Copy Files" />
-
-    <!-- Copy optional components -->
-    <CallTarget Condition="$(IncludeApplicationIcon)" Targets="Copy App Icon" />
-
-    <!-- Set executable header flags -->
-    <CallTarget Condition="$(SetDesktopExecutableX86Flag)" Targets="SetExeX86Flag" />
-    <CallTarget Condition="$(SetDesktopExecutableLAAFlag)" Targets="SetExeLAAFlag" />
 
     <!-- Override the value of TargetPlatform for this task. -->
     <CreateProperty Value="$(BuildPlatform)" Condition=" '$(TargetPlatform)' == '' ">
@@ -186,14 +149,16 @@
     </CreateProperty>
 
     <!-- Run the solution specific build file -->
-    <MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(Options);Localizations=$(Localizations)" />
+    <MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(Options)" />
   </Target>
 
   <Target Name="Default Target">
+
     <RegexIsMatch Pattern="ExcludeDesktopExecutable" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeDesktopExecutable" />
     </RegexIsMatch>
-    
-    <CallTarget Condition="!$(ExcludeDesktopExecutable)" Targets="Copy Desktop Executable Files" />
+
+    <CallTarget Condition="!$(ExcludeDesktopExecutable)" Targets="Copy Files" />
+
   </Target>
 </Project>

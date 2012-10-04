@@ -11,8 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ServiceModel;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Query;
@@ -52,39 +50,9 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                     IList<Device> list = broker.Find(criteria);
                     foreach (Device theDevice in list)
                     {
-                        // Check the settings and log for debug purposes
-                        if (!theDevice.Enabled)
-                        {
-                            Platform.Log(LogLevel.Debug, "Prior Server '{0}' on partition '{1}' is disabled in the device setting",
-                                    theDevice.AeTitle, partition.AeTitle);
-                            continue;
-                        }
-
                         DicomStudyRootQuery remoteQuery = new DicomStudyRootQuery(partition.AeTitle, theDevice.AeTitle,
                                                                                   theDevice.IpAddress, theDevice.Port);
                         _defaultQueryList.Add(remoteQuery);
-                    }
-
-                    // Log the prior servers for debug purpose
-                    if (Platform.IsLogLevelEnabled(LogLevel.Debug))
-                    {
-                        if (_defaultQueryList.Count > 0)
-                        {
-                            StringBuilder log = new StringBuilder();
-                            log.Append("Searching for priors on the following servers:");
-
-                            StringBuilder serverList = new StringBuilder();
-                            foreach (DicomStudyRootQuery server in _defaultQueryList)
-                            {
-                                if (serverList.Length > 0)
-                                    serverList.Append(",");
-                                serverList.AppendFormat("{0}", server);
-                            }
-
-                            log.Append(serverList.ToString());
-                            Platform.Log(LogLevel.Debug, log.ToString());
-
-                        }
                     }
                 }
             }
@@ -126,36 +94,18 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
             {
                 foreach (string patientId in patientIds)
                 {
+                    StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier();
+                    identifier.PatientId = patientId;
 
-                    try
+                    IList<StudyRootStudyIdentifier> list = query.StudyQuery(identifier);
+                    foreach (StudyRootStudyIdentifier i in list)
                     {
-                        StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier();
-                        identifier.PatientId = patientId;
+                        if (_cancel)
+                            break;
 
-                        IList<StudyRootStudyIdentifier> list = query.StudyQuery(identifier);
-                        foreach (StudyRootStudyIdentifier i in list)
-                        {
-                            if (_cancel)
-                                break;
-
-                            StudyItem studyItem = ConvertToStudyItem(i);
-                            if (studyItem != null)
-                                results.Add(studyItem);
-                        }
-                    }
-                    catch (FaultException<DataValidationFault> ex)
-                    {
-                        Platform.Log(LogLevel.Error, ex, "An error has occurred when searching for prior studies on server '{0}'", query.ToString());
-
-                        // note: ideally we want to continue searching on other servers. But for consistency with the workstation, we throw an exception here
-                        throw; 
-                    }
-                    catch (FaultException<QueryFailedFault> ex)
-                    {
-                        Platform.Log(LogLevel.Error, ex, "An error has occurred when searching for prior studies on server '{0}'", query.ToString());
-                        
-                        //note: ideally we want to continue searching on other servers. But for consistency with the workstation, we throw an exception here
-                        throw;
+                        StudyItem studyItem = ConvertToStudyItem(i);
+                        if (studyItem != null)
+                            results.Add(studyItem);
                     }
                 }
             }

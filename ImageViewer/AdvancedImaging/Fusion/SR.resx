@@ -126,9 +126,6 @@
   <data name="FormatPETFusionDisplaySet" xml:space="preserve">
     <value>Fusion: {0}/{1} ({2})</value>
   </data>
-  <data name="FormatReason" xml:space="preserve">
-    <value> - {0}</value>
-  </data>
   <data name="LabelAdvancedImageFusion" xml:space="preserve">
     <value>Advanced Imaging (Fusion)</value>
   </data>
@@ -147,47 +144,20 @@
   <data name="MenuAdjustOpacity" xml:space="preserve">
     <value>Adjust &amp;Opacity</value>
   </data>
+  <data name="MenuAdvanced" xml:space="preserve">
+    <value>Ad&amp;vanced</value>
+  </data>
   <data name="MenuDebug" xml:space="preserve">
     <value>&amp;Debug</value>
   </data>
   <data name="MenuFusion" xml:space="preserve">
     <value>&amp;Fusion</value>
   </data>
-  <data name="MenuStandard" xml:space="preserve">
-    <value>Standard</value>
-  </data>
   <data name="MessageFusionComplete" xml:space="preserve">
     <value>Fusion Complete</value>
   </data>
-  <data name="MessageFusionError" xml:space="preserve">
-    <value>Unable to fuse images</value>
-  </data>
   <data name="MessageFusionInProgress" xml:space="preserve">
     <value>Fusing Images...</value>
-  </data>
-  <data name="MessageInconsistentFramesOfReference" xml:space="preserve">
-    <value>Images have inconsistent frames of reference</value>
-  </data>
-  <data name="MessageInconsistentImageOrientation" xml:space="preserve">
-    <value>Images have inconsistent orientation information</value>
-  </data>
-  <data name="MessageInconsistentImageSpacing" xml:space="preserve">
-    <value>Images have inconsistent slice spacing</value>
-  </data>
-  <data name="MessageInconsistentPixelSpacing" xml:space="preserve">
-    <value>Images have inconsistent pixel spacing information</value>
-  </data>
-  <data name="MessageInvalidSeries" xml:space="preserve">
-    <value>Invalid series</value>
-  </data>
-  <data name="MessageMissingImageOrientation" xml:space="preserve">
-    <value>Images lack orientation information</value>
-  </data>
-  <data name="MessageMissingPixelSpacing" xml:space="preserve">
-    <value>Images lack pixel spacing information</value>
-  </data>
-  <data name="MessageUnsupportedGantryTilt" xml:space="preserve">
-    <value>Images have an unsupported gantry tilt</value>
   </data>
   <data name="TitleFusion" xml:space="preserve">
     <value>Fusion</value>
@@ -195,11 +165,11 @@
   <data name="ToolbarAdjustOpacity" xml:space="preserve">
     <value>Adjust Opacity</value>
   </data>
+  <data name="ToolbarAdvanced" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
   <data name="ToolbarFusion" xml:space="preserve">
     <value>Fusion</value>
-  </data>
-  <data name="ToolbarStandard" xml:space="preserve">
-    <value>Standard</value>
   </data>
   <data name="TooltipAdjustOpacity" xml:space="preserve">
     <value>Adjust Opacity</value>

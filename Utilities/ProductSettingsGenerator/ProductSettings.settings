@@ -1,0 +1,35 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Utilities.ProductSettingsGenerator" GeneratedClassName="ProductSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Component" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">ClearCanvas Workstation</Value>
+    </Setting>
+    <Setting Name="Version" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="VersionSuffix" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Copyright" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Copyright 2011 ClearCanvas Inc. All rights reserved.</Value>
+    </Setting>
+    <Setting Name="Product" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">ClearCanvas RIS/PACS</Value>
+    </Setting>
+    <Setting Name="License" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Copyright (c) 2011, ClearCanvas Inc.
+All rights reserved.
+http://www.clearcanvas.ca
+
+This software is licensed under the Open Software License v3.0.
+For the complete license, see http://www.clearcanvas.ca/OSLv3.0</Value>
+    </Setting>
+    <Setting Name="Edition" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Release" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Development</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

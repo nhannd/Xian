@@ -11,15 +11,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using System.Threading;
+using ClearCanvas.Utilities.Manifest;
 
 namespace ClearCanvas.Desktop
 {
@@ -103,36 +101,10 @@ namespace ClearCanvas.Desktop
     {
 		private static Application _instance;
 		
-		#region UI Thread Synchronization
-
 		internal static SynchronizationContext SynchronizationContext
 		{
 			get { return _instance._synchronizationContext; }
 		}
-
-		/// <summary>
-		/// Marshals a delegate over to the UI thread for execution.
-		/// </summary>
-		/// <remarks>
-		/// If the current thread is not the UI thread, the delegate is "posted" to the UI thread
-		/// for execution, otherwise it is executed immediately.
-		/// </remarks>
-		/// <returns>True, if the delegate was (or will be) executed.</returns>
-		internal static bool MarshalDelegate(Delegate del, params object[] args)
-		{
-			var syncContext = SynchronizationContext;
-			if (syncContext == null)
-				return false;
-
-			if (Equals(syncContext, SynchronizationContext.Current))
-				del.DynamicInvoke(args);
-			else
-				syncContext.Post(ignore => del.DynamicInvoke(args), null);
-
-			return true;
-		}
-
-		#endregion
 
 		#region Public Static Members
 
@@ -143,17 +115,6 @@ namespace ClearCanvas.Desktop
         {
             get { return _instance; }
         }
-
-    	public static SessionStatus SessionStatus
-    	{
-			get { return SessionManager.Current.SessionStatus; }
-    	}
-
-		public static event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged
-		{
-			add { SessionManager.Current.SessionStatusChanged += value; }
-			remove { SessionManager.Current.SessionStatusChanged -= value; }	
-		}
 
         /// <summary>
         /// Gets the toolkit ID of the currently loaded GUI <see cref="IGuiToolkit"/>,
@@ -250,24 +211,6 @@ namespace ClearCanvas.Desktop
             remove { _instance._quitting -= value; }
         }
 
-    	/// <summary>
-    	/// Gets or sets the current application UI culture.
-    	/// </summary>
-    	public static CultureInfo CurrentUICulture
-    	{
-    		get { return _instance != null ? _instance.CurrentUICultureCore : CultureInfo.InstalledUICulture; }
-    		set { if (_instance != null) _instance.CurrentUICultureCore = value; }
-    	}
-
-    	/// <summary>
-    	/// Fired when the value of <see cref="CurrentUICulture"/> changes.
-    	/// </summary>
-    	public static event EventHandler CurrentUICultureChanged
-    	{
-    		add { if (_instance != null) _instance._currentUiCultureChanged += value; }
-    		remove { if (_instance != null) _instance._currentUiCultureChanged -= value; }
-    	}
-
         #endregion
 
         #region ApplicationToolContext
@@ -278,6 +221,32 @@ namespace ClearCanvas.Desktop
             {
 
             }
+        }
+
+        #endregion
+
+        #region Default Session Manager Implementation
+
+        private class DefaultSessionManager : ISessionManager
+        {
+			public DefaultSessionManager()
+			{
+			}
+
+        	#region ISessionManager Members
+
+            public bool InitiateSession()
+            {
+                // do nothing
+                return true;
+            }
+			
+            public void TerminateSession()
+            {
+                // do nothing
+            }
+
+            #endregion
         }
 
         #endregion
@@ -295,16 +264,12 @@ namespace ClearCanvas.Desktop
         private IApplicationView _view;
         private DesktopWindowCollection _windows;
         private ToolSet _toolSet;
+        private ISessionManager _sessionManager;
 
 		private volatile bool _initialized;  // flag to be set when initialization is complete
     	private QuitState _quitState;
 		private event EventHandler<QuittingEventArgs> _quitting;
 		private volatile SynchronizationContext _synchronizationContext;
-
-		// i18n support
-		private readonly object _currentUICultureSyncLock = new object();
-		private event EventHandler _currentUiCultureChanged;
-		private CultureInfo _currentUICulture;
 
 		/// <summary>
         /// Default constructor, for internal framework use only.
@@ -405,14 +370,6 @@ namespace ClearCanvas.Desktop
         }
 
     	/// <summary>
-    	/// Raises the <see cref="CurrentUICultureChanged"/> event.
-    	/// </summary>
-    	protected virtual void OnCurrentUICultureCoreChanged(EventArgs e)
-    	{
-    		EventsHelper.Fire(_currentUiCultureChanged, this, e);
-    	}
-
-    	/// <summary>
     	/// Gets the display name for the application. Override this method to provide a custom display name.
     	/// </summary>
     	protected virtual string GetName()
@@ -479,34 +436,6 @@ namespace ClearCanvas.Desktop
         {
             get { return _view; }
         }
-
-    	/// <summary>
-    	/// Gets or sets the current application UI culture.
-    	/// </summary>
-    	protected CultureInfo CurrentUICultureCore
-    	{
-    		get
-    		{
-    			lock (_currentUICultureSyncLock)
-    			{
-    				return _currentUICulture ?? CultureInfo.InstalledUICulture;
-    			}
-    		}
-    		set
-    		{
-    			if (_currentUICulture != value)
-    			{
-    				lock (_currentUICultureSyncLock)
-    				{
-    					if (_currentUICulture != value)
-    					{
-    						_currentUICulture = value;
-    						OnCurrentUICultureCoreChanged(EventArgs.Empty);
-    					}
-    				}
-    			}
-    		}
-    	}
 
         #endregion
 
@@ -643,7 +572,7 @@ namespace ClearCanvas.Desktop
 
     		try
 			{
-				SessionManager.Current.TerminateSession();
+				_sessionManager.TerminateSession();
 			}
 			catch (Exception e)
 			{
@@ -681,11 +610,22 @@ namespace ClearCanvas.Desktop
         /// Initializes the session manager, using an extension if one is provided.
         /// </summary>
         /// <returns></returns>
-        private static bool InitializeSessionManager()
+        private bool InitializeSessionManager()
         {
             try
             {
-				return SessionManager.Current.InitiateSession();
+                _sessionManager = (ISessionManager)(new SessionManagerExtensionPoint()).CreateExtension();
+                Platform.Log(LogLevel.Info, string.Format("Using session manager extension: {0}", _sessionManager.GetType().FullName));
+            }
+            catch (NotSupportedException)
+            {
+                _sessionManager = new DefaultSessionManager();
+                Platform.Log(LogLevel.Info, "No session manager extension found");
+            }
+
+            try
+            {
+                return _sessionManager.InitiateSession();
             }
             catch (Exception ex)
             {

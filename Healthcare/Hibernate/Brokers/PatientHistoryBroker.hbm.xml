@@ -6,15 +6,14 @@
 		Parameters: 1. the patient.
 		-->
 	<query name="procedureHistory">
-    select p, o
-    from Procedure p
-    join p.Order o
-    join fetch p.Order
-    join fetch p.ProcedureCheckIn
-    join fetch o.Visit
-    where o.Patient = ?
-    and p.Status not in ('GH')
-  </query>
+		select p, o
+		from Procedure p
+		join p.Order o
+		join fetch p.Order
+		join fetch p.ProcedureCheckIn
+		join fetch o.Visit
+		where o.Patient = ?
+	</query>
 
 	<!--
 		Obtains the order history for a specified patient.

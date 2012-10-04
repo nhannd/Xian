@@ -106,20 +106,29 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to retrieve the Dicom Server configuration.  Please ensure the service is running and try again..
+        /// </summary>
+        internal static string ExceptionDicomServerConfigurationRefreshFailed {
+            get {
+                return ResourceManager.GetString("ExceptionDicomServerConfigurationRefreshFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to update the Dicom Server configuration.  Please ensure the service is running and try again..
+        /// </summary>
+        internal static string ExceptionDicomServerConfigurationUpdateFailed {
+            get {
+                return ResourceManager.GetString("ExceptionDicomServerConfigurationUpdateFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The identifiers must match..
         /// </summary>
         internal static string ExceptionIdentifiersMustMatch {
             get {
                 return ResourceManager.GetString("ExceptionIdentifiersMustMatch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ... {0:F1}%.
-        /// </summary>
-        internal static string FormatProgressUpdate {
-            get {
-                return ResourceManager.GetString("FormatProgressUpdate", resourceCulture);
             }
         }
         
@@ -395,24 +404,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You don&apos;t have the appropriate permissions to start/stop the service..
-        /// </summary>
-        internal static string MessageControlServiceAccessDenied {
-            get {
-                return ResourceManager.GetString("MessageControlServiceAccessDenied", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A timeout has occurred while attempting to control the service..
-        /// </summary>
-        internal static string MessageControlServiceTimeout {
-            get {
-                return ResourceManager.GetString("MessageControlServiceTimeout", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Deleting studies ....
         /// </summary>
         internal static string MessageDeletingStudies {
@@ -441,29 +432,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Determining reindex state ....
-        /// </summary>
-        internal static string MessageDeterminingReindexState {
-            get {
-                return ResourceManager.GetString("MessageDeterminingReindexState", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Failed to delete one or more studies. Please see the service log for more details. You may need to reindex the local data store after manually removing the affected studies..
         /// </summary>
         internal static string MessageFailedToDeleteOneOrMoreStudies {
             get {
                 return ResourceManager.GetString("MessageFailedToDeleteOneOrMoreStudies", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to delete the selected items..
-        /// </summary>
-        internal static string MessageFailedToDeleteStudy {
-            get {
-                return ResourceManager.GetString("MessageFailedToDeleteStudy", resourceCulture);
             }
         }
         
@@ -504,29 +477,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to open the selected study..
-        /// </summary>
-        internal static string MessageFailedToOpenStudy {
-            get {
-                return ResourceManager.GetString("MessageFailedToOpenStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Failed to restart service. Please check the logs for more details..
         /// </summary>
         internal static string MessageFailedToRestartService {
             get {
                 return ResourceManager.GetString("MessageFailedToRestartService", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to retrieve the DICOM Server configuration.  Please ensure sure the ClearCanvas Service is running and try again..
-        /// </summary>
-        internal static string MessageFailedToRetrieveDicomServerConfiguration {
-            get {
-                return ResourceManager.GetString("MessageFailedToRetrieveDicomServerConfiguration", resourceCulture);
             }
         }
         
@@ -581,15 +536,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string MessageFailedToStopService {
             get {
                 return ResourceManager.GetString("MessageFailedToStopService", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to update the DICOM Server configuration.  Please ensure sure the ClearCanvas Service is running and try again..
-        /// </summary>
-        internal static string MessageFailedToUpdateDicomServerConfiguration {
-            get {
-                return ResourceManager.GetString("MessageFailedToUpdateDicomServerConfiguration", resourceCulture);
             }
         }
         
@@ -676,15 +622,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The reindex has completed successfully..
-        /// </summary>
-        internal static string MessageReindexCompleted {
-            get {
-                return ResourceManager.GetString("MessageReindexCompleted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An error has occurred while reindexing.  You will have to correct the problem and reindex manually.  Please check the logs for more details..
         /// </summary>
         internal static string MessageReindexFailure {
@@ -731,7 +668,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The reindex operation will continue to run in the background, however you will NOT be informed of any errors that may have occurred..
+        ///   Looks up a localized string similar to The reindex operation will continue to run in the background..
         /// </summary>
         internal static string MessageReindexWillContinue {
             get {
@@ -801,15 +738,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string MessageStudyCountUnavailable {
             get {
                 return ResourceManager.GetString("MessageStudyCountUnavailable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Reindex.
-        /// </summary>
-        internal static string ReindexApplicationName {
-            get {
-                return ResourceManager.GetString("ReindexApplicationName", resourceCulture);
             }
         }
         

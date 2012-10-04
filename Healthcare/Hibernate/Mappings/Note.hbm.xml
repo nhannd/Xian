@@ -22,7 +22,5 @@
       <key column="NoteOID_"/>
       <one-to-many class="NotePosting"/>
     </set>
-    <!-- if this note is a ghost, this references the live note that it is a ghost of -->
-    <many-to-one name="GhostOf" class="Note" column="GhostOfOID_"/>
   </class>
 </hibernate-mapping>

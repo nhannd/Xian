@@ -59,28 +59,38 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DateTimeField));
 			this._dateTimePicker = new System.Windows.Forms.DateTimePicker();
 			this._label = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// _dateTimePicker
 			// 
-			resources.ApplyResources(this._dateTimePicker, "_dateTimePicker");
+			this._dateTimePicker.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._dateTimePicker.Location = new System.Drawing.Point(3, 18);
+			this._dateTimePicker.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this._dateTimePicker.Name = "_dateTimePicker";
+			this._dateTimePicker.Size = new System.Drawing.Size(144, 20);
+			this._dateTimePicker.TabIndex = 1;
 			// 
 			// _label
 			// 
-			resources.ApplyResources(this._label, "_label");
+			this._label.AutoSize = true;
+			this._label.Location = new System.Drawing.Point(2, 0);
 			this._label.Name = "_label";
+			this._label.Size = new System.Drawing.Size(29, 13);
+			this._label.TabIndex = 0;
+			this._label.Text = "label";
 			// 
 			// DateTimeField
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._label);
 			this.Controls.Add(this._dateTimePicker);
+			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "DateTimeField";
+			this.Size = new System.Drawing.Size(150, 41);
 			this.Load += new System.EventHandler(this.DateTimeField_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();

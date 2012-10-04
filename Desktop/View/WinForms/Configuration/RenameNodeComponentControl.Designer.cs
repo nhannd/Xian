@@ -30,7 +30,10 @@
 			// _txtName
 			// 
 			resources.ApplyResources(this._txtName, "_txtName");
+			this._txtName.LabelText = "Name";
+			this._txtName.Mask = "";
 			this._txtName.Name = "_txtName";
+			this._txtName.PasswordChar = '\0';
 			this._txtName.ToolTip = null;
 			this._txtName.Value = null;
 			// 

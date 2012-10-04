@@ -158,7 +158,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set { _listView.MultiSelect = value; }
 		}
 
-		public bool TileMode
+		public bool ShowDescription
 		{
 			get { return _listView.View == System.Windows.Forms.View.Tile; }
 			set { _listView.View = value ? System.Windows.Forms.View.Tile : System.Windows.Forms.View.LargeIcon; }
@@ -263,32 +263,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 			string imageKey = Guid.NewGuid().ToString();
 			_listView.LargeImageList.Images.Add(imageKey, galleryItem.Image);
 			ListViewItem lvi = new ListViewItem(galleryItem.Name, imageKey);
-
-			AddSubItems(lvi, galleryItem);
-
-			lvi.ToolTipText = galleryItem.Description;
+			foreach (string line in galleryItem.Description.Split(new char[] {'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries)
+				)
+			{
+				lvi.SubItems.Add(line, Color.Gray, Color.Transparent, _listView.Font);
+			}
 			lvi.Tag = galleryItem.Item;
 			_listView.Items.Add(lvi);
-		}
-
-		private void AddSubItems(ListViewItem lvi, IGalleryItem galleryItem)
-		{
-			string[] galleryDescriptionLines = galleryItem.Description.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-			for (var i = 0; i < galleryDescriptionLines.Length; i++)
-			{
-				if (galleryDescriptionLines.Length > this.MaxDescriptionLines &&
-					i == this.MaxDescriptionLines - 1)
-				{
-					// There are more descriptions then number of lines allowed
-					// and this is pass the last line, add ellipsis instead
-					lvi.SubItems.Add("...", Color.Gray, Color.Transparent, _listView.Font);
-				}
-				else
-				{
-					// Add regular description line
-					lvi.SubItems.Add(galleryDescriptionLines[i], Color.Gray, Color.Transparent, _listView.Font);
-				}
-			}
 		}
 
 		private void RemoveItem(int index)

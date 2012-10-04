@@ -121,22 +121,4 @@ namespace ClearCanvas.Workflow {
 			return workQueueItem;
 		}
 	}
-
-	public static class MergeWorkQueueItem
-	{
-		public const string Tag = "Merge";
-
-
-		public static WorkQueueItem Create(EntityRef targetRef)
-		{
-			var workQueueItem = new WorkQueueItem(Tag);
-			workQueueItem.ExtendedProperties.Add("Target", targetRef.Serialize());
-			return workQueueItem;
-		}
-
-		public static EntityRef GetTargetRef(WorkQueueItem item)
-		{
-			return new EntityRef(item.ExtendedProperties["Target"]);
-		}
-	}
 }

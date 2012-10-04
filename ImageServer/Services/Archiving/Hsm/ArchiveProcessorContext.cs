@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
         {
             StudyStorageLocation storage = StudyStorageLocation.FindStorageLocations(StudyStorage.Load(_item.StudyStorageKey))[0];
             if (storage == null)
-                return base.GetTemporaryPath();
+                return base.TempDirectory;
             else
             {
                 String basePath =  GetTempPathRoot();

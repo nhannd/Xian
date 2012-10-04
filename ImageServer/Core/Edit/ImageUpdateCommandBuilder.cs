@@ -257,17 +257,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
             }
 
             if (prop.PropertyType == typeof(string))
-            {
-                int maxLength = tag.VR.Equals(DicomVr.PNvr) ? 64 : (int)tag.VR.MaximumLength;
-                if (value.Length > maxLength)
-                {
-                    Platform.Log(LogLevel.Warn, "Truncating value to VR Length: {0}: {1}", tag.VR.Name, value);
-                    this[tag].SetValue(target, value.Substring(0, maxLength), null);
-                }
-                else
-                {
-                    this[tag].SetValue(target, value, null);
-                }
+            {   
+                this[tag].SetValue(target, value, null);
             }
             else if (prop.PropertyType == typeof(int) && prop.CanWrite)
             {

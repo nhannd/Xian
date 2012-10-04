@@ -80,10 +80,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 }
             }
         }
-
-        protected void SwitchToEnglishClicked(object sender, EventArgs e)
-        {
-            HttpContext.Current.Items["Language"] = "en";
-        }
     }
 }

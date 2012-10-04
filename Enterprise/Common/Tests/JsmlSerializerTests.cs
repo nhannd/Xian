@@ -149,24 +149,6 @@ namespace ClearCanvas.Enterprise.Common.Tests
 			}
 		}
 
-		/// </summary>
-		[DataContract]
-		class TestContract3 : DataContractBase
-		{
-			// used by deserializer
-			private TestContract3()
-			{
-			}
-
-			public TestContract3(string value)
-			{
-				this.Value = value;
-			}
-
-			[DataMember]
-			public string Value;
-		}
-
 		[Test]
 		public void Test_Null()
 		{
@@ -499,14 +481,6 @@ namespace ClearCanvas.Enterprise.Common.Tests
 			SerializeHelper(contract2, contract2.Jsml);
 			DeserializeHelper(contract2, contract2.Jsml);
 			DeserializeHelper(contract2, contract2.LegacyJsml);
-		}
-
-		[Test]
-		public void Test_DataContract_non_public_constructor()
-		{
-			var jsml = JsmlSerializer.Serialize(new TestContract3("foo"), "data");
-			var obj = JsmlSerializer.Deserialize<TestContract3>(jsml);
-			Assert.AreEqual("foo", obj.Value);
 		}
 
 		[Test]

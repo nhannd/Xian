@@ -47,8 +47,6 @@ namespace ClearCanvas.Desktop
             _name = args.Name;
             _title = args.Title;
             //_visible = true;    // all objects are visible by default
-
-			Application.CurrentUICultureChanged += Application_CurrentUICultureChanged;
         }
 
         /// <summary>
@@ -204,7 +202,7 @@ namespace ClearCanvas.Desktop
         public event EventHandler<ClosingEventArgs> Closing
         {
             add { _closing += value; }
-            remove { _closing -= value; }
+            remove { _closing += value; }
         }
 
         /// <summary>
@@ -323,23 +321,21 @@ namespace ClearCanvas.Desktop
             return false;
         }
 
-    	/// <summary>
-    	/// Called to dispose of this object.
-    	/// </summary>
-    	protected virtual void Dispose(bool disposing)
-    	{
-    		if (disposing)
-    		{
-    			Application.CurrentUICultureChanged -= Application_CurrentUICultureChanged;
-
-    			// view may have already been disposed in the Close method
-    			if (_view != null)
-    			{
-    				_view.Dispose();
-    				_view = null;
-    			}
-    		}
-    	}
+        /// <summary>
+        /// Called to dispose of this object.
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // view may have already been disposed in the Close method
+                if (_view != null)
+                {
+                    _view.Dispose();
+                    _view = null;
+                }
+            }
+        }
 
         /// <summary>
         /// Raises the <see cref="Opening"/> event.
@@ -541,17 +537,6 @@ namespace ClearCanvas.Desktop
         {
             EventsHelper.Fire(_internalActiveChanged, this, args);
         }
-
-    	/// <summary>
-    	/// Called when the current application UI culture has changed.
-    	/// </summary>
-    	protected virtual void OnCurrentUICultureChanged() {}
-
-    	private void Application_CurrentUICultureChanged(object sender, EventArgs e)
-    	{
-			// notify subclasses that the application UI culture has changed
-    		OnCurrentUICultureChanged();
-    	}
 
         #endregion
     }

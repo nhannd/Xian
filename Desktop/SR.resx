@@ -436,10 +436,4 @@ You can configure this item, but you do not have permission to use it.</value>
   <data name="LabelNotForDiagnosticUse" xml:space="preserve">
     <value>Not for Diagnostic Use</value>
   </data>
-  <data name="LabelConfigurationWarningOffline" xml:space="preserve">
-    <value>(Offline) Values shown may not be accurate, and changes may not be saved.</value>
-  </data>
-  <data name="MessageSettingsStoreOffline" xml:space="preserve">
-    <value>The settings store is currently offline.  Please try again later.</value>
-  </data>
 </root>

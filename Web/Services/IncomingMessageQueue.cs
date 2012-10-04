@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Common;
@@ -22,8 +23,9 @@ namespace ClearCanvas.Web.Services
 		private readonly object _syncLock = new object();
 		private readonly ProcessMessageSetDelegate _processMessageSet;
 		private readonly Dictionary<int, MessageSet> _messageSets;
-
-	    public IncomingMessageQueue(ProcessMessageSetDelegate processMessageSet)
+        private long _totalNumMouseMoveMsgs;
+        
+		public IncomingMessageQueue(ProcessMessageSetDelegate processMessageSet)
 		{
 			_processMessageSet = processMessageSet;
 			_messageSets = new Dictionary<int, MessageSet>();
@@ -40,6 +42,7 @@ namespace ClearCanvas.Web.Services
             }
 	    }
 
+        
 	    public bool ProcessMessageSet(MessageSet messageSet)
 		{
 			lock (_syncLock)
@@ -50,17 +53,22 @@ namespace ClearCanvas.Web.Services
 					ProcessPendingMessageSets(messageSet);
 				    return true;
 				}
-
-                Platform.Log(LogLevel.Warn, "Received message set out of order (received:{0}, expected:{1})", messageSet.Number, NextMessageSetNumber);
+                else
+                {
+                    string logMessage = String.Format("Received message set out of order (received:{0}, expected:{1})", 
+                        messageSet.Number, NextMessageSetNumber);
+                    Platform.Log(LogLevel.Error, logMessage);
                      
-			    _messageSets[messageSet.Number] = messageSet;
-			    return false;
+                    _messageSets[messageSet.Number] = messageSet;
+                    return false;
+                }
 			}
 		}
 
 		private void ProcessPendingMessageSets(MessageSet current)
 		{
-		    NextMessageSetNumber = current.Number + 1;
+		    int n = current.Number;
+			NextMessageSetNumber = current.Number + 1;
 			_processMessageSet(current);
 
 			while (_messageSets.TryGetValue(NextMessageSetNumber, out current))

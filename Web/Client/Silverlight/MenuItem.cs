@@ -84,7 +84,6 @@ namespace ClearCanvas.Web.Client.Silverlight
     [TemplateVisualState(GroupName = CheckStatesGroup, Name = CheckedNoIconState)]
     [TemplateVisualState(GroupName = CheckStatesGroup, Name = CheckedWithIconState)]
     [TemplateVisualState(GroupName = CommonStatesGroup, Name = NormalState)]
-    [TemplateVisualState(GroupName = CommonStatesGroup, Name = DisabledState)]
     [TemplateVisualState(GroupName = CommonStatesGroup, Name = HighlightedState)]
     [TemplateVisualState(GroupName = CommonStatesGroup, Name = ExpandedState)]
     [TemplateVisualState(GroupName = HasItemsStatesGroup, Name = HasItemsState)]
@@ -98,7 +97,6 @@ namespace ClearCanvas.Web.Client.Silverlight
 
         private const string CommonStatesGroup = "CommonStates";
         private const string NormalState = "Normal";
-        private const string DisabledState = "Disabled";
         private const string HighlightedState = "Highlighted";
         private const string ExpandedState = "Expanded";
 
@@ -491,7 +489,6 @@ namespace ClearCanvas.Web.Client.Silverlight
 
         internal virtual void ChangeVisualState()
         {
-            
             if (HasItems)
                 VisualStateManager.GoToState(this, HasItemsState, true);
             else
@@ -510,12 +507,6 @@ namespace ClearCanvas.Web.Client.Silverlight
                 VisualStateManager.GoToState(this, ExpandedState, true);
             else
                 VisualStateManager.GoToState(this, NormalState, true);
-
-            if (!IsEnabled)
-            {
-                // Note: this visual state must be appplied LAST
-                VisualStateManager.GoToState(this, DisabledState, true);
-            }
         }
 
         #endregion

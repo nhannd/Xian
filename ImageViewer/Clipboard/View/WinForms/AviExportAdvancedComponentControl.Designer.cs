@@ -96,6 +96,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._comboCodec.DataSource = null;
 			this._comboCodec.DisplayMember = "";
 			this._comboCodec.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._comboCodec.LabelText = "Codec";
 			resources.ApplyResources(this._comboCodec, "_comboCodec");
 			this._comboCodec.Name = "_comboCodec";
 			this._comboCodec.Value = null;

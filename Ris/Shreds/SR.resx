@@ -147,10 +147,4 @@
   <data name="ImageAvailabilityWorkQueueProcessor" xml:space="preserve">
     <value>Image Availability Work Queue Processor</value>
   </data>
-  <data name="MergeShredDescription" xml:space="preserve">
-    <value>Performs asynchronous merge operations as long-running background tasks.</value>
-  </data>
-  <data name="MergeShredName" xml:space="preserve">
-    <value>Merge Shred</value>
-  </data>
 </root>

@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2011, ClearCanvas Inc.
 // All rights reserved.
@@ -205,11 +205,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void AdvanceImage(int increment, IImageBox selectedImageBox)
 		{
-		    int prevTopLeftPresentationImageIndex = selectedImageBox.TopLeftPresentationImageIndex;
 			selectedImageBox.TopLeftPresentationImageIndex += increment;
-
-            if (selectedImageBox.TopLeftPresentationImageIndex != prevTopLeftPresentationImageIndex)
-                selectedImageBox.Draw(); 
+			selectedImageBox.Draw();
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)

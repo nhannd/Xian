@@ -11,15 +11,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Client.Formatting;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -37,21 +36,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[AssociateView(typeof(MergeOrdersComponentViewExtensionPoint))]
 	public class MergeOrdersComponent : ApplicationComponent
 	{
-		class MergeOrdersTable : Table<OrderDetail>
-		{
-			public MergeOrdersTable()
-			{
-				ITableColumn accesionNumberColumn;
-				this.Columns.Add(accesionNumberColumn = new TableColumn<OrderDetail, string>(SR.ColumnAccessionNumber, o => AccessionFormat.Format(o.AccessionNumber), 0.25f));
-				this.Columns.Add(new TableColumn<OrderDetail, string>(SR.ColumnImagingService, o => o.DiagnosticService.Name, 0.75f));
-
-				this.Sort(new TableSortParams(accesionNumberColumn, true));
-			}
-		}
-
-		private readonly List<EntityRef> _orderRefs;
-		private readonly MergeOrdersTable _ordersTable;
-		private OrderDetail _selectedOrder;
+		private readonly EntityRef _order1Ref;
+		private readonly EntityRef _order2Ref;
+		private OrderDetail _order1;
+		private OrderDetail _order2;
+		private bool _mergingRight =  true;  // Merging right meaning order1 --> order2
 		private OrderDetail _dryRunMergedOrder;
 
 		private TabComponentContainer _mergedOrderViewComponentContainer;
@@ -61,10 +50,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 		private AttachedDocumentPreviewComponent _attachmentSummaryComponent;
 
-		public MergeOrdersComponent(List<EntityRef> orderRefs)
+		public MergeOrdersComponent(EntityRef order1Ref, EntityRef order2Ref)
 		{
-			_orderRefs = orderRefs;
-			_ordersTable = new MergeOrdersTable();
+			_order1Ref = order1Ref;
+			_order2Ref = order2Ref;
 		}
 
 		public override void Start()
@@ -83,22 +72,23 @@ namespace ClearCanvas.Ris.Client.Workflow
 				{
 					var request = new GetDataRequest { GetOrderDetailRequest = new GetOrderDetailRequest() };
 
-					foreach (var orderRef in _orderRefs)
-					{
-						request.GetOrderDetailRequest.OrderRef = orderRef;
-						var response = service.GetData(request);
-						_ordersTable.Items.Add(response.GetOrderDetailResponse.Order);
-					}
+					request.GetOrderDetailRequest.OrderRef = _order1Ref;
+					var response1 = service.GetData(request);
+					_order1 = response1.GetOrderDetailResponse.Order;
+
+					request.GetOrderDetailRequest.OrderRef = _order2Ref;
+					var response2 = service.GetData(request);
+					_order2 = response2.GetOrderDetailResponse.Order;
 				});
 
-			_ordersTable.Sort();
+			if (_dryRunMergedOrder == null)
+			{
+				string failureReason;
+				if (!ValidateMergeRequest(out failureReason))
+					this.Host.DesktopWindow.ShowMessageBox(failureReason, MessageBoxActions.Ok);
+			}
 
-			// Re-populate orderRef list by sorted accession number
-			_orderRefs.Clear();
-			_orderRefs.AddRange(CollectionUtils.Map<OrderDetail, EntityRef>(_ordersTable.Items, item => item.OrderRef));
-
-			_selectedOrder = CollectionUtils.FirstElement(_ordersTable.Items);
-			DryRunForSelectedOrder();
+			ShowMergedOrder(_dryRunMergedOrder);
 
 			base.Start();
 		}
@@ -116,37 +106,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Presentation Model
 
-		public ITable OrdersTable
+		public string Order1Description
 		{
-			get { return _ordersTable; }
+			get { return FormatOrderDescription(_order1); }
 		}
 
-		public ISelection OrdersTableSelection
+		public string Order2Description
 		{
-			get
-			{
-				return new Selection(_selectedOrder);
-			}
-			set
-			{
-				var previousSelection = new Selection(_selectedOrder);
-				if (previousSelection.Equals(value))
-					return;
-
-				_selectedOrder = (OrderDetail) value.Item;
-				DryRunForSelectedOrder();
-				NotifyPropertyChanged("SummarySelection");
-			}
+			get { return FormatOrderDescription(_order2); }
 		}
 
-		public bool AcceptEnabled
+		public bool MergingRight
 		{
-			get
-			{
-				return _ordersTable.Items.Count > 0
-					&& _selectedOrder != null
-					&& _dryRunMergedOrder != null;
-			}
+			get { return _mergingRight; }
 		}
 
 		public ApplicationComponentHost MergedOrderPreviewComponentHost
@@ -154,31 +126,34 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _mergedOrderPreviewComponentHost; }
 		}
 
+		public void ToggleMergeDirection()
+		{
+			_mergingRight = !_mergingRight;
+
+			string failureReason;
+			if (ValidateMergeRequest(out failureReason))
+				ShowMergedOrder(_dryRunMergedOrder);
+			else
+				this.Host.ShowMessageBox(failureReason, MessageBoxActions.Ok);
+		}
+
 		public void Accept()
 		{
 			try
 			{
-				var destAccNumber = _selectedOrder.AccessionNumber;
-				var sourceAccNumbers = CollectionUtils.Map(_ordersTable.Items, (OrderDetail o) => o.AccessionNumber);
-				sourceAccNumbers.Remove(destAccNumber);
-
-				var message = string.Format("Merge order(s) {0} into order {1}?",
-					StringUtilities.Combine(sourceAccNumbers, ","),
-					destAccNumber);
-
-				if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
+				if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(SR.MessageMergeOrders, MessageBoxActions.YesNo))
 					return;
 
+				var sourceOrderRef = _mergingRight ? _order1Ref : _order2Ref;
+				var destinationOrderRef = _mergingRight ? _order2Ref : _order1Ref;
 
-				var destinationOrderRef = _selectedOrder.OrderRef;
-				var sourceOrderRefs = new List<EntityRef>(_orderRefs);
-				sourceOrderRefs.Remove(_selectedOrder.OrderRef);
+				MergeOrderResponse response = null;
 				Platform.GetService(
 					delegate(IOrderEntryService service)
 					{
-						var request = new MergeOrderRequest(sourceOrderRefs, destinationOrderRef) { DryRun = false };
-						service.MergeOrder(request);
-					});
+						var request = new MergeOrderRequest(sourceOrderRef, destinationOrderRef) { DryRun = false };
+						response = service.MergeOrder(request);
+					}); 
 				
 				this.Exit(ApplicationComponentExitCode.Accepted);
 			}
@@ -196,15 +171,29 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
-		private void DryRunForSelectedOrder()
+		public bool ValidateMergeRequest(out string failureReason)
 		{
-			string failureReason;
-			MergeOrderDryRun(out _dryRunMergedOrder, out failureReason);
-			if (!string.IsNullOrEmpty(failureReason))
-				this.Host.ShowMessageBox(failureReason, MessageBoxActions.Ok);
+			var sourceOrderRef = _mergingRight ? _order1Ref : _order2Ref;
+			var destinationOrderRef = _mergingRight ? _order2Ref : _order1Ref;
 
-			// Update order preview components
-			if (_dryRunMergedOrder == null)
+			MergeOrderResponse response = null;
+			Platform.GetService(
+				delegate(IOrderEntryService service)
+				{
+					var request = new MergeOrderRequest(sourceOrderRef, destinationOrderRef) { DryRun = true };
+					response = service.MergeOrder(request);
+				});
+
+			failureReason = response.DryRunFailureReason;
+
+			_dryRunMergedOrder = response.DryRunMergedOrder;
+			return _dryRunMergedOrder != null;
+		}
+
+
+		private void ShowMergedOrder(OrderDetail mergedOrder)
+		{
+			if (mergedOrder == null)
 			{
 				_orderPreviewComponent.Context = null;
 				_orderAdditionalInfoComponent.HealthcareContext = null;
@@ -213,44 +202,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 			else
 			{
-				_orderPreviewComponent.Context = _dryRunMergedOrder;
-				_orderAdditionalInfoComponent.HealthcareContext = _dryRunMergedOrder;
-				_orderAdditionalInfoComponent.OrderExtendedProperties = _dryRunMergedOrder.ExtendedProperties;
-				_attachmentSummaryComponent.OrderAttachments = _dryRunMergedOrder.Attachments;
+				_orderPreviewComponent.Context = mergedOrder;
+				_orderAdditionalInfoComponent.HealthcareContext = mergedOrder;
+				_orderAdditionalInfoComponent.OrderExtendedProperties = mergedOrder.ExtendedProperties;
+				_attachmentSummaryComponent.OrderAttachments = mergedOrder.Attachments;
 			}
 		}
 
-		private void MergeOrderDryRun(out OrderDetail mergedOrder, out string failureReason)
+		private static string FormatOrderDescription(OrderDetail order)
 		{
-			if (_selectedOrder == null)
-			{
-				failureReason = null;
-				mergedOrder = null;
-				return;
-			}
-
-			var destinationOrderRef = _selectedOrder.OrderRef;
-			var sourceOrderRefs = new List<EntityRef>(_orderRefs);
-			sourceOrderRefs.Remove(_selectedOrder.OrderRef);
-
-			try
-			{
-				MergeOrderResponse response = null;
-				Platform.GetService(
-					delegate(IOrderEntryService service)
-					{
-						var request = new MergeOrderRequest(sourceOrderRefs, destinationOrderRef) { DryRun = true };
-						response = service.MergeOrder(request);
-					});
-
-				mergedOrder = response.DryRunMergedOrder;
-				failureReason = null;
-			}
-			catch (RequestValidationException e)
-			{
-				failureReason = e.Message;
-				mergedOrder = null;
-			}
+			var builder = new StringBuilder();
+			builder.AppendLine(AccessionFormat.Format(order.AccessionNumber));
+			builder.AppendFormat("Imaging Service: {0}", order.DiagnosticService.Name);
+			return builder.ToString();
 		}
 	}
 }

@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
@@ -27,7 +26,6 @@ using ClearCanvas.ImageViewer.Web.EntityHandlers;
 using ClearCanvas.ImageViewer.Web.Common.Entities;
 using Application=ClearCanvas.Desktop.Application;
 using ClearCanvas.Common.Utilities;
-using Message=ClearCanvas.Web.Common.Message;
 
 namespace ClearCanvas.ImageViewer.Web
 {
@@ -36,38 +34,58 @@ namespace ClearCanvas.ImageViewer.Web
 	[ExtensionOf(typeof(ExceptionTranslatorExtensionPoint))]
 	internal class ExceptionTranslator : IExceptionTranslator
 	{
+		private const string _messageStudyInUse = 
+			"The study is being processed by the server and cannot be opened at this time.  Please try again later.";
+		
+		private const string _messageStudyOffline = 
+			"The study cannot be opened because it is offline.\n"  +
+			"Please contact your PACS administrator to restore the study.";
+		
+		private const string _messageStudyNearline = 
+			"The study cannot be opened because it is nearline.\n" +
+            "Please contact your PACS administrator to restore the study.";
+
+		private const string _messageStudyNotFound = 
+			"The study could not be found.";
+		
+		private const string _messagePatientStudiesNotFound = 
+			"No studies could be found for the specified patient.";
+
+		private const string _messageAccessionStudiesNotFound = 
+			"Studies matching the specified accession number could not be found.";
+
+		private const string _messageStudyCouldNotBeLoaded =
+			"The study could not be loaded.";
+
+		private const string _messageNoImages =
+			"No images could be loaded for display.";
+
 		#region IExceptionTranslator Members
 
 		public string Translate(Exception e)
 		{
-			//TODO (CR April 2011): Figure out how to share the Exception Policies for these messages ...
-			//Current ExceptionHandler/Policy design just doesn't work for this at all.
 			if (e.GetType().Equals(typeof(InUseLoadStudyException)))
-				return ImageViewer.SR.MessageStudyInUse;
+				return _messageStudyInUse;
 			if (e.GetType().Equals(typeof(NearlineLoadStudyException)))
-			{
-				return ((NearlineLoadStudyException)e).IsStudyBeingRestored
-					? ImageViewer.SR.MessageStudyNearline
-					: String.Format("{0}  {1}", ImageViewer.SR.MessageStudyNearlineNoRestore, ImageViewer.SR.MessageContactPacsAdmin);
-			}
+				return _messageStudyNearline;
 			if (e.GetType().Equals(typeof(OfflineLoadStudyException)))
-				return ImageViewer.SR.MessageStudyOffline;
+				return _messageStudyOffline;
 			if (e.GetType().Equals(typeof(NotFoundLoadStudyException)))
-				return ImageViewer.SR.MessageStudyNotFound;
-			if (e.GetType().Equals(typeof(LoadStudyException)))
-				return SR.MessageStudyCouldNotBeLoaded;
-			if (e is LoadMultipleStudiesException)
-				return ((LoadMultipleStudiesException)e).GetUserMessage();
-
-			if (e.GetType().Equals(typeof(NoVisibleDisplaySetsException)))
-				return ImageViewer.SR.MessageNoVisibleDisplaySets;
-
+				return _messageStudyNotFound;
 			if (e.GetType().Equals(typeof(PatientStudiesNotFoundException)))
-				return SR.MessagePatientStudiesNotFound;
+				return _messagePatientStudiesNotFound;
 			if (e.GetType().Equals(typeof(AccessionStudiesNotFoundException)))
-				return SR.MessageAccessionStudiesNotFound;
+				return _messageAccessionStudiesNotFound;
 			if (e.GetType().Equals(typeof(InvalidRequestException)))
 				return e.Message;
+			if (e is LoadMultipleStudiesException)
+				return ((LoadMultipleStudiesException)e).GetUserMessage();
+			if (e.GetType().Equals(typeof(LoadStudyException)))
+				return _messageStudyCouldNotBeLoaded;
+			if (e.GetType().Equals(typeof(NoVisibleDisplaySetsException)))
+				return _messageNoImages;
+			//if (e.GetType().Equals(typeof(StudyLoaderNotFoundException)))
+
 			return null;
 		}
 
@@ -98,11 +116,6 @@ namespace ClearCanvas.ImageViewer.Web
 		}
 	}
 
-    internal class RemoteClientInformation
-    {
-        public string IPAddress {get;set;}
-    }
-
 	[Application(typeof(StartViewerApplicationRequest))]
 	[ExtensionOf(typeof(ApplicationExtensionPoint))]
 	public class ViewerApplication : ClearCanvas.Web.Services.Application
@@ -111,28 +124,6 @@ namespace ClearCanvas.ImageViewer.Web
 		private Common.ViewerApplication _app;
 		private ImageViewerComponent _viewer;
 		private EntityHandler _viewerHandler;
-
-	    private readonly RemoteClientInformation _client;
-        
-        public  ViewerApplication()
-        {
-            _client = new RemoteClientInformation
-                          {
-                              IPAddress = GetClientAddress(OperationContext.Current)
-                          };
-
-        }
-
-        public override string InstanceName
-        {
-            get
-            {
-                return String.Format("WebStation (user={0}, ip={1})",
-                                         Principal != null ? Principal.Identity.Name : "Unknown",
-                                         _client.IPAddress);   
-
-            }
-        }
 
 		private static IList<StudyRootStudyIdentifier> FindStudies(StartViewerApplicationRequest request)
 		{
@@ -264,7 +255,6 @@ namespace ClearCanvas.ImageViewer.Web
             return _context.GetPendingOutboundEvent(wait);
 	    }
 
-
 	    protected override ProcessMessagesResult OnProcessMessageEnd(MessageSet messageSet, bool messageWasProcessed)
 	    {
             if (!messageWasProcessed)
@@ -294,7 +284,6 @@ namespace ClearCanvas.ImageViewer.Web
                 if (Application.Instance == null)
 					Platform.StartApp();
 			}
-
 
             if (Platform.IsLogLevelEnabled(LogLevel.Debug))
                 Platform.Log(LogLevel.Debug, "Finding studies...");
@@ -362,7 +351,7 @@ namespace ClearCanvas.ImageViewer.Web
             // TODO: Need to think about this more. What's the best way to swap different loader?
             // Do we need to support loading studies from multiple servers? 
 
-            if (WebViewerServices.Default.StudyLoaderName.Equals("CC_WEBSTATION_STREAMING"))
+	        if (WebViewerServices.Default.StudyLoaderName.Equals("CC_STREAMING"))
 	        {
 	            string host = WebViewerServices.Default.ArchiveServerHostname;
 	            int port = WebViewerServices.Default.ArchiveServerPort;
@@ -404,31 +393,12 @@ namespace ClearCanvas.ImageViewer.Web
 		{
 			return _app;
 		}
-
-
-        private static string GetClientAddress(OperationContext context)
-        {
-            if (context == null)
-                return "Unknonw";
-
-            MessageProperties prop = context.IncomingMessageProperties;
-            RemoteEndpointMessageProperty endpoint =
-                prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
-
-            return endpoint != null ? endpoint.Address : "Unknown";
-        }
-        
 	}
 
     [ExtensionOf(typeof(SettingsStoreExtensionPoint))]
     public class StandardSettingsProvider : ISettingsStore
     {
-		public bool IsOnline
-		{
-			get { return true; }
-		}
-		
-		public bool SupportsImport
+        public bool SupportsImport
         {
             get { return false; }
         }

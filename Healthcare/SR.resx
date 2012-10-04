@@ -451,7 +451,7 @@
     <value>To be Reviewed</value>
   </data>
   <data name="ReportingToBeReviewedReportWorklistDescription" xml:space="preserve">
-    <value>Lists procedures with reports that need to be reviewed.</value>
+    <value>Lists procoedures with reports that need to be reviewed.</value>
   </data>
   <data name="ReportingTrackingActiveWorklist" xml:space="preserve">
     <value>Active</value>
@@ -463,25 +463,25 @@
     <value>Corrected</value>
   </data>
   <data name="ReportingTrackingCorrectedWorklistDescription" xml:space="preserve">
-    <value>Lists procedures with reports that are corrected.</value>
+    <value>Lists procoedures with reports that are corrected.</value>
   </data>
   <data name="ReportingTrackingDraftWorklist" xml:space="preserve">
     <value>Draft</value>
   </data>
   <data name="ReportingTrackingDraftWorklistDescription" xml:space="preserve">
-    <value>Lists procedures with reports that are in draft.</value>
+    <value>Lists procoedures with reports that are in draft.</value>
   </data>
   <data name="ReportingTrackingFinalWorklist" xml:space="preserve">
     <value>Final</value>
   </data>
   <data name="ReportingTrackingFinalWorklistDescription" xml:space="preserve">
-    <value>Lists procedures with reports that are finalized.</value>
+    <value>Lists procoedures with reports that are finalized.</value>
   </data>
   <data name="ReportingTrackingPreliminaryWorklist" xml:space="preserve">
     <value>Preliminary</value>
   </data>
   <data name="ReportingTrackingPreliminaryWorklistDescription" xml:space="preserve">
-    <value>Lists procedures with reports that are in preliminary status.</value>
+    <value>Lists procoedures with reports that are in preliminary status.</value>
   </data>
   <data name="ReportPart" xml:space="preserve">
     <value>Report Part</value>
@@ -562,7 +562,7 @@
     <value>Department Name and Facility</value>
   </data>
   <data name="MessageValidateOrderPerformingDepartments" xml:space="preserve">
-    <value>All procedures must have the same performing department.</value>
+    <value>All procedures must have the same performing departments.</value>
   </data>
   <data name="MessageValidateOrderPerformingFacilities" xml:space="preserve">
     <value>All procedures must have the same performing facility.</value>
@@ -581,8 +581,5 @@
   </data>
   <data name="MessageValidateProcedurePerformingFacilityAndDepartment" xml:space="preserve">
     <value>A procedure's performing department must be part of its performing facility.</value>
-  </data>
-  <data name="MessageValidateInformationAuthorityForVisitAndPerformingFacilities" xml:space="preserve">
-    <value>Visit must have the same information authority as the performing facility.</value>
   </data>
 </root>

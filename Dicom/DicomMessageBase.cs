@@ -79,29 +79,30 @@ namespace ClearCanvas.Dicom
                     if (pixelData.IsNull)
                         throw new DicomCodecException("Sop pixel data has no valid value and cannot be compressed.");
 
-                	new OverlayPlaneModuleIod(DataSet).ExtractEmbeddedOverlays();
+                    DicomUncompressedPixelData pd = new DicomUncompressedPixelData(DataSet);
+                    DicomCompressedPixelData fragments = new DicomCompressedPixelData(pd);
 
-					var pd = new DicomUncompressedPixelData(DataSet);
-                	var rawPixelData = (byte[]) pixelData.Values;
+                    // Check if Overlay is embedded in pixels
+                    OverlayPlaneModuleIod overlayIod = new OverlayPlaneModuleIod(DataSet);
+                    for (int i = 0; i < 16; i++)
+                    {
+                        if (overlayIod.HasOverlayPlane(i))
+                        {
+                            OverlayPlane overlay = overlayIod[i];
+                            if (overlay.OverlayData == null)
+                            {
+                                Platform.Log(LogLevel.Debug,
+                                             "SOP Instance has embedded overlay in pixel data, extracting");
+                                overlay.ConvertEmbeddedOverlay(pd);
+                            }
+                        }
+                    }
 
-					//Before compression, make the pixel data more "typical", so it's harder to mess up the codecs.
-					//NOTE: Could combine mask and align into one method so we're not iterating twice, but I prefer having the methods separate.
-					if (DicomUncompressedPixelData.RightAlign(rawPixelData, pd.BitsAllocated, pd.BitsStored, pd.HighBit))
-					{
-						var newHighBit = (ushort)(pd.HighBit - pd.LowBit);
-						Platform.Log(LogLevel.Debug, "Right aligned pixel data (High Bit: {0}->{1}).", pd.HighBit, newHighBit);
+                    // Set before compression, the codecs need it.
+                    fragments.TransferSyntax = newTransferSyntax;
 
-						pd.HighBit = newHighBit; //correct high bit after right-aligning.
-						DataSet[DicomTags.HighBit].SetUInt16(0, newHighBit);
-					}
-					if (DicomUncompressedPixelData.ZeroUnusedBits(rawPixelData, pd.BitsAllocated, pd.BitsStored, pd.HighBit))
-					{
-						Platform.Log(LogLevel.Debug, "Zeroed some unused bits before compression.");
-					}
+                    codec.Encode(pd, fragments, parameters);
 
-                	// Set transfer syntax before compression, the codecs need it.
-					var fragments = new DicomCompressedPixelData(pd) { TransferSyntax = newTransferSyntax };
-                	codec.Encode(pd, fragments, parameters);
                     fragments.UpdateMessage(this);
 
                     //TODO: should we validate the number of frames in the compressed data?
@@ -293,5 +294,5 @@ namespace ClearCanvas.Dicom
 
 			return true;
 		}
-	}
+    }
 }

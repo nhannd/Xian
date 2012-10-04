@@ -13,7 +13,6 @@ using System;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Enterprise;
@@ -32,8 +31,7 @@ namespace ClearCanvas.ImageServer.Core.Process
         /// <param name="location"></param>
         /// <param name="scheduleTime"></param>
         /// <returns></returns>
-        /// <exception cref="InvalidStudyStateOperationException">Study is in a state that reprocessing is not allowed</exception>
-        public WorkQueue ReprocessStudy(String reason, StudyStorageLocation location, DateTime scheduleTime)
+		public WorkQueue ReprocessStudy(String reason, StudyStorageLocation location, DateTime scheduleTime)
         {
         	Platform.CheckForNullReference(location, "location");
 
@@ -51,50 +49,24 @@ namespace ClearCanvas.ImageServer.Core.Process
         	}
         }
 
-        /// <summary>
-        /// Inserts a <see cref="WorkQueue"/> request to reprocess the study
-        /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="reason"></param>
-        /// <param name="location"></param>
-        /// <param name="scheduleTime"></param>
-        /// <returns></returns>
-        /// <exception cref="InvalidStudyStateOperationException">Study is in a state that reprocessing is not allowed</exception>
-        /// 
 		public WorkQueue ReprocessStudy(IUpdateContext ctx, String reason, StudyStorageLocation location, DateTime scheduleTime)
 		{
 			Platform.CheckForNullReference(location, "location");
 
-            if (location.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy))
-            {
-                if (location.IsLatestArchiveLossless)
-                {
-                    string message = String.Format("Study has been archived as lossless and is currently lossy. It must be restored first");
-                    throw new InvalidStudyStateOperationException(message);
-                }
-            }
-
 			Study study = location.LoadStudy(ctx);
-            
-			// Unlock first. 
+
+			// Unlock first
 			ILockStudy lockStudy = ctx.GetBroker<ILockStudy>();
 			LockStudyParameters lockParms = new LockStudyParameters();
 			lockParms.StudyStorageKey = location.Key;
 			lockParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
 			if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-			{
-                // Note: according to the stored proc, setting study state to Idle always succeeds so
-                // this will never happen
-			    return null;
-			}
+				return null;
 
-            // Now relock into ReprocessScheduled state. If another process locks the study before this occurs,
-            // 
+			// Now relock
 			lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ReprocessScheduled;
 			if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-			{
-			    throw new InvalidStudyStateOperationException(lockParms.FailureReason);
-			}
+				return null;
 
 			InsertWorkQueueParameters columns = new InsertWorkQueueParameters();
 			columns.ScheduledTime = scheduleTime;

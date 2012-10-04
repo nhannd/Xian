@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
@@ -50,37 +51,32 @@ namespace ClearCanvas.Desktop.Configuration
 		/// </remarks>
 		public void Activate()
 		{
-			if (_workspace != null)
+			if (_workspace == null)
+			{
+				ISettingsStore store = null;
+				try
+				{
+					// if this throws an exception, only the default LocalFileSettingsProvider can be used.
+					store = (ISettingsStore)(new SettingsStoreExtensionPoint()).CreateExtension();
+				}
+				catch (NotSupportedException)
+				{
+					//allow editing of the app.config file via the LocalSettingsStore.
+					store = new LocalSettingsStore();
+				}
+
+				_workspace = ApplicationComponent.LaunchAsWorkspace(
+					this.Context.DesktopWindow,
+					new SettingsManagementComponent(store),
+					SR.TitleSettingsManagement,
+					"Settings Management");
+
+				_workspace.Closed += OnWorkspaceClosed;
+			}
+			else
 			{
 				_workspace.Activate();
-				return;
 			}
-
-			ISettingsStore store;
-			try
-			{
-				// if this throws an exception, only the default LocalFileSettingsProvider can be used.
-				store = SettingsStore.Create();
-			}
-			catch (NotSupportedException)
-			{
-				//allow editing of the app.config file via the LocalSettingsStore.
-				store = new LocalSettingsStore();
-			}
-
-			if (!store.IsOnline)
-			{
-				base.Context.DesktopWindow.ShowMessageBox(SR.MessageSettingsStoreOffline, MessageBoxActions.Ok);
-				return;
-			}
-
-			_workspace = ApplicationComponent.LaunchAsWorkspace(
-				this.Context.DesktopWindow,
-				new SettingsManagementComponent(store),
-				SR.TitleSettingsManagement,
-				"Settings Management");
-
-			_workspace.Closed += OnWorkspaceClosed;
 		}
 
 		private void OnWorkspaceClosed(object sender, ClosedEventArgs e)

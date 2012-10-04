@@ -154,7 +154,7 @@ namespace ClearCanvas.Dicom
             set
             {
                 if (value != null && value.Trim().Length > 16)
-					throw new ArgumentException("FileSetId can only be a maximum of 16 characters", "value");
+                    throw new ArgumentException("fileSetId can only be a maximum of 16 characters", "value");
 
                 _dicomDirFile.DataSet[DicomTags.FileSetId].SetString(0, value == null ? "" : value.Trim());
             }
@@ -374,7 +374,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <param name="dicomFile">The dicom file.</param>
         /// <param name="optionalDicomDirFileLocation">specifies the file location in the Directory Record ReferencedFileId 
-        /// tag.  If is null or empty, it will use a relative path to the dicom File from the specified DICOM Dir filename in the Save() method.</param>
+        /// tag.  If is null or empty, it will use a relative path to the dicom File from the specified DICOM Dir filename in the Save() method.</remarks></param>
         public void AddFile(DicomFile dicomFile, string optionalDicomDirFileLocation)
         {
             if (dicomFile == null)
@@ -388,7 +388,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <param name="dicomFileName">Name of the dicom file.</param>
         /// <param name="optionalDicomDirFileLocation">specifies the file location in the Directory Record ReferencedFileId 
-        /// tag.  If is null or empty, it will use a relative path to the dicom File from the specified DICOM Dir filename in the Save() method.</param>
+        /// tag.  If is null or empty, it will use a relative path to the dicom File from the specified DICOM Dir filename in the Save() method.</remarks></param>
         public void AddFile(string dicomFileName, string optionalDicomDirFileLocation)
         {
             if (String.IsNullOrEmpty(dicomFileName))

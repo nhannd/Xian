@@ -50,8 +50,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			foreach (var overlayPlane in overlaysIod)
 			{
-				// DICOM 2009 PS 3.3 Section C.9.3.1.1 specifies the rule: NumberOfFramesInOverlay+ImageFrameOrigin-1 must be <= NumberOfFrames
-				if (!overlayPlane.IsValidMultiFrameOverlay(frame.ParentImageSop.NumberOfFrames))
+				// if overlay claims to be multiframe while the base image isn't a multiframe, treat as an encoding error
+				if (overlayPlane.IsMultiFrame && frame.ParentImageSop.NumberOfFrames <= 1)
 				{
 					failedOverlays = true;
 					Platform.Log(LogLevel.Warn, new DicomOverlayDeserializationException(overlayPlane.Group, OverlayPlaneSource.Image), "Encoding error encountered while reading overlay from image headers.");

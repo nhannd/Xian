@@ -58,7 +58,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DesktopMonitorComponentControl));
 			this._windows = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._openWindow = new System.Windows.Forms.Button();
 			this._closeWindow = new System.Windows.Forms.Button();
@@ -85,32 +84,42 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _windows
 			// 
-			this._windows.ColumnHeaderTooltip = null;
-			resources.ApplyResources(this._windows, "_windows");
+			this._windows.Location = new System.Drawing.Point(48, 40);
+			this._windows.Margin = new System.Windows.Forms.Padding(4);
 			this._windows.MultiSelect = false;
 			this._windows.Name = "_windows";
 			this._windows.ReadOnly = false;
 			this._windows.ShowToolbar = false;
-			this._windows.SortButtonTooltip = null;
+			this._windows.Size = new System.Drawing.Size(662, 106);
+			this._windows.TabIndex = 0;
 			// 
 			// _openWindow
 			// 
-			resources.ApplyResources(this._openWindow, "_openWindow");
+			this._openWindow.Location = new System.Drawing.Point(728, 50);
 			this._openWindow.Name = "_openWindow";
+			this._openWindow.Size = new System.Drawing.Size(75, 23);
+			this._openWindow.TabIndex = 1;
+			this._openWindow.Text = "Open";
 			this._openWindow.UseVisualStyleBackColor = true;
 			this._openWindow.Click += new System.EventHandler(this._openWindow_Click);
 			// 
 			// _closeWindow
 			// 
-			resources.ApplyResources(this._closeWindow, "_closeWindow");
+			this._closeWindow.Location = new System.Drawing.Point(728, 108);
 			this._closeWindow.Name = "_closeWindow";
+			this._closeWindow.Size = new System.Drawing.Size(75, 23);
+			this._closeWindow.TabIndex = 3;
+			this._closeWindow.Text = "Close";
 			this._closeWindow.UseVisualStyleBackColor = true;
 			this._closeWindow.Click += new System.EventHandler(this._closeWindow_Click);
 			// 
 			// _activateWindow
 			// 
-			resources.ApplyResources(this._activateWindow, "_activateWindow");
+			this._activateWindow.Location = new System.Drawing.Point(728, 79);
 			this._activateWindow.Name = "_activateWindow";
+			this._activateWindow.Size = new System.Drawing.Size(75, 23);
+			this._activateWindow.TabIndex = 2;
+			this._activateWindow.Text = "Activate";
 			this._activateWindow.UseVisualStyleBackColor = true;
 			this._activateWindow.Click += new System.EventHandler(this._activateWindow_Click);
 			// 
@@ -128,121 +137,166 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.groupBox2.Controls.Add(this._closeWorkspace);
 			this.groupBox2.Controls.Add(this._openWorkspace);
 			this.groupBox2.Controls.Add(this._workspaces);
-			resources.ApplyResources(this.groupBox2, "groupBox2");
+			this.groupBox2.Location = new System.Drawing.Point(48, 163);
 			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.Size = new System.Drawing.Size(781, 335);
+			this.groupBox2.TabIndex = 4;
 			this.groupBox2.TabStop = false;
+			this.groupBox2.Text = "Window Contents";
 			// 
 			// _closeShelf
 			// 
-			resources.ApplyResources(this._closeShelf, "_closeShelf");
+			this._closeShelf.Location = new System.Drawing.Point(687, 300);
 			this._closeShelf.Name = "_closeShelf";
+			this._closeShelf.Size = new System.Drawing.Size(75, 23);
+			this._closeShelf.TabIndex = 9;
+			this._closeShelf.Text = "Close";
 			this._closeShelf.UseVisualStyleBackColor = true;
 			this._closeShelf.Click += new System.EventHandler(this._closeShelf_Click);
 			// 
 			// _hideShelf
 			// 
-			resources.ApplyResources(this._hideShelf, "_hideShelf");
+			this._hideShelf.Location = new System.Drawing.Point(687, 271);
 			this._hideShelf.Name = "_hideShelf";
+			this._hideShelf.Size = new System.Drawing.Size(75, 23);
+			this._hideShelf.TabIndex = 8;
+			this._hideShelf.Text = "Hide";
 			this._hideShelf.UseVisualStyleBackColor = true;
 			this._hideShelf.Click += new System.EventHandler(this._hideShelf_Click);
 			// 
 			// label3
 			// 
-			resources.ApplyResources(this.label3, "label3");
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(6, 165);
 			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(45, 13);
+			this.label3.TabIndex = 10;
+			this.label3.Text = "Shelves";
 			// 
 			// _activateShelf
 			// 
-			resources.ApplyResources(this._activateShelf, "_activateShelf");
+			this._activateShelf.Location = new System.Drawing.Point(687, 213);
 			this._activateShelf.Name = "_activateShelf";
+			this._activateShelf.Size = new System.Drawing.Size(75, 23);
+			this._activateShelf.TabIndex = 6;
+			this._activateShelf.Text = "Activate";
 			this._activateShelf.UseVisualStyleBackColor = true;
 			this._activateShelf.Click += new System.EventHandler(this._activateShelf_Click);
 			// 
 			// _showShelf
 			// 
-			resources.ApplyResources(this._showShelf, "_showShelf");
+			this._showShelf.Location = new System.Drawing.Point(687, 242);
 			this._showShelf.Name = "_showShelf";
+			this._showShelf.Size = new System.Drawing.Size(75, 23);
+			this._showShelf.TabIndex = 7;
+			this._showShelf.Text = "Show";
 			this._showShelf.UseVisualStyleBackColor = true;
 			this._showShelf.Click += new System.EventHandler(this._showShelf_Click);
 			// 
 			// _openShelf
 			// 
-			resources.ApplyResources(this._openShelf, "_openShelf");
+			this._openShelf.Location = new System.Drawing.Point(687, 184);
 			this._openShelf.Name = "_openShelf";
+			this._openShelf.Size = new System.Drawing.Size(75, 23);
+			this._openShelf.TabIndex = 5;
+			this._openShelf.Text = "Open";
 			this._openShelf.UseVisualStyleBackColor = true;
 			this._openShelf.Click += new System.EventHandler(this._openShelf_Click);
 			// 
 			// _shelves
 			// 
-			this._shelves.ColumnHeaderTooltip = null;
-			resources.ApplyResources(this._shelves, "_shelves");
+			this._shelves.Location = new System.Drawing.Point(7, 186);
+			this._shelves.Margin = new System.Windows.Forms.Padding(4);
 			this._shelves.MultiSelect = false;
 			this._shelves.Name = "_shelves";
 			this._shelves.ReadOnly = false;
 			this._shelves.ShowToolbar = false;
-			this._shelves.SortButtonTooltip = null;
+			this._shelves.Size = new System.Drawing.Size(662, 137);
+			this._shelves.TabIndex = 4;
 			// 
 			// label2
 			// 
-			resources.ApplyResources(this.label2, "label2");
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(6, 23);
 			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(67, 13);
+			this.label2.TabIndex = 0;
+			this.label2.Text = "Workspaces";
 			// 
 			// _activateWorkspace
 			// 
-			resources.ApplyResources(this._activateWorkspace, "_activateWorkspace");
+			this._activateWorkspace.Location = new System.Drawing.Point(687, 73);
 			this._activateWorkspace.Name = "_activateWorkspace";
+			this._activateWorkspace.Size = new System.Drawing.Size(75, 23);
+			this._activateWorkspace.TabIndex = 2;
+			this._activateWorkspace.Text = "Activate";
 			this._activateWorkspace.UseVisualStyleBackColor = true;
 			this._activateWorkspace.Click += new System.EventHandler(this._activateWorkspace_Click);
 			// 
 			// _closeWorkspace
 			// 
-			resources.ApplyResources(this._closeWorkspace, "_closeWorkspace");
+			this._closeWorkspace.Location = new System.Drawing.Point(687, 102);
 			this._closeWorkspace.Name = "_closeWorkspace";
+			this._closeWorkspace.Size = new System.Drawing.Size(75, 23);
+			this._closeWorkspace.TabIndex = 3;
+			this._closeWorkspace.Text = "Close";
 			this._closeWorkspace.UseVisualStyleBackColor = true;
 			this._closeWorkspace.Click += new System.EventHandler(this._closeWorkspace_Click);
 			// 
 			// _openWorkspace
 			// 
-			resources.ApplyResources(this._openWorkspace, "_openWorkspace");
+			this._openWorkspace.Location = new System.Drawing.Point(687, 44);
 			this._openWorkspace.Name = "_openWorkspace";
+			this._openWorkspace.Size = new System.Drawing.Size(75, 23);
+			this._openWorkspace.TabIndex = 1;
+			this._openWorkspace.Text = "Open";
 			this._openWorkspace.UseVisualStyleBackColor = true;
 			this._openWorkspace.Click += new System.EventHandler(this._openWorkspace_Click);
 			// 
 			// _workspaces
 			// 
-			this._workspaces.ColumnHeaderTooltip = null;
-			resources.ApplyResources(this._workspaces, "_workspaces");
+			this._workspaces.Location = new System.Drawing.Point(7, 44);
+			this._workspaces.Margin = new System.Windows.Forms.Padding(4);
 			this._workspaces.MultiSelect = false;
 			this._workspaces.Name = "_workspaces";
 			this._workspaces.ReadOnly = false;
 			this._workspaces.ShowToolbar = false;
-			this._workspaces.SortButtonTooltip = null;
+			this._workspaces.Size = new System.Drawing.Size(662, 105);
+			this._workspaces.TabIndex = 0;
 			// 
 			// label1
 			// 
-			resources.ApplyResources(this.label1, "label1");
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(45, 19);
 			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(51, 13);
+			this.label1.TabIndex = 4;
+			this.label1.Text = "Windows";
 			// 
 			// groupBox1
 			// 
 			this.groupBox1.Controls.Add(this._events);
-			resources.ApplyResources(this.groupBox1, "groupBox1");
+			this.groupBox1.Location = new System.Drawing.Point(48, 524);
 			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(781, 211);
+			this.groupBox1.TabIndex = 5;
 			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Events";
 			// 
 			// _events
 			// 
-			this._events.ColumnHeaderTooltip = null;
-			resources.ApplyResources(this._events, "_events");
+			this._events.Location = new System.Drawing.Point(9, 22);
+			this._events.Margin = new System.Windows.Forms.Padding(4);
 			this._events.MultiSelect = false;
 			this._events.Name = "_events";
 			this._events.ReadOnly = false;
 			this._events.ShowToolbar = false;
-			this._events.SortButtonTooltip = null;
+			this._events.Size = new System.Drawing.Size(753, 182);
+			this._events.TabIndex = 0;
 			// 
 			// DesktopMonitorComponentControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.label1);
@@ -252,6 +306,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.Controls.Add(this._openWindow);
 			this.Controls.Add(this._windows);
 			this.Name = "DesktopMonitorComponentControl";
+			this.Size = new System.Drawing.Size(856, 758);
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox2.PerformLayout();
 			this.groupBox1.ResumeLayout(false);

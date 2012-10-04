@@ -9,12 +9,12 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.DataStore;
+using System;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
@@ -25,28 +25,15 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
         public LocalDataStoreStudyLoader() : base("DICOM_LOCAL")
         {
-        	int? frameLookAhead = PreLoadingSettings.Default.FrameLookAheadCount;
-			if (PreLoadingSettings.Default.LoadAllFrames)
-				frameLookAhead = null;
 
-			var coreStrategy = new SimpleCorePrefetchingStrategy(frame => frame.ParentImageSop.DataSource is LocalDataStoreSopDataSource);
-			PrefetchingStrategy = new WeightedWindowPrefetchingStrategy(coreStrategy, "DICOM_LOCAL", "Simple prefetcing strategy for local data store images.")
-			{
-				Enabled = PreLoadingSettings.Default.Enabled,
-				RetrievalThreadConcurrency = PreLoadingSettings.Default.Concurrency,
-				FrameLookAheadCount = frameLookAhead,
-				SelectedImageBoxWeight = PreLoadingSettings.Default.SelectedImageBoxWeight,
-				UnselectedImageBoxWeight = PreLoadingSettings.Default.UnselectedImageBoxWeight,
-				DecompressionThreadConcurrency = 0
-			};
-		}
+        }
 
     	protected override int OnStart(StudyLoaderArgs studyLoaderArgs)
 		{
     		_sops = null;
 
     		EventResult result = EventResult.Success;
-			var loadedInstances = new AuditedInstances();
+			AuditedInstances loadedInstances = new AuditedInstances();
 			try
 			{
 				using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
@@ -66,7 +53,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			}
 			finally
 			{
-				AuditHelper.LogOpenStudies(new[] { AuditHelper.LocalAETitle }, loadedInstances, EventSource.CurrentUser, result);
+				AuditHelper.LogOpenStudies(new string[] { AuditHelper.LocalAETitle }, loadedInstances, EventSource.CurrentUser, result);
 			}
 		}
 
@@ -85,3 +72,5 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
         }
     }
 }
+
+

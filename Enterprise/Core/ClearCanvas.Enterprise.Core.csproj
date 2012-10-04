@@ -73,9 +73,6 @@
     <Compile Include="AuditLogEntry.cs" />
     <Compile Include="Audit\AuditLogEntryAssembler.cs" />
     <Compile Include="Audit\AuditService.cs" />
-    <Compile Include="DeadlockException.cs" />
-    <Compile Include="DeadlockRetryAdvice.cs" />
-    <Compile Include="DeadlockRetryManager.cs" />
     <Compile Include="LooseEnumPropertyChangeSetListener.cs" />
     <Compile Include="EqualityUtils.cs" />
     <Compile Include="ExtendedPropertiesSearchCriteria.cs" />
@@ -96,13 +93,6 @@
     <Compile Include="Modelling\ValidationRule.cs" />
     <Compile Include="Modelling\ValidationAttribute.cs" />
     <Compile Include="Modelling\XmlValidationRuleSetSource.cs" />
-    <Compile Include="Ping\PingService.cs" />
-    <Compile Include="Ping\PingServiceSettings.cs" />
-    <Compile Include="Ping\PingServiceSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>PingServiceSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="ResponseCachingServerSideAdvice.cs" />
     <Compile Include="ResponseCachingAttribute.cs" />
     <Compile Include="CoreServiceExtensionPoint.cs" />
@@ -213,7 +203,6 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="RelatedEntityCondition.cs" />
-    <Compile Include="Tests\DeadlockRetryManagerTests.cs" />
     <Compile Include="Tests\EnumValueTests.cs" />
     <Compile Include="Tests\EqualityUtilsTests.cs" />
     <Compile Include="Tests\EntityProxyFactory.cs" />
@@ -257,10 +246,6 @@
       <LastGenOutput>EntityValidationSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="persistence.cd" />
-    <None Include="Ping\PingServiceSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>PingServiceSettings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Caching\" />

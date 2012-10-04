@@ -158,9 +158,6 @@ Please choose another Server Group Name.</value>
   <data name="MenuVerify" xml:space="preserve">
     <value>Verify</value>
   </data>
-  <data name="MessageActionModelUpdateFailure" xml:space="preserve">
-    <value>Failed to update action models</value>
-  </data>
   <data name="MessageCEchoVerificationPrefix" xml:space="preserve">
     <value>C-ECHO Verification:</value>
   </data>

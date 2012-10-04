@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="PublishToDefaultServers" Description="Specifies whether to publish newly created key images to the default servers." Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="PublishLocalToSourceAE" Description="Specifies whether or not to publish newly created key images to the Source AE as specified in the source image's DICOM Header." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

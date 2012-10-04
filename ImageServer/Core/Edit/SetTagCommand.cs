@@ -60,16 +60,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		public SetTagCommand(uint tag, string originalValue, string value)
 			: this()
 		{
-		    var dicomTag = DicomTagDictionary.GetDicomTag(tag);
-            UpdateEntry.TagPath = new DicomTagPath { Tag = dicomTag };
-
-            if (!string.IsNullOrEmpty(value))
-            {
-                int maxLength = dicomTag.VR.Equals(DicomVr.PNvr) ? 64 : (int)dicomTag.VR.MaximumLength;
-                if (value.Length > maxLength)
-                    value = value.Substring(0, maxLength);
-            }
-
+			UpdateEntry.TagPath = new DicomTagPath {Tag = DicomTagDictionary.GetDicomTag(tag)};
 		    UpdateEntry.Value = value;
             UpdateEntry.OriginalValue = originalValue;
 		}

@@ -10,7 +10,7 @@
 #endregion
 
 using System;
-using ClearCanvas.Common;
+using System.Resources;
 
 namespace ClearCanvas.ImageServer.Enterprise
 {
@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageServer.Enterprise
     /// A specialized <see cref="ServerEntity"/> that represents an enumerated value.
     /// </summary>
     [Serializable]
-    public abstract partial class ServerEnum : ServerEntity
+    public abstract class ServerEnum : ServerEntity
     {
         
         #region Constructors
@@ -113,9 +113,14 @@ namespace ClearCanvas.ImageServer.Enterprise
             {
                 return e.Enum == Enum;
             }
-            return false;
+            else
+                return false;
         }
 
+        public override string ToString()
+        {
+            return Description;
+        }
         #endregion
 
         #region Operators
@@ -145,72 +150,5 @@ namespace ClearCanvas.ImageServer.Enterprise
         }
 
         #endregion
-    }
-
-    public class ServerEnumExtensionPoint : ExtensionPoint<IServerEnumDescriptionTranslator>
-    { }
-
-    /// <summary>
-    /// Localization Support implementation for ServerEnum
-    /// </summary>
-    public abstract partial class ServerEnum
-    {
-        private static readonly IServerEnumDescriptionTranslator _descriptionTranslator;
-
-        static ServerEnum()
-        {
-            try
-            {
-                _descriptionTranslator =
-                    new ServerEnumExtensionPoint().CreateExtension() as IServerEnumDescriptionTranslator;
-            }
-            catch(Exception ex)
-            {
-                Platform.Log(LogLevel.Warn, "Unable to instantiate ServerEnum Description transatlor: {0}", ex.Message);
-
-                Platform.Log(LogLevel.Warn, "Use default server enum description translator");
-                _descriptionTranslator = new DefaultServerEnumDescriptionTranslator();
-            }
-        }
-
-        public string LocalizedDescription
-        {
-            get
-            {
-                return _descriptionTranslator != null ? _descriptionTranslator.GetLocalizedDescription(this) : Description;
-            }
-        }
-
-        public string LocalizedLongDescription
-        {
-            get
-            {
-                return _descriptionTranslator != null ? _descriptionTranslator.GetLocalizedLongDescription(this) : Description;
-            }
-        }
-
-        public override string ToString()
-        {
-            return _descriptionTranslator != null ? _descriptionTranslator.GetLocalizedDescription(this) : Description;
-        }
-    }
-
-    internal class DefaultServerEnumDescriptionTranslator : IServerEnumDescriptionTranslator
-    {
-        public string GetLocalizedDescription(ServerEnum serverEnum)
-        {
-            return serverEnum.Description;
-        }
-
-        public string GetLocalizedLongDescription(ServerEnum serverEnum)
-        {
-            return serverEnum.LongDescription;
-        }
-    }
-
-    public interface IServerEnumDescriptionTranslator
-    {
-        string GetLocalizedDescription(ServerEnum serverEnum);
-        string GetLocalizedLongDescription(ServerEnum serverEnum);
     }
 }

@@ -59,14 +59,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TabComponentContainerControl));
 			this._tabControl = new Crownwood.DotNetMagic.Controls.TabControl();
 			this.SuspendLayout();
 			// 
 			// _tabControl
 			// 
-			resources.ApplyResources(this._tabControl, "_tabControl");
+			this._tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tabControl.IDE2005Style = Crownwood.DotNetMagic.Controls.IDE2005Style.StandardDark;
+			this._tabControl.Location = new System.Drawing.Point(4, 4);
+			this._tabControl.Margin = new System.Windows.Forms.Padding(4);
 			this._tabControl.MaximumHeaderWidth = 256;
 			this._tabControl.Name = "_tabControl";
 			this._tabControl.OfficeDockSides = false;
@@ -74,16 +75,21 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._tabControl.OfficeStyle = Crownwood.DotNetMagic.Controls.OfficeStyle.SoftWhite;
 			this._tabControl.PositionTop = true;
 			this._tabControl.ShowDropSelect = false;
+			this._tabControl.Size = new System.Drawing.Size(1029, 550);
 			this._tabControl.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
+			this._tabControl.TabIndex = 0;
 			this._tabControl.TextTips = true;
 			// 
 			// TabComponentContainerControl
 			// 
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.Controls.Add(this._tabControl);
+			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "TabComponentContainerControl";
+			this.Padding = new System.Windows.Forms.Padding(4, 4, 0, 4);
+			this.Size = new System.Drawing.Size(1033, 558);
 			this.ResumeLayout(false);
 
 		}

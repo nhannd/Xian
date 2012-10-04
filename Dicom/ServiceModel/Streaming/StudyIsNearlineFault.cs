@@ -19,7 +19,6 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
     [DataContract]
     public class StudyIsNearlineFault
     {
-		[DataMember(IsRequired = false)]
-		public bool IsStudyBeingRestored { get; set; }
+
     }
 }

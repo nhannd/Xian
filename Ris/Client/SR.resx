@@ -517,7 +517,7 @@
     <value>A cancellation reason is required to replace an order.</value>
   </data>
   <data name="MessageCannotMergeNewContactPoints" xml:space="preserve">
-    <value>New contact points cannot be merged.  Please deselect '{0}' and select another item to merge.</value>
+    <value>New contact points cannot be merged.  Please deselect '{0}' and select another item.</value>
   </data>
   <data name="MessageCommunicationError" xml:space="preserve">
     <value>A communication error occured while attempting to contact the server.</value>
@@ -1148,41 +1148,5 @@
   </data>
   <data name="MessageLoadingAffectedOrders" xml:space="preserve">
     <value>Loading affected orders...</value>
-  </data>
-  <data name="TitleReplaceInactiveContactPoints" xml:space="preserve">
-    <value>Select Replacement Contact Points</value>
-  </data>
-  <data name="MessageInstructionReplacementContactPoints" xml:space="preserve">
-    <value>Select a replacement contact point for each deactivated contact point.</value>
-  </data>
-  <data name="ColumnMerged" xml:space="preserve">
-    <value>Merged</value>
-  </data>
-  <data name="MessageCannotActivateMergedPractitioners" xml:space="preserve">
-    <value>The selected practitioner(s) has already been merged, and cannot be re-activated.</value>
-  </data>
-  <data name="MessageCannotMergeSelectedPractitioners" xml:space="preserve">
-    <value>The selected practitioner(s) is de-activated, or has already been merged.  Only active, non-merged practitioners can be merged.</value>
-  </data>
-  <data name="MessageCannotActivateSelectedContactPoints" xml:space="preserve">
-    <value>The selected contact point(s) has already been merged, and cannot be re-activated.</value>
-  </data>
-  <data name="WarnEditMergedContactPoint" xml:space="preserve">
-    <value>This contact point is already merged and will be deleted eventually.  Please edit the active contact point {0} instead.</value>
-  </data>
-  <data name="WarnEditMergedPractitioner" xml:space="preserve">
-    <value>This practitioner is already merged and will be deleted eventually.  Please edit the active practitioner {0} instead.</value>
-  </data>
-  <data name="ColumnBed" xml:space="preserve">
-    <value>Bed</value>
-  </data>
-  <data name="ColumnRoom" xml:space="preserve">
-    <value>Room</value>
-  </data>
-  <data name="MessageDefaultContactPointMustBeActive" xml:space="preserve">
-    <value>This contact point is not currently active and must be active in order to set it as the default.  Would you like to make it active?</value>
-  </data>
-  <data name="MessageInvalidVisitAssigningAuthority" xml:space="preserve">
-    <value>The selected visit should have the same assigning authority as one of the performing facilities.</value>
   </data>
 </root>

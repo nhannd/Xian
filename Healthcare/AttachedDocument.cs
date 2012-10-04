@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare {
 
@@ -21,21 +22,8 @@ namespace ClearCanvas.Healthcare {
 	/// <summary>
 	/// AttachedDocument entity
 	/// </summary>
-	public partial class AttachedDocument
+	public partial class AttachedDocument : ClearCanvas.Enterprise.Core.Entity
 	{
-		/// <summary>
-		/// Copy constructor that creates either an exact copy, or an "unprocessed" copy.
-		/// </summary>
-		/// <param name="source"></param>
-		/// <param name="unprocessed"></param>
-		protected AttachedDocument(AttachedDocument source, bool unprocessed)
-	{
-			_creationTime = unprocessed ? Platform.Time : source.CreationTime;
-			_mimeType = source.MimeType;
-	  		_fileExtension = source.FileExtension;
-
-			_contentUrl = source.ContentUrl;
-		}
 	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
@@ -43,30 +31,6 @@ namespace ClearCanvas.Healthcare {
 		/// </summary>
 		private void CustomInitialize()
 		{
-		}
-
-		/// <summary>
-		/// Duplicates this document.
-		/// </summary>
-		/// <remarks>
-		/// Does not duplicate the remote resource. However, the remote resource is treated as immutable,
-		/// so having multiple instances referring to the same remote resource poses no problems.
-		/// </remarks>
-		/// <returns></returns>
-		public virtual AttachedDocument Duplicate(bool unprocessed)
-		{
-			// derived classes may implement support
-			throw new NotSupportedException();
-		}
-
-		/// <summary>
-		/// Creates a ghost copy of this document.
-		/// </summary>
-		/// <returns></returns>
-		public virtual AttachedDocument CreateGhostCopy()
-		{
-			// derived classes may implement support
-			throw new NotSupportedException();
 		}
 
 		public virtual DateTime? DocumentReceivedTime
@@ -79,6 +43,7 @@ namespace ClearCanvas.Healthcare {
 		/// </summary>
 		public virtual void Attach()
 		{
+			return;
 		}
 
 		/// <summary>
@@ -86,6 +51,7 @@ namespace ClearCanvas.Healthcare {
 		/// </summary>
 		public virtual void Detach()
 		{
+			
 		}
 
 		/// <summary>
@@ -102,42 +68,6 @@ namespace ClearCanvas.Healthcare {
 		}
 
 		/// <summary>
-		/// Gets the file associated with this attached document, from the document store.
-		/// </summary>
-		/// <returns></returns>
-		public virtual string GetFile(IAttachedDocumentStore documentStore)
-		{
-			return documentStore.GetDocument(_contentUrl);
-		}
-
-		/// <summary>
-		/// Sets the file associated with this attached document, and stores a copy to the document store.
-		/// </summary>
-		/// <returns></returns> 
-		public virtual void PutFile(IAttachedDocumentStore documentStore, string localFilePath)
-		{
-			const string pathDelimiter = "/";
-
-			var builder = new StringBuilder();
-			builder.Append(_creationTime.Year.ToString());
-			builder.Append(pathDelimiter);
-			builder.Append(_creationTime.Month.ToString());
-			builder.Append(pathDelimiter);
-			builder.Append(_creationTime.Day.ToString());
-			builder.Append(pathDelimiter);
-
-			// important that we always generate a new GUID here, because multiple AttachedDocument objects
-			// are allowed to refer to the same remote resource - therefore we must treat the remote resource
-			// as immutable
-			builder.AppendFormat("{0}.{1}", Guid.NewGuid().ToString("D"), _fileExtension);
-
-			_contentUrl = builder.ToString();
-			documentStore.PutDocument(_contentUrl, localFilePath);
-		}
-
-
-
-		/// <summary>
 		/// Shifts the object in time by the specified number of minutes, which may be negative or positive.
 		/// </summary>
 		/// <remarks>
@@ -150,6 +80,19 @@ namespace ClearCanvas.Healthcare {
 		public virtual void TimeShift(int minutes)
 		{
 			_creationTime = _creationTime.AddMinutes(minutes);
+		}
+
+		public static string BuildContentUrl(AttachedDocument document, string pathDelimiter)
+		{
+			var builder = new StringBuilder();
+			builder.Append(document.CreationTime.Year.ToString());
+			builder.Append(pathDelimiter);
+			builder.Append(document.CreationTime.Month.ToString());
+			builder.Append(pathDelimiter);
+			builder.Append(document.CreationTime.Day.ToString());
+			builder.Append(pathDelimiter);
+			builder.AppendFormat("{0}.{1}", document.GetRef().ToString(false, false), document.FileExtension);
+			return builder.ToString();
 		}
 	}
 }

@@ -203,7 +203,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				{
 					Platform.Log(LogLevel.Error, ex, "An error has occured while rendering the contents of a tile.");
 
-					_lastRenderExceptionMessage = ex is RenderingException ? ((RenderingException) ex).UserMessage : ex.Message;
+					_lastRenderExceptionMessage = ex is RenderingException ? ((RenderingException) ex).SpecificMessage : ex.Message;
 
 					// we cannot simply pass the existing Graphics because we haven't released its hDC yet
 					// if we do, we'll get a "Object is currently in use elsewhere" exception
@@ -359,7 +359,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				{
 					Platform.Log(LogLevel.Error, ex, "An error has occured while refreshing the contents of a tile.");
 
-					var exceptionMessage = ex is RenderingException ? ((RenderingException) ex).UserMessage : ex.Message;
+					var exceptionMessage = ex is RenderingException ? ((RenderingException) ex).SpecificMessage : ex.Message;
 
 					// we cannot simply pass the existing Graphics because we haven't released its hDC yet
 					// if we do, we'll get a "Object is currently in use elsewhere" exception

@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public EntityRef VisitRef;
-
+		
 		[DataMember]
 		public EntityRef PatientRef;
 
@@ -63,12 +63,6 @@ namespace ClearCanvas.Ris.Application.Common
 		public LocationSummary CurrentLocation;
 
 		[DataMember]
-		public string CurrentRoom;
-
-		[DataMember]
-		public string CurrentBed;
-
-		[DataMember]
 		public string DischargeDisposition;
 
 		[DataMember]
@@ -93,7 +87,7 @@ namespace ClearCanvas.Ris.Application.Common
 		{
 			return new VisitSummary(this.VisitRef, this.PatientRef, this.VisitNumber,
 				this.PatientClass, this.PatientType, this.AdmissionType,
-				this.Status, this.AdmitTime, this.DischargeTime, this.Facility, this.CurrentLocation, this.CurrentRoom, this.CurrentBed);
+				this.Status, this.AdmitTime, this.DischargeTime, this.Facility, this.CurrentLocation);
 		}
 	}
 }

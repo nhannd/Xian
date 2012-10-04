@@ -34,12 +34,6 @@ namespace ClearCanvas.Enterprise.Desktop
             {
                 try
                 {
-					if (Application.SessionStatus != SessionStatus.Online)
-					{
-						Context.DesktopWindow.ShowMessageBox(SR.MessageServerOffline, MessageBoxActions.Ok);
-						return;
-					}
-
                     UserSummaryComponent component = new UserSummaryComponent();
 
                     _workspace = ApplicationComponent.LaunchAsWorkspace(

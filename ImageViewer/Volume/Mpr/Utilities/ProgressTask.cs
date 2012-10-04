@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 		public int IntPercent
 		{
 			get { return (int) (this.Progress*100); }
-			set { this.Progress = value/100f; }
+			set { this.Progress = value/100; }
 		}
 
 		public ProgressTask AddSubTask(string subtask)

@@ -1,12 +1,3 @@
-// License
-//
-// Copyright (c) 2011, ClearCanvas Inc.
-// All rights reserved.
-// http://www.clearcanvas.ca
-//
-// This software is licensed under the Open Software License v3.0.
-// For the complete license, see http://www.clearcanvas.ca/OSLv3.0
-
 function InputHover() {
 $(document).ready(function(){
     $(".SearchTextBox").mouseover(function() { $(this).addClass('TextInputHover'); }).mouseout(function() { $(this).removeClass('TextInputHover'); }).focus( function() {	$(this).addClass('TextInputFocus'); }).blur( function() { $(this).removeClass('TextInputFocus') });
@@ -93,6 +84,3 @@ function CheckDateRange(fromDate, toDate, textBoxId, calendarExtenderId, message
         $find(calendarExtenderId).set_selectedDate(null);
     }
 }
-
-
-

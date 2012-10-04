@@ -24,8 +24,4 @@
     <value>Patient did not show for exam</value>
     <description></description>
   </enum-value>
-  <enum-value code="UM">
-    <value>Order was un-merged and replaced</value>
-    <description></description>
-  </enum-value>
 </enum>

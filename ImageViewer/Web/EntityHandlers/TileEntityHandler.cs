@@ -106,7 +106,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
         private bool _isMouseDown;
         private readonly object _drawLock = new object();
-        private readonly object _refreshLock = new object();
         private bool _refreshingClient = false;
 
         // timer to push image to the client when dynamic image quality is used
@@ -561,42 +560,36 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             // a high-res image, the low res and another high-res image again. 
             // 500 ms is picked arbitrarily.
             TimeSpan refreshTime = TimeSpan.FromMilliseconds(500);
-
-            lock (_refreshLock)
+            
+            // If the timer is running then just postpone it
+            if (_refreshTimer != null)
             {
-                // If the timer is running then just postpone it
-                if (_refreshTimer != null)
-                {
-                    _refreshTimer.Change(refreshTime, TimeSpan.Zero);
-                }
-                else
-                {
-                    _refreshTimer = new System.Threading.Timer((ignore) =>
-                                                                   {
-                                                                       try
-                                                                       {
-                                                                           // Note: the image will not go to the client until it polls
-                                                                           // The assumption is the client continues polling if the user
-                                                                           // stops moving the mouse
-                                                                           Draw(true);
-                                                                       }
-                                                                       catch (Exception ex)
-                                                                       {
-                                                                           // catch exceptions to prevent crashing
-                                                                           Platform.Log(LogLevel.Error, ex);
-                                                                       }
-                                                                       finally
-                                                                       {
-                                                                           lock (_refreshLock)
-                                                                           {
-                                                                               _refreshTimer.Dispose();
-                                                                               _refreshTimer = null;
-                                                                           }
-                                                                       }
-                                                                   }, null, refreshTime, TimeSpan.Zero);
-                }
+                _refreshTimer.Change(refreshTime, TimeSpan.Zero);
             }
-
+            else {
+                _refreshTimer = new System.Threading.Timer((ignore) =>
+                                                               {
+                                                                   try
+                                                                   {
+                                                                       // Note: the image will not go to the client until it polls
+                                                                       // The assumption is the client continues polling if the user
+                                                                       // stops moving the mouse
+                                                                       Draw(true);
+                                                                   }
+                                                                   catch (Exception ex)
+                                                                   {
+                                                                       // catch exceptions to prevent crashing
+                                                                       Platform.Log(LogLevel.Error, ex);
+                                                                   }
+                                                                   finally
+                                                                   {
+                                                                       _refreshTimer.Dispose();
+                                                                       _refreshTimer = null;
+                                                                   }
+                                                               }, null, refreshTime, TimeSpan.Zero);
+            }
+            
+            
         }
 
         private byte[] GetCurrentTileBitmap()

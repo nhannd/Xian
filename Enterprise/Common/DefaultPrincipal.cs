@@ -44,7 +44,6 @@ namespace ClearCanvas.Enterprise.Common
         /// </summary>
         /// <param name="identity"></param>
         /// <param name="sessionToken"></param>
-        /// <param name="authorityTokens"></param>
         /// <returns></returns>
         public static IPrincipal CreatePrincipal(IIdentity identity, SessionToken sessionToken, string[] authorityTokens)
         {
@@ -77,10 +76,16 @@ namespace ClearCanvas.Enterprise.Common
 		{
 			// initialize auth tokens if not yet initialized
 			if (_authorityTokens == null)
-                Platform.GetService((IAuthenticationService service) => _authorityTokens =service.GetAuthorizations(new GetAuthorizationsRequest(_identity.Name, _sessionToken)).AuthorityTokens);
+			{
+                Platform.GetService<IAuthenticationService>(
+                    delegate(IAuthenticationService service)
+                    {
+                        _authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(_identity.Name, _sessionToken)).AuthorityTokens;
+                    });
+			}
 
 			// check that the user was granted this token
-			return CollectionUtils.Contains(_authorityTokens, token => token == role);
+			return CollectionUtils.Contains(_authorityTokens, delegate(string token) { return token == role; });
 		}
 
 		#region IUserCredentialsProvider Members

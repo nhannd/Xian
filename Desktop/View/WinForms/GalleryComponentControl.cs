@@ -171,8 +171,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			IGalleryItem item = (IGalleryItem) _gallery[index];
 
 			lvi.SubItems.Clear();
-			AddSubItems(lvi, item);
-
+			foreach (string line in item.Description.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) {
+				lvi.SubItems.Add(line, Color.Gray, Color.Transparent, _listView.Font);
+			}
 			lvi.Text = item.Name;
 
 			int keyIndex = _listView.LargeImageList.Images.IndexOfKey(lvi.ImageKey);
@@ -196,32 +197,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			string imageKey = Guid.NewGuid().ToString();
 			_listView.LargeImageList.Images.Add(imageKey, galleryItem.Image);
 			ListViewItem lvi = new ListViewItem(galleryItem.Name, imageKey);
-
-			AddSubItems(lvi, galleryItem);
-
-			lvi.ToolTipText = galleryItem.Description;
+			foreach (string line in galleryItem.Description.Split(new char[] {'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries))
+			{
+				lvi.SubItems.Add(line, Color.Gray, Color.Transparent, _listView.Font);
+			}
 			lvi.Tag = galleryItem;
 			_listView.Items.Insert(index, lvi);
-		}
-
-		private void AddSubItems(ListViewItem lvi, IGalleryItem galleryItem)
-		{
-			string[] galleryDescriptionLines = galleryItem.Description.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-			for (var i = 0; i < galleryDescriptionLines.Length; i++)
-			{
-				if (galleryDescriptionLines.Length > _component.MaxDescriptionLines &&
-					i == _component.MaxDescriptionLines - 1)
-				{
-					// There are more descriptions then number of lines allowed
-					// and this is pass the last line, add ellipsis instead
-					lvi.SubItems.Add("...", Color.Gray, Color.Transparent, _listView.Font);
-				}
-				else
-				{
-					// Add regular description line
-					lvi.SubItems.Add(galleryDescriptionLines[i], Color.Gray, Color.Transparent, _listView.Font);
-				}
-			}	
 		}
 
 		private void RemoveItem(int index)
