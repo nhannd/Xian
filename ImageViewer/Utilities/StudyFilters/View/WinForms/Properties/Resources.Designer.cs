@@ -202,5 +202,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.Propertie
                 return ResourceManager.GetString("TooltipNotEqualsOperator", resourceCulture);
             }
         }
+        
+        internal static System.Drawing.Bitmap WarningHS {
+            get {
+                object obj = ResourceManager.GetObject("WarningHS", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
