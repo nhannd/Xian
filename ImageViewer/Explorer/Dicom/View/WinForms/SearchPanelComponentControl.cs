@@ -11,6 +11,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows.Forms;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
@@ -24,6 +25,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 	public partial class SearchPanelComponentControl : ApplicationComponentUserControl
 	{
 		private readonly SearchPanelComponent _component;
+		private Control _lastActiveControl;
 
 		/// <summary>
 		/// Constructor
@@ -95,6 +97,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_searchButton.Text = _component.IsSearchEnabled ? SR.ButtonSearch : SR.ButtonCancelSearch;
 			_progressBar.Style = _component.IsSearchEnabled ? ProgressBarStyle.Blocks : ProgressBarStyle.Marquee;
 			_progressBar.Visible = _searchingLabel.Visible = !_component.IsSearchEnabled;
+
+			if (_component.IsSearchEnabled && _lastActiveControl != null)
+			{
+				SynchronizationContext.Current.Post(s => RefocusControl((Control) s), _lastActiveControl);
+				_lastActiveControl = null;
+			}
 		}
 
 		private void UpdateIcons()
@@ -106,10 +114,37 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_clearButton.Image = resourceResolver.OpenImage(@"Icons.Clear.png");
 		}
 
+		private void RefocusControl(Control control)
+		{
+			if (control is TextField)
+			{
+				var textField = (TextField) control;
+				var lastSelectionStart = textField.SelectionStart;
+				var lastSelectionLength = textField.SelectionLength;
+
+				ActiveControl = control;
+				SelectNextControl(control, true, true, true, true);
+				control.Focus();
+
+				textField.SelectionLength = 0;
+				textField.SelectionStart = lastSelectionStart;
+				textField.SelectionLength = lastSelectionLength;
+			}
+			else
+			{
+				ActiveControl = control;
+				SelectNextControl(control, true, true, true, true);
+				control.Focus();
+			}
+		}
+
 		private void OnSearchButtonClicked(object sender, EventArgs e)
 		{
 			if (_component.IsSearchEnabled)
+			{
+				if (!(_lastActiveControl is Button)) _lastActiveControl = ActiveControl;
 				_component.Search();
+			}
 			else
 				_component.CancelSearch();
 		}
