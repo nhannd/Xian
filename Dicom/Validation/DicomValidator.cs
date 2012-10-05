@@ -142,7 +142,7 @@ namespace ClearCanvas.Dicom.Validation
 		/// of DICOM's <i>Bits Allocated</i> and DICOM's <i>Samples Per Pixel</i></param>.
 		public static void ValidatePixelData(byte[] pixelData, int rows, int columns, int bitsPerPixel)
 		{
-			int sizeInBytes = rows * columns * bitsPerPixel / 8;
+			int sizeInBytes = rows * columns * (bitsPerPixel / 8);
 
 			if (pixelData.Length != sizeInBytes)
 				throw new DicomDataException(string.Format(SR.ExceptionInvalidPixelData, pixelData.Length, sizeInBytes));
