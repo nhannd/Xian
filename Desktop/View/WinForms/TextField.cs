@@ -107,6 +107,42 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _textBox.EditMask = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the current selection in the <see cref="TextField"/> control.
+        /// </summary>
+        /// <seealso cref="TextBoxBase.SelectedText"/>
+        public string SelectedText
+        {
+            get { return _textBox.SelectedText; }
+            set { _textBox.SelectedText = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the starting point of text selected in the <see cref="TextField"/> control.
+        /// </summary>
+        /// <seealso cref="TextBoxBase.SelectionStart"/>
+        public int SelectionStart
+        {
+            get { return _textBox.SelectionStart; }
+            set { _textBox.SelectionStart = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the number of characters selected in the <see cref="TextField"/> control.
+        /// </summary>
+        /// <seealso cref="TextBoxBase.SelectionLength"/>
+        public int SelectionLength
+        {
+            get { return _textBox.SelectionLength; }
+            set { _textBox.SelectionLength = value; }
+        }
+
+        protected override void OnGotFocus(EventArgs e)
+        {
+            base.OnGotFocus(e);
+            _textBox.Focus();
+        }
+
         private void _textBox_MouseHover(object sender, EventArgs e)
         {
             ShowToolTip(true);
