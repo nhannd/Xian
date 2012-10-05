@@ -64,6 +64,7 @@ namespace ClearCanvas.ImageViewer.Web
 						typeof (ActionClickedMessage),
 						typeof (SetLayoutActionMessage),
 			       		typeof (MouseMessage),
+			       		typeof (MouseLeaveMessage),
 			       		typeof (MouseMoveMessage),
 			       		typeof (MouseWheelMessage),
                         typeof (DismissMessageBoxMessage),

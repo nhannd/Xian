@@ -40,6 +40,7 @@ using ClearCanvas.Web.Common.Messages;
 using ClearCanvas.Common;
 using Cursor=ClearCanvas.ImageViewer.Web.Common.Entities.Cursor;
 using Encoder = System.Drawing.Imaging.Encoder;
+using MouseLeaveMessage = ClearCanvas.ImageViewer.Web.Common.Messages.MouseLeaveMessage;
 
 namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 {
@@ -352,7 +353,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		private void OnCursorTokenChanged(object sender, EventArgs e)
 		{
-			NotifyEntityPropertyChanged("MousePosition", new Position(_mousePosition));
+		    MousePosition = _tileController.Location;
 			NotifyEntityPropertyChanged("Cursor", CreateCursor());
 		}
 
@@ -642,6 +643,11 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		public override void ProcessMessage(Message message)
 		{
+            if (message is MouseLeaveMessage)
+            {
+                _tileController.ProcessMessage(new InputManagement.MouseLeaveMessage());
+                return;
+            }
             if (message is MouseMoveMessage)
 			{
 				ProcessMouseMoveMessage((MouseMoveMessage)message);
