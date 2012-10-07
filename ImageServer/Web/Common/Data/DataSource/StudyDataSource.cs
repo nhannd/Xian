@@ -319,6 +319,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			return true;
 		}
 
+
 	    public bool CanScheduleReconcile(out string reason)
 		{
             if (IsLocked)

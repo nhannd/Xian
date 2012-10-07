@@ -23,6 +23,9 @@ namespace ClearCanvas.ImageServer.Web.Common
     {
         public override void Init()
         {
+            if (HttpContext.Current == null || !HttpContext.Current.Request.Path.EndsWith(".aspx"))
+                return;
+
             try
             {
                 object[] extensions = new HttpApplicationExtensionPoint().CreateExtensions();
