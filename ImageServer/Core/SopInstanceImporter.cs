@@ -219,10 +219,23 @@ namespace ClearCanvas.ImageServer.Core
 
                     if (HasUnprocessedCopy(studyLocation.Key, seriesInstanceUid, sopInstanceUid))
                     {
-                        failureMessage = string.Format("Another copy of the SOP Instance was received but has not been processed: {0}", sopInstanceUid);
-                        result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
-                        return result;
+                        var accept = false;
+
+                        // This is a special case: #10569
+                        // Allow user to revive an orphaned study by reprocessing the files found in the filesystem
+                        if (File.Exists(finalDest))
+                        {
+                            accept = DuplicatePolicy.IsParitionDuplicatePolicyOverridden(studyLocation);
+                        }
+                        
+                        if (!accept)
+                        {
+                            failureMessage = string.Format("Another copy of the SOP Instance was received but has not been processed: {0}", sopInstanceUid);
+                            result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
+                            return result;
+                        }
                     }
+
                 	if (File.Exists(finalDest))
                 	{
                 		result = HandleDuplicate(sopInstanceUid, studyLocation, commandProcessor, file);
@@ -364,7 +377,7 @@ namespace ClearCanvas.ImageServer.Core
             commandProcessor.AddCommand(new SaveDicomFileCommand(path, file, true));
 
             commandProcessor.AddCommand(
-                new UpdateWorkQueueCommand(file, studyLocation, dupImage, extension));
+                new UpdateWorkQueueCommand(file, studyLocation, dupImage));
 
             #region SPECIAL CODE FOR TESTING
             if (Diagnostics.Settings.SimulateFileCorruption)
