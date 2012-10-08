@@ -666,11 +666,11 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             // show/hide tooltip
             if (!string.IsNullOrEmpty(TooltipContainerControlID))
             {
-                script += @"rows.mouseenter(function(){
+                script += @"rows.mouseenter(function(e){
                                 $(this).find('@@TooltipSelector@@')
                                 .css('position','absolute')
-                                .css('left', event.clientX  +20)
-                                .css('top', event.clientY)
+                                .css('left', e.pageX +20)
+                                .css('top', e.pageY)
                                 .show();
                         });";
 
