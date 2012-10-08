@@ -56,6 +56,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		[DefaultValue(false)]
+		public bool AcceptsTab
+		{
+			get { return _richTextBox.AcceptsTab; }
+			set { _richTextBox.AcceptsTab = value; }
+		}
+
+		[DefaultValue(false)]
 		public bool ReadOnly
 		{
 			get { return _richTextBox.ReadOnly; }

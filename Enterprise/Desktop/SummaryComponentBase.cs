@@ -400,8 +400,9 @@ namespace ClearCanvas.Enterprise.Desktop
 			{
 				if (_selectedItems.Count == 0) return;
 
-				var action = this.Host.ShowMessageBox(this.DeleteConfirmationMessage, MessageBoxActions.YesNo);
-				if (action == DialogBoxAction.Yes)
+				string confirmationMessage;
+				var doConfirmation = GetDeleteConfirmationMessage(_selectedItems, out confirmationMessage);
+				if (!doConfirmation || this.Host.ShowMessageBox(confirmationMessage, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
 				{
 					string failureMessage;
 					IList<TSummary> deletedItems;
@@ -621,11 +622,13 @@ namespace ClearCanvas.Enterprise.Desktop
 		}
 
 		/// <summary>
-		/// Gets the message to be presented to the user to confirm the deletion of items.
+		/// Gets the message to be presented to the user to confirm the deletion of items, or returns
+		/// false to specify that no confirmation is required.
 		/// </summary>
-		protected virtual string DeleteConfirmationMessage
+		protected virtual bool GetDeleteConfirmationMessage(IList<TSummary> itemsToBeDeleted, out string message)
 		{
-			get { return SR.MessageConfirmDeleteSelectedItems; }
+			message= SR.MessageConfirmDeleteSelectedItems;
+			return true;
 		}
 
 		/// <summary>

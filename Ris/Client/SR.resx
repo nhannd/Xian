@@ -1185,4 +1185,7 @@
   <data name="TitleHome" xml:space="preserve">
     <value>Home</value>
   </data>
+  <data name="MessageSavedContactPointsCannotBeDeleted" xml:space="preserve">
+    <value>Contact points that have already been saved cannot be deleted.  Use the Toggle Activation tool to de-activate them instead.</value>
+  </data>
 </root>

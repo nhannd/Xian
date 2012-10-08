@@ -36,34 +36,34 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			this._browse = new System.Windows.Forms.Button();
 			this._outputPath = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.panel2 = new System.Windows.Forms.Panel();
+			this.label2 = new System.Windows.Forms.Label();
+			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _studyDescription
 			// 
 			resources.ApplyResources(this._studyDescription, "_studyDescription");
 			this._studyDescription.Name = "_studyDescription";
-			this._studyDescription.ToolTip = null;
 			this._studyDescription.Value = null;
 			// 
 			// _patientId
 			// 
 			resources.ApplyResources(this._patientId, "_patientId");
 			this._patientId.Name = "_patientId";
-			this._patientId.ToolTip = null;
 			this._patientId.Value = null;
 			// 
 			// _accessionNumber
 			// 
 			resources.ApplyResources(this._accessionNumber, "_accessionNumber");
 			this._accessionNumber.Name = "_accessionNumber";
-			this._accessionNumber.ToolTip = null;
 			this._accessionNumber.Value = null;
 			// 
 			// _patientsName
 			// 
 			resources.ApplyResources(this._patientsName, "_patientsName");
 			this._patientsName.Name = "_patientsName";
-			this._patientsName.ToolTip = null;
 			this._patientsName.Value = null;
 			// 
 			// _dateOfBirth
@@ -102,7 +102,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			// 
 			resources.ApplyResources(this._studyId, "_studyId");
 			this._studyId.Name = "_studyId";
-			this._studyId.ToolTip = null;
 			this._studyId.Value = null;
 			// 
 			// _browse
@@ -122,10 +121,29 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			resources.ApplyResources(this.label1, "label1");
 			this.label1.Name = "label1";
 			// 
+			// panel1
+			// 
+			this.panel1.Controls.Add(this.label2);
+			this.panel1.Controls.Add(this.panel2);
+			resources.ApplyResources(this.panel1, "panel1");
+			this.panel1.Name = "panel1";
+			// 
+			// panel2
+			// 
+			this.panel2.BackgroundImage = global::ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.Properties.Resources.WarningHS;
+			resources.ApplyResources(this.panel2, "panel2");
+			this.panel2.Name = "panel2";
+			// 
+			// label2
+			// 
+			resources.ApplyResources(this.label2, "label2");
+			this.label2.Name = "label2";
+			// 
 			// ExportComponentPanel
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.panel1);
 			this.Controls.Add(this._outputPath);
 			this.Controls.Add(this._browse);
 			this.Controls.Add(this._studyId);
@@ -139,6 +157,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			this.Controls.Add(this._okButton);
 			this.Controls.Add(this.label1);
 			this.Name = "ExportComponentPanel";
+			this.panel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -158,5 +177,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 		private System.Windows.Forms.Button _browse;
 		private System.Windows.Forms.TextBox _outputPath;
 		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.Panel panel2;
+		private System.Windows.Forms.Label label2;
 	}
 }

@@ -93,5 +93,14 @@ namespace ClearCanvas.Ris.Application.Common {
                 return ((bool)(this["AllowUnscheduledProcedures"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoGenerateMrn {
+            get {
+                return ((bool)(this["AutoGenerateMrn"]));
+            }
+        }
     }
 }

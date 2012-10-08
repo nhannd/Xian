@@ -242,7 +242,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				// Only calculate this once
 				if (_sizeInBytes == -1)
-					_sizeInBytes = this.SizeInPixels * this.BitsPerPixel / 8;
+					_sizeInBytes = this.SizeInPixels * this.BytesPerPixel;
 
 				return _sizeInBytes;
 			}

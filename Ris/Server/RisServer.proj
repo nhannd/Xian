@@ -72,11 +72,19 @@
     <MSBuild Projects="$(MSBuildProjectDirectory)\..\..\JScript\Build.proj" Properties="Configuration=$(Configuration);KeyFile=$(KeyFile)"/>
   </Target>
 
+  <Target Name="CopyRISWebFiles">
+    <CreateItem Include="$(MSBuildProjectDirectory)\..\web\**\*.*">
+      <Output TaskParameter="Include" ItemName="RisWebFiles" />
+    </CreateItem>
+    <Copy SourceFiles="@(RisWebFiles)" DestinationFiles="$(DistributionDir)\web\%(RecursiveDir)%(Filename)%(Extension)" />
+  </Target>
+
   <Target Name="BuildSolution" DependsOnTargets="Build JScript" >
     <RemoveDir Condition="$(DistributionBuild)" Directories="$(DistributionDir)" />
 
     <MSBuild Projects=".\RisServerCodeGen.proj" />
     <MSBuild Projects=".\RisServer.sln" Properties="$(RisServerProperties)" />
 
+    <CallTarget Targets="CopyRISWebFiles" Condition="$(DistributionBuild)" />
   </Target>
 </Project>
