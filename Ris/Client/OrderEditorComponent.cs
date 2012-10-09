@@ -1149,6 +1149,8 @@ namespace ClearCanvas.Ris.Client
 			_extensionPages.ForEach(page => page.Save());
 
 			var requisition = BuildOrderRequisition();
+			if (!ShowPreSubmitWarnings(requisition))
+				return false;
 
 			if (!NotifyOrderSubmitting(requisition))
 				return false;
@@ -1339,6 +1341,20 @@ namespace ClearCanvas.Ris.Client
 					}
 				}
 			}
+		}
+
+		private bool ShowPreSubmitWarnings(OrderRequisition requisition)
+		{
+			// ignore any procedures that are no longer modifiable (or are pending cancellation), because we don't care if these are in the past
+			var modifiableProcedures = requisition.Procedures.Where(p => p.CanModify && !p.Cancelled);
+
+			// look for procedures scheduled in the past
+			var now = Platform.Time;
+			if (modifiableProcedures.Any(p => p.ScheduledTime.HasValue && (now - p.ScheduledTime.Value > TimeSpan.FromMinutes(1))) &&
+				DialogBoxAction.No == this.Host.ShowMessageBox(SR.WarnProceduresScheduledInThePast, MessageBoxActions.YesNo))
+				return false;
+
+			return true;
 		}
 	}
 }
