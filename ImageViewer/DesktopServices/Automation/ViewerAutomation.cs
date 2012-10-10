@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
             {
                 IImageViewer viewer = ViewerAutomationTool.GetViewer(viewerId);
                 if (viewer != null && GetViewerWorkspace(viewer) != null)
-                    viewers.Add(new Viewer(viewerId, GetPrimaryStudyInstanceUid(viewer)));
+                    viewers.Add(new Viewer(viewerId, GetPrimaryStudyIdentifier(viewer)));
             }
 
             if (viewers.Count == 0)
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
                 helper.HandleErrors = false;
                 var viewer = helper.OpenFiles();
                 var viewerId = ViewerAutomationTool.GetViewerId(viewer);
-                return new OpenFilesResult { Viewer = new Viewer(viewerId.Value, GetPrimaryStudyInstanceUid(viewer)) };
+                return new OpenFilesResult { Viewer = new Viewer(viewerId.Value, GetPrimaryStudyIdentifier(viewer)) };
 
             }
             catch (Exception e)
@@ -214,7 +214,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 				if (viewerId == null)
 					throw new FaultException("Failed to retrieve the id of the specified viewer.");
 
-				result.Viewer = new Viewer(viewerId.Value, primaryStudyInstanceUid);
+				result.Viewer = new Viewer(viewerId.Value, GetPrimaryStudyIdentifier(viewer));
 				return result;
 			}
 			catch(FaultException)
@@ -457,6 +457,12 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			}
 
 			return null;
+		}
+
+		private static StudyRootStudyIdentifier GetPrimaryStudyIdentifier(IImageViewer viewer)
+		{
+			// TODO CR (Oct 12): Add support for patient reconciliation (after we move that concept into viewer common)
+			return viewer.StudyTree.Patients.SelectMany(p => p.Studies).Select(s => new StudyRootStudyIdentifier(s.GetIdentifier())).FirstOrDefault();
 		}
 
 		private static List<string> GetAdditionalStudyInstanceUids(IImageViewer viewer)

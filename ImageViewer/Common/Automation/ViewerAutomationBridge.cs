@@ -152,37 +152,24 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// <summary>
 		/// Gets all the active viewers where the primary study has the given accession number.
 		/// </summary>
+		/// <remarks>
+		/// The accession number is matched using a case-insensitive comparison.
+		/// </remarks>
 		public IList<Viewer> GetViewersByAccessionNumber(string accessionNumber)
 		{
-			if (_studyLocatorBridge != null)
-			{
-				LocateFailureInfo[] failures;
-				var results = _studyLocatorBridge.LocateStudyByAccessionNumber(accessionNumber, out failures);
-				CheckAtLeastOneStudy(results);
-				return GetViewers(results);
-			}
-
-			IList<StudyRootStudyIdentifier> studies = _studyRootQueryBridge.QueryByAccessionNumber(accessionNumber);
-			CheckAtLeastOneStudy(studies);
-			return GetViewers(studies);
+			return GetViewers().Where(viewer => viewer.PrimaryStudyIdentifier != null && string.Equals(viewer.PrimaryStudyIdentifier.AccessionNumber, accessionNumber, StringComparison.InvariantCultureIgnoreCase)).ToList();
 		}
 
 		/// <summary>
 		/// Gets all the active viewers where the primary study has the given patient id.
 		/// </summary>
+		/// <remarks>
+		/// The patient ID is matched using a case-insensitive comparison. This method does not support reconciled patient IDs, and must match the original patient ID.
+		/// </remarks>
 		public IList<Viewer> GetViewersByPatientId(string patientId)
 		{
-			if (_studyLocatorBridge != null)
-			{
-				LocateFailureInfo[] failures;
-				var results = _studyLocatorBridge.LocateStudyByPatientId(patientId, out failures);
-				CheckAtLeastOneStudy(results);
-				return GetViewers(results);
-			}
-
-			IList<StudyRootStudyIdentifier> studies = _studyRootQueryBridge.QueryByPatientId(patientId);
-			CheckAtLeastOneStudy(studies);
-			return GetViewers(studies);
+			// TODO CR (Oct 12): Add support for patient reconciliation (after we move that concept into viewer common)
+			return GetViewers().Where(viewer => viewer.PrimaryStudyIdentifier != null && string.Equals(viewer.PrimaryStudyIdentifier.PatientId, patientId, StringComparison.InvariantCultureIgnoreCase)).ToList();
 		}
 
 		/// <summary>
