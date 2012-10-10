@@ -29,7 +29,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manifest Items", "Manifest 
 		ManifestInputMpr.xml = ManifestInputMpr.xml
 		ManifestInputReporting.xml = ManifestInputReporting.xml
 		ManifestInputStreaming.xml = ManifestInputStreaming.xml
-		ManifestInputStudyBrowser.xml = ManifestInputStudyBrowser.xml
 		ManifestInputStudyComposer.xml = ManifestInputStudyComposer.xml
 		ManifestInputStudyFilters.xml = ManifestInputStudyFilters.xml
 		ManifestInputSynchronizationTools.xml = ManifestInputSynchronizationTools.xml
