@@ -44,6 +44,8 @@
     <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate\Castle.Core.dll" />
     <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate\NHibernate.dll" />
     <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate\NHibernate.Caches.SysCache.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate\Npgsql.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate\Mono.Security.dll" />
 
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.dll" />
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.Hibernate.dll" />
