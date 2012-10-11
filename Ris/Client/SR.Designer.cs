@@ -2050,7 +2050,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Expiry date cannot be in the past..
+        ///   Looks up a localized string similar to Expiry date must be in the future..
         /// </summary>
         internal static string MessageInvalidExpiryDate {
             get {
