@@ -898,7 +898,7 @@
     <value>Valid Until</value>
   </data>
   <data name="MessageInvalidExpiryDate" xml:space="preserve">
-    <value>Expiry date cannot be in the past.</value>
+    <value>Expiry date must be in the future.</value>
   </data>
   <data name="MessageDateOfDeathMustBeLaterThanOrEqualToDateOfBirth" xml:space="preserve">
     <value>Date of death must be later than or equal to date of birth.</value>
