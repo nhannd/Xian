@@ -8,6 +8,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
     public class StudyTableItem : IStudyRootStudyIdentifier, IStudyEntryData
     {
+        private static readonly string[] _emptyStringArray = new string[0];
         private StudyEntry _entry;
 
         public StudyTableItem(StudyEntry entry)
@@ -41,19 +42,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public string[] InstitutionNamesInStudy
         {
-            get { return EntryData.InstitutionNamesInStudy; }
+            get { return EntryData.InstitutionNamesInStudy ?? _emptyStringArray; }
             set { EntryData.InstitutionNamesInStudy = value; }
         }
 
         public string[] StationNamesInStudy
         {
-            get { return EntryData.StationNamesInStudy; }
+            get { return EntryData.StationNamesInStudy ?? _emptyStringArray; }
             set { EntryData.StationNamesInStudy = value; }
         }
 
         public string[] SourceAETitlesInStudy
         {
-            get { return EntryData.SourceAETitlesInStudy; }
+            get { return EntryData.SourceAETitlesInStudy ?? _emptyStringArray; }
             set { EntryData.SourceAETitlesInStudy = value; }
         }
 
@@ -75,17 +76,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public string ResponsibleOrganization
         {
-            get { return Identifier.ResponsibleOrganization; }
+            get { return Identifier.ResponsibleOrganization ?? string.Empty; }
         }
 
         public string SpecificCharacterSet
         {
-            get { return Identifier.SpecificCharacterSet; }
+            get { return Identifier.SpecificCharacterSet ?? string.Empty; }
         }
 
         string IIdentifier.RetrieveAeTitle
         {
-            get { return Identifier.RetrieveAeTitle; }
+            get { return Identifier.RetrieveAeTitle ?? string.Empty; }
         }
 
         IApplicationEntity IIdentifier.RetrieveAE
@@ -95,84 +96,84 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public string InstanceAvailability
         {
-            get { return Identifier.InstanceAvailability; }
+            get { return Identifier.InstanceAvailability ?? string.Empty; }
         }
 
         public string ResponsiblePersonRole
         {
-            get { return Identifier.ResponsiblePersonRole; }
+            get { return Identifier.ResponsiblePersonRole ?? string.Empty; }
         }
 
         public string ResponsiblePerson
         {
-            get { return Identifier.ResponsiblePerson; }
+            get { return Identifier.ResponsiblePerson ?? string.Empty; }
         }
 
         public string PatientBreedCodeSequenceCodeMeaning
         {
-            get { return Identifier.PatientBreedCodeSequenceCodeMeaning; }
+            get { return Identifier.PatientBreedCodeSequenceCodeMeaning ?? string.Empty; }
         }
 
         public string PatientBreedCodeSequenceCodeValue
         {
-            get { return Identifier.PatientBreedCodeSequenceCodeValue; }
+            get { return Identifier.PatientBreedCodeSequenceCodeValue ?? string.Empty; }
         }
 
         public string PatientBreedCodeSequenceCodingSchemeDesignator
         {
-            get { return Identifier.PatientBreedCodeSequenceCodingSchemeDesignator; }
+            get { return Identifier.PatientBreedCodeSequenceCodingSchemeDesignator ?? string.Empty; }
         }
 
         public string PatientBreedDescription
         {
-            get { return Identifier.PatientBreedDescription; }
+            get { return Identifier.PatientBreedDescription ?? string.Empty; }
         }
 
         public string PatientSpeciesCodeSequenceCodeMeaning
         {
-            get { return Identifier.PatientSpeciesCodeSequenceCodeMeaning; }
+            get { return Identifier.PatientSpeciesCodeSequenceCodeMeaning ?? string.Empty; }
         }
 
         public string PatientSpeciesCodeSequenceCodeValue
         {
-            get { return Identifier.PatientSpeciesCodeSequenceCodeValue; }
+            get { return Identifier.PatientSpeciesCodeSequenceCodeValue ?? string.Empty; }
         }
 
         public string PatientSpeciesCodeSequenceCodingSchemeDesignator
         {
-            get { return Identifier.PatientSpeciesCodeSequenceCodingSchemeDesignator; }
+            get { return Identifier.PatientSpeciesCodeSequenceCodingSchemeDesignator ?? string.Empty; }
         }
 
         public string PatientSpeciesDescription
         {
-            get { return Identifier.PatientSpeciesDescription; }
+            get { return Identifier.PatientSpeciesDescription ?? string.Empty; }
         }
 
         public string PatientsSex
         {
-            get { return Identifier.PatientsSex; }
+            get { return Identifier.PatientsSex ?? string.Empty; }
         }
 
         public string PatientsBirthTime
         {
-            get { return Identifier.PatientsBirthTime; }
+            get { return Identifier.PatientsBirthTime ?? string.Empty; }
         }
 
         public string PatientsBirthDate
         {
-            get { return Identifier.PatientsBirthDate; }
+            get { return Identifier.PatientsBirthDate ?? string.Empty; }
         }
 
         public PersonName PatientsName { get { return new PersonName(Identifier.PatientsName ?? ""); } }
 
         string IPatientData.PatientsName
         {
-            get { return Identifier.PatientsName; }
+            get { return Identifier.PatientsName ?? string.Empty; }
         }
 
         public string PatientId
         {
-            get { return Identifier.PatientId; }
+            get { return Identifier.PatientId ?? string.Empty; }
         }
 
         public int? NumberOfStudyRelatedInstances
@@ -189,47 +190,47 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         
         string IStudyData.ReferringPhysiciansName
         {
-            get { return Identifier.ReferringPhysiciansName; }
+            get { return Identifier.ReferringPhysiciansName ?? string.Empty; }
         }
 
         public string AccessionNumber
         {
-            get { return Identifier.AccessionNumber; }
+            get { return Identifier.AccessionNumber ?? string.Empty; }
         }
 
         public string StudyTime
         {
-            get { return Identifier.StudyTime; }
+            get { return Identifier.StudyTime ?? string.Empty; }
         }
 
         public string StudyDate
         {
-            get { return Identifier.StudyDate; }
+            get { return Identifier.StudyDate ?? string.Empty; }
         }
 
         public string StudyId
         {
-            get { return Identifier.StudyId; }
+            get { return Identifier.StudyId ?? string.Empty; }
         }
 
         public string StudyDescription
         {
-            get { return Identifier.StudyDescription; }
+            get { return Identifier.StudyDescription ?? string.Empty; }
         }
 
         public string[] ModalitiesInStudy
         {
-            get { return Identifier.ModalitiesInStudy; }
+            get { return Identifier.ModalitiesInStudy ?? _emptyStringArray; }
         }
 
         public string[] SopClassesInStudy
         {
-            get { return Identifier.SopClassesInStudy; }
+            get { return Identifier.SopClassesInStudy ?? _emptyStringArray; }
         }
 
         public string StudyInstanceUid
         {
-            get { return Identifier.StudyInstanceUid; }
+            get { return Identifier.StudyInstanceUid ?? string.Empty; }
         }
 
         public IDicomServiceNode Server

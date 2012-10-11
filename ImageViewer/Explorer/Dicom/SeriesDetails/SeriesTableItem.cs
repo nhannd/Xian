@@ -7,6 +7,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 {
     public class SeriesTableItem : ISeriesIdentifier, ISeriesEntryData
     {
+        private static readonly string[] _emptyStringArray = new string[0];
         private readonly SeriesEntry _entry;
 
         public SeriesTableItem(SeriesEntry entry)
@@ -25,28 +26,28 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
         public string[] SourceAETitlesInSeries
         {
-            get { return Data.SourceAETitlesInSeries; }
+            get { return Data.SourceAETitlesInSeries ?? _emptyStringArray; }
             set { Data.SourceAETitlesInSeries = value; }
         }
 
         public string StudyInstanceUid
         {
-            get { return Series.StudyInstanceUid; }
+            get { return Series.StudyInstanceUid ?? string.Empty; }
         }
 
         public string SeriesInstanceUid
         {
-            get { return Series.SeriesInstanceUid; }
+            get { return Series.SeriesInstanceUid ?? string.Empty; }
         }
 
         public string Modality
         {
-            get { return Series.Modality; }
+            get { return Series.Modality ?? string.Empty; }
         }
 
         public string SeriesDescription
         {
-            get { return Series.SeriesDescription; }
+            get { return Series.SeriesDescription ?? string.Empty; }
         }
 
         public int? NumberOfSeriesRelatedInstances
@@ -56,17 +57,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
         public string SpecificCharacterSet
         {
-            get { return Series.SpecificCharacterSet; }
+            get { return Series.SpecificCharacterSet ?? string.Empty; }
         }
 
         public string RetrieveAeTitle
         {
-            get { return Series.RetrieveAeTitle; }
+            get { return Series.RetrieveAeTitle ?? string.Empty; }
         }
 
         public string InstanceAvailability
         {
-            get { return Series.InstanceAvailability; }
+            get { return Series.InstanceAvailability ?? string.Empty; }
         }
 
         public IApplicationEntity RetrieveAE
