@@ -1646,16 +1646,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private void VerifyStudy(StudyStorageLocation studyStorage)
         {
             Platform.CheckForNullReference(studyStorage, "studyStorage");
-            StudyIntegrityValidationModes mode = GetValidationMode();
-            if (mode != StudyIntegrityValidationModes.None)
+			// Only verify if the Study record exists
+            if (studyStorage.Study != null)
             {
-                Platform.Log(LogLevel.Info, "Verifying study {0}", studyStorage.StudyInstanceUid);
-                using (new ServerExecutionContext())
+                StudyIntegrityValidationModes mode = GetValidationMode();
+                if (mode != StudyIntegrityValidationModes.None)
                 {
-                    StudyIntegrityValidator validator = new StudyIntegrityValidator();
-                    validator.ValidateStudyState(WorkQueueItem.WorkQueueTypeEnum.ToString(), studyStorage, mode);
+                    Platform.Log(LogLevel.Info, "Verifying study {0}", studyStorage.StudyInstanceUid);
+                    using (new ServerExecutionContext())
+                    {
+                        StudyIntegrityValidator validator = new StudyIntegrityValidator();
+                        validator.ValidateStudyState(WorkQueueItem.WorkQueueTypeEnum.ToString(), studyStorage, mode);
+                    }
+                    Platform.Log(LogLevel.Info, "Study {0} has been verified", studyStorage.StudyInstanceUid);
                 }
-                Platform.Log(LogLevel.Info, "Study {0} has been verified", studyStorage.StudyInstanceUid);
+            
             }
             
             
