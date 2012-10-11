@@ -15,7 +15,9 @@ using System;
 
 namespace ClearCanvas.Web.Common
 {
-	[DataContract(Namespace = Namespace.Value)]
+    #region Data Contracts
+
+    [DataContract(Namespace = Namespace.Value)]
     public abstract class StartApplicationRequest : DataContractBase
 	{
 		[DataMember(IsRequired = true)]
@@ -45,7 +47,7 @@ namespace ClearCanvas.Web.Common
     public class StartApplicationResult : DataContractBase
     {
         [DataMember(IsRequired = true)]
-        public Guid AppIdentifier { get; set; }
+        public Guid ApplicationId { get; set; }
     }
     
 	[DataContract(Namespace = Namespace.Value)]
@@ -56,7 +58,7 @@ namespace ClearCanvas.Web.Common
 	}
 
     [DataContract(Namespace = Namespace.Value)]
-    public class GetPendingEventRequest : DataContractBase
+    public class GetPendingEventsRequest : DataContractBase
 	{
 		[DataMember(IsRequired = true)]
 		public Guid ApplicationId { get; set; }
@@ -66,31 +68,13 @@ namespace ClearCanvas.Web.Common
 	}
 
     [DataContract(Namespace = Namespace.Value)]
-    public class GetPendingEventResult : DataContractBase
+    public class GetPendingEventsResult : DataContractBase
     {
         [DataMember(IsRequired = true)]
         public Guid ApplicationId { get; set; }
 
         [DataMember(IsRequired = false)]
         public EventSet EventSet { get; set; }
-    }
-
-    [ServiceContract(Namespace = Namespace.Value)]
-	[ServiceKnownType("GetKnownTypes", typeof(ServiceKnownTypeExtensionPoint))]
-	public interface IApplicationService
-    {
-		[OperationContract(IsOneWay = false)]
-        [FaultContract(typeof(SessionValidationFault))]
-        [FaultContract(typeof(OutOfResourceFault))]
-        StartApplicationResult StartApplication(StartApplicationRequest request);
-
-		[OperationContract(IsOneWay = false)]
-        [FaultContract(typeof(InvalidOperationFault))]
-        void StopApplication(StopApplicationRequest request);
-
-        [OperationContract(IsOneWay = false)]
-        [FaultContract(typeof(InvalidOperationFault))]
-        ProcessMessagesResult ProcessMessages(MessageSet messages);
     }
 
     [DataContract(Namespace = Namespace.Value)]
@@ -101,31 +85,6 @@ namespace ClearCanvas.Web.Common
 
         [DataMember(IsRequired = false)]
         public EventSet EventSet { get; set; }
-    }
-
-    [ServiceContract(Namespace = Namespace.Value)]
-    public interface IPollingApplicationService : IApplicationService
-    {
-        [OperationContract(IsOneWay = false)]
-        [FaultContract(typeof(InvalidOperationFault))]
-        GetPendingEventResult GetPendingEvent(GetPendingEventRequest request);
-
-        [OperationContract(IsOneWay = true)]
-        void ReportPerformance(PerformanceData data);
-
-        [OperationContract(IsOneWay = false)]
-        void SetProperty(SetPropertyRequest request);
-    }
-
-    public interface IApplicationServiceCallback
-    {
-        [OperationContract(IsOneWay = false)]
-        void ProcessEvents(ProcessEventsRequest request);
-    }
-
-    [ServiceContract(Namespace = Namespace.Value, CallbackContract = typeof(IApplicationServiceCallback))]
-    public interface IDuplexApplicationService : IApplicationService
-    {
     }
 
     [DataContract]
@@ -144,5 +103,21 @@ namespace ClearCanvas.Web.Common
 
         [DataMember]
         public string Value { get; set; }
+    }
+
+    #endregion
+
+    [ServiceContract(Namespace = Namespace.Value)]
+	[ServiceKnownType("GetKnownTypes", typeof(ServiceKnownTypeExtensionPoint))]
+	public interface IApplicationService
+    {
+		[OperationContract(IsOneWay = false)]
+        [FaultContract(typeof(SessionValidationFault))]
+        [FaultContract(typeof(OutOfResourceFault))]
+        StartApplicationResult StartApplication(StartApplicationRequest request);
+
+		[OperationContract(IsOneWay = false)]
+        [FaultContract(typeof(InvalidOperationFault))]
+        void StopApplication(StopApplicationRequest request);
     }
 }

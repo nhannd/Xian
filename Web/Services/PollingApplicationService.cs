@@ -24,23 +24,18 @@ namespace ClearCanvas.Web.Services
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
     public class PollingApplicationService : ApplicationService, IPollingApplicationService
     {
-        public void ReportPerformance(PerformanceData data)
+        public GetPendingEventsResult GetPendingEvents(GetPendingEventsRequest request)
         {
-            PerformanceMonitor.Report(data);
-        }
-
-        public GetPendingEventResult GetPendingEvent(GetPendingEventRequest request)
-        {
-            IApplication application = Application.Find(request.ApplicationId);
-
+            Application application = Application.Find(request.ApplicationId);
             if (application != null)
             {
+                var eventQueue = (EventQueue)application.EventDeliveryStrategy;
                 try
                 {
-                    var response = new GetPendingEventResult
+                    var response = new GetPendingEventsResult
                     {
                         ApplicationId = application.Identifier,
-                        EventSet = application.GetPendingOutboundEvent(Math.Max(0, request.MaxWaitTime))
+                        EventSet = eventQueue.GetPendingEvents(Math.Max(0, request.MaxWaitTime))
                     };
 
                     return response;
@@ -50,7 +45,7 @@ namespace ClearCanvas.Web.Services
                     // TODO (CR Sep 2012): What if it happened not on shutdown?
 
                     // This happens on shutdown, just return an empty response.
-                    return new GetPendingEventResult
+                    return new GetPendingEventsResult
                     {
                         ApplicationId = application.Identifier,
                     };
@@ -62,15 +57,6 @@ namespace ClearCanvas.Web.Services
             string reason = String.Format("Could not find the specified ApplicationId: {0}", request.ApplicationId);
             Platform.Log(LogLevel.Error, reason);
             throw new FaultException<InvalidOperationFault>(new InvalidOperationFault(), reason);
-        }
-
-        public void SetProperty(SetPropertyRequest request)
-        {
-            IApplication application = Application.Find(request.ApplicationId);
-            if (application != null)
-            {
-                application.SetProperty(request.Key, request.Value);
-            }
         }
     }
 }

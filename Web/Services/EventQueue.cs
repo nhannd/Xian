@@ -13,42 +13,69 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Web.Common;
 
 namespace ClearCanvas.Web.Services
 {
-    internal class EventQueue : IDisposable
+    public enum EventBatchMethod
     {
-		private readonly Application _application;
+        PerType,
+        PerTarget
+    }
 
-      	private readonly object _syncLock = new object();
+    public class EventQueue : IEventDeliveryStrategy, IDisposable
+    {
+        private readonly EventBatchMethod _eventBatchMethod;
+        private Guid _applicationId;
+        private readonly object _syncLock = new object();
 		private readonly Queue<Event> _queue;
 		private int _nextEventSetNumber = 1;
         
-		public EventQueue(Application application)
+		public EventQueue() : this(EventBatchMethod.PerTarget)
         {
-		    Platform.CheckForNullReference(application, "application");
-            _application = application;
+		}
 
+        public EventQueue(EventBatchMethod eventBatchMethod)
+        {
+            _eventBatchMethod = eventBatchMethod;
             _queue = new Queue<Event>();
-		}
+        }
 
-		public void Send(Event @event)
+        #region IEventDeliveryStrategy Members
+
+        Guid IEventDeliveryStrategy.ApplicationId
+        {
+            get { return _applicationId; }
+            set { _applicationId = value; }
+        }
+
+        void IEventDeliveryStrategy.Deliver(Event @event)
 		{
-		    Platform.CheckForNullReference(@event, "event");
-			lock (_syncLock)
-			{
-				_queue.Enqueue(@event);
-				Monitor.Pulse(_syncLock);
-			}
+            Enqueue(@event);
 		}
 
+        #endregion
+
+        public event EventHandler EventQueued;
+
+        protected virtual void Enqueue(Event @event)
+        {
+            Platform.CheckForNullReference(@event, "event");
+            lock (_syncLock)
+            {
+                _queue.Enqueue(@event);
+                EventsHelper.Fire(EventQueued, this, EventArgs.Empty);
+                Monitor.Pulse(_syncLock);
+            }
+        }
+        
         /// <summary>
         /// Check for pending events
         /// </summary>
         /// <param name="wait">Milliseconds</param>
         /// <returns></returns>
-        internal EventSet GetPendingEvent(int wait)
+        public EventSet GetPendingEvents(int wait)
         {
             bool debugging = Platform.IsLogLevelEnabled(LogLevel.Debug);
 
@@ -79,9 +106,9 @@ namespace ClearCanvas.Web.Services
 
 
                 const int maxBatchSize = 20;
-                Dictionary<Guid, List<Event>> markedEvents = new Dictionary<Guid, List<Event>>();
+                var markedEvents = new Dictionary<Guid, List<Event>>();
 
-                List<Event> events = new List<Event>();
+                var events = new List<Event>();
                 try
                 {
                     while (_queue.Count > 0 && events.Count < maxBatchSize)
@@ -99,13 +126,13 @@ namespace ClearCanvas.Web.Services
                         {
                             Event theEvent = @event;
 
-                            if (_application.BatchMode == MessageBatchMode.PerType)
+                            if (_eventBatchMethod == EventBatchMethod.PerType)
                             {
                                 // Only include the event if there's no other event of the same type to be sent.
                                 if (events.Exists(i => i.GetType() == theEvent.GetType()))
                                     break;
                             }
-                            else if (_application.BatchMode == MessageBatchMode.PerTarget)
+                            else if (_eventBatchMethod == EventBatchMethod.PerTarget)
                             {
                                 // Note: We can send messages of the same type but targetted to different
                                 // entities in the same response instead of separated ones to improve performance. 
@@ -140,8 +167,7 @@ namespace ClearCanvas.Web.Services
 
                     foreach(var e in events)
                     {
-                        Platform.Log(LogLevel.Debug, "Event Sent: {0} [{1}]", 
-                            e.GetType().Name, e.ToString());
+                        Platform.Log(LogLevel.Debug, "Event Sent: {0} [{1}]", e.GetType().Name, e.ToString());
                     }
                 }
                 if (events.Count > 0)
@@ -149,7 +175,7 @@ namespace ClearCanvas.Web.Services
                     return new EventSet
                     {
                         Events = events.ToArray(),
-                        ApplicationId = _application.Identifier,
+                        ApplicationId = _applicationId,
                         Number = _nextEventSetNumber++,
                         HasMorePending = _queue.Count > 0,
                     };

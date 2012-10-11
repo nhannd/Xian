@@ -111,11 +111,6 @@ namespace ClearCanvas.ImageViewer.Web
 		}
 	}
 
-    internal class RemoteClientInformation
-    {
-        public string IPAddress {get;set;}
-    }
-
 	[Application(typeof(StartViewerApplicationRequest))]
 	[ExtensionOf(typeof(ApplicationExtensionPoint))]
 	public class ViewerApplication : ClearCanvas.Web.Services.Application
@@ -125,25 +120,12 @@ namespace ClearCanvas.ImageViewer.Web
 		private ImageViewerComponent _viewer;
 		private EntityHandler _viewerHandler;
 
-	    private readonly RemoteClientInformation _client;
-        
-        public ViewerApplication()
-        {
-            _client = new RemoteClientInformation
-                          {
-                              IPAddress = GetClientAddress(OperationContext.Current)
-                          };
-
-        }
-
         public override string InstanceName
         {
             get
             {
-                return String.Format("WebStation (user={0}, ip={1})",
-                                         Principal != null ? Principal.Identity.Name : "Unknown",
-                                         _client.IPAddress);   
-
+                // TODO (Phoenix5): this used to show the IP address of the client. 
+                return String.Format("WebStation (user={0})", Principal != null ? Principal.Identity.Name : "Unknown");   
             }
         }
 
@@ -266,38 +248,40 @@ namespace ClearCanvas.ImageViewer.Web
 		}
 
 
-	    protected override EventSet OnGetPendingOutboundEvent(int wait)
-	    {
-            if (Context == null)
-            {
-                string reason = string.Format("Application context no longer exists");
-                throw new Exception(reason);
-            }
+        //TODO (Phoenix5): figure out why this was here and restore.
 
-            return Context.GetPendingOutboundEvent(wait);
-	    }
+        //protected override EventSet OnGetPendingOutboundEvent(int wait)
+        //{
+        //    if (Context == null)
+        //    {
+        //        string reason = string.Format("Application context no longer exists");
+        //        throw new Exception(reason);
+        //    }
+
+        //    return Context.GetPendingOutboundEvent(wait);
+        //}
 
 
-	    protected override ProcessMessagesResult OnProcessMessageEnd(MessageSet messageSet, bool messageWasProcessed)
-	    {
-            if (!messageWasProcessed)
-            {
-                return new ProcessMessagesResult { EventSet = null, Pending = true };
-            }
+        //protected override ProcessMessagesResult OnProcessMessageEnd(MessageSet messageSet, bool messageWasProcessed)
+        //{
+        //    if (!messageWasProcessed)
+        //    {
+        //        return new ProcessMessagesResult { EventSet = null, Pending = true };
+        //    }
             
-            bool hasMouseMoveMsg = false;
-            foreach (Message m in messageSet.Messages)
-            {
-                if (m is MouseMoveMessage)
-                {
-                    hasMouseMoveMsg = true;
-                    break;
-                }
-            }
-            EventSet ev = GetPendingOutboundEvent(hasMouseMoveMsg ? 100 : 0);
+        //    bool hasMouseMoveMsg = false;
+        //    foreach (Message m in messageSet.Messages)
+        //    {
+        //        if (m is MouseMoveMessage)
+        //        {
+        //            hasMouseMoveMsg = true;
+        //            break;
+        //        }
+        //    }
+        //    EventSet ev = GetPendingOutboundEvent(hasMouseMoveMsg ? 100 : 0);
 
-            return new ProcessMessagesResult { EventSet = ev, Pending = false };
-	    }
+        //    return new ProcessMessagesResult { EventSet = ev, Pending = false };
+        //}
 
 	    protected override void OnStart(StartApplicationRequest request)
 		{

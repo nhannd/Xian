@@ -77,13 +77,11 @@
     <Compile Include="ApplicationCache.cs" />
     <Compile Include="ApplicationContext.cs" />
     <Compile Include="ApplicationService.cs" />
-    <Compile Include="ConsoleHelper.cs" />
     <Compile Include="EntityHandler.cs" />
     <Compile Include="EntityHandlerStore.cs" />
     <Compile Include="EventQueue.cs" />
     <Compile Include="ExceptionTranslator.cs" />
     <Compile Include="IncomingMessageQueue.cs" />
-    <Compile Include="PerformanceMonitor.cs" />
     <Compile Include="PollingApplicationService.cs" />
     <Compile Include="SilverlightFaultBehavior.cs" />
     <Compile Include="SR.Designer.cs">

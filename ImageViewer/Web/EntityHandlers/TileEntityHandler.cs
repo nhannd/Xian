@@ -86,6 +86,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 	{
 		private readonly string _mimeType = "image/jpeg";
 
+        // TODO (Phoenix5): change how this works 
         // TODO: Should this be at the application level?
         // So that all images are at the same quality during sync stacking
         // How can other tiles actively refresh themselves when this tile does?
@@ -144,28 +145,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             }
 
 	        return 80L; //default
-        }
-
-        private bool IsDynamicImageQualityEnabled
-        {
-            get
-            {
-                //TODO: Cache this and update whenever the client changes it?
-
-                const string key = "DynamicImageQualityEnabled";
-
-                if (ApplicationContext.HasProperty(key))
-                {
-                    string value;
-                    if (ApplicationContext.TryGetValue(key, out value))
-                    {
-                        bool isEnabled;
-                        if (Boolean.TryParse(value, out isEnabled))
-                            return isEnabled;
-                    }
-                }
-                return false;
-            }
         }
 
 		private Rectangle ClientRectangle
@@ -323,12 +302,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
         private void OnInformationBoxUpdated(object sender, EventArgs e)
         {
-            if (_tile.InformationBox == null)
-            {
-                NotifyEntityPropertyChanged("InformationBox", null);
-                return;
-            }
-
             NotifyEntityPropertyChanged("InformationBox", CreateInformationBox());
         }
 
@@ -440,20 +413,15 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 				return null;
 
             if (_refreshingClient)
-            {
                 return GetCurrentTileBitmap();
-            }
 
-            IImageSopProvider sop = _tile.PresentationImage as IImageSopProvider;
+            var sop = _tile.PresentationImage as IImageSopProvider;
             if (sop != null)
             {
-                //TODO (CR May 2010): sops are shared between users and threads.  This will be an issue
-                //for dynamic quality changes.
+                //TODO (CR May 2010): sops are shared between users and threads.  This will be an issue for dynamic quality changes.
                 DicomAttribute attrib = sop.ImageSop[DicomTags.LossyImageCompression];
                 DicomAttribute ratioAttrib = sop.ImageSop[DicomTags.LossyImageCompressionRatio];
-                bool lossy = false;
-                if (_mimeType.Equals("image/jpeg"))
-                    lossy = true;
+                bool lossy = _mimeType == "image/jpeg";
                 if (lossy)
                 {
                     attrib.SetStringValue("01");
@@ -467,7 +435,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                 }
             }
 
-            WebViewStudyStatistics stats = new WebViewStudyStatistics(_mimeType);
+            var stats = new WebViewStudyStatistics(_mimeType);
 
             //long t0 = Environment.TickCount;
             stats.DrawToBitmapTime.Start();
@@ -495,21 +463,21 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                 bmp1 = (Bitmap)Bitmap.Clone();
             }
 
-            //TODO (CR May 2010): should be in using and/or closed.  Separate function?
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
 
             _quality = _defaultJpegQFactor;
-            if (_isMouseDown && IsDynamicImageQualityEnabled)
+            // TODO (Phoenix5): fix/restore.
+            bool isDynamicQualityImage = _isMouseDown && false;
+            if (isDynamicQualityImage)
             {
                 _quality = GetOptimalQFactor(Bitmap.Width, Bitmap.Height, sop);
-
                 InitOrUpdateRefreshClientTimer();
             }
 
             stats.SaveTime.Start();
             if (_mimeType.Equals("image/jpeg"))
             {
-                EncoderParameters eps = new EncoderParameters(1);
+                var eps = new EncoderParameters(1);
                 eps.Param[0] = new EncoderParameter(Encoder.Quality, _quality);
                 ImageCodecInfo ici = GetEncoderInfo(_mimeType);
 
@@ -525,9 +493,10 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             byte[] imageBuffer = ms.ToArray();
 
             if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+            {
                 Platform.Log(LogLevel.Debug, "Render Frame #{0}. Size= {1}bytes. Q={2} {3}. Highbit={4}",
-                    sop.ImageSop.InstanceNumber, imageBuffer.Length, _quality, _isMouseDown && IsDynamicImageQualityEnabled ? "[Dynamic]" : "",
-                    sop.Frame.HighBit);
+                    sop.ImageSop.InstanceNumber, imageBuffer.Length, _quality, isDynamicQualityImage ? "[Dynamic]" : "", sop.Frame.HighBit);
+            }
 
             ms.Position = 0;
             stats.ImageSize = (ulong)imageBuffer.LongLength;
@@ -543,12 +512,10 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
             //Console.WriteLine("Tile {0} : DrawToBitmap (size: {3}, mime: {2}):{1}ms", tile.Identifier,Environment.TickCount - t0,mimeType, ms.Length);
 
-            //TODO (CR May 2010): #if DEBUG?
             if (DiagnosticsSettings.Default.CompareImageQuality)
             {
-                Bitmap bmp2 = new Bitmap(ms);
+                var bmp2 = new Bitmap(ms);
                 ImageComparisonResult result = BitmapComparison.Compare(ref bmp1, ref bmp2);
-                //TODO (CR May 2010): ConsoleHelper
                 Console.WriteLine("BMP vs {0} w/ client size: {1}x{2}", _mimeType, bmp2.Height, bmp2.Width);
                 Console.WriteLine("\tR: MinError={2:0.00} MaxError={3:0.00}  Mean={0:0.00}  STD={1:0.00}", result.Channels[0].MeanError, result.Channels[0].StdDeviation, Math.Abs(result.Channels[0].MinError), Math.Abs(result.Channels[0].MaxError));
                 Console.WriteLine("\tG: MinError={2:0.00} MaxError={3:0.00}  Mean={0:0.00}  STD={1:0.00}", result.Channels[1].MeanError, result.Channels[1].StdDeviation, Math.Abs(result.Channels[1].MinError), Math.Abs(result.Channels[1].MaxError));
@@ -561,6 +528,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
         private void InitOrUpdateRefreshClientTimer()
         {
+            // TODO (Phoenix5): use a delayed event and a mediator for this. Also, this timer is rendering images on a thread, which is a no-no.
+
             // If user is drawing an ellipse, the ROI info will be updated a short time after
             // user stops moving the mouse. If we don't wait long enough user will see
             // a high-res image, the low res and another high-res image again. 
@@ -606,14 +575,14 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
         private byte[] GetCurrentTileBitmap()
         {
-            Bitmap bitmap = Bitmap;
-            MemoryStream ms = new MemoryStream();
+            var bitmap = Bitmap;
+            var ms = new MemoryStream();
 
             _quality = _defaultJpegQFactor;
 
             if (_mimeType.Equals("image/jpeg"))
             {
-                EncoderParameters eps = new EncoderParameters(1);
+                var eps = new EncoderParameters(1);
                 eps.Param[0] = new EncoderParameter(Encoder.Quality, _quality);
                 ImageCodecInfo ici = GetEncoderInfo(_mimeType);
 
@@ -648,31 +617,36 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                 _tileController.ProcessMessage(new InputManagement.MouseLeaveMessage());
                 return;
             }
-            if (message is MouseMoveMessage)
-			{
-				ProcessMouseMoveMessage((MouseMoveMessage)message);
-				//TODO: ideally, the tilecontroller would have an event and the handler would listen
-				MousePosition = _tileController.Location;
-				return;
-			}
-			if (message is MouseMessage)
-			{
-				ProcessMouseMessage((MouseMessage)message);
-				//TODO: ideally, the tilecontroller would have an event and the handler would listen
-				MousePosition = _tileController.Location;
-				return;
-			}
-			if (message is MouseWheelMessage)
-			{
-				ProcessMouseWheelMessage((MouseWheelMessage)message);
-				return;
-			}
-			if (message is UpdatePropertyMessage)
-			{
-				ProcessUpdateMessage((UpdatePropertyMessage)message);
-			}
+		    var mouseMoveMessage = message as MouseMoveMessage;
+		    if (mouseMoveMessage != null)
+		    {
+		        ProcessMouseMoveMessage(mouseMoveMessage);
+		        //TODO: ideally, the tilecontroller would have an event and the handler would listen
+		        MousePosition = _tileController.Location;
+		        return;
+		    }
+		    
+            var mouseMessage = message as MouseMessage;
+		    if (mouseMessage != null)
+		    {
+		        ProcessMouseMessage(mouseMessage);
+		        //TODO: ideally, the tilecontroller would have an event and the handler would listen
+		        MousePosition = _tileController.Location;
+		        return;
+		    }
+		    
+            var mouseWheelMessage = message as MouseWheelMessage;
+		    if (mouseWheelMessage != null)
+		    {
+		        ProcessMouseWheelMessage(mouseWheelMessage);
+		        return;
+		    }
 
-			//throw new InvalidOperationException("Unexpected message");
+		    var updatePropertyMessage = message as UpdatePropertyMessage;
+		    if (updatePropertyMessage != null)
+		    {
+		        ProcessUpdateMessage(updatePropertyMessage);
+		    }
 		}
 
 		private void ProcessUpdateMessage(UpdatePropertyMessage message)
@@ -682,13 +656,12 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 				case "ClientRectangle":
 					ClientRectangle = (Common.Rectangle)message.Value;
 					break;
-				default: break;
 			}
 		}
 
 		private void ProcessMouseWheelMessage(MouseWheelMessage message)
 		{
-			MouseEventArgs e = new MouseEventArgs(MouseButtons.None, 1, 0, 0, message.Delta);
+			var e = new MouseEventArgs(MouseButtons.None, 1, 0, 0, message.Delta);
 			object msg = _tileInputTranslator.OnMouseWheel(e);
 			_tileController.ProcessMessage(msg);
 		}
@@ -698,7 +671,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			//TODO (CR May 2010): should we remove this code?  We should be very careful if we do.
 			//Theoretically, this could limit us to 10 fps.
 
-            Event ack = new MouseMoveProcessedEvent()
+            Event ack = new MouseMoveProcessedEvent
             {
                 Identifier = Guid.NewGuid(),
                 SenderId = this.Identifier
@@ -714,8 +687,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 				case MouseButton.Right: mouseButtons = MouseButtons.Right; break;
 			}
 
-			MouseEventArgs e = new MouseEventArgs(mouseButtons, 0, message.MousePosition.X, message.MousePosition.Y, 0);
-			object msg = _tileInputTranslator.OnMouseMove(e);
+			var e = new MouseEventArgs(mouseButtons, 0, message.MousePosition.X, message.MousePosition.Y, 0);
+			var msg = _tileInputTranslator.OnMouseMove(e);
 			_tileController.ProcessMessage(msg);
 		}
 
@@ -725,14 +698,14 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			{
 				if (message.MouseButtonState == MouseButtonState.Down)
 				{
-					MouseEventArgs e = new MouseEventArgs(MouseButtons.Left, message.ClickCount, message.MousePosition.X, message.MousePosition.Y, 0);
+					var e = new MouseEventArgs(MouseButtons.Left, message.ClickCount, message.MousePosition.X, message.MousePosition.Y, 0);
 					object msg = _tileInputTranslator.OnMouseDown(e);
 				    _tileController.ProcessMessage(msg);
                     _isMouseDown = true;
 				}
 				else if (message.MouseButtonState == MouseButtonState.Up)
 				{
-					MouseEventArgs e = new MouseEventArgs(MouseButtons.Left, 1, message.MousePosition.X, message.MousePosition.Y, 0);
+					var e = new MouseEventArgs(MouseButtons.Left, 1, message.MousePosition.X, message.MousePosition.Y, 0);
 					object msg = _tileInputTranslator.OnMouseUp(e);
 					_tileController.ProcessMessage(msg);
 
@@ -747,16 +720,16 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			{
 				if (message.MouseButtonState == MouseButtonState.Down)
 				{
-					MouseEventArgs e = new MouseEventArgs(MouseButtons.Right, message.ClickCount, message.MousePosition.X, message.MousePosition.Y, 0);
+					var e = new MouseEventArgs(MouseButtons.Right, message.ClickCount, message.MousePosition.X, message.MousePosition.Y, 0);
 					object msg = _tileInputTranslator.OnMouseDown(e);
 					_tileController.ProcessMessage(msg);
-                    _isMouseDown = false;
+                    _isMouseDown = true;
 				}
 				else if (message.MouseButtonState == MouseButtonState.Up)
 				{
 					//TODO (CR May 2010): should we be calling this when the tilecontroller fires an event?
 					FireContextMenuEvent();
-					MouseEventArgs e = new MouseEventArgs(MouseButtons.Right, 1, message.MousePosition.X, message.MousePosition.Y, 0);
+					var e = new MouseEventArgs(MouseButtons.Right, 1, message.MousePosition.X, message.MousePosition.Y, 0);
 					object msg = _tileInputTranslator.OnMouseUp(e);
 					_tileController.ProcessMessage(msg);
 
@@ -764,7 +737,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 					e = new MouseEventArgs(MouseButtons.None, 0, message.MousePosition.X, message.MousePosition.Y, 0);
 					msg = _tileInputTranslator.OnMouseMove(e);
 					_tileController.ProcessMessage(msg);
-                    _isMouseDown = true;
+                    _isMouseDown = false;
 				}
 			}
 		}

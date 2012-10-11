@@ -15,7 +15,6 @@ namespace ClearCanvas.ImageViewer.Web
 {
 	public class WebViewStudyStatistics : StatisticsSet
 	{
-
 		#region Constructors
 
 		public WebViewStudyStatistics(string name)

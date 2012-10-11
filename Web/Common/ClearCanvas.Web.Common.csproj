@@ -69,6 +69,7 @@
     <Compile Include="DataContractBase.cs" />
     <Compile Include="Events\ApplicationStoppedEvent.cs" />
     <Compile Include="Events\SessionUpdatedEvent.cs" />
+    <Compile Include="IDuplexApplicationService.cs" />
     <Compile Include="IKnownTypeProvider.cs" />
     <Compile Include="Events\ApplicationNotFoundEvent.cs" />
     <Compile Include="Entity.cs" />
@@ -76,11 +77,11 @@
     <Compile Include="Events\EntityUpdatedEvent.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="IApplicationService.cs" />
+    <Compile Include="IPollingApplicationService.cs" />
     <Compile Include="ProcessMessagesResult.cs" />
     <Compile Include="SessionValidationFault.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Namespace.cs" />
-    <Compile Include="PerformanceData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Events\PropertyChangedEvent.cs" />
     <Compile Include="Messages\UpdatePropertyMessage.cs" />

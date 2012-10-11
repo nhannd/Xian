@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using ClearCanvas.Common;
@@ -21,11 +22,6 @@ namespace ClearCanvas.Web.Services
 {
     public abstract class ApplicationService : IApplicationService
     {
-        static ApplicationService()
-        {
-            PerformanceMonitor.Initialize();
-        }
-
         protected static Application FindApplication(Guid applicationId)
 		{
 			Application application = Application.Find(applicationId);
@@ -43,7 +39,7 @@ namespace ClearCanvas.Web.Services
         /// </summary>
         protected static void CheckNumberOfApplications()
         {
-            ApplicationServiceSettings settings = new ApplicationServiceSettings();
+            var settings = new ApplicationServiceSettings();
             if (settings.MaximumSimultaneousApplications <= 0)
                 return;
 
@@ -62,7 +58,7 @@ namespace ClearCanvas.Web.Services
 
         protected static void CheckMemoryAvailable()
         {
-            ApplicationServiceSettings settings = new ApplicationServiceSettings();
+            var settings = new ApplicationServiceSettings();
 
             if (settings.MinimumFreeMemoryMB <= 0)
                 return;
@@ -87,7 +83,7 @@ namespace ClearCanvas.Web.Services
             if (context != null)
             {
                 MessageProperties prop = context.IncomingMessageProperties;
-                RemoteEndpointMessageProperty endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+                var endpoint = prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
 
                 return endpoint != null ? endpoint.Address : "Unknown";
             }
@@ -98,7 +94,7 @@ namespace ClearCanvas.Web.Services
         public StartApplicationResult StartApplication(StartApplicationRequest request)
         {
             CheckNumberOfApplications();
-            // TODO (CR Sep 2012): Restore
+            // TODO (Phoenix5): Restore
             //CheckMemoryAvailable();
 
             try
@@ -110,7 +106,7 @@ namespace ClearCanvas.Web.Services
                     operationContext.Channel.OperationTimeout = TimeSpan.FromMinutes(5);
                 }
 
-                Application application = Application.Start(request);
+                Application application = Application.Start(request, new EventQueue());
 
                 //TODO: when we start allowing application recovery, remove these lines.
                 // NOTE: These events are fired only if the underlying connection is permanent (eg, duplex http or net tcp).
@@ -119,7 +115,7 @@ namespace ClearCanvas.Web.Services
                 //operationContext.Channel.Closed += delegate { application.Stop(); };
                 //operationContext.Channel.Faulted += delegate { application.Stop(); };
 
-                return new StartApplicationResult { AppIdentifier = application.Identifier };
+                return new StartApplicationResult { ApplicationId = application.Identifier };
             }
             catch (InvalidUserSessionException ex)
             {
@@ -145,13 +141,16 @@ namespace ClearCanvas.Web.Services
 
         public ProcessMessagesResult ProcessMessages(MessageSet messageSet)
         {
-            IApplication application = FindApplication(messageSet.ApplicationId);
+            Application application = FindApplication(messageSet.ApplicationId);
             if (application == null)
                 return null;
 
             try
             {
-                return application.ProcessMessages(messageSet);
+                var eventQueue = (EventQueue) application.EventDeliveryStrategy;
+                application.ProcessMessages(messageSet);
+                // TODO (Phoenix5): This Pending thing used for anything? Restore.
+                return new ProcessMessagesResult {EventSet = eventQueue.GetPendingEvents(5), Pending = false };
             }
             catch (InvalidUserSessionException ex)
             {
@@ -188,7 +187,7 @@ namespace ClearCanvas.Web.Services
 
                 Platform.Log(LogLevel.Info, "Received application shutdown request from {0}", GetClientAddress());
 
-                application.Shutdown();
+                application.Stop();
             }
             catch (Exception ex)
             {

@@ -21,7 +21,6 @@ using System.Globalization;
 
 namespace ClearCanvas.Web.Services
 {
-	
 	[ExtensionOf(typeof(ExceptionTranslatorExtensionPoint))]
 	internal class UserSessionExceptionTranslator : IExceptionTranslator
 	{
@@ -68,72 +67,94 @@ namespace ClearCanvas.Web.Services
 	{
 	}
 
+    public interface IEventDeliveryStrategy
+    {
+        Guid ApplicationId { get; set; }
+        void Deliver(Event @event);
+    }
+
 	public interface IApplication
 	{
-		Guid Identifier { get; }
-		IPrincipal Principal { get; }
-		IApplicationContext Context { get; }
-
-        /// <summary>
-        /// Starts the application
-        /// </summary>
-        void Start(StartApplicationRequest request);
-
-        /// <summary>
-        /// Processes the specific <see cref="MessageSet"/>
-        /// </summary>
-        ProcessMessagesResult ProcessMessages(MessageSet messages);
-
-        /// <summary>
-        /// Stops the application. <see cref="Shutdown"/> will be called later
-        /// </summary>
-        void Stop();
-
-        /// <summary>
-        /// Stops the application. <see cref="Shutdown"/> will be called later
-        /// </summary>
-        void Stop(string message);
-
-        /// <summary>
-        /// Gets pending events
-        /// </summary>
-	    EventSet GetPendingOutboundEvent(int wait);
-
-        /// <summary>
-        /// Updates property
-        /// </summary>
-        void SetProperty(string key, object value);
-
-        /// <summary>
-        /// Shuts down the application
-        /// </summary>
-        void Shutdown();
+		/// <summary>
+		/// A unique identifier for the application.
+		/// </summary>
+        Guid Identifier { get; }
 
         /// <summary>
         /// Name of the application instance for logging purpose.
         /// </summary>
         string InstanceName { get; }
+
+        /// <summary>
+        /// Starts the application.
+        /// </summary>
+        void Start(StartApplicationRequest request);
+
+        /// <summary>
+        /// Processes the specific <see cref="MessageSet"/>.
+        /// </summary>
+        void ProcessMessages(MessageSet messages);
+
+        /// <summary>
+        /// Stops the application.
+        /// </summary>
+        void Stop();
+
+        /// <summary>
+        /// Stops the application.
+        /// </summary>
+        void Stop(string message);
 	}
 
-    public enum MessageBatchMode
+	public abstract class Application : IApplication
     {
-        /// <summary>
-        /// Allow only one single message of the same type to be sent in a batch
-        /// </summary>
-        PerType,
-        
-        /// <summary>
-        /// Allow messages of the same type to be sent in the same batch if they are sent by different entities.
-        /// </summary>
-        PerTarget
-    }
+        #region Context class
 
-	public abstract partial class Application : IApplication
-	{
-		[ThreadStatic]
+        private class ApplicationContext : Services.ApplicationContext
+        {
+            private readonly Application _application;
+
+            public ApplicationContext(Application application)
+            {
+                _application = application;
+            }
+
+            #region IApplicationContext Members
+
+            public override EntityHandlerStore EntityHandlers
+            {
+                get { return _application._entityHandlers; }
+            }
+
+            public override IPrincipal Principal
+            {
+                get { return _application.Principal; }
+            }
+
+            public override Guid ApplicationId
+            {
+                get { return _application.Identifier; }
+            }
+
+            public override void FireEvent(Event e)
+            {
+                _application.FireEvent(e);
+            }
+
+            public override void FatalError(Exception e)
+            {
+                _application.Stop(e);
+            }
+
+            #endregion
+        }
+
+        #endregion
+
+        [ThreadStatic]
 		private static Application _current;
 
-		private ApplicationContext _context;
+	    private readonly ApplicationContext _context;
 
 		private string _userName;
 	    private volatile UserSessionInfo _session;
@@ -151,26 +172,39 @@ namespace ClearCanvas.Web.Services
 
 		private readonly IncomingMessageQueue _incomingMessageQueue;
 
+		private readonly EntityHandlerStore _entityHandlers = new EntityHandlerStore();
+
 		private static readonly TimeSpan TimerInterval = TimeSpan.FromSeconds(5);
 		private System.Threading.Timer _timer;
 		private bool _timerMethodExecuting;
+	    private IEventDeliveryStrategy _eventDeliveryStrategy;
 
-        public CultureInfo Culture
+	    public IApplicationContext Context
+	    {
+	        get { return _context; }
+	    }
+
+	    public CultureInfo Culture
         {
             private set;
             get;
         }
 
+        /// <summary>
+        /// Passed in when the application is first started/created, and is here for convenience to allow the creator to access it.
+        /// </summary>
+        public IEventDeliveryStrategy EventDeliveryStrategy { get { return _eventDeliveryStrategy; } }
+
 		protected Application()
 		{
-		    BatchMode = MessageBatchMode.PerTarget;
-
 		    Identifier = Guid.NewGuid();
 			_incomingMessageQueue = new IncomingMessageQueue(
 				messageSet => _synchronizationContext.Send(nothing => DoProcessMessages(messageSet), null));
-		}
 
-		internal static Application Current
+            _context = new ApplicationContext(this);
+        }
+
+		public static Application Current
 		{
 			get { return _current; }
 			set
@@ -183,11 +217,6 @@ namespace ClearCanvas.Web.Services
 
 		public Guid Identifier { get; private set; }
 
-		public IApplicationContext Context
-		{
-			get { return _context; }
-		}
-
 		#region Authentication
 
 		public IPrincipal Principal { get; private set; }
@@ -195,8 +224,6 @@ namespace ClearCanvas.Web.Services
 		private bool IsSessionShared { get; set; }
 
         public abstract string InstanceName { get;  }
-
-        public MessageBatchMode BatchMode { get; protected set; }
 
 	    private void AuthenticateUser(StartApplicationRequest request)
 		{
@@ -251,7 +278,7 @@ namespace ClearCanvas.Web.Services
             if (_session == null)
 				return;
 
-		    _context.FireEvent(new SessionUpdatedEvent
+		    FireEvent(new SessionUpdatedEvent
 			{
 				Identifier = Guid.NewGuid(),
 				SenderId = Identifier,
@@ -272,9 +299,7 @@ namespace ClearCanvas.Web.Services
         protected void ProcessMetaInfo(MetaInformation info)
         {
             if (info == null)
-            {
                 return;
-            }
 
             if (false == string.IsNullOrEmpty(info.Language))
             {
@@ -329,17 +354,20 @@ namespace ClearCanvas.Web.Services
                     StartRequestId = request.Identifier
                 };
 
-            _context.FireEvent(@event);
+            FireEvent(@event);
 
             OnStart(request);
 
-            string logMessage = _session == null
-                                    ? String.Format("Application {0} has started.", Identifier)
-                                    : String.Format("Application {0} has started (user={1}, session={2}, expiry={3}).",
-                                                    Identifier, _userName, _session.SessionToken.Id,
-                                                    _session.SessionToken.ExpiryTime);
-
-            ConsoleHelper.Log(LogLevel.Info, ConsoleColor.Green, logMessage);
+            if (_session == null)
+            {
+                Platform.Log(LogLevel.Info, "Application {0} has started.", Identifier);
+            }
+            else
+            {
+                Platform.Log(LogLevel.Info, "Application {0} has started (user={1}, session={2}, expiry={3}).",
+                             Identifier, _userName, _session.SessionToken.Id,
+                             _session.SessionToken.ExpiryTime);
+            }
 
             OnSessionRenewed();
         }
@@ -348,13 +376,6 @@ namespace ClearCanvas.Web.Services
 		{
 			Stop("");
 		}
-
-        public void Shutdown()
-        {
-            Stop();
-            DisposeMembers();
-            //TODO: Remove from cache immediately?
-        }
 
 	    public void Stop(string message)
 		{
@@ -381,16 +402,9 @@ namespace ClearCanvas.Web.Services
 			}
 
 			Logout();
-
-			// DisposeMembers(); // Commented out for non-duplex binding since app is now managed by the cache
-		}
+            DisposeMembers();
+        }
         
-	    public void SetProperty(string key, object value)
-	    {
-	        Platform.Log(LogLevel.Debug, "Setting {0}={1}", key, value);
-	        _context.SetProperty(key, value);
-	    }
-
 	    internal void Stop(Exception e)
 		{
             Platform.Log(LogLevel.Error, e, "An error has occurred and the application is stopping");
@@ -409,7 +423,7 @@ namespace ClearCanvas.Web.Services
             }
             finally
             {
-                _context.FireEvent(new ApplicationStoppedEvent
+                FireEvent(new ApplicationStoppedEvent
                                        {
                                            Identifier = Guid.NewGuid(),
                                            SenderId = Identifier,
@@ -423,20 +437,32 @@ namespace ClearCanvas.Web.Services
                     Platform.Log(LogLevel.Info, "Application {0} has stopped (message={1}).", Identifier, stopMessage);
                 }
                 else
+                {
                     Platform.Log(LogLevel.Info, "Application {0} has stopped (user={1}, session={2}, message={3}).",
                                       Identifier, _userName, _session.SessionToken.Id, stopMessage);
+                }
             }
 		}
 
-		private void OnTimer(object nothing)
+	    protected virtual void FireEvent(Event @event)
+	    {
+            InjectSenderName(@event);
+            _eventDeliveryStrategy.Deliver(@event);
+	    }
+
+        private void InjectSenderName(Event @event)
+        {
+            IEntityHandler handler = _entityHandlers[@event.SenderId];
+            if (handler == null || !String.IsNullOrEmpty(@event.Sender))
+                return;
+
+            @event.Sender = !String.IsNullOrEmpty(handler.Name) ? handler.Name : handler.GetType().Name;
+        }
+
+	    private void OnTimer(object nothing)
 		{
 			try
 			{
-                if (String.IsNullOrEmpty(Thread.CurrentThread.Name))
-                {
-                    Thread.CurrentThread.Name = String.Format("{0} [{1}]", InstanceName, Thread.CurrentThread.ManagedThreadId);
-                }
-
 				lock (_syncLock)
 				{
 					if (_stop || _timerMethodExecuting)
@@ -450,7 +476,8 @@ namespace ClearCanvas.Web.Services
                 
                 //CheckIfSessionIsStillValid();
 
-                // TODO: REVIEW THIS
+                // TODO: Get rid of this - it is not generic, but rather depends on the polling behaviour.
+
                 // This is a temporary workaround to ensure the app shuts down when the connection is lost.
                 // Although the app will eventually timed out after 11 min (_inactivityTimeoutMinutes),
                 // for security reason it's better to detect this situation asap. 
@@ -511,12 +538,12 @@ namespace ClearCanvas.Web.Services
 					_synchronizationContext = null;
 				}
 
-				if (_context == null)
-					return;
-
-				_context.Dispose();
-				_context = null;
-
+			    var eventDeliveryStrategy = _eventDeliveryStrategy as IDisposable;
+			    if (eventDeliveryStrategy != null)
+			    {
+			        eventDeliveryStrategy.Dispose();
+                    _eventDeliveryStrategy = null;
+			    }
 			}
 			catch (Exception e)
 			{
@@ -530,20 +557,18 @@ namespace ClearCanvas.Web.Services
 			remove { lock (_syncLock) { _stopped -= value; } }
 		}
 
-		public ProcessMessagesResult ProcessMessages(MessageSet messageSet)
+		public void ProcessMessages(MessageSet messageSet)
 		{
 			lock (_syncLock)
 			{
 				if (_stop)
-					return null;
+					return;
 			}
 
             //TODO: do this here (which will fault the channel), or inside DoProcessMessages and stop the app?
 			//EnsureSessionIsValid();
 
-			bool processed = _incomingMessageQueue.ProcessMessageSet(messageSet);
-
-		    return OnProcessMessageEnd(messageSet, processed);
+			_incomingMessageQueue.ProcessMessageSet(messageSet);
 		}
 
 
@@ -553,21 +578,12 @@ namespace ClearCanvas.Web.Services
                 ProcessMessage(message);
 		}
 
-        protected abstract ProcessMessagesResult OnProcessMessageEnd(MessageSet messageSet, bool processed);
 		protected abstract void OnStart(StartApplicationRequest request);
 		protected abstract void OnStop();
-	    protected abstract EventSet OnGetPendingOutboundEvent(int wait);
         
-        public EventSet GetPendingOutboundEvent(int wait)
-        {
-            _lastClientMessage = DateTime.Now;
-            EventSet result = OnGetPendingOutboundEvent(wait);
-            return result;
-        }
-
 		protected virtual void ProcessMessage(Message message)
 		{
-			IEntityHandler handler = Context.EntityHandlers[message.TargetId];
+			IEntityHandler handler = _entityHandlers[message.TargetId];
 			if (handler != null)
 			{
 				handler.ProcessMessage(message);
@@ -577,7 +593,6 @@ namespace ClearCanvas.Web.Services
 			{
 				string msg = String.Format("Invalid message target: {0}", message.TargetId);
 				Platform.Log(LogLevel.Debug, msg);
-				//throw new ArgumentException(msg);
 			}
 		}
 
@@ -587,7 +602,7 @@ namespace ClearCanvas.Web.Services
 
 		#region Static Helpers
 
-		public static Application Start(StartApplicationRequest request)
+		public static Application Start(StartApplicationRequest request, IEventDeliveryStrategy eventDeliveryStrategy)
 		{
 			var filter = new AttributeExtensionFilter(new ApplicationAttribute(request.GetType()));
 			var app = new ApplicationExtensionPoint().CreateExtension(filter) as IApplication;
@@ -600,9 +615,8 @@ namespace ClearCanvas.Web.Services
 			#region Setup
 
 			var application = (Application)app;
-			var context = new ApplicationContext(application);
-			application._context = context;
-
+            application._eventDeliveryStrategy = eventDeliveryStrategy;
+		    eventDeliveryStrategy.ApplicationId = app.Identifier;
 			application._sessionPollingIntervalSeconds = TimeSpan.FromSeconds(ApplicationServiceSettings.Default.SessionPollingIntervalSeconds);
 
 			#endregion
@@ -616,15 +630,9 @@ namespace ClearCanvas.Web.Services
 			return application;
 		}
 
-		public static Application Find(Guid identifier)
+	    public static Application Find(Guid identifier)
 		{
-            var application = Cache.Instance.Find(identifier);
-            if (application != null && String.IsNullOrEmpty(Thread.CurrentThread.Name))
-            {
-                Thread.CurrentThread.Name = String.Format("{0} [{1}]", application.InstanceName, Thread.CurrentThread.ManagedThreadId);
-            }
-
-		    return application;
+            return Cache.Instance.Find(identifier);
 		}
 
 		public static void StopAll(string message)
