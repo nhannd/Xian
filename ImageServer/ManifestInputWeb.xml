@@ -224,6 +224,7 @@
     <File name="Web\Pages\Queues\StudyIntegrityQueue\SearchPanel.ascx" />
     <File name="Web\Pages\Queues\StudyIntegrityQueue\SearchPanel.js" />
     <File name="Web\Pages\Queues\StudyIntegrityQueue\StudyIntegrityQueueItemList.ascx" />
+    <File name="Web\Pages\Queues\StudyIntegrityQueue\SIQEntryTooltip.ascx" />
     <File name="Web\Pages\Queues\WorkQueue\Default.aspx" />
     <File name="Web\Pages\Queues\WorkQueue\SearchPanel.ascx" />
     <File name="Web\Pages\Queues\WorkQueue\SearchPanel.js" />
