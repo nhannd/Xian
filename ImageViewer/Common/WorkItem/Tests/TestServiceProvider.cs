@@ -6,7 +6,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Common.WorkItem.Tests
 {
-    [ExtensionOf(typeof(DuplexServiceProviderExtensionPoint))]
+    // Use a UnitTestExtensionFactory instead of declaring this an extension, because it will break debug builds that include the UNIT_TESTS symbol. 
     internal class TestServiceProvider : IDuplexServiceProvider
     {
         internal static readonly TestWorkItemService ServiceInstance = new TestWorkItemService();

@@ -3272,5 +3272,14 @@ namespace ClearCanvas.Ris.Client {
                 return ResourceManager.GetString("WarnEditMergedPractitioner", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One or more procedures are scheduled in the past.  Is this what you intended to do?.
+        /// </summary>
+        internal static string WarnProceduresScheduledInThePast {
+            get {
+                return ResourceManager.GetString("WarnProceduresScheduledInThePast", resourceCulture);
+            }
+        }
     }
 }

@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -78,7 +79,13 @@ namespace ClearCanvas.Ris.Client.ViewerIntegration
 			try
 			{
 				using (IViewerAutomationBridge bridge = CreateBridge())
-					bridge.OpenStudiesByAccessionNumber(accessionNumber);
+				{
+					var existingViewers = GetViewers(bridge, accessionNumber);
+					if (existingViewers != null && existingViewers.Count > 0)
+						bridge.ActivateViewer(existingViewers[0]);
+					else
+						bridge.OpenStudiesByAccessionNumber(accessionNumber);
+				}
 			}
 			catch (QueryNoMatchesException e)
 			{
@@ -131,5 +138,18 @@ namespace ClearCanvas.Ris.Client.ViewerIntegration
 		}
 
 		#endregion
+
+		private static IList<Viewer> GetViewers(IViewerAutomationBridge bridge, string accessionNumber)
+		{
+			try
+			{
+				return bridge.GetViewersByAccessionNumber(accessionNumber);
+			}
+			catch (FaultException<NoViewersFault>)
+			{
+				// eat this exception, as it really just means that the user has closed all viewer workspaces
+				return new Viewer[0];
+			}
+		}
 	}
 }

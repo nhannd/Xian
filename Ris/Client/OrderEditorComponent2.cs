@@ -328,10 +328,6 @@ namespace ClearCanvas.Ris.Client
 					service => response = service.ReplaceOrder(new ReplaceOrderRequest(this.OrderRef, component.SelectedCancelReason, requisition))
 				);
 
-				component.Host.ShowMessageBox(
-					string.Format("Order successfully replaced with new order {0}.", AccessionFormat.Format(response.Order.AccessionNumber)),
-					MessageBoxActions.Ok);
-
 				return response.Order.OrderRef;
 			}
 		}
