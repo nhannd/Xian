@@ -25,6 +25,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 
@@ -521,12 +522,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 				try
 				{
-				    var storeQuery = server.IsSupported<IStudyStoreQuery>()
-				                         ? server.GetService<IStudyStoreQuery>()
-				                         : new StudyRootQueryStoreAdapter(server.GetService<IStudyRootQuery>());
-                    
-                        using (var bridge = new StudyStoreBridge(storeQuery))
-                            serverItems = bridge.GetStudyEntries(criteria).Select(e => new StudyTableItem(e)).ToList();
+					serverItems = GetStudyEntries(server, criteria).Select(e => new StudyTableItem(e)).ToList();
 				}
 				catch (Exception e)
 				{
@@ -542,6 +538,45 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 
 			return aggregateItems;
+		}
+
+#if UNIT_TESTS
+		internal static List<StudyEntry> TestGetStudyEntries(IDicomServiceNode server, StudyRootStudyIdentifier criteria)
+		{
+			return GetStudyEntries(server, criteria);
+		}
+#endif
+
+		private static List<StudyEntry> GetStudyEntries(IDicomServiceNode server, StudyRootStudyIdentifier criteria)
+		{
+			// N.B.: we have to handle multiple modalities in the search criteria this way because DICOM does not allow multi-valued search on modality (if you think it does, re-read the standard carefully!)
+			// normalize the list of modalities (no duplicates, and empty string only if no other modalities)
+			var modalities = (criteria.ModalitiesInStudy ?? new string[0]).Except(new[] {string.Empty}).Distinct().ToList();
+			if (modalities.Count == 0) modalities.Add(string.Empty);
+
+			var storeQuery = server.IsSupported<IStudyStoreQuery>() ? server.GetService<IStudyStoreQuery>() : new StudyRootQueryStoreAdapter(server.GetService<IStudyRootQuery>());
+			using (var bridge = new StudyStoreBridge(storeQuery))
+			{
+				IEnumerable<StudyEntry> results = new StudyEntry[0];
+				foreach (var modality in modalities)
+				{
+					var modalityCriteria = new StudyRootStudyIdentifier(criteria) {ModalitiesInStudy = new[] {modality}};
+					var modalityResults = bridge.GetStudyEntries(modalityCriteria).ToList(); // 'ToList' to execute query here and now
+
+					if ((modality == string.Empty)
+					    || (modalityResults.All(s => s.Study.ModalitiesInStudy.All(string.IsNullOrEmpty))) // 'All' returns true if sequence is empty
+					    || (modalityResults.Any(s => !s.Study.ModalitiesInStudy.Any(m => modality.Equals(m, StringComparison.InvariantCultureIgnoreCase)))))
+					{
+						// if modality was not filtered in the query
+						// or if all results do not return modality (i.e. the server does not support querying or returning this optional tag)
+						// or if any result does not match the queried modality (i.e. the server does not support querying on this optional tag)
+						// then these are all the unique results we'll ever get, and we can skip the other modalities
+						return modalityResults;
+					}
+					results = results.Union(modalityResults, s => s.Study.StudyInstanceUid);
+				}
+				return results.ToList();
+			}
 		}
 
 		private void OnSearchCompleted(List<StudyTableItem> aggregateItems, List<KeyValuePair<string, Exception>> failedServerInfo)

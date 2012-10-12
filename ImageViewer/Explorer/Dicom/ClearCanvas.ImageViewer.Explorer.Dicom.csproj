@@ -118,6 +118,7 @@
     <Compile Include="StudyTable.cs" />
     <Compile Include="StudyTableItem.cs" />
     <Compile Include="Tests\MiscellaneousTests.cs" />
+    <Compile Include="Tests\StudyQueryTests.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
