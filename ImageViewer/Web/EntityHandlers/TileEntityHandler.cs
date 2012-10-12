@@ -83,7 +83,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
     public class QFactorExtensionPoint : ExtensionPoint<IQFactorStrategy> { }
 
     public class TileEntityHandler : EntityHandler<TileEntity>
-	{
+    {
+        private const string _logName = "TileEntityHandler.Rendering";
 		private readonly string _mimeType = "image/jpeg";
 
         // TODO (Phoenix5): change how this works 
@@ -93,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
         private readonly long _defaultJpegQFactor = WebViewerServices.Default.JpegQualityFactor;
         private long _quality = WebViewerServices.Default.JpegQualityFactor;
 
-        private AverageImageStatistics _averageImageStats = new AverageImageStatistics();
+        //private AverageImageStatistics _averageImageStats = new AverageImageStatistics();
 
 		private Tile _tile;
 		private Point _mousePosition;
@@ -435,7 +436,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                 }
             }
 
-            var imageStats = new ImageStatistics(_mimeType);
+            var imageStats = new RenderingStatistics(_mimeType);
 
             //long t0 = Environment.TickCount;
             imageStats.DrawToBitmapTime.Start();
@@ -455,7 +456,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             }
 
             imageStats.DrawToBitmapTime.End();
-            _averageImageStats.AverageDrawToBitmapTime.AddSample(imageStats.DrawToBitmapTime);
+            //_averageImageStats.AverageDrawToBitmapTime.AddSample(imageStats.DrawToBitmapTime);
 
             Bitmap bmp1 = null;
             if (DiagnosticsSettings.Default.CompareImageQuality)
@@ -491,7 +492,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             }
             
             imageStats.SaveTime.End();
-            _averageImageStats.AverageSaveTime.AddSample(imageStats.SaveTime);
+            //_averageImageStats.AverageSaveTime.AddSample(imageStats.SaveTime);
 
             byte[] imageBuffer = ms.ToArray();
 
@@ -503,15 +504,16 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
             ms.Position = 0;
             imageStats.ImageSize.Value = (ulong)imageBuffer.LongLength;
-            _averageImageStats.AverageImageSize.AddSample(imageStats.ImageSize);
+            ApplicationContext.LogStatistics(_logName, imageStats);
 
-            StatisticsLogger.Log(LogLevel.Info, false, imageStats);
-            if (_averageImageStats.AverageSaveTime.SampleCount > 20)
-            {
-                _averageImageStats.CalculateAverage();
-                StatisticsLogger.Log(LogLevel.Info, false, _averageImageStats);
-                _averageImageStats = new AverageImageStatistics();
-            }
+            //_averageImageStats.AverageImageSize.AddSample(imageStats.ImageSize);
+
+            //if (_averageImageStats.AverageSaveTime.SampleCount > 20)
+            //{
+            //    _averageImageStats.CalculateAverage();
+            //    ApplicationContext.LogStatistics(_logName, _averageImageStats);
+            //    _averageImageStats = new AverageImageStatistics();
+            //}
 
             //Console.WriteLine("Tile {0} : DrawToBitmap (size: {3}, mime: {2}):{1}ms", tile.Identifier,Environment.TickCount - t0,mimeType, ms.Length);
 

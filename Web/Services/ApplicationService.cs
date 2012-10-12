@@ -106,7 +106,9 @@ namespace ClearCanvas.Web.Services
                     operationContext.Channel.OperationTimeout = TimeSpan.FromMinutes(5);
                 }
 
-                Application application = Application.Start(request, new EventQueue());
+                Application application = Application.Create(request.GetType());
+                application.SessionPollingInterval = TimeSpan.FromSeconds(new ApplicationServiceSettings().SessionPollingIntervalSeconds);
+                application.Start(request);
 
                 //TODO: when we start allowing application recovery, remove these lines.
                 // NOTE: These events are fired only if the underlying connection is permanent (eg, duplex http or net tcp).

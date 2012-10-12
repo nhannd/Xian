@@ -13,7 +13,7 @@ using ClearCanvas.Common.Statistics;
 
 namespace ClearCanvas.ImageViewer.Web
 {
-    public class AverageImageStatistics : StatisticsSet
+    public class AverageRenderingStatistics : StatisticsSet
     {
         public AverageByteCountStatistics AverageImageSize
         {
@@ -52,12 +52,12 @@ namespace ClearCanvas.ImageViewer.Web
         }
     }
 
-    public class ImageStatistics : StatisticsSet
+    public class RenderingStatistics : StatisticsSet
 	{
 		#region Constructors
 
-		public ImageStatistics(string name)
-			: base("Image", name)
+		public RenderingStatistics(string name)
+			: base("Rendering", name)
 		{
 		}
 

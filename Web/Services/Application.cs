@@ -12,6 +12,7 @@
 using System;
 using System.Security.Principal;
 using System.Threading;
+using ClearCanvas.Common.Statistics;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Common;
@@ -136,6 +137,23 @@ namespace ClearCanvas.Web.Services
                 get { return _application.Identifier; }
             }
 
+            public override bool IsStatisticsLoggingEnabled
+            {
+                get { return _application.IsStatisticsLoggingEnabled; }
+            }
+
+            public override void LogStatistics(StatisticsSet statistics)
+            {
+                if (IsStatisticsLoggingEnabled)
+                    StatisticsLogger.Log(LogLevel.Info, statistics);
+            }
+
+            public override void LogStatistics(string logName, StatisticsSet statistics)
+            {
+                if (IsStatisticsLoggingEnabled)
+                    StatisticsLogger.Log(logName, LogLevel.Info, statistics);
+            }
+
             public override void FireEvent(Event e)
             {
                 _application.FireEvent(e);
@@ -159,7 +177,6 @@ namespace ClearCanvas.Web.Services
 		private string _userName;
 	    private volatile UserSessionInfo _session;
 		private const int SessionRenewalOffsetMinutes = 1; // renew the session 1 min before it is expired.
-		private TimeSpan _sessionPollingIntervalSeconds;
 		private volatile int _lastSessionCheckTicks;
 
         private DateTime? _lastClientMessage;
@@ -179,7 +196,17 @@ namespace ClearCanvas.Web.Services
 		private bool _timerMethodExecuting;
 	    private IEventDeliveryStrategy _eventDeliveryStrategy;
 
-	    public IApplicationContext Context
+        protected Application()
+        {
+            Identifier = Guid.NewGuid();
+            _incomingMessageQueue = new IncomingMessageQueue(
+                messageSet => _synchronizationContext.Send(nothing => DoProcessMessages(messageSet), null));
+
+            _context = new ApplicationContext(this);
+            SessionPollingInterval = TimeSpan.FromSeconds(30);
+        }
+        
+        public IApplicationContext Context
 	    {
 	        get { return _context; }
 	    }
@@ -190,19 +217,14 @@ namespace ClearCanvas.Web.Services
             get;
         }
 
-        /// <summary>
-        /// Passed in when the application is first started/created, and is here for convenience to allow the creator to access it.
-        /// </summary>
-        public IEventDeliveryStrategy EventDeliveryStrategy { get { return _eventDeliveryStrategy; } }
+        public TimeSpan SessionPollingInterval { get; set; }
+	    public bool IsStatisticsLoggingEnabled { get; set; }
 
-		protected Application()
-		{
-		    Identifier = Guid.NewGuid();
-			_incomingMessageQueue = new IncomingMessageQueue(
-				messageSet => _synchronizationContext.Send(nothing => DoProcessMessages(messageSet), null));
-
-            _context = new ApplicationContext(this);
-        }
+	    public IEventDeliveryStrategy EventDeliveryStrategy
+	    {
+	        get { return _eventDeliveryStrategy ?? (_eventDeliveryStrategy = new EventQueue(EventBatchMethod.PerTarget)); }
+            set { _eventDeliveryStrategy = value; }
+	    }
 
 		public static Application Current
 		{
@@ -256,7 +278,7 @@ namespace ClearCanvas.Web.Services
 
             bool nearExpiry = Platform.Time.Add(TimeSpan.FromMinutes(SessionRenewalOffsetMinutes)) > _session.SessionToken.ExpiryTime;
 			TimeSpan timeSinceLastCheck = TimeSpan.FromMilliseconds(Environment.TickCount - _lastSessionCheckTicks);
-			if (nearExpiry || timeSinceLastCheck > _sessionPollingIntervalSeconds)
+			if (nearExpiry || timeSinceLastCheck > SessionPollingInterval)
 			{
 				_lastSessionCheckTicks = Environment.TickCount;
                 _session = UserAuthentication.RenewSession(_session);
@@ -291,10 +313,33 @@ namespace ClearCanvas.Web.Services
 
 		#region IApplication Members
 
-		void IApplication.Start(StartApplicationRequest request)
+		public void Start(StartApplicationRequest request)
 		{
-			throw new InvalidOperationException("Start must be called internally.");
-		}
+            try
+            {
+                ProcessMetaInfo(request.MetaInformation);
+                //AuthenticateUser(request);
+                _synchronizationContext = new WebSynchronizationContext(this);
+                _synchronizationContext.Send(nothing => DoStart(request), null);
+            }
+            catch (Exception)
+            {
+                Logout();
+                DisposeMembers();
+                throw;
+            }
+
+            lock (_syncLock)
+            {
+                //DoStart can call Stop.
+                if (_stop)
+                    return;
+            }
+
+            _timer = new System.Threading.Timer(OnTimer, null, TimerInterval, TimerInterval);
+
+            Cache.Instance.Add(this);
+        }
 
         protected void ProcessMetaInfo(MetaInformation info)
         {
@@ -318,32 +363,6 @@ namespace ClearCanvas.Web.Services
                 }
             }
         }
-
-		internal void InternalStart(StartApplicationRequest request)
-		{
-            try
-			{
-                ProcessMetaInfo(request.MetaInformation);
-				//AuthenticateUser(request);
-                _synchronizationContext = new WebSynchronizationContext(this);
-				_synchronizationContext.Send(nothing => DoStart(request), null);
-			}
-			catch (Exception)
-			{
-				Logout();
-				DisposeMembers();
-				throw;
-			}
-
-			lock (_syncLock)
-			{
-				//DoStart can call Stop.
-				if (_stop)
-					return;
-			}
-
-			_timer = new System.Threading.Timer(OnTimer, null, TimerInterval, TimerInterval);
-		}
 
         private void DoStart(StartApplicationRequest request)
         {
@@ -602,32 +621,17 @@ namespace ClearCanvas.Web.Services
 
 		#region Static Helpers
 
-		public static Application Start(StartApplicationRequest request, IEventDeliveryStrategy eventDeliveryStrategy)
+		public static Application Create(Type requestType)
 		{
-			var filter = new AttributeExtensionFilter(new ApplicationAttribute(request.GetType()));
+			var filter = new AttributeExtensionFilter(new ApplicationAttribute(requestType));
 			var app = new ApplicationExtensionPoint().CreateExtension(filter) as IApplication;
 			if (app == null)
-				throw new NotSupportedException(String.Format("No application extension exists for start request type {0}", request.GetType().FullName));
+				throw new NotSupportedException(String.Format("No application extension exists for start request type '{0}'.", requestType.FullName));
 
 			if (!(app is Application))
 				throw new NotSupportedException("Application class must derive from Application base class.");
 
-			#region Setup
-
-			var application = (Application)app;
-            application._eventDeliveryStrategy = eventDeliveryStrategy;
-		    eventDeliveryStrategy.ApplicationId = app.Identifier;
-			application._sessionPollingIntervalSeconds = TimeSpan.FromSeconds(ApplicationServiceSettings.Default.SessionPollingIntervalSeconds);
-
-			#endregion
-
-			//NOTE: must call start before adding to the cache; we want the app to be fully initialized before it can be accessed from outside this method.
-            
-            application.InternalStart(request);
-			
-            Cache.Instance.Add(application);
-
-			return application;
+			return (Application)app;
 		}
 
 	    public static Application Find(Guid identifier)

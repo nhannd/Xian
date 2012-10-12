@@ -100,7 +100,7 @@
     <Compile Include="View\WorkspaceView.cs" />
     <Compile Include="WebDesktopWindow.cs" />
     <Compile Include="WebViewerServices.cs" />
-    <Compile Include="ImageStatistics.cs" />
+    <Compile Include="RenderingStatistics.cs" />
     <Compile Include="TileInputTranslator.cs" />
     <Compile Include="Utiltities\BitmapComparison.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

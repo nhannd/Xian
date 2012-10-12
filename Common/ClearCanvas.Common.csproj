@@ -180,12 +180,14 @@
     <Compile Include="Specifications\Tests\XmlSpecificationCompilerTests.cs" />
     <Compile Include="Specifications\WhenThenPair.cs" />
     <Compile Include="Statistics\AverageByteCountStatistics.cs" />
+    <Compile Include="Statistics\AverageCountStatistics.cs" />
     <Compile Include="Statistics\AverageMessageCountStatistics.cs" />
     <Compile Include="Statistics\AverageRateStatistics.cs" />
     <Compile Include="Statistics\AverageStatistics.cs" />
     <Compile Include="Statistics\AverageTimeSpanStatistics.cs" />
     <Compile Include="Statistics\ByteCountFormatter.cs" />
     <Compile Include="Statistics\ByteCountStatistics.cs" />
+    <Compile Include="Statistics\CountStatistics.cs" />
     <Compile Include="Statistics\IAverageStatistics.cs" />
     <Compile Include="Statistics\IStatisticsContext.cs" />
     <Compile Include="Statistics\IStatisticsLoggerListener.cs" />

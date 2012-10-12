@@ -11,6 +11,7 @@
 
 using System;
 using System.Security.Principal;
+using ClearCanvas.Common.Statistics;
 using ClearCanvas.Web.Common;
 
 namespace ClearCanvas.Web.Services
@@ -20,6 +21,11 @@ namespace ClearCanvas.Web.Services
         EntityHandlerStore EntityHandlers { get; }
         IPrincipal Principal { get; }
         Guid ApplicationId { get; }
+        bool IsStatisticsLoggingEnabled { get; }
+
+        void LogStatistics(StatisticsSet statistics);
+        void LogStatistics(string logName, StatisticsSet statistics);
+
         void FireEvent(Event e);
         void FatalError(Exception e);
     }
@@ -38,6 +44,11 @@ namespace ClearCanvas.Web.Services
         public abstract EntityHandlerStore EntityHandlers { get; }
         public abstract IPrincipal Principal { get; }
         public abstract Guid ApplicationId { get; }
+        public abstract bool IsStatisticsLoggingEnabled { get; }
+        
+        public abstract void LogStatistics(StatisticsSet statistics);
+        public abstract void LogStatistics(string logName, StatisticsSet statistics);
+        
         public abstract void FireEvent(Event e);
         public abstract void FatalError(Exception e);
     }

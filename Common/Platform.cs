@@ -129,6 +129,8 @@ namespace ClearCanvas.Common
 		private static object _syncRoot = new Object();
 
     	private static readonly ILog _log = LogManager.GetLogger(typeof(Platform));
+        private static readonly object _namedLogLock = new object();
+        private static readonly Dictionary<string, ILog> _namedLogs = new Dictionary<string, ILog>();
 
 		private static string _pluginSubFolder = "plugins";
         private static string _commonSubFolder = "common";
@@ -683,28 +685,43 @@ namespace ClearCanvas.Common
             throw new UnknownServiceException(message);
         }
 
-		/// <summary>
+        #region Logging
+
+        /// <summary>
 		/// Determines if the specified <see cref="LogLevel"/> is enabled.
 		/// </summary>
 		/// <param name="category">The logging level to check.</param>
 		/// <returns>true if the <see cref="LogLevel"/> is enabled, or else false.</returns>
 		public static bool IsLogLevelEnabled(LogLevel category)
-		{
-			switch (category)
-			{
-				case LogLevel.Debug:
-					return _log.IsDebugEnabled;
-				case LogLevel.Info:
-					return _log.IsInfoEnabled;
-				case LogLevel.Warn:
-					return _log.IsWarnEnabled;
-				case LogLevel.Error:
-					return _log.IsErrorEnabled;
-				case LogLevel.Fatal:
-					return _log.IsFatalEnabled;
-			}
-			return false;
-		}
+        {
+            return IsLogLevelEnabled(null, category);
+        }
+
+	    /// <summary>
+	    /// Determines if the specified <see cref="LogLevel"/> is enabled for the named log.
+	    /// </summary>
+	    /// <param name="logName">The name of the log.</param>
+	    /// <param name="category">The logging level to check.</param>
+	    /// <returns>true if the <see cref="LogLevel"/> is enabled, or else false.</returns>
+	    public static bool IsLogLevelEnabled(string logName, LogLevel category)
+	    {
+	        var log = GetLog(logName);
+            switch (category)
+            {
+                case LogLevel.Debug:
+                    return log.IsDebugEnabled;
+                case LogLevel.Info:
+                    return log.IsInfoEnabled;
+                case LogLevel.Warn:
+                    return log.IsWarnEnabled;
+                case LogLevel.Error:
+                    return log.IsErrorEnabled;
+                case LogLevel.Fatal:
+                    return log.IsFatalEnabled;
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// Logs the specified message at the specified <see cref="LogLevel"/>.
@@ -717,27 +734,10 @@ namespace ClearCanvas.Common
 			// Just return without formatting if the log level isn't enabled
 			if (!IsLogLevelEnabled(category)) return;
 
-            Exception ex = message as Exception;
+            var ex = message as Exception;
             if (ex != null)
             {
-                switch (category)
-                {
-                    case LogLevel.Debug:
-                        _log.Debug(SR.ExceptionThrown, ex);
-                        break;
-                    case LogLevel.Info:
-                        _log.Info(SR.ExceptionThrown, ex);
-                        break;
-                    case LogLevel.Warn:
-                        _log.Warn(SR.ExceptionThrown, ex);
-                        break;
-                    case LogLevel.Error:
-                        _log.Error(SR.ExceptionThrown, ex);
-                        break;
-                    case LogLevel.Fatal:
-                        _log.Fatal(SR.ExceptionThrown, ex);
-                        break;
-                }
+                Log(_log, category, ex, null, null);
             }
             else
             {
@@ -771,36 +771,8 @@ namespace ClearCanvas.Common
         /// <param name="args">Optional arguments used with <paramref name="message"/>.</param>
         public static void Log(LogLevel category,String message, params object[] args)
         {
-			// Just return without formatting if the log level isn't enabled
-			if (!IsLogLevelEnabled(category)) return;
-
-			StringBuilder sb = new StringBuilder();
-
-			if (args == null || args.Length == 0)
-				sb.Append(message);
-			else
-				sb.AppendFormat(message, args);
-
-            switch (category)
-            {
-                case LogLevel.Debug:
-                    _log.Debug(sb.ToString());
-                    break;
-                case LogLevel.Info:
-                    _log.Info(sb.ToString());
-                    break;
-                case LogLevel.Warn:
-                    _log.Warn(sb.ToString());
-                    break;
-                case LogLevel.Error:
-                    _log.Error(sb.ToString());
-                    break;
-                case LogLevel.Fatal:
-                    _log.Fatal(sb.ToString());
-                    break;
-            }
+            Log(_log, category, null, message, args);
         }
-
 
         /// <summary>
         /// Logs the specified exception at the specified <see cref="LogLevel"/>.
@@ -812,38 +784,130 @@ namespace ClearCanvas.Common
         /// <param name="args">Optional arguments used with <paramref name="message"/>.</param>
         public static void Log(LogLevel category, Exception ex, String message, params object[] args)
         {
-			// Just return without formatting if the log level isn't enabled
-			if (!IsLogLevelEnabled(category)) return;
+            Log(_log, category, ex, message, args);
+        }
 
-			StringBuilder sb = new StringBuilder();
-            sb.AppendLine(SR.ExceptionThrown);
-            sb.AppendLine();
+	    /// <summary>
+	    /// Logs the specified message at the specified <see cref="LogLevel"/>, to the log with the specified name.
+	    /// </summary>
+	    /// <remarks>This method is thread-safe.</remarks>
+	    /// <param name="logName"> </param>
+	    /// <param name="category">The log level.</param>
+	    /// <param name="message">Format message, as used with <see cref="System.Text.StringBuilder"/>.</param>
+	    /// <param name="args">Optional arguments used with <paramref name="message"/>.</param>
+	    public static void Log(string logName, LogLevel category, String message, params object[] args)
+        {
+            Log(logName, category, null, message, args);
+        }
 
-			if (args == null || args.Length == 0)
-				sb.Append(message);
-			else
-				sb.AppendFormat(message, args);
-            
-            switch (category)
+	    /// <summary>
+	    /// Logs the specified exception at the specified <see cref="LogLevel"/>, to the log with the specified name.
+	    /// </summary>
+	    /// <remarks>This method is thread-safe.</remarks>
+	    /// <param name="ex">The exception to log.</param>
+	    /// <param name="logName">A named log.</param>
+	    /// <param name="category">The log level.</param>
+	    /// <param name="message">Format message, as used with <see cref="System.Text.StringBuilder"/>.</param>
+	    /// <param name="args">Optional arguments used with <paramref name="message"/>.</param>
+	    public static void Log(string logName, LogLevel category, Exception ex, String message, params object[] args)
+        {
+            Log(GetLog(logName), category, ex, message, args);
+        }
+
+	    private static void Log(ILog log, LogLevel category, Exception ex, String message, object[] args)
+	    {
+            if (IsLogLevelEnabled(category))
+                Log(log, category, ex, GetLogMessage(ex != null, message, args));
+	    }
+
+	    private static void Log(ILog log, LogLevel category, Exception ex, string message)
+        {
+            if (log == null) return;
+
+            if (ex == null)
             {
-                case LogLevel.Debug:
-                    _log.Debug(sb.ToString(), ex);
-                    break;
-                case LogLevel.Info:
-                    _log.Info(sb.ToString(), ex);
-                    break;
-                case LogLevel.Warn:
-                    _log.Warn(sb.ToString(), ex);
-                    break;
-                case LogLevel.Error:
-                    _log.Error(sb.ToString(), ex);
-                    break;
-                case LogLevel.Fatal:
-                    _log.Fatal(sb.ToString(), ex);
-                    break;
+                switch (category)
+                {
+                    case LogLevel.Debug:
+                        log.Debug(message);
+                        break;
+                    case LogLevel.Info:
+                        log.Info(message);
+                        break;
+                    case LogLevel.Warn:
+                        log.Warn(message);
+                        break;
+                    case LogLevel.Error:
+                        log.Error(message);
+                        break;
+                    case LogLevel.Fatal:
+                        log.Fatal(message);
+                        break;
+                }
+            }
+            else
+            {
+                switch (category)
+                {
+                    case LogLevel.Debug:
+                        log.Debug(message, ex);
+                        break;
+                    case LogLevel.Info:
+                        log.Info(message, ex);
+                        break;
+                    case LogLevel.Warn:
+                        log.Warn(message, ex);
+                        break;
+                    case LogLevel.Error:
+                        log.Error(message, ex);
+                        break;
+                    case LogLevel.Fatal:
+                        log.Fatal(message, ex);
+                        break;
+                }
+            }
+        }
+
+        private static string GetLogMessage(bool isExceptionLog, string message, params object[] args)
+        {
+            var sb = new StringBuilder();
+            if (isExceptionLog)
+            {
+                sb.AppendLine(SR.ExceptionThrown);
+                sb.AppendLine();
             }
 
+            if (!String.IsNullOrEmpty(message))
+            {
+                if (args == null || args.Length == 0)
+                    sb.Append(message);
+                else
+                    sb.AppendFormat(message, args);
+            }
+
+            return sb.ToString();
         }
+
+        private static ILog GetLog(string name)
+        {
+            if (String.IsNullOrEmpty(name))
+                return _log;
+
+            lock (_namedLogLock)
+            {
+                ILog log;
+                if (!_namedLogs.TryGetValue(name, out log))
+                {
+                    log = LogManager.GetLogger(name);
+                    if (log != null)
+                        _namedLogs[name] = log;
+                }
+
+                return log ?? _log;
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// Displays a message box with the specified message.
