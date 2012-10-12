@@ -20,6 +20,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Core.ModelExtensions;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
 {
@@ -50,7 +51,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                 foreach (ServerPartition partition in ServerPartitionMonitor.Instance)
                 {
                     DirectoryImporterParameters parms = new DirectoryImporterParameters();
-					String incomingFolder = String.Format("{0}_{1}", partition.PartitionFolder, FilesystemMonitor.ImportDirectorySuffix);
+                    String incomingFolder = partition.GetIncomingFolder(); // String.Format("{0}_{1}", partition.PartitionFolder, FilesystemMonitor.ImportDirectorySuffix);
 
                     parms.Directory = new DirectoryInfo(filesystem.Filesystem.GetAbsolutePath(incomingFolder));
                     parms.PartitionAE = partition.AeTitle;

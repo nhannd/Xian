@@ -90,7 +90,11 @@
     <Compile Include="Edit\UpdateStudyCommand.cs" />
     <Compile Include="Edit\UpdateStudyStatistics.cs" />
     <Compile Include="Edit\WebDeleteWorkQueueEntryData.cs" />
+    <Compile Include="FilesystemDynamicPath.cs" />
     <Compile Include="IStudyPreProcessor.cs" />
+    <Compile Include="ModelExtensions\ServerPartitionExtensions.cs" />
+    <Compile Include="ModelExtensions\StudyStorageLocationExtensions.cs" />
+    <Compile Include="ModelExtensions\WorkQueueExtensions.cs" />
     <Compile Include="PatientNameRules.cs" />
     <Compile Include="PreProcessors.cs" />
     <Compile Include="Process\IInsertExtension.cs" />

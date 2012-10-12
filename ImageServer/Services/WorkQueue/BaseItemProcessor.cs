@@ -34,6 +34,7 @@ using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using System.Text;
+using ClearCanvas.ImageServer.Core.ModelExtensions;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
@@ -114,7 +115,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     	private bool _cancelPending;
     	private readonly object _syncRoot = new object();
     	private WorkQueueTypeProperties _workQueueProperties;
-
+        private string _partitionIncomingFolder;
+        private bool _partitionIncomingFolderLoaded;
+        
         #endregion
 
         #region Constructors
@@ -236,6 +239,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         #endregion
 
         #region Protected Methods
+
+
+        /// <summary>
+        /// Gets the incoming folder for the <see cref="ServerPartition"/>. This method returns null if
+        /// there's no incoming folder (e.g, if the Import Files Service is disabled)
+        /// </summary>
+        protected string GetServerPartitionIncomingFolder()
+        {
+            if (!_partitionIncomingFolderLoaded)
+            {
+                _partitionIncomingFolder = ServerPartition.GetIncomingFolder();
+                _partitionIncomingFolderLoaded = true;
+            }
+
+            return _partitionIncomingFolder;
+        }
 
         /// <summary>
         /// Load the storage location for the WorkQueue item.
@@ -1667,7 +1686,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         }
 
         #endregion
-
 
     }
 

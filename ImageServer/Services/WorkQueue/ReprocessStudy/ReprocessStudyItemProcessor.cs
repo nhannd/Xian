@@ -30,6 +30,9 @@ using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
+using ClearCanvas.ImageServer.Common.Command;
+using ClearCanvas.Dicom.Utilities.Command;
+using ClearCanvas.ImageServer.Core.ModelExtensions;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 {
@@ -186,11 +189,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
         #region Private Members
 
         private bool _completed;
-        private ReprocessStudyQueueData _queueData; 
-        
+        private ReprocessStudyQueueData _queueData;
+        private List<string> _additionalFilesToProcess;
         #endregion
 
         #region Overrriden Protected Methods
+
         protected override void ProcessItem(Model.WorkQueue item)
         {
             Platform.CheckForNullReference(item, "item");
@@ -210,15 +214,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             string failureDescription = null;
             
             // The processor stores its state in the Data column
-            LoadState(item);
-            
+            ReadQueueData(item);
+
+
             if (_queueData.State == null || !_queueData.State.ExecuteAtLeastOnce)
             {
+                // Added for ticket #9673:
+                // If the study folder does not exist and the study has been archived, trigger a restore and we're done
                 if (!Directory.Exists(StorageLocation.GetStudyPath()))
                 {
                     if (StorageLocation.ArchiveLocations.Count > 0)
                     {
-                        // Added for ticket #9673
                         Platform.Log(LogLevel.Info,
                                      "Reprocessing archived study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4} without study data on the filesystem.  Inserting Restore Request.",
                                      Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
@@ -358,14 +364,31 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                                                   break;
 
                                                               case ProcessingStatus.Reconciled:
-                                                                  Platform.Log(LogLevel.Error, "SOP was unexpectedly reconciled on reprocess SOP {0} for study {1}", instanceUid, StorageLocation.StudyInstanceUid);
+                                                                  Platform.Log(LogLevel.Warn, "SOP was unexpectedly reconciled on reprocess SOP {0} for study {1}. It will be removed from the folder.", instanceUid, StorageLocation.StudyInstanceUid);
                                                                   failureDescription = String.Format("SOP Was reconciled: {0}", instanceUid);
+
+                                                                  // Added for #10620 (Previously we didn't do anything here)
+                                                                  // Because we are reprocessing files in the study folder, when file needs to be reconciled it is copied to the reconcile folder
+                                                                  // Therefore, we need to delete the one in the study folder. Otherwise, there will be problem when the SIQ entry is reconciled.
+                                                                  // InstanceAlreadyExistsException will also be thrown by the SOpInstanceProcessor if this ReprocessStudy WQI 
+                                                                  // resumes and reprocesses the same file again.
+                                                                  // Note: we are sure that the file has been copied to the Reconcile folder and there's no way back. 
+                                                                  // We must get rid of this file in the study folder.
+                                                                  FileUtils.Delete(path);
+
+                                                                  // Special handling: if the file is one which we're supposed to reprocess at the end (see ProcessAdditionalFiles), we must remove the file from the list
+                                                                  if (_additionalFilesToProcess != null && _additionalFilesToProcess.Contains(path))
+                                                                  {
+                                                                      _additionalFilesToProcess.Remove(path);
+                                                                  }
+
                                                                   break;
                                                           }
                                                       }
                                                   }
                                                   catch (DicomException ex)
                                                   {
+                                                      // TODO : should we fail the reprocess instead? Deleting an dicom file can lead to incomplete study.
                                                       removedFiles.Add(file);
                                                       Platform.Log(LogLevel.Warn, "Skip reprocessing and delete {0}: Not readable.", path);
                                                       FileUtils.Delete(path);
@@ -442,6 +465,134 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             }
         }
 
+        protected override void PostProcessing(Model.WorkQueue item, WorkQueueProcessorStatus status, WorkQueueProcessorDatabaseUpdate resetQueueStudyState)
+        {
+            ProcessAdditionalFiles();
+            base.PostProcessing(item, status, resetQueueStudyState);
+
+        }
+
+        /// <summary>
+        /// Reprocess the file requested by the process which initiates the reprocess. 
+        /// If the file is located outside the study folder, it will be moved to the incoming folder for import.
+        /// </summary>
+        private void ProcessAdditionalFiles()
+        {
+            if (_additionalFilesToProcess != null && _additionalFilesToProcess.Count > 0)
+            {
+                if (string.IsNullOrEmpty(base.GetServerPartitionIncomingFolder()))
+                {
+                    var error = "Some files need to be moved to the Incoming folder in order to be reprocess. However, there is no active incoming folder. Make sure the Import Files Service is enabled";
+                    throw new Exception(error);
+                }
+                else
+                {
+                    try
+                    {
+
+                        foreach (var entry in _additionalFilesToProcess)
+                        {
+                            var path = FilesystemDynamicPath.Parse(entry);
+                            var realPath = path.ConvertToAbsolutePath(this.StorageLocation);
+
+                            try
+                            {
+                                // On one hand, if the file is in the study folder then we should have processed it in prev stage.
+                                // But on the other hand, the original WQI may have failed because the file was missing. If this is the case, we should fail
+                                var fileInfo = new FileInfo(realPath);
+                                if (fileInfo.FullName.IndexOf(StorageLocation.GetStudyPath()) == 0)
+                                {
+                                    // only check if file exists if it's a DCM file. Other type of files (eg xml, gz) may have been deleted during reprocessing
+                                    if (fileInfo.Extension.Equals(ServerPlatform.DicomFileExtension, StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        if (!fileInfo.Exists)
+                                            throw new FileNotFoundException(string.Format("{0} is expected but it could not be found", fileInfo.FullName));
+
+                                        Platform.Log(LogLevel.Debug, "Skip reprocessing {0} since it is in the study folder", realPath);
+                                    }                                                                        
+                                }
+                                else
+                                {
+                                    MoveFileToIncomingFolder(fileInfo.FullName);
+
+                                    // delete empty directories if necessary
+                                    if (path.Type == FilesystemDynamicPath.PathType.RelativeToReconcileFolder)
+                                    {
+                                        var folderToDelete = fileInfo.Directory.FullName;
+
+                                        DirectoryUtility.DeleteIfEmpty(folderToDelete, StorageLocation.GetReconcileRootPath());
+                                    }
+                                }
+                                
+                                _queueData.AdditionalFiles.Remove(entry);
+
+                            }
+                            catch (FileNotFoundException ex)
+                            {
+                                throw; // File is missing. Better leave decision making to the user.
+                            }
+                            catch (DirectoryNotFoundException ex)
+                            {
+                                // ignore?
+                            }
+                        }
+
+                    }
+                    finally
+                    {
+                        // update the list so we don't have to reprocess again when the WQI resumes (that will cause problem because we may have moved the files somewhere else)
+                        SaveState(WorkQueueItem, _queueData);
+                    }
+                
+                }
+
+                
+            }
+        }
+
+        /// <summary>
+        /// Move the file specified in the path to the incoming folder so that it will be imported again
+        /// </summary>
+        /// <param name="path"></param>
+        private void MoveFileToIncomingFolder(string path)
+        {
+            Platform.Log(LogLevel.Debug, "Moving file {0} to incoming folder", path);
+
+            // should not proceed because it may mean incomplete study
+            if (!File.Exists(path))
+                throw new FileNotFoundException(string.Format("File is missing: {0}", path));
+            
+            // move the file to the Incoming folder to reprocess            
+            using (var processor = new ServerCommandProcessor("Move file back to incoming folder"))
+            {
+                var fileInfo = new FileInfo(path);
+                const string folder = "FromWorkQueue";
+                var incomingPath = GetServerPartitionIncomingFolder();
+                incomingPath = Path.Combine(incomingPath, "FromWorkQueue");
+                incomingPath = Path.Combine(incomingPath, StorageLocation.StudyInstanceUid);
+
+                var createDirCommand = new CreateDirectoryCommand(incomingPath);
+                processor.AddCommand(createDirCommand);
+
+                incomingPath = Path.Combine(incomingPath, fileInfo.Name);
+                var move = new RenameFileCommand(path, incomingPath, true);
+                processor.AddCommand(move);
+
+                if (!processor.Execute())
+                {
+                    throw new Exception("Unexpected error happened when trying to move file back to the incoming folder for reprocess", processor.FailureException);
+                }
+
+                Platform.Log(LogLevel.Info, "File {0} has been moved to the incoming folder.", path);
+
+            }
+        }
+
+        private void ProcessAdditionalFolder(string path)
+        {
+            Platform.Log(LogLevel.Info, "Reprocessing folder {0}", path);
+        }
+
         private void LogRemovedFiles(List<FileInfo> removedFiles)
         {
             if (removedFiles.Count>0)
@@ -472,6 +623,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                 updateContext.Commit();
             }
         }
+
 
         private void CleanupDatabase()
         {
@@ -546,7 +698,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             return studyXml ?? new StudyXml(StorageLocation.StudyInstanceUid);
         }
 
-        private void LoadState(Model.WorkQueue item)
+        private void ReadQueueData(Model.WorkQueue item)
         {
             if (item.Data!=null)
             {
@@ -563,6 +715,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                                  }
                                  };
             }
+
+            // Convert the paths stored in _queueData.AdditionalFiles to the actual paths
+            if (_queueData.AdditionalFiles != null)
+            {
+                _additionalFilesToProcess = new List<string>();
+                var list = _queueData.AdditionalFiles.ToArray();
+                foreach (var entry in list)
+                {
+                    var path = FilesystemDynamicPath.Parse(entry);
+                    var realPath = path.ConvertToAbsolutePath(this.StorageLocation);
+                    _additionalFilesToProcess.Add(realPath);
+                }
+            }
+                     
         }
 
         private void EnsureConsistentObjectCount(StudyXml studyXml, IDictionary<string, List<string>> processedSeriesMap)
@@ -661,5 +827,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
         {
             return true;// can start anytime
         }
+
     }
 }
