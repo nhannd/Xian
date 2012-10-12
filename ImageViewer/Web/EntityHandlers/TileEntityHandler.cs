@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
         private readonly long _defaultJpegQFactor = WebViewerServices.Default.JpegQualityFactor;
         private long _quality = WebViewerServices.Default.JpegQualityFactor;
 
-		private StatisticsSet _stats = new StatisticsSet("AverageRender");
+        private AverageImageStatistics _averageImageStats = new AverageImageStatistics();
 
 		private Tile _tile;
 		private Point _mousePosition;
@@ -435,10 +435,10 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                 }
             }
 
-            var stats = new WebViewStudyStatistics(_mimeType);
+            var imageStats = new ImageStatistics(_mimeType);
 
             //long t0 = Environment.TickCount;
-            stats.DrawToBitmapTime.Start();
+            imageStats.DrawToBitmapTime.Start();
 
             Bitmap bitmap = Bitmap;
 
@@ -454,7 +454,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                 graphics.ReleaseHdc(Surface.ContextID);
             }
 
-            stats.DrawToBitmapTime.End();
+            imageStats.DrawToBitmapTime.End();
+            _averageImageStats.AverageDrawToBitmapTime.AddSample(imageStats.DrawToBitmapTime);
 
             Bitmap bmp1 = null;
             if (DiagnosticsSettings.Default.CompareImageQuality)
@@ -474,7 +475,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                 InitOrUpdateRefreshClientTimer();
             }
 
-            stats.SaveTime.Start();
+            imageStats.SaveTime.Start();
             if (_mimeType.Equals("image/jpeg"))
             {
                 var eps = new EncoderParameters(1);
@@ -488,7 +489,9 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             {
                 bitmap.Save(ms, ImageFormat.Png);
             }
-            stats.SaveTime.End();
+            
+            imageStats.SaveTime.End();
+            _averageImageStats.AverageSaveTime.AddSample(imageStats.SaveTime);
 
             byte[] imageBuffer = ms.ToArray();
 
@@ -499,15 +502,15 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             }
 
             ms.Position = 0;
-            stats.ImageSize = (ulong)imageBuffer.LongLength;
-            _stats.AddSubStats(stats);
+            imageStats.ImageSize.Value = (ulong)imageBuffer.LongLength;
+            _averageImageStats.AverageImageSize.AddSample(imageStats.ImageSize);
 
-            //StatisticsLogger.Log(LogLevel.Info, false, stats);
-            if (_stats.SubStatistics.Count > 20)
+            StatisticsLogger.Log(LogLevel.Info, false, imageStats);
+            if (_averageImageStats.AverageSaveTime.SampleCount > 20)
             {
-                _stats.CalculateAverage();
-                //StatisticsLogger.Log(LogLevel.Info, false, _stats);
-                _stats = new StatisticsSet("AverageRender");
+                _averageImageStats.CalculateAverage();
+                StatisticsLogger.Log(LogLevel.Info, false, _averageImageStats);
+                _averageImageStats = new AverageImageStatistics();
             }
 
             //Console.WriteLine("Tile {0} : DrawToBitmap (size: {3}, mime: {2}):{1}ms", tile.Identifier,Environment.TickCount - t0,mimeType, ms.Length);

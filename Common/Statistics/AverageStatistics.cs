@@ -101,6 +101,11 @@ namespace ClearCanvas.Common.Statistics
 
         #region Public Properties
 
+        public int SampleCount
+        {
+            get { return _samples.Count; }
+        }
+
         /// <summary>
         /// Gets or sets a value indicating whether a new sample has been added.
         /// </summary>
