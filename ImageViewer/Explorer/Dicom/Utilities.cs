@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
@@ -114,5 +115,52 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             return name.Split(new[] { separator }, StringSplitOptions.None);
         }
+
+    	/// <summary>
+    	/// Returns distinct elements from a sequence based on comparing a key projected by the specified function.
+    	/// </summary>
+    	/// <typeparam name="TElement"></typeparam>
+    	/// <typeparam name="TKey"></typeparam>
+    	/// <param name="source"></param>
+    	/// <param name="key"></param>
+    	/// <returns></returns>
+    	public static IEnumerable<TElement> Distinct<TElement, TKey>(this IEnumerable<TElement> source, Func<TElement, TKey> key)
+    	{
+    		return source.Distinct(new DistinctKeyComparer<TElement, TKey>(key));
+    	}
+
+    	/// <summary>
+		/// Produces the set union of two sequences based on comparing a key projected by the specified function.
+    	/// </summary>
+    	/// <typeparam name="TElement"></typeparam>
+    	/// <typeparam name="TKey"></typeparam>
+    	/// <param name="first"></param>
+    	/// <param name="second"></param>
+    	/// <param name="key"></param>
+    	/// <returns></returns>
+    	public static IEnumerable<TElement> Union<TElement, TKey>(this IEnumerable<TElement> first, IEnumerable<TElement> second, Func<TElement, TKey> key)
+    	{
+    		return first.Union(second, new DistinctKeyComparer<TElement, TKey>(key));
+    	}
+
+    	private class DistinctKeyComparer<TElement, TKey> : IEqualityComparer<TElement>
+    	{
+    		private readonly Func<TElement, TKey> _key;
+
+    		public DistinctKeyComparer(Func<TElement, TKey> key)
+    		{
+    			_key = key;
+    		}
+
+    		public bool Equals(TElement x, TElement y)
+    		{
+    			return Equals(_key.Invoke(x), _key.Invoke(y));
+    		}
+
+    		public int GetHashCode(TElement x)
+    		{
+    			return _key.Invoke(x).GetHashCode();
+    		}
+    	}
     }
 }
