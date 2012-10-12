@@ -26,6 +26,23 @@ namespace ClearCanvas.ImageServer.Core.ModelExtensions
     public static class WorkQueueExtensions
     {
         /// <summary>
+        /// Indicates whether or not this WQI will result in patient/study information change.
+        /// This usually indicates if the operation can be safely deleted from the system without any major consequences.
+        /// </summary>
+        public static bool WillResultInDataChanged(this WorkQueue item)
+        {
+            var harmlessWQITypes = new[]{
+                WorkQueueTypeEnum.AutoRoute,
+                WorkQueueTypeEnum.CompressStudy, // not changing patient/study info 
+                WorkQueueTypeEnum.PurgeStudy, // nearline or online
+                WorkQueueTypeEnum.MigrateStudy,
+                WorkQueueTypeEnum.WebMoveStudy
+            };
+
+            return !harmlessWQITypes.Contains(item.WorkQueueTypeEnum);
+        }
+
+        /// <summary>
         /// Finds all <see cref="WorkQueueUids"/> this item. 
         /// </summary>
         /// <param name="item"></param>
