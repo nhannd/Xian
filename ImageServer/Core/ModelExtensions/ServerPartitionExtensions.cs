@@ -16,6 +16,8 @@ using System.Text;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Common;
 using System.IO;
+using ClearCanvas.Web.Enterprise.Authentication;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Core.ModelExtensions
 {
@@ -42,6 +44,26 @@ namespace ClearCanvas.ImageServer.Core.ModelExtensions
             // Note: Import Service doesn't care if the filesystem is disabled or readonly so we don't need to care either
             var incomingPath = Path.Combine(filesystem.Filesystem.FilesystemPath, String.Format("{0}_{1}", partition.PartitionFolder, FilesystemMonitor.ImportDirectorySuffix));
             return incomingPath;
+        }
+
+
+        /// <summary>
+        /// Checks if the specified user is allowed to access this partition.
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsUserAccessAllowed(this ServerPartition partition, CustomPrincipal user)
+        {
+            Platform.CheckForNullReference(user, "user cannot be null");
+
+            // If user has the "access all" token, return true
+            if (user.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.DataAccess.AllPartitions))
+                return true;
+
+            // If user belongs to any data access authority group which can access the partition, return true
+            var isAllowed = user.Credentials.DataAccessAuthorityGroups != null
+                && user.Credentials.DataAccessAuthorityGroups.Any(g => partition.IsAuthorityGroupAllowed(g.ToString()));
+
+            return isAllowed;
         }
     }
 }

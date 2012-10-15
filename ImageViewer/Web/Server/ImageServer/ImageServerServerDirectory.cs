@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
@@ -18,9 +19,11 @@ using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Core.ModelExtensions;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.Web.Enterprise.Authentication;
+using System.Text;
 
 namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 {
@@ -42,100 +45,12 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 
     internal class ImageServerServerDirectory : IServerDirectory
     {
-        private ServerDirectoryEntry FindLocalPartition(string retrieveAeTitle)
-        {
-            var webUser = Thread.CurrentPrincipal as CustomPrincipal;
-            if (webUser == null)
-            {
-                Platform.Log(LogLevel.Debug, "ImageServerServerDirectory: FindLocalPartition(): user is not logged in ?");
-                return null;
-            }
-
-            ServerPartition partition = ServerPartitionMonitor.Instance.GetPartition(retrieveAeTitle);
-            if (partition == null)
-            {
-                Platform.Log(LogLevel.Debug, "ImageServerServerDirectory: FindLocalPartition(): Could not find partition with AE Title '{0}'", retrieveAeTitle);
-                return null;
-            }
-
-            foreach (var oid in webUser.Credentials.DataAccessAuthorityGroups)
-            {
-                if (partition.IsAccessAllowed(oid.ToString()))
-                {
-                    throw new PermissionDeniedException(string.Empty);
-                }
-            }
-
-            return new ServerDirectoryEntry()
-            {
-                IsPriorsServer = true,
-                Server = new ApplicationEntity()
-                {
-                    AETitle = partition.AeTitle,
-                    Description = partition.Description,
-                    Name = partition.AeTitle,
-                    ScpParameters = new ScpParameters(WebViewerServices.Default.ArchiveServerHostname, partition.Port),
-                    StreamingParameters = new StreamingParameters(WebViewerServices.Default.ArchiveServerHeaderPort, WebViewerServices.Default.ArchiveServerWADOPort)
-                }
-            };
-        }
-        private static Device FindServer(string retrieveAeTitle)
-        {
-         
-            var webUser = Thread.CurrentPrincipal as CustomPrincipal;
-            if (webUser != null)
-            {
-
-                foreach (var partition in ServerPartitionMonitor.Instance)
-                {
-                    if (partition.AeTitle.Equals(retrieveAeTitle, StringComparison.InvariantCulture))
-                    {
-                        foreach (var oid in webUser.Credentials.DataAccessAuthorityGroups)
-                        {
-                            if (partition.IsAccessAllowed(oid.ToString()))
-                            {
-                                throw new PermissionDeniedException(string.Format("User does not have permission to access partition {0}", partition.AeTitle));
-                            }
-                        }
-                    }
-                }
-            }
-
-            using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-            {
-                var broker = ctx.GetBroker<IDeviceEntityBroker>();
-                var criteria = new DeviceSelectCriteria();
-                criteria.AeTitle.EqualTo(retrieveAeTitle);
-                IList<Device> list = broker.Find(criteria);
-                foreach (Device theDevice in list)
-                {
-                    if (string.Compare(theDevice.AeTitle, retrieveAeTitle, false, CultureInfo.InvariantCulture) == 0)
-                        return theDevice;
-                }
-            }
-
-            return null;
-        }
-        private static ServerDirectoryEntry FromDeviceToServerDirectoryEntry(Device theDevice)
-        {
-            var entry = new ServerDirectoryEntry(new ApplicationEntity
-                                                     {
-                                                         AETitle = theDevice.AeTitle,
-                                                         Description = theDevice.Description,
-                                                         Name = theDevice.Name,
-                                                         ScpParameters =
-                                                             new ScpParameters(theDevice.IpAddress, theDevice.Port)
-                                                     });
-
-            return entry;
-        }
-
         public GetServersResult GetServers(GetServersRequest request)
         {
             var result = new GetServersResult
-                       {
-                           ServerEntries = new List<ServerDirectoryEntry>()
-                       };
+            {
+                ServerEntries = new List<ServerDirectoryEntry>()
+            };
 
             if (!string.IsNullOrEmpty(request.AETitle))
             {
@@ -167,5 +82,97 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
         {
             return new DeleteServerResult();
         }
+
+        #region Helpers 
+
+        
+        /// <summary>
+        /// Gets the <see cref="ServerDirectoryEntry"/> record corresponding to the <see cref="ServerPartition"/> whose AE Title matches the the specified Retrieve AE Title.
+        /// PermissionDeniedException will be thrown if the current user does not have permission to access the partition.
+        /// </summary>
+        /// <param name="retrieveAeTitle"></param>
+        /// <returns></returns>
+        /// <exception cref="PermissionDeniedException">If user hasn't logged in (Thread.CurrentPrincipal is not set) or user does not have access to the server partition</exception>
+        private ServerDirectoryEntry FindLocalPartition(string retrieveAeTitle)
+        {
+            var webUser = Thread.CurrentPrincipal as CustomPrincipal;
+            if (webUser == null)
+            {
+                throw new PermissionDeniedException("User is not logged in");
+            }
+
+            ServerPartition partition = ServerPartitionMonitor.Instance.GetPartition(retrieveAeTitle);
+            if (partition == null)
+            {
+                Platform.Log(LogLevel.Error, "ImageServerServerDirectory: FindLocalPartition(): Could not find partition with AE Title '{0}'", retrieveAeTitle);
+                return null;
+            }
+
+            if (!partition.IsUserAccessAllowed(webUser))
+                throw new PermissionDeniedException(string.Format("User '{0}' does not have permission to access to partition {1}. Check both the Server Partition and Study Data Access!", webUser.DisplayName, partition.AeTitle));
+
+            return new ServerDirectoryEntry()
+            {
+                IsPriorsServer = true, // search this partition for prior studies
+                Server = new ApplicationEntity()
+                {
+                    AETitle = partition.AeTitle,
+                    Description = partition.Description,
+                    Name = partition.AeTitle,
+                    ScpParameters = new ScpParameters(WebViewerServices.Default.ArchiveServerHostname, partition.Port),
+                    StreamingParameters = new StreamingParameters(WebViewerServices.Default.ArchiveServerHeaderPort, WebViewerServices.Default.ArchiveServerWADOPort)
+                }
+            };
+        }
+
+
+
+        private static Device FindServer(string retrieveAeTitle)
+        {
+         
+            var webUser = Thread.CurrentPrincipal as CustomPrincipal;
+            if (webUser != null)
+            {
+                foreach (var partition in ServerPartitionMonitor.Instance)
+                {
+                    if (partition.AeTitle.Equals(retrieveAeTitle, StringComparison.InvariantCulture))
+                    {
+                        if (!partition.IsUserAccessAllowed(webUser))
+                            throw new PermissionDeniedException(string.Format("User does not have permission to access partition {0}", partition.AeTitle));
+                    }
+                }
+            }
+
+            using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                var broker = ctx.GetBroker<IDeviceEntityBroker>();
+                var criteria = new DeviceSelectCriteria();
+                criteria.AeTitle.EqualTo(retrieveAeTitle);
+                IList<Device> list = broker.Find(criteria);
+                foreach (Device theDevice in list)
+                {
+                    if (string.Compare(theDevice.AeTitle, retrieveAeTitle, false, CultureInfo.InvariantCulture) == 0)
+                        return theDevice;
+                }
+            }
+
+            return null;
+        }
+
+        private static ServerDirectoryEntry FromDeviceToServerDirectoryEntry(Device theDevice)
+        {
+            var entry = new ServerDirectoryEntry(new ApplicationEntity
+                                                     {
+                                                         AETitle = theDevice.AeTitle,
+                                                         Description = theDevice.Description,
+                                                         Name = theDevice.Name,
+                                                         ScpParameters =
+                                                             new ScpParameters(theDevice.IpAddress, theDevice.Port)
+                                                     });
+
+            return entry;
+        }
+
+        #endregion
     }
 }

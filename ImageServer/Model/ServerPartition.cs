@@ -16,6 +16,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using System;
 
 namespace ClearCanvas.ImageServer.Model
 {
@@ -153,7 +154,12 @@ namespace ClearCanvas.ImageServer.Model
             }
         }
 
-        public bool IsAccessAllowed(string authorityGroupOID)
+        /// <summary>
+        /// Checks if users in the specified data access authority group have access to this partition
+        /// </summary>
+        /// <param name="authorityGroupOID"></param>
+        /// <returns></returns>
+        public bool IsAuthorityGroupAllowed(string authorityGroupOID)
         {
             var dataAccessGroup = FindDataAccessGroup(authorityGroupOID);
             if (dataAccessGroup == null)
@@ -256,6 +262,5 @@ namespace ClearCanvas.ImageServer.Model
                 }
             }
         }
-
     }
 }
