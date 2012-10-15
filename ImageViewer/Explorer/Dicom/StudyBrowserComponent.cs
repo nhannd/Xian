@@ -564,11 +564,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					var modalityResults = bridge.GetStudyEntries(modalityCriteria).ToList(); // 'ToList' to execute query here and now
 
 					if ((modality == string.Empty)
-					    || (modalityResults.All(s => s.Study.ModalitiesInStudy.All(string.IsNullOrEmpty))) // 'All' returns true if sequence is empty
+					    || (modalityResults.Any() && modalityResults.All(s => s.Study.ModalitiesInStudy.All(string.IsNullOrEmpty))) // 'All' returns true if sequence is empty, so make sure it's not empty!
 					    || (modalityResults.Any(s => !s.Study.ModalitiesInStudy.Any(m => modality.Equals(m, StringComparison.InvariantCultureIgnoreCase)))))
 					{
 						// if modality was not filtered in the query
-						// or if all results do not return modality (i.e. the server does not support querying or returning this optional tag)
+						// or if all results (non-empty) do not return modality (i.e. the server does not support querying or returning this optional tag)
 						// or if any result does not match the queried modality (i.e. the server does not support querying on this optional tag)
 						// then these are all the unique results we'll ever get, and we can skip the other modalities
 						return modalityResults;
