@@ -94,8 +94,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
         private readonly long _defaultJpegQFactor = WebViewerServices.Default.JpegQualityFactor;
         private long _quality = WebViewerServices.Default.JpegQualityFactor;
 
-        //private AverageImageStatistics _averageImageStats = new AverageImageStatistics();
-
 		private Tile _tile;
 		private Point _mousePosition;
 		private bool _hasCapture;
@@ -456,7 +454,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             }
 
             imageStats.DrawToBitmapTime.End();
-            //_averageImageStats.AverageDrawToBitmapTime.AddSample(imageStats.DrawToBitmapTime);
 
             Bitmap bmp1 = null;
             if (DiagnosticsSettings.Default.CompareImageQuality)
@@ -492,7 +489,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             }
             
             imageStats.SaveTime.End();
-            //_averageImageStats.AverageSaveTime.AddSample(imageStats.SaveTime);
 
             byte[] imageBuffer = ms.ToArray();
 
@@ -505,17 +501,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             ms.Position = 0;
             imageStats.ImageSize.Value = (ulong)imageBuffer.LongLength;
             ApplicationContext.LogStatistics(_logName, imageStats);
-
-            //_averageImageStats.AverageImageSize.AddSample(imageStats.ImageSize);
-
-            //if (_averageImageStats.AverageSaveTime.SampleCount > 20)
-            //{
-            //    _averageImageStats.CalculateAverage();
-            //    ApplicationContext.LogStatistics(_logName, _averageImageStats);
-            //    _averageImageStats = new AverageImageStatistics();
-            //}
-
-            //Console.WriteLine("Tile {0} : DrawToBitmap (size: {3}, mime: {2}):{1}ms", tile.Identifier,Environment.TickCount - t0,mimeType, ms.Length);
 
             if (DiagnosticsSettings.Default.CompareImageQuality)
             {
