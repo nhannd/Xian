@@ -286,6 +286,28 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.Tests
 		}
 
 		[Test]
+		public void TestUnindexedMultiModalityQuery2()
+		{
+			var server = new TestDicomServiceNode();
+			server.Studies.AddRange(CreateTestStudies());
+			server.StudyMatcher = null;
+
+			var expectedStudies = server.Studies.Select(s => s.StudyInstanceUid).ToList();
+
+			var actualStudies = StudyBrowserComponent.TestGetStudyEntries(server, new StudyRootStudyIdentifier {ModalitiesInStudy = new[] {"PT", "CT", "ZZ"}}).Select(s => s.Study.StudyInstanceUid).ToList();
+			AssertCollections(expectedStudies, actualStudies, "ModalitiesInStudy=['PT','CT','ZZ']");
+			Assert.AreEqual(1, server.QueryCount, "Too many server query calls");
+
+			actualStudies = StudyBrowserComponent.TestGetStudyEntries(server, new StudyRootStudyIdentifier {ModalitiesInStudy = new[] {"PT", "ZZ", "CT", "KO", "PR"}}).Select(s => s.Study.StudyInstanceUid).ToList();
+			AssertCollections(expectedStudies, actualStudies, "ModalitiesInStudy=['PT','ZZ','CT','KO','PR']");
+			Assert.AreEqual(2, server.QueryCount, "Too many server query calls");
+
+			actualStudies = StudyBrowserComponent.TestGetStudyEntries(server, new StudyRootStudyIdentifier {ModalitiesInStudy = new[] {"ZZ", "PT", "CT", "KO", "PR"}}).Select(s => s.Study.StudyInstanceUid).ToList();
+			AssertCollections(expectedStudies, actualStudies, "ModalitiesInStudy=['ZZ','PT','CT','KO','PR']");
+			Assert.AreEqual(3, server.QueryCount, "Too many server query calls");
+		}
+
+		[Test]
 		public void TestUnsupportedOpenModalityQuery()
 		{
 			var server = new TestDicomServiceNode();
@@ -344,6 +366,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.Tests
 			actualStudies = StudyBrowserComponent.TestGetStudyEntries(server, new StudyRootStudyIdentifier {ModalitiesInStudy = new[] {"PT", "CT", "KO", "PR"}}).Select(s => s.Study.StudyInstanceUid).ToList();
 			AssertCollections(expectedStudies, actualStudies, "ModalitiesInStudy=['PT','CT','KO','PR']");
 			Assert.AreEqual(2, server.QueryCount, "Too many server query calls");
+		}
+
+		[Test]
+		public void TestUnsupportedMultiModalityQuery2()
+		{
+			var server = new TestDicomServiceNode();
+			server.Studies.AddRange(CreateTestStudies());
+			server.StudyMatcher = null;
+			foreach (var study in server.Studies) study.ModalitiesInStudy = new string[0]; // blank the modalities field
+
+			var expectedStudies = server.Studies.Select(s => s.StudyInstanceUid).ToList();
+
+			var actualStudies = StudyBrowserComponent.TestGetStudyEntries(server, new StudyRootStudyIdentifier {ModalitiesInStudy = new[] {"PT", "CT", "ZZ"}}).Select(s => s.Study.StudyInstanceUid).ToList();
+			AssertCollections(expectedStudies, actualStudies, "ModalitiesInStudy=['PT','CT','ZZ']");
+			Assert.AreEqual(1, server.QueryCount, "Too many server query calls");
+
+			actualStudies = StudyBrowserComponent.TestGetStudyEntries(server, new StudyRootStudyIdentifier {ModalitiesInStudy = new[] {"PT", "ZZ", "CT", "KO", "PR"}}).Select(s => s.Study.StudyInstanceUid).ToList();
+			AssertCollections(expectedStudies, actualStudies, "ModalitiesInStudy=['PT','ZZ','CT','KO','PR']");
+			Assert.AreEqual(2, server.QueryCount, "Too many server query calls");
+
+			actualStudies = StudyBrowserComponent.TestGetStudyEntries(server, new StudyRootStudyIdentifier {ModalitiesInStudy = new[] {"ZZ", "PT", "CT", "KO", "PR"}}).Select(s => s.Study.StudyInstanceUid).ToList();
+			AssertCollections(expectedStudies, actualStudies, "ModalitiesInStudy=['ZZ','PT','CT','KO','PR']");
+			Assert.AreEqual(3, server.QueryCount, "Too many server query calls");
 		}
 
 		private static bool IdealMatchModalitiesInStudy(StudyRootStudyIdentifier s, StudyRootStudyIdentifier q)
