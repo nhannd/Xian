@@ -19,6 +19,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using SR=Resources.SR;
+using ClearCanvas.ImageServer.Core.ModelExtensions;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 {
@@ -217,6 +218,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 PreDeleteConfirmDialog.Message = WorkQueue.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.ExternalEdit) 
                     ? SR.WorkQueueDeleteConfirmExternalEdit 
                     : SR.WorkQueueDeleteConfirm;
+
+                if (WorkQueue.WillResultInDataChanged())
+                {
+                    PreDeleteConfirmDialog.WarningMessage = SR.WorkQueueDeleteWarning;
+                }
             }
             else
             {

@@ -134,21 +134,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             SelectedWorkQueueItemList.TheGrid = SelectedWorkQueueItemList.WorkQueueItemGridView;
         }
 
-        public override void DataBind()
-        {
-            base.DataBind();
-
-            if (WorkQueues == null || WorkQueues.Count == 0)
-            {
-                MessageDialog.BackgroundCSS = string.Empty;
-                MessageDialog.Message = Resources.SR.SelectedWorkQueueNoLongerOnTheList;
-                MessageDialog.MessageStyle = "color: red; font-weight: bold;";
-                MessageDialog.MessageType = Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
-
-                MessageDialog.Show();
-            }
-        }
-
 
         internal void Reset()
         {

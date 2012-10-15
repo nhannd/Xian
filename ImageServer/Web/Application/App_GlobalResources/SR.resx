@@ -843,4 +843,7 @@ At least one server partition is required. Please add a new server partition.</v
   <data name="PartitionStorageConfiguration_NoArchiveConfiguredNoDeleteRule" xml:space="preserve">
     <value>New processed studies will now be kept online.</value>
   </data>
+  <data name="WorkQueueDeleteWarning" xml:space="preserve">
+    <value>Warning: deleting this WorkQueue item may result in loss of images or incorrect study information!</value>
+  </data>
 </root>

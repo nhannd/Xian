@@ -2090,6 +2090,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Warning: deleting this WorkQueue item may result in loss of images or incorrect study information!.
+        /// </summary>
+        internal static string WorkQueueDeleteWarning {
+            get {
+                return ResourceManager.GetString("WorkQueueDeleteWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This item has already failed. It cannot be rescheduled. Try reset it instead..
         /// </summary>
         internal static string WorkQueueFailed_CannotReschedule {

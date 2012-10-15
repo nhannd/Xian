@@ -45,37 +45,40 @@ namespace ClearCanvas.ImageServer.Web.Application
             }
 
             AddIE6PngBugFixCSS();
-
-            CustomIdentity id = SessionManager.Current.User.Identity as CustomIdentity;
-
-            if (DisplayUserInformationPanel)
+            if (SessionManager.Current != null)
             {
-                if (id != null)
+                CustomIdentity id = SessionManager.Current.User.Identity as CustomIdentity;
+
+                if (DisplayUserInformationPanel)
                 {
-                    Username.Text = id.DisplayName;
+                    if (id != null)
+                    {
+                        Username.Text = id.DisplayName;
+                    }
+                    else
+                    {
+                        Username.Text = "unknown";
+                    }
+
+                    try
+                    {
+                        AlertIndicator alertControl = (AlertIndicator)LoadControl("~/Controls/AlertIndicator.ascx");
+                        AlertIndicatorPlaceHolder.Controls.Add(alertControl);
+                    }
+                    catch (Exception)
+                    {
+                        //No permissions for Alerts, control won't be displayed
+                        //hide table cell that contains the control.
+                        AlertIndicatorCell.Visible = false;
+                    }
                 }
                 else
                 {
-                    Username.Text = "unknown";
-                }
-
-                try
-                {
-                    AlertIndicator alertControl = (AlertIndicator)LoadControl("~/Controls/AlertIndicator.ascx");
-                    AlertIndicatorPlaceHolder.Controls.Add(alertControl);
-                }
-                catch (Exception)
-                {
-                    //No permissions for Alerts, control won't be displayed
-                    //hide table cell that contains the control.
-                    AlertIndicatorCell.Visible = false;
+                    UserInformationCell.Width = Unit.Percentage(0);
+                    MenuCell.Width = Unit.Percentage(100);
                 }
             }
-            else
-            {
-                UserInformationCell.Width = Unit.Percentage(0);
-                MenuCell.Width = Unit.Percentage(100);
-            }
+            
         }
 
         private void AddIE6PngBugFixCSS()
