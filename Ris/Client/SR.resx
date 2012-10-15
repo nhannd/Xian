@@ -1191,4 +1191,10 @@
   <data name="WarnProceduresScheduledInThePast" xml:space="preserve">
     <value>One or more procedures are scheduled in the past.  Is this what you intended to do?</value>
   </data>
+  <data name="MessageDateOfBirthMustBeInThePast" xml:space="preserve">
+    <value>Date of birth must be in the past.</value>
+  </data>
+  <data name="MessageDateOfDeathMustBeInThePast" xml:space="preserve">
+    <value>Date of death must be in the past.</value>
+  </data>
 </root>
