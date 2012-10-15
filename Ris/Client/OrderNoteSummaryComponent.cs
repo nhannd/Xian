@@ -89,8 +89,8 @@ namespace ClearCanvas.Ris.Client
 				return;
 
 			// only un-posted notes can be edited or deleted
-			this.ActionModel.Edit.Enabled &= selectedNote.PostTime == null;
-			this.ActionModel.Delete.Enabled &= selectedNote.PostTime == null;
+			this.ActionModel.Edit.Enabled = selectedNote.PostTime == null;
+			this.ActionModel.Delete.Enabled = selectedNote.PostTime == null;
 		}
 
 		protected override IList<OrderNoteDetail> ListItems(int firstRow, int maxRows)

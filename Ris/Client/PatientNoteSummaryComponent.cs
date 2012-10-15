@@ -20,18 +20,13 @@ namespace ClearCanvas.Ris.Client
 	public class PatientNoteSummaryComponent : SummaryComponentBase<PatientNoteDetail, PatientNoteTable>
 	{
 		private readonly List<PatientNoteCategorySummary> _noteCategoryChoices;
-		private IList<PatientNoteDetail> _notes;
+		private readonly IList<PatientNoteDetail> _notes;
 
-		public PatientNoteSummaryComponent(List<PatientNoteCategorySummary> categoryChoices)
+		public PatientNoteSummaryComponent(IList<PatientNoteDetail> notes, List<PatientNoteCategorySummary> categoryChoices)
 			: base(false)
 		{
+			_notes = notes;
 			_noteCategoryChoices = categoryChoices;
-		}
-
-		public IList<PatientNoteDetail> Subject
-		{
-			get { return _notes; }
-			set { _notes = value; }
 		}
 
 		#region Overrides
@@ -55,10 +50,10 @@ namespace ClearCanvas.Ris.Client
 				return;
 
 			// only allow editing of non-expired notes
-			this.ActionModel.Edit.Enabled &= !selectedNote.IsExpired;
+			this.ActionModel.Edit.Enabled = !selectedNote.IsExpired;
 
 			// only allow deletion of new notes
-			this.ActionModel.Delete.Enabled &= selectedNote.CreationTime == null;
+			this.ActionModel.Delete.Enabled = selectedNote.CreationTime == null;
 		}
 
 		protected override IList<PatientNoteDetail> ListItems(int firstRow, int maxRows)
@@ -86,18 +81,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			editedItems = new List<PatientNoteDetail>();
 
-			var originalNote = CollectionUtils.FirstElement(items);
-			var editedNote = (PatientNoteDetail) originalNote.Clone();
-			var editor = new PatientNoteEditorComponent(editedNote, _noteCategoryChoices);
+			var note = CollectionUtils.FirstElement(items);
+			var editor = new PatientNoteEditorComponent(note, _noteCategoryChoices);
 			if (ApplicationComponentExitCode.Accepted == LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNoteText))
 			{
-				editedItems.Add(editedNote);
-
-				// Preserve the order of the items
-				var index = _notes.IndexOf(originalNote);
-				_notes.Insert(index, editedNote);
-				_notes.Remove(originalNote);
-
+				editedItems.Add(note);
 				return true;
 			}
 

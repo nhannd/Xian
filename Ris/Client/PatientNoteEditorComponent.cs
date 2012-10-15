@@ -31,6 +31,10 @@ namespace ClearCanvas.Ris.Client
 		private readonly PatientNoteDetail _note;
 		private readonly List<PatientNoteCategorySummary> _noteCategoryChoices;
 
+		private string _comment;
+		private DateTime? _expiryDate;
+		private PatientNoteCategorySummary _category;
+
 		public PatientNoteEditorComponent(PatientNoteDetail noteDetail, List<PatientNoteCategorySummary> noteCategoryChoices)
 			: this(noteDetail, noteCategoryChoices, false)
 		{
@@ -42,10 +46,14 @@ namespace ClearCanvas.Ris.Client
 			_note = noteDetail;
 			_noteCategoryChoices = noteCategoryChoices;
 
+			_comment = _note.Comment;
+			_expiryDate = _note.ValidRangeUntil == null ? null : (DateTime?)_note.ValidRangeUntil.Value.Date;
+			_category = _note.Category;
+
 			this.Validation.Add(new ValidationRule("ExpiryDate",
 				delegate
 				{
-					var valid = _note.ValidRangeUntil == null || _note.ValidRangeUntil > Platform.Time.Date;
+					var valid = ExpiryDate == null || ExpiryDate > Platform.Time.Date;
 					return new ValidationResult(valid, SR.MessageInvalidExpiryDate);
 				}));
 		}
@@ -54,10 +62,10 @@ namespace ClearCanvas.Ris.Client
 
 		public string Comment
 		{
-			get { return _note.Comment; }
+			get { return _comment; }
 			set 
-			{ 
-				_note.Comment = value;
+			{
+				_comment = value;
 				this.Modified = true;
 			}
 		}
@@ -69,10 +77,10 @@ namespace ClearCanvas.Ris.Client
 
 		public DateTime? ExpiryDate
 		{
-			get { return _note.ValidRangeUntil == null ? null : (DateTime?)_note.ValidRangeUntil.Value.Date; }
+			get { return _expiryDate; }
 			set
 			{
-				_note.ValidRangeUntil = (value == null) ? null : (DateTime?)value.Value.Date;
+				_expiryDate = (value == null) ? null : (DateTime?)value.Value.Date;
 				this.Modified = true;
 			}
 		}
@@ -84,25 +92,19 @@ namespace ClearCanvas.Ris.Client
 
 		public IList CategoryChoices
 		{
-			get
-			{
-				return _noteCategoryChoices;
-			}
+			get { return _noteCategoryChoices; }
 		}
 
 		[ValidateNotNull]
 		public PatientNoteCategorySummary Category
 		{
-			get 
-			{
-				return _note.Category;
-			}
+			get { return _category; }
 			set
 			{
-				if (_note.Category == value)
+				if (_category == value)
 					return;
 
-				_note.Category = value;
+				_category = value;
 
 				NotifyPropertyChanged("Category");
 				NotifyPropertyChanged("CategoryDescription");
@@ -112,7 +114,7 @@ namespace ClearCanvas.Ris.Client
 
 		public string CategoryDescription
 		{
-			get { return _note.Category == null ? "" : _note.Category.Description; }
+			get { return _category == null ? "" : _category.Description; }
 		}
 
 		public string FormatNoteCategory(object item)
@@ -134,21 +136,25 @@ namespace ClearCanvas.Ris.Client
 
 		public void Accept()
 		{
-			if (this.HasValidationErrors)
+			if (!_readOnlyMode)
 			{
-				this.ShowValidation(true);
+				if (this.HasValidationErrors)
+				{
+					this.ShowValidation(true);
+					return;
+				}
+
+				_note.Comment = _comment;
+				_note.ValidRangeUntil = _expiryDate;
+				_note.Category = _category;
 			}
-			else
-			{
-				this.ExitCode = ApplicationComponentExitCode.Accepted;
-				Host.Exit();
-			}
+
+			this.Exit(ApplicationComponentExitCode.Accepted);
 		}
 
 		public void Cancel()
 		{
-			this.ExitCode = ApplicationComponentExitCode.None;
-			Host.Exit();
+			this.Exit(ApplicationComponentExitCode.None);
 		}
 
 		#endregion
