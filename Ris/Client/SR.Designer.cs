@@ -1870,6 +1870,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Date of birth must be in the past..
+        /// </summary>
+        internal static string MessageDateOfBirthMustBeInThePast {
+            get {
+                return ResourceManager.GetString("MessageDateOfBirthMustBeInThePast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date of death must be in the past..
+        /// </summary>
+        internal static string MessageDateOfDeathMustBeInThePast {
+            get {
+                return ResourceManager.GetString("MessageDateOfDeathMustBeInThePast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Date of death must be later than or equal to date of birth..
         /// </summary>
         internal static string MessageDateOfDeathMustBeLaterThanOrEqualToDateOfBirth {

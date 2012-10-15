@@ -70,21 +70,28 @@ namespace ClearCanvas.Ris.Client
 					if (!_profile.DateOfBirth.HasValue || !_profile.TimeOfDeath.HasValue)
 						return new ValidationResult(true, "");
 
+					if(_profile.TimeOfDeath.Value > Platform.Time)
+						return new ValidationResult(false, SR.MessageDateOfDeathMustBeInThePast);
+
 					var ok = DateTime.Compare(_profile.TimeOfDeath.Value, _profile.DateOfBirth.Value) >= 0;
 					return new ValidationResult(ok, SR.MessageDateOfDeathMustBeLaterThanOrEqualToDateOfBirth);
 				}));
 
-			// add validation rule to ensure the DateOfBirth is a valid DateTime
+			// add validation rule to ensure the DateOfBirth is a valid DateTime and is not in the future
 			this.Validation.Add(new ValidationRule("DateOfBirth",
 				delegate
 				{
-					if (string.IsNullOrEmpty(this.DateOfBirth))
-						return new ValidationResult(true, "");
+					if (!string.IsNullOrEmpty(this.DateOfBirth))
+					{
+						DateTime dt;
+						if (!DateTime.TryParseExact(_dateOfBirth, this.DateOfBirthFormat, null, DateTimeStyles.None, out dt))
+							return new ValidationResult(false, SR.MessageInvalidDateFormat);
 
-					DateTime dt;
-					return DateTime.TryParseExact(_dateOfBirth, this.DateOfBirthFormat, null, DateTimeStyles.None, out dt)
-						? new ValidationResult(true, "")
-						: new ValidationResult(false, SR.MessageInvalidDateFormat);
+						if (dt > Platform.Time)
+							return new ValidationResult(false, SR.MessageDateOfBirthMustBeInThePast);
+					}
+
+					return new ValidationResult(true, "");
 				}));
 
             base.Start();
