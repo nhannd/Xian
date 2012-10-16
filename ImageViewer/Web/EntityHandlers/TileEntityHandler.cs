@@ -84,7 +84,13 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
     public class TileEntityHandler : EntityHandler<TileEntity>
     {
-        private const string _logName = "TileEntityHandler.Rendering";
+        private static class LogNames
+        {
+            public const string ServerRendering = "TileEntityHandler.Rendering.Server";
+            public const string ClientRoundTripRendering = "TileEntityHandler.Rendering.Client.RoundTrip";
+            public const string ClientStackRendering = "TileEntityHandler.Rendering.Client.Stacking";
+        }
+
 		private readonly string _mimeType = "image/jpeg";
 
         // TODO (Phoenix5): change how this works 
@@ -102,7 +108,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		private IRenderingSurface _surface;
 		private Bitmap _bitmap;
-
+        private Message _currentMessage;
+        
 		[ThreadStatic]private static ContextMenuContainer _contextMenu;
 
 	    private readonly IQFactorStrategy _qFactorPlugin;
@@ -393,7 +400,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                                    SenderId = Identifier,
                                    Tile = GetEntity(),
                                    MimeType = _mimeType,
-                                   Quality = _quality
+                                   Quality = _quality,
+                                   TriggeringMessageId = _currentMessage != null ? _currentMessage.Identifier : (Guid?)null
                                };
 
                 ApplicationContext.FireEvent(ev);
@@ -446,7 +454,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                 Surface.ContextID = graphics.GetHdc();
                 Surface.ClipRectangle = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
 
-                DrawArgs drawArgs = new DrawArgs(Surface, null, Rendering.DrawMode.Render);
+                var drawArgs = new DrawArgs(Surface, null, Rendering.DrawMode.Render);
                 CurrentImage.Draw(drawArgs);
                 drawArgs = new DrawArgs(Surface, null, Rendering.DrawMode.Refresh);
                 CurrentImage.Draw(drawArgs);
@@ -500,7 +508,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
             ms.Position = 0;
             imageStats.ImageSize.Value = (ulong)imageBuffer.LongLength;
-            ApplicationContext.LogStatistics(_logName, imageStats);
+            ApplicationContext.LogStatistics(LogNames.ServerRendering, imageStats);
 
             if (DiagnosticsSettings.Default.CompareImageQuality)
             {
@@ -602,44 +610,69 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		public override void ProcessMessage(Message message)
 		{
+		    _currentMessage = message;
+
             if (message is MouseLeaveMessage)
             {
                 _tileController.ProcessMessage(new InputManagement.MouseLeaveMessage());
-                return;
             }
-		    var mouseMoveMessage = message as MouseMoveMessage;
-		    if (mouseMoveMessage != null)
+            else if (message is MouseMoveMessage)
 		    {
-		        ProcessMouseMoveMessage(mouseMoveMessage);
+                ProcessMouseMoveMessage((MouseMoveMessage)message);
 		        //TODO: ideally, the tilecontroller would have an event and the handler would listen
 		        MousePosition = _tileController.Location;
-		        return;
 		    }
-		    
-            var mouseMessage = message as MouseMessage;
-		    if (mouseMessage != null)
+            else if (message is MouseMessage)
 		    {
-		        ProcessMouseMessage(mouseMessage);
+                ProcessMouseMessage((MouseMessage)message);
 		        //TODO: ideally, the tilecontroller would have an event and the handler would listen
 		        MousePosition = _tileController.Location;
-		        return;
 		    }
-		    
-            var mouseWheelMessage = message as MouseWheelMessage;
-		    if (mouseWheelMessage != null)
+		    else if (message is MouseWheelMessage)
 		    {
-		        ProcessMouseWheelMessage(mouseWheelMessage);
-		        return;
+                ProcessMouseWheelMessage((MouseWheelMessage)message);
+		    }
+            else if (message is UpdatePropertyMessage)
+		    {
+                ProcessUpdateMessage((UpdatePropertyMessage)message);
 		    }
 
-		    var updatePropertyMessage = message as UpdatePropertyMessage;
-		    if (updatePropertyMessage != null)
-		    {
-		        ProcessUpdateMessage(updatePropertyMessage);
-		    }
+		    _currentMessage = null;
+		    ProcessClientStatsMessage(message);
 		}
 
-		private void ProcessUpdateMessage(UpdatePropertyMessage message)
+        private void ProcessClientStatsMessage(Message message)
+        {
+            var roundTripRendering = message as RoundTripRenderingTimeMessage;
+            if (roundTripRendering != null)
+            {
+                var stat = new StatisticsSet("RoundTripRendering");
+                var renderingTime = TimeSpan.FromMilliseconds(roundTripRendering.ValueMilliseconds);
+                stat.AddField(new TimeSpanStatistics("RoundTripRenderingTime") { Value = renderingTime });
+                StatisticsLogger.Log(LogNames.ClientRoundTripRendering, LogLevel.Info, stat);
+            }
+
+            var stackingRendering = message as StackRenderingTimesMessage;
+            if (stackingRendering != null)
+            {
+                var fps = new AverageStatistics<double>("AverageStackRendering") { Unit = "fps" };
+                var stat = new StatisticsSet("StackRendering");
+                stat.AddField(fps);
+
+                foreach (var valueMilliseconds in stackingRendering.ValuesMilliseconds)
+                {
+                    fps.AddSample(1 / (valueMilliseconds/1000.0));
+
+                    var renderingTime = TimeSpan.FromMilliseconds(valueMilliseconds);
+                    var substat = new StatisticsSet("ImageRendering");
+                    substat.AddField(new TimeSpanStatistics("ImageRenderingTime") {Value = renderingTime});
+                    stat.SubStatistics.Add(substat);
+                }
+                StatisticsLogger.Log(LogNames.ClientStackRendering, LogLevel.Info, stat);
+            }
+        }
+
+        private void ProcessUpdateMessage(UpdatePropertyMessage message)
 		{
 			switch(message.PropertyName)
 			{

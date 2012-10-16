@@ -39,6 +39,9 @@ namespace ClearCanvas.ImageViewer.Web.Common.Events
                 return false;
             }
         }
+
+        [DataMember(IsRequired = true)]
+        public Guid? TriggeringMessageId { get; set; }
     }
 
     [DataContract(Namespace = ViewerNamespace.Value)]

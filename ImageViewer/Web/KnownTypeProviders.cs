@@ -41,11 +41,13 @@ namespace ClearCanvas.ImageViewer.Web
 						typeof(EntityUpdatedEvent),
 						typeof(PropertyChangedEvent),
 
-			       		typeof (ContextMenuEvent),
-			       		typeof (TileUpdatedEvent),
-			       		typeof (SessionUpdatedEvent),
-			       		typeof (MessageBoxShownEvent),
-                        typeof(MouseMoveProcessedEvent)
+			       		typeof(ContextMenuEvent),
+			       		typeof(TileUpdatedEvent),
+			       		typeof(SessionUpdatedEvent),
+			       		typeof(MessageBoxShownEvent),
+                        typeof(MouseMoveProcessedEvent),
+                        typeof(RoundTripRenderingTimeMessage),
+                        typeof(StackRenderingTimesMessage)
 			       	};
 		}
 
