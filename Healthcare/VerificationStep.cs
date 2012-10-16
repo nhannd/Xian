@@ -86,7 +86,7 @@ namespace ClearCanvas.Healthcare
 
 			// check for a non-empty ReportContent property
     		string content;
-    		if(step.ReportPart.ExtendedProperties.TryGetValue("ReportContent", out content) || string.IsNullOrEmpty(content))
+    		if(!step.ReportPart.ExtendedProperties.TryGetValue("ReportContent", out content) || string.IsNullOrEmpty(content))
 				return new TestResult(false, SR.MessageValidateVerifiedReportIsNotBlank);
 
 			// attempt to parse reportContent property as XML, to check for content
