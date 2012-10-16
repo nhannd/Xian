@@ -16,7 +16,7 @@ namespace ClearCanvas.Server.ShredHost
 {
 	[Obsolete("Use ShredHostServiceSettings")]
 	[LegacyShredConfigSection("ShredHostServiceSettings")]
-	internal sealed class LegacyShredHostServiceSettings : ShredConfigSection
+	internal sealed class LegacyShredHostServiceSettings : ShredConfigSection, IMigrateLegacyShredConfigSection
 	{
 		public const int DefaultShredHostHttpPort = 51121;
 		public const int DefaultSharedHttpPort = 51122;
@@ -99,6 +99,12 @@ namespace ClearCanvas.Server.ShredHost
 			clone.ServiceAddressBase = _instance.ServiceAddressBase;
 
 			return clone;
+		}
+
+		void IMigrateLegacyShredConfigSection.Migrate()
+		{
+			// #10584 - do not migrate these settings! they are used internally by the product, and users generally do not need to change them
+			// #10645 - do not remove this interface definition, as it also acts as a NO-OP to prevent the shred config section migration
 		}
 	}
 }
