@@ -127,6 +127,11 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
             [AuthorityToken(Description = "Allow editing of data access permissions for studies.")]
             public const string EditDataAccess = "PACS/Study/Edit Data Access";
 
+			// Note: #10641. Replacing "Viewer/Visible" token
+            [AuthorityToken(Description = "Allow users to view images.")]
+            public const string ViewImages = "PACS/Study/View Images";
+
+
             public const string VetTags = "PACS/Study/Veterinary Tags";
         }
 
