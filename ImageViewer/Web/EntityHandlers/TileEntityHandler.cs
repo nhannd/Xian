@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
@@ -115,8 +116,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 	    private readonly IQFactorStrategy _qFactorPlugin;
 
         private bool _isMouseDown;
-        private readonly object _drawLock = new object();
-        private readonly object _refreshLock = new object();
         private bool _refreshingClient = false;
 
         // timer to push image to the client when dynamic image quality is used
@@ -360,7 +359,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 				webCursor.HotSpot = new Position { X = bitmap.Width / 2, Y = bitmap.Height / 2 };
 			}
 
-			using (MemoryStream stream = new MemoryStream())
+			using (var stream = new MemoryStream())
 			{
 				bitmap.Save(stream, ImageFormat.Png);
 				stream.Position = 0;
@@ -389,26 +388,17 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		public void Draw(bool refresh)
 		{
-            lock (_drawLock)
-            {
-                if (refresh)
-                    _refreshingClient = true;
+            Event ev = new TileUpdatedEvent
+                            {
+                                Identifier = Guid.NewGuid(),
+                                SenderId = Identifier,
+                                Tile = GetEntity(),
+                                MimeType = _mimeType,
+                                Quality = _quality,
+                                TriggeringMessageId = _currentMessage != null ? _currentMessage.Identifier : (Guid?)null
+                            };
 
-                Event ev = new TileUpdatedEvent
-                               {
-                                   Identifier = Guid.NewGuid(),
-                                   SenderId = Identifier,
-                                   Tile = GetEntity(),
-                                   MimeType = _mimeType,
-                                   Quality = _quality,
-                                   TriggeringMessageId = _currentMessage != null ? _currentMessage.Identifier : (Guid?)null
-                               };
-
-                ApplicationContext.FireEvent(ev);
-               
-                if (refresh) 
-                    _refreshingClient = false;
-            }
+            ApplicationContext.FireEvent(ev);
 		}
 
         private byte[] CreateImage()
@@ -478,7 +468,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             if (isDynamicQualityImage)
             {
                 _quality = GetOptimalQFactor(Bitmap.Width, Bitmap.Height, sop);
-                InitOrUpdateRefreshClientTimer();
             }
 
             imageStats.SaveTime.Start();
@@ -523,53 +512,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
             return imageBuffer;
 		}
-
-        private void InitOrUpdateRefreshClientTimer()
-        {
-            // TODO (Phoenix5): use a delayed event and a mediator for this. Also, this timer is rendering images on a thread, which is a no-no.
-
-            // If user is drawing an ellipse, the ROI info will be updated a short time after
-            // user stops moving the mouse. If we don't wait long enough user will see
-            // a high-res image, the low res and another high-res image again. 
-            // 500 ms is picked arbitrarily.
-            TimeSpan refreshTime = TimeSpan.FromMilliseconds(500);
-
-            lock (_refreshLock)
-            {
-                // If the timer is running then just postpone it
-                if (_refreshTimer != null)
-                {
-                    _refreshTimer.Change(refreshTime, TimeSpan.Zero);
-                }
-                else
-                {
-                    _refreshTimer = new System.Threading.Timer((ignore) =>
-                                                                   {
-                                                                       try
-                                                                       {
-                                                                           // Note: the image will not go to the client until it polls
-                                                                           // The assumption is the client continues polling if the user
-                                                                           // stops moving the mouse
-                                                                           Draw(true);
-                                                                       }
-                                                                       catch (Exception ex)
-                                                                       {
-                                                                           // catch exceptions to prevent crashing
-                                                                           Platform.Log(LogLevel.Error, ex);
-                                                                       }
-                                                                       finally
-                                                                       {
-                                                                           lock (_refreshLock)
-                                                                           {
-                                                                               _refreshTimer.Dispose();
-                                                                               _refreshTimer = null;
-                                                                           }
-                                                                       }
-                                                                   }, null, refreshTime, TimeSpan.Zero);
-                }
-            }
-
-        }
 
         private byte[] GetCurrentTileBitmap()
         {
@@ -643,13 +585,16 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
         private void ProcessClientStatsMessage(Message message)
         {
+            if (!ApplicationContext.IsStatisticsLoggingEnabled)
+                return;
+
             var roundTripRendering = message as RoundTripRenderingTimeMessage;
             if (roundTripRendering != null)
             {
                 var stat = new StatisticsSet("RoundTripRendering");
                 var renderingTime = TimeSpan.FromMilliseconds(roundTripRendering.ValueMilliseconds);
                 stat.AddField(new TimeSpanStatistics("RoundTripRenderingTime") { Value = renderingTime });
-                StatisticsLogger.Log(LogNames.ClientRoundTripRendering, LogLevel.Info, stat);
+                ApplicationContext.LogStatistics(LogNames.ClientRoundTripRendering, stat);
             }
 
             var stackingRendering = message as StackRenderingTimesMessage;
@@ -668,7 +613,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                     substat.AddField(new TimeSpanStatistics("ImageRenderingTime") {Value = renderingTime});
                     stat.SubStatistics.Add(substat);
                 }
-                StatisticsLogger.Log(LogNames.ClientStackRendering, LogLevel.Info, stat);
+                ApplicationContext.LogStatistics(LogNames.ClientStackRendering, stat);
             }
         }
 

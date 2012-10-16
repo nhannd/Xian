@@ -145,13 +145,13 @@ namespace ClearCanvas.Web.Services
             public override void LogStatistics(StatisticsSet statistics)
             {
                 if (IsStatisticsLoggingEnabled)
-                    StatisticsLogger.Log(LogLevel.Info, statistics);
+                    ThreadPool.QueueUserWorkItem(o => StatisticsLogger.Log(LogLevel.Info, statistics));
             }
 
             public override void LogStatistics(string logName, StatisticsSet statistics)
             {
                 if (IsStatisticsLoggingEnabled)
-                    StatisticsLogger.Log(logName, LogLevel.Info, statistics);
+                    ThreadPool.QueueUserWorkItem(o => StatisticsLogger.Log(logName, LogLevel.Info, statistics));
             }
 
             public override void FireEvent(Event e)
