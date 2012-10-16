@@ -24,6 +24,8 @@
                         <td colspan="2" style="height: 24px; vertical-align: top; text-align: center;">
                             <asp:Panel runat="server" CssClass="ConfirmationContent">
                                 <asp:Label ID="MessageLabel" runat="server" Style="text-align: center" Text="Message" />
+                                <p/>
+                                <asp:Label ID="WarningMessageLabel" runat="server" Style="text-align: center; color:red;" Text="Warning: blah blah blah" />
                             </asp:Panel>
                         </td>
                     </tr>

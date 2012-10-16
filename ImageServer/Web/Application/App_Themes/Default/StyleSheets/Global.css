@@ -27,6 +27,12 @@ Global.css - Defines the global styles for the entire web application relating
 	color:Red;
 	font-weight:bold;
 }
+
+img
+{
+	border:0px;
+}
+
 /*==================================================
  * Header Items (Main Menu and Location Panel)
  *==================================================*/

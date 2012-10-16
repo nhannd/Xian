@@ -1175,12 +1175,13 @@ Canada
     <p style="margin-top:20px; font-weight:bold"><a style="color: #205F87;" href="<%=ClearCanvas.ImageServer.Web.Common.PageSettings.AboutPage.Default.DocumentationUrl %>" target="_blank"><%= Resources.SR.CCDocumentation%></a></p>
 <% }%>
 
-
-
-
-
   </div>    
   </td></tr>
+  <tr>
+    <td colspan="2" align="right">
+        <asp:PlaceHolder runat="server" ID="ExtensionContentPlaceHolder" />
+    </td>
+  </tr>
   </table>
 </div>  
   

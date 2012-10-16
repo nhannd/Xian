@@ -12,6 +12,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ServerPartitionGridView.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard.ServerPartitionGridView" %>
 
+<%@ Register Src="~/Controls/UsersGuideLink.ascx" TagPrefix="cc" TagName="HelpLink" %>
 
   
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
@@ -34,7 +35,8 @@
                     <asp:TemplateField>
                         <HeaderTemplate>
                             <div class="PartitionStorageConfigColumnContent">
-                                <%=ColumnHeaders.PartitionStorageConfiguration %>
+                                <%=ColumnHeaders.PartitionStorageConfiguration %>    
+                                <cc:HelpLink ID="HelpLink1" runat="server" TopicID="Partition_Storage_Configuration" Target="_blank" />
                             </div>
                         </HeaderTemplate>
                         <ItemTemplate>

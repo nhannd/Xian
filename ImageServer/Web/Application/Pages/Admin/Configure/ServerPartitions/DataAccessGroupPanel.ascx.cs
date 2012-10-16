@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
                         return new DataAccessGroupInfo(authorityRecordRef, group.Name)
                         {
                             Description = group.Description,
-                            HasAccessToCurrentPartition = fullServerPartitionAccess || (Partition != null && Partition.Key != null && Partition.IsAccessAllowed(authorityRecordRef)),
+                            HasAccessToCurrentPartition = fullServerPartitionAccess || (Partition != null && Partition.Key != null && Partition.IsAuthorityGroupAllowed(authorityRecordRef)),
                             CanAccessAllPartitions = fullServerPartitionAccess,
                             CanAccessAllStudies = allStudiesAccess
                         };

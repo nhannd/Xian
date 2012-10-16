@@ -114,6 +114,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             }
         }
 
+        public string WarningMessage{get; set;}
+
         public string MessageStyle
         {
             set { _messageStyle = value; }
@@ -214,6 +216,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             MessageLabel.Text = Message;
             MessageLabel.Attributes["style"] = MessageStyle;
             ModalDialog.Title = Title;
+
+            if (!string.IsNullOrEmpty(WarningMessage))
+            {
+                WarningMessageLabel.Text = WarningMessage;
+                WarningMessageLabel.Visible = true;
+            }
+            else
+                WarningMessageLabel.Visible = false;
 
             base.OnPreRender(e);
         }

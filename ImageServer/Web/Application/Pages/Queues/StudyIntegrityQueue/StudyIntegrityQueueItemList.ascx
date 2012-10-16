@@ -13,6 +13,20 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Data.DataSource" %>
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.StudyIntegrityQueueItemList"
     CodeBehind="StudyIntegrityQueueItemList.ascx.cs" %>
+
+<%@ Register Src="~/Pages/Queues/StudyIntegrityQueue/SIQEntryTooltip.ascx" TagPrefix="ccAsp" TagName="SIQItemTooltip" %>
+
+<style type="text/css">
+    .SIQRowTooltip
+    {
+    	display:none;
+    	background-color:#fff7e2;
+    	border: 1px solid #bdcad2;
+    	padding:10px; 
+    }
+</style>
+
+
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
     Width="100%">
     <asp:TableRow VerticalAlign="top">
@@ -23,8 +37,19 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
                 OnObjectDisposing="DisposeDataSource" />
             <ccUI:GridView ID="StudyIntegrityQueueGridView" runat="server" OnSelectedIndexChanged="StudyIntegrityQueueGridView_SelectedIndexChanged"
                 OnPageIndexChanging="StudyIntegrityQueueGridView_PageIndexChanging" SelectionMode="Single"
-                OnRowDataBound="StudyIntegrityQueueItemList_RowDataBound">
+                OnRowDataBound="StudyIntegrityQueueItemList_RowDataBound"
+                TooltipContainerControlID="RowTooltip"
+                >
                 <Columns>
+                    <asp:TemplateField>
+                        <ItemTemplate>
+                            <asp:Panel runat="server" ID="RowTooltip"  CssClass="SIQRowTooltip">
+                                <ccAsp:SIQItemTooltip runat="server"  ID="TooltipContent"  />
+                            </asp:Panel>
+                            <aspAjax:DropShadowExtender runat="server" TrackPosition="true" TargetControlID="RowTooltip" Opacity="0.5" Radius="5" />
+
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:BoundField DataField="Reason" HeaderText="" HeaderStyle-HorizontalAlign="Left"
                         ItemStyle-HorizontalAlign="Left"></asp:BoundField>
                     <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, StudyInstanceUID %>" HeaderStyle-HorizontalAlign="Center"
