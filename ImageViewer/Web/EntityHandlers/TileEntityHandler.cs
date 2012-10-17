@@ -21,6 +21,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Common.Utilities.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Web.Common;
 using ClearCanvas.ImageViewer.Web.Common.Events;
@@ -78,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
     public interface IQFactorStrategy
     {
-        long GetOptimalQFactor(int imageWidth, int imageHeight, IImageSopProvider sop);
+        int GetOptimalQFactor(int imageWidth, int imageHeight, IImageSopProvider sop);
     }
 
     public class QFactorExtensionPoint : ExtensionPoint<IQFactorStrategy> { }
@@ -98,8 +99,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
         // TODO: Should this be at the application level?
         // So that all images are at the same quality during sync stacking
         // How can other tiles actively refresh themselves when this tile does?
-        private readonly long _defaultJpegQFactor = WebViewerServices.Default.JpegQualityFactor;
-        private long _quality = WebViewerServices.Default.JpegQualityFactor;
+        private readonly int _defaultJpegQFactor = WebViewerServices.Default.JpegQualityFactor;
+        private int _quality = WebViewerServices.Default.JpegQualityFactor;
 
 		private Tile _tile;
 		private Point _mousePosition;
@@ -110,16 +111,15 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 		private IRenderingSurface _surface;
 		private Bitmap _bitmap;
         private Message _currentMessage;
-        
+
+        private IJpegCompressor _jpegCompressor;
+
 		[ThreadStatic]private static ContextMenuContainer _contextMenu;
 
 	    private readonly IQFactorStrategy _qFactorPlugin;
 
         private bool _isMouseDown;
         private bool _refreshingClient = false;
-
-        // timer to push image to the client when dynamic image quality is used
-        private System.Threading.Timer _refreshTimer; 
         
         public TileEntityHandler()
 		{
@@ -132,6 +132,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		    _quality = _defaultJpegQFactor;
 
+            _jpegCompressor = JpegCompressor.Create();
+
             try
             {
                 _qFactorPlugin = new QFactorExtensionPoint().CreateExtension() as IQFactorStrategy;
@@ -142,14 +144,14 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             }
 		}
 
-	    private long GetOptimalQFactor(int w, int h, IImageSopProvider sop)
+	    private int GetOptimalQFactor(int w, int h, IImageSopProvider sop)
         {
             if (_qFactorPlugin!=null)
             {
                 return _qFactorPlugin.GetOptimalQFactor(w, h, sop);
             }
 
-	        return 80L; //default
+	        return _defaultJpegQFactor;
         }
 
 		private Rectangle ClientRectangle
@@ -460,7 +462,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                 bmp1 = (Bitmap)Bitmap.Clone();
             }
 
-            var ms = new MemoryStream();
+            MemoryStream ms = null;
 
             _quality = _defaultJpegQFactor;
             // TODO (Phoenix5): fix/restore.
@@ -473,15 +475,11 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             imageStats.SaveTime.Start();
             if (_mimeType.Equals("image/jpeg"))
             {
-                var eps = new EncoderParameters(1);
-                eps.Param[0] = new EncoderParameter(Encoder.Quality, _quality);
-                ImageCodecInfo ici = GetEncoderInfo(_mimeType);
-
-                bitmap.Save(ms, ici, eps);
-
+                ms = _jpegCompressor.Compress(bitmap, _quality);
             }
             else if (_mimeType.Equals("image/png"))
             {
+                ms = new MemoryStream();
                 bitmap.Save(ms, ImageFormat.Png);
             }
             
@@ -516,39 +514,22 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
         private byte[] GetCurrentTileBitmap()
         {
             var bitmap = Bitmap;
-            var ms = new MemoryStream();
+            MemoryStream ms = null;
 
             _quality = _defaultJpegQFactor;
 
             if (_mimeType.Equals("image/jpeg"))
             {
-                var eps = new EncoderParameters(1);
-                eps.Param[0] = new EncoderParameter(Encoder.Quality, _quality);
-                ImageCodecInfo ici = GetEncoderInfo(_mimeType);
-
-                bitmap.Save(ms, ici, eps);
-
+                ms = _jpegCompressor.Compress(bitmap, _quality);
             }
             else if (_mimeType.Equals("image/png"))
             {
+                ms = new MemoryStream();
                 bitmap.Save(ms, ImageFormat.Png);
             }
 
             return ms.ToArray();
         }
-
-        private static ImageCodecInfo GetEncoderInfo(String mimeType)
-		{
-			//TODO (CR May 2010): cache the encoder
-			int j;
-			ImageCodecInfo[] encoders = ImageCodecInfo.GetImageEncoders();
-			for (j = 0; j < encoders.Length; ++j)
-			{
-				if (encoders[j].MimeType.Equals(mimeType))
-					return encoders[j];
-			}
-			return null;
-		}
 
 		public override void ProcessMessage(Message message)
 		{

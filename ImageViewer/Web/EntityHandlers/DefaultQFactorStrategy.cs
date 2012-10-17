@@ -18,9 +18,9 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
     internal class DefaultQFactorStrategy : IQFactorStrategy
     {
 
-        private readonly Dictionary<long, long> _8bitImageSizeToQMap = new Dictionary<long, long>();
-        private readonly Dictionary<long, long> _12bitImageSizeToQMap = new Dictionary<long, long>();
-        private readonly Dictionary<long, long> _16bitImageSizeToQMap = new Dictionary<long, long>();
+        private readonly Dictionary<int, int> _8bitImageSizeToQMap = new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _12bitImageSizeToQMap = new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _16bitImageSizeToQMap = new Dictionary<int, int>();
 	    
         public DefaultQFactorStrategy()
         {
@@ -33,26 +33,26 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             // based on: connection speed, bitdepth and range, 
             // zoom level (can be more aggressive at 5x than at 1x?), 
             // action: zoom, stack, pan
-            _8bitImageSizeToQMap.Add(300 * 300, 70L);
-            _8bitImageSizeToQMap.Add(400 * 400, 65L);
-            _8bitImageSizeToQMap.Add(600 * 600, 60L);
-            _8bitImageSizeToQMap.Add(800 * 800, 55L);
-            _8bitImageSizeToQMap.Add(900 * 900, 50L);
+            _8bitImageSizeToQMap.Add(300 * 300, 70);
+            _8bitImageSizeToQMap.Add(400 * 400, 65);
+            _8bitImageSizeToQMap.Add(600 * 600, 60);
+            _8bitImageSizeToQMap.Add(800 * 800, 55);
+            _8bitImageSizeToQMap.Add(900 * 900, 50);
 
-            _12bitImageSizeToQMap.Add(300 * 300, 70L);
-            _12bitImageSizeToQMap.Add(400 * 400, 60L);
-            _12bitImageSizeToQMap.Add(600 * 600, 50L);
-            _12bitImageSizeToQMap.Add(800 * 800, 40L);
-            _12bitImageSizeToQMap.Add(900 * 900, 30L);
+            _12bitImageSizeToQMap.Add(300 * 300, 70);
+            _12bitImageSizeToQMap.Add(400 * 400, 60);
+            _12bitImageSizeToQMap.Add(600 * 600, 50);
+            _12bitImageSizeToQMap.Add(800 * 800, 40);
+            _12bitImageSizeToQMap.Add(900 * 900, 30);
 
-            _16bitImageSizeToQMap.Add(300 * 300, 50L);
-            _16bitImageSizeToQMap.Add(400 * 400, 50L);
-            _16bitImageSizeToQMap.Add(600 * 600, 45L);
-            _16bitImageSizeToQMap.Add(800 * 800, 40L);
-            _16bitImageSizeToQMap.Add(900 * 900, 30L);
+            _16bitImageSizeToQMap.Add(300 * 300, 50);
+            _16bitImageSizeToQMap.Add(400 * 400, 50);
+            _16bitImageSizeToQMap.Add(600 * 600, 45);
+            _16bitImageSizeToQMap.Add(800 * 800, 40);
+            _16bitImageSizeToQMap.Add(900 * 900, 30);
         }
 
-        public long GetOptimalQFactor(int imageWidth, int imageHeight, IImageSopProvider sop)
+        public int GetOptimalQFactor(int imageWidth, int imageHeight, IImageSopProvider sop)
         {
             // TODO: It's probably better to adjust this dynamically
             // based on: connection speed, bitdepth and pixel value range, 
@@ -70,12 +70,12 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             //if (sop is ISpatialTransformProvider)
             //    zoomLevel = (sop as ISpatialTransformProvider).SpatialTransform.Scale;
 
-            long lowestQuality = 50L;
+            int lowestQuality = 50;
             int highBit = sop.Frame.HighBit;
 
             if (highBit <= 8)
             {
-                foreach (long k in _8bitImageSizeToQMap.Keys)
+                foreach (int k in _8bitImageSizeToQMap.Keys)
                 {
                     if (k > imageWidth * imageHeight)
                         return _8bitImageSizeToQMap[k];
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             }
             if (highBit <= 12)
             {
-                foreach (long k in _12bitImageSizeToQMap.Keys)
+                foreach (int k in _12bitImageSizeToQMap.Keys)
                 {
                     if (k > imageWidth * imageHeight)
                         return _12bitImageSizeToQMap[k];
@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
                 return lowestQuality;
             }
-            foreach (long k in _16bitImageSizeToQMap.Keys)
+            foreach (int k in _16bitImageSizeToQMap.Keys)
             {
                 if (k > imageWidth * imageHeight)
                     return _16bitImageSizeToQMap[k];
