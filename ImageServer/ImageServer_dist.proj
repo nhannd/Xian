@@ -180,8 +180,6 @@
     <!-- Copy License.rtf -->
     <Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
 
-    <Copy SourceFiles="$(XianTrunkDirectory)\..\Docs\ImageServer\UsersGuide\CCImageServerUsersGuide.chm" DestinationFolder="$(DistributionDirectory)"  />
-
     <Copy SourceFiles="$(XianTrunkDirectory)\Docs\PrivacyNotice.rtf" DestinationFolder="$(DistributionDirectory)"  />
 
     <Copy SourceFiles="@(UtilBatchFiles)" DestinationFolder="$(UtilitiesDirectory)" />

@@ -7,27 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer {
+namespace ClearCanvas.ImageServer.Web.Application.Controls {
     
     
-    public partial class Default {
+    public partial class UsersGuideLink {
         
         /// <summary>
-        /// Head1 control.
+        /// Link control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlHead Head1;
-        
-        /// <summary>
-        /// form2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form2;
+        protected global::System.Web.UI.WebControls.HyperLink Link;
     }
 }

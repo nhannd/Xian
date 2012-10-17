@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
 
                         foreach(string role in session.Credentials.Authorities)
                         {
-                            if(role.Equals(ImageServerConstants.WebViewerAuthorityToken))
+                            if (role.Equals(ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.Study.ViewImages))
                             {
                                 Context.Items["Authorized"] = "true";
                                 break;

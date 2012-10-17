@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         [ClientPropertyName("CanViewImages")]
         public bool CanViewImages
         {
-            get { return Thread.CurrentPrincipal.IsInRole(ImageServerConstants.WebViewerAuthorityToken); }
+            get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Study.ViewImages); }
         }
 
         [ExtenderControlProperty]
@@ -311,7 +311,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                         };
 
             //Set Roles
-            ViewImagesButton.Roles = ImageServerConstants.WebViewerAuthorityToken;
+            ViewImagesButton.Roles = AuthorityTokens.Study.ViewImages;
             ViewStudyDetailsButton.Roles = AuthorityTokens.Study.View;
             MoveStudyButton.Roles = AuthorityTokens.Study.Move;
             DeleteStudyButton.Roles = AuthorityTokens.Study.Delete;
