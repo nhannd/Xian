@@ -1,3 +1,14 @@
+/*	***************************************** WARNING ************************************************************************************************
+	Modifying this template incorrectly may cause the report printing functionality and publication of reports to the Web Portal to fail.
+	It is recommended that:
+	
+	1. This template only be modified by qualified personnel.
+	2. A backup copy of the original template is made, prior to making any modifications.
+	3. This template is modified only during scheduled system downtime.
+	4. After modifying the template, report printing functionality is thoroughly tested.
+	**************************************************************************************************************************************************
+*/
+
 table {
 	border-collapse:collapse;
 	width:100%;
