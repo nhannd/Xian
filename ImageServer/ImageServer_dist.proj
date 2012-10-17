@@ -120,10 +120,6 @@
 	<PluginFiles Include="$(XianTrunkDirectory)\ImageServer\Utilities\bin\$(Configuration)\ClearCanvas.ImageServer.Utilities.dll" />
     <PluginFiles Include="$(XianTrunkDirectory)\Utilities\Manifest\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll" />
   </ItemGroup>
-	
-	<ItemGroup>
-		<UtilBatchFiles Include="$(XianTrunkDirectory)\ImageServer\Utilities\bin\$(Configuration)\ReconcileCleanup.bat" />
-	</ItemGroup>
 
   <ItemGroup>
     <ConfigFiles Include="$(XianTrunkDirectory)\ImageServer\Executable\Logging.config" />
@@ -181,8 +177,6 @@
     <Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
 
     <Copy SourceFiles="$(XianTrunkDirectory)\Docs\PrivacyNotice.rtf" DestinationFolder="$(DistributionDirectory)"  />
-
-    <Copy SourceFiles="@(UtilBatchFiles)" DestinationFolder="$(UtilitiesDirectory)" />
 
     <MakeDir Directories="$(ManifestDirectory)"/>
   </Target>
