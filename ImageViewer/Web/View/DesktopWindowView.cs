@@ -10,8 +10,11 @@
 #endregion
 
 using System;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Web.Common.Entities;
@@ -34,6 +37,8 @@ namespace ClearCanvas.ImageViewer.Web.View
     public class DesktopWindowView : DesktopObjectView, IDesktopWindowView
     {
         private DialogBoxAction _result;
+        private IDesktopAlertContext _alertContext;
+        private DesktopWindow _window;
 
         /// <summary>
         /// Constructor
@@ -41,6 +46,7 @@ namespace ClearCanvas.ImageViewer.Web.View
         /// <param name="window"></param>
         protected internal DesktopWindowView(DesktopWindow window)
         {
+            _window = window;
         }
 
         #region IDesktopWindowView Members
@@ -121,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Web.View
             if (ApplicationContext.Current != null)
             {
 
-                MessageBoxEntityHandler handler = EntityHandler.Create<MessageBoxEntityHandler>();
+                var handler = EntityHandler.Create<MessageBoxEntityHandler>();
                 handler.SetModelObject(this);
 
                 MessageBox box = handler.GetEntity();
@@ -147,16 +153,16 @@ namespace ClearCanvas.ImageViewer.Web.View
                         break;
                 }
 
-                MessageBoxShownEvent @event = new MessageBoxShownEvent
-                                                  {
-                                                      Identifier = box.Identifier,
-                                                      MessageBox = box,
-                                                      SenderId = ApplicationContext.Current.ApplicationId,
-                                                  };
+                var @event = new MessageBoxShownEvent
+                    {
+                        Identifier = box.Identifier,
+                        MessageBox = box,
+                        SenderId = ApplicationContext.Current.ApplicationId,
+                    };
 
                 ApplicationContext.Current.FireEvent(@event);
 
-                IWebSynchronizationContext context = (SynchronizationContext.Current as IWebSynchronizationContext);
+                var context = (SynchronizationContext.Current as IWebSynchronizationContext);
                 if (context != null) context.RunModal();
                 return _result;
             }
@@ -166,24 +172,51 @@ namespace ClearCanvas.ImageViewer.Web.View
 
         public void SetAlertContext(IDesktopAlertContext alertContext)
         {
-            // TODO (Marmot) - Need to implement for Webstation
-            //throw new NotImplementedException();
+            _alertContext = alertContext;
         }
 
         public void ShowAlert(AlertNotificationArgs args)
         {
-            // TODO (Marmot) - Need to implement for Webstation
 
-            LogLevel level;
-            if (args.Level == AlertLevel.Info)
-                level = LogLevel.Info;
-            else if (args.Level == AlertLevel.Warning)
-                level = LogLevel.Warn;
-            else
+            var handler = EntityHandler.Create<AlertEntityHandler>();
+            handler.SetModelObject(this._window);
+            handler.SetLinkAction(args.LinkAction);
+
+            Alert alertEvent = handler.GetEntity();
+            alertEvent.Message = args.Message;
+
+            var image = _alertContext.GetIcon(args.Level).CreateIcon(IconSize.Large, new ResourceResolver(typeof(DesktopWindow).Assembly));
+
+            using (var theStream = new MemoryStream())
             {
-                level = LogLevel.Error;
+                image.Save(theStream, ImageFormat.Png);
+                theStream.Position = 0;
+                alertEvent.Icon = Convert.ToBase64String(theStream.GetBuffer());
             }
-            Platform.Log(level, args.Message);
+
+            alertEvent.DismissOnLinkClicked = args.DismissOnLinkClicked;
+          
+            switch (args.Level)
+            {
+                case AlertLevel.Error:
+                    alertEvent.Level = WebAlertLevel.Error;
+                    break;
+                case AlertLevel.Warning:
+                    alertEvent.Level = WebAlertLevel.Warning;
+                    break;
+                case AlertLevel.Info:
+                    alertEvent.Level = WebAlertLevel.Info;
+                    break;
+            }
+
+            var @event = new AlertShownEvent
+                {
+                    Identifier = alertEvent.Identifier,
+                    AlertEvent = alertEvent,
+                    SenderId = ApplicationContext.Current.ApplicationId,
+                };
+
+            ApplicationContext.Current.FireEvent(@event);            
         }
 
         /// <summary>
