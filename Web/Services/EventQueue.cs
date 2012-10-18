@@ -59,14 +59,22 @@ namespace ClearCanvas.Web.Services
 
         public event EventHandler EventQueued;
 
+        private void OnEventQueued()
+        {
+            lock (_syncLock)
+            {
+                EventsHelper.Fire(EventQueued, this, EventArgs.Empty);
+                Monitor.Pulse(_syncLock);
+            }
+        }
+
         protected virtual void Enqueue(Event @event)
         {
             Platform.CheckForNullReference(@event, "event");
             lock (_syncLock)
             {
                 _queue.Enqueue(@event);
-                EventsHelper.Fire(EventQueued, this, EventArgs.Empty);
-                Monitor.Pulse(_syncLock);
+                ThreadPool.QueueUserWorkItem(ignore => OnEventQueued());
             }
         }
         
