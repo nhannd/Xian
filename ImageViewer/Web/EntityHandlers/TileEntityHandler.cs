@@ -214,7 +214,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			get
 			{
 				if (_bitmap == null && _surface != null)
-					_bitmap = new Bitmap(ClientRectangle.Width, ClientRectangle.Height, PixelFormat.Format32bppArgb);
+					_bitmap = new Bitmap(ClientRectangle.Width, ClientRectangle.Height, PixelFormat.Format24bppRgb);
 
 				return _bitmap;
 			}
