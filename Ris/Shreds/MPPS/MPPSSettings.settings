@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Shreds.MPPS" GeneratedClassName="MPPSSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Port" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">105</Value>
+    </Setting>
+    <Setting Name="AeTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">CCMPPS</Value>
+    </Setting>
+    <Setting Name="MPPSShredName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">MPPS Shred</Value>
+    </Setting>
+    <Setting Name="MPPSShredDescription" Type="System.String" Scope="User">
+      <Value Profile="(Default)">MPPS Shred</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
