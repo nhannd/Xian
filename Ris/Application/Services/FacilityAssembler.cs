@@ -15,7 +15,7 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-	class FacilityAssembler
+	public class FacilityAssembler
 	{
 		public FacilitySummary CreateFacilitySummary(Facility facility)
 		{

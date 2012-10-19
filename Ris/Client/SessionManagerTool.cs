@@ -18,11 +18,12 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
     [MenuAction("changePassword", "global-menus/MenuTools/Change Password", "ChangePassword")]
-    [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
+	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
     public class SessionManagerTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
     {
         public SessionManagerTool()

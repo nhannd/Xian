@@ -45,7 +45,8 @@ namespace ClearCanvas.Healthcare
 			return new TimeDirective(
 				WorklistItemField.ProcedureStepCreationTime,
 				null,
-				WorklistOrdering.PrioritizeOldestItems);
+				WorklistOrdering.PrioritizeOldestItems,
+				true);
 		}
 	}
 
@@ -71,50 +72,6 @@ namespace ClearCanvas.Healthcare
 		}
 	}
 
-	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[StaticWorklist(true)]
-	[WorklistClassDescription("TranscriptionToBeReviewedWorklistDescription")]
-	public class TranscriptionToBeReviewedWorklist : TranscriptionWorklist
-	{
-		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
-		{
-			var criteria = new ReportingWorklistItemSearchCriteria();
-			criteria.ProcedureStep.State.In(new[] { ActivityStatus.SC });
-			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.ExecutingStaff);
-			return new WorklistItemSearchCriteria[] { criteria };
-		}
-
-		protected override TimeDirective GetTimeDirective()
-		{
-			return new TimeDirective(
-				WorklistItemField.ProcedureStepStartTime,
-				null,
-				WorklistOrdering.PrioritizeOldestItems);
-		}
-	}
-
-	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[StaticWorklist(true)]
-	[WorklistClassDescription("TranscriptionAwaitingReviewWorklistDescription")]
-	public class TranscriptionAwaitingReviewWorklist : TranscriptionWorklist
-	{
-		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
-		{
-			var criteria = new ReportingWorklistItemSearchCriteria();
-			criteria.ProcedureStep.State.In(new[] { ActivityStatus.IP, ActivityStatus.SC });
-			criteria.ProcedureStep.Scheduling.Performer.Staff.NotEqualTo(wqc.ExecutingStaff);
-			criteria.ReportPart.Transcriber.EqualTo(wqc.ExecutingStaff);
-			return new WorklistItemSearchCriteria[] { criteria };
-		}
-
-		protected override TimeDirective GetTimeDirective()
-		{
-			return new TimeDirective(
-				WorklistItemField.ProcedureStepStartTime,
-				null,
-				WorklistOrdering.PrioritizeOldestItems);
-		}
-	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
 	[StaticWorklist(true)]

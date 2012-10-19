@@ -240,6 +240,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                                 CustomizeRowAttribute(e.Row);
                                 HighlightDifference(e.Row);
                             }
+
+                            var tooltipControl = row.FindControl("TooltipContent") as SIQEntryTooltip;
+                            if (tooltipControl != null)
+                            {
+                                tooltipControl.SIQItem = item;
+                                tooltipControl.DataBind();
+                            }
                         }
                     }
                 }

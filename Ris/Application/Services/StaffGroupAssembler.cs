@@ -18,7 +18,7 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    class StaffGroupAssembler
+	public class StaffGroupAssembler
     {
 		private class StaffGroupWorklistCollectionSynchronizeHelper : CollectionSynchronizeHelper<Worklist, WorklistSummary>
 		{

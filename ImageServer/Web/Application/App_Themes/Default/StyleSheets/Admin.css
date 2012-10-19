@@ -193,6 +193,30 @@ div.DeleteAlertTableContainer {
 /*=========================
  * Dashboard
  *=========================*/
+ 
+.PartitionStorageConfigColumnContent
+{
+	margin-left:20px;
+	margin-right:20px;
+}
+
+#OperatingModeIndicationPanel
+{
+	padding:10px;
+	border-bottom:2px dashed lightgray;
+	font-size:large;
+	color:#205F87;
+	font-weight:bold;
+	text-align:center;
+}
+
+.OperatingModeLinkButtonBorder
+{
+	
+	padding-left:3px; 
+	padding-right:3px; 
+	font-size:x-small
+}
 
 .UsersOverview
 {

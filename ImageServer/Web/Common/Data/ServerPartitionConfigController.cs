@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns></returns>
         public bool CanDelete(ServerPartition partition)
         {
-            return partition.StudyCount == 0;
+            return partition.StudyCount <= 0;
         }
 
 

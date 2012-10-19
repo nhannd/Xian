@@ -59,7 +59,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 			_configuration = configuration;
 
 			// establish default certificate search parameters consistent with behaviour prior to #8219
-			_certificateSearchDirective = new CertificateSearchDirective { FindValue = _baseAddress.Host };
+			_certificateSearchDirective = CertificateSearchDirective.CreateBasic(_baseAddress);
 		}
 
 		/// <summary>
@@ -211,7 +211,15 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 		{
 			foreach (var host in _serviceHosts)
 			{
-				host.Open();
+                try
+                {
+                    host.Open();                    
+                }
+                catch (Exception)
+                {
+                    Platform.Log(LogLevel.Error, "Error mounting service: {0}", host.Description.Endpoints[0].Address);
+                    throw;
+                }
 			}
 		}
 
@@ -244,9 +252,17 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 		/// <param name="interceptors"></param>
 		protected virtual void ApplyInterceptors(IList<IInterceptor> interceptors)
 		{
+			// exception logging occurs outside of the main persistence context
+			interceptors.Add(new ExceptionLoggingAdvice());
 
 			// add exception promotion advice at the beginning of the interception chain (outside of the service transaction)
 			interceptors.Add(new ExceptionPromotionAdvice());
+
+			// additional interceptors are added outside of all others
+			foreach (var interceptor in AdditionalServiceInterceptorProvider.GetInterceptors(ServiceInterceptSite.Server))
+			{
+				interceptors.Add(interceptor);
+			}
 
 			// add performance logging advice conditionally
 			if (_enablePerformanceLogging)
@@ -254,23 +270,22 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 				interceptors.Add(new PerformanceLoggingAdvice());
 			}
 
-			// exception logging occurs outside of the main persistence context
-			interceptors.Add(new ExceptionLoggingAdvice());
-
 			// deadlock recovery occurs outside of persistence context,
 			// since each retry should be done in a new persistence context
 			interceptors.Add(new DeadlockRetryAdvice());
 
+			// add outer audit advice outside of main persistence context advice
+			interceptors.Add(new AuditAdvice.Outer());
+
 			// add persistence context advice, that controls the persistence context for the main transaction
 			interceptors.Add(new PersistenceContextAdvice());
+
+			// add inner audit advice inside of main persistence context advice
+			interceptors.Add(new AuditAdvice.Inner());
 
 			// add response caching advice inside of persistence context, because
 			// the context may be used when determining the cache directive, etc.
 			interceptors.Add(new ResponseCachingServerSideAdvice());
-
-			// add audit advice inside of main persistence context advice,
-			// so that the audit record will be inserted as part of the main transaction (this applies only to update contexts)
-			interceptors.Add(new AuditAdvice());
 		}
 
 		#endregion
@@ -299,7 +314,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 
 			// determine if service requires authentication
 			var authenticationAttribute = AttributeUtils.GetAttribute<AuthenticationAttribute>(contractAttribute.ServiceContract);
-			var authenticated = authenticationAttribute == null ? true : authenticationAttribute.AuthenticationRequired;
+			var authenticated = authenticationAttribute == null || authenticationAttribute.AuthenticationRequired;
 
 			// create service URI
 			var uri = new Uri(_baseAddress, contractAttribute.ServiceContract.FullName);
@@ -353,7 +368,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 
 		private static object InstantiateClass(string className)
 		{
-			var type = Type.GetType(className);
+			var type = Type.GetType(className, true);
 			return Activator.CreateInstance(type);
 		}
 

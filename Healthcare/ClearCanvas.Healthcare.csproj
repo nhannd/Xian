@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,9 +12,26 @@
     <AssemblyName>ClearCanvas.Healthcare</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,6 +41,7 @@
     <DefineConstants>TRACE;DEBUG;UNIT_TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +50,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Iesi.Collections, Version=1.0.0.3, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
@@ -44,11 +64,10 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Runtime.Serialization.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="*.gen.cs" />
@@ -64,7 +83,6 @@
     <Compile Include="Alerts\ExternalPractitionerAlertBase.cs" />
     <Compile Include="Alerts\ExternalPractitionerAlerts.cs" />
     <Compile Include="Alerts\IncompleteDemographicDataAlert.cs" />
-    <Compile Include="Alerts\InvalidVisitAlert.cs" />
     <Compile Include="Alerts\OrderAlertBase.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -78,6 +96,8 @@
     <Compile Include="Alerts\ReconciliationAlert.cs" />
     <Compile Include="Allergy.cs" />
     <Compile Include="AttachedDocument.cs" />
+    <Compile Include="Brokers\IDicomUidBroker.cs" />
+    <Compile Include="Brokers\IMrnBroker.cs" />
     <Compile Include="Brokers\IPerformedProcedureStepBroker.cs" />
     <Compile Include="Brokers\IProcedureNumberBroker.cs" />
     <Compile Include="Brokers\IProtocolWorklistItemBroker.cs" />
@@ -90,6 +110,7 @@
     <Compile Include="Brokers\IProcedureTypeGroupBroker.cs" />
     <Compile Include="Brokers\IProtocolGroupBroker.cs" />
     <Compile Include="Brokers\IPublicationStepBroker.cs" />
+    <Compile Include="Brokers\ISequenceBroker.cs" />
     <Compile Include="Brokers\IStaffBroker.cs" />
     <Compile Include="Brokers\ITranscriptionReviewStepBroker.cs" />
     <Compile Include="Brokers\IVisitBroker.cs" />
@@ -99,17 +120,41 @@
     <Compile Include="Alerts\NoteAlert.cs" />
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
     <Compile Include="CannedText.cs" />
+    <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="Department.cs" />
     <Compile Include="FtpAttachedDocumentStore.cs" />
     <Compile Include="IAttachedDocumentStore.cs" />
     <Compile Include="Imex\DepartmentImex.cs" />
     <Compile Include="IOrderNoteProvider.cs" />
+    <Compile Include="LogicalHL7EventSettings.cs" />
+    <Compile Include="LogicalHL7EventSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>LogicalHL7EventSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="MergeWorkQueueItem.cs" />
     <Compile Include="OrderMergeHistoryVirtualOrderNoteProvider.cs" />
     <Compile Include="OrderMergeInfo.cs" />
     <Compile Include="OrderRules.cs" />
+    <Compile Include="Printing\PrintTemplateSettings.cs" />
+    <Compile Include="Printing\DowntimeFormPageModel.cs" />
+    <Compile Include="Printing\PageModel.cs" />
+    <Compile Include="Printing\LetterheadSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>LetterheadSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Printing\LetterheadSettings.cs" />
+    <Compile Include="Printing\ReportPageModel.cs" />
+    <Compile Include="ProcedureBuilderSettings.cs" />
+    <Compile Include="ProcedureBuilderSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ProcedureBuilderSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ProcedurePlan.cs" />
     <Compile Include="ProtocolingWorklistItemSearchCriteria.cs" />
     <Compile Include="DicomSeries.cs" />
-    <Compile Include="EmergencyWorklists.cs" />
     <Compile Include="EntityValidationRulesSettings.cs" />
     <Compile Include="EntityValidationRulesSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -121,8 +166,8 @@
     <Compile Include="Imex\CannedTextImex.cs" />
     <Compile Include="Imex\LocationImex.cs" />
     <Compile Include="Imex\PatientNoteCategoryImex.cs" />
-    <Compile Include="LogicalHL7EventType.cs" />
-    <Compile Include="LogicalHL7EventWorkQueueItem.cs" />
+    <Compile Include="LogicalHL7Event.cs" />
+    <Compile Include="LogicalHL7EventArgs.cs" />
     <Compile Include="ModalityPerformedProcedureStepSearchCriteria.cs" />
     <Compile Include="NoteboxFactory.cs" />
     <Compile Include="Imex\ExternalPractitionerImex.cs" />
@@ -145,7 +190,6 @@
     <Compile Include="NotePosting.cs" />
     <Compile Include="Imex\ExternalPractitionerImporter.cs" />
     <Compile Include="Imex\FacilityImporter.cs" />
-    <Compile Include="Imex\ModalityImporter.cs" />
     <Compile Include="Imex\StaffImporter.cs" />
     <Compile Include="OrderCancelInfo.cs" />
     <Compile Include="OrderCreationArgs.cs" />
@@ -155,7 +199,6 @@
     <Compile Include="PublicationStepSearchCriteria.cs" />
     <Compile Include="RadiologistAdminWorklists.cs" />
     <Compile Include="RegistrationProcedureStep.cs" />
-    <Compile Include="ReportingProtocolWorklists.cs" />
     <Compile Include="ExternalPractitionerContactPoint.cs" />
     <Compile Include="IWorklistQueryContext.cs" />
     <Compile Include="MinMaxHelper.cs" />
@@ -164,11 +207,11 @@
     <Compile Include="ProcedureBuilder.cs" />
     <Compile Include="ProcedureStepSchedulingSearchCriteria.cs" />
     <Compile Include="ReadingGroup.cs" />
-    <Compile Include="RegistrationProtocolWorklists.cs" />
     <Compile Include="ProtocolAssignmentStep.cs" />
     <Compile Include="ProtocolProcedureStepSearchCriteria.cs" />
     <Compile Include="ProtocolResolutionStep.cs" />
     <Compile Include="RelevanceGroup.cs" />
+    <Compile Include="ReportingReviewWorklists.cs" />
     <Compile Include="ReportingWorklists.cs" />
     <Compile Include="ReportTrackingWorklists.cs" />
     <Compile Include="ResultCommunicationMode.cs" />
@@ -192,6 +235,7 @@
     <Compile Include="Tests\PublicationStepTests.cs" />
     <Compile Include="Tests\ReportingProcedureStepTests.cs" />
     <Compile Include="Tests\ReportTests.cs" />
+    <Compile Include="Tests\TestDicomUidBroker.cs" />
     <Compile Include="Tests\TestExtensionFactory.cs" />
     <Compile Include="Tests\TestLocationFactory.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />
@@ -203,6 +247,7 @@
     <Compile Include="Tests\WorklistTimePointTests.cs" />
     <Compile Include="TranscriptionReviewStep.cs" />
     <Compile Include="TranscriptionReviewStepSearchCriteria.cs" />
+    <Compile Include="TranscriptionReviewWorklists.cs" />
     <Compile Include="TranscriptionWorklists.cs" />
     <Compile Include="Workflow\DiscontinueOrderOperation.cs" />
     <Compile Include="Workflow\OrderEntry\Operations.cs" />
@@ -382,6 +427,19 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>EntityValidationRulesSettings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="LogicalHL7EventSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>LogicalHL7EventSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Printing\LetterheadSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>LetterheadSettings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="ProcedureBuilderSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ProcedureBuilderSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ProcedureStepHierarchy.cd" />
     <None Include="Workflow\Reporting\ReportingWorkflowSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -454,6 +512,26 @@
     <Folder Include="Workflow\Registration\Tests\" />
     <Folder Include="Workflow\Reporting\Tests\" />
     <Folder Include="Workflow\Transcription\Tests\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ProcedureBuilderRootProcedurePlan.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

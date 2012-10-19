@@ -1184,7 +1184,7 @@ Preview.ReportPreview = function () {
 	{
 		var timePropertyMap = {X: 'CancelledTime', D: 'CreationTime', P: 'PreliminaryTime', F: 'CompletedTime'};
 		var timeText = Ris.formatDateTime(report[timePropertyMap[report.Status.Code]]);
-		var warningText = " *** THIS " + (isAddendum ? "ADDENDUM" : "REPORT") + " HAS NOT BEEN VERIFIED ***";
+		var warningText = " *** THIS " + (isAddendum ? "ADDENDUM" : "REPORT") + " HAS NOT BEEN FINALIZED ***";
 
 		var statusText = report.Status.Value + " - " + timeText;
 
@@ -1309,12 +1309,13 @@ Preview.ImagingServiceSection = function () {
 		'		<td width="120" class="propertyname">Performing Facility/Dept.</td>'+
 		'		<td width="200"><div id="PerformingFacility"/></td>'+
 		'	</tr>'+
-		'	<tr>'+
-		'		<td width="120" class="propertyname">Patient Class</td>'+
-		'		<td width="200"><div id="PatientClass"/></td>'+
-		'		<td width="120" class="propertyname">Location, Room/Bed</td>'+
-		'		<td width="200"><div id="LocationRoomBed"/></td>'+
-		'	</tr>'+
+		// Yen: Removed thess fields, since they aren't needed for the time being.  May need to add them back in future releases. (jr 2012)
+		// '	<tr>'+
+		// '		<td width="120" class="propertyname">Patient Class</td>'+
+		// '		<td width="200"><div id="PatientClass"/></td>'+
+		// '		<td width="120" class="propertyname">Location, Room/Bed</td>'+
+		// '		<td width="200"><div id="LocationRoomBed"/></td>'+
+		// '	</tr>'+
 		'	<tr>'+
 		'		<td width="120" class="propertyname">Indication</td>'+
 		'		<td colspan="4"><div id="ReasonForStudy"/></td>'+
@@ -1378,8 +1379,13 @@ Preview.ImagingServiceSection = function () {
 			Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
 			Field.setLink($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name), function() { Ris.openPractitionerDetails(orderDetail.OrderingPractitioner); });
 			Field.setValue($("PerformingFacility"), formatPerformingFacility(orderDetail.Procedures));
-			Field.setValue($("PatientClass"), orderDetail.Visit.PatientClass.Value);
-			Field.setValue($("LocationRoomBed"), Preview.formatVisitCurrentLocation(orderDetail.Visit));
+			
+			// visit information may not exist, depending on whether the Visit Workflow feature is enabled
+			// Yen: Removed thess fields, since they aren't needed for the time being.  May need to add them back in future releases. (jr 2012)
+//			if (orderDetail.Visit && orderDetail.Visit.PatientClass) {
+//				Field.setValue($("PatientClass"), orderDetail.Visit.PatientClass.Value);
+//				Field.setValue($("LocationRoomBed"), Preview.formatVisitCurrentLocation(orderDetail.Visit));
+//			}
 			Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
 			Field.setValue($("EnteredBy"), orderDetail.EnteredBy ? (Ris.formatPersonName(orderDetail.EnteredBy.Name) + ' (' + orderDetail.EnteredBy.StaffType.Value + ')') : "");
 			if (orderDetail.CancelReason)
@@ -1622,11 +1628,15 @@ Preview.PatientDemographicsSection = function () {
 	var _html = 
 		'<table border="0" cellspacing="0" cellpadding="0" class="PatientDemographicsTable">'+
 		'	<tr>'+
-		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Healthcard #: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="healthcard"/></td>'+
 		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Date of Birth:</td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="dateOfBirth"/></td>'+
-		'   </tr><tr>' +
 		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Age:</td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="age"/></td>'+
+		'   </tr><tr>' +
 		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Sex:</td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="sex"/></td>'+
+		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Healthcard #: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="healthcard"/></td>'+
+		'	</tr>'+
+		'	<tr id="BillingInformationRow">'+
+		'		<td class="DemographicsLabel" nowrap="nowrap">Billing Information:</td>'+
+		'		<td colspan="3" class="DemographicsCell"><div id="billingInformation"/></td>'+
 		'	</tr>'+
 		'	<tr id="HomePhoneRow">'+
 		'		<td class="ContactInfoDemographicsLabel" nowrap="nowrap">Home Phone:</td>'+
@@ -1636,7 +1646,7 @@ Preview.PatientDemographicsSection = function () {
 		'		<td class="ContactInfoDemographicsLabel" nowrap="nowrap">Home Address:</td>'+
 		'		<td colspan="3" class="ContactInfoDemographicsCell" nowrap="nowrap"><div id="currentHomeAddress"/></td>'+
 		'	</tr>'+
-		'	<tr><td colspan="4"><img src="../images/blank.gif" height="10" /></td></tr>'
+		'	<tr><td colspan="4"><img src="../images/blank.gif"/></td></tr>'+
 		'</table>';
 
 	return {
@@ -1651,6 +1661,12 @@ Preview.PatientDemographicsSection = function () {
 			Field.setValue($("sex"), patientProfile.Sex.Value);
 			Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
 			Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
+			
+			if (patientProfile.BillingInformation)
+				Field.setValue($("billingInformation"), patientProfile.BillingInformation);
+			else
+				Field.show($("BillingInformationRow"), false);
+				
 			if (patientProfile.CurrentHomePhone)
 				Field.setValue($("currentHomePhone"), Ris.formatTelephone(patientProfile.CurrentHomePhone));
 			else
@@ -2101,9 +2117,9 @@ Preview.VisitDetailsSection = function () {
 			Field.setValue($("VisitStatus"), visitDetail.Status.Value);
 			Field.setValue($("AdmitTime"), Ris.formatDateTime(visitDetail.AdmitTime));
 			Field.setValue($("DischargeTime"), Ris.formatDateTime(visitDetail.DischargeTime));
-			Field.setValue($("PatientClass"), visitDetail.PatientClass.Value);
-			Field.setValue($("PatientType"), visitDetail.PatientType.Value);
-			Field.setValue($("AdmissionType"), visitDetail.AdmissionType.Value);
+			Field.setValue($("PatientClass"), visitDetail.PatientClass ? visitDetail.PatientClass.Value : "");
+			Field.setValue($("PatientType"), visitDetail.PatientType ? visitDetail.PatientType.Value : "");
+			Field.setValue($("AdmissionType"), visitDetail.AdmissionType ? visitDetail.AdmissionType.Value : "");
 			Field.setValue($("DischargeDisposition"), visitDetail.DischargeDisposition);
 			Field.setValue($("CurrentLocation"), visitDetail.CurrentLocation ? visitDetail.CurrentLocation.Name : null);
 			Field.setValue($("CurrentRoom"), visitDetail.CurrentRoom ? visitDetail.CurrentRoom : null);

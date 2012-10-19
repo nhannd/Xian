@@ -17,7 +17,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 {
@@ -77,8 +77,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
             {
                 if (ContainerTable != null)
                     return ContainerTable.Height;
-                else
-                    return _height;
+                return _height;
             }
             set
             {
@@ -96,13 +95,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
         {
             base.OnInit(e);
 
+            var criteria = new ServerPartitionSelectCriteria();
+            criteria.AeTitle.SortAsc(0);
+            Partitions = _theController.GetPartitions(criteria);
+
             TheGrid = PartitionGridView;
+
+            GridPagerTop.InitializeGridPager(SR.GridPagerPartitionSingleItem, SR.GridPagerPartitionMultipleItems, TheGrid,
+                                             () => Partitions.Count, ImageServerConstants.GridViewPagerPosition.Top);
+            Pager = GridPagerTop;
+            GridPagerTop.Reset();
 
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
 
-            ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
-            Partitions = _theController.GetPartitions(criteria);
             DataBind();
         }
 
@@ -133,13 +139,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
                     CustomizeActiveColumn(e);
                     CustomizeAcceptAnyDeviceColumn(e);
                     CustomizeDuplicateSopPolicyColumn(e.Row);
+                    CustomizePartitionStorageConfiguration(e.Row);
+                }
+            }
+        }
+
+        private void CustomizePartitionStorageConfiguration(GridViewRow row)
+        {
+            ServerPartition partition = row.DataItem as ServerPartition;
+            Label lbl = row.FindControl("PartitionStorageConfigurationLabel") as Label; // The label is added in the template
+            if (lbl != null)
+            {
+                if (partition.HasEnabledDeleteRules)
+                    lbl.Text = Resources.SR.PartitionStorageConfiguration_DeleteRuleExists;
+                else
+                {
+                    lbl.Text = partition.ArchiveExists
+                            ? Resources.SR.PartitionStorageConfiguration_ArchiveConfiguredNoDeleteRule
+                            : Resources.SR.PartitionStorageConfiguration_NoArchiveConfiguredNoDeleteRule;
                 }
             }
         }
 
         protected void CustomizeActiveColumn(GridViewRowEventArgs e)
         {
-            Image img = ((Image) e.Row.FindControl("ActiveImage"));
+            var img = ((Image) e.Row.FindControl("ActiveImage"));
 
             if (img != null)
             {
@@ -157,7 +181,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 
         protected void CustomizeAcceptAnyDeviceColumn(GridViewRowEventArgs e)
         {
-            Image img = ((Image) e.Row.FindControl("AcceptAnyDeviceImage"));
+            var img = ((Image) e.Row.FindControl("AcceptAnyDeviceImage"));
 
             if (img != null)
             {
@@ -175,8 +199,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 
         private void CustomizeDuplicateSopPolicyColumn(GridViewRow row)
         {
-            ServerPartition partition = row.DataItem as ServerPartition;
-            Label lbl = row.FindControl("DuplicateSopDescription") as Label; // The label is added in the template
+            var partition = row.DataItem as ServerPartition;
+            var lbl = row.FindControl("DuplicateSopDescription") as Label; // The label is added in the template
             lbl.Text = partition.DuplicateSopPolicyEnum.Description;
         }
 

@@ -16,7 +16,7 @@ using ClearCanvas.Common.Configuration;
 namespace ClearCanvas.Enterprise.Authentication
 {
 
-    [SettingsGroupDescription("Configurates behaviour related to authentication.")]
+    [SettingsGroupDescription("Configures behaviour related to authentication.")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class AuthenticationSettings
     {

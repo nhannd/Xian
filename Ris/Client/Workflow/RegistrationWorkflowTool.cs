@@ -11,11 +11,9 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Client.Formatting;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
@@ -58,21 +56,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected override bool Execute(RegistrationWorklistItemSummary item)
 		{
-			CheckInOrderComponent checkInComponent = new CheckInOrderComponent(item);
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-				this.Context.DesktopWindow,
-				checkInComponent,
-				String.Format("Checking in {0}", PersonNameFormat.Format(item.PatientName)));
-
-			if (exitCode == ApplicationComponentExitCode.Accepted)
+			if (OrderCheckInHelper.CheckIn(item.OrderRef, PersonNameFormat.Format(item.PatientName), this.Context.DesktopWindow))
 			{
 				this.Context.InvalidateFolders(typeof(Folders.Registration.CheckedInFolder));
 				return true;
 			}
-			else
-			{
-				return false;
-			}
+			return false;
 		}
 	}
 }

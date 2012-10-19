@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
@@ -21,7 +22,7 @@ namespace ClearCanvas.Ris.Client
     /// <summary>
     /// Extension to <see cref="DesktopWindowFactoryExtensionPoint"/> to provide instances of <see cref="RisDesktopWindow"/> subclass.
     /// </summary>
-    [ExtensionOf(typeof(DesktopWindowFactoryExtensionPoint))]
+	[ExtensionOf(typeof(DesktopWindowFactoryExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
     public class RisDesktopWindowFactory : IDesktopWindowFactory
     {
         /// <summary>
@@ -52,7 +53,9 @@ namespace ClearCanvas.Ris.Client
         protected internal RisDesktopWindow(DesktopWindowCreationArgs args, Desktop.Application application)
             :base(args, application)
         {
-        }
+			// set the current session before attempting to access other services, as these will require authentication
+			LoginSession.Create(SessionManager.FacilityCode);
+		}
 
         /// <summary>
         /// Creates the title that is displayed in the title bar.  Overridden to display user name. 

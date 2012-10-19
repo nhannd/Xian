@@ -9,6 +9,7 @@
 
 #endregion
 
+using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
@@ -22,6 +23,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             if (_workspace != null)
             {
                 _workspace.Activate();
+                return;
+            }
+
+            if (!PermissionsHelper.IsInRole(AuthorityTokens.ActivityMonitor.View))
+            {
+                desktopWindow.ShowMessageBox(SR.WarningActivityMonitorPermission, MessageBoxActions.Ok);
                 return;
             }
 

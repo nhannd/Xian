@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
                 Thread.CurrentThread.CurrentCulture = culture;
                 Thread.CurrentThread.CurrentUICulture = culture;
             }
-            return ServerUtility.GetFilesystemInfo(path);
+            return ServerUtility.GetFilesystemInfo(path.Trim());
         }
     }
 }

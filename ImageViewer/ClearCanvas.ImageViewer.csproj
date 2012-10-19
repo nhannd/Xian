@@ -166,6 +166,7 @@
       <DependentUpon>MouseToolSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="BaseTools\MouseToolSettingsProfile.cs" />
+    <Compile Include="Graphics\Tests\ImageGraphicTests.cs" />
     <Compile Include="InputManagement\Tests\ViewerShortcutManagerTests.cs" />
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="AuthorityTokens.cs" />
@@ -211,7 +212,6 @@
     <Compile Include="PresentationStates\Dicom\Tests\GeneratedOverlayTestImages.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\OverlayPlanePresentationTests.cs" />
     <Compile Include="PresentationStates\GeometricShutterCache.cs" />
-    <Compile Include="Services\AuthorityTokens.cs" />
     <Compile Include="Services\LocalServiceProcess.cs" />
     <Compile Include="Services\ServiceControlSettings.cs" />
     <Compile Include="Services\ServiceControlSettings.Designer.cs">
@@ -239,7 +239,6 @@
     <Compile Include="StudyManagement\PatientOrientationHelper.cs" />
     <Compile Include="StudyManagement\ProgressBarIconSet.cs" />
     <Compile Include="StudyManagement\RescaleUnits.cs" />
-    <Compile Include="StudyManagement\SopInstanceFactory.cs" />
     <Compile Include="StudyManagement\SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

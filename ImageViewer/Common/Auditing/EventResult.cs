@@ -10,6 +10,7 @@
 #endregion
 
 using ClearCanvas.Dicom.Audit;
+using DicomEventResult = ClearCanvas.Dicom.Audit.EventResult;
 
 namespace ClearCanvas.ImageViewer.Common.Auditing
 {
@@ -21,61 +22,55 @@ namespace ClearCanvas.ImageViewer.Common.Auditing
 	/// but <see cref="EventResult"/> uses <see cref="AuditHelper"/> to abstract away any requirement for knowledge of the
 	/// underlying audit types defined in the DICOM toolkit.
 	/// </remarks>
-	public sealed class EventResult
+	public class EventResult
 	{
 		/// <summary>
 		/// The auditable event completed successfully.
 		/// </summary>
-		public static readonly EventResult Success = new EventResult(EventIdentificationContentsEventOutcomeIndicator.Success);
+		public static DicomEventResult Success
+		{
+			get { return DicomEventResult.Success; }
+		}
 
 		/// <summary>
 		/// The auditable event finished with minor errors.
 		/// </summary>
-		public static readonly EventResult MinorFailure = new EventResult(EventIdentificationContentsEventOutcomeIndicator.MinorFailureActionRestarted);
+		public static DicomEventResult MinorFailure
+		{
+			get { return DicomEventResult.MinorFailure; }
+		}
 
 		/// <summary>
 		/// The auditable event finished with major errors.
 		/// </summary>
-		public static readonly EventResult MajorFailure = new EventResult(EventIdentificationContentsEventOutcomeIndicator.MajorFailureActionMadeUnavailable);
+		public static DicomEventResult MajorFailure
+		{
+			get { return DicomEventResult.MajorFailure; }
+		}
 
 		/// <summary>
 		/// The auditable event finished with serious errors.
 		/// </summary>
-		public static readonly EventResult SeriousFailure = new EventResult(EventIdentificationContentsEventOutcomeIndicator.SeriousFailureActionTerminated);
-
-		private readonly EventIdentificationContentsEventOutcomeIndicator _outcome;
-
-		private EventResult(EventIdentificationContentsEventOutcomeIndicator outcome)
+		public static DicomEventResult SeriousFailure
 		{
-			_outcome = outcome;
+			get { return DicomEventResult.SeriousFailure; }
 		}
 
-		/// <summary>
-		/// Converts the <paramref name="operand"/> to the equivalent <see cref="EventIdentificationContentsEventOutcomeIndicator"/>.
-		/// </summary>
-		public static implicit operator EventIdentificationContentsEventOutcomeIndicator(EventResult operand)
+		private readonly DicomEventResult _result;
+
+		private EventResult(DicomEventResult result)
 		{
-			return operand._outcome;
+			_result = result;
 		}
 
-		/// <summary>
-		/// Converts the <paramref name="operand"/> to the equivalent <see cref="EventResult"/>.
-		/// </summary>
-		public static implicit operator EventResult(EventIdentificationContentsEventOutcomeIndicator operand)
+		public static implicit operator DicomEventResult(EventResult result)
 		{
-			switch (operand)
-			{
-				case EventIdentificationContentsEventOutcomeIndicator.Success:
-					return Success;
-				case EventIdentificationContentsEventOutcomeIndicator.MinorFailureActionRestarted:
-					return MinorFailure;
-				case EventIdentificationContentsEventOutcomeIndicator.SeriousFailureActionTerminated:
-					return SeriousFailure;
-				case EventIdentificationContentsEventOutcomeIndicator.MajorFailureActionMadeUnavailable:
-					return MajorFailure;
-				default:
-					return null;
-			}
+			return result._result;
+		}
+
+		public static implicit operator EventResult(DicomEventResult result)
+		{
+			return new EventResult(result);
 		}
 	}
 }

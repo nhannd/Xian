@@ -33,6 +33,11 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
 			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
 			_id.DataBindings.Add("Value", _component, "ID", true, DataSourceUpdateMode.OnPropertyChanged);
+			_aeTitle.DataBindings.Add("Value", _component, "AETitle", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_facility.DataSource = _component.FacilityChoices;
+			_facility.DataBindings.Add("Value", _component, "Facility", true, DataSourceUpdateMode.OnPropertyChanged);
+			_facility.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatFacility(e.ListItem); };
 
 			_dicomModality.DataSource = _component.DicomModalityChoices;
 			_dicomModality.DataBindings.Add("Value", _component, "DicomModality", true, DataSourceUpdateMode.OnPropertyChanged);

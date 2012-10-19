@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ColumnActive" xml:space="preserve">
     <value>Active</value>
@@ -153,6 +153,9 @@
   <data name="ColumnPasswordExpiry" xml:space="preserve">
     <value>Password Expiry</value>
   </data>
+  <data name="ColumnSessionCount" xml:space="preserve">
+    <value>Sessions</value>
+  </data>
   <data name="ColumnUser" xml:space="preserve">
     <value>User</value>
   </data>
@@ -188,6 +191,9 @@ Note: This change may not take effect immediately.</value>
   <data name="ExceptionUserAccessDenied" xml:space="preserve">
     <value>Unable to update Authority Group, the password entered is incorrect.</value>
   </data>
+  <data name="LabelTerminateSessions" xml:space="preserve">
+    <value>Terminate...</value>
+  </data>
   <data name="MenuAdmin" xml:space="preserve">
     <value>Admin</value>
   </data>
@@ -197,8 +203,17 @@ Note: This change may not take effect immediately.</value>
   <data name="MenuUsers" xml:space="preserve">
     <value>Users</value>
   </data>
+  <data name="MessageCannotDeleteOwnCurrentSession" xml:space="preserve">
+    <value>You cannot delete your own current session.</value>
+  </data>
   <data name="MessageConfirmDeleteSelectedItems" xml:space="preserve">
     <value>Are you sure you want to delete the selected item(s)?</value>
+  </data>
+  <data name="MessageConfirmImportLocallyDefinedAuthorityTokens" xml:space="preserve">
+    <value>Import authority tokens defined in locally installed plugins?</value>
+  </data>
+  <data name="MessageConfirmTerminateSelectedSessions" xml:space="preserve">
+    <value>Terminating a session that is in use may cause the associated user to lose unsaved data.  Are you sure you want to terminate the selected session(s)?</value>
   </data>
   <data name="MessageServerOffline" xml:space="preserve">
     <value>The server is currently offline.  Please try again later.</value>
@@ -233,10 +248,16 @@ Note: This change may not take effect immediately.</value>
   <data name="TitleUser" xml:space="preserve">
     <value>User Admin</value>
   </data>
+  <data name="TitleViewUserSessions" xml:space="preserve">
+    <value>View User's Sessions</value>
+  </data>
   <data name="TooltipDuplicateAuthorityGroup" xml:space="preserve">
     <value>Duplicate the selected authority group</value>
   </data>
   <data name="TooltipImportAuthorityGroup" xml:space="preserve">
     <value>Import authority tokens and groups from local plugins</value>
+  </data>
+  <data name="TooltipTerminateSessions" xml:space="preserve">
+    <value>Terminate selected session(s)</value>
   </data>
 </root>

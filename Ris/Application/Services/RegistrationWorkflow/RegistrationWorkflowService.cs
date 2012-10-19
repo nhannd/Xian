@@ -32,6 +32,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		#region IRegistrationWorkflowService Members
 
 		[ReadOperation]
+		[AuditRecorder(typeof(WorkflowServiceRecorder.SearchWorklists))]
 		public TextQueryResponse<RegistrationWorklistItemSummary> SearchWorklists(WorklistItemTextQueryRequest request)
 		{
 			var assembler = new RegistrationWorkflowAssembler();
@@ -45,9 +46,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		}
 
 		[ReadOperation]
+		[AuditRecorder(typeof(WorkflowServiceRecorder.SearchPatientProfiles))]
 		public TextQueryResponse<PatientProfileSummary> PatientProfileTextQuery(TextQueryRequest request)
 		{
-			var helper = new ProfileTextQueryHelper(this.PersistenceContext);
+			var helper = new PatientProfileTextQueryHelper(this.PersistenceContext);
 			return helper.Query(request);
 		}
 
@@ -86,7 +88,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				var procedure = broker.Load(procedureRef, EntityLoadFlags.CheckVersion);
 				op.Execute(procedure, this.CurrentUserStaff, request.CheckInTime, new PersistentWorkflow(this.PersistenceContext));
 
-				CreateLogicalHL7Event(procedure, LogicalHL7EventType.ProcedureModified);
+				LogicalHL7Event.ProcedureModified.EnqueueEvents(procedure);
 			}
 
 			return new CheckInProcedureResponse();

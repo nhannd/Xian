@@ -44,6 +44,7 @@ namespace ClearCanvas.Healthcare.Tests
 		public static Order CreateOrder(Patient patient, Visit visit, Facility facility, string accession, int numProcedures, int numMpsPerProcedure, bool createProcedureSteps, bool schedule)
         {
 			var procedureNumberBroker = new TestProcedureNumberBroker();
+			var dicomUidBroker = new TestDicomUidBroker();
 			DateTime? scheduleTime = DateTime.Now;
 
             DiagnosticService ds = TestDiagnosticServiceFactory.CreateDiagnosticService(numProcedures);
@@ -64,7 +65,9 @@ namespace ClearCanvas.Healthcare.Tests
                 facility,
                 scheduleTime,
                 orderingPrac,
-                new List<ResultRecipient>()), procedureNumberBroker);
+                new List<ResultRecipient>()),
+				procedureNumberBroker,
+				dicomUidBroker);
 
             if(createProcedureSteps)
             {
@@ -88,7 +91,7 @@ namespace ClearCanvas.Healthcare.Tests
 
         private static void AddProcedureSteps(Procedure procedure, int numMps)
         {
-            Modality m = new Modality("01", "CT", null);
+            Modality m = new Modality("01", "CT", procedure.PerformingFacility, null, null);
 
             for (int s = 0; s < numMps; s++)
             {

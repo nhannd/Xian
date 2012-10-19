@@ -79,19 +79,13 @@ namespace ClearCanvas.Desktop.Tools
     	/// </remarks>
     	public virtual IActionSet Actions
         {
-            get
-            {
-                if (_actions == null)
-                {
-                    _actions = new ActionSet(ActionAttributeProcessor.Process(this));
-                }
-                return _actions;
-            }
+            get { return _actions ?? (_actions = new ActionSet(ActionAttributeProcessor.Process(this))); }
+            protected set { _actions = value; }
         }
 
         #endregion
 
-		/// <summary>
+        /// <summary>
 		/// Disposes of this object; override this method to do any necessary cleanup.
 		/// </summary>
 		/// <param name="disposing">True if this object is being disposed, false if it is being finalized.</param>

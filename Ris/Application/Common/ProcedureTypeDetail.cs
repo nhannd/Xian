@@ -9,13 +9,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
-using System.Xml;
 
 namespace ClearCanvas.Ris.Application.Common
 {
@@ -26,16 +22,41 @@ namespace ClearCanvas.Ris.Application.Common
 		{
 		}
 
-		public ProcedureTypeDetail(EntityRef entityRef, string id, string name, ProcedureTypeSummary baseType, string planXml,
+		public ProcedureTypeDetail(
+			EntityRef entityRef,
+			string id,
+			string name,
+			ModalitySummary defaultModality,
+			int defaultDuration,
 			bool deactivated)
         {
             this.ProcedureTypeRef = entityRef;
             this.Id = id;
             this.Name = name;
-        	this.BaseType = baseType;
-        	this.PlanXml = planXml;
+			this.CustomProcedurePlan = false;
+			this.DefaultModality = defaultModality;
+			this.DefaultDuration = defaultDuration;
 			this.Deactivated = deactivated;
         }
+
+		public ProcedureTypeDetail(
+			EntityRef entityRef,
+			string id,
+			string name,
+			ProcedureTypeSummary baseType,
+			string planXml,
+			int defaultDuration,
+			bool deactivated)
+		{
+			this.ProcedureTypeRef = entityRef;
+			this.Id = id;
+			this.Name = name;
+			this.BaseType = baseType;
+			this.CustomProcedurePlan = true;
+			this.PlanXml = planXml;
+			this.DefaultDuration = defaultDuration;
+			this.Deactivated = deactivated;
+		}
 
         [DataMember]
         public EntityRef ProcedureTypeRef;
@@ -47,17 +68,39 @@ namespace ClearCanvas.Ris.Application.Common
         public string Name;
 
 		[DataMember]
-		public ProcedureTypeSummary BaseType;
-
-		[DataMember]
-		public string PlanXml;
+		public int DefaultDuration;
 
 		[DataMember]
 		public bool Deactivated;
 
+		/// <summary>
+		/// Specifies the default modality used by the default procedure plan (assuming <see cref="CustomProcedurePlan"/> is false).
+		/// </summary>
+		[DataMember]
+    	public ModalitySummary DefaultModality;
+
+		/// <summary>
+		/// Specifies whether a custom procedure plan is used.
+		/// </summary>
+		[DataMember]
+    	public bool CustomProcedurePlan;
+
+		/// <summary>
+		/// Specifies the base type, or null if <see cref="CustomProcedurePlan"/> is false.
+		/// </summary>
+		[DataMember]
+		public ProcedureTypeSummary BaseType;
+
+		/// <summary>
+		/// Specifies the custom plan XML, or null if <see cref="CustomProcedurePlan"/> is false.
+		/// </summary>
+		[DataMember]
+		public string PlanXml;
+
+
 		public ProcedureTypeSummary GetSummary()
         {
-            return new ProcedureTypeSummary(this.ProcedureTypeRef, this.Name, this.Id, this.Deactivated);
+            return new ProcedureTypeSummary(this.ProcedureTypeRef, this.Name, this.Id, this.DefaultDuration, this.Deactivated);
         }
     }
 }

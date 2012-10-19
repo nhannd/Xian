@@ -80,9 +80,12 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			this._headerServicePort = new System.Windows.Forms.TextBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this._wadoServicePort = new System.Windows.Forms.TextBox();
+			this._serverRoles = new System.Windows.Forms.GroupBox();
+			this._isPriorsServer = new System.Windows.Forms.CheckBox();
 			this._dicom.SuspendLayout();
 			this._general.SuspendLayout();
 			this._streaming.SuspendLayout();
+			this._serverRoles.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -206,10 +209,24 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			resources.ApplyResources(this._wadoServicePort, "_wadoServicePort");
 			this._wadoServicePort.Name = "_wadoServicePort";
 			// 
+			// _serverRoles
+			// 
+			this._serverRoles.Controls.Add(this._isPriorsServer);
+			resources.ApplyResources(this._serverRoles, "_serverRoles");
+			this._serverRoles.Name = "_serverRoles";
+			this._serverRoles.TabStop = false;
+			// 
+			// _isPriorsServer
+			// 
+			resources.ApplyResources(this._isPriorsServer, "_isPriorsServer");
+			this._isPriorsServer.Name = "_isPriorsServer";
+			this._isPriorsServer.UseVisualStyleBackColor = true;
+			// 
 			// DicomServerEditComponentControl
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._serverRoles);
 			this.Controls.Add(this._btnCancel);
 			this.Controls.Add(this._btnAccept);
 			this.Controls.Add(this._general);
@@ -222,6 +239,8 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			this._general.PerformLayout();
 			this._streaming.ResumeLayout(false);
 			this._streaming.PerformLayout();
+			this._serverRoles.ResumeLayout(false);
+			this._serverRoles.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -248,5 +267,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 		private System.Windows.Forms.TextBox _wadoServicePort;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.TextBox _headerServicePort;
+		private System.Windows.Forms.GroupBox _serverRoles;
+		private System.Windows.Forms.CheckBox _isPriorsServer;
     }
 }

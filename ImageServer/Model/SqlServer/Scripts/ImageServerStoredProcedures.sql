@@ -628,7 +628,7 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: August 13, 2007
--- Modify date: Jan 09, 2012
+-- Modify date: Aug 17, 2012
 -- Description:	Insert a ServerPartition row
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertServerPartition] 
@@ -648,7 +648,8 @@ CREATE PROCEDURE [dbo].[InsertServerPartition]
     @MatchPatientsBirthDate bit = 1,
     @MatchIssuerOfPatientId bit = 1,
     @MatchPatientsSex bit = 1,
-	@AuditDeleteStudy bit = 0
+	@AuditDeleteStudy bit = 0,
+	@AcceptLatestReport bit = 1
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -668,9 +669,9 @@ BEGIN
 
 	INSERT INTO [ImageServer].[dbo].[ServerPartition] 
 			([GUID],[Enabled],[Description],[AeTitle],[Port],[PartitionFolder],[AcceptAnyDevice],[AutoInsertDevice],[DefaultRemotePort],[DuplicateSopPolicyEnum],
-			[MatchPatientsName], [MatchPatientId], [MatchAccessionNumber], [MatchPatientsBirthDate], [MatchIssuerOfPatientId], [MatchPatientsSex], [AuditDeleteStudy])
+			[MatchPatientsName], [MatchPatientId], [MatchAccessionNumber], [MatchPatientsBirthDate], [MatchIssuerOfPatientId], [MatchPatientsSex], [AuditDeleteStudy], [AcceptLatestReport])
 	VALUES (@ServerPartitionGUID, @Enabled, @Description, @AeTitle, @Port, @PartitionFolder, @AcceptAnyDevice, @AutoInsertDevice, @DefaultRemotePort, @DuplicateSopPolicyEnum,
-			@MatchPatientsName, @MatchPatientId, @MatchAccessionNumber, @MatchPatientsBirthDate, @MatchIssuerOfPatientId, @MatchPatientsSex, @AuditDeleteStudy)
+			@MatchPatientsName, @MatchPatientId, @MatchAccessionNumber, @MatchPatientsBirthDate, @MatchIssuerOfPatientId, @MatchPatientsSex, @AuditDeleteStudy, @AcceptLatestReport)
 
 	-- Populate PartitionSopClass
 	DECLARE cur_sopclass CURSOR FOR 
@@ -735,7 +736,7 @@ BEGIN
 	INSERT INTO [ImageServer].[dbo].[ServerRule]
 			   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Enabled],[DefaultRule],[RuleXml])
 		 VALUES
-			   (newid(),''Default Delete'',@ServerPartitionGUID, @StudyServerRuleApplyTimeEnum, @StudyDeleteServerRuleTypeEnum, 1, 1,
+			   (newid(),''Default Delete'',@ServerPartitionGUID, @StudyServerRuleApplyTimeEnum, @StudyDeleteServerRuleTypeEnum, 0, 0,
 				''<rule id="Default Delete">
 					<condition>
 					</condition>
@@ -2022,11 +2023,12 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: November 19, 2007
--- Update date: Oct 06, 2009
+-- Update date: Sep 05, 2012
 -- Description:	Completely delete a Study from the database
 -- History
 --	Oct 06, 2009:  Delete StudyHistory record if DestStudyStorageGUID matches
 --  Aug 18, 2011:  Delete StudyDataAccess
+--  Sep 05, 2012:  Move updating ServerPartition count to end of procedure
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteStudyStorage] 
 	-- Add the parameters for the stored procedure here
@@ -2104,14 +2106,20 @@ BEGIN
 	DELETE FROM StudyStorage
 	WHERE GUID = @StudyStorageGUID
 
+	declare @NumberOfStudiesDeleted int
+	set @NumberOfStudiesDeleted = @@ROWCOUNT
+
 	UPDATE Patient
 	SET	NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies -1,
 		NumberOfPatientRelatedSeries = NumberOfPatientRelatedSeries - @NumberOfStudyRelatedSeries,
 		NumberOfPatientRelatedInstances = NumberOfPatientRelatedInstances - @NumberOfStudyRelatedInstances
 	WHERE GUID = @PatientGUID
 	
-	UPDATE dbo.ServerPartition SET StudyCount=StudyCount-1
-	WHERE GUID=@ServerPartitionGUID
+	if @NumberOfStudiesDeleted != 0
+	BEGIN
+		UPDATE dbo.ServerPartition SET StudyCount=StudyCount-@NumberOfStudiesDeleted
+		WHERE GUID=@ServerPartitionGUID
+	END
 
 	-- Do afterwards, in case multiple studies for the same patient are being deleted at once.
 	SELECT @NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies 

@@ -9,54 +9,10 @@
 
 #endregion
 
-using ClearCanvas.Common;
 using ClearCanvas.Common.Authorization;
-using ClearCanvas.ImageViewer;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
-    [ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint), Enabled = false)]
-	internal class DefineAuthorityGroups : IDefineAuthorityGroups
-	{
-		#region IDefineAuthorityGroups Members
-
-		/// <summary>
-		/// Get the authority group definitions.
-		/// </summary>
-		public AuthorityGroupDefinition[] GetAuthorityGroups()
-		{
-			return new AuthorityGroupDefinition[]
-            {
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
-                    new string[] 
-                    {
-						AuthorityTokens.DicomEditor,
-						AuthorityTokens.Study.Anonymize
-                    }),
-				new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
-                    new string[] 
-                    {
-						AuthorityTokens.DicomEditor,
-						AuthorityTokens.Study.Anonymize
-                    }),
-				new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
-                    new string[] 
-                    {
-						AuthorityTokens.DicomEditor,
-						AuthorityTokens.Study.Anonymize
-                    }),
-					new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
-                    new string[] 
-                    {
-						AuthorityTokens.DicomEditor,
-						AuthorityTokens.Study.Anonymize
-                    })
-			};
-		}
-
-		#endregion
-	}
-
 	public static class AuthorityTokens
 	{
 		public class Study

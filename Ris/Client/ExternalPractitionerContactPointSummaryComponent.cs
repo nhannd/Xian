@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -19,6 +20,7 @@ using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Desktop;
 using ClearCanvas.Ris.Application.Common;
+
 
 namespace ClearCanvas.Ris.Client
 {
@@ -259,6 +261,13 @@ namespace ClearCanvas.Ris.Client
 			return false;
 		}
 
+		protected override bool GetDeleteConfirmationMessage(IList<ExternalPractitionerContactPointDetail> itemsToBeDeleted, out string message)
+		{
+			// given that saved contact points cannot be deleted, it seems silly to confirm
+			message = null;
+			return false;
+		}
+
 		/// <summary>
 		/// Called to handle the "delete" action, if supported.
 		/// </summary>
@@ -269,11 +278,12 @@ namespace ClearCanvas.Ris.Client
 		protected override bool DeleteItems(IList<ExternalPractitionerContactPointDetail> items, out IList<ExternalPractitionerContactPointDetail> deletedItems, out string failureMessage)
 		{
 			failureMessage = null;
-			deletedItems = new List<ExternalPractitionerContactPointDetail>();
+			deletedItems = items.Where(item => item.ContactPointRef == null).ToList();
 
-			foreach (var item in items)
+			var nonDeletableItems = items.Where(item => item.ContactPointRef != null).ToList();
+			if (nonDeletableItems.Count > 0)
 			{
-				deletedItems.Add(item);
+				this.Host.ShowMessageBox(SR.MessageSavedContactPointsCannotBeDeleted, MessageBoxActions.Ok);
 			}
 
 			return deletedItems.Count > 0;

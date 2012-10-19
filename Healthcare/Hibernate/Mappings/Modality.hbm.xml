@@ -8,7 +8,9 @@
     <version name="Version" column="Version_"/>
     <property name="Id" column="Id_" type="String" length="30" not-null="true" unique="true"/>
     <property name="Name" column="Name_" type="String" length="200" not-null="true" unique="true"/>
+		<many-to-one name="Facility" class="Facility" column="FacilityOID_"/>
+		<property name="AETitle" column="AETitle_" type="String" length="16" not-null="false" unique="false"/>
     <many-to-one name="DicomModality" class="DicomModalityEnum" column="DicomModality_"/>
-    <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
+		<property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
   </class>
 </hibernate-mapping>

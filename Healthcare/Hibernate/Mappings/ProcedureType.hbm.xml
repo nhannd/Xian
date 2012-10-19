@@ -11,6 +11,7 @@
     <property name="Name" column="Name_" type="String" length="100" not-null="true" unique="true"/>
     <many-to-one name="BaseType" class="ProcedureType" column="BaseTypeOID_" not-null="false"/>
     <property name="PlanXml" column="PlanXml_" type="StringClob" length="65000" access="field.camelcase-underscore"/>
-    <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
+		<property name="DefaultDuration" column="DefaultDuration_" type="int" not-null="true"/>
+		<property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
   </class>
 </hibernate-mapping>

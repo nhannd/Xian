@@ -103,6 +103,25 @@ namespace ClearCanvas.Common.UsageTracking
 			}
 		}
 
+		private const string _trackingServerHost = "4rf";
+		private const string _trackingServerIp = "10.19.20.122";
+		private const string _trackingServiceEndpoint = "https://{0}/Tracking/Service.svc";
+
+		private static string TrackingServerHost
+		{
+			get { return _trackingServerHost; }
+		}
+
+		private static string TrackingServerIp
+		{
+			get { return _trackingServerIp; }
+		}
+
+		private static string TrackingServiceEndpoint
+		{
+			get { return _trackingServiceEndpoint; }
+		}
+
 		/// <summary>
 		/// Send the UsageTracking message.
 		/// </summary>
@@ -140,26 +159,16 @@ namespace ClearCanvas.Common.UsageTracking
                     WSHttpBinding binding = new WSHttpBinding();
                     EndpointAddress endpointAddress = new EndpointAddress("http://localhost:8080/UsageTracking");
                     TrySend(req, binding, endpointAddress);
-#elif	DEBUG
-					// WSHttpBinding binding = new WSHttpBinding(SecurityMode.None);
-					// EndpointAddress endpointAddress = new EndpointAddress("http://localhost/Tracking/Service.svc");
+#else
 					WSHttpBinding binding = new WSHttpBinding(SecurityMode.Transport);
 					binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
 					binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
-					EndpointAddress endpointAddress = new EndpointAddress("https://4rf/Tracking/Service.svc");
-					TrySend(req, binding, endpointAddress);
-#else
-	// This is updated to the real address as part of the build process, when appropriate and
-	// doing an official build.
-                    WSHttpBinding binding = new WSHttpBinding(SecurityMode.Transport);
-                    binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
-                    binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
-                    EndpointAddress endpointAddress = new EndpointAddress("https://4rf/Tracking/Service.svc");
-                    if (!TrySend(req, binding, endpointAddress))
-                    {
-                        endpointAddress = new EndpointAddress("https://10.19.20.122/Tracking/Service.svc");
-                        TrySend(req, binding, endpointAddress); 
-                    }
+					EndpointAddress endpointAddress = new EndpointAddress(string.Format(TrackingServiceEndpoint, TrackingServerHost));
+					if (!TrySend(req, binding, endpointAddress))
+					{
+						endpointAddress = new EndpointAddress(string.Format(TrackingServiceEndpoint, TrackingServerIp));
+						TrySend(req, binding, endpointAddress);
+					}
 #endif
 				}
 			}

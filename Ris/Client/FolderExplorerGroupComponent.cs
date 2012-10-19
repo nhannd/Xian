@@ -94,14 +94,14 @@ namespace ClearCanvas.Ris.Client
 		class FolderSystemContext : ToolContext, IFolderSystemContext
 		{
 			private readonly FolderExplorerGroupComponent _owner;
-			private readonly FolderExplorerComponent _explorerComponent;
+			private readonly IFolderExplorerComponent _explorerComponent;
 			private readonly FolderContentsComponent _contentsComponent;
 
 			private event EventHandler _selectedItemsChanged;
 			private event EventHandler _selectedItemDoubleClicked;
 
 
-			public FolderSystemContext(FolderExplorerGroupComponent owner, FolderExplorerComponent explorerComponent, FolderContentsComponent contentsComponent)
+			public FolderSystemContext(FolderExplorerGroupComponent owner, IFolderExplorerComponent explorerComponent, FolderContentsComponent contentsComponent)
 			{
 				_owner = owner;
 				_explorerComponent = explorerComponent;
@@ -216,8 +216,8 @@ namespace ClearCanvas.Ris.Client
 		private readonly StackTabComponentContainer _stackTabComponent;
 		private ChildComponentHost _stackTabComponentContainerHost;
 
-		private readonly Dictionary<IFolderSystem, FolderExplorerComponent> _folderExplorerComponents;
-		private FolderExplorerComponent _selectedFolderExplorer;
+		private readonly Dictionary<IFolderSystem, IFolderExplorerComponent> _folderExplorerComponents;
+		private IFolderExplorerComponent _selectedFolderExplorer;
 
 		private event EventHandler _selectedFolderExplorerChanged;
 		private event EventHandler _selectedFolderChanged;
@@ -232,7 +232,7 @@ namespace ClearCanvas.Ris.Client
 			_folderSystems = folderSystems;
 			_contentComponent = contentComponent;
 			_stackTabComponent = new StackTabComponentContainer(StackStyle.ShowOneOnly, false);
-			_folderExplorerComponents = new Dictionary<IFolderSystem, FolderExplorerComponent>();
+			_folderExplorerComponents = new Dictionary<IFolderSystem, IFolderExplorerComponent>();
 
 		}
 
@@ -300,7 +300,7 @@ namespace ClearCanvas.Ris.Client
 			remove { _selectedFolderChanged -= value; }
 		}
 
-		public FolderExplorerComponent SelectedFolderExplorer
+		public IFolderExplorerComponent SelectedFolderExplorer
 		{
 			get { return _selectedFolderExplorer; }
 		}
@@ -347,11 +347,11 @@ namespace ClearCanvas.Ris.Client
 
 		public void Search(string textSearch)
 		{
-			var searchParams = this.SelectedFolderExplorer.CreateSearchParams(textSearch);
+			var searchParams = this.SelectedFolderExplorer.FolderSystem.CreateSearchParams(textSearch);
 			Search(searchParams);
 		}
 
-		public void Search(SearchParams searchParams)
+		protected void Search(SearchParams searchParams)
 		{
 			if (!searchParams.UseAdvancedSearch && string.IsNullOrEmpty(searchParams.TextSearch))
 			{
@@ -364,7 +364,7 @@ namespace ClearCanvas.Ris.Client
 
 		public void AdvancedSearch()
 		{
-			this.SelectedFolderExplorer.LaunchSearchComponent();
+			this.SelectedFolderExplorer.LaunchAdvancedSearchComponent();
 		}
 
 		#endregion
@@ -440,7 +440,7 @@ namespace ClearCanvas.Ris.Client
 			// create a folder explorer component and a tab page for each folder system
 			foreach (var folderSystem in folderSystems)
 			{
-				var explorer = new FolderExplorerComponent(folderSystem, this);
+				IFolderExplorerComponent explorer = new FolderExplorerComponent(folderSystem, this);
 				explorer.Initialized += FolderSystemInitializedEventHandler;
 				explorer.SelectedFolderChanged += OnSelectedFolderChanged;
 
@@ -454,11 +454,11 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		private static StackTabPage CreatePageForFolderExplorer(FolderExplorerComponent explorer)
+		private static StackTabPage CreatePageForFolderExplorer(IFolderExplorerComponent explorer)
 		{
 			return new StackTabPage(
 				explorer.FolderSystem.Title,
-				explorer,
+				(IApplicationComponent)explorer,
 				explorer.FolderSystem.Title,
 				explorer.FolderSystem.TitleIcon,
 				explorer.FolderSystem.ResourceResolver)
@@ -484,9 +484,10 @@ namespace ClearCanvas.Ris.Client
 		private ActionModelNode CreateActionModel(string site)
 		{
 			var allActions = _toolSet.Actions;
-			if (_selectedFolderExplorer != null)
+			var explorerComponent = _selectedFolderExplorer as IApplicationComponent;
+			if (explorerComponent != null)
 			{
-				allActions = allActions.Union(_selectedFolderExplorer.ExportedActions);
+				allActions = allActions.Union(explorerComponent.ExportedActions);
 			}
 			return ActionModelRoot.CreateModel(this.GetType().FullName, site, allActions);
 		}

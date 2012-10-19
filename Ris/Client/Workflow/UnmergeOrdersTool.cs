@@ -66,16 +66,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 			var reasonCode = OrderMergeSettings.Default.UnmergeDefaultReasonCode;
 			if(string.IsNullOrEmpty(reasonCode))
 			{
-				var cancelOrderComponent = new CancelOrderComponent();
+				var unmergeComponent = new UnmergeOrderComponent();
 				var exitCode = ApplicationComponent.LaunchAsDialog(
 					this.Context.DesktopWindow,
-					cancelOrderComponent,
+					unmergeComponent,
 					string.Format("Undo merge order {0}", AccessionFormat.Format(item.AccessionNumber)));
 
 				if (exitCode != ApplicationComponentExitCode.Accepted)
 					return false;
 
-				reason = cancelOrderComponent.SelectedCancelReason;
+				reason = unmergeComponent.SelectedReason;
 			}
 			else
 			{
@@ -110,21 +110,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			DocumentManager.InvalidateFolder(typeof(Folders.Registration.ScheduledFolder));
 			DocumentManager.InvalidateFolder(typeof(Folders.Registration.CancelledFolder));
-		}
-	}
-
-	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-	public class BookingUnmergeOrdersTool : UnmergeOrdersToolBase<RegistrationWorklistItemSummary, IRegistrationWorkflowItemToolContext>
-	{
-		protected override bool Execute(RegistrationWorklistItemSummary item)
-		{
-			return ExecuteCore(item);
-		}
-
-		protected override void InvalidateFolders()
-		{
-			DocumentManager.InvalidateFolder(typeof(Folders.Registration.ToBeScheduledFolder));
-			DocumentManager.InvalidateFolder(typeof(Folders.Registration.PendingProtocolFolder));
 		}
 	}
 

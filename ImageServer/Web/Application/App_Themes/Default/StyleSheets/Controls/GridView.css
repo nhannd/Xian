@@ -38,7 +38,7 @@
     height: 20px;
 }
 
-.GlobalGridViewRow td
+.GlobalGridViewRow > td
 {
     border-bottom: solid 2px #eeeeee;
     padding: 0px 0px 0px 8px;
@@ -52,7 +52,7 @@
     height: 20px;
 }
 
-.GlobalGridViewAlternatingRow td
+.GlobalGridViewAlternatingRow > td
 {
     padding: 0px 0px 0px 8px;
     border-bottom: solid 2px #eeeeee;
@@ -67,7 +67,7 @@
     height: 20px;    
 }
 
-.GlobalGridViewSelectedRow td
+.GlobalGridViewSelectedRow > td
 {
     background: #9edc98;
     border-bottom: solid 2px #eeeeee;

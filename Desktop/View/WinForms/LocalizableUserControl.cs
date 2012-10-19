@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -22,6 +22,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 	/// </summary>
 	public class LocalizableUserControl : UserControl
 	{
+		// N.B. do not make this class abstract, no matter how tempting it may look. You will break the VS Forms designer.
+
 		private readonly MethodInvoker _onCurrentUICultureChangedMethod;
 		private readonly MethodInvoker _onCurrentUIThemeChangedMethod;
 
@@ -30,7 +32,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		public LocalizableUserControl()
 		{
-			if (!DesignMode)
+			// System.Component.DesignMode does not work in control constructors
+			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
 			{
 				Application.CurrentUICultureChanged += Application_CurrentUICultureChanged;
 				Application.CurrentUIThemeChanged += Application_CurrentUIThemeChanged;

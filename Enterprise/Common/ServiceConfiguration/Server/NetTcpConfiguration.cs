@@ -46,12 +46,13 @@ namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Server
 
 #if DEBUG
 			// We need to expose the metadata in order to generate client proxy code for some service
-			// used in applications that cannot reference any CC assemblies.
+			// used in applications that cannot reference any CC assemblies (e.g utilities for installer).
             if (host.Description.Behaviors.Find<ServiceMetadataBehavior>() == null)
             {
+                
                 ServiceMetadataBehavior smb = new ServiceMetadataBehavior();
                 smb.HttpGetEnabled = true;
-                smb.HttpGetUrl = new Uri(string.Format("http://localhost:8001/{0}/mex", args.ServiceContract.Name));
+                smb.HttpGetUrl = new Uri(string.Format("http://localhost:{0}/{1}/mex", args.HostUri.Port+1, args.ServiceContract.Name));
                 Platform.Log(LogLevel.Debug, "Service Metadata endpoint: {0}", smb.HttpGetUrl);
                 host.Description.Behaviors.Add(smb);
             }

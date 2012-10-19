@@ -21,6 +21,7 @@ using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+using ClearCanvas.ImageServer.Enterprise.Authentication;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.WebViewer.SearchPanel.js", "application/x-javascript")]
 
@@ -42,7 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WebViewer
         [ClientPropertyName("CanViewImages")]
         public bool CanViewImages
         {
-            get { return Thread.CurrentPrincipal.IsInRole(ImageServerConstants.WebViewerAuthorityToken); }
+            get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Study.ViewImages); }
         }
 
         [ExtenderControlProperty]

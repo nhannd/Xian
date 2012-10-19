@@ -89,13 +89,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuditAdvice.cs" />
-    <Compile Include="AuditAttribute.cs" />
+    <Compile Include="AuditRecorderAttribute.cs" />
     <Compile Include="AuditLogEntry.cs" />
     <Compile Include="Audit\AuditLogEntryAssembler.cs" />
     <Compile Include="Audit\AuditService.cs" />
     <Compile Include="DeadlockException.cs" />
     <Compile Include="DeadlockRetryAdvice.cs" />
     <Compile Include="DeadlockRetryManager.cs" />
+    <Compile Include="EntityChangeSetRecorderSettings.cs" />
     <Compile Include="LooseEnumPropertyChangeSetListener.cs" />
     <Compile Include="EqualityUtils.cs" />
     <Compile Include="ExtendedPropertiesSearchCriteria.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="IPersistenceBrokerFactory.cs" />
     <Compile Include="Mail\IMailQueueService.cs" />
     <Compile Include="Mail\OutgoingMailMessage.cs" />
+    <Compile Include="Manifest\ManifestService.cs" />
     <Compile Include="Modelling\IDomainObjectValidator.cs" />
     <Compile Include="Modelling\PublishInChangeSetsAttribute.cs" />
     <Compile Include="Modelling\DomainObjectValidator.cs" />
@@ -120,6 +122,20 @@
     <Compile Include="Modelling\ValidationAttribute.cs" />
     <Compile Include="Modelling\XmlValidationRuleSetSource.cs" />
     <Compile Include="Ping\PingService.cs" />
+    <Compile Include="Printing\IPageModel.cs" />
+    <Compile Include="Printing\Print.cs" />
+    <Compile Include="Printing\PrintException.cs" />
+    <Compile Include="Printing\PrintSettings.cs" />
+    <Compile Include="Printing\PrintSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PrintSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="EntityChangeSetRecorderSettings.Designer.cs">
+      <DependentUpon>EntityChangeSetRecorderSettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
     <Compile Include="ResponseCachingServerSideAdvice.cs" />
     <Compile Include="ResponseCachingAttribute.cs" />
     <Compile Include="CoreServiceExtensionPoint.cs" />
@@ -223,7 +239,6 @@
     <Compile Include="ServiceOperationAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ServiceOperationRecorderBase.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -262,6 +277,10 @@
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Utilities\Manifest\ClearCanvas.Utilities.Manifest.csproj">
+      <Project>{E2F1A5D4-73A4-4BA6-AA5A-87BBDEC727F8}</Project>
+      <Name>ClearCanvas.Utilities.Manifest</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\ClearCanvas.Enterprise.Common.csproj">
       <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
       <Name>ClearCanvas.Enterprise.Common</Name>
@@ -274,6 +293,16 @@
       <LastGenOutput>EntityValidationSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="persistence.cd" />
+    <None Include="Printing\PrintSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PrintSettings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="EntityChangeSetRecorderSettings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>EntityChangeSetRecorderSettings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

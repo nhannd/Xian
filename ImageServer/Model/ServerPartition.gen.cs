@@ -43,6 +43,7 @@ namespace ClearCanvas.ImageServer.Model
             ,Boolean _matchPatientsBirthDate_
             ,Boolean _matchPatientsName_
             ,Boolean _matchPatientsSex_
+            ,Boolean _acceptLatestReport_
             ):base("ServerPartition")
         {
             Enabled = _enabled_;
@@ -62,6 +63,7 @@ namespace ClearCanvas.ImageServer.Model
             MatchPatientsBirthDate = _matchPatientsBirthDate_;
             MatchPatientsName = _matchPatientsName_;
             MatchPatientsSex = _matchPatientsSex_;
+            AcceptLatestReport = _acceptLatestReport_;
         }
         #endregion
 
@@ -117,6 +119,9 @@ namespace ClearCanvas.ImageServer.Model
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsSex")]
         public Boolean MatchPatientsSex
         { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AcceptLatestReport")]
+        public Boolean AcceptLatestReport
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -163,6 +168,7 @@ namespace ClearCanvas.ImageServer.Model
             updateColumns.MatchPatientsBirthDate = entity.MatchPatientsBirthDate;
             updateColumns.MatchPatientsName = entity.MatchPatientsName;
             updateColumns.MatchPatientsSex = entity.MatchPatientsSex;
+            updateColumns.AcceptLatestReport = entity.AcceptLatestReport;
             ServerPartition newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

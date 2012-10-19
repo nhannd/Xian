@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Serialization;
 using ClearCanvas.Enterprise.Common;
@@ -16,13 +17,15 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common
 {
 	[DataContract]
-	public class ModalitySummary : DataContractBase
+	public class ModalitySummary : DataContractBase, IEquatable<ModalitySummary>
 	{
-		public ModalitySummary(EntityRef modalityRef, string id, string name, EnumValueInfo dicomModality, bool deactivated)
+		public ModalitySummary(EntityRef modalityRef, string id, string name, FacilitySummary facility, string aeTitle, EnumValueInfo dicomModality, bool deactivated)
 		{
 			this.ModalityRef = modalityRef;
 			this.Id = id;
 			this.Name = name;
+			this.Facility = facility;
+			this.AETitle = aeTitle;
 			this.DicomModality = dicomModality;
 			this.Deactivated = deactivated;
 		}
@@ -41,9 +44,35 @@ namespace ClearCanvas.Ris.Application.Common
 		public string Name;
 
 		[DataMember]
+		public FacilitySummary Facility;
+
+		[DataMember]
+		public string AETitle;
+
+		[DataMember]
 		public EnumValueInfo DicomModality;
 
 		[DataMember]
 		public bool Deactivated;
+
+		public bool Equals(ModalitySummary other)
+		{
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return Equals(other.ModalityRef, ModalityRef);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != typeof (ModalitySummary)) return false;
+			return Equals((ModalitySummary) obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return (ModalityRef != null ? ModalityRef.GetHashCode() : 0);
+		}
 	}
 }

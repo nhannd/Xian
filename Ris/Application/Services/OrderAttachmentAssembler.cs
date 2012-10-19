@@ -20,7 +20,7 @@ namespace ClearCanvas.Ris.Application.Services
 {
     public class OrderAttachmentAssembler
     {
-        class OrderAttachmentSynchronizeHelper : CollectionSynchronizeHelper<OrderAttachment, OrderAttachmentSummary>
+        class OrderAttachmentSynchronizeHelper : CollectionSynchronizeHelper<OrderAttachment, AttachmentSummary>
         {
             private readonly OrderAttachmentAssembler _assembler;
             private readonly IPersistenceContext _context;
@@ -34,19 +34,19 @@ namespace ClearCanvas.Ris.Application.Services
                 _currentUserStaff = currentUserStaff;
             }
 
-            protected override bool CompareItems(OrderAttachment domainItem, OrderAttachmentSummary sourceItem)
+			protected override bool CompareItems(OrderAttachment domainItem, AttachmentSummary sourceItem)
             {
                 return Equals(domainItem.Document.GetRef(), sourceItem.Document.DocumentRef);
             }
 
-            protected override void AddItem(OrderAttachmentSummary sourceItem, ICollection<OrderAttachment> domainList)
+			protected override void AddItem(AttachmentSummary sourceItem, ICollection<OrderAttachment> domainList)
             {
                 OrderAttachment attachment = _assembler.CreateOrderAttachment(sourceItem, _currentUserStaff, _context);
                 attachment.Document.Attach();
                 domainList.Add(attachment);
             }
 
-            protected override void UpdateItem(OrderAttachment domainItem, OrderAttachmentSummary sourceItem, ICollection<OrderAttachment> domainList)
+			protected override void UpdateItem(OrderAttachment domainItem, AttachmentSummary sourceItem, ICollection<OrderAttachment> domainList)
             {
                 _assembler.UpdateOrderAttachment(domainItem, sourceItem, _context);
             }
@@ -58,25 +58,25 @@ namespace ClearCanvas.Ris.Application.Services
             }
         }
 
-        public void Synchronize(IList<OrderAttachment> domainList, IList<OrderAttachmentSummary> sourceList, Staff currentUserStaff, IPersistenceContext context)
+		public void Synchronize(IList<OrderAttachment> domainList, IList<AttachmentSummary> sourceList, Staff currentUserStaff, IPersistenceContext context)
         {
             OrderAttachmentSynchronizeHelper synchronizer = new OrderAttachmentSynchronizeHelper(this, currentUserStaff, context);
             synchronizer.Synchronize(domainList, sourceList);
         }
 
-        public OrderAttachmentSummary CreateOrderAttachmentSummary(OrderAttachment attachment, IPersistenceContext context)
+		public AttachmentSummary CreateOrderAttachmentSummary(OrderAttachment attachment, IPersistenceContext context)
         {
             AttachedDocumentAssembler attachedDocAssembler = new AttachedDocumentAssembler();
             StaffAssembler staffAssembler = new StaffAssembler();
 
-            return new OrderAttachmentSummary(
+			return new AttachmentSummary(
                 EnumUtils.GetEnumValueInfo(attachment.Category),
                 staffAssembler.CreateStaffSummary(attachment.AttachedBy, context),
                 attachment.AttachedTime,
                 attachedDocAssembler.CreateAttachedDocumentSummary(attachment.Document));
         }
 
-        public OrderAttachment CreateOrderAttachment(OrderAttachmentSummary summary, Staff currentUserStaff, IPersistenceContext context)
+		public OrderAttachment CreateOrderAttachment(AttachmentSummary summary, Staff currentUserStaff, IPersistenceContext context)
         {
             return new OrderAttachment(
                 EnumUtils.GetEnumValue<OrderAttachmentCategoryEnum>(summary.Category, context),
@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Application.Services
                 context.Load<AttachedDocument>(summary.Document.DocumentRef));
         }
 
-        public void UpdateOrderAttachment(OrderAttachment attachment, OrderAttachmentSummary summary, IPersistenceContext context)
+		public void UpdateOrderAttachment(OrderAttachment attachment, AttachmentSummary summary, IPersistenceContext context)
         {
             AttachedDocumentAssembler mimeDocAssembler = new AttachedDocumentAssembler();
             attachment.Category = EnumUtils.GetEnumValue<OrderAttachmentCategoryEnum>(summary.Category, context);

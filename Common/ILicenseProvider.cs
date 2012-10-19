@@ -26,7 +26,7 @@ namespace ClearCanvas.Common
 		/// <summary>
 		/// Gets license information.
 		/// </summary>
-		void GetLicenseInfo(out string licenseKey, out string machineId, out int sessionCount);
+		void GetLicenseInfo(out string licenseKey, out string machineId);
 
 		/// <summary>
 		/// Sets the current license key.
@@ -66,11 +66,10 @@ namespace ClearCanvas.Common
 
 		private sealed class LocalLicenseProvider : ILicenseProvider
 		{
-			public void GetLicenseInfo(out string licenseKey, out string machineId, out int sessionCount)
+			public void GetLicenseInfo(out string licenseKey, out string machineId)
 			{
 				licenseKey = ApplicationSettingsExtensions.GetSharedPropertyValue(new LicenseSettings(), "LicenseKey").ToString();
 				machineId = EnvironmentUtilities.MachineIdentifier;
-				sessionCount = 1;
 			}
 
 			public void SetLicenseInfo(string licenseKey)

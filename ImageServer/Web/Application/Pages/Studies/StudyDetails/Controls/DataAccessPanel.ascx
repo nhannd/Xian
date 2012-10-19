@@ -77,7 +77,7 @@
                                 </asp:BoundField>
                             </Columns>
                             <EmptyDataTemplate>
-                                <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0">
+                                <asp:Table runat="server" Width="100%" CellPadding="0" CellSpacing="0">
                                     <asp:TableHeaderRow CssClass="GlobalGridViewHeader">
                                         <asp:TableHeaderCell><%=ColumnHeaders.AdminUserGroups_GroupName%></asp:TableHeaderCell>
                                         <asp:TableHeaderCell><%=ColumnHeaders.AdminUserGroups_GroupDescription%></asp:TableHeaderCell>

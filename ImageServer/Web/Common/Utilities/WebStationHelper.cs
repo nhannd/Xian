@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
             {
                 _helper = new WebStationHelperExtensionPoint().CreateExtension() as IWebStationHelper;
             }
-            catch(Exception ex){
+            catch(Exception){
                 // ignore
             }
         }

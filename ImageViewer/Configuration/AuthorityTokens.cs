@@ -9,65 +9,10 @@
 
 #endregion
 
-using ClearCanvas.Common;
 using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
-    [ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint), Enabled = false)]
-	internal class DefineAuthorityGroups : IDefineAuthorityGroups
-	{
-		#region IDefineAuthorityGroups Members
-
-		public AuthorityGroupDefinition[] GetAuthorityGroups()
-		{
-			return new AuthorityGroupDefinition[]
-            {
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
-                    DefaultAuthorityGroups.HealthcareAdministrators,
-                    false,
-				    new string[] 
-				    {
-						AuthorityTokens.Configuration.PriorsServers
-				   }),
-
-				new AuthorityGroupDefinition(DefaultAuthorityGroups.Technologists,
-                    DefaultAuthorityGroups.Technologists,
-                    false,
-				    new string[] 
-				    {
-						AuthorityTokens.Configuration.PriorsServers
-				   }),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
-                    DefaultAuthorityGroups.Radiologists,
-                    false,
-				    new string[] 
-				    {
-						AuthorityTokens.Configuration.PriorsServers
-				   }),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
-                    DefaultAuthorityGroups.RadiologyResidents,
-                    false,
-				    new string[] 
-				    {
-						AuthorityTokens.Configuration.PriorsServers
-				   }),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.EmergencyPhysicians,
-                    DefaultAuthorityGroups.EmergencyPhysicians,
-                    false,
-				    new string[] 
-				    {
-						AuthorityTokens.Configuration.PriorsServers
-				   })
-            };
-		}
-
-		#endregion
-	}
-
 	public static class AuthorityTokens
 	{
 		[AuthorityToken(Description = "Allow publishing of locally created data to remote servers.")]
@@ -75,11 +20,14 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		public static class Configuration
 		{
-            [AuthorityToken(Description = "Allow configuration of priors servers.", Formerly = "Viewer/Configuration/Default Servers")]
-			public const string PriorsServers = "Viewer/Configuration/Priors Servers";
-
 		    [AuthorityToken(Description = "Allow configuration of data publishing options.", Formerly = "Viewer/Administration/Key Images")]
 			public const string Publishing = "Viewer/Configuration/Publishing";
-		}
+
+            [AuthorityToken(Description = "Allow administration/configuration of the local DICOM Server (e.g. set AE Title, Port).", Formerly = "Viewer/Administration/DICOM Server")]
+            public const string DicomServer = "Viewer/Configuration/DICOM Server";
+
+            [AuthorityToken(Description = "Allow configuration of local DICOM storage.", Formerly = "Viewer/Administration/Storage")]
+            public const string Storage = "Viewer/Configuration/Storage";
+        }
 	}
 }

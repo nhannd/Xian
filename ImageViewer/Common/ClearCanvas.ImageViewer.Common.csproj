@@ -75,7 +75,6 @@
     <Compile Include="Auditing\EventReceiptAction.cs" />
     <Compile Include="Auditing\EventResult.cs" />
     <Compile Include="Auditing\EventSource.cs" />
-    <Compile Include="AuthorityTokens.cs" />
     <Compile Include="Automation\DataContracts.cs" />
     <Compile Include="Automation\IDicomExplorerAutomation.cs" />
     <Compile Include="Automation\IViewerAutomation.cs" />
@@ -127,6 +126,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>StorageMonitorSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="StudyManagement\IStudyLocator.cs" />
+    <Compile Include="StudyManagement\IStudyLocatorBridge.cs" />
     <Compile Include="StudyManagement\StudyDeletionSettings.cs" />
     <Compile Include="StudyManagement\DataContracts.cs" />
     <Compile Include="StudyManagement\IPublishFiles.cs" />
@@ -148,6 +149,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>StudyDeletionSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="StudyManagement\StudyLocatorBridge.cs" />
+    <Compile Include="StudyManagement\StudyLocatorServiceClient.cs" />
     <Compile Include="StudyManagement\StudyRootQueryStoreAdapter.cs" />
     <Compile Include="StudyManagement\StudyStore.cs" />
     <Compile Include="MemoryCollector.cs" />

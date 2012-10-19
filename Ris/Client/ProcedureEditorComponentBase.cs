@@ -28,14 +28,17 @@ namespace ClearCanvas.Ris.Client
 		private readonly List<FacilitySummary> _facilityChoices;
 		private readonly List<DepartmentSummary> _allDepartments;
 		private List<DepartmentSummary> _departmentChoices;
+		private List<ModalitySummary> _modalityChoices;
 		private readonly DepartmentSummary _departmentNone = new DepartmentSummary(null, SR.DummyItemNone, null, null, null, true);
 		private readonly List<EnumValueInfo> _lateralityChoices;
 		private readonly List<EnumValueInfo> _schedulingCodeChoices;
 		private readonly EnumValueInfo _schedulingCodeNone = new EnumValueInfo(null, SR.DummyItemNone);
 
 		private DateTime? _scheduledDateTime;
+		private int _scheduledDuration;
 		private FacilitySummary _selectedFacility;
 		private DepartmentSummary _selectedDepartment;
+		private ModalitySummary _selectedModality;
 		private EnumValueInfo _selectedLaterality;
 		private EnumValueInfo _selectedSchedulingCode;
 		private bool _portableModality;
@@ -44,17 +47,20 @@ namespace ClearCanvas.Ris.Client
 		protected ProcedureEditorComponentBase(
 			List<FacilitySummary> facilityChoices,
 			List<DepartmentSummary> departmentChoices,
+			List<ModalitySummary> modalityChoices,
 			List<EnumValueInfo> lateralityChoices,
 			List<EnumValueInfo> schedulingCodeChoices)
 		{
 			Platform.CheckForNullReference(facilityChoices, "facilityChoices");
 			Platform.CheckForNullReference(departmentChoices, "departmentChoices");
+			Platform.CheckForNullReference(modalityChoices, "modalityChoices");
 			Platform.CheckForNullReference(lateralityChoices, "lateralityChoices");
 			Platform.CheckForNullReference(schedulingCodeChoices, "schedulingCodeChoices");
 
 			_facilityChoices = facilityChoices;
 			_allDepartments = departmentChoices;
 			_lateralityChoices = lateralityChoices;
+			_modalityChoices = modalityChoices;
 
 			_schedulingCodeChoices = new List<EnumValueInfo> {_schedulingCodeNone};
 			_schedulingCodeChoices.AddRange(schedulingCodeChoices);
@@ -83,6 +89,12 @@ namespace ClearCanvas.Ris.Client
 			set { }
 		}
 
+		public virtual bool IsScheduledDurationEditable
+		{
+			get { return true; }
+			set { }
+		}
+
 		public virtual bool IsPerformingFacilityEditable
 		{
 			get { return true; }
@@ -90,6 +102,12 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		public virtual bool IsPerformingDepartmentEditable
+		{
+			get { return true; }
+			set { }
+		}
+
+		public virtual bool IsModalityEditable
 		{
 			get { return true; }
 			set { }
@@ -174,6 +192,29 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public IList ModalityChoices
+		{
+			get { return _modalityChoices; }
+		}
+
+		public string FormatModality(object modality)
+		{
+			return modality == null ? null : ((ModalitySummary)modality).Name;
+		}
+
+		public ModalitySummary SelectedModality
+		{
+			get { return _selectedModality; }
+			set
+			{
+				if (Equals(value, _selectedModality))
+					return;
+
+				_selectedModality =value;
+				NotifyPropertyChanged("SelectedModality");
+			}
+		}
+
 		public IList LateralityChoices
 		{
 			get { return _lateralityChoices; }
@@ -235,6 +276,19 @@ namespace ClearCanvas.Ris.Client
 			set { this.ScheduledDate = value; }
 		}
 
+		public int ScheduledDuration
+		{
+			get { return _scheduledDuration; }
+			set
+			{
+				if (value == _scheduledDuration)
+					return;
+
+				_scheduledDuration = value;
+				NotifyPropertyChanged("ScheduledDuration");
+			}
+		}
+
 		public bool PortableModality
 		{
 			get { return _portableModality; }
@@ -280,6 +334,13 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
+
+		protected static bool IsModalityValidForFacility(ModalitySummary modality, FacilitySummary facility)
+		{
+			return modality == null
+				   || modality.Facility == null
+				   || modality.Facility.Code == facility.Code;
+		}
 
 		private void UpdateDepartmentChoices()
 		{

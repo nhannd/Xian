@@ -15,7 +15,9 @@
     </set>
 
     <property name="ScheduledStartTime" column="ScheduledStartTime_" type="DateTime" not-null="false" access="nosetter.camelcase-underscore"/>
-    <many-to-one name="SchedulingCode" class="SchedulingCodeEnum" column="SchedulingCode_"/>
+		<property name="ScheduledDuration" column="ScheduledDuration_" type="int" not-null="true" access="nosetter.camelcase-underscore"/>
+		<property name="ScheduledEndTime" column="ScheduledEndTime_" type="DateTime" not-null="false" access="nosetter.camelcase-underscore"/>
+		<many-to-one name="SchedulingCode" class="SchedulingCodeEnum" column="SchedulingCode_"/>
     <property name="StartTime" column="StartTime_" type="DateTime" not-null="false" access="nosetter.camelcase-underscore"/>
     <property name="EndTime" column="EndTime_" type="DateTime" not-null="false" access="nosetter.camelcase-underscore"/>
     <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ProcedureStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true" access="nosetter.camelcase-underscore"/>
@@ -28,6 +30,9 @@
 
     <!-- Specifies whether the procedure is currently in downtime recovery mode -->
     <property name="DowntimeRecoveryMode" column="DowntimeRecoveryMode_" type="Boolean" not-null="true"/>
+
+    <!-- specify the StudyInstanceUID that would be returned to the modality via MWL -->
+    <property name="StudyInstanceUID" column="StudyInstanceUID_" type="String" length="64" not-null="true" access="nosetter.camelcase-underscore"/>
 
     <!-- Radiology Reports : a Procedure should only ever have one Report in a status other than X.
           The collection may contain multiple entries, because a report may have been cancelled by the author

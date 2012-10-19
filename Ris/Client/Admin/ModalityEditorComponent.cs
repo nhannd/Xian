@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
@@ -36,6 +37,9 @@ namespace ClearCanvas.Ris.Client.Admin
 	{
 		private readonly EnumValueInfo _dummyModalityNone = new EnumValueInfo("", "");
 		private IList _dicomModalityChoices;
+
+		private readonly FacilitySummary _dummyFacilityNone = new FacilitySummary();
+		private IList _facilityChoices;
 		private ModalityDetail _modalityDetail;
 		private EntityRef _modalityRef;
 		private readonly bool _isNew;
@@ -70,8 +74,8 @@ namespace ClearCanvas.Ris.Client.Admin
 				delegate(IModalityAdminService service)
 				{
 					var formDataResponse = service.LoadModalityEditorFormData(new LoadModalityEditorFormDataRequest());
-					formDataResponse.DicomModalityChoices.Insert(0, _dummyModalityNone);
-					_dicomModalityChoices = formDataResponse.DicomModalityChoices;
+					_dicomModalityChoices = new[]{_dummyModalityNone}.Concat(formDataResponse.DicomModalityChoices).ToList();
+					_facilityChoices = new[]{_dummyFacilityNone}.Concat(formDataResponse.FacilityChoices).ToList();
 
 					if (_isNew)
 					{
@@ -108,6 +112,43 @@ namespace ClearCanvas.Ris.Client.Admin
 			set
 			{
 				_modalityDetail.Name = value;
+				this.Modified = true;
+			}
+		}
+
+		public FacilitySummary Facility
+		{
+			get { return _modalityDetail.Facility ?? _dummyFacilityNone; }
+			set
+			{
+				if (value == null || ReferenceEquals(value, _dummyFacilityNone))
+					_modalityDetail.Facility = null;
+				else
+					_modalityDetail.Facility = value;
+
+				this.Modified = true;
+			}
+		}
+
+		public IList FacilityChoices
+		{
+			get { return _facilityChoices; }
+		}
+
+		public object FormatFacility(object item)
+		{
+			var facility = item as FacilitySummary;
+			return facility == null || facility.Name == null ? "" : facility.Name;
+		}
+
+		[ValidateLength(0, 16, Message = "ValidationAETitleLengthIncorrect")]
+		[ValidateRegex(@"[\r\n\e\f\\]+", SuccessOnMatch = false, Message = "ValidationAETitleInvalidCharacters")]
+		public string AETitle
+		{
+			get { return _modalityDetail.AETitle; }
+			set
+			{
+				_modalityDetail.AETitle = value;
 				this.Modified = true;
 			}
 		}
@@ -203,5 +244,6 @@ namespace ClearCanvas.Ris.Client.Admin
 			add { this.ModifiedChanged += value; }
 			remove { this.ModifiedChanged -= value; }
 		}
+
 	}
 }

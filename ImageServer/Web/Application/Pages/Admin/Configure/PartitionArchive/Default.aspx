@@ -1,6 +1,6 @@
 <%--  License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -19,14 +19,17 @@
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContentTitlePlaceHolder" runat="server"><asp:Literal ID="Literal1" runat="server" Text="<%$Resources:Titles,PartitionArchive%>" /></asp:Content>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
-    <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
+    <asp:UpdatePanel ID="PageContent" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <ccAsp:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" />
+            <ccAsp:ServerPartitionSelector runat="server" id="ServerPartitionSelector" visible="true" />
+            <localAsp:PartitionArchivePanel runat="server" id="SearchPanel" visible="true" />
         </ContentTemplate>
-    </asp:UpdatePanel>
-    
+    </asp:UpdatePanel>       
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="DialogsPlaceHolder" runat="server">
     <localAsp:AddEditPartitionDialog ID="AddEditPartitionDialog" runat="server" /> 
     <ccAsp:MessageBox ID="DeleteConfirmDialog" runat="server" />       
     <ccAsp:MessageBox ID="MessageBox" runat="server" />     
-    <ccAsp:TimedDialog ID="TimedDialog" runat="server" Timeout="3500" />        
+    <ccAsp:TimedDialog ID="TimedDialog" runat="server" Timeout="3500" />   
 </asp:Content>

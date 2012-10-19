@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -108,48 +109,65 @@ namespace ClearCanvas.ImageServer.Core.Process
             Platform.CheckMemberIsSet(context.CommandProcessor, "parameters.CommandProcessor");
             Platform.CheckMemberIsSet(context.StudyLocation, "parameters.StudyLocation");
 
-			String studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
-			String seriesInstanceUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
-        	String sopInstanceUid = file.MediaStorageSopInstanceUid;
-			String accessionNumber = file.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
-
-			DicomProcessingResult result = new DicomProcessingResult
-			{
-				DicomStatus = DicomStatuses.Success,
-				Successful = true,
-				StudyInstanceUid = studyInstanceUid,
-				SeriesInstanceUid = seriesInstanceUid,
-				SopInstanceUid = sopInstanceUid,
-				AccessionNumber = accessionNumber
-			};
+            var result = new DicomProcessingResult
+                             {
+                                 DicomStatus = DicomStatuses.Success,
+                                 Successful = true,
+                                 StudyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty),
+                                 SeriesInstanceUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty),
+                                 SopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty),
+                                 SopClassUid = file.DataSet[DicomTags.SopClassUid].GetString(0, string.Empty),
+                                 AccessionNumber = file.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty)
+                             };
 
         	string failureMessage;
 
-            if (context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.SendSuccess))
+            if (SopClassIsReport(result.SopClassUid) && context.StudyLocation.ServerPartition.AcceptLatestReport)
             {
-                Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, sending success response {0}", sopInstanceUid);
+                Platform.Log(LogLevel.Info, "Duplicate Report received, overwriting {0}", result.SopInstanceUid);
+                SaveDuplicate(context, file);
+                context.CommandProcessor.AddCommand(
+                    new UpdateWorkQueueCommand(file, context.StudyLocation, true, ServerPlatform.DuplicateFileExtension, context.Group));
                 return result;
             }
-        	if (context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.RejectDuplicates))
-        	{
-        		failureMessage = String.Format("Duplicate SOP Instance received, rejecting {0}", sopInstanceUid);
-        		Platform.Log(LogLevel.Info, failureMessage);
-        		result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
-        		return result;
-        	}
 
-        	if (context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.CompareDuplicates))
-        	{
-        		SaveDuplicate(context, file);
-        		context.CommandProcessor.AddCommand(
-					new UpdateWorkQueueCommand(file, context.StudyLocation, true, ServerPlatform.DuplicateFileExtension, context.Group));
-        	}
-        	else
-        	{
-        		failureMessage = String.Format("Duplicate SOP Instance received. Unsupported duplicate policy {0}.", context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum);
-        		result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
-        		return result;
-        	}
+            if (DuplicatePolicy.IsParitionDuplicatePolicyOverridden(context.StudyLocation))
+            {
+                Platform.Log(LogLevel.Warn, "Duplicate instance received for study {0} on Partition {1}. Duplicate policy overridden. Will overwrite {2}", 
+                                result.StudyInstanceUid, context.StudyLocation.ServerPartition.AeTitle, result.SopInstanceUid);
+                SaveDuplicate(context, file);
+                context.CommandProcessor.AddCommand(new UpdateWorkQueueCommand(file, context.StudyLocation, true, ServerPlatform.DuplicateFileExtension, context.Group));
+                return result;
+            }
+            else
+            {
+                if (context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.SendSuccess))
+                {
+                    Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, sending success response {0}", result.SopInstanceUid);
+                    return result;
+                }
+                if (context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.RejectDuplicates))
+                {
+                    failureMessage = String.Format("Duplicate SOP Instance received, rejecting {0}", result.SopInstanceUid);
+                    Platform.Log(LogLevel.Info, failureMessage);
+                    result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
+                    return result;
+                }
+
+                if (context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.CompareDuplicates))
+                {
+                    SaveDuplicate(context, file);
+                    context.CommandProcessor.AddCommand(
+                        new UpdateWorkQueueCommand(file, context.StudyLocation, true, ServerPlatform.DuplicateFileExtension, context.Group));
+                }
+                else
+                {
+                    failureMessage = String.Format("Duplicate SOP Instance received. Unsupported duplicate policy {0}.", context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum);
+                    result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
+                    return result;
+                }
+            }
+            
 
         	return result;
         }
@@ -166,11 +184,11 @@ namespace ClearCanvas.ImageServer.Core.Process
 		{
 			Platform.Log(LogLevel.Info, "Creating Work Queue Entry for duplicate...");
 			String uidGroup = queue.GroupID ?? queue.GetKey().Key.ToString();
-			using (ServerCommandProcessor commandProcessor = new ServerCommandProcessor("Insert Work Queue entry for duplicate"))
+			using (var commandProcessor = new ServerCommandProcessor("Insert Work Queue entry for duplicate"))
 			{
 				commandProcessor.AddCommand(new FileDeleteCommand(sourcePath, true));
 
-				SopProcessingContext sopProcessingContext = new SopProcessingContext(commandProcessor, location, uidGroup);
+				var sopProcessingContext = new SopProcessingContext(commandProcessor, location, uidGroup);
 				DicomProcessingResult result = Process(sopProcessingContext, file);
 				if (!result.Successful)
 				{
@@ -188,6 +206,12 @@ namespace ClearCanvas.ImageServer.Core.Process
 			}
 		}
 
+        public static bool SopClassIsReport(string sopClassUid)
+        {
+            return (SopClass.EncapsulatedPdfStorageUid.Equals(sopClassUid)
+                    || SopClass.EncapsulatedCdaStorageUid.Equals(sopClassUid));
+        }
+
         #endregion
 
         #region Private Methods
@@ -196,8 +220,8 @@ namespace ClearCanvas.ImageServer.Core.Process
 		{
 			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-				IWorkQueueUidEntityBroker uidUpdateBroker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
-				WorkQueueUidUpdateColumns columns = new WorkQueueUidUpdateColumns();
+				var uidUpdateBroker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
+				var columns = new WorkQueueUidUpdateColumns();
 				if (!retry)
 					columns.Failed = true;
 				else

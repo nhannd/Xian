@@ -142,7 +142,7 @@ namespace ClearCanvas.Desktop
 		{
 			var ctm = GetComponentTaskManager(component);
 
-			//TODO (CR April 2011): DefaultErrorHandler just logs - for an application component, it should probably use ExceptionHandler.
+			//TODO (CR April 2011): DefaultErrorHandler just logs - for an application component, it should probably use ExceptionHandler (JR responds: I don't think that would be a good idea - because the call is async, the user may have no context for understanding the message box. Logging is safer.)
 			ctm.Invoke(asyncCode, continuationCode, AsyncTask.DefaultErrorHandler);
 		}
 

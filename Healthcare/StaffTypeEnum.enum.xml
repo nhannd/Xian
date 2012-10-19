@@ -33,7 +33,7 @@
     <description>Healthcare Administrative staff</description>
   </enum-value>
   <enum-value code="SADS">
-    <value>Clerical</value>
+    <value>IT Administrator</value>
     <description>System/Technical Administrative staff</description>
   </enum-value>
   <enum-value code="SSUP">

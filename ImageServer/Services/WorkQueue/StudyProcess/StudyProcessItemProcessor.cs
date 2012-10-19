@@ -17,6 +17,7 @@ using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom.Utilities.Command;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
@@ -24,10 +25,12 @@ using ClearCanvas.ImageServer.Common.Command;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Command;
+using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
+using DeleteDirectoryCommand = ClearCanvas.ImageServer.Core.Command.DeleteDirectoryCommand;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
@@ -41,7 +44,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <summary>
         /// Duplicate is different from the existing copy and a SIQ entry has been created.
         /// </summary>
-        Reconcile
+        Reconcile,
+
+        /// <summary>
+        /// Duplicate has overwritten the existing SOP Instance
+        /// </summary>
+        Accept
     }
 
     /// <summary>
@@ -76,9 +84,83 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         #region Private Methods
 
-        private ProcessDuplicateResult ProcessDuplicate(DicomFile dupFile, WorkQueueUid uid)
+        void SaveDuplicateReport(WorkQueueUid uid, string sourceFile, string destinationFile, DicomFile dupFile, StudyXml studyXml)
         {
-            ProcessDuplicateResult result = new ProcessDuplicateResult();
+            using (var processor = new ServerCommandProcessor("Save duplicate report"))
+            {
+                processor.AddCommand(new RenameFileCommand(sourceFile, destinationFile, false));
+
+                // Update the StudyStream object
+                processor.AddCommand( new InsertStudyXmlCommand(dupFile, studyXml, Context.StorageLocation));
+
+                processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
+
+                processor.Execute();
+            }
+        }
+
+        private ProcessDuplicateResult ProcessDuplicateReport(DicomFile dupFile, DicomFile baseFile, WorkQueueUid uid, StudyXml studyXml)
+        {
+            var result = new ProcessDuplicateResult();
+
+            DateTime? dupTime = DateTimeParser.ParseDateAndTime(dupFile.DataSet, 0, DicomTags.InstanceCreationDate,
+                                                                DicomTags.InstanceCreationTime);
+
+            DateTime? baseTime = DateTimeParser.ParseDateAndTime(baseFile.DataSet, 0, DicomTags.InstanceCreationDate,
+                                                                 DicomTags.InstanceCreationTime);
+
+            if (dupTime.HasValue && baseTime.HasValue)
+            {
+                if (dupTime.Value <= baseTime.Value)
+                {
+                    RemoveWorkQueueUid(uid, dupFile.Filename);
+                    result.ActionTaken = DuplicateProcessResultAction.Delete;
+                    return result;
+                }
+            }
+
+            result.ActionTaken = DuplicateProcessResultAction.Accept;
+            SaveDuplicateReport(uid, dupFile.Filename, baseFile.Filename, dupFile, studyXml);
+            return result;
+        }
+
+        private ProcessDuplicateResult OverwriteDuplicate(DicomFile dupFile, WorkQueueUid uid, StudyXml studyXml)
+        {
+            Platform.Log(LogLevel.Info, "Overwriting duplicate SOP {0}", uid.SopInstanceUid);
+
+            var result = new ProcessDuplicateResult();
+            result.ActionTaken = DuplicateProcessResultAction.Accept;
+
+            using (var processor = new ServerCommandProcessor("Overwrite duplicate instance"))
+            {
+                var destination = Context.StorageLocation.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid);
+                processor.AddCommand(new RenameFileCommand(dupFile.Filename, destination, false));
+
+                // Ideally we don't need to insert the instance into the database since it's a duplicate.
+				// However, we need to do so to ensure the Study record is recreated if we are dealing with an orphan study.
+				// For other cases, this will cause the instance count in the DB to be out of sync with the filesystem.
+				// But it will be corrected at the end of the processing when the study verification is executed.
+                processor.AddCommand(new InsertInstanceCommand(dupFile, Context.StorageLocation));
+                
+                // Update the StudyStream object
+                processor.AddCommand(new InsertStudyXmlCommand(dupFile, studyXml, Context.StorageLocation));
+                
+                processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
+
+                if (!processor.Execute())
+                {
+                    // cause the item to fail
+                    throw new Exception(string.Format("Error occurred when trying to overwrite duplicate in the filesystem."), processor.FailureException);
+                }
+            }
+
+            return result;
+        }
+
+        private ProcessDuplicateResult ProcessDuplicate(DicomFile dupFile, WorkQueueUid uid, StudyXml studyXml)
+        {
+            var result = new ProcessDuplicateResult();
+
 
             string duplicateSopPath = ServerPlatform.GetDuplicateUidPath(StorageLocation, uid);
             string basePath = StorageLocation.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid);
@@ -92,61 +174,77 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 			}
 			else
 			{
-				DicomFile baseFile = new DicomFile(basePath);
-				baseFile.Load();
-
-				if (!dupFile.TransferSyntax.Equals(baseFile.TransferSyntax))
-				{
-					// If they're compressed, and we have a codec, lets decompress and still do the comparison
-					if (dupFile.TransferSyntax.Encapsulated 
-						&& !dupFile.TransferSyntax.LossyCompressed
-						&& DicomCodecRegistry.GetCodec(dupFile.TransferSyntax)!=null)
-					{
-						dupFile.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
-					}
-
-					if (baseFile.TransferSyntax.Encapsulated
-						&& !baseFile.TransferSyntax.LossyCompressed
-						&& DicomCodecRegistry.GetCodec(baseFile.TransferSyntax) != null)
-					{
-						baseFile.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
-					}
-
-					if (dupFile.TransferSyntax.Encapsulated || baseFile.TransferSyntax.Encapsulated)
-					{
-						string failure = String.Format("Base file transfer syntax is '{0}' while duplicate file has '{1}'",
-						                               baseFile.TransferSyntax, dupFile.TransferSyntax);
-
-						List<DicomAttributeComparisonResult> list = new List<DicomAttributeComparisonResult>();
-						DicomAttributeComparisonResult compareResult = new DicomAttributeComparisonResult
-						                                        	{
-						                                        		ResultType = ComparisonResultType.DifferentValues,
-						                                        		TagName =
-						                                        			DicomTagDictionary.GetDicomTag(DicomTags.TransferSyntaxUid).Name,
-						                                        		Details = failure
-						                                        	};
-                        list.Add(compareResult);
-                        CreateDuplicateSIQEntry(uid, dupFile, list);
-                        result.ActionTaken = DuplicateProcessResultAction.Reconcile; 
-                        return result;
-					}
-				}
-
-				List<DicomAttributeComparisonResult> failureReason = new List<DicomAttributeComparisonResult>();
-				if (baseFile.DataSet.Equals(dupFile.DataSet, ref failureReason))
-				{
-					Platform.Log(LogLevel.Info,
-					             "Duplicate SOP being processed is identical.  Removing SOP: {0}",
-					             baseFile.MediaStorageSopInstanceUid);
-
-                    RemoveWorkQueueUid(uid, duplicateSopPath);
-                    result.ActionTaken = DuplicateProcessResultAction.Delete;
+                // Check if system is configured to override the rule for this study
+                if (DuplicatePolicy.IsParitionDuplicatePolicyOverridden(this.StorageLocation))
+                {
+                    return OverwriteDuplicate(dupFile, uid, studyXml);
                 }
-				else
-				{
-					CreateDuplicateSIQEntry(uid, dupFile, failureReason);
-                    result.ActionTaken = DuplicateProcessResultAction.Reconcile;
-				}
+                else
+                {
+                    var baseFile = new DicomFile(basePath);
+                    baseFile.Load();
+
+                    if (DuplicateSopProcessorHelper.SopClassIsReport(dupFile.SopClass.Uid) && ServerPartition.AcceptLatestReport)
+                    {
+                        return ProcessDuplicateReport(dupFile, baseFile, uid, studyXml);
+                    }
+
+
+                    if (!dupFile.TransferSyntax.Equals(baseFile.TransferSyntax))
+                    {
+                        // If they're compressed, and we have a codec, lets decompress and still do the comparison
+                        if (dupFile.TransferSyntax.Encapsulated
+                            && !dupFile.TransferSyntax.LossyCompressed
+                            && DicomCodecRegistry.GetCodec(dupFile.TransferSyntax) != null)
+                        {
+                            dupFile.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
+                        }
+
+                        if (baseFile.TransferSyntax.Encapsulated
+                            && !baseFile.TransferSyntax.LossyCompressed
+                            && DicomCodecRegistry.GetCodec(baseFile.TransferSyntax) != null)
+                        {
+                            baseFile.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
+                        }
+
+                        if (dupFile.TransferSyntax.Encapsulated || baseFile.TransferSyntax.Encapsulated)
+                        {
+                            string failure = String.Format("Base file transfer syntax is '{0}' while duplicate file has '{1}'",
+                                                           baseFile.TransferSyntax, dupFile.TransferSyntax);
+
+                            var list = new List<DicomAttributeComparisonResult>();
+                            var compareResult = new DicomAttributeComparisonResult
+                            {
+                                ResultType = ComparisonResultType.DifferentValues,
+                                TagName = DicomTagDictionary.GetDicomTag(DicomTags.TransferSyntaxUid).Name,
+                                Details = failure
+                            };
+                            list.Add(compareResult);
+                            CreateDuplicateSIQEntry(uid, dupFile, list);
+                            result.ActionTaken = DuplicateProcessResultAction.Reconcile;
+                            return result;
+                        }
+                    }
+
+                    var failureReason = new List<DicomAttributeComparisonResult>();
+                    if (baseFile.DataSet.Equals(dupFile.DataSet, ref failureReason))
+                    {
+                        Platform.Log(LogLevel.Info,
+                                 "Duplicate SOP being processed is identical.  Removing SOP: {0}",
+                                 baseFile.MediaStorageSopInstanceUid);
+
+
+                        RemoveWorkQueueUid(uid, duplicateSopPath);
+                        result.ActionTaken = DuplicateProcessResultAction.Delete;
+
+                    }
+                    else
+                    {
+                        CreateDuplicateSIQEntry(uid, dupFile, failureReason);
+                        result.ActionTaken = DuplicateProcessResultAction.Reconcile;
+                    }
+                }
+				
 			}
 
             return result;
@@ -156,15 +254,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             Platform.Log(LogLevel.Info, "Duplicate SOP is different from existing copy. Creating duplicate SIQ entry. SOP: {0}", uid.SopInstanceUid);
 
-            using (ServerCommandProcessor processor = new ServerCommandProcessor("Create Duplicate SIQ Entry"))
+            using (var processor = new ServerCommandProcessor("Create Duplicate SIQ Entry"))
             {
-            	InsertOrUpdateEntryCommand insertCommand = new InsertOrUpdateEntryCommand(
-                                                                    uid.GroupID, StorageLocation, file,
-                                                                    ServerPlatform.GetDuplicateGroupPath(StorageLocation, uid),
-                                                                    string.IsNullOrEmpty(uid.RelativePath)
-                                                                  	    ? Path.Combine(StorageLocation.StudyInstanceUid, uid.SopInstanceUid + "." + uid.Extension) 
-																	    : uid.RelativePath, 
-																	differences);
+                var insertCommand = new InsertOrUpdateEntryCommand(
+                    uid.GroupID, StorageLocation, file,
+                    ServerPlatform.GetDuplicateGroupPath(StorageLocation, uid),
+                    string.IsNullOrEmpty(uid.RelativePath)
+                        ? Path.Combine(StorageLocation.StudyInstanceUid, uid.SopInstanceUid + "." + uid.Extension)
+                        : uid.RelativePath,
+                    differences);
                 processor.AddCommand(insertCommand);
 
                 processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
@@ -173,8 +271,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
             
         }
-
-
 
         /// <summary>
         /// Process a specific DICOM file related to a <see cref="WorkQueue"/> request.
@@ -185,9 +281,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="compare">Indicates whether to compare the DICOM file against the study in the system.</param>
         protected virtual void ProcessFile(WorkQueueUid queueUid, DicomFile file, StudyXml stream, bool compare)
         {
-            SopInstanceProcessor processor = new SopInstanceProcessor(Context) {EnforceNameRules = true};
+            var processor = new SopInstanceProcessor(Context) {EnforceNameRules = true};
 
-        	FileInfo fileInfo = new FileInfo(file.Filename);
+        	var fileInfo = new FileInfo(file.Filename);
 			long fileSize = fileInfo.Length;
 
 			processor.InstanceStats.FileLoadTime.Start();
@@ -270,7 +366,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 if (sop.Duplicate && sop.Extension != null)
                 {
                     path = ServerPlatform.GetDuplicateUidPath(StorageLocation, sop);
-                    DicomFile file = new DicomFile(path);
+                    var file = new DicomFile(path);
                     file.Load();
 
                     InstancePreProcessingResult result = PreProcessFile(sop, file);
@@ -280,14 +376,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     {
                         RemoveWorkQueueUid(sop, null);
                     }
-                    else {
-                    	var duplicateResult = ProcessDuplicate(file, sop);
-                        if (duplicateResult.ActionTaken == DuplicateProcessResultAction.Delete)
+                    else 
+                    {
+                    	var duplicateResult = ProcessDuplicate(file, sop, studyXml);
+                        if (duplicateResult.ActionTaken == DuplicateProcessResultAction.Delete || duplicateResult.ActionTaken == DuplicateProcessResultAction.Accept)
                         {
                             // make sure the folder is also deleted if it's empty
                             string folder = Path.GetDirectoryName(path);
 
-                            String reconcileRootFolder = ServerPlatform.GetDuplicateFolderRootPath(this.StorageLocation);
+                            String reconcileRootFolder = ServerPlatform.GetDuplicateFolderRootPath(StorageLocation);
                             DirectoryUtility.DeleteIfEmpty(folder, reconcileRootFolder);
                         }
                     }
@@ -297,7 +394,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     try
                     {
                         path = StorageLocation.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid);
-                        DicomFile file = new DicomFile(path);
+                        var file = new DicomFile(path);
                         file.Load();
 
                         InstancePreProcessingResult result = PreProcessFile(sop, file);
@@ -309,7 +406,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         }
                         else
                         {
-                            ProcessFile(sop, file, studyXml, result.AutoReconciled? false:true);
+                            ProcessFile(sop, file, studyXml, !result.AutoReconciled);
                         }
                     }
                     catch (DicomException ex)
@@ -360,14 +457,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 String.IsNullOrEmpty(file.SourceApplicationEntityTitle) ? ServerPartition.AeTitle : file.SourceApplicationEntityTitle, 
                 WorkQueueItem.InsertTime.ToString("yyyyMMddHHmmss"));
 
-            InstancePreProcessingResult result = new InstancePreProcessingResult();
+            var result = new InstancePreProcessingResult();
             
-            PatientNameRules patientNameRules = new PatientNameRules(Study);
+            var patientNameRules = new PatientNameRules(Study);
             UpdateItem updateItem = patientNameRules.Apply(file);
 
             result.Modified = updateItem != null;
 
-            AutoReconciler autoBaseReconciler = new AutoReconciler(contextID, StorageLocation);
+            var autoBaseReconciler = new AutoReconciler(contextID, StorageLocation);
             InstancePreProcessingResult reconcileResult = autoBaseReconciler.Process(file);
             result.AutoReconciled = reconcileResult != null;
             result.Modified |= reconcileResult != null;
@@ -447,7 +544,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 String dupPath = ServerPlatform.GetDuplicateUidPath(StorageLocation, uid);
                 // Delete the container if it's empty
-                FileInfo f = new FileInfo(dupPath);
+                var f = new FileInfo(dupPath);
 
                 if (f.Directory!=null && DirectoryUtility.DeleteIfEmpty(f.Directory.FullName))
                 {
@@ -561,7 +658,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 				if (idle && item.ExpirationTime <= Platform.Time)
 				{
 					// Run Study / Series Rules Engine.
-					StudyRulesEngine engine = new StudyRulesEngine(StorageLocation, ServerPartition);
+					var engine = new StudyRulesEngine(StorageLocation, ServerPartition);
 					engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed);
 
 					// Log the FilesystemQueue related entries

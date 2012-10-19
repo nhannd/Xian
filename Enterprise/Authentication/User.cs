@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens;
+using System.Linq;
 using ClearCanvas.Enterprise.Common;
 using Iesi.Collections.Generic;
 using ClearCanvas.Common;
@@ -35,7 +36,7 @@ namespace ClearCanvas.Enterprise.Authentication {
         /// <param name="initialPassword"></param>
         /// <param name="authorityGroups"></param>
         /// <returns></returns>
-        public static User CreateNewUser(UserInfo userInfo, Password initialPassword, ISet<AuthorityGroup> authorityGroups)
+        public static User CreateNewUser(UserInfo userInfo, Password initialPassword, Iesi.Collections.Generic.ISet<AuthorityGroup> authorityGroups)
         {
 			Platform.CheckForNullReference(userInfo, "userInfo");
 			Platform.CheckForNullReference(initialPassword, "initialPassword");
@@ -95,6 +96,14 @@ namespace ClearCanvas.Enterprise.Authentication {
                    && (_validFrom == null || _validFrom < currentTime)
                    && (_validUntil == null || _validUntil > currentTime);
         }
+
+		/// <summary>
+		/// Obtains the set of sessions that are currently active (not expired).
+		/// </summary>
+    	public IEnumerable<UserSession> ActiveSessions
+    	{
+			get { return _sessions.Where(s => !s.IsExpired).ToList(); }
+    	}
 
 		/// <summary>
 		/// Initiates a new session for this user, updating the <see cref="Sessions"/> collection and returning

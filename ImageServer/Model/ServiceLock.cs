@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -9,6 +9,9 @@
 
 #endregion
 
+using System.Collections.Generic;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 namespace ClearCanvas.ImageServer.Model
 {
 	public partial class ServiceLock
@@ -30,5 +33,21 @@ namespace ClearCanvas.ImageServer.Model
 			}
 		}
 		#endregion
+
+        /// <summary>
+        /// Finds all <see cref="ServiceLock"/> of the specified <see cref="ServiceLockTypeEnum"/>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static IList<ServiceLock> FindServicesOfType(ServiceLockTypeEnum type)
+        {
+            using (var readCtx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                var broker = readCtx.GetBroker<IServiceLockEntityBroker>();
+                var criteria = new ServiceLockSelectCriteria();
+                criteria.ServiceLockTypeEnum.EqualTo(type);
+                return broker.Find(criteria);
+            }
+        }
 	}
 }

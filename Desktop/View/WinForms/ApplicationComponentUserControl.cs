@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -20,6 +20,8 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// </summary>
     public partial class ApplicationComponentUserControl : CustomUserControl
     {
+        // N.B. do not make this class abstract, no matter how tempting it may look. You will break the VS Forms designer.
+
         /// <summary>
         /// Constructor required for Designer support.  Do not use this constructor in application code.
         /// </summary>

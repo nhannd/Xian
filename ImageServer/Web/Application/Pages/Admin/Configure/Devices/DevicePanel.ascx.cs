@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
+using ClearCanvas.ImageServer.Core.Query;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using Resources;
@@ -27,12 +28,12 @@ using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 {
+    /// <summary>
+    /// Panel to display list of devices for a particular server partition.
+    /// </summary>
     [ClientScriptResource(
         ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel",
-        ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel.js")]
-    /// <summary>
-        /// Panel to display list of devices for a particular server partition.
-        /// </summary>
+        ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel.js")]    
     public partial class DevicePanel : AJAXScriptControl
     {
         #region Private members
@@ -86,6 +87,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             DHCPFilter.SelectedIndex = 0;
         }
 
+        internal void Reset()
+        {
+            Clear();
+            DeviceGridViewControl1.Reset();
+        }
+
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -96,7 +103,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             // setup child controls
             GridPagerTop.InitializeGridPager(SR.GridPagerDeviceSingleItem, SR.GridPagerDeviceMultipleItems,
                                              DeviceGridViewControl1.TheGrid,
-                                             delegate { return DeviceGridViewControl1.Devices.Count; },
+                                             () => DeviceGridViewControl1.Devices.Count,
                                              ImageServerConstants.GridViewPagerPosition.Top);
             DeviceGridViewControl1.Pager = GridPagerTop;
             GridPagerTop.Reset();
@@ -123,7 +130,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
-            UpdateUI();
+            Refresh();
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -163,11 +170,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         /// Load the devices for the partition based on the filters specified in the filter panel.
         /// </summary>
         /// <remarks>
-        /// This method only reloads and binds the list bind to the internal grid. <seealso cref="UpdateUI()"/> should be called
+        /// This method only reloads and binds the list bind to the internal grid. <seealso cref="Refresh"/> should be called
         /// to explicit update the list in the grid. 
         /// <para>
         /// This is intentionally so that the list can be reloaded so that it is available to other controls during postback.  In
-        /// some cases we may not want to refresh the list if there's no change. Calling <seealso cref="UpdateUI()"/> will
+        /// some cases we may not want to refresh the list if there's no change. Calling <seealso cref="Refresh"/> will
         /// give performance hit as the data will be transfered back to the browser.
         ///  
         /// </para>
@@ -181,42 +188,30 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
             if (!String.IsNullOrEmpty(AETitleFilter.Text))
             {
-                string key = SearchHelper.LeadingAndTrailingWildCard(AETitleFilter.Text);
-                key = key.Replace("*", "%");
-                key = key.Replace("?", "_");
-                criteria.AeTitle.Like(key);
+                QueryHelper.SetGuiStringCondition(criteria.AeTitle,
+                                                  SearchHelper.LeadingAndTrailingWildCard(AETitleFilter.Text));
             }
 
             if (!String.IsNullOrEmpty(DescriptionFilter.Text))
             {
-                string key = SearchHelper.LeadingAndTrailingWildCard(DescriptionFilter.Text);
-                key = key.Replace("*", "%");
-                key = key.Replace("?", "_");
-                criteria.Description.Like(key);
+                QueryHelper.SetGuiStringCondition(criteria.Description,
+                                                  SearchHelper.LeadingAndTrailingWildCard(DescriptionFilter.Text));
             }
 
             if (!String.IsNullOrEmpty(IPAddressFilter.Text))
             {
-                string key = SearchHelper.TrailingWildCard(IPAddressFilter.Text);
-                key = key.Replace("*", "%");
-                key = key.Replace("?", "_");
-                criteria.IpAddress.Like(key);
+                QueryHelper.SetGuiStringCondition(criteria.IpAddress,
+                                                  SearchHelper.TrailingWildCard(IPAddressFilter.Text));
             }
 
             if (StatusFilter.SelectedIndex != 0)
             {
-                if (StatusFilter.SelectedIndex == 1)
-                    criteria.Enabled.EqualTo(true);
-                else
-                    criteria.Enabled.EqualTo(false);
+                criteria.Enabled.EqualTo(StatusFilter.SelectedIndex == 1);
             }
 
             if (DHCPFilter.SelectedIndex != 0)
             {
-                if (DHCPFilter.SelectedIndex == 1)
-                    criteria.Dhcp.EqualTo(true);
-                else
-                    criteria.Dhcp.EqualTo(false);
+                criteria.Dhcp.EqualTo(DHCPFilter.SelectedIndex == 1);
             }
 
             if (DeviceTypeFilter.SelectedIndex > -1)
@@ -243,7 +238,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         /// This method should only be called when necessary as the information in the list window needs to be transmitted back to the client.
         /// If the list is not changed, call <seealso cref="LoadDevices()"/> instead.
         /// </remarks>
-        public void UpdateUI()
+        public void Refresh()
         {
             LoadDevices();
             Device dev = DeviceGridViewControl1.SelectedDevice;
@@ -289,13 +284,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             {
                 EnclosingPage.OnDeleteDevice(_theController, ServerPartition, dev);
             }
-        }
-
-        protected void RefreshButton_Click(object sender, ImageClickEventArgs e)
-        {
-            // Clear all filters and reload the data
-            Clear();
-            LoadDevices();
         }
     }
 }

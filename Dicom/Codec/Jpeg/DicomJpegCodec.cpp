@@ -141,6 +141,12 @@ void DicomJpegCodec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompr
 				newPixelData->PhotometricInterpretation = "YBR_FULL";
 		}
 	}
+
+	if (oldPixelData->BitsAllocated == 16 && oldPixelData->BitsStored == 8)
+	{
+		// #8940, forcing the Bits allocated to 8, so it can be more easily be decompressed.
+		newPixelData->BitsAllocated = 8;
+	}
 }
 
 void DicomJpegCodec::Decode(DicomCompressedPixelData^ oldPixelData, DicomUncompressedPixelData^ newPixelData, DicomCodecParameters^ parameters)

@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
         {
             get
             {
-                using (var monitor = Create())
+                using (var monitor = Create(false))
                     return monitor.IsConnected;
             }
         }

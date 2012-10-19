@@ -14,18 +14,20 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
+	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	public class ConfigurationPageProvider : IConfigurationPageProvider
 	{
 		#region IConfigurationPageProvider Members
 
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
-			if (!Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.HomePage.View) ||
-				!LoginSession.Current.IsStaff)
+			if (!Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.HomePage.View)
+				|| LoginSession.Current == null
+				|| !LoginSession.Current.IsStaff)
 				return new IConfigurationPage[] {}; 
 			
 			return new IConfigurationPage[] { new HomepageConfigurationPage() };

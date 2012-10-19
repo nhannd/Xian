@@ -93,12 +93,12 @@ namespace ClearCanvas.Ris.Client
 
 			private ClickAction Previous
 			{
-				get { return (ClickAction)this["Previous"]; }
+				get { return (ClickAction) this["Previous"]; }
 			}
 
 			private ClickAction Next
 			{
-				get { return (ClickAction)this["Next"]; }
+				get { return (ClickAction) this["Next"]; }
 			}
 		}
 
@@ -152,6 +152,7 @@ namespace ClearCanvas.Ris.Client
 				}
 
 				_selectedFolder = value;
+				_selectedItems = new Selection();	// clear selected items
 
 				if (_selectedFolder != null)
 				{

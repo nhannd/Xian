@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,9 +12,26 @@
     <AssemblyName>ClearCanvas.Ris.Application.Common</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,6 +41,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +50,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -44,6 +64,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.ServiceModel.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -120,10 +141,6 @@
     <Compile Include="Admin\ProcedureTypeGroupAdmin\DeleteProcedureTypeGroupResponse.cs" />
     <Compile Include="Admin\ProcedureTypeGroupAdmin\GetProcedureTypeGroupSummaryFormDataRequest.cs" />
     <Compile Include="Admin\ProcedureTypeGroupAdmin\GetProcedureTypeGroupSummaryFormDataResponse.cs" />
-    <Compile Include="Admin\ProtocolAdmin\ListProtocolCodesRequest.cs" />
-    <Compile Include="Admin\ProtocolAdmin\ListProtocolCodesResponse.cs" />
-    <Compile Include="Admin\ProtocolAdmin\LoadProtocolCodeForEditRequest.cs" />
-    <Compile Include="Admin\ProtocolAdmin\LoadProtocolCodeForEditResponse.cs" />
     <Compile Include="Admin\StaffAdmin\DeleteStaffRequest.cs" />
     <Compile Include="Admin\StaffAdmin\DeleteStaffResponse.cs" />
     <Compile Include="Admin\StaffGroupAdmin\AddStaffGroupRequest.cs" />
@@ -171,18 +188,24 @@
     <Compile Include="AttachmentSummary.cs" />
     <Compile Include="CannedTextService\EditCannedTextCategoriesRequest.cs" />
     <Compile Include="CannedTextService\EditCannedTextCategoriesResponse.cs" />
+    <Compile Include="Documents\UploadResponse.cs" />
+    <Compile Include="Documents\UploadRequest.cs" />
+    <Compile Include="FeatureTokens.cs" />
     <Compile Include="Jsml\ShimUtil.cs" />
+    <Compile Include="Manifest\IRisManifestService.cs" />
+    <Compile Include="Manifest\RisServerManifestVerification.cs" />
     <Compile Include="ModalityProcedureStepSummary.cs" />
     <Compile Include="ModalityWorkflow\DicomSeriesDetail.cs" />
     <Compile Include="PatientAllergyDetail.cs" />
-    <Compile Include="ProtocollingWorkflow\GetLinkableProtocolsRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\GetLinkableProtocolsResponse.cs" />
+    <Compile Include="DiagnosticServicePlanDetail.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\MergeOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\MergeOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\QueryCancelOrderWarningsRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\QueryCancelOrderWarningsResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\UnmergeOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\UnmergeOrderResponse.cs" />
+    <Compile Include="ReportingWorkflow\PrintReportRequest.cs" />
+    <Compile Include="ReportingWorkflow\PrintReportResponse.cs" />
     <Compile Include="ReportingWorkflow\GetDocumentationStatusResponse.cs" />
     <Compile Include="ReportingWorkflow\GetDocumentationStatusRequest.cs" />
     <Compile Include="ReportingWorkflow\ReturnToInterpreterRequest.cs" />
@@ -207,9 +230,14 @@
     <Compile Include="TranscriptionWorkflow\StartTranscriptionResponse.cs" />
     <Compile Include="TranscriptionWorkflow\SubmitTranscriptionForReviewRequest.cs" />
     <Compile Include="TranscriptionWorkflow\SubmitTranscriptionForReviewResponse.cs" />
+    <Compile Include="WorkflowConfigurationReader.cs" />
+    <Compile Include="WorkflowSettings.cs" />
+    <Compile Include="WorkflowSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>WorkflowSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="WorkQueueItemDetail.cs" />
-    <Compile Include="ProtocollingWorkflow\ReviseSubmittedProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\ReviseSubmittedProtocolResponse.cs" />
     <Compile Include="ReportingWorkflow\CompleteDowntimeProcedureRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteDowntimeProcedureResponse.cs" />
     <Compile Include="ReportingWorkflow\SendReportToQueueRequest.cs" />
@@ -247,28 +275,9 @@
     <Compile Include="ListWorklistsForUserResponse.cs" />
     <Compile Include="ModalityWorkflow\LoadOrderDocumentationDataRequest.cs" />
     <Compile Include="ModalityWorkflow\LoadOrderDocumentationDataResponse.cs" />
-    <Compile Include="OrderNotes\AcknowledgeAndPostRequest.cs" />
-    <Compile Include="OrderNotes\AcknowledgeAndPostResponse.cs" />
-    <Compile Include="OrderNotes\GetConversationEditorFormDataRequest.cs" />
-    <Compile Include="OrderNotes\GetConversationEditorFormDataResponse.cs" />
-    <Compile Include="OrderNotes\ListStaffGroupsRequest.cs" />
-    <Compile Include="OrderNotes\ListStaffGroupsResponse.cs" />
-    <Compile Include="OrderNotes\OrderNoteboxItemSummary.cs" />
-    <Compile Include="OrderNotes\GetConversationRequest.cs" />
-    <Compile Include="OrderNotes\GetConversationResponse.cs" />
-    <Compile Include="OrderNotes\IOrderNoteService.cs" />
     <Compile Include="OrderNoteSummary.cs" />
-    <Compile Include="OrderNotes\QueryNoteboxRequest.cs" />
-    <Compile Include="OrderNotes\QueryNoteboxResponse.cs" />
-    <Compile Include="OrderNotes\AddStaffGroupsRequest.cs" />
-    <Compile Include="OrderNotes\AddStaffGroupsResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\UpdateProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\GetProtocolFormDataRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\GetProtocolFormDataResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\SubmitProtocolForApprovalRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\SubmitProtocolForApprovalResponse.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\ReserveAccessionNumberRequest.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\ReserveAccessionNumberResponse.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\PrintDowntimeFormsRequest.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\PrintDowntimeFormsResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\TimeShiftOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\TimeShiftOrderResponse.cs" />
     <Compile Include="RisApplicationServiceAttribute.cs" />
@@ -294,50 +303,23 @@
     <Compile Include="BrowsePatientData\ListReportsRequest.cs" />
     <Compile Include="ExternalPractitionerContactPointDetail.cs" />
     <Compile Include="ExternalPractitionerContactPointSummary.cs" />
-    <Compile Include="Login\ChangePasswordRequest.cs" />
-    <Compile Include="Login\ChangePasswordResponse.cs" />
-    <Compile Include="Login\LoginServiceRequestBase.cs" />
-    <Compile Include="Login\LogoutRequest.cs" />
-    <Compile Include="Login\LogoutResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetExternalPractitionerContactPointsResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetExternalPractitionerContactPointsRequest.cs" />
     <Compile Include="ResultRecipientDetail.cs" />
     <Compile Include="ReportDetail.cs" />
     <Compile Include="OrderNoteDetail.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationRequestBase.cs" />
-    <Compile Include="ProtocollingWorkflow\DiscardProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\DiscardProtocolResponse.cs" />
     <Compile Include="ReportingWorkflow\GetLinkableInterpretationsRequest.cs" />
     <Compile Include="ReportingWorkflow\GetLinkableInterpretationsResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\StartProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\StartProtocolResponse.cs" />
     <Compile Include="ReportingWorkflow\PriorProcedureSummary.cs" />
     <Compile Include="WorklistItemSummaryBase.cs" />
     <Compile Include="Login\GetWorkingFacilityChoicesRequest.cs" />
     <Compile Include="Login\GetWorkingFacilityChoicesResponse.cs" />
-    <Compile Include="Admin\ProtocolAdmin\AddProtocolGroupRequest.cs" />
-    <Compile Include="Admin\ProtocolAdmin\AddProtocolGroupResponse.cs" />
-    <Compile Include="Admin\ProtocolAdmin\DeleteProtocolCodeRequest.cs" />
-    <Compile Include="Admin\ProtocolAdmin\DeleteProtocolCodeResponse.cs" />
-    <Compile Include="Admin\ProtocolAdmin\DeleteProtocolGroupRequest.cs" />
-    <Compile Include="Admin\ProtocolAdmin\DeleteProtocolGroupResponse.cs" />
-    <Compile Include="Admin\ProtocolAdmin\GetProtocolGroupEditFormDataRequest.cs" />
-    <Compile Include="Admin\ProtocolAdmin\GetProtocolGroupEditFormDataResponse.cs" />
-    <Compile Include="Admin\ProtocolAdmin\ListProtocolGroupsRequest.cs" />
-    <Compile Include="Admin\ProtocolAdmin\ListProtocolGroupsResponse.cs" />
-    <Compile Include="Admin\ProtocolAdmin\LoadProtocolGroupForEditRequest.cs" />
-    <Compile Include="Admin\ProtocolAdmin\LoadProtocolGroupForEditResponse.cs" />
-    <Compile Include="Admin\ProtocolAdmin\UpdateProtocolCodeRequest.cs" />
-    <Compile Include="Admin\ProtocolAdmin\UpdateProtocolCodeResponse.cs" />
-    <Compile Include="Admin\ProtocolAdmin\UpdateProtocolGroupRequest.cs" />
-    <Compile Include="Admin\ProtocolAdmin\UpdateProtocolGroupResponse.cs" />
     <Compile Include="ModalityWorkflow\CanCompleteOrderDocumentationRequest.cs" />
     <Compile Include="ModalityWorkflow\CanCompleteOrderDocumentationResponse.cs" />
-    <Compile Include="PatientAttachmentSummary.cs" />
-    <Compile Include="OrderAttachmentSummary.cs" />
-    <Compile Include="AttachedDocumentService\GetAttachedDocumentFormDataRequest.cs" />
-    <Compile Include="AttachedDocumentService\GetAttachedDocumentFormDataResponse.cs" />
-    <Compile Include="AttachedDocumentService\IAttachedDocumentService.cs" />
+    <Compile Include="Documents\GetAttachedDocumentFormDataRequest.cs" />
+    <Compile Include="Documents\GetAttachedDocumentFormDataResponse.cs" />
+    <Compile Include="Documents\IDocumentsService.cs" />
     <Compile Include="ExternalPractitionerDetail.cs" />
     <Compile Include="ExternalPractitionerSummary.cs" />
     <Compile Include="Admin\EnumerationAdmin\AddValueRequest.cs" />
@@ -412,9 +394,6 @@
     <Compile Include="Admin\PatientAdmin\LoadPatientProfileEditorFormDataResponse.cs" />
     <Compile Include="Admin\PatientAdmin\UpdatePatientProfileRequest.cs" />
     <Compile Include="Admin\PatientAdmin\UpdatePatientProfileResponse.cs" />
-    <Compile Include="Admin\ProtocolAdmin\AddProtocolCodeRequest.cs" />
-    <Compile Include="Admin\ProtocolAdmin\AddProtocolCodeResponse.cs" />
-    <Compile Include="Admin\ProtocolAdmin\IProtocolAdminService.cs" />
     <Compile Include="Admin\ProcedureTypeGroupAdmin\AddProcedureTypeGroupRequest.cs" />
     <Compile Include="Admin\ProcedureTypeGroupAdmin\AddProcedureTypeGroupResponse.cs" />
     <Compile Include="Admin\ProcedureTypeGroupAdmin\GetProcedureTypeGroupEditFormDataRequest.cs" />
@@ -427,18 +406,6 @@
     <Compile Include="Admin\ProcedureTypeGroupAdmin\ProcedureTypeGroupDetail.cs" />
     <Compile Include="ProtocolGroupDetail.cs" />
     <Compile Include="ProtocolGroupSummary.cs" />
-    <Compile Include="ProtocollingWorkflow\CancelProtocolAndOrderRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\CancelProtocolAndOrderResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\GetProcedurePlanForProtocollingWorklistItemRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\GetProcedurePlanForProtocollingWorklistItemResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\GetProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\GetProtocolResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\GetSuspendRejectReasonChoicesRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\GetSuspendRejectReasonChoicesResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\ListProtocolGroupsForProcedureRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\ListProtocolGroupsForProcedureResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\SaveProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\SaveProtocolResponse.cs" />
     <Compile Include="ProtocolNoteDetail.cs" />
     <Compile Include="ProtocolProcedureStepDetail.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderRequisitionForEditRequest.cs" />
@@ -530,22 +497,7 @@
     <Compile Include="ModalityWorkflow\CompleteModalityPerformedProcedureStepRequest.cs" />
     <Compile Include="ModalityWorkflow\CompleteModalityPerformedProcedureStepResponse.cs" />
     <Compile Include="ProtocolCodeDetail.cs" />
-    <Compile Include="ProtocollingWorkflow\AcceptProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\AcceptProtocolResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\AddOrderProtocolStepsRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\AddOrderProtocolStepsResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\ApproveResidentProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\ApproveResidentProtocolResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\GetProcedureProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\GetProcedureProtocolResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\IProtocollingWorkflowService.cs" />
-    <Compile Include="ProtocollingWorkflow\GetProtocolGroupDetailRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\GetProtocolGroupDetailResponse.cs" />
     <Compile Include="ProtocolDetail.cs" />
-    <Compile Include="ProtocollingWorkflow\RejectProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\RejectProtocolResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\ResubmitProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\ResubmitProtocolResponse.cs" />
     <Compile Include="RegistrationWorkflow\LoadSearchPatientFormDataRequest.cs" />
     <Compile Include="RegistrationWorkflow\LoadSearchPatientFormDataResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ReplaceOrderRequest.cs" />
@@ -568,8 +520,6 @@
     <Compile Include="HealthcardDetail.cs" />
     <Compile Include="ImportException.cs" />
     <Compile Include="Login\ILoginService.cs" />
-    <Compile Include="Login\LoginRequest.cs" />
-    <Compile Include="Login\LoginResponse.cs" />
     <Compile Include="ModalityWorkflow\SuspendProcedureRequest.cs" />
     <Compile Include="ModalityWorkflow\SuspendProcedureResponse.cs" />
     <Compile Include="ModalityWorkflow\CompleteProcedureRequest.cs" />
@@ -592,17 +542,6 @@
     <Compile Include="BrowsePatientData\LoadPatientProfileFormDataResponse.cs" />
     <Compile Include="PatientProfileDetail.cs" />
     <Compile Include="PatientProfileSummary.cs" />
-    <Compile Include="PatientReconciliation\IPatientReconciliationService.cs" />
-    <Compile Include="PatientReconciliation\ListPatientReconciliationMatchesRequest.cs" />
-    <Compile Include="PatientReconciliation\ListPatientReconciliationMatchesResponse.cs" />
-    <Compile Include="PatientReconciliation\LoadPatientProfileDiffRequest.cs" />
-    <Compile Include="PatientReconciliation\LoadPatientProfileDiffResponse.cs" />
-    <Compile Include="PatientReconciliation\PatientProfileDiff.cs" />
-    <Compile Include="PatientReconciliation\ReconciliationCandidate.cs" />
-    <Compile Include="PatientReconciliation\ReconcilePatientsRequest.cs" />
-    <Compile Include="PatientReconciliation\ReconcilePatientsResponse.cs" />
-    <Compile Include="PatientReconciliation\ListProfilesForPatientsRequest.cs" />
-    <Compile Include="PatientReconciliation\ListProfilesForPatientsResponse.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="PersonNameDetail.cs" />
     <Compile Include="BrowsePatientData\GetReportDetailRequest.cs" />
@@ -636,8 +575,8 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderEntryFormDataRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderEntryFormDataResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\IOrderEntryService.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\LoadDiagnosticServiceBreakdownRequest.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\LoadDiagnosticServiceBreakdownResponse.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\LoadDiagnosticServicePlanRequest.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\LoadDiagnosticServicePlanResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\PlaceOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\PlaceOrderResponse.cs" />
     <Compile Include="ReportingWorkflow\CancelReportingStepRequest.cs" />
@@ -706,7 +645,29 @@
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>AttachedDocumentSettings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="WorkflowSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>WorkflowSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

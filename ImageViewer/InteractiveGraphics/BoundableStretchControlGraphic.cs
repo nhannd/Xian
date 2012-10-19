@@ -149,6 +149,32 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		protected override PointF ConstrainControlPointLocation(int controlPointIndex, PointF cursorLocation)
+		{
+			// this operation must be performed in source coodinates because the definition of top/left/right/bottom controls are relative to image not tile!
+			var sourcePoint = SpatialTransform.ConvertToSource(cursorLocation);
+			CoordinateSystem = CoordinateSystem.Source;
+			try
+			{
+				var rect = Subject.Rectangle;
+				switch (controlPointIndex)
+				{
+					case _top:
+					case _bottom:
+						return SpatialTransform.ConvertToDestination(new PointF(rect.Left + rect.Width/2, sourcePoint.Y));
+					case _left:
+					case _right:
+						return SpatialTransform.ConvertToDestination(new PointF(sourcePoint.X, rect.Top + rect.Height/2));
+				}
+			}
+			finally
+			{
+				ResetCoordinateSystem();
+			}
+
+			return base.ConstrainControlPointLocation(controlPointIndex, cursorLocation);
+		}
+
 		/// <summary>
 		/// Called to notify the derived class of a control point change event.
 		/// </summary>
@@ -156,23 +182,34 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="point">The value of the point that changed.</param>
 		protected override void OnControlPointChanged(int index, PointF point)
 		{
-			IBoundableGraphic subject = this.Subject;
-			RectangleF rect = subject.Rectangle;
-			switch (index)
+			// this operation must be performed in source coodinates because the definition of top/left/right/bottom controls are relative to image not tile!
+			var sourcePoint = CoordinateSystem == CoordinateSystem.Destination ? SpatialTransform.ConvertToSource(point) : point;
+			CoordinateSystem = CoordinateSystem.Source;
+			try
 			{
-				case _top:
-					subject.TopLeft = new PointF(rect.Left, point.Y);
-					break;
-				case _bottom:
-					subject.BottomRight = new PointF(rect.Right, point.Y);
-					break;
-				case _left:
-					subject.TopLeft = new PointF(point.X, rect.Top);
-					break;
-				case _right:
-					subject.BottomRight = new PointF(point.X, rect.Bottom);
-					break;
+				var subject = Subject;
+				var rect = subject.Rectangle;
+				switch (index)
+				{
+					case _top:
+						subject.TopLeft = new PointF(rect.Left, sourcePoint.Y);
+						break;
+					case _bottom:
+						subject.BottomRight = new PointF(rect.Right, sourcePoint.Y);
+						break;
+					case _left:
+						subject.TopLeft = new PointF(sourcePoint.X, rect.Top);
+						break;
+					case _right:
+						subject.BottomRight = new PointF(sourcePoint.X, rect.Bottom);
+						break;
+				}
 			}
+			finally
+			{
+				ResetCoordinateSystem();
+			}
+
 			base.OnControlPointChanged(index, point);
 		}
 

@@ -131,6 +131,7 @@
     <Compile Include="Async.cs" />
     <Compile Include="AsyncTask.cs" />
     <Compile Include="AlertViewerComponent.cs" />
+    <Compile Include="Configuration\Tools\ActionModelsTool.cs" />
     <Compile Include="IDesktopAlertContext.cs" />
     <Compile Include="Tables\ComboBoxCellEditor.cs" />
     <Compile Include="Configuration\ActionModel\AbstractActionModelTreeBranch.cs" />
@@ -380,6 +381,7 @@
     <Compile Include="Validation\AllComponentsValidationStrategy.cs" />
     <Compile Include="Validation\IValidationRuleSet.cs" />
     <Compile Include="Validation\IValidationRule.cs" />
+    <Compile Include="Validation\IValidationRuleSource.cs" />
     <Compile Include="Validation\NoComponentsValidationStrategy.cs" />
     <Compile Include="Validation\ValidateCompareAttribute.cs" />
     <Compile Include="Validation\ValidateGreaterThanAttribute.cs" />

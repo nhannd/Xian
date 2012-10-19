@@ -13,6 +13,17 @@ namespace ClearCanvas.ImageViewer.Configuration
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
     public class SharedConfigurationTool : Tool<IDesktopToolContext>
     {
+        public override IActionSet Actions
+        {
+            get
+            {
+                //If there's no pages, don't show the button.
+                if (!SharedConfigurationDialog.CanShow)
+                    return new ActionSet();
+
+                return base.Actions;
+            }
+        }
         public void Show()
         {
             try

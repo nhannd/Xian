@@ -33,6 +33,7 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 		#region IWorklistService Members
 
 		[ReadOperation]
+		[AuditRecorder(typeof(WorkflowServiceRecorder.SearchWorklists))]
 		public TextQueryResponse<ReportingWorklistItemSummary> SearchWorklists(WorklistItemTextQueryRequest request)
 		{
 			var assembler = new ReportingWorkflowAssembler();

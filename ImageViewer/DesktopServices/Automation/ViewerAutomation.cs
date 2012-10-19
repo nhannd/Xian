@@ -23,6 +23,7 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.Automation;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Common.DicomServer;
@@ -41,9 +42,9 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		{
 		}
 
-		private static IStudyRootQuery GetStudyRootQuery()
+		private static IStudyLocator GetStudyLocator()
 		{
-			return Platform.GetService<IStudyRootQuery>();
+			return Platform.GetService<IStudyLocator>();
 		}
 
 	    /// TODO (CR Dec 2011): Build this functionality right into ImageViewerComponent?
@@ -63,18 +64,27 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
             {
                 IImageViewer viewer = ViewerAutomationTool.GetViewer(viewerId);
                 if (viewer != null && GetViewerWorkspace(viewer) != null)
-                    viewers.Add(new Viewer(viewerId, GetPrimaryStudyInstanceUid(viewer)));
+                    viewers.Add(new Viewer(viewerId, GetPrimaryStudyIdentifier(viewer)));
             }
 
             if (viewers.Count == 0)
-                throw new FaultException<NoActiveViewersFault>(new NoActiveViewersFault(), "No active viewers were found.");
+                throw new FaultException<NoViewersFault>(new NoViewersFault(), "No active viewers were found.");
 
             return new GetViewersResult {Viewers = viewers};
         }
-        
-        public GetActiveViewersResult GetActiveViewers()
+
+		[Obsolete("Use GetViewers instead.")]
+		public GetActiveViewersResult GetActiveViewers()
 		{
-            return new GetActiveViewersResult {ActiveViewers = GetViewers(new GetViewersRequest()).Viewers};
+			try
+			{
+				return new GetActiveViewersResult { ActiveViewers = GetViewers(new GetViewersRequest()).Viewers };
+			}
+			catch (FaultException<NoViewersFault>)
+			{
+				// translate the exception correctly, since the type of exception is specified in the service contract
+				throw new FaultException<NoActiveViewersFault>(new NoActiveViewersFault(), "No active viewers were found.");
+			}
 		}
 
 		public GetViewerInfoResult GetViewerInfo(GetViewerInfoRequest request)
@@ -148,7 +158,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
                 helper.HandleErrors = false;
                 var viewer = helper.OpenFiles();
                 var viewerId = ViewerAutomationTool.GetViewerId(viewer);
-                return new OpenFilesResult { Viewer = new Viewer(viewerId.Value, GetPrimaryStudyInstanceUid(viewer)) };
+                return new OpenFilesResult { Viewer = new Viewer(viewerId.Value, GetPrimaryStudyIdentifier(viewer)) };
 
             }
             catch (Exception e)
@@ -204,7 +214,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 				if (viewerId == null)
 					throw new FaultException("Failed to retrieve the id of the specified viewer.");
 
-				result.Viewer = new Viewer(viewerId.Value, primaryStudyInstanceUid);
+				result.Viewer = new Viewer(viewerId.Value, GetPrimaryStudyIdentifier(viewer));
 				return result;
 			}
 			catch(FaultException)
@@ -329,9 +339,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 
 			List<string> incompleteStudyUids = incomplete.Select(info => info.StudyInstanceUid).ToList();
 
-			using (var bridge = new StudyRootQueryBridge(GetStudyRootQuery()))
+			using (var bridge = new StudyLocatorBridge(GetStudyLocator()))
 			{
-				IList<StudyRootStudyIdentifier> foundStudies = bridge.QueryByStudyInstanceUid(incompleteStudyUids);
+				LocateFailureInfo[] queryFailures;
+				IList<StudyRootStudyIdentifier> foundStudies = bridge.LocateStudyByInstanceUid(incompleteStudyUids, out queryFailures);
 				foreach (StudyRootStudyIdentifier study in foundStudies)
 				{
 					foreach (OpenStudyInfo info in openStudyInfo)
@@ -343,12 +354,27 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 						}
 					}
 				}
+
+				var unlocated = openStudyInfo.Where(info => string.IsNullOrEmpty(info.SourceAETitle)).Select(info => info.StudyInstanceUid).ToArray();
+				if (unlocated.Any())
+				{
+					var fault = new OpenStudiesFault(string.Format("One or more specified studies could not be opened: {0}", string.Join(", ", unlocated)));
+					throw new FaultException<OpenStudiesFault>(fault, fault.FailureDescription);
+				}
 			}
 		}
 
 		private static IImageViewer LaunchViewer(OpenStudiesRequest request, string primaryStudyInstanceUid)
 		{
-			CompleteOpenStudyInfo(request.StudiesToOpen);
+			try
+			{
+				CompleteOpenStudyInfo(request.StudiesToOpen);
+			}
+			catch (Exception ex)
+			{
+				if (request.ReportFaultToUser) SynchronizationContext.Current.Post(ReportLoadFailures, ex);
+				throw;
+			}
 		    
             ImageViewerComponent viewer;
             if (!request.LoadPriors.HasValue || request.LoadPriors.Value)
@@ -431,6 +457,12 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			}
 
 			return null;
+		}
+
+		private static StudyRootStudyIdentifier GetPrimaryStudyIdentifier(IImageViewer viewer)
+		{
+			// TODO CR (Oct 12): Add support for patient reconciliation (after we move that concept into viewer common)
+			return viewer.StudyTree.Patients.SelectMany(p => p.Studies).Select(s => new StudyRootStudyIdentifier(s.GetIdentifier())).FirstOrDefault();
 		}
 
 		private static List<string> GetAdditionalStudyInstanceUids(IImageViewer viewer)

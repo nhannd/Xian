@@ -133,7 +133,6 @@ namespace ClearCanvas.Healthcare
 		
 		#endregion
 
-
 		#region Reporting-specific field constants
 
 		public static readonly WorklistItemField Report = new EntityRefField(WorklistItemFieldLevel.Report);

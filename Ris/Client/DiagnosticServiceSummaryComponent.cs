@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Client
 {
 	[MenuAction("launch", "global-menus/Admin/Imaging Services", "Launch")]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.DiagnosticService)]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	public class DiagnosticServiceAdminTool : Tool<IDesktopToolContext>
 	{
 		private IWorkspace _workspace;

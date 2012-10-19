@@ -14,6 +14,7 @@ using System.Security.Permissions;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using Resources;
+using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 {
@@ -23,6 +24,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
         protected void Page_Load(object sender, EventArgs e)
         {
             SetPageTitle(Titles.DashboardTitle);
+
+            
         }
     }
 }

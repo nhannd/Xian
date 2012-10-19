@@ -14,6 +14,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -23,11 +24,19 @@ namespace ClearCanvas.Ris.Client
 	[MenuAction("launch", "global-menus/MenuTools/Staff Profile", "Launch")]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.StaffProfile.View)]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.StaffProfile.Update)]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	public class StaffProfileEditorTool : Tool<IDesktopToolContext>
 	{
 		public void Launch()
 		{
+			if(LoginSession.Current == null)
+			{
+				this.Context.DesktopWindow.ShowMessageBox(
+					"This feature will be available the next time you start the workstation.",
+					MessageBoxActions.Ok);
+				return;
+			}
+
 			try
 			{
 				if (LoginSession.Current.Staff == null)

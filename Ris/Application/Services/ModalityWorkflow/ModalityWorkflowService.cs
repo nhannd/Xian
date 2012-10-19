@@ -39,6 +39,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		/// <param name="request"></param>
 		/// <returns></returns>
 		[ReadOperation]
+		[AuditRecorder(typeof(WorkflowServiceRecorder.SearchWorklists))]
 		public TextQueryResponse<ModalityWorklistItemSummary> SearchWorklists(WorklistItemTextQueryRequest request)
 		{
 			var assembler = new ModalityWorkflowAssembler();
@@ -90,7 +91,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
 			var assembler = new ModalityPerformedProcedureStepAssembler();
 
-			ISet<PerformedStep> mppsSet = new HashedSet<PerformedStep>();
+			var mppsSet = new HashedSet<PerformedStep>();
 			foreach (var procedure in order.Procedures)
 			{
 				foreach (var mps in procedure.ModalityProcedureSteps)
@@ -112,6 +113,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		/// <param name="request"><see cref="StartModalityProcedureStepsRequest"/></param>
 		/// <returns><see cref="StartModalityProcedureStepsResponse"/></returns>
 		[UpdateOperation]
+		[AuditRecorder(typeof(ModalityWorkflowServiceRecorder.StartProcedures))]
 		public StartModalityProcedureStepsResponse StartModalityProcedureSteps(StartModalityProcedureStepsRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
@@ -147,6 +149,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		/// <param name="request"><see cref="DiscontinueModalityProcedureStepsResponse"/></param>
 		/// <returns><see cref="DiscontinueModalityProcedureStepsRequest"/></returns>
 		[UpdateOperation]
+		[AuditRecorder(typeof(ModalityWorkflowServiceRecorder.DiscontinueProcedures))]
 		public DiscontinueModalityProcedureStepsResponse DiscontinueModalityProcedureSteps(DiscontinueModalityProcedureStepsRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
@@ -165,7 +168,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 				// If discontinuing the procedure step caused the parent procedure to be discontinued,
 				// create an HL7 event.
 				if (step.Procedure.IsTerminated)
-					CreateLogicalHL7Event(step.Procedure, LogicalHL7EventType.ProcedureCancelled);
+					LogicalHL7Event.ProcedureCancelled.EnqueueEvents(step.Procedure);
 			}
 
 			this.PersistenceContext.SynchState();
@@ -181,6 +184,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		/// <param name="request"><see cref="CompleteModalityPerformedProcedureStepRequest"/></param>
 		/// <returns><see cref="CompleteModalityPerformedProcedureStepResponse"/></returns>
 		[UpdateOperation]
+		[AuditRecorder(typeof(ModalityWorkflowServiceRecorder.CompleteProcedures))]
 		public CompleteModalityPerformedProcedureStepResponse CompleteModalityPerformedProcedureStep(CompleteModalityPerformedProcedureStepRequest request)
 		{
 			var mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(request.Mpps.ModalityPerformendProcedureStepRef);
@@ -212,6 +216,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		/// <param name="request"><see cref="DiscontinueModalityPerformedProcedureStepRequest"/></param>
 		/// <returns><see cref="DiscontinueModalityPerformedProcedureStepResponse"/></returns>
 		[UpdateOperation]
+		[AuditRecorder(typeof(ModalityWorkflowServiceRecorder.DiscontinueProcedures))]
 		public DiscontinueModalityPerformedProcedureStepResponse DiscontinueModalityPerformedProcedureStep(DiscontinueModalityPerformedProcedureStepRequest request)
 		{
 			var mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(request.Mpps.ModalityPerformendProcedureStepRef);
@@ -233,7 +238,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 			{
 				var procedure = activity.As<ProcedureStep>().Procedure;
 				if(procedure.IsTerminated)
-					CreateLogicalHL7Event(procedure, LogicalHL7EventType.ProcedureCancelled);
+					LogicalHL7Event.ProcedureCancelled.EnqueueEvents(procedure);
 			}
 	
 			// Drill back to order so we can refresh procedure plan
@@ -269,6 +274,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
 		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Documentation.Create)]
+		[AuditRecorder(typeof(ModalityWorkflowServiceRecorder.UpdateDocumentation))]
 		public SaveOrderDocumentationDataResponse SaveOrderDocumentationData(SaveOrderDocumentationDataRequest request)
 		{
 			var order = this.PersistenceContext.Load<Order>(request.OrderRef);
@@ -334,6 +340,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
 		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Documentation.Accept)]
+		[AuditRecorder(typeof(ModalityWorkflowServiceRecorder.CompleteDocumentation))]
 		public CompleteOrderDocumentationResponse CompleteOrderDocumentation(CompleteOrderDocumentationRequest request)
 		{
 			var order = this.PersistenceContext.Load<Order>(request.OrderRef);

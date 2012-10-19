@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -81,10 +81,13 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { SubCriteria["MatchPatientsSex"] = new ProcedureParameter<bool>("MatchPatientsSex", value); }
         }
-
         public bool AuditDeleteStudy
         {
             set { SubCriteria["AuditDeleteStudy"] = new ProcedureParameter<bool>("AuditDeleteStudy", value); }
+        }
+        public bool AcceptLatestReport
+        {
+            set { SubCriteria["AcceptLatestReport"] = new ProcedureParameter<bool>("AcceptLatestReport", value); }
         }
     }
 }

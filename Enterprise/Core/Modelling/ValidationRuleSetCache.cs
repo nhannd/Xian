@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Caching;
 
@@ -86,20 +87,20 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 			ValidationRuleSet customRules;
 			if (Cache.IsSupported())
 			{
-			using (var cacheClient = Cache.CreateClient(CacheId))
-			{
-				// check the cache for a compiled ruleset
+				using (var cacheClient = Cache.CreateClient(CacheId))
+				{
+					// check the cache for a compiled ruleset
 					customRules = (ValidationRuleSet)cacheClient.Get(domainClass.FullName, new CacheGetOptions(CacheRegion));
 					if (customRules == null)
 					{
-				// no cached, so compile the ruleset from source
+						// no cached, so compile the ruleset from source
 						customRules = BuildCustomRules(domainClass);
 
-				// cache the ruleset if desired
-				var settings = new EntityValidationSettings();
-				var ttl = TimeSpan.FromSeconds(settings.CustomRulesCachingTimeToLiveSeconds);
-				if (ttl > TimeSpan.Zero)
-				{
+						// cache the ruleset if desired
+						var settings = new EntityValidationSettings();
+						var ttl = TimeSpan.FromSeconds(settings.CustomRulesCachingTimeToLiveSeconds);
+						if (ttl > TimeSpan.Zero)
+						{
 							cacheClient.Put(domainClass.FullName, customRules, new CachePutOptions(CacheRegion, ttl, false));
 						}
 					}
@@ -111,7 +112,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 				Platform.Log(LogLevel.Warn, "Caching of custom rules is not supported in this configuration - rules are being compiled from source.");
 				customRules = BuildCustomRules(domainClass);
 			}
-			return new ValidationRuleSet(new[]{staticRules, customRules});
+			return new ValidationRuleSet(new[] { staticRules, customRules });
 		}
 
 		/// <summary>
@@ -123,17 +124,14 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 		{
 			try
 			{
-				var ruleset = new ValidationRuleSet();
-
-				// combine rules from all sources
+				// combine rules from all non-static (i.e. custom) sources
 				var sources = new EntityValidationRuleSetSourceExtensionPoint().CreateExtensions();
-				foreach (IValidationRuleSetSource source in sources)
-				{
-					var r = source.GetRuleSet(domainClass.FullName);
-					if (!r.IsEmpty)
-						ruleset = ruleset.Add(r);
-				}
-				return ruleset;
+				var rules = from source in sources.Cast<IValidationRuleSetSource>()
+							where !source.IsStatic
+							let r = source.GetRuleSet(domainClass)
+							where !r.IsEmpty
+							select r;
+				return new ValidationRuleSet(rules);
 			}
 			catch (Exception e)
 			{

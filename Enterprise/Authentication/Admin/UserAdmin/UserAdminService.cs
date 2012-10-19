@@ -9,12 +9,12 @@
 
 #endregion
 
-using System.Collections.Generic;
+using System;
+using System.Linq;
 using System.Security.Permissions;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
@@ -25,19 +25,19 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
 {
 	[ExtensionOf(typeof(CoreServiceExtensionPoint))]
 	[ServiceImplementsContract(typeof(IUserAdminService))]
-    public class UserAdminService : CoreServiceLayer, IUserAdminService
-    {
-        #region IUserAdminService Members
+	public class UserAdminService : CoreServiceLayer, IUserAdminService
+	{
+		#region IUserAdminService Members
 
-        [ReadOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
-        public ListUsersResponse ListUsers(ListUsersRequest request)
-        {
-            UserSearchCriteria criteria = new UserSearchCriteria();
+		[ReadOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
+		public ListUsersResponse ListUsers(ListUsersRequest request)
+		{
+			var criteria = new UserSearchCriteria();
 			criteria.UserName.SortAsc(0);
 
 			// create the criteria, depending on whether matches should be "exact" or "like"
-			if(request.ExactMatchOnly)
+			if (request.ExactMatchOnly)
 			{
 				if (!string.IsNullOrEmpty(request.UserName))
 					criteria.UserName.EqualTo(request.UserName);
@@ -52,75 +52,73 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
 					criteria.DisplayName.Like(string.Format("%{0}%", request.DisplayName));
 			}
 
-            UserAssembler assembler = new UserAssembler();
-            List<UserSummary> userSummaries = CollectionUtils.Map<User, UserSummary>(
-                PersistenceContext.GetBroker<IUserBroker>().Find(criteria, request.Page),
-                delegate(User user)
-                {
-                    return assembler.GetUserSummary(user);
-                });
-            return new ListUsersResponse(userSummaries);
-        }
+			var assembler = new UserAssembler();
+			var userSummaries = CollectionUtils.Map(
+				PersistenceContext.GetBroker<IUserBroker>().Find(criteria, request.Page),
+				(User user) => assembler.GetUserSummary(user));
 
-        [ReadOperation]
+			return new ListUsersResponse(userSummaries);
+		}
+
+		[ReadOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
 		public LoadUserForEditResponse LoadUserForEdit(LoadUserForEditRequest request)
-        {
-            User user = FindUserByName(request.UserName);
+		{
+			var user = FindUserByName(request.UserName);
 
-            UserAssembler assembler = new UserAssembler();
-            return new LoadUserForEditResponse(assembler.GetUserDetail(user));
-        }
+			var assembler = new UserAssembler();
+			return new LoadUserForEditResponse(assembler.GetUserDetail(user));
+		}
 
-    	[UpdateOperation]
+		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
 		public AddUserResponse AddUser(AddUserRequest request)
-        {
-            Platform.CheckForNullReference(request, "request");
-            Platform.CheckMemberIsSet(request.UserDetail, "UserDetail");
+		{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.UserDetail, "UserDetail");
 
-            UserDetail userDetail = request.UserDetail;
-			AuthenticationSettings settings = new AuthenticationSettings();
+			var userDetail = request.UserDetail;
+			var settings = new AuthenticationSettings();
 
 			// create new user
-    		UserInfo userInfo =
-    			new UserInfo(userDetail.UserName, userDetail.DisplayName, userDetail.EmailAddress, userDetail.ValidFrom, userDetail.ValidUntil);
+			var userInfo =
+				new UserInfo(userDetail.UserName, userDetail.DisplayName, userDetail.EmailAddress, userDetail.ValidFrom, userDetail.ValidUntil);
 
-			User user = User.CreateNewUser(userInfo, settings.DefaultTemporaryPassword);
+			var user = User.CreateNewUser(userInfo, settings.DefaultTemporaryPassword);
 
-            // copy other info such as authority groups from request
-            UserAssembler assembler = new UserAssembler();
-            assembler.UpdateUser(user, request.UserDetail, PersistenceContext);
+			// copy other info such as authority groups from request
+			var assembler = new UserAssembler();
+			assembler.UpdateUser(user, request.UserDetail, PersistenceContext);
 
 			// save
-            PersistenceContext.Lock(user, DirtyState.New);
-    		PersistenceContext.SynchState();
+			PersistenceContext.Lock(user, DirtyState.New);
+			PersistenceContext.SynchState();
 
-            return new AddUserResponse(user.GetRef(), assembler.GetUserSummary(user));
-        }
+			return new AddUserResponse(user.GetRef(), assembler.GetUserSummary(user));
+		}
 
-        [UpdateOperation]
+		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
 		public UpdateUserResponse UpdateUser(UpdateUserRequest request)
-        {
-            User user = FindUserByName(request.UserDetail.UserName);
+		{
+			var user = FindUserByName(request.UserDetail.UserName);
 
-            // update user account info
-            UserAssembler assembler = new UserAssembler();
-            assembler.UpdateUser(user, request.UserDetail, PersistenceContext);
+			// update user account info
+			var assembler = new UserAssembler();
+			assembler.UpdateUser(user, request.UserDetail, PersistenceContext);
 
-            // reset password if requested
-            if (request.UserDetail.ResetPassword)
-            {
-				AuthenticationSettings settings = new AuthenticationSettings();
+			// reset password if requested
+			if (request.UserDetail.ResetPassword)
+			{
+				var settings = new AuthenticationSettings();
 				user.ResetPassword(settings.DefaultTemporaryPassword);
 
-            }
+			}
 
 			PersistenceContext.SynchState();
 
 			return new UpdateUserResponse(assembler.GetUserSummary(user));
-        }
+		}
 
 		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
@@ -130,11 +128,11 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
 			Platform.CheckForEmptyString(request.UserName, "UserName");
 
 			// prevent current user from deleting own account
-			if(request.UserName == Thread.CurrentPrincipal.Identity.Name)
+			if (request.UserName == Thread.CurrentPrincipal.Identity.Name)
 				throw new RequestValidationException(SR.MessageCannotDeleteOwnUserAccount);
 
-			IUserBroker broker = PersistenceContext.GetBroker<IUserBroker>();
-			User user = FindUserByName(request.UserName);
+			var broker = PersistenceContext.GetBroker<IUserBroker>();
+			var user = FindUserByName(request.UserName);
 
 			// remove user from groups we don't get errors from db references
 			user.AuthorityGroups.Clear();
@@ -145,37 +143,88 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
 			return new DeleteUserResponse();
 		}
 
-    	[UpdateOperation]
+		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
 		public ResetUserPasswordResponse ResetUserPassword(ResetUserPasswordRequest request)
-        {
-            Platform.CheckForNullReference(request, "request");
-            Platform.CheckMemberIsSet(request.UserName, "UserName");
+		{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.UserName, "UserName");
 
-			User user = FindUserByName(request.UserName);
+			var user = FindUserByName(request.UserName);
 
-			AuthenticationSettings settings = new AuthenticationSettings();
+			var settings = new AuthenticationSettings();
 			user.ResetPassword(settings.DefaultTemporaryPassword);
 
-            UserAssembler assembler = new UserAssembler();
-            return new ResetUserPasswordResponse(assembler.GetUserSummary(user));
-        }
+			var assembler = new UserAssembler();
+			return new ResetUserPasswordResponse(assembler.GetUserSummary(user));
+		}
 
-    	#endregion
+		[ReadOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
+		public ListUserSessionsResponse ListUserSessions(ListUserSessionsRequest request)
+		{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.UserName, "UserName");
 
-        private User FindUserByName(string name)
-        {
-            try
-            {
-                UserSearchCriteria where = new UserSearchCriteria();
-                where.UserName.EqualTo(name);
+			var user = FindUserByName(request.UserName);
+			var assembler = new UserAssembler();
+			return new ListUserSessionsResponse(user.UserName, user.ActiveSessions.Select(assembler.GetUserSessionSummary).ToList());
+		}
 
-                return PersistenceContext.GetBroker<IUserBroker>().FindOne(where);
-            }
-            catch (EntityNotFoundException)
-            {
-                throw new RequestValidationException(string.Format("{0} is not a valid user name.", name));
-            }
-        }
-    }
+
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
+		public TerminateUserSessionResponse TerminateUserSession(TerminateUserSessionRequest request)
+		{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckForNullReference(request.SessionIds, "SessionIds");
+
+			// exclude the current session - user must not delete own active session!
+			var sessionIds = request.SessionIds.Where(id => id != CurrentUserSessionId).ToList();
+			if(sessionIds.Count == 0)
+				throw new RequestValidationException(SR.MessageCannotDeleteOwnUserCurrentSession);
+
+			// load all sessions by id 
+			var where = new UserSessionSearchCriteria();
+			where.SessionId.In(sessionIds);
+
+			var sessions = PersistenceContext.GetBroker<IUserSessionBroker>().Find(where);
+
+			// terminate all sessions
+			foreach (var session in sessions)
+			{
+				session.Terminate();
+			}
+
+			return new TerminateUserSessionResponse(sessions.Select(s => s.SessionId).ToList());
+		}
+
+		#endregion
+
+		private User FindUserByName(string name)
+		{
+			try
+			{
+				var where = new UserSearchCriteria();
+				where.UserName.EqualTo(name);
+
+				return PersistenceContext.GetBroker<IUserBroker>().FindOne(where);
+			}
+			catch (EntityNotFoundException)
+			{
+				throw new RequestValidationException(string.Format("{0} is not a valid user name.", name));
+			}
+		}
+
+		private static string CurrentUserSessionId
+		{
+			get
+			{
+				if (!(Thread.CurrentPrincipal is DefaultPrincipal))
+					throw new InvalidOperationException("Unable to obtain current user session ID on this thread");
+
+				return (Thread.CurrentPrincipal as DefaultPrincipal).SessionToken.Id;
+			}
+		}
+	}
 }

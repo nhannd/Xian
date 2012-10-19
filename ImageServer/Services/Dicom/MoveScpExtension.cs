@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -44,10 +45,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// </summary>
         public MoveScpExtension()
         {
-            SupportedSop sop = new SupportedSop
-                               	{
-                               		SopClass = SopClass.PatientRootQueryRetrieveInformationModelMove
-                               	};
+            var sop = new SupportedSop
+                          {
+                              SopClass = SopClass.PatientRootQueryRetrieveInformationModelMove
+                          };
         	sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
             sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
             _list.Add(sop);
@@ -71,15 +72,16 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// </summary>
         /// <param name="read"></param>
         /// <param name="msg"></param>
+        /// <param name="errorComment"> </param>
         /// <returns></returns>
-        private bool GetSopListForPatient(IPersistenceContext read, DicomMessageBase msg)
+        private bool GetSopListForPatient(IPersistenceContext read, DicomMessageBase msg, out string errorComment)
         {
-
+            errorComment = string.Empty;
             string patientId = msg.DataSet[DicomTags.PatientId].GetString(0, "");
 
-            IStudyEntityBroker select = read.GetBroker<IStudyEntityBroker>();
+            var select = read.GetBroker<IStudyEntityBroker>();
 
-            StudySelectCriteria criteria = new StudySelectCriteria();
+            var criteria = new StudySelectCriteria();
             criteria.PatientId.EqualTo(patientId);
 			criteria.ServerPartitionKey.EqualTo(Partition.Key);
 
@@ -95,8 +97,16 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					FilesystemMonitor.Instance.GetReadableStudyStorageLocation(Partition.Key, study.StudyInstanceUid,
 					                                                           StudyRestore.True, StudyCache.True, out location);
 				}
-				catch (Exception)
+                catch (StudyIsNearlineException e)
+                {
+                    errorComment = string.Format(e.RestoreRequested ? "Study is nearline, inserted restore request: {0}" : "Study is nearline: {0}", study.StudyInstanceUid);
+
+                    bOfflineFound = true;
+                    continue;				        
+                }
+				catch (Exception e)
 				{
+				    errorComment = string.Format("Exception occurred when determining study location: {0}", e.Message);
 					bOfflineFound = true;
 					continue;
 				}
@@ -113,12 +123,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// Create a list of DICOM SOP Instances to move based on a Study level C-MOVE-RQ.
         /// </summary>
         /// <param name="msg"></param>
-       /// <returns></returns>
-        private bool GetSopListForStudy(DicomMessageBase msg)
+        /// <param name="errorComment"></param>
+        /// <returns></returns>
+        private bool GetSopListForStudy(DicomMessageBase msg, out string errorComment)
         {
+            errorComment = string.Empty;
         	bool bOfflineFound = false;
 
-            string[] studyList = (string[]) msg.DataSet[DicomTags.StudyInstanceUid].Values;
+            var studyList = (string[]) msg.DataSet[DicomTags.StudyInstanceUid].Values;
 
             // Now get the storage location
             foreach (string studyInstanceUid in studyList)
@@ -133,17 +145,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             	}
             	catch (StudyIsNearlineException e)
             	{
-					if (e.RestoreRequested)
-						Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyInstanceUid);
-					else						
-						Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyInstanceUid);
-					
-					bOfflineFound = true;
+                    errorComment = string.Format(e.RestoreRequested ? "Study is nearline, inserted restore request: {0}" : "Study is nearline: {0}", studyInstanceUid);
+
+            	    bOfflineFound = true;
 					continue;
             	}
 				catch (Exception e)
 				{
-					Platform.Log(LogLevel.Error, e, "Unexpected exception getting readable storage location");
+                    errorComment = string.Format("Exception occurred when determining study location: {0}", e.Message);
 					bOfflineFound = true;
 					continue;
 				}
@@ -163,12 +172,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// </summary>
         /// <param name="persistenceContext"></param>
         /// <param name="msg"></param>
+        /// <param name="errorComment"> </param>
         /// <returns></returns>
-        private bool GetSopListForSeries(IPersistenceContext persistenceContext, DicomMessageBase msg)
+        private bool GetSopListForSeries(IPersistenceContext persistenceContext, DicomMessageBase msg, out string errorComment)
         {
-
+            errorComment = string.Empty;
             string studyInstanceUid = msg.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
-            string[] seriesList = (string[])msg.DataSet[DicomTags.SeriesInstanceUid].Values;
+            var seriesList = (string[])msg.DataSet[DicomTags.SeriesInstanceUid].Values;
 
             // Now get the storage location
             StudyStorageLocation location;
@@ -180,22 +190,18 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 			}
 			catch(StudyIsNearlineException e)
 			{
-				if (e.RestoreRequested)
-					Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyInstanceUid);
-				else
-					Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyInstanceUid);
-            		
+                errorComment = string.Format(e.RestoreRequested ? "Study is nearline, inserted restore request: {0}" : "Study is nearline: {0}", studyInstanceUid);
 				return false;
 			}
 			catch (Exception e)
 			{
-				Platform.Log(LogLevel.Error, e, "Unexpected exception getting readable storage location");
-				return false;
+                errorComment = string.Format("Exception occurred when determining study location: {0}", e.Message);
+                return false;
 			}
 
-			IStudyEntityBroker select = persistenceContext.GetBroker<IStudyEntityBroker>();
+			var select = persistenceContext.GetBroker<IStudyEntityBroker>();
 
-			StudySelectCriteria criteria = new StudySelectCriteria();
+			var criteria = new StudySelectCriteria();
 			criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
 			criteria.ServerPartitionKey.EqualTo(Partition.Key);
 
@@ -214,12 +220,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// Create a list of DICOM SOP Instances to move based on an Image level C-MOVE-RQ.
         /// </summary>
         /// <param name="msg"></param>
+        /// <param name="errorComment"> </param>
         /// <returns></returns>
-        private bool GetSopListForSop(DicomMessageBase msg)
+        private bool GetSopListForSop(DicomMessageBase msg, out string errorComment)
         {
+            errorComment = string.Empty;
             string studyInstanceUid = msg.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
             string seriesInstanceUid = msg.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
-            string[] sopInstanceUidArray = (string[])msg.DataSet[DicomTags.SopInstanceUid].Values;
+            var sopInstanceUidArray = (string[])msg.DataSet[DicomTags.SopInstanceUid].Values;
 
             // Now get the storage location
             StudyStorageLocation location;
@@ -230,17 +238,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 																		   StudyCache.True, out location);
 			}
 			catch (StudyIsNearlineException e)
-			{
-				if (e.RestoreRequested)
-					Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyInstanceUid);
-				else
-					Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyInstanceUid);
-				return false;
+            {
+                errorComment = string.Format(e.RestoreRequested ? "Study is nearline, inserted restore request: {0}" : "Study is nearline: {0}", studyInstanceUid);
+                return false;
 			}
 			catch (Exception e)
 			{
-				Platform.Log(LogLevel.Error, e, "Unable to get readable storage location");
-				return false;
+                errorComment = string.Format("Exception occurred when determining study location: {0}", e.Message);
+                return false;
 			}
 
         	// There can be multiple SOP Instance UIDs in the move request
@@ -263,14 +268,21 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns></returns>
         private static Device LoadRemoteHost(IPersistenceContext read, ServerPartition partition, string remoteAe)
         {
-            IDeviceEntityBroker select = read.GetBroker<IDeviceEntityBroker>();
+            var select = read.GetBroker<IDeviceEntityBroker>();
 
             // Setup the select parameters.
-            DeviceSelectCriteria selectParms = new DeviceSelectCriteria();
+            var selectParms = new DeviceSelectCriteria();
             selectParms.AeTitle.EqualTo(remoteAe);
             selectParms.ServerPartitionKey.EqualTo(partition.GetKey());
-
-            return select.FindOne(selectParms);
+            var devices = select.Find(selectParms);
+            foreach (var d in devices)
+            {
+                if (string.Compare(d.AeTitle, remoteAe, false, CultureInfo.InvariantCulture) == 0)
+                {
+                    return d;
+                }
+            }
+            return null;
         }
         #endregion
 
@@ -286,6 +298,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         public override bool OnReceiveRequest(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
         {
             bool finalResponseSent = false;
+            string errorComment;
 
             try
             {
@@ -312,12 +325,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     Device device = LoadRemoteHost(read, Partition, remoteAe);
                     if (device == null)
                     {
-                        Platform.Log(LogLevel.Error,
+                        errorComment = string.Format(
                                      "Unknown move destination \"{0}\", failing C-MOVE-RQ from {1} to {2}",
                                      remoteAe, association.CallingAE, association.CalledAE);
-
+                        Platform.Log(LogLevel.Error, errorComment);
                         server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
-                                                 DicomStatuses.QueryRetrieveMoveDestinationUnknown);
+                                                 DicomStatuses.QueryRetrieveMoveDestinationUnknown, errorComment);
                         finalResponseSent = true;
                         return true;
                     }
@@ -334,29 +347,31 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                     // Now create the list of SOPs to send
                     bool bOnline;
-
+                   
                     if (level.Equals("PATIENT"))
                     {
-                        bOnline = GetSopListForPatient(read, message);
+                        bOnline = GetSopListForPatient(read, message, out errorComment);
                     }
                     else if (level.Equals("STUDY"))
                     {
-                        bOnline = GetSopListForStudy(message);
+                        bOnline = GetSopListForStudy(message, out errorComment);
                     }
                     else if (level.Equals("SERIES"))
                     {
-                        bOnline = GetSopListForSeries(read, message);
+                        bOnline = GetSopListForSeries(read, message, out errorComment);
                     }
                     else if (level.Equals("IMAGE"))
                     {
-                        bOnline = GetSopListForSop(message);
+                        bOnline = GetSopListForSop(message, out errorComment);
                     }
                     else
                     {
-                        Platform.Log(LogLevel.Error, "Unexpected Study Root Move Query/Retrieve level: {0}", level);
+                        errorComment = string.Format("Unexpected Study Root Move Query/Retrieve level: {0}", level);
+                        Platform.Log(LogLevel.Error, errorComment);
 
                         server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
-                                                 DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass);
+                                                 DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass,
+                                                 errorComment);
                         finalResponseSent = true;
                         return true;
                     }
@@ -366,10 +381,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					// were online and some offline, we don't fail now (ie, the check on the Count)
 					if (!bOnline && _theScu.StorageInstanceList.Count == 0)
                     {
-                        Platform.Log(LogLevel.Error, "Unable to find online storage location for C-MOVE-RQ");
+                        Platform.Log(LogLevel.Error, "Unable to find online storage location for C-MOVE-RQ: {0}", errorComment);
 
                         server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
-                                                 DicomStatuses.QueryRetrieveUnableToPerformSuboperations);
+                                                 DicomStatuses.QueryRetrieveUnableToPerformSuboperations,
+                                                 string.IsNullOrEmpty(errorComment) ? string.Empty : errorComment);
                         finalResponseSent = true;
                     	_theScu.Dispose();
                         _theScu = null;
@@ -393,9 +409,17 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                 	_theScu.ImageStoreCompleted += delegate(Object sender, StorageInstance instance)
                 	                               	{
-                	                               		StorageScu scu = (StorageScu) sender;
-                	                               		DicomMessage msg = new DicomMessage();
+                	                               		var scu = (StorageScu) sender;
+                	                               		var msg = new DicomMessage();
                 	                               		DicomStatus status;
+
+                                                        if (instance.SendStatus.Status == DicomState.Failure)
+                                                        {
+                                                            errorComment =
+                                                                string.IsNullOrEmpty(instance.ExtendedFailureDescription)
+                                                                    ? instance.SendStatus.ToString()
+                                                                    : instance.ExtendedFailureDescription;
+                                                        }
 
                 	                               		if (scu.RemainingSubOperations == 0)
                 	                               		{
@@ -403,18 +427,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 	                               			{
                 	                               				if ((sop.SendStatus.Status != DicomState.Success)
                 	                               				    && (sop.SendStatus.Status != DicomState.Warning))
-                	                               					msg.DataSet[DicomTags.FailedSopInstanceUidList].
-                	                               						AppendString(
-                	                               						sop.SopInstanceUid);
+                	                               					msg.DataSet[DicomTags.FailedSopInstanceUidList].AppendString(sop.SopInstanceUid);
                 	                               			}
                 	                               			if (scu.Status == ScuOperationStatus.Canceled)
                 	                               				status = DicomStatuses.Cancel;
                 	                               			else if (scu.Status == ScuOperationStatus.ConnectFailed)
                 	                               				status = DicomStatuses.QueryRetrieveMoveDestinationUnknown;
                 	                               			else if (scu.FailureSubOperations > 0)
-                	                               				status =
-                	                               					DicomStatuses.
-                	                               						QueryRetrieveSubOpsOneOrMoreFailures;
+                	                               				status = DicomStatuses.QueryRetrieveSubOpsOneOrMoreFailures;
 															else if (!bOnline)
 																status = DicomStatuses.QueryRetrieveUnableToPerformSuboperations;
                 	                               			else
@@ -428,35 +448,49 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 	                               				return;
                 	                               			// Only send a RSP every 5 to reduce network load
                 	                               		}
-                	                               		server.SendCMoveResponse(presentationID, message.MessageId,
-                	                               		                         msg, status,
-                	                               		                         (ushort) scu.SuccessSubOperations,
-                	                               		                         (ushort) scu.RemainingSubOperations,
-                	                               		                         (ushort) scu.FailureSubOperations,
-                	                               		                         (ushort) scu.WarningSubOperations);
+                	                               	    server.SendCMoveResponse(presentationID, message.MessageId,
+                	                               	                             msg, status,
+                	                               	                             (ushort) scu.SuccessSubOperations,
+                	                               	                             (ushort) scu.RemainingSubOperations,
+                	                               	                             (ushort) scu.FailureSubOperations,
+                	                               	                             (ushort) scu.WarningSubOperations,
+                                                                                 status == DicomStatuses.QueryRetrieveSubOpsOneOrMoreFailures
+                	                               	                                 ? errorComment
+                	                               	                                 : string.Empty);
+                	                               	    
+                	                               	    
                 	                               		if (scu.RemainingSubOperations == 0)
                 	                               			finalResponseSent = true;
                 	                               	};
 
-                	_theScu.AssociationAccepted += delegate(Object sender, AssociationParameters parms)
-                	                               	{
-                	                               		AssociationAuditLogger.BeginInstancesTransferAuditLogger(
-                	                               			_theScu.StorageInstanceList,
-                	                               			parms);
-                	                               	};
+                    _theScu.AssociationAccepted +=
+                        (sender, parms) => AssociationAuditLogger.BeginInstancesTransferAuditLogger(
+                            _theScu.StorageInstanceList,
+                            parms);
 					
                     _theScu.BeginSend(
                         delegate(IAsyncResult ar)
                         	{
 								if (_theScu != null)
 								{
+                                    if (!finalResponseSent)
+                                    {
+                                        var msg = new DicomMessage();
+                                        server.SendCMoveResponse(presentationID, message.MessageId,
+                                                                 msg, DicomStatuses.QueryRetrieveSubOpsOneOrMoreFailures,
+                                                                 (ushort) _theScu.SuccessSubOperations,
+                                                                 0,
+                                                                 (ushort) (_theScu.FailureSubOperations + _theScu.RemainingSubOperations),
+                                                                 (ushort) _theScu.WarningSubOperations, errorComment);
+                                        finalResponseSent = true;
+                                    }
+
 									_theScu.EndSend(ar);
 									_theScu.Dispose();
 									_theScu = null;
 								}
                         	},
                         _theScu);
-
 
                     return true;
                 } // end using()
@@ -469,13 +503,15 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     try
                     {
                         server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
-												 DicomStatuses.QueryRetrieveUnableToProcess);
+                                                 DicomStatuses.QueryRetrieveUnableToProcess, e.Message);
+                        finalResponseSent = true;
                     }
                     catch (Exception x)
                     {
                         Platform.Log(LogLevel.Error, x,
                                      "Unable to send final C-MOVE-RSP message on association from {0} to {1}",
                                      association.CallingAE, association.CalledAE);
+                        server.Abort();
                     }
                 }
             }

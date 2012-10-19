@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -50,6 +50,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 				ResumeLayout(false);
 			}
 
+			// System.Component.DesignMode does not work in control constructors
+			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
+			{
+				InitializeLocales();
+			}
+		}
+
+		private void InitializeLocales()
+		{
 			AvailableLocales = new List<InstalledLocales.Locale>(InstalledLocales.Instance.Locales).AsReadOnly();
 			AvailableCultures = CollectionUtils.Map<InstalledLocales.Locale, CultureInfo>(AvailableLocales, x => x.GetCultureInfo()).AsReadOnly();
 			DefaultLocale = InstalledLocales.Instance.Default;

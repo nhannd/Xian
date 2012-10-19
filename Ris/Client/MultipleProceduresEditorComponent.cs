@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -37,19 +38,22 @@ namespace ClearCanvas.Ris.Client
 		private readonly List<ProcedureRequisition> _requisitions;
 
 		private bool _isScheduledTimeEditable;
+		private bool _isScheduledDurationEditable;
 		private bool _isPerformingFacilityEditable;
 		private bool _isPerformingDepartmentEditable;
 		private bool _isLateralityEditable;
 		private bool _isSchedulingCodeEditable;
 		private bool _isPortableEditable;
 		private bool _isCheckedInEditable;
+		private bool _isModalityEditable;
 
 		public MultipleProceduresEditorComponent(List<ProcedureRequisition> requisitions,
 			List<FacilitySummary> facilityChoices,
 			List<DepartmentSummary> departmentChoices,
+			List<ModalitySummary> modalityChoices,
 			List<EnumValueInfo> lateralityChoices,
 			List<EnumValueInfo> schedulingCodeChoices)
-			: base(facilityChoices, departmentChoices, lateralityChoices, schedulingCodeChoices)
+			: base(facilityChoices, departmentChoices, modalityChoices, lateralityChoices, schedulingCodeChoices)
 		{
 			Platform.CheckForNullReference(requisitions, "requisitions");
 
@@ -72,14 +76,30 @@ namespace ClearCanvas.Ris.Client
 					return this.IsCheckedInEditable ? ValidateCheckInTime() : new ValidationResult(true, "");
 				}));
 
+			// This validation shows the icon beside the modality if it's being edited
+			this.Validation.Add(new ValidationRule("SelectedModality",
+				delegate
+				{
+					return this.IsModalityEditable ? ValidateModalityAndFacility("Modality is not valid for performing facility.") : new ValidationResult(true, "");
+				}));
+
+			// This validation shows the icon beside the facility if it's being edited
+			this.Validation.Add(new ValidationRule("SelectedFacility",
+				delegate
+				{
+					return this.IsPerformingFacilityEditable ? ValidateModalityAndFacility("Performing facility is not valid for all procedures' modalities.") : new ValidationResult(true, "");
+				}));
+
 			base.Start();
 		}
 
 		protected override void LoadFromRequisition()
 		{
 			this.ScheduledTime = GetCommonValue(_requisitions, r => r.ScheduledTime);
+			this.ScheduledDuration = GetCommonValue(_requisitions, r => r.ScheduledDuration);
 			this.SelectedFacility = GetCommonValue(_requisitions, r => r.PerformingFacility);
 			this.SelectedDepartment = GetCommonValue(_requisitions, r => r.PerformingDepartment);
+			this.SelectedModality = GetCommonValue(_requisitions, r => r.Modality);
 			this.SelectedLaterality = GetCommonValue(_requisitions, r => r.Laterality);
 			this.SelectedSchedulingCode = GetCommonValue(_requisitions, r => r.SchedulingCode);
 			this.PortableModality = GetCommonValue(_requisitions, r => r.PortableModality);
@@ -93,11 +113,17 @@ namespace ClearCanvas.Ris.Client
 				if (_isScheduledTimeEditable)
 					requisition.ScheduledTime = this.ScheduledTime;
 
+				if (_isScheduledDurationEditable)
+					requisition.ScheduledDuration = this.ScheduledDuration;
+
 				if (_isPerformingFacilityEditable)
 					requisition.PerformingFacility = this.SelectedFacility;
 
 				if (_isPerformingDepartmentEditable)
 					requisition.PerformingDepartment = this.SelectedDepartment;
+
+				if (_isModalityEditable)
+					requisition.Modality = this.SelectedModality;
 
 				if (_isLateralityEditable)
 					requisition.Laterality = this.SelectedLaterality;
@@ -121,6 +147,12 @@ namespace ClearCanvas.Ris.Client
 			set { _isScheduledTimeEditable = value; }
 		}
 
+		public override bool IsScheduledDurationEditable
+		{
+			get { return _isScheduledDurationEditable; }
+			set { _isScheduledDurationEditable = value; }
+		}
+
 		public override bool IsPerformingFacilityEditable
 		{
 			get { return _isPerformingFacilityEditable; }
@@ -131,6 +163,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			get { return _isPerformingDepartmentEditable; }
 			set { _isPerformingDepartmentEditable = value; }
+		}
+
+		public override bool IsModalityEditable
+		{
+			get { return _isModalityEditable; }
+			set { _isModalityEditable = value; }
 		}
 
 		public override bool IsLateralityEditable
@@ -201,5 +239,18 @@ namespace ClearCanvas.Ris.Client
 
 			return new ValidationResult(true, string.Empty);
 		}
+
+		private ValidationResult ValidateModalityAndFacility(string message)
+		{
+			// Here, we exploit the knowledge that all procedures must have the same performing facility
+			// to simplify the validation logic.  Either the Modality is editable, in which case all
+			// procedures will have that modality and we just test it against selected facility, or it is not editable,
+			// in which case we need to test the modality of each procedure.
+			var valid = IsModalityEditable ? 
+				IsModalityValidForFacility(this.SelectedModality, this.SelectedFacility)
+				: _requisitions.All(r => IsModalityValidForFacility(r.Modality, this.SelectedFacility));
+			return new ValidationResult(valid, message);
+		}
+
 	}
 }

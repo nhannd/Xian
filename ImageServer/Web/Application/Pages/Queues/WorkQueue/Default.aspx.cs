@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Security.Permissions;
 using System.Web.UI;
 using ClearCanvas.ImageServer.Common.Exceptions;
@@ -19,7 +20,6 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit;
-using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
@@ -30,11 +30,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
     [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.WorkQueue.Search)]
     public partial class Default : BasePage
     {
-
-        #region Private members
-        private readonly Dictionary<string, SearchPanel> _partitionPanelMap = new Dictionary<string, SearchPanel>();
-        #endregion
-
         /// <summary>
         /// Sets/Gets a value which indicates whether auto refresh is on
         /// </summary>
@@ -44,8 +39,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             {
                 if (ViewState["AutoRefresh"] == null)
                     return false;
-                else
-                    return (bool)ViewState["AutoRefresh"];
+                return (bool)ViewState["AutoRefresh"];
             }
             set
             {
@@ -60,8 +54,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             {
                 if (ViewState["RefreshRate"] == null)
                     return WorkQueueSettings.Default.NormalRefreshIntervalSeconds;
-                else
-                    return (int)ViewState["RefreshRate"];
+                return (int)ViewState["RefreshRate"];
             }
             set { ViewState["RefreshRate"] = value; }
         }
@@ -69,7 +62,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         #region Protected Methods
 
         protected void Page_Load(object sender, EventArgs e)
-        {
+        {         
+            SearchPanel.ServerPartition = ServerPartitionSelector.SelectedPartition;
+        
             string controlName = Request.Params.Get("__EVENTTARGET");
             if(controlName != null && controlName.Equals(RefreshRateTextBox.ClientID))
             {
@@ -80,47 +75,33 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            RefreshTimer.AutoDisabled += new EventHandler<TimerEventArgs>(RefreshTimer_AutoDisabled);
+            SearchPanel.EnclosingPage = this;
+
+            RefreshTimer.AutoDisabled += RefreshTimer_AutoDisabled;
             ConfirmRescheduleDialog.Confirmed += ConfirmationContinueDialog_Confirmed;
             ScheduleWorkQueueDialog.WorkQueueUpdated += ScheduleWorkQueueDialog_OnWorkQueueUpdated;
             ScheduleWorkQueueDialog.OnShow += DisableRefresh;
-            ScheduleWorkQueueDialog.OnHide += delegate() { 
-                RefreshTimer.Reset(AutoRefresh); 
-                ServerPartitionTabs.UpdateCurrentPartition();
-            };
-            ScheduleWorkQueueDialog.SchedulePanel.OnNoWorkQueueItems += delegate()
-                                                            {
-                                                                ScheduleWorkQueueDialog.Hide();
+            ScheduleWorkQueueDialog.OnHide += () => RefreshTimer.Reset(AutoRefresh);
 
-                                                                MessageBox.BackgroundCSS = string.Empty;
-                                                                MessageBox.Message = SR.SelectedWorkQueueNoLongerOnTheList;
-                                                                MessageBox.MessageStyle = "color: red; font-weight: bold;";
-                                                                MessageBox.MessageType =
-                                                                    Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
-
-                                                                MessageBox.Show();
-
-                                                            };
             ResetWorkQueueDialog.WorkQueueItemReseted += ResetWorkQueueDialog_WorkQueueItemReseted;
             ResetWorkQueueDialog.OnShow += DisableRefresh;
-            ResetWorkQueueDialog.OnHide += delegate() { RefreshTimer.Reset(AutoRefresh); };
+            ResetWorkQueueDialog.OnHide += () => RefreshTimer.Reset(AutoRefresh);
             DeleteWorkQueueDialog.WorkQueueItemDeleted += DeleteWorkQueueDialog_WorkQueueItemDeleted;
             DeleteWorkQueueDialog.OnShow += DisableRefresh;
-            DeleteWorkQueueDialog.OnHide += delegate() { RefreshTimer.Reset(AutoRefresh); };
+            DeleteWorkQueueDialog.OnHide += () => RefreshTimer.Reset(AutoRefresh);
             InformationDialog.OnShow += DisableRefresh;
-            InformationDialog.OnHide += delegate() { RefreshTimer.Reset(AutoRefresh); };
+            InformationDialog.OnHide += () => RefreshTimer.Reset(AutoRefresh);
 
             if (!Page.IsPostBack)
             {
                 AutoRefresh = false;
                 RefreshTimer.Enabled = false;
                 RefreshTimer.Interval = (int)TimeSpan.FromSeconds(Math.Max(WorkQueueSettings.Default.NormalRefreshIntervalSeconds, 5)).TotalMilliseconds;// min refresh rate: every 5 sec 
-                RefreshRateTextBox.Text = TimeSpan.FromMilliseconds(RefreshTimer.Interval).TotalSeconds.ToString();
+                RefreshRateTextBox.Text = TimeSpan.FromMilliseconds(RefreshTimer.Interval).TotalSeconds.ToString(CultureInfo.InvariantCulture);
             }
 
             string patientID = string.Empty;
             string patientName = string.Empty;
-            string partitionKey = string.Empty;
             string processorID = string.Empty;
             ServerPartition activePartition = null;
 
@@ -128,37 +109,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             {
                 patientID = Server.UrlDecode(Request["PatientID"]);
                 patientName = Server.UrlDecode(Request["PatientName"]);
-                partitionKey = Request["PartitionKey"];
+                string partitionKey = Request["PartitionKey"];
                 processorID = Request["ProcessorID"];
 
                 if (!string.IsNullOrEmpty(partitionKey))
                 {
-                    ServerPartitionConfigController controller = new ServerPartitionConfigController();
+                    var controller = new ServerPartitionConfigController();
                     activePartition = controller.GetPartition(new ServerEntityKey("ServerPartition", partitionKey));
                 }
             }
 
-            ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
+            ServerPartitionSelector.PartitionChanged += delegate(ServerPartition partition)
             {
-                SearchPanel panel =
-                    LoadControl("SearchPanel.ascx") as SearchPanel;
-                panel.ServerPartition = partition;
-                panel.ID = "SearchPanel_" + partition.AeTitle;
+                SearchPanel.ServerPartition = partition;
+                SearchPanel.Reset();
+            };
 
-                panel.EnclosingPage = this;
+            ServerPartitionSelector.SetUpdatePanel(PageContent);
 
-                panel.PatientNameFromUrl = patientName;
-                panel.PatientIDFromUrl = patientID;
-                panel.ProcessingServerFromUrl = processorID;
+            SearchPanel.PatientNameFromUrl = patientName;
+            SearchPanel.PatientIDFromUrl = patientID;
+            SearchPanel.ProcessingServerFromUrl = processorID;
 
-                _partitionPanelMap.Add(partition.GetKey().ToString(), panel);
-
-                return panel;
-            });
 
             if (activePartition != null)
             {
-                ServerPartitionTabs.SetActivePartition(activePartition.AeTitle);
+                ServerPartitionSelector.SelectedPartition = activePartition;
             }
 
             SetPageTitle(Titles.WorkQueuePageTitle);
@@ -219,7 +195,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             if (itemKey == null)
                 return;
 
-            WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
+            var adaptor = new WorkQueueAdaptor();
 
             Model.WorkQueue item = adaptor.Get(itemKey);
 
@@ -238,9 +214,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                     InformationDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
                     InformationDialog.Show();
                     return;
-
                 }
-                else if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed)
+
+                if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed)
                 {
                     InformationDialog.Message = SR.WorkQueueFailed_CannotReschedule;
                     InformationDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
@@ -248,11 +224,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                     return;
                 }
 
-
-                ScheduleWorkQueueDialog.WorkQueueKeys = new List<ServerEntityKey>();
-                ScheduleWorkQueueDialog.WorkQueueKeys.Add(itemKey);
+                ScheduleWorkQueueDialog.WorkQueueKeys = new List<ServerEntityKey> {itemKey};
+                ScheduleWorkQueueDialog.Reset();
                 ScheduleWorkQueueDialog.Show();
-                
             }
         }
 
@@ -279,7 +253,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             if (itemKey != null)
             {
                 Model.WorkQueue item = Model.WorkQueue.Load(itemKey);
-                WorkQueueController controller = new WorkQueueController();
+                var controller = new WorkQueueController();
                 try
                 {
                     if (controller.ReprocessWorkQueueItem(item))
@@ -321,30 +295,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         private void ScheduleWorkQueueDialog_OnWorkQueueUpdated(List<Model.WorkQueue> workqueueItems)
         {
-            List<ServerEntityKey> updatedPartitions = new List<ServerEntityKey>();
-            foreach (Model.WorkQueue item in workqueueItems)
-            {
-                ServerEntityKey partitionKey = item.ServerPartitionKey;
-                if (!updatedPartitions.Contains(partitionKey))
-                {
-                    updatedPartitions.Add(partitionKey);
-
-                    ServerPartitionTabs.Update(partitionKey);
-                }
-            }
+            SearchPanel.Refresh();
         }
 
         void ResetWorkQueueDialog_WorkQueueItemReseted(Model.WorkQueue item)
         {
-            ServerEntityKey partitionKey = item.ServerPartitionKey;
-            ServerPartitionTabs.Update(partitionKey);
+            SearchPanel.Refresh();
         }
 
         void DeleteWorkQueueDialog_WorkQueueItemDeleted(Model.WorkQueue item)
         {
-            ServerEntityKey partitionKey = item.ServerPartitionKey;
-            if (_partitionPanelMap.ContainsKey(partitionKey.ToString()))
-                _partitionPanelMap[partitionKey.ToString()].Refresh();
+            SearchPanel.Refresh();
         }
 
         void ConfirmationContinueDialog_Confirmed(object data)
@@ -377,15 +338,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         protected void RefreshTimer_Tick(object sender, EventArgs e)
         {
-            //ServerPartitionTabs.Update(true);
-            UpdatePanel updatePanel = ServerPartitionTabs.GetUserControlForCurrentPartition() as UpdatePanel;
-            
-            if(updatePanel != null)
-            {
-                ServerPartition partition = ServerPartitionTabs.GetCurrentPartition();
-                SearchPanel searchPanel = updatePanel.FindControl("SearchPanel_" + partition.AeTitle) as SearchPanel;
-                if (searchPanel != null) searchPanel.Refresh();
-            }
+            SearchPanel.Refresh();
         }
 
         protected void OnResetWorkQueueError(object sender, WorkQueueItemResetErrorEventArgs e)
@@ -393,7 +346,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
             MessageBox.Message = e.ErrorMessage;
             MessageBox.Show();
-            UpdatePanel.Update();
+            PageContent.Update();
         }
     }
 }

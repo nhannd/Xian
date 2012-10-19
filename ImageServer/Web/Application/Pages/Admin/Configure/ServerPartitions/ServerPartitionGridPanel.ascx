@@ -12,6 +12,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ServerPartitionGridPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions.ServerPartitionGridPanel" %>
 
+<%@ Register Src="~/Controls/UsersGuideLink.ascx" TagPrefix="cc" TagName="HelpLink" %>
 
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
     Width="100%">
@@ -24,7 +25,20 @@
                     <asp:BoundField DataField="AeTitle" HeaderText="<%$Resources: ColumnHeaders,AETitle %>" HeaderStyle-HorizontalAlign="Left"/>
                     <asp:BoundField DataField="Description" HeaderText="<%$Resources: ColumnHeaders, PartitionDescription %>" HeaderStyle-HorizontalAlign="Left" />
                     <asp:BoundField DataField="Port" HeaderText="<%$Resources: ColumnHeaders,Port %>" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
-                    <asp:BoundField DataField="PartitionFolder" HeaderText="<%$Resources: ColumnHeaders,PartitionFolder %>" HeaderStyle-HorizontalAlign="Left" />
+                    <asp:TemplateField>
+                        <HeaderTemplate>
+                            <div class="PartitionStorageConfigColumnContent">
+                                <%=ColumnHeaders.PartitionStorageConfiguration %>
+                               <cc:HelpLink runat="server" TopicID="Partition_Storage_Configuration" Target="_blank" />
+                            </div>
+                        </HeaderTemplate>
+                        <ItemTemplate>
+                            <div class="PartitionStorageConfigColumnContent">
+                                <asp:Label ID="PartitionStorageConfigurationLabel" runat="server" />
+                            </div>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+
                     <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders,Enabled %>">
                         <EditItemTemplate>
                             <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("Enabled") %>'></asp:TextBox>

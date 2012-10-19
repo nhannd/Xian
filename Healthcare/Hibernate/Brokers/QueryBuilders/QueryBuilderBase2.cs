@@ -71,9 +71,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 			public static readonly HqlSelect SelectProcedurePortable = new HqlSelect("rp.Portable");
 			public static readonly HqlSelect SelectProcedureLaterality = new HqlSelect("rp.Laterality");
 			public static readonly HqlSelect SelectProcedureStepState = new HqlSelect("ps.State");
-			
-			
-			
+
 			public static readonly HqlSelect SelectReport = new HqlSelect("r");
 			public static readonly HqlSelect SelectReportPart = new HqlSelect("rpp");
 			public static readonly HqlSelect SelectReportPartIndex = new HqlSelect("rpp.Index");
@@ -151,7 +149,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers.QueryBuilders
 				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.ProcedureStepName, SelectProcedureStep);
 				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.ProcedureStepState, SelectProcedureStepState);
 
-	
 				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.Report, SelectReport);
 				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.ReportPart, SelectReportPart);
 				MapWorklistItemFieldToHqlSelect.Add(WorklistItemField.ReportPartIndex, SelectReportPartIndex);

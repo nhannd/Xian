@@ -1,6 +1,6 @@
 /* License
  *
- * Copyright (c) 2011, ClearCanvas Inc.
+ * Copyright (c) 2012, ClearCanvas Inc.
  * All rights reserved.
  * http://www.clearcanvas.ca
  *
@@ -10,344 +10,300 @@
  */
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-///
 /// This script contains the javascript component class for the study search panel
-/// 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Define and register the control type.
-//
-// Only define and register the type if it doens't exist. Otherwise "... does not derive from Sys.Component" error 
-// will show up if multiple instance of the controls must be created. The error is misleading. It looks like the type 
-// is RE-define for the 2nd instance but registerClass() will fail so the type will be essential undefined when the object
-// is instantiated.
-//
-if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs']==null)
-{
-    Type.registerNamespace('ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls');
+Type.registerNamespace('ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls');
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Constructor
-    //
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs = function(element) { 
-        ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs.initializeBase(this, [element]);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Constructor
+ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs = function(element) { 
+    ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs.initializeBase(this, [element]);
        
-    }
+},
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Create the prototype for the control.
-    //
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs.prototype = 
-    {
-        initialize : function() {
-            ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs.callBaseMethod(this, 'initialize');        
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Create the prototype for the control.
+ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs.prototype = 
+{
+    initialize : function() {
+        ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs.callBaseMethod(this, 'initialize');        
             
-            this._OnLoadHandler = Function.createDelegate(this,this._OnLoad);
-            this._OnSeriesListClickedHandler = Function.createDelegate(this,this._OnSeriesListClicked);
-            this._OnViewSeriesButtonClickedHandler = Function.createDelegate(this,this._OnViewSeriesButtonClicked);
-            this._OnMoveSeriesButtonClickedHandler = Function.createDelegate(this,this._OnMoveSeriesButtonClicked);
-            this._updateToolbarButtonStates();
+        this._OnLoadHandler = Function.createDelegate(this,this._OnLoad);
+        this._OnSeriesListClickedHandler = Function.createDelegate(this,this._OnSeriesListClicked);
+        this._OnViewSeriesButtonClickedHandler = Function.createDelegate(this,this._OnViewSeriesButtonClicked);
+        this._OnMoveSeriesButtonClickedHandler = Function.createDelegate(this,this._OnMoveSeriesButtonClicked);
+        this._updateToolbarButtonStates();
             
-            Sys.Application.add_load(this._OnLoadHandler);
-                 
-        },
+        Sys.Application.add_load(this._OnLoadHandler);      
+    },
         
-        dispose : function() {
-            $clearHandlers(this.get_element());
+    dispose : function() {
+        $clearHandlers(this.get_element());
 
-            ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs.callBaseMethod(this, 'dispose');
+        ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs.callBaseMethod(this, 'dispose');
             
-            var serieslist = $find(this._SeriesListClientID);
-            if (serieslist!=null)
-            {
-                serieslist.remove_onClientRowClick(this._OnSeriesListClickedHandler);
-            }
+        var serieslist = $find(this._SeriesListClientID);
+        if (serieslist!=null)
+        {
+            serieslist.remove_onClientRowClick(this._OnSeriesListClickedHandler);
+        }
             
-            var viewSeriesBtn = $find(this._ViewSeriesButtonClientID);
-            if (viewSeriesBtn!=null)
-            {
-                viewSeriesBtn.remove_onClientClick(this._OnViewSeriesButtonClickedHandler);
-            }
+        var viewSeriesBtn = $find(this._ViewSeriesButtonClientID);
+        if (viewSeriesBtn!=null)
+        {
+            viewSeriesBtn.remove_onClientClick(this._OnViewSeriesButtonClickedHandler);
+        }
                         
-            var moveSeriesBtn = $find(this._MoveSeriesButtonClientID); 
-            if (moveSeriesBtn!=null)
-            {
-                moveSeriesBtn.remove_onClientClick(this._OnMoveSeriesButtonClickedHandler);
-            }
+        var moveSeriesBtn = $find(this._MoveSeriesButtonClientID); 
+        if (moveSeriesBtn!=null)
+        {
+            moveSeriesBtn.remove_onClientClick(this._OnMoveSeriesButtonClickedHandler);
+        }
             
-            Sys.Application.remove_load(this._OnLoadHandler);
-        },
+        Sys.Application.remove_load(this._OnLoadHandler);
+    },
         
-        
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //
-        // Events
-        //
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
-              
-        /// called whenever the page is reloaded or partially reloaded
-        _OnLoad : function()
-        {           
-            var serieslist = $find(this._SeriesListClientID);
-            if (serieslist!=null)
-            {
-                serieslist.add_onClientRowClick(this._OnSeriesListClickedHandler);
-                // serieslist.add_onClientRowDblClick(this._OnSeriesListDoubleClickedHandler);
-            }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Events
+    /// called whenever the page is reloaded or partially reloaded
+    _OnLoad : function()
+    {           
+        var serieslist = $find(this._SeriesListClientID);
+        if (serieslist!=null)
+        {
+            serieslist.add_onClientRowClick(this._OnSeriesListClickedHandler);
+            // serieslist.add_onClientRowDblClick(this._OnSeriesListDoubleClickedHandler);
+        }
             
-            var viewSeriesBtn = $find(this._ViewSeriesButtonClientID);
-            var moveSeriesBtn = $find(this._MoveSeriesButtonClientID);            
-            if (viewSeriesBtn!=null)
-            {
-                viewSeriesBtn.add_onClientClick(this._OnViewSeriesButtonClickedHandler);
-            }
-            if (moveSeriesBtn!=null)
-            {
-                moveSeriesBtn.add_onClientClick(this._OnMoveSeriesButtonClickedHandler);
-            }
-        },
-        
-        // called when the user clicks on the series list
-        _OnSeriesListClicked : function(src, event)
+        var viewSeriesBtn = $find(this._ViewSeriesButtonClientID);
+        var moveSeriesBtn = $find(this._MoveSeriesButtonClientID);            
+        if (viewSeriesBtn!=null)
         {
-            this._updateToolbarButtonStates();
-        },
-        
-        _OnViewSeriesButtonClicked : function()
+            viewSeriesBtn.add_onClientClick(this._OnViewSeriesButtonClickedHandler);
+        }
+        if (moveSeriesBtn!=null)
         {
-            var serieslist = $find(this._SeriesListClientID);
-            if (serieslist!=null)
-            {
-                var rows = serieslist.getSelectedRowElements();
-                for(i=0;i<rows.length;i++)
-                {
-                    var url = String.format("{0}?serverae={1}&studyuid={2}&seriesuid={3}", 
-                           this._OpenSeriesPageUrl,
-                           this._getServerAE(rows[i]),
-                           this._getStudyUid(rows[i]),
-                           this._getSeriesUid(rows[i]));
-                    window.open(url);
-                }
-            }
-        },
+            moveSeriesBtn.add_onClientClick(this._OnMoveSeriesButtonClickedHandler);
+        }
+    },
         
-        _updateToolbarButtonStates : function()
-        {
-            var serieslist = $find(this._SeriesListClientID);
-                      
-            this._enableDeleteButton(false);
-            this._enableMoveButton(false);
-            this._enableViewDetailsButton(false);     
-            
-            if (serieslist!=null )
-            {
-                var rows = serieslist.getSelectedRowElements();
-                
-                if (rows!=null && rows.length>0)
-                {
-                    var selectedSeriesCount = rows.length; 
-                    var canMoveCount=0;   
-		            var canDeleteCount=0;  
-		            	            
-		            for(i=0; i<rows.length; i++)
-                    {
-                        if (this._canMoveSeries(rows[i]))
-                        {
-                            canMoveCount++;
-                        }
-                        if (this._canDeleteSeries(rows[i]))
-                        {
-                            canDeleteCount++;
-                        }
-                    }
-                
-                    this._enableDeleteButton(canDeleteCount==selectedSeriesCount);
-                    this._enableMoveButton(canMoveCount==selectedSeriesCount);
-                    this._enableViewDetailsButton(true);                  
-                }
-            }
-        },
+    // called when the user clicks on the series list
+    _OnSeriesListClicked : function(src, event)
+    {
+        this._updateToolbarButtonStates();
+    },
         
-        _OnDeleteSeriesButtonClicked : function()
+    _OnViewSeriesButtonClicked : function()
+    {
+        var serieslist = $find(this._SeriesListClientID);
+        if (serieslist!=null)
         {
-            var serieslist = $find(this._SeriesListClientID);
-            if (serieslist!=null)
+            var rows = serieslist.getSelectedRowElements();
+            for(i=0;i<rows.length;i++)
             {
-                var rows = serieslist.getSelectedRowElements();
-                for(i=0;i<rows.length;i++)
-                {
-                    var url = String.format("{0}?serverae={1}&studyuid={2}&seriesuid={3}", 
-                           this._OpenSeriesPageUrl,
-                           this._getServerAE(rows[i]),
-                           this._getStudyUid(rows[i]),
-                           this._getSeriesUid(rows[i]));
-                    window.open(url);
-                }
-            }
-        },
-        
-        _OnMoveSeriesButtonClicked : function()
-        {
-            var serieslist = $find(this._SeriesListClientID);
-            if (serieslist!=null)
-            {
-                var rows = serieslist.getSelectedRowElements();
-                var urlCount = 1;
-                var url = "";
-                
-                for(i=0;i<rows.length;i++)
-                {                    
-                    var studyuid = this._getStudyUid(rows[i]);
-                    var serverae = this._getServerAE(rows[i]);
-                    var seriesuid = this._getSeriesUid(rows[i]);
-                    if (studyuid!=undefined && serverae!=undefined && seriesuid!=undefined)
-                    {
-                        if (urlCount == 1)
-                            url = String.format('{0}?serverae={1}&studyuid={2}&seriesuid{4}={3}', this._SendSeriesPageUrl, serverae, studyuid, seriesuid, urlCount);
-                        else
-                            url += String.format('&seriesuid{1}={0}', seriesuid, urlCount);
-                            
-                        urlCount++;
-                    }
-                }
-                          
+                var url = String.format("{0}?serverae={1}&studyuid={2}&seriesuid={3}", 
+                        this._OpenSeriesPageUrl,
+                        this._getServerAE(rows[i]),
+                        this._getStudyUid(rows[i]),
+                        this._getSeriesUid(rows[i]));
                 window.open(url);
             }
-        },
-        
-         _enableViewDetailsButton : function(en)
-        {
-            var viewSeriesBtn = $find(this._ViewSeriesButtonClientID);
-            if(viewSeriesBtn != null) viewSeriesBtn.set_enable(en);
-        },
-        
-         _enableMoveButton : function(en)
-        {
-            var moveSeriesBtn = $find(this._MoveSeriesButtonClientID);
-            if(moveSeriesBtn != null) moveSeriesBtn.set_enable(en);
-        },
-        
-         _enableDeleteButton : function(en)
-        {
-            var deleteSeriesBtn = $find(this._DeleteSeriesButtonClientID);
-            if(deleteSeriesBtn != null) deleteSeriesBtn.set_enable(en);
-        },
-                
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //
-        // Private Methods
-        //
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
-             
-        _getServerAE:function(row)
-        {
-            return row.getAttribute("serverae");
-        },
-        
-        _getStudyUid:function(row)
-        {
-            return row.getAttribute("studyuid");
-        },
-        
-        _getSeriesUid:function(row)
-        {
-            return row.getAttribute("seriesuid");
-        },
-        
-         _canDeleteSeries:function(row)
-        {
-            //"candelete" is a custom attribute injected by the study list control
-            return row.getAttribute('candelete')=='true';
-        },
-        
-        _canMoveSeries:function(row)
-        {
-            //"canmove" is a custom attribute injected by the study list control
-            return row.getAttribute('canmove')=='true';
-        },
-        
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //
-        // Public methods
-        //
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
-        
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //
-        // Properties
-        //
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
-        get_SeriesListClientID : function() {
-            return this._SeriesListClientID;
-        },
-
-        set_SeriesListClientID: function(value) {
-            this._SeriesListClientID = value;
-            this.raisePropertyChanged('SeriesListClientID');
-        },
-        
-        get_OpenSeriesPageUrl : function() {
-            return this._OpenSeriesPageUrl;
-        },
-
-        set_OpenSeriesPageUrl: function(value) {
-            this._OpenSeriesPageUrl = value;
-            this.raisePropertyChanged('OpenSeriesPageUrl');
-        },
-        
-        get_SendSeriesPageUrl : function() {
-            return this._SendSeriesPageUrl;
-        },
-
-        set_SendSeriesPageUrl: function(value) {
-            this._SendSeriesPageUrl = value;
-            this.raisePropertyChanged('SendSeriesPageUrl');
-        },
-        
-        get_ViewSeriesButtonClientID : function() {
-            return this._ViewSeriesButtonClientID;
-        },
-       
-        set_ViewSeriesButtonClientID : function(value) {
-            this._ViewSeriesButtonClientID = value;
-            this.raisePropertyChanged('ViewSeriesButtonClientID');
-        },
-        
-        get_MoveSeriesButtonClientID : function() {
-            return this._MoveSeriesButtonClientID;
-        },
-       
-        set_MoveSeriesButtonClientID : function(value) {
-            this._MoveSeriesButtonClientID = value;
-            this.raisePropertyChanged('MoveSeriesButtonClientID');
-        },
-        
-        get_DeleteSeriesButtonClientID : function() {
-            return this._DeleteSeriesButtonClientID;
-        },
-       
-        set_DeleteSeriesButtonClientID : function(value) {
-            this._DeleteSeriesButtonClientID = value;
-            this.raisePropertyChanged('DeleteSeriesButtonClientID');
-        },
-        
-        get_PatientBirthDateClientID : function() {
-            return this._PatientBirthDateClientID;
         }
+    },
+        
+    _updateToolbarButtonStates : function()
+    {
+        var serieslist = $find(this._SeriesListClientID);
+                      
+        this._enableDeleteButton(false);
+        this._enableMoveButton(false);
+        this._enableViewDetailsButton(false);     
+            
+        if (serieslist!=null )
+        {
+            var rows = serieslist.getSelectedRowElements();
+                
+            if (rows!=null && rows.length>0)
+            {
+                var selectedSeriesCount = rows.length; 
+                var canMoveCount=0;   
+		        var canDeleteCount=0;  
+		            	            
+		        for(i=0; i<rows.length; i++)
+                {
+                    if (this._canMoveSeries(rows[i]))
+                    {
+                        canMoveCount++;
+                    }
+                    if (this._canDeleteSeries(rows[i]))
+                    {
+                        canDeleteCount++;
+                    }
+                }
+                
+                this._enableDeleteButton(canDeleteCount==selectedSeriesCount);
+                this._enableMoveButton(canMoveCount==selectedSeriesCount);
+                this._enableViewDetailsButton(true);                  
+            }
+        }
+    },
+        
+    _OnDeleteSeriesButtonClicked : function()
+    {
+        var serieslist = $find(this._SeriesListClientID);
+        if (serieslist!=null)
+        {
+            var rows = serieslist.getSelectedRowElements();
+            for(i=0;i<rows.length;i++)
+            {
+                var url = String.format("{0}?serverae={1}&studyuid={2}&seriesuid={3}", 
+                        this._OpenSeriesPageUrl,
+                        this._getServerAE(rows[i]),
+                        this._getStudyUid(rows[i]),
+                        this._getSeriesUid(rows[i]));
+                window.open(url);
+            }
+        }
+    },
+        
+    _OnMoveSeriesButtonClicked : function()
+    {
+        var serieslist = $find(this._SeriesListClientID);
+        if (serieslist!=null)
+        {
+            var rows = serieslist.getSelectedRowElements();
+            var urlCount = 1;
+            var url = "";
+                
+            for(i=0;i<rows.length;i++)
+            {                    
+                var studyuid = this._getStudyUid(rows[i]);
+                var serverae = this._getServerAE(rows[i]);
+                var seriesuid = this._getSeriesUid(rows[i]);
+                if (studyuid!=undefined && serverae!=undefined && seriesuid!=undefined)
+                {
+                    if (urlCount == 1)
+                        url = String.format('{0}?serverae={1}&studyuid={2}&seriesuid{4}={3}', this._SendSeriesPageUrl, serverae, studyuid, seriesuid, urlCount);
+                    else
+                        url += String.format('&seriesuid{1}={0}', seriesuid, urlCount);
+                            
+                    urlCount++;
+                }
+            }          
+            window.open(url);
+        }
+    },
+        
+        _enableViewDetailsButton : function(en)
+    {
+        var viewSeriesBtn = $find(this._ViewSeriesButtonClientID);
+        if(viewSeriesBtn != null) viewSeriesBtn.set_enable(en);
+    },
+        
+        _enableMoveButton : function(en)
+    {
+        var moveSeriesBtn = $find(this._MoveSeriesButtonClientID);
+        if(moveSeriesBtn != null) moveSeriesBtn.set_enable(en);
+    },
+        
+        _enableDeleteButton : function(en)
+    {
+        var deleteSeriesBtn = $find(this._DeleteSeriesButtonClientID);
+        if(deleteSeriesBtn != null) deleteSeriesBtn.set_enable(en);
+    },
+                
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Private Methods
+    _getServerAE:function(row)
+    {
+        return row.getAttribute("serverae");
+    },
+        
+    _getStudyUid:function(row)
+    {
+        return row.getAttribute("studyuid");
+    },
+        
+    _getSeriesUid:function(row)
+    {
+        return row.getAttribute("seriesuid");
+    },
+        
+        _canDeleteSeries:function(row)
+    {
+        //"candelete" is a custom attribute injected by the study list control
+        return row.getAttribute('candelete')=='true';
+    },
+        
+    _canMoveSeries:function(row)
+    {
+        //"canmove" is a custom attribute injected by the study list control
+        return row.getAttribute('canmove')=='true';
+    },
+        
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Properties
+        
+    get_SeriesListClientID : function() {
+        return this._SeriesListClientID;
+    },
+
+    set_SeriesListClientID: function(value) {
+        this._SeriesListClientID = value;
+        this.raisePropertyChanged('SeriesListClientID');
+    },
+        
+    get_OpenSeriesPageUrl : function() {
+        return this._OpenSeriesPageUrl;
+    },
+
+    set_OpenSeriesPageUrl: function(value) {
+        this._OpenSeriesPageUrl = value;
+        this.raisePropertyChanged('OpenSeriesPageUrl');
+    },
+        
+    get_SendSeriesPageUrl : function() {
+        return this._SendSeriesPageUrl;
+    },
+
+    set_SendSeriesPageUrl: function(value) {
+        this._SendSeriesPageUrl = value;
+        this.raisePropertyChanged('SendSeriesPageUrl');
+    },
+        
+    get_ViewSeriesButtonClientID : function() {
+        return this._ViewSeriesButtonClientID;
+    },
+       
+    set_ViewSeriesButtonClientID : function(value) {
+        this._ViewSeriesButtonClientID = value;
+        this.raisePropertyChanged('ViewSeriesButtonClientID');
+    },
+        
+    get_MoveSeriesButtonClientID : function() {
+        return this._MoveSeriesButtonClientID;
+    },
+       
+    set_MoveSeriesButtonClientID : function(value) {
+        this._MoveSeriesButtonClientID = value;
+        this.raisePropertyChanged('MoveSeriesButtonClientID');
+    },
+        
+    get_DeleteSeriesButtonClientID : function() {
+        return this._DeleteSeriesButtonClientID;
+    },    
+    set_DeleteSeriesButtonClientID : function(value) {
+        this._DeleteSeriesButtonClientID = value;
+        this.raisePropertyChanged('DeleteSeriesButtonClientID');
+    },
+        
+    get_PatientBirthDateClientID : function() {
+        return this._PatientBirthDateClientID;
     }
+},
 
-    // Register the class as a type that inherits from Sys.UI.Control.
-
-    ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs.registerClass('ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs', Sys.UI.Control);
+// Register the class as a type that inherits from Sys.UI.Control.
+ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs.registerClass('ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs', Sys.UI.Control);
      
-
-    if (typeof(Sys) !== 'undefined') Sys.Application.notifyScriptLoaded();
-
-}
+if (typeof(Sys) !== 'undefined') Sys.Application.notifyScriptLoaded();

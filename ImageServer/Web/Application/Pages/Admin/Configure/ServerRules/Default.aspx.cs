@@ -30,20 +30,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
         protected override void OnInit(EventArgs e)
         {
-            ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
-                                                           {
-                                                               var panel =
-                                                                   LoadControl("ServerRulePanel.ascx") as
-                                                                   ServerRulePanel;
-                                                               if (panel != null)
-                                                               {
-                                                                   panel.ServerPartition = partition;
-                                                                   panel.ID = "ServerRulePanel_" + partition.AeTitle;
+            ServerPartitionSelector.PartitionChanged += delegate(ServerPartition partition)
+            {
+                SearchPanel.ServerPartition = partition;
+                SearchPanel.Reset();
+            };
 
-                                                                   panel.EnclosingPage = this;
-                                                               }
-                                                               return panel;
-                                                           });
+            ServerPartitionSelector.SetUpdatePanel(PageContent);
+            SearchPanel.EnclosingPage = this;
 
             ConfirmDialog.Confirmed += delegate(object data)
                                            {
@@ -54,7 +48,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
                                                _controller.DeleteServerRule(rule);
 
-                                               ServerPartitionTabs.Update(rule.ServerPartitionKey);
+                                               SearchPanel.Refresh();
                                            };
 
 
@@ -63,10 +57,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
                                                           if (AddEditServerRuleControl.EditMode)
                                                           {
                                                               // Commit the change into database
-                                                              if (_controller.UpdateServerRule(rule))
-                                                              {
-                                                              }
-                                                              else
+                                                              if (!_controller.UpdateServerRule(rule))
                                                               {
                                                                   // TODO: alert user
                                                               }
@@ -75,16 +66,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
                                                           {
                                                               // Create new device in the database
                                                               ServerRule newRule = _controller.AddServerRule(rule);
-                                                              if (newRule != null)
-                                                              {
-                                                              }
-                                                              else
+                                                              if (newRule == null)
                                                               {
                                                                   //TODO: alert user
                                                               }
                                                           }
 
-                                                          ServerPartitionTabs.Update(rule.ServerPartitionKey);
+                                                          SearchPanel.Refresh();
                                                       };
 
 
@@ -95,11 +83,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
         protected override void OnLoad(EventArgs e)
         {
+            SearchPanel.ServerPartition = ServerPartitionSelector.SelectedPartition;
+
             base.OnLoad(e);
 
             if (!Page.IsPostBack)
             {
-                ServerPartitionTabs.Update(0);
+                SearchPanel.Refresh();
             }
         }
 

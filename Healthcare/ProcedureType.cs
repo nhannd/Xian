@@ -10,31 +10,23 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.IO;
-using System.Text;
 
-using Iesi.Collections;
-using ClearCanvas.Enterprise.Core;
-using Iesi.Collections.Generic;
-using System.Xml;
-
-
-namespace ClearCanvas.Healthcare {
-
-
+namespace ClearCanvas.Healthcare
+{
     /// <summary>
     /// ProcedureType entity
     /// </summary>
 	public partial class ProcedureType
-	{
+    {
+    	private ProcedurePlan _plan;
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="id"></param>
         /// <param name="name"></param>
         public ProcedureType(string id, string name)
-            :this(id, name, null, null)
+            :this(id, name, null, null, 0)
         {
         }
 
@@ -44,34 +36,31 @@ namespace ClearCanvas.Healthcare {
         /// <param name="prototype"></param>
         public virtual void SetPlanFromPrototype(Procedure prototype)
         {
-            ProcedureBuilder builder = new ProcedureBuilder();
-            this.SetPlanXml(builder.CreatePlanFromProcedure(prototype));
+			this.Plan = ProcedurePlan.CreateFromProcedure(prototype);
         }
 
-        /// <summary>
-        /// Gets the XML representation of the procedure plan for this procedure type.
-        /// </summary>
-        public virtual XmlDocument GetPlanXml()
-        {
-            XmlDocument xmlDoc = new XmlDocument();
-            if (!string.IsNullOrEmpty(_planXml))
-                xmlDoc.LoadXml(_planXml);
-            return xmlDoc;
-        }
+		/// <summary>
+		/// Gets or sets the procedure plan.
+		/// </summary>
+    	public virtual ProcedurePlan Plan
+    	{
+    		get
+    		{
+				if (_plan == null)
+				{
+					_plan = new ProcedurePlan(_planXml);
+				}
+    			return _plan;
+    		}
+			set
+			{
+				if(value == null)
+					throw new InvalidOperationException("Value must not be null.");
 
-        /// <summary>
-        /// Sets the XML representation of the procedure plan for this procedure type.
-        /// </summary>
-        public virtual void SetPlanXml(XmlDocument value)
-        {
-            StringBuilder sb = new StringBuilder();
-            using (XmlTextWriter writer = new XmlTextWriter(new StringWriter(sb)))
-            {
-                writer.Formatting = Formatting.Indented;
-                value.Save(writer);
-                _planXml = sb.ToString();
-            }
-        }
+				_plan = value;
+				_planXml = value.ToString();
+			}
+    	}
 
         /// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom

@@ -51,8 +51,8 @@ namespace ClearCanvas.Healthcare.Workflow.Transcription
 			public void Execute(TranscriptionStep step, Staff performingStaff)
 			{
 				step.Discontinue();
-				TranscriptionStep transcriptionStep = new TranscriptionStep(step);
-				step.Procedure.AddProcedureStep(transcriptionStep);
+				var transcriptionStep = new TranscriptionStep(step);
+				transcriptionStep.Schedule(Platform.Time);
 			}
 
 			public override bool CanExecute(TranscriptionStep step, Staff currentUserStaff)
@@ -99,8 +99,7 @@ namespace ClearCanvas.Healthcare.Workflow.Transcription
 			{
 				step.Complete();
 
-				TranscriptionStep transcriptionStep = new TranscriptionStep(step);
-				step.Procedure.AddProcedureStep(transcriptionStep);
+				var transcriptionStep = new TranscriptionStep(step);
 				transcriptionStep.Assign(supervisor);
 				transcriptionStep.Schedule(Platform.Time);
 			}

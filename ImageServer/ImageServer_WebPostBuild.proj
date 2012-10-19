@@ -63,7 +63,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <PluginFiles Include="$(TrunkDirectory)\ImageServer\Web\Common\bin\$(Configuration)\System.Web.Extensions.Design.dll"/>
     <PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer.dll"/>
 		<PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer.dll"/>
 	</ItemGroup>
@@ -77,6 +76,7 @@
 		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll"/>
 		
 		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\bin\$(Configuration)\ClearCanvas.ImageViewer.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Common\bin\$(Configuration)\ClearCanvas.ImageViewer.Common.dll"/>
 		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Layout\Basic\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.dll"/>
 		
 		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Services\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.dll"/>

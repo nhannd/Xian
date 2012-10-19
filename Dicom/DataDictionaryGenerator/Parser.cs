@@ -36,22 +36,18 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
 
     public struct SopClass
     {
-        public String name;
-        public String uid;
-        public String type;
-        public String varName;
+        public String Name;
+        public String Uid;
+        public String Type;
+        public String VarName;
     }
 
     public class Parser
     {
-        public SortedList<uint, Tag> _tags = new SortedList<uint, Tag>();
-        public SortedList _sopClasses = new SortedList();
-        public SortedList _metaSopClasses = new SortedList();
-        public SortedList _tranferSyntaxes = new SortedList();
-
-        public Parser()
-        {
-        }
+        public SortedList<uint, Tag> Tags = new SortedList<uint, Tag>();
+        public SortedList SopClasses = new SortedList();
+        public SortedList MetaSopClasses = new SortedList();
+        public SortedList TranferSyntaxes = new SortedList();
 
         /// <summary>
         /// Formats to pascal.
@@ -63,7 +59,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             if (value == null)
                 return null;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             bool lastCharWasSpace = false;
             foreach (char c in value)
             {
@@ -80,7 +76,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         public static string CreateVariableName(string input)
         {
             // Now create the variable name
-            char[] charSeparators = new[] {'(', ')', ',', ' ', '\'', '�', '�', '-', '/', '&', '[', ']', '@', '.'};
+            var charSeparators = new[] {'(', ')', ',', ' ', '\'', '�', '�', '-', '/', '&', '[', ']', '@', '.'};
 
             // just remove apostrophes so casing is correct
             string tempString = input.Replace("’", ""); 
@@ -88,7 +84,9 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             tempString = tempString.Replace("(", "");
             tempString = tempString.Replace(")", "");
             tempString = tempString.Replace("–", "");
-
+            tempString = tempString.Replace("μ", "U");
+            tempString = tempString.Replace("µ", "U");
+            
             String[] nodes = tempString.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries);
 
             string output = "";
@@ -118,15 +116,16 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         public void ParseFile(String filename)
         {
             TextReader tReader = new StreamReader(filename);
-            XmlReaderSettings settings = new XmlReaderSettings();
-            settings.CheckCharacters = false;
-            settings.ValidationType = ValidationType.None;
-            settings.ConformanceLevel = ConformanceLevel.Fragment;
-            settings.IgnoreProcessingInstructions = true;
+            var settings = new XmlReaderSettings
+                               {
+                                   CheckCharacters = false,
+                                   ValidationType = ValidationType.None,
+                                   ConformanceLevel = ConformanceLevel.Fragment,
+                                   IgnoreProcessingInstructions = true
+                               };
             XmlReader reader = XmlReader.Create(tReader, settings);
-            String[] columnArray = new String[10];
+            var columnArray = new String[10];
             int colCount = -1;
-            bool isFirst = true;
             bool isTag = true;
             bool isUid = true;
             try
@@ -135,7 +134,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                 {
                     if (reader.IsStartElement())
                     {
-                        isFirst = true;
+                        bool isFirst = true;
                         if (reader.Name == "w:tbl")
                         {
                             while (reader.Read())
@@ -178,7 +177,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                                     {
                                         if (isTag)
                                         {
-                                            Tag thisTag = new Tag();
+                                            var thisTag = new Tag();
                                             if (columnArray[0] != null && columnArray[0] != "Tag")
                                             {
                                                 thisTag.tag = columnArray[0];
@@ -194,7 +193,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                                                 if (thisTag.tag[3] == 'x')
                                                     thisTag.tag = thisTag.tag.Replace("xx", "00");
 
-                                                char[] charSeparators = new char[] { '(', ')', ',', ' ' };
+                                                var charSeparators = new[] { '(', ')', ',', ' ' };
 
                                                 String[] nodes = thisTag.tag.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries);
                                                 UInt32 group, element; 
@@ -210,8 +209,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                                                      && !thisTag.varName.Equals("ItemDelimitationItem")
                                                      && !thisTag.varName.Equals("SequenceDelimitationItem")
                                                      && !thisTag.varName.Equals("GroupLength"))
-
-                                                        _tags.Add(thisTag.nTag, thisTag);
+                                                        Tags.Add(thisTag.nTag, thisTag);
                                                 }
                                             }
                                         }
@@ -220,38 +218,40 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
 
                                             if (columnArray[0] != null)
                                             {
-                                                SopClass thisUid = new SopClass();
+                                                var thisUid = new SopClass
+                                                                  {
+                                                                      Uid = columnArray[0] ?? string.Empty,
+                                                                      Name = columnArray[1] ?? string.Empty,
+                                                                      Type = columnArray[2] ?? string.Empty
+                                                                  };
 
-                                                thisUid.uid = columnArray[0] ?? string.Empty;
-                                                thisUid.name = columnArray[1] ?? string.Empty;
-                                                thisUid.type = columnArray[2] ?? string.Empty;
 
-                                                thisUid.varName = CreateVariableName(thisUid.name);
+                                                thisUid.VarName = CreateVariableName(thisUid.Name);
 
                                                 // Take out the invalid chars in the name, and replace with escape characters.
-                                                thisUid.name = SecurityElement.Escape(thisUid.name);
+                                                thisUid.Name = SecurityElement.Escape(thisUid.Name);
 
-                                                if (thisUid.type == "SOP Class")
+                                                if (thisUid.Type == "SOP Class")
                                                 {
                                                     // Handling leading digits in names
-                                                    if (thisUid.varName.Length > 0 && char.IsDigit(thisUid.varName[0]))
-                                                        thisUid.varName = "Sop" + thisUid.varName;
-                                                    _sopClasses.Add(thisUid.name, thisUid);
+                                                    if (thisUid.VarName.Length > 0 && char.IsDigit(thisUid.VarName[0]))
+                                                        thisUid.VarName = "Sop" + thisUid.VarName;
+                                                    SopClasses.Add(thisUid.Name, thisUid);
                                                 }
-                                                else if (thisUid.type == "Transfer Syntax")
+                                                else if (thisUid.Type == "Transfer Syntax")
                                                 {
-                                                    int index = thisUid.varName.IndexOf(':');
+                                                    int index = thisUid.VarName.IndexOf(':');
                                                     if (index != -1)
-                                                        thisUid.varName = thisUid.varName.Remove(index);
+                                                        thisUid.VarName = thisUid.VarName.Remove(index);
 
-                                                    _tranferSyntaxes.Add(thisUid.name, thisUid);
+                                                    TranferSyntaxes.Add(thisUid.Name, thisUid);
                                                 }
-                                                else if (thisUid.type == "Meta SOP Class")
+                                                else if (thisUid.Type == "Meta SOP Class")
                                                 {
                                                     // Handling leading digits in names
-                                                    if (thisUid.varName.Length > 0 && char.IsDigit(thisUid.varName[0]))
-                                                        thisUid.varName = "Sop" + thisUid.varName;
-                                                    _metaSopClasses.Add(thisUid.name, thisUid);
+                                                    if (thisUid.VarName.Length > 0 && char.IsDigit(thisUid.VarName[0]))
+                                                        thisUid.VarName = "Sop" + thisUid.VarName;
+                                                    MetaSopClasses.Add(thisUid.Name, thisUid);
                                                 }
                                             }
                                         }

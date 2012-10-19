@@ -13,6 +13,8 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="AddEditServerRuleDialog.ascx.cs"
 	Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules.AddEditServerRuleDialog" %>
 <%@ Import Namespace="Resources"%>
+<%@ Register Src="~/Controls/UsersGuideLink.ascx" TagPrefix="cc" TagName="HelpLink" %>
+
 
 <asp:ScriptManagerProxy runat="server">
 	<Services>
@@ -78,10 +80,12 @@
 									<td>
 										<asp:CheckBox ID="DefaultCheckBox" runat="server" Text="<%$Resources: InputLabels, ServerRuleDefaultRule %>" Checked="false"
 											ToolTip="<% $Resources: Tooltips,AdminRules_AddEditDialog_Default %>" CssClass="DialogCheckBox" />
+                                        <cc:HelpLink ID="HelpLink1" runat="server" TopicID="Rules_Engine" SubTopicID="DefaultRules" Target="_blank" />
 									</td>
 									<td>
 										<asp:CheckBox ID="ExemptRuleCheckBox" runat="server" Text="<%$Resources: InputLabels, ServerRuleExemptRule %>" Checked="false"
 											ToolTip="<%$Resources: Tooltips,AdminRules_AddEditDialog_Exempt %>" CssClass="DialogCheckBox" />
+                                         <cc:HelpLink ID="HelpLink2" runat="server" TopicID="Rules_Engine" SubTopicID="DefaultRules" Target="_blank" />
 									</td>
 									<td></td>
 								</tr>

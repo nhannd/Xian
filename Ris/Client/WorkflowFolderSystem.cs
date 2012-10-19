@@ -18,7 +18,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
@@ -153,6 +152,11 @@ namespace ClearCanvas.Ris.Client
 			public void UnregisterWorkflowService(Type serviceContract)
 			{
 				_owner.UnregisterWorkflowService(serviceContract);
+			}
+
+			public void ExecuteSearch(SearchParams searchParams)
+			{
+				_owner.ExecuteSearch(searchParams);
 			}
 		}
 
@@ -333,7 +337,15 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public virtual IApplicationComponent GetContentComponent()
+		{
+			// return null to indicate that the default Content component should be used
+			return null;
+		}
+
 		public abstract string GetPreviewUrl(IFolder folder, object[] items);
+
+		public abstract PreviewOperationAuditData[] GetPreviewAuditData(IFolder folder, object[] items);
 
 
 		public event EventHandler TitleChanged
@@ -449,7 +461,6 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
-
 
 		#region Protected API
 
@@ -927,9 +938,14 @@ namespace ClearCanvas.Ris.Client
 
 		#region Overrides
 
-		public override string GetPreviewUrl(IFolder folder, object[] items)
+		public sealed override string GetPreviewUrl(IFolder folder, object[] items)
 		{
 			return GetPreviewUrl((WorkflowFolder)folder, CollectionUtils.Cast<TItem>(items));
+		}
+
+		public sealed override PreviewOperationAuditData[] GetPreviewAuditData(IFolder folder, object[] items)
+		{
+			return GetPreviewAuditData((WorkflowFolder)folder, CollectionUtils.Cast<TItem>(items));
 		}
 
 		/// <summary>
@@ -1020,6 +1036,15 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="items"></param>
 		/// <returns></returns>
 		protected abstract string GetPreviewUrl(WorkflowFolder folder, ICollection<TItem> items);
+
+		/// <summary>
+		/// Called to obtain the preview audit data for the specified folder and items.
+		/// </summary>
+		/// <param name="folder"></param>
+		/// <param name="items"></param>
+		/// <returns></returns>
+		protected abstract PreviewOperationAuditData[] GetPreviewAuditData(WorkflowFolder folder, ICollection<TItem> items);
+
 
 		/// <summary>
 		/// Called once to instantiate the item tool context.

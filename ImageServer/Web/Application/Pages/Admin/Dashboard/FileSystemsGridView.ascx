@@ -15,6 +15,11 @@
 
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
     Width="100%">
+     <asp:TableRow VerticalAlign="top">
+        <asp:TableCell VerticalAlign="top">
+            <ccAsp:GridPager ID="GridPagerTop" runat="server" />   
+        </asp:TableCell>
+    </asp:TableRow>
     <asp:TableRow VerticalAlign="top">
         <asp:TableCell VerticalAlign="top">
             <ccUI:GridView ID="FSGridView" runat="server" OnRowDataBound="FSGridView_RowDataBound" 

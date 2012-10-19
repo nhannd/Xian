@@ -61,6 +61,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			this._wadoServicePort.DataBindings.Add("Text", _component, "WadoServicePort", true, DataSourceUpdateMode.OnPropertyChanged);
 			this._headerServicePort.DataBindings.Add("Enabled", _component, "IsStreaming", true, DataSourceUpdateMode.OnPropertyChanged);
 			this._wadoServicePort.DataBindings.Add("Enabled", _component, "IsStreaming", true, DataSourceUpdateMode.OnPropertyChanged);
+			this._isPriorsServer.DataBindings.Add("Checked", _component, "IsPriorsServer", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		void OnPortBindingFormat(object sender, ConvertEventArgs e)

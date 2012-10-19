@@ -48,5 +48,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_component = new PerformingDocumentationComponent(_item);
 			return _component;
 		}
+
+		public override OpenWorkspaceOperationAuditData GetAuditData()
+		{
+			return new OpenWorkspaceOperationAuditData("Performing", _item);
+		}
 	}
 }

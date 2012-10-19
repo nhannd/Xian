@@ -9,25 +9,12 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Core;
-
 namespace ClearCanvas.Healthcare.Brokers
 {
     /// <summary>
     /// Custom broker that provides Accession numbers.
     /// </summary>
-    public interface IAccessionNumberBroker : IPersistenceBroker
+	public interface IAccessionNumberBroker : ISequenceBroker
     {
-		/// <summary>
-		/// Peeks at the next number in the sequence, but does not advance the sequence.
-		/// </summary>
-		/// <returns></returns>
-    	string PeekNext();
-
-		/// <summary>
-		/// Gets the next number in the sequence, advancing the sequence by 1.
-		/// </summary>
-		/// <returns></returns>
-		string GetNext();
     }
 }

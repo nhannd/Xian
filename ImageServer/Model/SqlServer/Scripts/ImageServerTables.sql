@@ -75,6 +75,7 @@ CREATE TABLE [dbo].[ServerPartition](
 	[MatchPatientsBirthDate] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchPatientsBirthDate]  DEFAULT ((1)),
 	[MatchPatientsName] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchPatientsName]  DEFAULT ((1)),
 	[MatchPatientsSex] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchPatientsSex]  DEFAULT ((1)),
+	[AcceptLatestReport] bit NOT NULL CONSTRAINT [DF_ServerPartition_AcceptLatestReport] DEFAULT ((1)),
  CONSTRAINT [PK_ServerPartition] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
@@ -1366,7 +1367,11 @@ CREATE CLUSTERED INDEX [IX_StudyHistory] ON [dbo].[StudyHistory]
 	[StudyStorageGUID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 GO
-
+CREATE NONCLUSTERED INDEX IX_StudyHistory_DestStudyStorageGUID ON dbo.StudyHistory
+	(
+	DestStudyStorageGUID
+	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON INDEXES
+GO
 
 /****** Object:  Table [dbo].[StudyHistoryTypeEnum]    Script Date: 09/26/2008 23:49:11 ******/
 SET ANSI_NULLS ON

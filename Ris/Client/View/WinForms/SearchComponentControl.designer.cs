@@ -70,12 +70,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._searchButton = new System.Windows.Forms.Button();
 			this._clearButton = new System.Windows.Forms.Button();
 			this._outerFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.panel2 = new System.Windows.Forms.Panel();
-			this._showDeactivatedChoices = new System.Windows.Forms.CheckBox();
 			this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._diagnosticService = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._procedureType = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this._showDeactivatedChoices = new System.Windows.Forms.CheckBox();
+			this.panel2 = new System.Windows.Forms.Panel();
 			this._outerFlowLayoutPanel.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.panel2.SuspendLayout();
@@ -179,7 +179,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._keepOpen.Name = "_keepOpen";
 			this._keepOpen.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
 			this._keepOpen.Size = new System.Drawing.Size(109, 23);
-			this._keepOpen.TabIndex = 0;
+			this._keepOpen.TabIndex = 1;
 			this._keepOpen.Text = "Keep dialog open";
 			this._keepOpen.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this._keepOpen.UseVisualStyleBackColor = true;
@@ -221,40 +221,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._outerFlowLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._outerFlowLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this._outerFlowLayoutPanel.Name = "_outerFlowLayoutPanel";
-			this._outerFlowLayoutPanel.Size = new System.Drawing.Size(431, 283);
+			this._outerFlowLayoutPanel.Size = new System.Drawing.Size(455, 300);
 			this._outerFlowLayoutPanel.TabIndex = 0;
-			// 
-			// panel1
-			// 
-			this.panel1.Controls.Add(this._showDeactivatedChoices);
-			this.panel1.Controls.Add(this._keepOpen);
-			this.panel1.Location = new System.Drawing.Point(2, 232);
-			this.panel1.Margin = new System.Windows.Forms.Padding(2);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(206, 49);
-			this.panel1.TabIndex = 10;
-			// 
-			// panel2
-			// 
-			this.panel2.Controls.Add(this._clearButton);
-			this.panel2.Controls.Add(this._searchButton);
-			this.panel2.Location = new System.Drawing.Point(212, 232);
-			this.panel2.Margin = new System.Windows.Forms.Padding(2);
-			this.panel2.Name = "panel2";
-			this.panel2.Size = new System.Drawing.Size(206, 49);
-			this.panel2.TabIndex = 11;
-			// 
-			// _showDeactivatedChoices
-			// 
-			this._showDeactivatedChoices.AutoSize = true;
-			this._showDeactivatedChoices.Location = new System.Drawing.Point(4, 1);
-			this._showDeactivatedChoices.Name = "_showDeactivatedChoices";
-			this._showDeactivatedChoices.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
-			this._showDeactivatedChoices.Size = new System.Drawing.Size(201, 23);
-			this._showDeactivatedChoices.TabIndex = 1;
-			this._showDeactivatedChoices.Text = "Include inactive items in filter choices";
-			this._showDeactivatedChoices.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this._showDeactivatedChoices.UseVisualStyleBackColor = true;
 			// 
 			// _orderingPractitioner
 			// 
@@ -286,6 +254,38 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._procedureType.TabIndex = 7;
 			this._procedureType.Value = null;
 			// 
+			// panel1
+			// 
+			this.panel1.Controls.Add(this._showDeactivatedChoices);
+			this.panel1.Controls.Add(this._keepOpen);
+			this.panel1.Location = new System.Drawing.Point(2, 232);
+			this.panel1.Margin = new System.Windows.Forms.Padding(2);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(206, 49);
+			this.panel1.TabIndex = 10;
+			// 
+			// _showDeactivatedChoices
+			// 
+			this._showDeactivatedChoices.AutoSize = true;
+			this._showDeactivatedChoices.Location = new System.Drawing.Point(4, 1);
+			this._showDeactivatedChoices.Name = "_showDeactivatedChoices";
+			this._showDeactivatedChoices.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
+			this._showDeactivatedChoices.Size = new System.Drawing.Size(201, 23);
+			this._showDeactivatedChoices.TabIndex = 0;
+			this._showDeactivatedChoices.Text = "Include inactive items in filter choices";
+			this._showDeactivatedChoices.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this._showDeactivatedChoices.UseVisualStyleBackColor = true;
+			// 
+			// panel2
+			// 
+			this.panel2.Controls.Add(this._clearButton);
+			this.panel2.Controls.Add(this._searchButton);
+			this.panel2.Location = new System.Drawing.Point(212, 232);
+			this.panel2.Margin = new System.Windows.Forms.Padding(2);
+			this.panel2.Name = "panel2";
+			this.panel2.Size = new System.Drawing.Size(206, 49);
+			this.panel2.TabIndex = 11;
+			// 
 			// SearchComponentControl
 			// 
 			this.AcceptButton = this._searchButton;
@@ -294,7 +294,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._outerFlowLayoutPanel);
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "SearchComponentControl";
-			this.Size = new System.Drawing.Size(431, 283);
+			this.Size = new System.Drawing.Size(455, 300);
 			this._outerFlowLayoutPanel.ResumeLayout(false);
 			this.panel1.ResumeLayout(false);
 			this.panel1.PerformLayout();

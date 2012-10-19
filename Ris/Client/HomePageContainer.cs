@@ -36,24 +36,31 @@ namespace ClearCanvas.Ris.Client
 	public class HomePageContainer : SplitComponentContainer, ISearchDataHandler
 	{
 		private readonly FolderExplorerGroupComponent _folderSystemGroup;
+		private readonly StackedComponentContainer _contentArea;
+
+		// default content component consists of the FolderContents and a preview pane
+		private readonly SplitComponentContainer _defaultContentComponent;
 		private readonly FolderContentsComponent _folderContentComponent;
 		private readonly IPreviewComponent _previewComponent;
 
 		public HomePageContainer(List<IFolderSystem> folderSystems, IPreviewComponent preview)
-			: base(Desktop.SplitOrientation.Vertical)
+			: base(SplitOrientation.Vertical)
 		{
 			_folderContentComponent = new FolderContentsComponent();
-			_previewComponent = preview;
 			_folderSystemGroup = new FolderExplorerGroupComponent(folderSystems, _folderContentComponent);
 
-			// Construct the home page
-			SplitComponentContainer contentAndPreview = new SplitComponentContainer(
-				new SplitPane("Folder Contents", _folderContentComponent, 0.4f),
-				new SplitPane("Content Preview", _previewComponent, 0.6f),
+			// Construct the default content view
+			_previewComponent = preview;
+			_defaultContentComponent = new SplitComponentContainer(
+				new SplitPane("FolderItems", _folderContentComponent, 0.4f),
+				new SplitPane("ItemPreview", _previewComponent, 0.6f),
 				SplitOrientation.Vertical);
 
+			_contentArea = new StackedComponentContainer();
+			_contentArea.Show(_defaultContentComponent);
+
 			this.Pane1 = new SplitPane("Folders", _folderSystemGroup, 0.2f);
-			this.Pane2 = new SplitPane("Contents", contentAndPreview, 0.8f);
+			this.Pane2 = new SplitPane("Contents", _contentArea, 0.8f);
 		}
 
 		#region ISearchDataHandler implementation
@@ -94,29 +101,52 @@ namespace ClearCanvas.Ris.Client
 			base.Stop();
 		}
 
-		private void SelectedItemsChangedEventHandler(object sender, System.EventArgs e)
+		private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
 		{
+			var selectedItems = _folderContentComponent.SelectedItems.Items;
 			// update the preview component url whenever the selected items change,
 			// regardless of whether the folder system has changed or not
 			// this should help to guarantee that the correct preview page is always displayed
-			string url = _folderSystemGroup.SelectedFolderExplorer.SelectedFolder is WorkflowFolder
-			             	? _folderSystemGroup.SelectedFolderExplorer.FolderSystem.GetPreviewUrl(
-			             			_folderSystemGroup.SelectedFolderExplorer.SelectedFolder,
-			             			_folderContentComponent.SelectedItems.Items)
+			var selectedExplorer = _folderSystemGroup.SelectedFolderExplorer;
+			var url = selectedExplorer.SelectedFolder is WorkflowFolder
+							? selectedExplorer.FolderSystem.GetPreviewUrl(selectedExplorer.SelectedFolder, selectedItems)
 			             	: null;
 
-			_previewComponent.SetPreviewItems(url, _folderContentComponent.SelectedItems.Items);
+			_previewComponent.SetPreviewItems(url, selectedItems);
+
+			if(selectedExplorer.SelectedFolder != null && selectedItems.Length > 0)
+			{
+				AuditHelper.FolderItemPreviewed(selectedExplorer.SelectedFolder, selectedItems);
+			}
 		}
 
-		private void OnSelectedFolderSystemChanged(object sender, System.EventArgs e)
+		private void OnSelectedFolderSystemChanged(object sender, EventArgs e)
 		{
-			_folderContentComponent.FolderSystem = _folderSystemGroup.SelectedFolderExplorer.FolderSystem;
-			_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolderExplorer.SelectedFolder;
+			var selectedFolderExplorer = _folderSystemGroup.SelectedFolderExplorer;
+			var customContentComponent = selectedFolderExplorer.GetContentComponent();
+			if(customContentComponent != null)
+			{
+				// this folder system has a custom content component, so display it
+				_contentArea.Show(customContentComponent);
+			}
+			else
+			{
+				// this folder system uses the default folder content component, so we just
+				// need to update it to reflect current selection
+				_folderContentComponent.FolderSystem = selectedFolderExplorer.FolderSystem;
+				_folderContentComponent.SelectedFolder = selectedFolderExplorer.SelectedFolder;
+				_contentArea.Show(_defaultContentComponent);
+			}
 		}
 
-		private void OnSelectedFolderChanged(object sender, System.EventArgs e)
+		private void OnSelectedFolderChanged(object sender, EventArgs e)
 		{
-			_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolderExplorer.SelectedFolder;
+			var selectedFolderExplorer = _folderSystemGroup.SelectedFolderExplorer;
+			var customContentComponent = selectedFolderExplorer.GetContentComponent();
+			if (customContentComponent == null)
+			{
+				_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolderExplorer.SelectedFolder;
+			}
 		}
 	}
 }

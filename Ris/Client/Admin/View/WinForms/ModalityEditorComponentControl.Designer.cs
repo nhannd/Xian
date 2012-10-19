@@ -64,6 +64,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._acceptButton = new System.Windows.Forms.Button();
 			this._dicomModality = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._aeTitle = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._facility = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this.SuspendLayout();
 			// 
 			// _id
@@ -95,10 +97,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// _cancelButton
 			// 
 			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._cancelButton.Location = new System.Drawing.Point(213, 147);
+			this._cancelButton.Location = new System.Drawing.Point(213, 242);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 4;
+			this._cancelButton.TabIndex = 6;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -106,10 +108,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// _acceptButton
 			// 
 			this._acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._acceptButton.Location = new System.Drawing.Point(132, 147);
+			this._acceptButton.Location = new System.Drawing.Point(132, 242);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
-			this._acceptButton.TabIndex = 3;
+			this._acceptButton.TabIndex = 5;
 			this._acceptButton.Text = "OK";
 			this._acceptButton.UseVisualStyleBackColor = true;
 			this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
@@ -127,19 +129,47 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._dicomModality.TabIndex = 2;
 			this._dicomModality.Value = null;
 			// 
+			// _aeTitle
+			// 
+			this._aeTitle.LabelText = "AE Title";
+			this._aeTitle.Location = new System.Drawing.Point(2, 147);
+			this._aeTitle.Margin = new System.Windows.Forms.Padding(2);
+			this._aeTitle.Mask = "";
+			this._aeTitle.Name = "_aeTitle";
+			this._aeTitle.PasswordChar = '\0';
+			this._aeTitle.Size = new System.Drawing.Size(288, 41);
+			this._aeTitle.TabIndex = 3;
+			this._aeTitle.ToolTip = null;
+			this._aeTitle.Value = null;
+			// 
+			// _facility
+			// 
+			this._facility.DataSource = null;
+			this._facility.DisplayMember = "";
+			this._facility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._facility.LabelText = "Facility";
+			this._facility.Location = new System.Drawing.Point(4, 192);
+			this._facility.Margin = new System.Windows.Forms.Padding(2);
+			this._facility.Name = "_facility";
+			this._facility.Size = new System.Drawing.Size(286, 39);
+			this._facility.TabIndex = 4;
+			this._facility.Value = null;
+			// 
 			// ModalityEditorComponentControl
 			// 
 			this.AcceptButton = this._acceptButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._cancelButton;
+			this.Controls.Add(this._facility);
+			this.Controls.Add(this._aeTitle);
 			this.Controls.Add(this._dicomModality);
 			this.Controls.Add(this._name);
 			this.Controls.Add(this._id);
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._acceptButton);
 			this.Name = "ModalityEditorComponentControl";
-			this.Size = new System.Drawing.Size(316, 181);
+			this.Size = new System.Drawing.Size(316, 276);
 			this.ResumeLayout(false);
 
         }
@@ -151,5 +181,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.TextField _name;
         private ClearCanvas.Desktop.View.WinForms.TextField _id;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _dicomModality;
+		private Desktop.View.WinForms.TextField _aeTitle;
+		private Desktop.View.WinForms.ComboBoxField _facility;
     }
 }

@@ -38,9 +38,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         public EnumValueInfo CancelReason;
 
         /// <summary>
-        /// Requisition for replacement order.
+        /// Requisition for replacement order.  The value of <see cref="OrderRequisition.OrderRef"/> should be null.
         /// </summary>
         [DataMember]
         public OrderRequisition Requisition;
-    }
+	}
 }

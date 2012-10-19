@@ -21,10 +21,16 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 	public class OrderRequisition : DataContractBase
 	{
 		/// <summary>
+		/// Reference to an existing order, or null for new orders.
+		/// </summary>
+		[DataMember]
+		public EntityRef OrderRef;
+
+		/// <summary>
 		/// Patient for which procedures are being ordered. Required for new orders. Ignored for order modification.
 		/// </summary>
 		[DataMember]
-		public EntityRef Patient;
+		public PatientProfileSummary Patient;
 
 		/// <summary>
 		/// Visit with which the order is associated. Required.
@@ -88,7 +94,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		/// A list of attachments for this order.  Optional.
 		/// </summary>
 		[DataMember]
-		public List<OrderAttachmentSummary> Attachments;
+		public List<AttachmentSummary> Attachments;
 
 		/// <summary>
 		/// A list of notes for this order.  Optional.
@@ -116,5 +122,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		{
 			get { return !string.IsNullOrEmpty(DowntimeAccessionNumber); }
 		}
+
+		/// <summary>
+		/// Set by the server to indicate whether this order can be modified
+		/// (e.g. it cannot be modified if it is already in-progress).
+		/// </summary>
+		[DataMember]
+		public bool CanModify;
+
 	}
 }

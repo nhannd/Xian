@@ -53,7 +53,7 @@ namespace ClearCanvas.Healthcare
 		/// <summary>
 		/// Factory method to create a new order.
 		/// </summary>
-		public static Order NewOrder(OrderCreationArgs args, IProcedureNumberBroker procedureNumberBroker)
+		public static Order NewOrder(OrderCreationArgs args, IProcedureNumberBroker procedureNumberBroker, IDicomUidBroker dicomUidBroker)
 		{
 			// validate required members are set
 			Platform.CheckMemberIsSet(args.Patient, "Patient");
@@ -87,7 +87,7 @@ namespace ClearCanvas.Healthcare
 				// create procedures according to the diagnostic service plan
 				args.Procedures = CollectionUtils.Map<ProcedureType, Procedure>(
 					args.DiagnosticService.ProcedureTypes,
-					type => new Procedure(type, procedureNumberBroker.GetNext())
+					type => new Procedure(type, procedureNumberBroker.GetNext(), dicomUidBroker.GetNewUid())
 								{
 									PerformingFacility = args.PerformingFacility ?? args.OrderingFacility
 								});
@@ -139,6 +139,19 @@ namespace ClearCanvas.Healthcare
 		#endregion
 
 		#region Public properties
+
+		/// <summary>
+		/// Priority
+		/// </summary>
+		public virtual OrderPriority Priority
+		{
+			get { return _priority; }
+			set
+			{
+				_priority = value;
+				_priorityRank = (int) value;
+			}
+		}
 
 		/// <summary>
 		/// Gets a value indicating whether this order is in a terminal state.
@@ -220,19 +233,6 @@ namespace ClearCanvas.Healthcare
 			}
 			return false;
 		}
-
-		/// <summary>
-		/// Schedules all procedures in this order for the specified start time.
-		/// </summary>
-		/// <param name="startTime"></param>
-		public virtual void Schedule(DateTime? startTime)
-		{
-			foreach (var procedure in _procedures)
-			{
-				procedure.Schedule(startTime);
-			}
-		}
-
 
 		/// <summary>
 		/// Check to see if merge is possible.
@@ -396,6 +396,7 @@ namespace ClearCanvas.Healthcare
 					new List<OrderAttachment>(),
 					_reasonForStudy,
 					_priority,
+					(int)_priority,
 					OrderStatus.SC,
 					null,
 					null,

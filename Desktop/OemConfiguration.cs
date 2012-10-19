@@ -10,6 +10,8 @@
 #endregion
 
 using System;
+using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
@@ -47,6 +49,8 @@ namespace ClearCanvas.Desktop
 
 		public string ProductName { get; private set; }
 
+		public Color GlyphColor { get; private set; }
+
 		public void ReadXml(XmlReader reader)
 		{
 			reader.MoveToContent();
@@ -59,6 +63,10 @@ namespace ClearCanvas.Desktop
 					if (reader.Name == @"ProductName" && !reader.IsEmptyElement)
 					{
 						ProductName = reader.ReadElementString();
+					}
+					else if (reader.Name == @"GlyphColor" && !reader.IsEmptyElement)
+					{
+						GlyphColor = ParseColor(reader.ReadElementString());
 					}
 					else
 					{
@@ -74,11 +82,41 @@ namespace ClearCanvas.Desktop
 		public void WriteXml(XmlWriter writer)
 		{
 			writer.WriteElementString(@"ProductName", ProductName);
+			writer.WriteElementString(@"GlyphColor", FormatColor(GlyphColor));
 		}
 
 		XmlSchema IXmlSerializable.GetSchema()
 		{
 			return null;
+		}
+
+		private static string FormatColor(Color color)
+		{
+			if (color.IsNamedColor) return color.Name;
+
+			var colorValue = (uint) color.ToArgb();
+			return color.A == 255 ? string.Format("#{0:X6}", colorValue & 0x00FFFFFF) : string.Format("#{0:X8}", colorValue);
+		}
+
+		private static Color ParseColor(string value)
+		{
+			if (!string.IsNullOrEmpty(value))
+			{
+				if (value[0] == '#') value = value.Substring(1); // drop the # prefix used in HTML/CSS
+
+				int argb;
+				if (int.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out argb))
+				{
+					var color = Color.FromArgb(argb);
+					if (value.Length < 7) color = Color.FromArgb(255, color); // if less than 7 characters, assume alpha of 255 (full opacity)
+					return color;
+				}
+
+				// try parsing as a known color - if not known, the ARGB value will be 0
+				var knownColor = Color.FromName(value);
+				if (knownColor.ToArgb() != 0) return knownColor;
+			}
+			return Color.Empty;
 		}
 	}
 }

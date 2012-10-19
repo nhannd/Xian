@@ -9,9 +9,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Authorization;
 using ClearCanvas.Desktop.Explorer;
@@ -19,47 +16,6 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local
 {
-    [ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint), Enabled = false)]
-	internal class DefineAuthorityGroups : IDefineAuthorityGroups
-	{
-		#region IDefineAuthorityGroups Members
-
-		/// <summary>
-		/// Get the authority group definitions.
-		/// </summary>
-		public AuthorityGroupDefinition[] GetAuthorityGroups()
-		{
-			return new AuthorityGroupDefinition[]
-            {
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
-				    new string[] 
-				    {
-						AuthorityTokens.MyComputer
-				   }),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.Technologists,
-                    new string[] 
-                    {
-						AuthorityTokens.MyComputer
-					}),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
-                    new string[] 
-                    {
-						AuthorityTokens.MyComputer
-					}),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
-                    new string[] 
-                    {
-						AuthorityTokens.MyComputer
-					})
-            };
-		}
-
-		#endregion
-	}
-	
 	public static class AuthorityTokens
 	{
 		[AuthorityToken(Description = "Grant access to the 'My Computer' explorer.")]

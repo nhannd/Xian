@@ -38,6 +38,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 		private WorkQueueProcessor _theProcessor;
 		private readonly int _threadCount;
 		private static bool _reset = false;
+        private readonly TimeSpan _retryDelay = TimeSpan.FromMinutes(2);
 		#endregion
 
 		#region Constructors
@@ -94,7 +95,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 		/// </summary>
 		public static void ResetFailedItems()
 		{
-			WorkQueueSettings settings = WorkQueueSettings.Instance;
+			var settings = WorkQueueSettings.Instance;
 
 			WorkQueueStatusEnum pending = WorkQueueStatusEnum.Pending;
 			WorkQueueStatusEnum failed = WorkQueueStatusEnum.Failed;
@@ -168,16 +169,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
                     {
                         extension.OnInitializing(this);
                     }
-                    catch (WorkQueueInitializationException ex)
+                    catch (Exception ex)
                     {
-                        bool logException = !AttributeUtils.HasAttribute<ExceptionLogAdviceAttribute>(extension.GetType())
-                            || (!AttributeUtils.GetAttribute<ExceptionLogAdviceAttribute>(extension.GetType()).Suppress);
-
-                        if (logException)
-                        {
-                            Platform.Log(LogLevel.Error, ex, "Unable to initializating work queue server manager");
-                        }
-                        this.ThreadRetryDelay = (int) ex.RetryDelay.TotalMilliseconds;
+                        this.ThreadRetryDelay = (int) _retryDelay.TotalMilliseconds;
                         return false;
                     }
                 }
@@ -206,37 +200,5 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 		#endregion
 
 	}
-
-    /// <summary>
-    /// Represents exception thrown during initialization of the work queue processor
-    /// </summary>
-    public class WorkQueueInitializationException : Exception
-    {
-        /// <summary>
-        /// Gets the minimum amount of time during which the caller 
-        /// should not attempt to initialize the work queue processor
-        /// </summary>
-        public TimeSpan RetryDelay { get; private set;}
-
-        public WorkQueueInitializationException(string error, TimeSpan retryDelay):
-            base(error)
-        {
-            RetryDelay = retryDelay;
-        }
-
-    }
-
-    public interface IWorkQueueManagerExtensionPoint 
-    {
-        /// <summary>
-        /// Called when work queue processor is being initialized
-        /// </summary>
-        /// <exception cref="WorkQueueInitializationException"></exception>
-        void OnInitializing(WorkQueueServerManager manager);
-    }
-
-    [ExtensionPoint]
-    public class WorkQueueManagerExtensionPoint : ExtensionPoint<IWorkQueueManagerExtensionPoint>
-    {
-    }
+    
 }

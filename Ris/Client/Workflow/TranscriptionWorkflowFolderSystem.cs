@@ -9,11 +9,14 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
@@ -39,17 +42,28 @@ namespace ClearCanvas.Ris.Client.Workflow
 		: ReportingWorkflowFolderSystemBase<TranscriptionWorkflowFolderExtensionPoint, TranscriptionWorkflowFolderToolExtensionPoint,
 			TranscriptionWorkflowItemToolExtensionPoint>
 	{
+		private readonly WorkflowConfigurationReader _workflowConfiguration;
+
 		public TranscriptionWorkflowFolderSystem()
 			: base(SR.TitleTranscriptionFolderSystem)
 		{
+			_workflowConfiguration = new WorkflowConfigurationReader();
+			if(!_workflowConfiguration.EnableTranscriptionWorkflow)
+				throw new NotSupportedException("Transcription workflow has been disabled in the system configuration.");
 		}
 
 		protected override void AddDefaultFolders()
 		{
-			this.Folders.Add(new Folders.Transcription.ToBeReviewedFolder());
+
+			if (_workflowConfiguration.EnableTranscriptionReviewWorkflow)
+			{
+				this.Folders.Add(new Folders.Transcription.ToBeReviewedFolder());
+			}
+
 			this.Folders.Add(new Folders.Transcription.DraftFolder());
 
-			if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview))
+			if (_workflowConfiguration.EnableTranscriptionReviewWorkflow &&
+				Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview))
 				this.Folders.Add(new Folders.Transcription.AwaitingReviewFolder());
 
 			this.Folders.Add(new Folders.Transcription.CompletedFolder());
@@ -58,6 +72,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<ReportingWorklistItemSummary> items)
 		{
 			return WebResourcesSettings.Default.TranscriptionFolderSystemUrl;
+		}
+
+		protected override PreviewOperationAuditData[] GetPreviewAuditData(WorkflowFolder folder, ICollection<ReportingWorklistItemSummary> items)
+		{
+			return items.Select(item => new PreviewOperationAuditData("Transcription", item)).ToArray();
 		}
 
 		protected override SearchResultsFolder CreateSearchResultsFolder()

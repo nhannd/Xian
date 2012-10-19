@@ -10,13 +10,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 using ClearCanvas.Desktop.Validation;
 
@@ -43,8 +41,8 @@ namespace ClearCanvas.Ris.Client
 		private DiagnosticServiceDetail _editedItemDetail;
 		private DiagnosticServiceSummary _editedItemSummary;
 
-		private ProcedureTypeSummaryTable _availableDiagnosticServices;
-		private ProcedureTypeSummaryTable _selectedDiagnosticServices;
+		private ProcedureTypeSummaryTable _availableProcedureTypes;
+		private ProcedureTypeSummaryTable _selectedProcedureTypes;
 
 		public DiagnosticServiceEditorComponent()
 		{
@@ -59,42 +57,35 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			_availableDiagnosticServices = new ProcedureTypeSummaryTable();
-			_selectedDiagnosticServices = new ProcedureTypeSummaryTable();
+			_availableProcedureTypes = new ProcedureTypeSummaryTable();
+			_selectedProcedureTypes = new ProcedureTypeSummaryTable();
 
 			Platform.GetService<IDiagnosticServiceAdminService>(
-				delegate(IDiagnosticServiceAdminService service)
-				{
-					LoadDiagnosticServiceEditorFormDataResponse formDataResponse =
-						service.LoadDiagnosticServiceEditorFormData(new LoadDiagnosticServiceEditorFormDataRequest());
-					_availableDiagnosticServices.Items.AddRange(formDataResponse.ProcedureTypeChoices);
-
-					if (_isNew)
+				service =>
 					{
-						_editedItemDetail = new DiagnosticServiceDetail();
-					}
-					else
-					{
-						LoadDiagnosticServiceForEditResponse response =
-							service.LoadDiagnosticServiceForEdit(
-								new LoadDiagnosticServiceForEditRequest(_editedItemEntityRef));
+						var formDataResponse =
+							service.LoadDiagnosticServiceEditorFormData(new LoadDiagnosticServiceEditorFormDataRequest());
+						_availableProcedureTypes.Items.AddRange(formDataResponse.ProcedureTypeChoices);
 
-						_editedItemDetail = response.DiagnosticService;
-						_selectedDiagnosticServices.Items.AddRange(_editedItemDetail.ProcedureTypes);
-					}
+						if (_isNew)
+						{
+							_editedItemDetail = new DiagnosticServiceDetail();
+						}
+						else
+						{
+							var response = service.LoadDiagnosticServiceForEdit(new LoadDiagnosticServiceForEditRequest(_editedItemEntityRef));
 
-					foreach (ProcedureTypeSummary selectedSummary in _selectedDiagnosticServices.Items)
-					{
-						_availableDiagnosticServices.Items.Remove(selectedSummary);
-					}
-				});
+							_editedItemDetail = response.DiagnosticService;
+							_selectedProcedureTypes.Items.AddRange(_editedItemDetail.ProcedureTypes);
+						}
+
+						foreach (var selectedSummary in _selectedProcedureTypes.Items)
+						{
+							_availableProcedureTypes.Items.Remove(selectedSummary);
+						}
+					});
 
 			base.Start();
-		}
-
-		public override void Stop()
-		{
-			base.Stop();
 		}
 
 		public DiagnosticServiceSummary DiagnosticServiceSummary
@@ -131,68 +122,14 @@ namespace ClearCanvas.Ris.Client
 			get { return this.Modified; }
 		}
 
-		public ITable AvailableDiagnosticServices
+		public ITable AvailableProcedureTypes
 		{
-			get { return _availableDiagnosticServices; }
+			get { return _availableProcedureTypes; }
 		}
 
-		public ITable SelectedDiagnosticServices
+		public ITable SelectedProcedureTypes
 		{
-			get { return _selectedDiagnosticServices; }
-		}
-
-		#endregion
-
-		public void Accept()
-		{
-			if (this.HasValidationErrors)
-			{
-				this.ShowValidation(true);
-			}
-			else
-			{
-				try
-				{
-					Platform.GetService<IDiagnosticServiceAdminService>(
-						delegate(IDiagnosticServiceAdminService service)
-						{
-							if (_isNew)
-							{
-								_editedItemDetail.ProcedureTypes.AddRange(_selectedDiagnosticServices.Items);
-								AddDiagnosticServiceResponse response =
-									service.AddDiagnosticService(new AddDiagnosticServiceRequest(_editedItemDetail));
-								_editedItemEntityRef = response.DiagnosticService.DiagnosticServiceRef;
-								_editedItemSummary = response.DiagnosticService;
-							}
-							else
-							{
-								_editedItemDetail.ProcedureTypes.Clear();
-								_editedItemDetail.ProcedureTypes.AddRange(_selectedDiagnosticServices.Items);
-								UpdateDiagnosticServiceResponse response =
-									service.UpdateDiagnosticService(new UpdateDiagnosticServiceRequest(_editedItemDetail));
-								_editedItemEntityRef = response.DiagnosticService.DiagnosticServiceRef;
-								_editedItemSummary = response.DiagnosticService;
-							}
-						});
-
-					this.Exit(ApplicationComponentExitCode.Accepted);
-				}
-				catch (Exception e)
-				{
-					ExceptionHandler.Report(e, SR.ExceptionSaveDiagnosticService, this.Host.DesktopWindow,
-						delegate()
-						{
-							this.ExitCode = ApplicationComponentExitCode.Error;
-							this.Host.Exit();
-						});
-				}
-			}
-		}
-
-		public void Cancel()
-		{
-			this.ExitCode = ApplicationComponentExitCode.None;
-			Host.Exit();
+			get { return _selectedProcedureTypes; }
 		}
 
 		public event EventHandler AcceptEnabledChanged
@@ -205,5 +142,61 @@ namespace ClearCanvas.Ris.Client
 		{
 			this.Modified = true;
 		}
+
+		public void Accept()
+		{
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+				return;
+			}
+
+			// can't seem to get validation working on the ListItemSelector control that is bound here,
+			// so quick fix is we just manually check and show a message box
+			if(_selectedProcedureTypes.Items.Count == 0)
+			{
+				this.Host.ShowMessageBox(SR.MessageDiagnosticServiceMustHaveAssociatedProcedureTypes, MessageBoxActions.Ok);
+				return;
+			}
+
+			try
+			{
+				Platform.GetService<IDiagnosticServiceAdminService>(
+					service =>
+						{
+							if (_isNew)
+							{
+								_editedItemDetail.ProcedureTypes.AddRange(_selectedProcedureTypes.Items);
+								var response = service.AddDiagnosticService(new AddDiagnosticServiceRequest(_editedItemDetail));
+								_editedItemEntityRef = response.DiagnosticService.DiagnosticServiceRef;
+								_editedItemSummary = response.DiagnosticService;
+							}
+							else
+							{
+								_editedItemDetail.ProcedureTypes.Clear();
+								_editedItemDetail.ProcedureTypes.AddRange(_selectedProcedureTypes.Items);
+								var response = service.UpdateDiagnosticService(new UpdateDiagnosticServiceRequest(_editedItemDetail));
+								_editedItemEntityRef = response.DiagnosticService.DiagnosticServiceRef;
+								_editedItemSummary = response.DiagnosticService;
+							}
+						});
+
+				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, SR.ExceptionSaveDiagnosticService, this.Host.DesktopWindow,
+				                        () => Exit(ApplicationComponentExitCode.Error));
+			}
+		}
+
+		public void Cancel()
+		{
+			this.ExitCode = ApplicationComponentExitCode.None;
+			Host.Exit();
+		}
+
+		#endregion
+
 	}
 }

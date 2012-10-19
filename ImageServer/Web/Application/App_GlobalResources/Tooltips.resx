@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AdminFilesystem_DiskUsage" xml:space="preserve">
     <value>Current Usage   : {0}%
@@ -235,5 +235,8 @@ Low Watermark  : {2}%</value>
   </data>
   <data name="SearchByResponsiblePerson" xml:space="preserve">
     <value>Search the list by owner (Responsible Person)</value>
+  </data>
+  <data name="AdminPartition_AddEditDialog_AcceptLatestReport" xml:space="preserve">
+    <value>Enable/Disable always replacing duplicate reports with the latest received.  When enabled, the duplicate SOP policy is overridden. </value>
   </data>
 </root>

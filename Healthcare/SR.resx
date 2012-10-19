@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AccessionNumber" xml:space="preserve">
     <value>Accession Number</value>
@@ -327,20 +327,8 @@
   <data name="ProcedureTypeGroup" xml:space="preserve">
     <value>Procedure Type Group</value>
   </data>
-  <data name="ProtocollingAdminAssignedWorklist" xml:space="preserve">
-    <value>Active Protocolling Items</value>
-  </data>
-  <data name="ProtocollingAdminAssignedWorklistDescription" xml:space="preserve">
-    <value>Lists active procedures that are currently in protocolling by a radiologist.</value>
-  </data>
   <data name="ReadingGroup" xml:space="preserve">
     <value>Reading Group</value>
-  </data>
-  <data name="RegistrationAsapPendingProtocolWorklist" xml:space="preserve">
-    <value>Pending Protocol ASAP</value>
-  </data>
-  <data name="RegistrationAsapPendingProtocolWorklistDescription" xml:space="preserve">
-    <value>Lists procedures that have been scheduled and need to be protocoled ASAP.</value>
   </data>
   <data name="RegistrationCancelledWorklist" xml:space="preserve">
     <value>Cancelled</value>
@@ -390,12 +378,6 @@
   <data name="RegistrationScheduledWorklistDescription" xml:space="preserve">
     <value>Lists scheduled procedures.</value>
   </data>
-  <data name="RegistrationToBeScheduledWorklist" xml:space="preserve">
-    <value>To be Scheduled</value>
-  </data>
-  <data name="RegistrationToBeScheduledWorklistDescription" xml:space="preserve">
-    <value>Lists procedures that need to be scheduled.</value>
-  </data>
   <data name="RelevanceGroup" xml:space="preserve">
     <value>Relevance Group</value>
   </data>
@@ -429,23 +411,11 @@
   <data name="ReportingReviewTranscriptionWorklistDescription" xml:space="preserve">
     <value>Lists procedures with transcriptions that need to be reviewed.</value>
   </data>
-  <data name="ReportingToBeProtocolledWorklist" xml:space="preserve">
-    <value>To be Protocolled</value>
-  </data>
-  <data name="ReportingToBeProtocolledWorklistDescription" xml:space="preserve">
-    <value>Lists procedures that need to be protocoled.</value>
-  </data>
   <data name="ReportingToBeReportedWorklist" xml:space="preserve">
     <value>To be Reported</value>
   </data>
   <data name="ReportingToBeReportedWorklistDescription" xml:space="preserve">
     <value>Lists procedures that need to be reported.</value>
-  </data>
-  <data name="ReportingToBeReviewedProtocolWorklist" xml:space="preserve">
-    <value>To be Reviewed</value>
-  </data>
-  <data name="ReportingToBeReviewedProtocolWorklistDescription" xml:space="preserve">
-    <value>Lists procedures with protocols that need to be reviewed.</value>
   </data>
   <data name="ReportingToBeReviewedReportWorklist" xml:space="preserve">
     <value>To be Reviewed</value>
@@ -510,17 +480,8 @@
   <data name="Visit" xml:space="preserve">
     <value>Visit</value>
   </data>
-  <data name="WorklistCategoryBooking" xml:space="preserve">
-    <value>Booking</value>
-  </data>
-  <data name="WorklistCategoryEmergency" xml:space="preserve">
-    <value>Emergency</value>
-  </data>
   <data name="WorklistCategoryPerforming" xml:space="preserve">
     <value>Performing</value>
-  </data>
-  <data name="WorklistCategoryProtocoling" xml:space="preserve">
-    <value>Protocoling</value>
   </data>
   <data name="WorklistCategoryRadiologistAdmin" xml:space="preserve">
     <value>Radiologist Admin</value>
@@ -584,5 +545,23 @@
   </data>
   <data name="MessageValidateInformationAuthorityForVisitAndPerformingFacilities" xml:space="preserve">
     <value>Visit must have the same information authority as the performing facility.</value>
+  </data>
+  <data name="MessageValidateProcedurePerformingFacilityAndModalities" xml:space="preserve">
+    <value>A procedure's performing modalities must belong to its performing facility.</value>
+  </data>
+  <data name="InterpretationStep" xml:space="preserve">
+    <value>Interpretation</value>
+  </data>
+  <data name="MessageValidateVerifiedReportIsNotBlank" xml:space="preserve">
+    <value>Report contents cannot be empty.</value>
+  </data>
+  <data name="PublicationStep" xml:space="preserve">
+    <value>Publication</value>
+  </data>
+  <data name="TranscriptionStep" xml:space="preserve">
+    <value>Transcription</value>
+  </data>
+  <data name="VerificationStep" xml:space="preserve">
+    <value>Verification</value>
   </data>
 </root>

@@ -14,52 +14,6 @@ using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 {
-    [ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint), Enabled = false)]
-	internal class DefineAuthorityGroups : IDefineAuthorityGroups
-	{
-		#region IDefineAuthorityGroups Members
-
-		/// <summary>
-		/// Get the authority group definitions.
-		/// </summary>
-		public AuthorityGroupDefinition[] GetAuthorityGroups()
-		{
-			return new AuthorityGroupDefinition[]
-			       	{
-			       		new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
-			       		                             new string[]
-			       		                             	{
-			       		                             		AuthorityTokens.StudyFilters,
-			       		                             		AuthorityTokens.Study.Export,
-			       		                             		AuthorityTokens.Study.Anonymize
-			       		                             	}),
-			       		new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
-			       		                             new string[]
-			       		                             	{
-			       		                             		AuthorityTokens.StudyFilters,
-			       		                             		AuthorityTokens.Study.Export,
-			       		                             		AuthorityTokens.Study.Anonymize
-			       		                             	}),
-			       		new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
-			       		                             new string[]
-			       		                             	{
-			       		                             		AuthorityTokens.StudyFilters,
-			       		                             		AuthorityTokens.Study.Export,
-			       		                             		AuthorityTokens.Study.Anonymize
-			       		                             	}),
-			       		new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
-			       		                             new string[]
-			       		                             	{
-			       		                             		AuthorityTokens.StudyFilters,
-			       		                             		AuthorityTokens.Study.Export,
-			       		                             		AuthorityTokens.Study.Anonymize
-			       		                             	})
-			       	};
-		}
-
-		#endregion
-	}
-
 	public static class AuthorityTokens
 	{
 		[AuthorityToken(Description = "Grant access to the Study Filters.")]

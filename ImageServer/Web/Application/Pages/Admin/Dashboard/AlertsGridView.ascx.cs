@@ -21,7 +21,7 @@ using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
-
+using SR = Resources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 {
@@ -37,7 +37,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 
         #region Private members
         // list of studies to display
-        private AlertItemCollection _alertCollection;
         private Unit _height;
         private AlertDataSource _dataSource;
         #endregion Private members
@@ -82,7 +81,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
         /// <summary>
         /// Gets/Sets the current selected device.
         /// </summary>
-        public IList<Model.Alert> SelectedItems
+        public IList<Alert> SelectedItems
         {
             get
             {
@@ -95,7 +94,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
                 if (rows == null || rows.Length == 0)
                     return null;
 
-                IList<Alert> queueItems = new List<Model.Alert>();
+                var queueItems = new List<Alert>();
                 for (int i = 0; i < rows.Length; i++)
                 {
                     if (rows[i] < AlertItems.Count)
@@ -111,17 +110,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
         /// <summary>
         /// Gets/Sets the list of Alert Items
         /// </summary>
-        public AlertItemCollection AlertItems
-        {
-            get
-            {
-                return _alertCollection;
-            }
-            set
-            {
-                _alertCollection = value;
-            }
-        }
+        public AlertItemCollection AlertItems { get; set; }
 
         /// <summary>
         /// Gets/Sets the height of the study list panel
@@ -132,8 +121,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
             {
                 if (ContainerTable != null)
                     return ContainerTable.Height;
-                else
-                    return _height;
+                return _height;
             }
             set
             {
@@ -154,8 +142,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
                 {
                     return AlertItems[SelectedAlertKey];
                 }
-                else
-                    return null;
+                return null;
             }
             set
             {
@@ -186,6 +173,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 
             TheGrid = AlertGrid;
 
+            GridPagerTop.InitializeGridPager(SR.GridPagerAlertSingleItemFound, SR.GridPagerAlertMultipleItemsFound, AlertGrid,
+                                             () => ResultCount, ImageServerConstants.GridViewPagerPosition.Top);
+            Pager = GridPagerTop;
+            GridPagerTop.Reset();
+
             // Set up the grid
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
@@ -211,8 +203,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
             {
                 if (row.RowType == DataControlRowType.DataRow)
                 {                   
-                    AlertSummary alert = e.Row.DataItem as AlertSummary;
-                    Label level = e.Row.FindControl("Level") as Label;
+                    var alert = e.Row.DataItem as AlertSummary;
+                    var level = e.Row.FindControl("Level") as Label;
                    
                     if(level != null && alert != null)
                     {
@@ -222,7 +214,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
                         }
                         level.Text = alert.Level;
 
-                        LinkButton appLogLink = e.Row.FindControl("AppLogLink") as LinkButton;
+                        var appLogLink = e.Row.FindControl("AppLogLink") as LinkButton;
 
 
                         int timeRange = int.Parse(ConfigurationManager.AppSettings["AlertTimeRange"]);
@@ -241,7 +233,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 
                     if (alert.ContextData!=null)
                     {
-                        AlertHoverPopupDetails ctrl =
+                        var ctrl =
                        Page.LoadControl("AlertHoverPopupDetails.ascx") as AlertHoverPopupDetails;
 
                         ctrl.Alert = alert;

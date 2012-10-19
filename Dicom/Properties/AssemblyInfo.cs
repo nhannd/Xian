@@ -32,6 +32,8 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("1abe4325-fe45-4aaa-9bef-2646c15a27d8")]
 
+[assembly: ClearCanvas.Common.Plugin]
+
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version

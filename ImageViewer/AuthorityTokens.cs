@@ -9,117 +9,10 @@
 
 #endregion
 
-using ClearCanvas.Common;
 using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.ImageViewer
 {
-	/// <summary>
-	/// Default authority groups.
-	/// </summary>
-	public class DefaultAuthorityGroups
-	{
-		/// <summary>
-		/// Healthcare Administrators authority group.
-		/// </summary>
-		public const string HealthcareAdministrators = "Healthcare Administrators";
-
-		/// <summary>
-		/// Clerical authority group.
-		/// </summary>
-		public const string Clerical = "Clerical";
-
-		/// <summary>
-		/// Technologists authority group.
-		/// </summary>
-		public const string Technologists = "Technologists";
-
-		/// <summary>
-		/// Radiologists authority group.
-		/// </summary>
-		public const string Radiologists = "Radiologists";
-
-		/// <summary>
-		/// Radiology Residents authority group.
-		/// </summary>
-		public const string RadiologyResidents = "Radiology Residents";
-
-		/// <summary>
-		/// Emergency Physicians authority group.
-		/// </summary>
-		public const string EmergencyPhysicians = "Emergency Physicians";
-	}
-
-    [ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint), Enabled = false)]
-	internal class DefineAuthorityGroups : IDefineAuthorityGroups
-	{
-		#region IDefineAuthorityGroups Members
-
-		/// <summary>
-		/// Get the authority group definitions.
-		/// </summary>
-		public AuthorityGroupDefinition[] GetAuthorityGroups()
-		{
-		    return new AuthorityGroupDefinition[]
-		               {
-		                   new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
-		                                                DefaultAuthorityGroups.HealthcareAdministrators,
-		                                                false,
-		                                                new string[]
-		                                                    {
-		                                                        AuthorityTokens.ViewerVisible,
-		                                                        AuthorityTokens.Study.Open
-		                                                    }),
-
-		                   new AuthorityGroupDefinition(DefaultAuthorityGroups.Clerical,
-		                                                DefaultAuthorityGroups.Clerical,
-		                                                false,
-		                                                new string[]
-		                                                    {
-		                                                        AuthorityTokens.ViewerVisible
-		                                                    }),
-
-		                   new AuthorityGroupDefinition(DefaultAuthorityGroups.Technologists,
-		                                                DefaultAuthorityGroups.Technologists,
-		                                                false,
-		                                                new string[]
-		                                                    {
-		                                                        AuthorityTokens.ViewerVisible,
-		                                                        AuthorityTokens.Study.Open
-		                                                    }),
-
-		                   new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
-		                                                DefaultAuthorityGroups.Radiologists,
-		                                                false,
-		                                                new string[]
-		                                                    {
-		                                                        AuthorityTokens.ViewerVisible,
-		                                                        AuthorityTokens.Study.Open
-		                                                    }),
-
-		                   new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
-		                                                DefaultAuthorityGroups.RadiologyResidents,
-		                                                false,
-		                                                new string[]
-		                                                    {
-		                                                        AuthorityTokens.ViewerVisible,
-		                                                        AuthorityTokens.Study.Open
-		                                                    }),
-
-		                   new AuthorityGroupDefinition(DefaultAuthorityGroups.EmergencyPhysicians,
-		                                                DefaultAuthorityGroups.EmergencyPhysicians,
-		                                                false,
-		                                                new string[]
-		                                                    {
-		                                                        AuthorityTokens.ViewerVisible,
-		                                                        AuthorityTokens.Study.Open
-		                                                    })
-		               };
-		}
-
-		#endregion
-	}
-
 	/// <summary>
 	/// Common viewer authority tokens.
 	/// </summary>
@@ -141,6 +34,49 @@ namespace ClearCanvas.ImageViewer
 			/// </summary>
 			[AuthorityToken(Description = "Permission to open a study in the viewer.")]
 			public const string Open = "Viewer/Study/Open";
-		}
+
+            [AuthorityToken(Description = "Permission to send a study to another DICOM device (e.g. another workstation or PACS).")]
+            public const string Send = "Viewer/Study/Send";
+
+            [AuthorityToken(Description = "Permission to delete a study from the local store.")]
+            public const string Delete = "Viewer/Study/Delete";
+
+            [AuthorityToken(Description = "Permission to retrieve a study to the local store.")]
+            public const string Retrieve = "Viewer/Study/Retrieve";
+
+            [AuthorityToken(Description = "Permission to import study data into the local store.")]
+            public const string Import = "Viewer/Study/Import";
+        }
+
+	    public class ActivityMonitor
+	    {
+            [AuthorityToken(Description = "Permission to view the Activity Monitor.")]
+            public const string View = "Viewer/Activity Monitor/View";
+            
+            public class WorkItems
+            {
+                [AuthorityToken(Description = "Permission to stop a work item.")]
+                public const string Stop = "Viewer/Activity Monitor/Work Items/Stop";
+
+                [AuthorityToken(Description = "Permission to restart a work item.")]
+                public const string Restart = "Viewer/Activity Monitor/Work Items/Restart";
+
+                [AuthorityToken(Description = "Permission to delete a work item.")]
+                public const string Delete = "Viewer/Activity Monitor/Work Items/Delete";
+
+                [AuthorityToken(Description = "Permission to stat or re-prioritize work items.")]
+                public const string Prioritize = "Viewer/Activity Monitor/Work Items/Prioritize";
+            }
+        }
+
+
+	    public static class Administration
+	    {
+	        [AuthorityToken(Description = "Permission to re-index the local file store.", Formerly = "Viewer/Administration/Reindex Local Data Store")]
+	        public const string ReIndex = "Viewer/Administration/Re-index";
+
+	        [AuthorityToken(Description = "Allow administration of the viewer services (e.g. Start/Stop/Restart).")]
+	        public const string Services = "Viewer/Administration/Services";
+	    }
 	}
 }

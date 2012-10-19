@@ -12,10 +12,34 @@
 using System;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming.WebStation
 {
+    [ExtensionOf(typeof(ServiceNodeServiceProviderExtensionPoint), Enabled = false)]
+    internal class StudyLoaderServiceProvider : ServiceNodeServiceProvider
+    {
+        private bool IsStreamingServiceNode
+        {
+            get
+            {
+                var dicomServiceNode = Context.ServiceNode as IDicomServiceNode;
+                return dicomServiceNode != null && dicomServiceNode.StreamingParameters != null;
+            }
+        }
+
+        public override bool IsSupported(Type type)
+        {
+            return type == typeof(IStudyLoader) && IsStreamingServiceNode;
+        }
+
+        public override object GetService(Type type)
+        {
+            return IsSupported(type) ? new WebStationStreamingStudyLoader() : null;
+        }
+    }
+
     /// <summary>
     /// Special Streaming study loader to be used in a web server. Prefetch 
     /// should be less aggressive on the web server.
@@ -37,7 +61,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming.WebStation
 
         protected override void InitStrategy()
         {
-            WebStationStreamingSettings settings = new WebStationStreamingSettings();
+            var settings = new WebStationStreamingSettings();
             
             _strategy = new WeightedWindowPrefetchingStrategy(
                 new StreamingCorePrefetchingStrategy(), _loaderName, SR.DescriptionWebStationPrefetchingStrategy)
@@ -63,8 +87,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming.WebStation
                 message.AppendLine(String.Format("\tSelected Imagebox Weight: {0}", _strategy.SelectedImageBoxWeight));
                 message.AppendLine(String.Format("\tUnselected Imagebox Weight: {0}", _strategy.UnselectedImageBoxWeight));
 
-                Platform.Log(LogLevel.Debug, message.ToString());
-                
+                Platform.Log(LogLevel.Debug, message.ToString());                
             }
         }
     }

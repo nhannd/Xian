@@ -9,11 +9,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using System.Xml;
+using System.Runtime.Serialization;
+using ClearCanvas.Common.Serialization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Configuration;
 using ClearCanvas.Enterprise.Core;
@@ -23,38 +20,48 @@ namespace ClearCanvas.Enterprise.Configuration
 	/// <summary>
 	/// Records custom information about operations on <see cref="IConfigurationService"/>.
 	/// </summary>
-    public class ConfigurationServiceRecorder : ServiceOperationRecorderBase
-    {
-		/// <summary>
-		/// Gets the category that should be assigned to the audit entries.
-		/// </summary>
-		public override string Category
-        {
-            get { return "Configuration"; }
-        }
+	public class ConfigurationServiceRecorder : IServiceOperationRecorder
+	{
+		[DataContract]
+		class OperationData
+		{
+			[DataMember]
+			public string Operation;
+			[DataMember]
+			public string DocumentName;
+			[DataMember]
+			public string DocumentVersion;
+			[DataMember]
+			public string DocumentUser;
+			[DataMember]
+			public string DocumentInstanceKey;
+		}
 
-		/// <summary>
-		/// Writes the detailed message to the specified XML writer.
-		/// </summary>
-		protected override bool WriteXml(XmlWriter writer, ServiceOperationInvocationInfo info)
-        {
-            // don't bother logging failed attempts
-            if(info.Exception != null)
-                return false;
+		string IServiceOperationRecorder.Category
+		{
+			get { return "Configuration"; }
+		}
 
-			ConfigurationDocumentRequestBase request = (ConfigurationDocumentRequestBase)info.Arguments[0];
+		public void PreCommit(IServiceOperationRecorderContext recorderContext, IPersistenceContext persistenceContent)
+		{
+		}
 
-            writer.WriteStartDocument();
-            writer.WriteStartElement("action");
-            writer.WriteAttributeString("type", info.OperationMethodInfo.Name);
-            writer.WriteAttributeString("documentName", request.DocumentKey.DocumentName);
-            writer.WriteAttributeString("documentVersion", request.DocumentKey.Version.ToString());
-            writer.WriteAttributeString("documentUser", request.DocumentKey.User ?? "{application}");
-            writer.WriteAttributeString("instanceKey", request.DocumentKey.InstanceKey ?? "{default}");
-            writer.WriteEndElement();
-            writer.WriteEndDocument();
+		public void PostCommit(IServiceOperationRecorderContext recorderContext)
+		{
+			var request = (ConfigurationDocumentRequestBase)recorderContext.Request;
 
-            return true;
-        }
-    }
+			var data = new OperationData
+						{
+							Operation = "SetConfigurationDocument",
+							DocumentName = request.DocumentKey.DocumentName,
+							DocumentVersion = request.DocumentKey.Version.ToString(),
+							DocumentUser = request.DocumentKey.User ?? "{application}",
+							DocumentInstanceKey = StringUtilities.NullIfEmpty(request.DocumentKey.InstanceKey) ?? "{default}"
+						};
+
+
+			var xml = JsmlSerializer.Serialize(data, "Audit");
+			recorderContext.Write(data.Operation, xml);
+		}
+	}
 }

@@ -23,7 +23,8 @@ namespace ClearCanvas.ImageServer.Core
 		public String StudyInstanceUid;
 		public String SeriesInstanceUid;
 		public String SopInstanceUid;
-		public bool Successful;
+        public String SopClassUid;
+        public bool Successful;
 		public String ErrorMessage;
 		public DicomStatus DicomStatus;
         public bool RestoreRequested;

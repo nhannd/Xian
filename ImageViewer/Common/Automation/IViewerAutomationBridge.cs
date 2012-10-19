@@ -16,8 +16,7 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 namespace ClearCanvas.ImageViewer.Common.Automation
 {
 	/// <summary>
-	/// Class containing flags that specify how to behave when opening a study
-	/// for display in the viewer.
+	/// Specifies how the ImageViewer should behave when opening a study for display.
 	/// </summary>
 	public class OpenStudiesBehaviour
 	{
@@ -27,12 +26,12 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		}
 
 		/// <summary>
-		/// 
+		/// Specifies whether or not an existing viewer should be reactivated if the specified study is the primary study in that instance.
 		/// </summary>
 		public bool ActivateExistingViewer { get; set; }
 
 		/// <summary>
-		/// 
+		/// Specifies whether or not errors should be reported to the user.
 		/// </summary>
 		public bool ReportFaultToUser { get; set; }
 	}
@@ -61,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	public interface IViewerAutomationBridge : IDisposable
 	{
 		/// <summary>
-		/// Specifies what the behaviour should be if the primary study is already the primary study in an existing viewer.
+		/// Specifies how the ImageViewer should behave when opening a study for display.
 		/// </summary>
 		OpenStudiesBehaviour OpenStudiesBehaviour { get; }
 

@@ -43,19 +43,21 @@ namespace ClearCanvas.Ris.Client
 			else
 			{
 				workspace = LaunchWorkspace();
+
+				AuditHelper.DocumentWorkspaceOpened(this);
+
 				if (workspace != null)
 				{
 					workspace.Closed += DocumentClosedEventHandler;
 					DocumentManager.RegisterDocument(this);
 				}
 			}
-
 		}
 
 		public bool Close()
 		{
 			var workspace = GetWorkspace(_key);
-			return workspace == null ? false : workspace.Close();
+			return workspace != null && workspace.Close();
 		}
 
 		public abstract bool SaveAndClose();
@@ -63,6 +65,12 @@ namespace ClearCanvas.Ris.Client
 		public abstract string GetTitle();
 
 		public abstract IApplicationComponent GetComponent();
+
+		/// <summary>
+		/// Gets the audit data for opening this document, or null if auditing is not required.
+		/// </summary>
+		/// <returns></returns>
+		public abstract OpenWorkspaceOperationAuditData GetAuditData();
 
 		public event EventHandler<ClosedEventArgs> Closed
 		{

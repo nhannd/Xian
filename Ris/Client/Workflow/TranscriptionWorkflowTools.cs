@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Reject", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Reject", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "Icons.RejectProtocolSmall.png", "Icons.RejectProtocolMedium.png", "Icons.RejectProtocolLarge.png")]
+	[IconSet("apply", IconScheme.Colour, "Icons.RejectTranscriptionSmall.png", "Icons.RejectTranscriptionMedium.png", "Icons.RejectTranscriptionLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.Create)]
 	[ExtensionOf(typeof(TranscriptionWorkflowItemToolExtensionPoint))]
@@ -100,10 +100,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Submit for Review", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.VerifyReportSmall.png", "Icons.VerifyReportMedium.png", "Icons.VerifyReportLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview)]
 	[ExtensionOf(typeof(TranscriptionWorkflowItemToolExtensionPoint))]
 	public class SubmitTranscriptionForReviewTool : TranscriptionWorkflowItemTool
 	{
+		private WorkflowConfigurationReader _workflowConfiguration = new WorkflowConfigurationReader();
+
 		public SubmitTranscriptionForReviewTool()
 			: base("SubmitTranscriptionForReview")
 		{
@@ -115,6 +118,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			base.Initialize();
 		}
+
+		public bool Visible
+		{
+			get { return _workflowConfiguration.EnableTranscriptionReviewWorkflow; }
+		}
+
+		public event EventHandler VisibleChanged;
 
 		protected override bool Execute(ReportingWorklistItemSummary item)
 		{

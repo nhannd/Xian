@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -39,19 +39,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 {
     public class SearchPanelButtonClickedEventArgs:EventArgs
     {
-        private IEnumerable<StudySummary> _selectedStudies;
-        public IEnumerable<StudySummary> SelectedStudies
-        {
-            set { _selectedStudies = value; }
-            get { return _selectedStudies; }
-        }
+        public IEnumerable<StudySummary> SelectedStudies { get; set; }
     }
+
     [ClientScriptResource(ComponentType="ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel", ResourcePath="ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel.js")]
     public partial class SearchPanel : AJAXScriptControl, IStudySearchPage
     {
         #region Private members
-        private ServerPartition _serverPartition;
-        private StudyController _controller = new StudyController();
+
+        private readonly StudyController _controller = new StudyController();
         private EventHandler<SearchPanelButtonClickedEventArgs> _deleteButtonClickedHandler;
         private EventHandler<SearchPanelButtonClickedEventArgs> _assignAuthorityGroupsButtonClickedHandler;
         private static IStudySearchPageExtension _customizer;
@@ -172,7 +168,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         [ClientPropertyName("CanViewImages")]
         public bool CanViewImages
         {
-            get { return Thread.CurrentPrincipal.IsInRole(ImageServerConstants.WebViewerAuthorityToken); }
+            get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Study.ViewImages); }
         }
 
         [ExtenderControlProperty]
@@ -182,11 +178,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             get { return ViewImagesButton.ClientID; }
         }
 
-        public ServerPartition ServerPartition
-        {
-            get { return _serverPartition; }
-            set { _serverPartition = value; }
-        }
+        public ServerPartition ServerPartition { get; set; }
 
         Control IStudySearchPage.SearchFieldsContainer
         {
@@ -213,7 +205,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         {
             foreach(StudyStatusEnum s in  StudyStatusEnum.GetAll())
             {
-                StatusListBox.Items.Add(new ListItem(){ Text = ServerEnumDescription.GetLocalizedDescription(s), Value = s.Lookup});
+                StatusListBox.Items.Add(new ListItem { Text = ServerEnumDescription.GetLocalizedDescription(s), Value = s.Lookup});
             }
 
             ClearToStudyDateButton.Attributes["onclick"] = ScriptHelper.ClearDate(ToStudyDate.ClientID, ToStudyDateCalendarExtender.ClientID);
@@ -221,23 +213,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             ToStudyDate.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromStudyDate.ClientID, ToStudyDate.ClientID, ToStudyDate.ClientID, ToStudyDateCalendarExtender.ClientID, "To Date must be greater than From Date");
             FromStudyDate.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromStudyDate.ClientID, ToStudyDate.ClientID, FromStudyDate.ClientID, FromStudyDateCalendarExtender.ClientID, "From Date must be less than To Date");
             
-            GridPagerTop.InitializeGridPager(SR.GridPagerStudySingleItem, SR.GridPagerStudyMultipleItems, StudyListGridView.TheGrid, delegate { return StudyListGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
+            GridPagerTop.InitializeGridPager(SR.GridPagerStudySingleItem, SR.GridPagerStudyMultipleItems, StudyListGridView.TheGrid,
+                                             () => StudyListGridView.ResultCount, ImageServerConstants.GridViewPagerPosition.Top);
             StudyListGridView.Pager = GridPagerTop;
 
-            ConfirmStudySearchMessageBox.Confirmed += delegate(object data) {
-                                                                                StudyListGridView.DataBindOnPreRender =
-                                                                                    true;  StudyListGridView.Refresh(); };
-            ConfirmStudySearchMessageBox.Cancel += delegate()
-            {
-                StudyListGridView.DataBindOnPreRender =
-                    false; 
-            };
+            ConfirmStudySearchMessageBox.Confirmed += delegate
+                                                          {
+                                                              StudyListGridView.DataBindOnPreRender =
+                                                                  true;
+                                                              StudyListGridView.Refresh();
+                                                              if (SearchUpdatePanel.UpdateMode ==
+                                                                  UpdatePanelUpdateMode.Conditional)
+                                                                  SearchUpdatePanel.Update();
+                                                          };
+            ConfirmStudySearchMessageBox.Cancel += delegate
+                                                       {
+                                                           StudyListGridView.DataBindOnPreRender = false;
+                                                       };
 
             RestoreMessageBox.Confirmed += delegate(object data)
                             {
                                 if (data is IList<Study>)
                                 {
-                                    IList<Study> studies = data as IList<Study>;
+                                    var studies = data as IList<Study>;
                                     foreach (Study study in studies)
                                     {
                                         _controller.RestoreStudy(study);
@@ -245,7 +243,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                 }
 								else if (data is IList<StudySummary>)
 								{
-									IList<StudySummary> studies = data as IList<StudySummary>;
+									var studies = data as IList<StudySummary>;
 									foreach (StudySummary study in studies)
 									{
                                         _controller.RestoreStudy(study.TheStudy);
@@ -253,7 +251,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 								}
                                 else if (data is Study)
                                 {
-                                    Study study = data as Study;
+                                    var study = data as Study;
                                     _controller.RestoreStudy(study);
                                 }
 
@@ -287,7 +285,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                             
                                             if (ModalityListBox.SelectedIndex > -1)
                                             {
-                                                List<string> modalities = new List<string>();
+                                                var modalities = new List<string>();
                                                 foreach (ListItem item in ModalityListBox.Items)
                                                 {
                                                     if (item.Selected)
@@ -300,7 +298,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
                                             if (StatusListBox.SelectedIndex > -1)
                                             {
-                                                List<string> statuses = new List<string>();
+                                                var statuses = new List<string>();
                                                 foreach (ListItem status in StatusListBox.Items)
                                                 {
                                                     if (status.Selected)
@@ -313,7 +311,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                         };
 
             //Set Roles
-            ViewImagesButton.Roles = ImageServerConstants.WebViewerAuthorityToken;
+            ViewImagesButton.Roles = AuthorityTokens.Study.ViewImages;
             ViewStudyDetailsButton.Roles = AuthorityTokens.Study.View;
             MoveStudyButton.Roles = AuthorityTokens.Study.Move;
             DeleteStudyButton.Roles = AuthorityTokens.Study.Delete;
@@ -337,12 +335,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             ToStudyDate.Text = string.Empty;
             FromStudyDate.Text = string.Empty;
             ReferringPhysiciansName.Text = string.Empty;
+
+            foreach (ListItem item in StatusListBox.Items)
+            {
+                if (item.Selected)
+                {
+                    item.Selected = false;
+                }
+            }
+
+            foreach (ListItem item in ModalityListBox.Items)
+            {
+                if (item.Selected)
+                {
+                    item.Selected = false;
+                }
+            }
         }
 
         public void Refresh()
         {
             if (!StudyListGridView.IsDataSourceSet()) StudyListGridView.SetDataSource();
             StudyListGridView.RefreshCurrentPage();
+            SearchUpdatePanel.Update();
         }
 
         #endregion Public Methods
@@ -360,7 +375,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             if (_customizer!=null)
             {
                 _customizer.OnPageLoad(this);
-            }
+            }  
+        }
+
+        internal void Reset()
+        {
+            Clear();
+            StudyListGridView.Reset(); 
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
@@ -370,11 +391,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                 ConfirmStudySearchMessageBox.Message = SR.NoFiltersSearchWarning;
                    ConfirmStudySearchMessageBox.MessageStyle = "font-weight: bold; color: #205F87;";
                 ConfirmStudySearchMessageBox.Show();
-            } else
+            } 
+            else
             {
                 StudyListGridView.Refresh();    
             }
-        	StringBuilder sb = new StringBuilder();
+        	var sb = new StringBuilder();
 			if(!String.IsNullOrEmpty(PatientId.Text))
 				sb.AppendFormat("PatientId={0};", PatientId.Text);
             if(!String.IsNullOrEmpty(PatientName.Text))
@@ -406,7 +428,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 					sb.Append(';');
 			}
 
-        	QueryAuditHelper helper = new QueryAuditHelper(ServerPlatform.AuditSource, EventIdentificationContentsEventOutcomeIndicator.Success,
+        	var helper = new QueryAuditHelper(ServerPlatform.AuditSource, EventIdentificationContentsEventOutcomeIndicator.Success,
 				new AuditPersonActiveParticipant(SessionManager.Current.Credentials.UserName,
 											 null,
 											 SessionManager.Current.Credentials.DisplayName),
@@ -469,8 +491,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         }
 
         #endregion Protected Methods
-
-        
     }
-
 }

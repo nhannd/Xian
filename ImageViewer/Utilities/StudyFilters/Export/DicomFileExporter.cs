@@ -31,6 +31,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 		private volatile bool _canceled;
 		private volatile AuditedInstances _exportedInstances;
 		private SynchronizationContext _synchronizationContext;
+		private IDesktopWindow _desktopWindow;
 
 		public DicomFileExporter(ICollection<string> files)
 		{
@@ -40,6 +41,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 
 		public bool Anonymize { get; set; }
 		public string OutputPath { get; set; }
+
+		public IDesktopWindow DesktopWindow
+		{
+			get { return _desktopWindow ?? Application.ActiveDesktopWindow; }
+			set { _desktopWindow = value; }
+		}
 
 		public bool Export()
 		{
@@ -51,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 			try
 			{
 				BackgroundTask task = new BackgroundTask(DoExport, true);
-				ProgressDialog.Show(task, Application.ActiveDesktopWindow, true, ProgressBarStyle.Continuous);
+				ProgressDialog.Show(task, DesktopWindow, true, ProgressBarStyle.Continuous);
 				
 				if (_canceled)
 					result = EventResult.MinorFailure;
@@ -82,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 				ExportComponent component = new ExportComponent();
 				component.OutputPath = OutputPath;
 
-				if (DialogBoxAction.Ok != Application.ActiveDesktopWindow.ShowDialogBox(component, SR.Export))
+				if (DialogBoxAction.Ok != DesktopWindow.ShowDialogBox(component, SR.Export))
 					return false;
 
 				OutputPath = component.OutputPath;
@@ -108,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 				args.Prompt = SR.MessageSelectOutputLocation;
 				args.Path = OutputPath;
 
-				FileDialogResult result = Application.ActiveDesktopWindow.ShowSelectFolderDialogBox(args);
+				FileDialogResult result = DesktopWindow.ShowSelectFolderDialogBox(args);
 				if (result.Action != DialogBoxAction.Ok)
 					return false;
 
@@ -163,7 +170,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Export
 			_synchronizationContext.Send(
 				delegate
 				{
-					_canceled = DialogBoxAction.No == Application.ActiveDesktopWindow.ShowMessageBox(SR.MessageConfirmOverwriteFiles, MessageBoxActions.YesNo);
+					_canceled = DialogBoxAction.No == DesktopWindow.ShowMessageBox(SR.MessageConfirmOverwriteFiles, MessageBoxActions.YesNo);
 				}, null);
 
 			_overwrite = !_canceled;

@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 MessageBox.Show();
             }
 
-            ((Default) Page).UpdateUI();
+            //((Default) Page).UpdateUI();
             Close();
         }
 

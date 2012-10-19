@@ -196,12 +196,13 @@ namespace ClearCanvas.Ris.Client
                 if (!string.IsNullOrEmpty(folder.WorklistClassName))
                     worklistClassNames.Add(folder.WorklistClassName);
 
+#if DEBUG	// only available in debug builds (only used for testing)
                 // if unfiltered folders are visible, add the root folder
                 if (Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
                 {
                     this.Folders.Add(folder);
                 }
-
+#endif
             }
 
             // query the set of worklists to which the current user is subscribed, add a folder for each

@@ -10,15 +10,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Shreds;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Common.ServiceConfiguration.Server;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Services;
-using ClearCanvas.Server.ShredHost;
 using ClearCanvas.Enterprise.Core.ServiceModel;
 
 namespace ClearCanvas.Ris.Server
@@ -80,15 +76,17 @@ namespace ClearCanvas.Ris.Server
 		{
 			Platform.Log(LogLevel.Info, "Starting application root {0}", this.GetType().FullName);
 
-            _serviceMount = new ServiceMount(
-                    new Uri(WebServicesSettings.Default.BaseUrl),
-                    WebServicesSettings.Default.ConfigurationClass);
+			var hostUri = new Uri(WebServicesSettings.Default.BaseUrl);
+			_serviceMount = new ServiceMount(hostUri, WebServicesSettings.Default.ConfigurationClass)
+			                	{
+			                		EnablePerformanceLogging = WebServicesSettings.Default.EnablePerformanceLogging,
+			                		MaxReceivedMessageSize = WebServicesSettings.Default.MaxReceivedMessageSize,
+			                		SendExceptionDetailToClient = WebServicesSettings.Default.SendExceptionDetailToClient,
+									CertificateSearchDirective = GetCertificateSearchDirective(WebServicesSettings.Default, hostUri)
+			                	};
 
-            _serviceMount.EnablePerformanceLogging = WebServicesSettings.Default.EnablePerformanceLogging;
-            _serviceMount.MaxReceivedMessageSize = WebServicesSettings.Default.MaxReceivedMessageSize;
-            _serviceMount.SendExceptionDetailToClient = WebServicesSettings.Default.SendExceptionDetailToClient;
 
-            _serviceMount.AddServices(new CoreServiceExtensionPoint());
+			_serviceMount.AddServices(new CoreServiceExtensionPoint());
             _serviceMount.AddServices(new ApplicationServiceExtensionPoint());
 
 
@@ -113,6 +111,16 @@ namespace ClearCanvas.Ris.Server
 			Platform.Log(LogLevel.Info, "WCF services stopped.");
 
 			_isStarted = false;
+		}
+
+		private static CertificateSearchDirective GetCertificateSearchDirective(WebServicesSettings settings, Uri hostUri)
+		{
+			var directive = string.IsNullOrEmpty(settings.CertificateCustomFindValue)
+					? CertificateSearchDirective.CreateBasic(hostUri)
+					: CertificateSearchDirective.CreateCustom(settings.CertificateFindType, settings.CertificateCustomFindValue);
+			directive.StoreLocation = settings.CertificateStoreLocation;
+			directive.StoreName = settings.CertificateStoreName;
+			return directive;
 		}
 
 		#endregion

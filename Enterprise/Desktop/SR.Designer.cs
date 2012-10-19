@@ -169,6 +169,15 @@ namespace ClearCanvas.Enterprise.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sessions.
+        /// </summary>
+        public static string ColumnSessionCount {
+            get {
+                return ResourceManager.GetString("ColumnSessionCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User.
         /// </summary>
         public static string ColumnUser {
@@ -270,6 +279,15 @@ namespace ClearCanvas.Enterprise.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Terminate....
+        /// </summary>
+        public static string LabelTerminateSessions {
+            get {
+                return ResourceManager.GetString("LabelTerminateSessions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Admin.
         /// </summary>
         public static string MenuAdmin {
@@ -297,11 +315,38 @@ namespace ClearCanvas.Enterprise.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You cannot delete your own current session..
+        /// </summary>
+        public static string MessageCannotDeleteOwnCurrentSession {
+            get {
+                return ResourceManager.GetString("MessageCannotDeleteOwnCurrentSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete the selected item(s)?.
         /// </summary>
         public static string MessageConfirmDeleteSelectedItems {
             get {
                 return ResourceManager.GetString("MessageConfirmDeleteSelectedItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import authority tokens defined in locally installed plugins?.
+        /// </summary>
+        public static string MessageConfirmImportLocallyDefinedAuthorityTokens {
+            get {
+                return ResourceManager.GetString("MessageConfirmImportLocallyDefinedAuthorityTokens", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Terminating a session that is in use may cause the associated user to lose unsaved data.  Are you sure you want to terminate the selected session(s)?.
+        /// </summary>
+        public static string MessageConfirmTerminateSelectedSessions {
+            get {
+                return ResourceManager.GetString("MessageConfirmTerminateSelectedSessions", resourceCulture);
             }
         }
         
@@ -405,6 +450,15 @@ namespace ClearCanvas.Enterprise.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to View User&apos;s Sessions.
+        /// </summary>
+        public static string TitleViewUserSessions {
+            get {
+                return ResourceManager.GetString("TitleViewUserSessions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate the selected authority group.
         /// </summary>
         public static string TooltipDuplicateAuthorityGroup {
@@ -419,6 +473,15 @@ namespace ClearCanvas.Enterprise.Desktop {
         public static string TooltipImportAuthorityGroup {
             get {
                 return ResourceManager.GetString("TooltipImportAuthorityGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Terminate selected session(s).
+        /// </summary>
+        public static string TooltipTerminateSessions {
+            get {
+                return ResourceManager.GetString("TooltipTerminateSessions", resourceCulture);
             }
         }
     }

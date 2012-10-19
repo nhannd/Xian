@@ -142,7 +142,6 @@ namespace ClearCanvas.Ris.Client
 	/// </summary>
 	/// <typeparam name="TItem"></typeparam>
 	public abstract class WorkflowFolder<TItem> : WorkflowFolder
-		where TItem : DataContractBase
 	{
 		#region QueryItemsResult class
 

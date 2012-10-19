@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 	[Tooltip("activate", "TooltipRetrieveSeries")]
     [IconSet("activate", "Icons.RetrieveSeriesToolSmall.png", "Icons.RetrieveSeriesToolSmall.png", "Icons.RetrieveSeriesToolSmall.png")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-    [ViewerActionPermission("activate", Common.AuthorityTokens.Study.Retrieve)]
+    [ViewerActionPermission("activate", ImageViewer.AuthorityTokens.Study.Retrieve)]
     [ExtensionOf(typeof (SeriesDetailsToolExtensionPoint))]
 	public class RetrieveSeriesTool : SeriesDetailsTool
 	{

@@ -53,6 +53,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _patientClass.DataBindings.Add("Items", _component, "PatientClassChoices", true, DataSourceUpdateMode.Never);
             _patientClass.DataBindings.Add("CheckedItems", _component, "SelectedPatientClasses", true,
                                          DataSourceUpdateMode.OnPropertyChanged);
+        	_patientClass.DataBindings.Add("Visible", _component, "PatientClassVisible");
 
             _portable.NullItem = _component.NullFilterItem;
             _portable.DataBindings.Add("Items", _component, "PortableChoices", true, DataSourceUpdateMode.Never);

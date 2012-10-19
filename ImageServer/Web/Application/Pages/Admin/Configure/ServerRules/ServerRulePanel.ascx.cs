@@ -94,18 +94,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
             if (StatusFilter.SelectedIndex != 0)
             {
-                if (StatusFilter.SelectedIndex == 1)
-                    criteria.Enabled.EqualTo(true);
-                else
-                    criteria.Enabled.EqualTo(false);
+                criteria.Enabled.EqualTo(StatusFilter.SelectedIndex == 1);
             }
 
             if (DefaultFilter.SelectedIndex != 0)
             {
-                if (DefaultFilter.SelectedIndex == 1)
-                    criteria.DefaultRule.EqualTo(true);
-                else
-                    criteria.DefaultRule.EqualTo(false);
+                criteria.DefaultRule.EqualTo(DefaultFilter.SelectedIndex == 1);
             }
 
             ServerRuleGridViewControl.ServerRules = _controller.GetServerRules(criteria);
@@ -119,13 +113,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
         /// This method should only be called when necessary as the information in the list window needs to be transmitted back to the client.
         /// If the list is not changed, call <seealso cref="LoadRules()"/> instead.
         /// </remarks>
-        public void UpdateUI()
+        public void Refresh()
         {
             LoadRules();
 
             // UpdatePanel UpdateMode must be set to "conditional"
             // Calling UpdatePanel.Update() will force the client to refresh the screen
             SearchUpdatePanel.Update();
+        }
+
+        internal void Reset()
+        {
+            Clear();
+            ServerRuleGridViewControl.Reset();
         }
 
         public override void DataBind()
@@ -214,6 +214,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             }
 
             base.OnPreRender(e);
+            Refresh();
         }
 
         protected void AddServerRuleButton_Click(object sender, ImageClickEventArgs e)
@@ -248,6 +249,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             DataBind();
         }
 
+        private void Clear()
+        {
+            RuleTypeDropDownList.SelectedIndex = 0;
+            RuleApplyTimeDropDownList.SelectedIndex = 0;
+            StatusFilter.SelectedIndex = 0;
+            DefaultFilter.SelectedIndex = 0;
+        }
         #endregion Protected Methods
     }
 }

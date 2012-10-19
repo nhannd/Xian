@@ -33,7 +33,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
     [ExtensionOf(typeof(PatientBiographyToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
     public class PatientEditTool : ToolBase
     {

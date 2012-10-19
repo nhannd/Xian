@@ -230,6 +230,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			}
 		}
 
+        public string GetNotReconcilableReason()
+        {
+            if (!StudyExists)
+                return SR.ActionNotAllowed_StudyNotFound;
+
+            string reason;
+            _study.CanScheduleReconcile(out reason);
+            return reason;
+        }
+
 	    public StudyIntegrityReasonEnum Reason { get; set; }
 
 	    public string ConflictingStudyDate { get; set; }
@@ -237,6 +247,52 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 	    public string ConflictingStudyDescription { get; set; }
 
 	    #endregion Public Properties
+
+        private string _filesystemPath;
+        private string _reconcileFolderPath;
+        
+        private StudyStorageLocation _storageLocation;
+
+        private void LoadStorageLocation()
+        {
+            if (_storageLocation == null)
+            {
+                var studyStorage = StudyStorage.Load(HttpContextData.Current.ReadContext, TheStudyIntegrityQueueItem.StudyStorageKey);
+                _storageLocation = StudyStorageLocation.FindStorageLocations(studyStorage)[0];
+            }
+        }
+
+        public string GetFilesystemStudyPath()
+        {
+            if (_filesystemPath==null)
+            {
+                LoadStorageLocation();
+
+                _filesystemPath = _storageLocation.GetStudyPath();
+            }
+
+            return _filesystemPath;
+
+        }
+
+        
+        public string GetReconcileFolderPath()
+        {
+            if (_reconcileFolderPath == null)
+            {
+                LoadStorageLocation();
+
+                String path = Path.Combine(_storageLocation.FilesystemPath, _storageLocation.PartitionFolder);
+                path = Path.Combine(path, ServerPlatform.ReconcileStorageFolder);
+                path = Path.Combine(path, TheStudyIntegrityQueueItem.GroupID);
+                path = Path.Combine(path, _storageLocation.StudyInstanceUid);
+
+                _reconcileFolderPath = path;
+            }
+
+            return _reconcileFolderPath;
+
+        }
 	}
 
 	public class StudyIntegrityQueueDataSource

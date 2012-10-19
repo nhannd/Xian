@@ -19,6 +19,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using Resources;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 {
@@ -93,6 +94,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         public delegate void OnShowEventHandler();
 
+
         /// <summary>
         /// Defines the event handler for <see cref="WorkQueueUpdated"/> event.
         /// </summary>
@@ -130,7 +132,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                                                                };
 
             SelectedWorkQueueItemList.TheGrid = SelectedWorkQueueItemList.WorkQueueItemGridView;
-            SelectedWorkQueueItemList.Refresh();
+        }
+
+
+        internal void Reset()
+        {
+            SchedulePanel.ResetSelections();
         }
 
         protected void WorkQueueListControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -150,6 +157,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         protected void OnApplyButtonClicked(object sender, EventArgs arg)
         {
+            SelectedWorkQueueItemList.Refresh();
             Hide();
 
             foreach (Model.WorkQueue wq in WorkQueues)
@@ -302,6 +310,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
             SelectedWorkQueueItemList.Refresh();
 
+            if (WorkQueues == null)
+                return;
+
+            if (SelectedWorkQueueItemList.WorkQueueItems.Count != WorkQueueKeys.Count)
+            {
+                MessageDialog.Message = HttpContext.GetGlobalResourceObject("SR", "WorkQueueNoLongerAvailable") as string;
+                MessageDialog.MessageType =
+                    MessageBox.MessageTypeEnum.INFORMATION;
+                MessageDialog.Show();
+            }
+
             ModalDialog.Show();
         }
 
@@ -335,19 +354,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             IsShown = true;
 
-            DataBind();
-
-            if (WorkQueues == null)
-                return;
-
-            if (SelectedWorkQueueItemList.WorkQueueItems.Count != WorkQueueKeys.Count)
-            {
-                MessageDialog.Message = HttpContext.GetGlobalResourceObject("SR", "WorkQueueNoLongerAvailable") as string;
-                MessageDialog.MessageType =
-                    MessageBox.MessageTypeEnum.INFORMATION;
-                MessageDialog.Show();
-            }
-
             WorkQueueSettingsPanel.ScheduleNow = false;
 
             if (OnShow != null) OnShow();
@@ -356,5 +362,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         }
 
         #endregion Public Methods
+
     }
 }

@@ -42,6 +42,13 @@ namespace ClearCanvas.Desktop.Actions
 			return new AbstractAction(id, path);
 		}
 
+		public static AbstractAction Create(string id, string path, bool isClickAction, IResourceResolver resourceResolver)
+		{
+			if (isClickAction)
+				return new AbstractClickAction(id, path, resourceResolver);
+			return new AbstractAction(id, path, resourceResolver);
+		}
+
 		#endregion
 
 		private event EventHandler _availableChanged;
@@ -61,14 +68,17 @@ namespace ClearCanvas.Desktop.Actions
 		private bool _available;
 
 		private AbstractAction(string id, string path)
+			: this(id, path, _globalResourceResolver) {}
+
+		private AbstractAction(string id, string path, IResourceResolver resourceResolver)
 		{
 			Platform.CheckForEmptyString(id, "id");
 			Platform.CheckForEmptyString(path, "path");
 
-			_resourceResolver = _globalResourceResolver;
+			_resourceResolver = resourceResolver;
 			_actionId = id;
             _formerActionIds = new List<string>();
-			_path = new ActionPath(path, _globalResourceResolver);
+			_path = new ActionPath(path, resourceResolver);
 			_groupHint = new GroupHint(string.Empty);
 			_label = string.Empty;
 			_tooltip = string.Empty;
@@ -263,6 +273,12 @@ namespace ClearCanvas.Desktop.Actions
 
 			public AbstractClickAction(string id, string path)
 				: base(id, path)
+			{
+				_keyStroke = XKeys.None;
+			}
+
+			public AbstractClickAction(string id, string path, IResourceResolver resourceResolver)
+				: base(id, path, resourceResolver)
 			{
 				_keyStroke = XKeys.None;
 			}

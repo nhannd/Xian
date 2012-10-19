@@ -17,11 +17,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 	public class ReportingComponentWorklistItemManager : WorklistItemManager<ReportingWorklistItemSummary, IReportingWorkflowService>
 	{
 		public ReportingComponentWorklistItemManager(string folderName, EntityRef worklistRef, string worklistClassName)
-			: base(folderName, worklistRef, worklistClassName)
+			: base(folderName, worklistRef, worklistClassName, ReportingSettings.Default.NextItemQueueCacheSize)
 		{
 		}
 
-		protected override IContinuousWorkflowComponentMode GetMode<TWorklistITem>(ReportingWorklistItemSummary worklistItem)
+		protected override IContinuousWorkflowComponentMode GetMode(ReportingWorklistItemSummary worklistItem)
 		{
 			if (worklistItem == null)
 				return ReportingComponentModes.Review;

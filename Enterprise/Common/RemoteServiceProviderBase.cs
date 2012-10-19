@@ -90,7 +90,8 @@ namespace ClearCanvas.Enterprise.Common
 			MaxReceivedMessageSize = maxReceivedMessageSize;
 			CertificateValidationMode = certificateValidationMode;
 			RevocationMode = revocationMode;
-			UserCredentialsProvider = string.IsNullOrEmpty(credentialsProviderClassName) ? null :
+			UserCredentialsProvider = string.IsNullOrEmpty(credentialsProviderClassName) ?
+				new DefaultUserCredentialsProvider() : 
 				InstantiateClass<IUserCredentialsProvider>(credentialsProviderClassName);
 		}
 
@@ -131,7 +132,6 @@ namespace ClearCanvas.Enterprise.Common
 
 		/// <summary>
 		/// Gets or sets an <see cref="IUserCredentialsProvider"/>.
-		/// May be null if user credentials are not relevant.
 		/// </summary>
 		public IUserCredentialsProvider UserCredentialsProvider { get; set; }
 
@@ -305,6 +305,12 @@ namespace ClearCanvas.Enterprise.Common
 			// it is basically a hack to prevent the interception chain from acting on a call to Dispose(),
 			// because Dispose() is not a service operation
 			interceptors.Add(new DisposableInterceptor());
+
+			// additional interceptors are added outside of all others
+			foreach (var interceptor in AdditionalServiceInterceptorProvider.GetInterceptors(ServiceInterceptSite.Client))
+			{
+				interceptors.Add(interceptor);
+			}
 
 			if (ClearCanvas.Common.Caching.Cache.IsSupported() && IsResponseCachingEnabled(serviceType))
 			{

@@ -280,9 +280,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         internal void UpdateColumnVisibility()
         {
-            var hide = _isLocalServer || _numberOfChildServers == 1;
-            _studyTable.SetServerColumnsVisibility(!hide);
-
+            _studyTable.SetAvailabilityColumnsVisibility(!_isLocalServer);
+            _studyTable.SetServerColumnVisibility(!_isLocalServer && _numberOfChildServers > 1);
             _studyTable.SetColumnVisibility(StudyTable.ColumnNameDeleteOn, _isLocalServer);
         }
 

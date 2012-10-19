@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-        private EntityRef _patientRef;
+        private PatientProfileSummary _patient;
         private EntityRef _visitRef;
         private VisitDetail _visit;
         private VisitSummary _addedVisit;
@@ -94,16 +94,16 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
         /// Constructor
         /// </summary>
-        public VisitEditorComponent(EntityRef patientRef)
+        public VisitEditorComponent(PatientProfileSummary patientProfile)
         {
             _isNew = true;
-            _patientRef = patientRef;
+			_patient = patientProfile;
         }
 
         public VisitEditorComponent(VisitSummary editVisit)
         {
             _isNew = false;
-            _patientRef = editVisit.PatientRef;
+			_patient = editVisit.Patient;
             _visitRef = editVisit.VisitRef;
         }
 
@@ -141,7 +141,7 @@ namespace ClearCanvas.Ris.Client
                     if (_isNew)
                     {
                         _visit = new VisitDetail();
-                        _visit.PatientRef = _patientRef;
+                        _visit.Patient = _patient;
                         _visit.VisitNumber.AssigningAuthority = response.VisitNumberAssigningAuthorityChoices.Count > 0 ?
                             response.VisitNumberAssigningAuthorityChoices[0] : null;
                         _visit.PatientClass = response.PatientClassChoices[0];
@@ -153,7 +153,7 @@ namespace ClearCanvas.Ris.Client
                     else
                     {
                         LoadVisitForEditResponse loadVisitResponse = service.LoadVisitForEdit(new LoadVisitForEditRequest(_visitRef));
-                        _patientRef = loadVisitResponse.Patient;
+						_patient = loadVisitResponse.VisitDetail.Patient;
                         _visitRef = loadVisitResponse.VisitRef;
                         _visit = loadVisitResponse.VisitDetail;
                     }
@@ -213,15 +213,15 @@ namespace ClearCanvas.Ris.Client
                         {
                             AddVisitResponse response = service.AddVisit(new AddVisitRequest(_visit));
                             _addedVisit = response.Visit;
-                            _patientRef = response.Visit.PatientRef;
+                            _patient = response.Visit.Patient;
                             _visitRef = response.Visit.VisitRef;
                         }
                         else
                         {
                             UpdateVisitResponse response = service.UpdateVisit(new UpdateVisitRequest(_visitRef, _visit));
                             _addedVisit = response.Visit;
-                            _patientRef = response.Visit.PatientRef;
-                            _visitRef = response.Visit.VisitRef;
+							_patient = response.Visit.Patient;
+							_visitRef = response.Visit.VisitRef;
                         }
                     });
                 this.Exit(ApplicationComponentExitCode.Accepted);

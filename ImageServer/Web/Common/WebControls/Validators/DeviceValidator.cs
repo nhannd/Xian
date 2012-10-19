@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -58,11 +59,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             criteria.ServerPartitionKey.EqualTo(Partition);
 
             IList<Device> list = controller.GetDevices(criteria);
-
-            if (list.Count > 0)
+            foreach (var d in list)
             {
-                ErrorMessage = String.Format(ValidationErrors.AETitleIsInUse, deviceAE);
-                return false;
+                if (string.Compare(d.AeTitle, deviceAE, false, CultureInfo.InvariantCulture) == 0)
+                {
+                    ErrorMessage = String.Format(ValidationErrors.AETitleIsInUse, deviceAE);
+                    return false;
+                }
             }
 
             return true;

@@ -271,15 +271,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 				this.Owner.SetReportPartExtendedProperty(key, value);
 			}
 
-			//public StaffSummary Supervisor
-			//{
-			//    get { return Owner._supervisor; }
-			//    set
-			//    {
-			//        Owner.SetSupervisor(value);
-			//    }
-			//}
-
 			public void RequestClose(TranscriptionEditorCloseReason reason)
 			{
 				this.Owner.RequestClose(reason);
@@ -312,6 +303,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private ReportingOrderDetailViewComponent _orderComponent;
 
 		private event EventHandler _worklistItemChanged;
+
+		private readonly WorkflowConfigurationReader _workflowConfiguration = new WorkflowConfigurationReader();
 
 		/// <summary>
 		/// Constructor.
@@ -553,12 +546,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				if (this.HasValidationErrors)
-				{
-					this.ShowValidation(true);
-					return;
-				}
-
 				EnumValueInfo rejectReason;
 				string additionalComments;
 
@@ -631,12 +618,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool SubmitForReviewEnabled
 		{
-			get { return CanSubmitForReview; }
+			get { return _workflowConfiguration.EnableTranscriptionReviewWorkflow && CanSubmitForReview; }
 		}
 
 		public bool SubmitForReviewVisible
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview); }
+			get
+			{
+				return _workflowConfiguration.EnableTranscriptionReviewWorkflow &&
+					Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview);
+			}
 		}
 
 		#endregion
@@ -747,7 +738,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool SupervisorVisible
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview); }
+			get
+			{ 
+				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview)
+							&& _workflowConfiguration.EnableTranscriptionReviewWorkflow;
+			}
 		}
 
 		#endregion

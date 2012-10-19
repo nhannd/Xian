@@ -17,5 +17,20 @@
     <Setting Name="EnablePerformanceLogging" Description="Indicates whether to enable performance logging." Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="ConfigurationServiceResponseCachingEnabled" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="CertificateFindType" Type="System.Security.Cryptography.X509Certificates.X509FindType" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="CertificateStoreName" Type="System.Security.Cryptography.X509Certificates.StoreName" Scope="Application">
+      <Value Profile="(Default)">My</Value>
+    </Setting>
+    <Setting Name="CertificateStoreLocation" Type="System.Security.Cryptography.X509Certificates.StoreLocation" Scope="Application">
+      <Value Profile="(Default)">LocalMachine</Value>
+    </Setting>
+    <Setting Name="CertificateCustomFindValue" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

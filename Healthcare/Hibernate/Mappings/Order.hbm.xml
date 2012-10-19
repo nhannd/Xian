@@ -76,7 +76,8 @@
 
 		<!-- Indications.... may need to be a coded-value, not sure yet -->
 		<property name="ReasonForStudy" column="ReasonForStudy_" type="String" length="400"/>
-		<property name="Priority" column="Priority_" type="ClearCanvas.Healthcare.Hibernate.OrderPriorityEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+		<property name="Priority" column="Priority_" type="ClearCanvas.Healthcare.Hibernate.OrderPriorityEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true" access="field.camelcase-underscore"/>
+		<property name="PriorityRank" column="PriorityRank_" type="int" not-null="true" access="field.camelcase-underscore"/>
 		<property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.OrderStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true" access="nosetter.camelcase-underscore"/>
 
 		<!-- Information about why the order was cancelled, populated if the order status is CA, DC, or RP -->

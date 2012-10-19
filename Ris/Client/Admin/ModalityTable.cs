@@ -24,11 +24,22 @@ namespace ClearCanvas.Ris.Client.Admin
 			this.Columns.Add(new TableColumn<ModalitySummary, string>(SR.ColumnName,
 				modality => modality.Name, 1.0f));
 
+			this.Columns.Add(new TableColumn<ModalitySummary, string>(SR.ColumnAETitle,
+				modality => modality.AETitle, 1.0f));
+
 			this.Columns.Add(new TableColumn<ModalitySummary, string>(SR.ColumnDicomModality,
 				FormatDicomModality, 1.0f));
+
+			this.Columns.Add(new TableColumn<ModalitySummary, string>(SR.ColumnFacility,
+				FormatFacility, 1.0f));
 		}
 
-		public string FormatDicomModality(ModalitySummary modality)
+		private string FormatFacility(ModalitySummary modality)
+		{
+			return modality.Facility == null ? null : modality.Facility.Name;
+		}
+
+		private string FormatDicomModality(ModalitySummary modality)
 		{
 			return modality.DicomModality == null ? null 
 				: string.Format("{0} - {1}", modality.DicomModality.Value, modality.DicomModality.Description);

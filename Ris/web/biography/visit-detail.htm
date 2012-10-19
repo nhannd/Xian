@@ -51,15 +51,9 @@
 					return;
 				}
 
-				var visitDetail = data.GetVisitDetailResponse.Visit;
-				if(visitDetail)
+				if(data.GetVisitDetailResponse && data.GetVisitDetailResponse.Visit)
 				{
-					Preview.VisitDetailsSection.create($("visitDetailsSection"), visitDetail);
-
-					if (visitDetail.ExtendedProperties)
-					{
-						Preview.PhysiciansSection.create($("physiciansSection"), visitDetail);
-					}
+					Preview.VisitDetailsSection.create($("visitDetailsSection"), data.GetVisitDetailResponse.Visit);
 				}
 			}
 		</script>

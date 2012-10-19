@@ -87,6 +87,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdditionalServiceInterceptorProvider.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\IAuthorityGroupAdminService.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\AddAuthorityGroupRequest.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\AddAuthorityGroupResponse.cs" />
@@ -109,6 +110,8 @@
     <Compile Include="Admin\AuthorityGroupAdmin\ListAuthorityGroupsResponse.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\ListAuthorityTokensRequest.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\ListAuthorityTokensResponse.cs" />
+    <Compile Include="Admin\UserAdmin\ListUserSessionsRequest.cs" />
+    <Compile Include="Admin\UserAdmin\ListUserSessionsResponse.cs" />
     <Compile Include="Admin\UserAdmin\ListUsersRequest.cs" />
     <Compile Include="Admin\UserAdmin\ListUsersResponse.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\LoadAuthorityGroupForEditRequest.cs" />
@@ -119,9 +122,12 @@
     <Compile Include="Admin\UserAdmin\ResetUserPasswordResponse.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\UpdateAuthorityGroupRequest.cs" />
     <Compile Include="Admin\AuthorityGroupAdmin\UpdateAuthorityGroupResponse.cs" />
+    <Compile Include="Admin\UserAdmin\TerminateUserSessionRequest.cs" />
+    <Compile Include="Admin\UserAdmin\TerminateUserSessionResponse.cs" />
     <Compile Include="Admin\UserAdmin\UpdateUserRequest.cs" />
     <Compile Include="Admin\UserAdmin\UpdateUserResponse.cs" />
     <Compile Include="Admin\UserAdmin\UserDetail.cs" />
+    <Compile Include="Admin\UserAdmin\UserSessionSummary.cs" />
     <Compile Include="Admin\UserAdmin\UserSummary.cs" />
     <Compile Include="AopInterceptorChain.cs" />
     <Compile Include="Audit\AuditException.cs" />
@@ -151,10 +157,13 @@
     <Compile Include="Configuration\ListConfigurationDocumentsResponse.cs" />
     <Compile Include="DefaultPrincipal.cs" />
     <Compile Include="EntityRefJsmlSerializerHook.cs" />
+    <Compile Include="Facility.cs" />
     <Compile Include="FailoverClientAdvice.cs" />
     <Compile Include="IChannelProvider.cs" />
     <Compile Include="IOfflineCache.cs" />
     <Compile Include="ListRequestBase.cs" />
+    <Compile Include="Manifest\IManifestService.cs" />
+    <Compile Include="Manifest\ServerManifestVerification.cs" />
     <Compile Include="NullOfflineCache.cs" />
     <Compile Include="PagedDataContractBase.cs" />
     <Compile Include="Ping\IPingService.cs" />

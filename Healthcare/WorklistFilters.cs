@@ -89,7 +89,7 @@ namespace ClearCanvas.Healthcare
 	/// <typeparam name="T"></typeparam>
 	public abstract class WorklistMultiValuedFilter<T> : WorklistFilter, IEquatable<WorklistMultiValuedFilter<T>>
 	{
-		private ISet<T> _values;
+		private Iesi.Collections.Generic.ISet<T> _values;
 
 		/// <summary>
 		/// Constructor.
@@ -102,7 +102,7 @@ namespace ClearCanvas.Healthcare
 		/// <summary>
 		/// Gets the set of values for this filter.
 		/// </summary>
-		public ISet<T> Values
+		public Iesi.Collections.Generic.ISet<T> Values
 		{
 			get { return _values; }
 			// private setter for NHibernate compatibility
@@ -364,10 +364,16 @@ namespace ClearCanvas.Healthcare
 			var condition = subCriteria as ISearchCondition;
 
 			// apply ordering
-			if (timeDirective.Ordering == Worklist.WorklistOrdering.PrioritizeOldestItems)
-				condition.SortAsc(0);
+			if(timeDirective.HonourOrderPriority)
+			{
+				criteria.Order.PriorityRank.SortDesc(0);
+				ApplyOrdering(timeDirective.Ordering, condition, 1);
+			}
 			else
-				condition.SortDesc(0);
+			{
+				ApplyOrdering(timeDirective.Ordering, condition, 0);
+			}
+
 
 			// apply range filtering, if supported by the worklist class, and not downtime recovery mode
 			if (!wqc.DowntimeRecoveryMode)
@@ -376,6 +382,14 @@ namespace ClearCanvas.Healthcare
 				if (range != null)
 					range.Apply(condition, Platform.Time);
 			}
+		}
+
+		private static void ApplyOrdering(Worklist.WorklistOrdering ordering, ISearchCondition condition, int index)
+		{
+			if (ordering == Worklist.WorklistOrdering.PrioritizeOldestItems)
+				condition.SortAsc(index);
+			else
+				condition.SortDesc(index);
 		}
 	}
 

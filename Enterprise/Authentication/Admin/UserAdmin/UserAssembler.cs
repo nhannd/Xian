@@ -9,8 +9,7 @@
 
 #endregion
 
-using System.Collections.Generic;
-
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
@@ -23,14 +22,14 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
         internal UserSummary GetUserSummary(User user)
         {
             return new UserSummary(user.UserName, user.DisplayName, user.EmailAddress, user.CreationTime, user.ValidFrom, user.ValidUntil,
-                                   user.LastLoginTime, user.Password.ExpiryTime, user.Enabled);
+                                   user.LastLoginTime, user.Password.ExpiryTime, user.Enabled, user.ActiveSessions.Count());
         }
 
         internal UserDetail GetUserDetail(User user)
         {
-            AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
+            var assembler = new AuthorityGroupAssembler();
 
-        	List<AuthorityGroupSummary> groups = CollectionUtils.Map(
+        	var groups = CollectionUtils.Map(
         		user.AuthorityGroups,
         		(AuthorityGroup group) => assembler.CreateAuthorityGroupSummary(group));
 				
@@ -50,12 +49,24 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
             user.EmailAddress = detail.EmailAddress;
 
             // process authority groups
-			List<AuthorityGroup> authGroups = CollectionUtils.Map(
+			var authGroups = CollectionUtils.Map(
 				detail.AuthorityGroups,
 				(AuthorityGroupSummary group) => context.Load<AuthorityGroup>(group.AuthorityGroupRef, EntityLoadFlags.Proxy));
 
             user.AuthorityGroups.Clear();
 			user.AuthorityGroups.AddAll(authGroups);
         }
+
+		internal UserSessionSummary GetUserSessionSummary(UserSession session)
+		{
+			return new UserSessionSummary
+			       	{
+			       		Application = session.Application,
+			       		CreationTime = session.CreationTime,
+			       		ExpiryTime = session.ExpiryTime,
+			       		HostName = session.HostName,
+			       		SessionId = session.SessionId
+			       	};
+		}
     }
 }

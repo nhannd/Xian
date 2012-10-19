@@ -17,8 +17,7 @@ function LoadFilesystemInfo()
 {
      path = document.getElementById('@@PATH_INPUT_CLIENTID@@').value;
 
-     ClearCanvas.ImageServer.Web.Application.Services.FilesystemInfoService.GetFilesystemInfo(path, OnLoadFilesystemInfoSuccess, OnLoadFilesystemInfoError);
-     
+     ClearCanvas.ImageServer.Web.Application.Services.FilesystemInfoService.GetFilesystemInfo(path, OnLoadFilesystemInfoSuccess, OnLoadFilesystemInfoError);     
 }
     
 function RecalculateWatermark()

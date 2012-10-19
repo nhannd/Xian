@@ -9,9 +9,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Healthcare;
@@ -19,32 +17,38 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    public class DiagnosticServiceAssembler
-    {
-        public DiagnosticServiceSummary CreateSummary(DiagnosticService diagnosticService)
-        {
-            return new DiagnosticServiceSummary(
-                diagnosticService.GetRef(),
-                diagnosticService.Id,
-                diagnosticService.Name,
+	public class DiagnosticServiceAssembler
+	{
+		public DiagnosticServiceSummary CreateSummary(DiagnosticService diagnosticService)
+		{
+			return new DiagnosticServiceSummary(
+				diagnosticService.GetRef(),
+				diagnosticService.Id,
+				diagnosticService.Name,
 				diagnosticService.Deactivated);
-        }
+		}
 
-        public DiagnosticServiceDetail CreateDetail(DiagnosticService diagnosticService)
-        {
-            ProcedureTypeAssembler rptAssembler = new ProcedureTypeAssembler();
-            return new DiagnosticServiceDetail(
-                diagnosticService.GetRef(),
-                diagnosticService.Id,
-                diagnosticService.Name,
-                CollectionUtils.Map<ProcedureType, ProcedureTypeSummary>(
-                    diagnosticService.ProcedureTypes,
-                    delegate(ProcedureType rpType)
-                    {
-						return rptAssembler.CreateSummary(rpType);
-                    }),
+		public DiagnosticServiceDetail CreateDetail(DiagnosticService diagnosticService)
+		{
+			var rptAssembler = new ProcedureTypeAssembler();
+			return new DiagnosticServiceDetail(
+				diagnosticService.GetRef(),
+				diagnosticService.Id,
+				diagnosticService.Name,
+				CollectionUtils.Map<ProcedureType, ProcedureTypeSummary>(diagnosticService.ProcedureTypes, rptAssembler.CreateSummary),
 				diagnosticService.Deactivated);
-        }
+		}
+
+		public DiagnosticServicePlanDetail CreatePlanDetail(DiagnosticService diagnosticService, IPersistenceContext context)
+		{
+			var rptAssembler = new ProcedureTypeAssembler();
+			return new DiagnosticServicePlanDetail(
+				diagnosticService.GetRef(),
+				diagnosticService.Id,
+				diagnosticService.Name,
+				diagnosticService.ProcedureTypes.Select(rpType => rptAssembler.CreateDetail(rpType, context)).ToList()
+				);
+		}
 
 		public void UpdateDiagnosticService(DiagnosticService ds, DiagnosticServiceDetail detail, IPersistenceContext context)
 		{
@@ -54,12 +58,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 			ds.ProcedureTypes.Clear();
 			ds.ProcedureTypes.AddAll(
-				CollectionUtils.Map<ProcedureTypeSummary, ProcedureType>(
-					detail.ProcedureTypes,
-					delegate(ProcedureTypeSummary pt)
-					{
-						return context.Load<ProcedureType>(pt.ProcedureTypeRef, EntityLoadFlags.Proxy);
-					}));
+				detail.ProcedureTypes.Select(pt => context.Load<ProcedureType>(pt.ProcedureTypeRef, EntityLoadFlags.Proxy)).ToList());
 		}
-    }
+	}
 }

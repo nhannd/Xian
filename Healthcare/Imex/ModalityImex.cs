@@ -33,6 +33,12 @@ namespace ClearCanvas.Healthcare.Imex
 			public string Name;
 
 			[DataMember]
+			public string FacilityCode;
+
+			[DataMember]
+			public string AETitle;
+
+			[DataMember]
 			public string DicomModality;
 		}
 
@@ -53,6 +59,8 @@ namespace ClearCanvas.Healthcare.Imex
 					Deactivated = entity.Deactivated,
 					Id = entity.Id,
 					Name = entity.Name,
+					FacilityCode = entity.Facility == null ? null : entity.Facility.Code,
+					AETitle = entity.AETitle,
 					DicomModality = entity.DicomModality == null ? null : entity.DicomModality.Code
 				};
 		}
@@ -62,6 +70,8 @@ namespace ClearCanvas.Healthcare.Imex
 			var m = LoadOrCreateModality(data.Id, data.Name, context);
 			m.Deactivated = data.Deactivated;
 			m.Name = data.Name;
+			m.Facility = string.IsNullOrEmpty(data.FacilityCode) ? null : FindFacility(data.FacilityCode, context);
+			m.AETitle = data.AETitle;
 			m.DicomModality = data.DicomModality == null ? null : context.GetBroker<IEnumBroker>().Find<DicomModalityEnum>(data.DicomModality);
 		}
 
@@ -80,11 +90,19 @@ namespace ClearCanvas.Healthcare.Imex
 			catch (EntityNotFoundException)
 			{
 				// create it
-				pt = new Modality(id, name, null);
+				pt = new Modality(id, name, null, null, null);
 				context.Lock(pt, DirtyState.New);
 			}
 
 			return pt;
 		}
+
+		private Facility FindFacility(string facilityCode, IPersistenceContext context)
+		{
+			var facilityCriteria = new FacilitySearchCriteria();
+			facilityCriteria.Code.EqualTo(facilityCode);
+			return context.GetBroker<IFacilityBroker>().FindOne(facilityCriteria);
+		}
+
 	}
 }

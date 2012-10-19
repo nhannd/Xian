@@ -21,100 +21,7 @@ namespace ClearCanvas.Ris.Client
 	/// </summary>
 	public interface IFolderSystem : IDisposable
 	{
-		#region Properties
-
-		/// <summary>
-		/// Gets a value indicating whether initialization of this folder system can be deferred.
-		/// </summary>
-		/// <remarks>
-		/// If the folder system displays a status message, such as a total item count, in the
-		/// title bar of the explorer, then deferring initialization is probably not a good idea,
-		/// since the title bar will remain empty until the folder system is initialized.
-		/// </remarks>
-		bool LazyInitialize { get; }
-
-		/// <summary>
-		/// Gets the desktop window of the folder explorer that is hosting this folder system.
-		/// </summary>
-		IDesktopWindow DesktopWindow { get; }
-
-		/// <summary>
-		/// Gets the ID that identifies the folder system
-		/// </summary>
-		string Id { get; }
-
-		/// <summary>
-		/// Gets the text that should be displayed for the folder system
-		/// </summary>
-		string Title { get; }
-
-		/// <summary>
-		/// Gets the iconset that should be displayed for the folder system
-		/// </summary>
-		IconSet TitleIcon { get; }
-
-		/// <summary>
-		/// Gets the resource resolver that is used to resolve the title icon
-		/// </summary>
-		IResourceResolver ResourceResolver { get; }
-
-		/// <summary>
-		/// Gets the list of folders that belong to this folder system
-		/// </summary>
-		ObservableList<IFolder> Folders { get; }
-
-		/// <summary>
-		/// Gets the toolset defined for the folders
-		/// </summary>
-		IToolSet FolderTools { get; }
-
-		/// <summary>
-		/// Gets the toolset defined for the items in a folder
-		/// </summary>
-		IToolSet ItemTools { get; }
-
-		/// <summary>
-		/// Gets the URL of the preview page as a function of the specified folder and items.
-		/// </summary>
-		string GetPreviewUrl(IFolder folder, object[] items);
-
-		#endregion
-
-		#region Events
-
-		/// <summary>
-		/// Occurs when the <see cref="Title"/> property changes.
-		/// </summary>
-		event EventHandler TitleChanged;
-
-		/// <summary>
-		/// Occurs when the <see cref="TitleIcon"/> property changes.
-		/// </summary>
-		event EventHandler TitleIconChanged;
-
-		/// <summary>
-		/// Occurs to indicate that the entire folder system should be rebuilt.
-		/// </summary>
-		/// <remarks>
-		/// This is distinct from incremental changes to the <see cref="Folders"/> collection,
-		/// which can be observed via the <see cref="ObservableList{TItem}.ItemAdded"/> and
-		/// <see cref="ObservableList{TItem}.ItemRemoved"/> events.
-		/// </remarks>
-		event EventHandler FoldersChanged;
-
-		/// <summary>
-		/// Occurs when one or more folders in the system have been invalidated.
-		/// </summary>
-		event EventHandler FoldersInvalidated;
-
-		/// <summary>
-		/// Occurs to indicate that one or more properties of a folder have changed and the UI needs to be updated.
-		/// </summary>
-		event EventHandler<ItemEventArgs<IFolder>> FolderPropertiesChanged;
-
-		#endregion
-
-		#region Methods
+		#region Initialization
 
 		/// <summary>
 		/// Initializes the folder system with a context.  Set <see cref="context"/> to null to clear context.
@@ -129,6 +36,128 @@ namespace ClearCanvas.Ris.Client
 		/// This method will be called after <see cref="SetContext"/> has been called. 
 		/// </remarks>
 		void Initialize();
+
+		/// <summary>
+		/// Gets a value indicating whether initialization of this folder system can be deferred.
+		/// </summary>
+		/// <remarks>
+		/// If the folder system displays a status message, such as a total item count, in the
+		/// title bar of the explorer, then deferring initialization is probably not a good idea,
+		/// since the title bar will remain empty until the folder system is initialized.
+		/// </remarks>
+		bool LazyInitialize { get; }
+
+		#endregion
+
+		#region Infrastructure
+
+		/// <summary>
+		/// Gets the ID that identifies the folder system
+		/// </summary>
+		string Id { get; }
+
+		/// <summary>
+		/// Gets the resource resolver that is used to resolve icons.
+		/// </summary>
+		IResourceResolver ResourceResolver { get; }
+
+
+		/// <summary>
+		/// Gets the desktop window of the folder explorer that is hosting this folder system.
+		/// </summary>
+		IDesktopWindow DesktopWindow { get; }
+
+		#endregion
+
+		#region Title
+
+		/// <summary>
+		/// Gets the text that should be displayed for the folder system
+		/// </summary>
+		string Title { get; }
+
+		/// <summary>
+		/// Occurs when the <see cref="Title"/> property changes.
+		/// </summary>
+		event EventHandler TitleChanged;
+
+		/// <summary>
+		/// Gets the iconset that should be displayed for the folder system
+		/// </summary>
+		IconSet TitleIcon { get; }
+
+		/// <summary>
+		/// Occurs when the <see cref="TitleIcon"/> property changes.
+		/// </summary>
+		event EventHandler TitleIconChanged;
+
+		#endregion
+
+		#region Folders collection
+
+		/// <summary>
+		/// Gets the list of folders that belong to this folder system
+		/// </summary>
+		ObservableList<IFolder> Folders { get; }
+
+		/// <summary>
+		/// Occurs to indicate that the entire folder system should be rebuilt.
+		/// </summary>
+		/// <remarks>
+		/// This is distinct from incremental changes to the <see cref="Folders"/> collection,
+		/// which can be observed via the <see cref="ObservableList{TItem}.ItemAdded"/> and
+		/// <see cref="ObservableList{TItem}.ItemRemoved"/> events.
+		/// </remarks>
+		event EventHandler FoldersChanged;
+
+		/// <summary>
+		/// Occurs to indicate that one or more properties of a folder have changed and the UI needs to be updated.
+		/// </summary>
+		event EventHandler<ItemEventArgs<IFolder>> FolderPropertiesChanged;
+
+		#endregion
+
+		#region Tool sets
+
+		/// <summary>
+		/// Gets the toolset defined for the folders
+		/// </summary>
+		IToolSet FolderTools { get; }
+
+		/// <summary>
+		/// Gets the toolset defined for the items in a folder
+		/// </summary>
+		IToolSet ItemTools { get; }
+
+		#endregion
+
+		#region Content viewing
+
+		/// <summary>
+		/// Obtains the custom content viewing component for this folder system, or null if the default items/preview view should be used.
+		/// </summary>
+		/// <returns></returns>
+		IApplicationComponent GetContentComponent();
+
+		/// <summary>
+		/// Gets the URL of the preview page as a function of the specified folder and items.
+		/// </summary>
+		/// <remarks>
+		/// If <see cref="GetContentComponent"/> return a non-null value, then the this method is not called.
+		/// </remarks>
+		string GetPreviewUrl(IFolder folder, object[] items);
+
+		/// <summary>
+		/// Gets the audit data for previewing the specified items.
+		/// </summary>
+		/// <param name="folder"> </param>
+		/// <param name="items"> </param>
+		/// <returns></returns>
+		PreviewOperationAuditData[] GetPreviewAuditData(IFolder folder, object[] items);
+
+		#endregion
+
+		#region Folder Invalidation
 
 		/// <summary>
 		/// Invalidates all folders. Use this method judiciously,
@@ -154,8 +183,14 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="folder"></param>
 		void InvalidateFolder(IFolder folder);
 
+		/// <summary>
+		/// Occurs when one or more folders in the system have been invalidated.
+		/// </summary>
+		event EventHandler FoldersInvalidated;
 
 		#endregion
+
+		#region Search support
 
 		/// <summary>
 		/// Gets a value indicating whether this folder system supports searching.
@@ -194,5 +229,8 @@ namespace ClearCanvas.Ris.Client
 		/// Indicates the type of <see cref="SearchComponentBase"/> appropriate to this folder system
 		/// </summary>
 		Type SearchComponentType { get; }
+
+		#endregion
+
 	}
 }

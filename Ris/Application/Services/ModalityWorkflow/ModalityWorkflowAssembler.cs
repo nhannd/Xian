@@ -10,7 +10,6 @@
 #endregion
 
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Healthcare;
 

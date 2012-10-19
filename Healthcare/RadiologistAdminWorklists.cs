@@ -16,20 +16,13 @@ using ClearCanvas.Workflow;
 namespace ClearCanvas.Healthcare
 {
 	/// <summary>
-	/// Abstract base class for protocoling worklists.
+	/// Abstract base class for reporting admin worklists.
 	/// </summary>
 	[WorklistCategory("WorklistCategoryRadiologistAdmin")]
 	public abstract class ReportingAdminWorklist : ReportingWorklist
 	{
 	}
 
-	/// <summary>
-	/// Abstract base class for protocoling worklists.
-	/// </summary>
-	[WorklistCategory("WorklistCategoryRadiologistAdmin")]
-	public abstract class ProtocolingAdminWorklist : ProtocolingWorklist
-	{
-	}
 
 	/// <summary>
 	/// ReportingAdminToBeReportedWorklist entity
@@ -99,42 +92,12 @@ namespace ClearCanvas.Healthcare
 		}
 	}
 
-	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistClassDescription("ProtocollingAdminAssignedWorklist")]
-	public class ProtocollingAdminAssignedWorklist : ProtocolingAdminWorklist
-	{
-		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
-		{
-			var performerCriteria = BuildCommonCriteria(wqc);
-			performerCriteria.ProcedureStep.Performer.Staff.IsNotNull();
-
-			var scheduledPerformerCriteria = BuildCommonCriteria(wqc);
-			scheduledPerformerCriteria.ProcedureStep.Scheduling.Performer.Staff.IsNotNull();
-
-			return new[] { performerCriteria, scheduledPerformerCriteria };
-		}
-
-		protected override TimeDirective GetTimeDirective()
-		{
-			return new TimeDirective(
-				WorklistItemField.ProcedureStepCreationTime,
-				null,
-				WorklistOrdering.PrioritizeOldestItems);
-		}
-
-		private static ReportingWorklistItemSearchCriteria BuildCommonCriteria(IWorklistQueryContext wqc)
-		{
-			var criteria = new ReportingWorklistItemSearchCriteria();
-			criteria.ProcedureStep.State.In(new[] { ActivityStatus.SC, ActivityStatus.IP, ActivityStatus.SU });
-			return criteria;
-		}
-	}
 
 	/// <summary>
 	/// ReportingAdminToBeTranscribedWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistClassDescription("ReportingAdminToBeTranscribedDescription")]
+	[WorklistClassDescription("ReportingAdminToBeTranscribedWorklistDescription")]
 	public class ReportingAdminToBeTranscribedWorklist : ReportingAdminWorklist
 	{
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)

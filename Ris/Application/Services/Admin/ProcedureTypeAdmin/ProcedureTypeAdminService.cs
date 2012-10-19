@@ -9,9 +9,8 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -35,46 +34,36 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
 		[ReadOperation]
 		public TextQueryResponse<ProcedureTypeSummary> TextQuery(TextQueryRequest request)
 		{
-			IProcedureTypeBroker broker = PersistenceContext.GetBroker<IProcedureTypeBroker>();
-			ProcedureTypeAssembler assembler = new ProcedureTypeAssembler();
+			var broker = PersistenceContext.GetBroker<IProcedureTypeBroker>();
+			var assembler = new ProcedureTypeAssembler();
 
-			TextQueryHelper<ProcedureType, ProcedureTypeSearchCriteria, ProcedureTypeSummary> helper
-				= new TextQueryHelper<ProcedureType, ProcedureTypeSearchCriteria, ProcedureTypeSummary>(
+			var helper = new TextQueryHelper<ProcedureType, ProcedureTypeSearchCriteria, ProcedureTypeSummary>(
 					delegate
 					{
-						string rawQuery = request.TextQuery;
+						var rawQuery = request.TextQuery;
 
 						IList<string> terms = TextQueryHelper.ParseTerms(rawQuery);
-						List<ProcedureTypeSearchCriteria> criteria = new List<ProcedureTypeSearchCriteria>();
+						var criteria = new List<ProcedureTypeSearchCriteria>();
 
 						// allow matching on name (assume entire query is a name which may contain spaces)
-						ProcedureTypeSearchCriteria nameCriteria = new ProcedureTypeSearchCriteria();
+						var nameCriteria = new ProcedureTypeSearchCriteria();
 						nameCriteria.Name.StartsWith(rawQuery);
 						criteria.Add(nameCriteria);
 
 						// allow matching of any term against ID
-						criteria.AddRange(CollectionUtils.Map<string, ProcedureTypeSearchCriteria>(terms,
+						criteria.AddRange(CollectionUtils.Map(terms,
 									 delegate(string term)
 									 {
-										 ProcedureTypeSearchCriteria c = new ProcedureTypeSearchCriteria();
+										 var c = new ProcedureTypeSearchCriteria();
 										 c.Id.StartsWith(term);
 										 return c;
 									 }));
 
 						return criteria.ToArray();
 					},
-					delegate(ProcedureType pt)
-					{
-						return assembler.CreateSummary(pt);
-					},
-					delegate(ProcedureTypeSearchCriteria[] criteria, int threshold)
-					{
-						return broker.Count(criteria) <= threshold;
-					},
-					delegate(ProcedureTypeSearchCriteria[] criteria, SearchResultPage page)
-					{
-						return broker.Find(criteria, page);
-					});
+					assembler.CreateSummary,
+					(criteria, threshold) => broker.Count(criteria) <= threshold,
+					broker.Find);
 
 			return helper.Query(request);
 		}
@@ -84,7 +73,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
 		{
 			Platform.CheckForNullReference(request, "request");
 
-			ProcedureTypeSearchCriteria where = new ProcedureTypeSearchCriteria();
+			var where = new ProcedureTypeSearchCriteria();
 			where.Id.SortAsc(0);
 			if (!string.IsNullOrEmpty(request.Id))
 				where.Id.StartsWith(request.Id);
@@ -93,17 +82,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
 			if (!request.IncludeDeactivated)
 				where.Deactivated.EqualTo(false);
 
-			IProcedureTypeBroker broker = PersistenceContext.GetBroker<IProcedureTypeBroker>();
-			IList<ProcedureType> items = broker.Find(where, request.Page);
+			var broker = PersistenceContext.GetBroker<IProcedureTypeBroker>();
+			var items = broker.Find(where, request.Page);
 
-			ProcedureTypeAssembler assembler = new ProcedureTypeAssembler();
-			return new ListProcedureTypesResponse(
-				CollectionUtils.Map<ProcedureType, ProcedureTypeSummary>(items,
-					delegate(ProcedureType item)
-					{
-						return assembler.CreateSummary(item);
-					})
-				);
+			var assembler = new ProcedureTypeAssembler();
+			return new ListProcedureTypesResponse(CollectionUtils.Map(items, (ProcedureType item) => assembler.CreateSummary(item)));
 		}
 
 		[ReadOperation]
@@ -112,25 +95,23 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.ProcedureTypeRef, "request.ProcedureTypeRef");
 
-			ProcedureType item = PersistenceContext.Load<ProcedureType>(request.ProcedureTypeRef);
+			var item = PersistenceContext.Load<ProcedureType>(request.ProcedureTypeRef);
 
-			ProcedureTypeAssembler assembler = new ProcedureTypeAssembler();
-			return new LoadProcedureTypeForEditResponse(assembler.CreateDetail(item));
+			var assembler = new ProcedureTypeAssembler();
+			return new LoadProcedureTypeForEditResponse(assembler.CreateDetail(item, PersistenceContext));
 		}
 
 		[ReadOperation]
 		public LoadProcedureTypeEditorFormDataResponse LoadProcedureTypeEditorFormData(LoadProcedureTypeEditorFormDataRequest request)
 		{
-			ProcedureTypeSearchCriteria where = new ProcedureTypeSearchCriteria();
-			where.Id.SortAsc(0);
+			var where = new ModalitySearchCriteria();
+			where.Name.SortAsc(0);
 			where.Deactivated.EqualTo(false);
 
-			IList<ProcedureType> procTypes = PersistenceContext.GetBroker<IProcedureTypeBroker>().Find(where);
+			var modalities = PersistenceContext.GetBroker<IModalityBroker>().Find(where);
 
-			ProcedureTypeAssembler assembler = new ProcedureTypeAssembler();
-			return new LoadProcedureTypeEditorFormDataResponse(
-				CollectionUtils.Map<ProcedureType, ProcedureTypeSummary>(procTypes,
-					delegate(ProcedureType pt) { return assembler.CreateSummary(pt); }));
+			var assembler = new ModalityAssembler();
+			return new LoadProcedureTypeEditorFormDataResponse(modalities.Select(assembler.CreateModalitySummary).ToList());
 		}
 
 		[UpdateOperation]
@@ -140,12 +121,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.ProcedureType, "request.ProcedureType");
 
-			if (string.IsNullOrEmpty(request.ProcedureType.PlanXml))
-				throw new RequestValidationException(SR.ExceptionProcedurePlanXmlRequired);
+			var item = new ProcedureType();
 
-			ProcedureType item = new ProcedureType();
-
-			ProcedureTypeAssembler assembler = new ProcedureTypeAssembler();
+			var assembler = new ProcedureTypeAssembler();
 			assembler.UpdateProcedureType(item, request.ProcedureType, PersistenceContext);
 
 			PersistenceContext.Lock(item, DirtyState.New);
@@ -162,12 +140,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
 			Platform.CheckMemberIsSet(request.ProcedureType, "request.ProcedureType");
 			Platform.CheckMemberIsSet(request.ProcedureType.ProcedureTypeRef, "request.ProcedureType.ProcedureTypeRef");
 
-			if (string.IsNullOrEmpty(request.ProcedureType.PlanXml))
-				throw new RequestValidationException(SR.ExceptionProcedurePlanXmlRequired);
+			var item = PersistenceContext.Load<ProcedureType>(request.ProcedureType.ProcedureTypeRef);
 
-			ProcedureType item = PersistenceContext.Load<ProcedureType>(request.ProcedureType.ProcedureTypeRef);
-
-			ProcedureTypeAssembler assembler = new ProcedureTypeAssembler();
+			var assembler = new ProcedureTypeAssembler();
 			assembler.UpdateProcedureType(item, request.ProcedureType, PersistenceContext);
 
 			PersistenceContext.SynchState();
@@ -181,8 +156,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
 		{
 			try
 			{
-				IProcedureTypeBroker broker = PersistenceContext.GetBroker<IProcedureTypeBroker>();
-				ProcedureType item = broker.Load(request.ProcedureTypeRef, EntityLoadFlags.Proxy);
+				var broker = PersistenceContext.GetBroker<IProcedureTypeBroker>();
+				var item = broker.Load(request.ProcedureTypeRef, EntityLoadFlags.Proxy);
 				broker.Delete(item);
 				PersistenceContext.SynchState();
 				return new DeleteProcedureTypeResponse();

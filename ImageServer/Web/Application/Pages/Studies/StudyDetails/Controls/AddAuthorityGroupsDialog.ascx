@@ -24,7 +24,7 @@
                             <table width="100%">
                                 <tr>
                                     <td>
-                                        <asp:Label ID="Label1" runat="server" CssClass="DialogTextBoxLabel" Text="<%$ Resources:Labels, AddAuthorityGroupsDialog_StudyListingLabel %>"></asp:Label>
+                                        <asp:Label runat="server" CssClass="DialogTextBoxLabel" Text="<%$ Resources:Labels, AddAuthorityGroupsDialog_StudyListingLabel %>"/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -79,7 +79,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <asp:Label ID="Label2" runat="server" CssClass="DialogTextBoxLabel" Text="<%$ Resources:Labels, AddAuthorityGroupsDialog_AuthorityGroupsLabel %>"></asp:Label>
+                                        <asp:Label runat="server" CssClass="DialogTextBoxLabel" Text="<%$ Resources:Labels, AddAuthorityGroupsDialog_AuthorityGroupsLabel %>"/>
                                     </td>
                                 </tr>
                                 <tr>

@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Application.Common
 			this.EmailAddresses = new List<EmailAddressDetail>();
 			this.TelephoneNumbers = new List<TelephoneDetail>();
 			this.Notes = new List<PatientNoteDetail>();
-			this.Attachments = new List<PatientAttachmentSummary>();
+			this.Attachments = new List<AttachmentSummary>();
 			this.Allergies = new List<PatientAllergyDetail>();
 			this.Name = new PersonNameDetail();
 		}
@@ -80,6 +80,9 @@ namespace ClearCanvas.Ris.Application.Common
 		public TelephoneDetail CurrentWorkPhone;
 
 		[DataMember]
+		public string BillingInformation;
+
+		[DataMember]
 		public List<AddressDetail> Addresses;
 
 		[DataMember]
@@ -95,9 +98,23 @@ namespace ClearCanvas.Ris.Application.Common
 		public List<PatientNoteDetail> Notes;
 
 		[DataMember]
-		public List<PatientAttachmentSummary> Attachments;
+		public List<AttachmentSummary> Attachments;
 
 		[DataMember]
 		public List<PatientAllergyDetail> Allergies;
+
+		public PatientProfileSummary GetSummary()
+		{
+			return new PatientProfileSummary
+			       	{
+			       		DateOfBirth = this.DateOfBirth,
+			       		Healthcard = this.Healthcard,
+			       		Mrn = this.Mrn,
+			       		Name = this.Name,
+			       		PatientProfileRef = this.PatientProfileRef,
+			       		PatientRef = this.PatientRef,
+			       		Sex = this.Sex
+			       	};
+		}
 	}
 }

@@ -191,6 +191,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				step.ReportPart.ResetTranscription();
 
 				var transcriptionStep = new TranscriptionStep(step);
+				transcriptionStep.Schedule(Platform.Time);
 				workflow.AddEntity(transcriptionStep);
 				return transcriptionStep;
 			}

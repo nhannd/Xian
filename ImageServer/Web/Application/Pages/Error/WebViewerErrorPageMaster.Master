@@ -40,7 +40,7 @@ div#StackTrace
         <asp:Table ID="Table1" runat="server" HorizontalAlign="Center" CssClass="ErrorTable">
             <asp:TableRow>
                 <asp:TableCell HorizontalAlign="left">
-                    <asp:Image ID="Image1" ImageUrl="~/Images/ImageServerLogo.png" runat="server" />
+                    <asp:Image ID="Image1" ImageUrl="~/App_Themes/Default/WebStation/WebStationLogo.png" runat="server" />
                     <div class="ErrorMessage">
                         <asp:ContentPlaceHolder ID="ErrorMessagePlaceHolder" runat="server" />
                     </div>

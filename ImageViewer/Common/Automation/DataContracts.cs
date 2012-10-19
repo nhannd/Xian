@@ -33,8 +33,8 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	/// Data contract for fault when there are no active viewers.
 	/// </summary>
 	[DataContract(Namespace = AutomationNamespace.Value)]
-    [Obsolete("Use GetViewers instead.")]
-    public class NoActiveViewersFault
+	[Obsolete("Used only by the deprecated GetActiveViewers method. Replaced by NoViewersFault, which is thrown by the GetViewers method.")]
+	public class NoActiveViewersFault
 	{
 	}
 
@@ -124,6 +124,19 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	    /// <summary>
 		/// Constructor.
 		/// </summary>
+		public Viewer(Guid identifier, StudyRootStudyIdentifier primaryStudyIdentifier)
+		{
+			Identifier = identifier;
+			PrimaryStudyIdentifier = primaryStudyIdentifier;
+		}
+
+	    /// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <remarks>
+		/// Deprecated. Consider returning complete primary study identifier values using the overload <see cref="Viewer(Guid,StudyIdentifier)"/>.
+		/// </remarks>
+		[Obsolete("Consider returning complete primary study identifier values using the overload ctor(Guid, StudyIdentifier)")]
 		public Viewer(Guid identifier, string primaryStudyInstanceUid)
 		{
 			Identifier = identifier;
@@ -133,8 +146,8 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public Viewer(Guid viewerId)
-			: this(viewerId, null)
+		public Viewer(Guid identifier)
+			: this(identifier, (StudyRootStudyIdentifier) null)
 		{
 		}
 
@@ -151,11 +164,20 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	    [DataMember(IsRequired = true)]
 	    public Guid Identifier { get; set; }
 
-	    /// <summary>
-	    /// Gets or sets the study instance uid of the primary study, or study of interest.
-	    /// </summary>
+		/// <summary>
+		/// Gets or sets the identifying details of the primary study, or study of interest.
+		/// </summary>
 	    [DataMember(IsRequired = true)]
-	    public string PrimaryStudyInstanceUid { get; set; }
+		public StudyRootStudyIdentifier PrimaryStudyIdentifier { get; set; }
+
+		/// <summary>
+		/// Gets or sets the study instance uid of the primary study, or study of interest.
+		/// </summary>
+		public string PrimaryStudyInstanceUid
+		{
+			get { return PrimaryStudyIdentifier != null ? PrimaryStudyIdentifier.StudyInstanceUid : null; }
+			set { PrimaryStudyIdentifier = !string.IsNullOrEmpty(value) ? new StudyRootStudyIdentifier { StudyInstanceUid = value } : null; }
+		}
 
 	    public override bool Equals(object obj)
 		{
@@ -189,8 +211,8 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	/// Data contract for results returned from <see cref="IViewerAutomation.GetActiveViewers"/>.
 	/// </summary>
 	[DataContract(Namespace = AutomationNamespace.Value)]
-    [Obsolete("Use GetViewers method.")]
-    public class GetActiveViewersResult
+	[Obsolete("Used only by the deprecated GetActiveViewers method. Replaced by GetViewersResult, which is returned by the GetViewers method.")]
+	public class GetActiveViewersResult
 	{
 	    /// <summary>
 		/// Constructor.
@@ -212,7 +234,7 @@ namespace ClearCanvas.ImageViewer.Common.Automation
     {}
 
     /// <summary>
-    /// Data contract for results returned from <see cref="IViewerAutomation.GetActiveViewers"/>.
+    /// Data contract for results returned from <see cref="IViewerAutomation.GetViewers"/>.
     /// </summary>
     [DataContract(Namespace = AutomationNamespace.Value)]
     public class GetViewersResult

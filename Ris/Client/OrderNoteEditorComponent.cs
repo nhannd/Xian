@@ -27,10 +27,12 @@ namespace ClearCanvas.Ris.Client
     {
         private readonly OrderNoteDetail _note;
 		private ICannedTextLookupHandler _cannedTextLookupHandler;
+    	private string _noteBody;
 
         public OrderNoteEditorComponent(OrderNoteDetail noteDetail)
         {
             _note = noteDetail;
+        	_noteBody = noteDetail.NoteBody;
         }
 
 		public override void Start()
@@ -50,10 +52,10 @@ namespace ClearCanvas.Ris.Client
 		[ValidateNotNull]
 		public string Comment
         {
-            get { return _note.NoteBody; }
+			get { return _noteBody; }
             set
             {
-                _note.NoteBody = value;
+				_noteBody = value;
                 this.Modified = true;
             }
         }
@@ -71,14 +73,13 @@ namespace ClearCanvas.Ris.Client
 				return;
 			}
 
-            this.ExitCode = ApplicationComponentExitCode.Accepted;
-            Host.Exit();
+        	_note.NoteBody = _noteBody;
+            this.Exit(ApplicationComponentExitCode.Accepted);
         }
 
         public void Cancel()
         {
-            this.ExitCode = ApplicationComponentExitCode.None;
-            Host.Exit();
+            this.Exit(ApplicationComponentExitCode.None);
         }
 
         public bool AcceptEnabled

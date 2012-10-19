@@ -18,7 +18,7 @@ namespace ClearCanvas.Ris.Application.Common
 	/// Defines a default set of authority groups to be imported at deployment time.  This class
 	/// is not used post-deployment.
 	/// </summary>
-	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
+	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	public class DefaultAuthorityGroups : IDefineAuthorityGroups
 	{
 		// note: we do not define the sys admin ("Administrators") group here because it is defined 
@@ -47,7 +47,6 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.CannedText.Group,
                         AuthorityTokens.Workflow.Patient.Create,
                         AuthorityTokens.Workflow.Patient.Update,
-                        AuthorityTokens.Workflow.Patient.Reconcile,
                         AuthorityTokens.Workflow.PatientProfile.Update,
                         AuthorityTokens.Workflow.Visit.Create,
                         AuthorityTokens.Workflow.Visit.Update,
@@ -56,13 +55,8 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.Order.Cancel,
                         AuthorityTokens.Workflow.Order.Replace,
                         AuthorityTokens.Workflow.Procedure.CheckIn,
-                        AuthorityTokens.Workflow.Protocol.Accept,
-                        AuthorityTokens.Workflow.Protocol.Create,
-                        AuthorityTokens.Workflow.Protocol.Resubmit,
-                        AuthorityTokens.Workflow.Protocol.Reassign,
                         AuthorityTokens.Workflow.Documentation.Create,
                         AuthorityTokens.Workflow.Documentation.Accept,
-                        AuthorityTokens.Workflow.PreliminaryDiagnosis.Create,
                         AuthorityTokens.Workflow.Report.Create,
                         AuthorityTokens.Workflow.Report.Cancel,
                         AuthorityTokens.Workflow.Report.Verify,
@@ -81,18 +75,14 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Admin.Data.PatientNoteCategory,
                         AuthorityTokens.Admin.Data.ProcedureType,
                         AuthorityTokens.Admin.Data.ProcedureTypeGroup,
-                        AuthorityTokens.Admin.Data.ProtocolGroups,
                         AuthorityTokens.Admin.Data.Staff,
                         AuthorityTokens.Admin.Data.StaffGroup,
                         AuthorityTokens.Admin.Data.Worklist,
+                        AuthorityTokens.Admin.Data.Scheduling,
 
-						AuthorityTokens.FolderSystems.Booking,
 						AuthorityTokens.FolderSystems.Registration,
 						AuthorityTokens.FolderSystems.Performing,
-						AuthorityTokens.FolderSystems.Protocolling,
 						AuthorityTokens.FolderSystems.Reporting,
-						AuthorityTokens.FolderSystems.OrderNotes,
-						AuthorityTokens.FolderSystems.Emergency,
 						AuthorityTokens.FolderSystems.RadiologistAdmin,
                     }),
 
@@ -104,7 +94,6 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.CannedText.Personal,
                         AuthorityTokens.Workflow.Patient.Create,
                         AuthorityTokens.Workflow.Patient.Update,
-                        AuthorityTokens.Workflow.Patient.Reconcile,
                         AuthorityTokens.Workflow.PatientProfile.Update,
                         AuthorityTokens.Workflow.Visit.Create,
                         AuthorityTokens.Workflow.Visit.Update,
@@ -113,11 +102,9 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.Order.Cancel,
                         AuthorityTokens.Workflow.Order.Replace,
                         AuthorityTokens.Workflow.Procedure.CheckIn,
-                        AuthorityTokens.Workflow.Protocol.Resubmit,
                         AuthorityTokens.Workflow.ExternalPractitioner.Create,
                         AuthorityTokens.Workflow.ExternalPractitioner.Update,
 
- 						AuthorityTokens.FolderSystems.Booking,
 						AuthorityTokens.FolderSystems.Registration,
                    }),
 
@@ -148,14 +135,8 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.Report.Create,
                         AuthorityTokens.Workflow.Report.Verify,
                         AuthorityTokens.Workflow.Report.OmitSupervisor,
-                        AuthorityTokens.Workflow.Protocol.Create,
-                        AuthorityTokens.Workflow.Protocol.Accept,
-                        AuthorityTokens.Workflow.Protocol.OmitSupervisor,
-                        AuthorityTokens.Workflow.PreliminaryDiagnosis.Create,
 
-						AuthorityTokens.FolderSystems.Protocolling,
 						AuthorityTokens.FolderSystems.Reporting,
-						AuthorityTokens.FolderSystems.OrderNotes,
                    }),
 
                 new AuthorityGroupDefinition(RadiologyResidents,
@@ -165,12 +146,8 @@ namespace ClearCanvas.Ris.Application.Common
 						AuthorityTokens.Workflow.PatientBiography.View,
 						AuthorityTokens.Workflow.CannedText.Personal,
 						AuthorityTokens.Workflow.Report.Create,
-						AuthorityTokens.Workflow.Protocol.Create,
-                        AuthorityTokens.Workflow.PreliminaryDiagnosis.Create,
 
-						AuthorityTokens.FolderSystems.Protocolling,
 						AuthorityTokens.FolderSystems.Reporting,
-						AuthorityTokens.FolderSystems.OrderNotes,
                    }),
 
                 new AuthorityGroupDefinition(EmergencyPhysicians,
@@ -179,10 +156,6 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.HomePage.View,
                         AuthorityTokens.Workflow.PatientBiography.View,
                         AuthorityTokens.Workflow.CannedText.Personal,
-                        AuthorityTokens.Workflow.PreliminaryDiagnosis.Create,
-
-						AuthorityTokens.FolderSystems.OrderNotes,
-						AuthorityTokens.FolderSystems.Emergency,
                     }),
 
             };

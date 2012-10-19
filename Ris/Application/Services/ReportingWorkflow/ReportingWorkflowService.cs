@@ -11,14 +11,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Printing;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.Printing;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
@@ -57,6 +61,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		}
 
 		[ReadOperation]
+		[AuditRecorder(typeof(WorkflowServiceRecorder.SearchWorklists))]
 		public TextQueryResponse<ReportingWorklistItemSummary> SearchWorklists(WorklistItemTextQueryRequest request)
 		{
 			var procedureStepClass = request.ProcedureStepClassName == null ? null
@@ -132,12 +137,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 		[UpdateOperation]
 		[OperationEnablement("CanCompleteInterpretationForTranscription")]
+		[AuditRecorder(typeof(ReportingWorkflowServiceRecorder.CompleteInterpretation))]
 		public CompleteInterpretationForTranscriptionResponse CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request)
 		{
 			var interpretation = this.PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
 			var supervisor = ResolveSupervisor(interpretation, request.SupervisorRef);
 
 			SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor, true);
+			UpdatePriority(interpretation, request.Priority);
 
 			ValidateReportTextExists(interpretation);
 
@@ -155,12 +162,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		[UpdateOperation]
 		[OperationEnablement("CanCompleteInterpretationForVerification")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.SubmitForReview)]
+		[AuditRecorder(typeof(ReportingWorkflowServiceRecorder.CompleteInterpretation))]
 		public CompleteInterpretationForVerificationResponse CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request)
 		{
 			var interpretation = this.PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
 			var supervisor = ResolveSupervisor(interpretation, request.SupervisorRef);
 
 			SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor, true);
+			UpdatePriority(interpretation, request.Priority);
 
 			ValidateReportTextExists(interpretation);
 
@@ -178,12 +187,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		[UpdateOperation]
 		[OperationEnablement("CanCompleteInterpretationAndVerify")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Verify)]
+		[AuditRecorder(typeof(ReportingWorkflowServiceRecorder.CompleteVerification))]
 		public CompleteInterpretationAndVerifyResponse CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request)
 		{
 			var interpretation = this.PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
 			var supervisor = ResolveSupervisor(interpretation, request.SupervisorRef);
 
 			SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor, true);
+			UpdatePriority(interpretation, request.Priority);
 
 			ValidateReportTextExists(interpretation);
 
@@ -202,6 +213,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		[OperationEnablement("CanCancelReportingStep")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Create)]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Cancel)]
+		[AuditRecorder(typeof(ReportingWorkflowServiceRecorder.Discard))]
 		public CancelReportingStepResponse CancelReportingStep(CancelReportingStepRequest request)
 		{
 			var step = this.PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
@@ -248,6 +260,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			var supervisor = ResolveSupervisor(step, request.SupervisorRef);
 
 			SaveReportHelper(request.ReportPartExtendedProperties, step, supervisor, true);
+			UpdatePriority(step, request.Priority);
 
 			ValidateReportTextExists(step);
 
@@ -275,12 +288,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		[UpdateOperation]
 		[OperationEnablement("CanCompleteVerification")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Verify)]
+		[AuditRecorder(typeof(ReportingWorkflowServiceRecorder.CompleteVerification))]
 		public CompleteVerificationResponse CompleteVerification(CompleteVerificationRequest request)
 		{
 			var verification = this.PersistenceContext.Load<VerificationStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
 			var supervisor = ResolveSupervisor(verification, request.SupervisorRef);
 
 			SaveReportHelper(request.ReportPartExtendedProperties, verification, supervisor, true);
+			UpdatePriority(verification, request.Priority);
 
 			ValidateReportTextExists(verification);
 
@@ -316,6 +331,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		[UpdateOperation]
 		[OperationEnablement("CanReviseUnpublishedReport")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Verify)]
+		[AuditRecorder(typeof(ReportingWorkflowServiceRecorder.Revise))]
 		public ReviseUnpublishedReportResponse ReviseUnpublishedReport(ReviseUnpublishedReportRequest request)
 		{
 			var publication = this.PersistenceContext.Load<PublicationStep>(request.PublicationStepRef, EntityLoadFlags.CheckVersion);
@@ -337,10 +353,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			var op = new Operations.PublishReport();
 			op.Execute(publication, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
-			foreach (var logicalEvent in LogicalHL7EventWorkQueueItem.CreateReportLogicalEvents(LogicalHL7EventType.ReportPublished, publication.Report))
-			{
-				this.PersistenceContext.Lock(logicalEvent.Item, DirtyState.New);
-			}
+			LogicalHL7Event.ReportPublished.EnqueueEvents(publication.Report);
 
 			this.PersistenceContext.SynchState();
 			return new PublishReportResponse(publication.GetRef());
@@ -362,7 +375,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return new LoadReportForEditResponse(
 				reportDetail,
 				step.ReportPart.Index,
-				orderDetail);
+				orderDetail,
+				EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext));
 		}
 
 		[UpdateOperation]
@@ -375,6 +389,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 			// saving a draft does not require supervisor validation
 			SaveReportHelper(request.ReportPartExtendedProperties, step, supervisor, false);
+			UpdatePriority(step, request.Priority);
 
 			this.PersistenceContext.SynchState();
 
@@ -458,31 +473,30 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 					item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext)));
 		}
 
-		[UpdateOperation]
-		[OperationEnablement("CanSendReportToQueue")]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.SendToFaxQueue)]
-		public SendReportToQueueResponse SendReportToQueue(SendReportToQueueRequest request)
-		{
-			var procedure = this.PersistenceContext.Load<Procedure>(request.ProcedureRef);
+		//[UpdateOperation]
+		//[OperationEnablement("CanSendReportToQueue")]
+		//[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.SendToFaxQueue)]
+		//public SendReportToQueueResponse SendReportToQueue(SendReportToQueueRequest request)
+		//{
+		//    var procedure = this.PersistenceContext.Load<Procedure>(request.ProcedureRef);
 
-			foreach (var detail in request.Recipients)
-			{
-				var item = MailFaxWorkQueueItem.Create(
-					procedure.Order.AccessionNumber,
-					procedure.ActiveReport.GetRef(),
-					detail.PractitionerRef,
-					detail.ContactPointRef);
+		//    foreach (var detail in request.Recipients)
+		//    {
+		//        var item = MailFaxWorkQueueItem.Create(
+		//            procedure.Order.AccessionNumber,
+		//            procedure.ActiveReport.GetRef(),
+		//            detail.PractitionerRef,
+		//            detail.ContactPointRef);
 
-				this.PersistenceContext.Lock(item, DirtyState.New);
-			}
+		//        this.PersistenceContext.Lock(item, DirtyState.New);
+		//    }
 
-			return new SendReportToQueueResponse();
-		}
+		//    return new SendReportToQueueResponse();
+		//}
 
 		[UpdateOperation]
 		[OperationEnablement("CanReassignProcedureStep")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Reassign)]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Reassign)]
 		public ReassignProcedureStepResponse ReassignProcedureStep(ReassignProcedureStepRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
@@ -490,6 +504,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			Platform.CheckMemberIsSet(request.ReassignedRadiologistRef, "ReassignedRadiologistRef");
 
 			var procedureStep = this.PersistenceContext.Load<ProcedureStep>(request.ProcedureStepRef, EntityLoadFlags.Proxy);
+
+			// bug #6418 - this operation doesn't apply to transcription steps, because it doesn't make any sense to assign
+			// a transcription step to a radiologist
+
+
 			var newStaff = this.PersistenceContext.Load<Staff>(request.ReassignedRadiologistRef, EntityLoadFlags.Proxy);
 
 			var newStep = procedureStep.Reassign(newStaff);
@@ -547,6 +566,26 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			procedure.DowntimeRecoveryMode = false;
 
 			return new CompleteDowntimeProcedureResponse();
+		}
+
+		[ReadOperation]
+		[AuditRecorder(typeof(ReportingWorkflowServiceRecorder.PrintReport))]
+		public PrintReportResponse PrintReport(PrintReportRequest request)
+		{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.ReportRef, "ReportRef");
+
+			var report = PersistenceContext.Load<Report>(request.ReportRef);
+
+			var printModel = request.RecipientContactPointRef != null ?
+				 new ReportPageModel(report, PersistenceContext.Load<ExternalPractitionerContactPoint>(request.RecipientContactPointRef))
+				: new ReportPageModel(report);
+
+			using(var printResult = PrintJob.Run(printModel))
+			{
+				var contents = File.ReadAllBytes(printResult.OutputFilePath);
+				return new PrintReportResponse(contents);
+			}
 		}
 
 		#endregion
@@ -613,7 +652,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 					return false;
 			}
 
-			return CanExecuteOperation(new Operations.CancelReportingStep(), itemKey, true);
+			return CanExecuteOperation(new Operations.CancelReportingStep(), itemKey);
 		}
 
 		public bool CanReviseResidentReport(ReportingWorklistItemKey itemKey)
@@ -675,10 +714,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 		public bool CanPublishReport(ReportingWorklistItemKey itemKey)
 		{
+#if DEBUG
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.TestPublishReport))
 				return false;
 
 			return CanExecuteOperation(new Operations.PublishReport(), itemKey);
+#else
+			return false;
+#endif
 		}
 
 		public bool CanSaveReport(ReportingWorklistItemKey itemKey)
@@ -693,8 +736,10 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 			var procedureStep = this.PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
 
-			if (procedureStep.Is<ProtocolProcedureStep>())
-				return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Reassign);
+			// bug #6418 - this operation doesn't apply to transcription steps, because it doesn't make any sense to assign
+			// a transcription step to a radiologist
+			if (procedureStep.Is<TranscriptionStep>())
+				return false;
 
 			if (procedureStep.Is<ReportingProcedureStep>())
 				return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Reassign)
@@ -802,6 +847,15 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 			var saveReportOp = new Operations.SaveReport();
 			saveReportOp.Execute(step, reportPartExtendedProperties, supervisor);
+		}
+
+		private void UpdatePriority(ReportingProcedureStep step, EnumValueInfo priority)
+		{
+			if (priority == null)
+				return;
+
+			// update the priority of the associated order
+			step.Procedure.Order.Priority = EnumUtils.GetEnumValue<OrderPriority>(priority);
 		}
 
 		private void ValidateReportTextExists(ReportingProcedureStep step)

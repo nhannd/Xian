@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -27,7 +27,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             _datePicker.ValueChanged += OnValueChanged;
             _timePicker.ValueChanged += OnValueChanged;
 
-            if (!DesignMode)
+            // System.Component.DesignMode does not work in control constructors
+            if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
             {
                 try
                 {

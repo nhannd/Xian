@@ -35,5 +35,5 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// </summary>
         [DataMember]
         public OrderRequisition Requisition;
-    }
+	}
 }

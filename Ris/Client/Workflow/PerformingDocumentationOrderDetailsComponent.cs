@@ -9,13 +9,45 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Serialization;
 using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
+	/// <summary>
+	/// Defines an interface for providing custom pages to be displayed in the performing documentation order details section.
+	/// </summary>
+	public interface IPerformingDocumentationOrderDetailsPageProvider : IExtensionPageProvider<IPerformingDocumentationOrderDetailsPage, IPerformingDocumentationOrderDetailsContext>
+	{
+	}
+
+	/// <summary>
+	/// Defines an interface to a custom performing order details page.
+	/// </summary>
+	public interface IPerformingDocumentationOrderDetailsPage : IExtensionPage
+	{
+		void Save();
+	}
+
+	/// <summary>
+	/// Defines an interface for providing a custom page with access to the performing documentation context.
+	/// </summary>
+	public interface IPerformingDocumentationOrderDetailsContext
+	{
+		WorklistItemSummaryBase WorklistItem { get; }
+		IDictionary<string, string> OrderExtendedProperties { get; }
+	}
+
+	/// <summary>
+	/// Defines an extension point for adding custom pages to the performing documentation order details section.
+	/// </summary>
+	[ExtensionPoint]
+	public class PerformingDocumentationOrderDetailsPageProviderExtensionPoint : ExtensionPoint<IPerformingDocumentationOrderDetailsPageProvider>
+	{
+	}
+
 	/// <summary>
 	/// Extension point for views onto <see cref="PerformingDocumentationOrderDetailsComponent"/>
 	/// </summary>
@@ -47,22 +79,43 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
+		class PerformingDocumentationOrderDetailsContext : IPerformingDocumentationOrderDetailsContext
+		{
+			private readonly PerformingDocumentationOrderDetailsComponent _owner;
+
+			public PerformingDocumentationOrderDetailsContext(PerformingDocumentationOrderDetailsComponent owner)
+			{
+				_owner = owner;
+			}
+
+			public WorklistItemSummaryBase WorklistItem
+			{
+				get { return _owner._worklistItem; }
+			}
+
+			public IDictionary<string, string> OrderExtendedProperties
+			{
+				get { return _owner._context.OrderExtendedProperties; }
+			}
+		}
+
 		private OrderNoteSummaryComponent _orderNoteComponent;
 		private ChildComponentHost _orderNotesComponentHost;
 		private ChildComponentHost _protocolSummaryComponentHost;
 
 		private ChildComponentHost _rightHandComponentContainerHost;
 		private TabComponentContainer _rightHandComponentContainer;
-		private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 		private AttachedDocumentPreviewComponent _orderAttachmentsComponent;
 
 		private readonly IPerformingDocumentationContext _context;
-		private readonly DataContractBase _worklistItem;
+		private readonly WorklistItemSummaryBase _worklistItem;
+
+		private readonly List<IPerformingDocumentationOrderDetailsPage> _extensionPages = new List<IPerformingDocumentationOrderDetailsPage>();
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public PerformingDocumentationOrderDetailsComponent(IPerformingDocumentationContext context, DataContractBase worklistItem)
+		public PerformingDocumentationOrderDetailsComponent(IPerformingDocumentationContext context, WorklistItemSummaryBase worklistItem)
 		{
 			_context = context;
 			_worklistItem = worklistItem;
@@ -79,14 +132,21 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_protocolSummaryComponentHost.StartComponent();
 
 			_rightHandComponentContainer = new TabComponentContainer();
-			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
-			_orderAdditionalInfoComponent.OrderExtendedProperties = _context.OrderExtendedProperties;
-			_orderAdditionalInfoComponent.HealthcareContext = _worklistItem;
-			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleAdditionalInfo, _orderAdditionalInfoComponent));
-
-			_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
-			_orderAttachmentsComponent.OrderRef = _context.OrderRef;
+			_orderAttachmentsComponent = new AttachedDocumentPreviewComponent(true, AttachmentSite.Order) {OrderRef = _context.OrderRef};
 			_rightHandComponentContainer.Pages.Add(new TabPage(SR.TitleOrderAttachments, _orderAttachmentsComponent));
+
+			// instantiate all extension pages
+			foreach (IPerformingDocumentationOrderDetailsPageProvider pageProvider in new PerformingDocumentationOrderDetailsPageProviderExtensionPoint().CreateExtensions())
+			{
+				_extensionPages.AddRange(pageProvider.GetPages(new PerformingDocumentationOrderDetailsContext(this)));
+			}
+
+			// add extension pages to container and set initial context
+			// the container will start those components if the user goes to that page
+			foreach (var page in _extensionPages)
+			{
+				_rightHandComponentContainer.Pages.Add(new TabPage(page.Path, page.GetComponent()));
+			}
 
 			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 			_rightHandComponentContainerHost.StartComponent();
@@ -134,7 +194,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		internal void SaveData()
 		{
-			_orderAdditionalInfoComponent.SaveData();
+			foreach (var extensionPage in _extensionPages)
+			{
+				extensionPage.Save();
+			}
 		}
 	}
 }

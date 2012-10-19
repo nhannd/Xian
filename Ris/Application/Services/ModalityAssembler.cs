@@ -19,20 +19,26 @@ namespace ClearCanvas.Ris.Application.Services
 	{
 		public ModalitySummary CreateModalitySummary(Modality modality)
 		{
+			var facilityAssember = new FacilityAssembler();
 			return new ModalitySummary(
 				modality.GetRef(),
 				modality.Id,
 				modality.Name,
+				modality.Facility == null ? null : facilityAssember.CreateFacilitySummary(modality.Facility),
+				modality.AETitle,
 				EnumUtils.GetEnumValueInfo(modality.DicomModality),
 				modality.Deactivated);
 		}
 
 		public ModalityDetail CreateModalityDetail(Modality modality)
 		{
+			var facilityAssember = new FacilityAssembler();
 			return new ModalityDetail(
 				modality.GetRef(),
 				modality.Id,
 				modality.Name,
+				modality.Facility == null ? null : facilityAssember.CreateFacilitySummary(modality.Facility),
+				modality.AETitle,
 				EnumUtils.GetEnumValueInfo(modality.DicomModality),
 				modality.Deactivated);
 		}
@@ -41,6 +47,8 @@ namespace ClearCanvas.Ris.Application.Services
 		{
 			modality.Id = detail.Id;
 			modality.Name = detail.Name;
+			modality.Facility = detail.Facility == null ? null : context.Load<Facility>(detail.Facility.FacilityRef, EntityLoadFlags.Proxy);
+			modality.AETitle = detail.AETitle;
 			modality.DicomModality = EnumUtils.GetEnumValue<DicomModalityEnum>(detail.DicomModality, context);
 			modality.Deactivated = detail.Deactivated;
 		}

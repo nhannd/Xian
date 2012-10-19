@@ -555,6 +555,15 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You do not have permission to view System Configuration..
+        /// </summary>
+        internal static string MessageSystemConfigurationNoPermission {
+            get {
+                return ResourceManager.GetString("MessageSystemConfigurationNoPermission", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to start the local service. See the logs for more details..
         /// </summary>
         internal static string MessageUnableToStartLocalService {

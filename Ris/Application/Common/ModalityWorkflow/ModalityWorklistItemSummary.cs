@@ -55,5 +55,5 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
             )
         {
         }
-    }
+	}
 }

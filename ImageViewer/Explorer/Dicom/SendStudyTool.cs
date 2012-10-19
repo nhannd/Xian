@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     [Tooltip("activate", "TooltipSendStudy")]
 	[IconSet("activate", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png")]
 
-    [ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Study.Send)]
+    [ViewerActionPermission("activate", ImageViewer.AuthorityTokens.Study.Send)]
 
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
     public class SendStudyTool : StudyBrowserTool

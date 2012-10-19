@@ -18,11 +18,13 @@ namespace ClearCanvas.Ris.Application.Common
 	[DataContract]
 	public class ModalityDetail : DataContractBase
 	{
-		public ModalityDetail(EntityRef modalityRef, string id, string name, EnumValueInfo dicomModality, bool deactivated)
+		public ModalityDetail(EntityRef modalityRef, string id, string name, FacilitySummary facility, string aeTitle, EnumValueInfo dicomModality, bool deactivated)
 		{
 			this.ModalityRef = modalityRef;
 			this.Id = id;
 			this.Name = name;
+			this.Facility = facility;
+			this.AETitle = aeTitle;
 			this.DicomModality = dicomModality;
 			this.Deactivated = deactivated;
 		}
@@ -39,6 +41,12 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public string Name;
+
+		[DataMember]
+		public FacilitySummary Facility;
+
+		[DataMember]
+		public string AETitle;
 
 		[DataMember]
 		public EnumValueInfo DicomModality;

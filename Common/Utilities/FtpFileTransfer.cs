@@ -11,8 +11,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.IO;
+using System.Net;
 
 namespace ClearCanvas.Common.Utilities
 {
@@ -55,28 +55,11 @@ namespace ClearCanvas.Common.Utilities
 			{
 				CreateRemoteDirectoryForFile(request.RemoteFile);
 
-				// Create a FTP request to upload file
-				var localFileInf = new FileInfo(request.LocalFile);
-				var ftpRequest = (FtpWebRequest)WebRequest.Create(request.RemoteFile);
-				ftpRequest.Credentials = new NetworkCredential(_userId, _password);
-				ftpRequest.Method = WebRequestMethods.Ftp.UploadFile;
-				ftpRequest.UseBinary = true;
-				ftpRequest.UsePassive = _usePassive;
-				ftpRequest.ContentLength = localFileInf.Length;
-
-				// Open ftp and local streams
-				using (var localFileStream = localFileInf.OpenRead())
-				using (var ftpRequestStream = ftpRequest.GetRequestStream())
+				// upload the file
+				var credentials = new NetworkCredential(_userId, _password);
+				using (var ftpClient = new FtpClient {UsePassiveMode = _usePassive, Credentials = credentials})
 				{
-					// Write Content from the file stream to the FTP Upload Stream
-					const int bufferLength = 2048;
-					var buffer = new byte[bufferLength];
-					var localFileContentLength = localFileStream.Read(buffer, 0, bufferLength);
-					while (localFileContentLength != 0)
-					{
-						ftpRequestStream.Write(buffer, 0, localFileContentLength);
-						localFileContentLength = localFileStream.Read(buffer, 0, bufferLength);
-					}
+					ftpClient.UploadFile(request.RemoteFile, request.LocalFile);
 				}
 			}
 			catch (Exception e)
@@ -96,33 +79,16 @@ namespace ClearCanvas.Common.Utilities
 		{
 			try
 			{
-				// Create a FTP request to download file
-				var ftpRequest = (FtpWebRequest) WebRequest.Create(request.RemoteFile);
-				ftpRequest.Method = WebRequestMethods.Ftp.DownloadFile;
-				ftpRequest.UseBinary = true;
-				ftpRequest.UsePassive = _usePassive;
-				ftpRequest.Credentials = new NetworkCredential(_userId, _password);
-
 				// Create download directory if not already exist
 				var downloadDirectory = Path.GetDirectoryName(request.LocalFile);
 				if (!Directory.Exists(downloadDirectory))
 					Directory.CreateDirectory(downloadDirectory);
 
-				// Open ftp and local streams
-
-				using (var ftpResponse = (FtpWebResponse) ftpRequest.GetResponse())
-				using (var ftpResponseStream = ftpResponse.GetResponseStream())
-				using (var localFileStream = new FileStream(request.LocalFile, FileMode.Create))
+				// download the file
+				var credentials = new NetworkCredential(_userId, _password);
+				using (var ftpClient = new FtpClient {UsePassiveMode = _usePassive, Credentials = credentials})
 				{
-					// Write Content from the FTP download stream to local file stream
-					const int bufferSize = 2048;
-					var buffer = new byte[bufferSize];
-					var readCount = ftpResponseStream.Read(buffer, 0, bufferSize);
-					while (readCount > 0)
-					{
-						localFileStream.Write(buffer, 0, readCount);
-						readCount = ftpResponseStream.Read(buffer, 0, bufferSize);
-					}
+					ftpClient.DownloadFile(request.RemoteFile, request.LocalFile);
 				}
 			}
 			catch (Exception e)
@@ -145,21 +111,23 @@ namespace ClearCanvas.Common.Utilities
 
 				var isFileSegment = segment == urlToCreate.Segments[urlToCreate.Segments.Length - 1];
 
-				if (_urlCreated.Contains(uri.ToString()) || 
-					Equals(this.BaseUri, uri) ||	// The base Uri should already exist
-					isFileSegment)					// Skip the file segment, so we don't create a directory with the same name as the file
+				if (_urlCreated.Contains(uri.ToString()) ||
+				    Equals(this.BaseUri, uri) || // The base Uri should already exist
+				    isFileSegment) // Skip the file segment, so we don't create a directory with the same name as the file
 					continue;
 
 				try
 				{
-					var ftpRequest = (FtpWebRequest)WebRequest.Create(uri);
+					var ftpRequest = (FtpWebRequest) WebRequest.Create(uri);
 					ftpRequest.Method = WebRequestMethods.Ftp.MakeDirectory;
 					ftpRequest.UseBinary = true;
 					ftpRequest.UsePassive = _usePassive;
 					ftpRequest.Credentials = new NetworkCredential(_userId, _password);
-					
-					var ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
-					ftpResponse.Close();
+
+					using (var ftpResponse = (FtpWebResponse) ftpRequest.GetResponse())
+					{
+						ftpResponse.Close();
+					}
 				}
 				catch (Exception)
 				{
@@ -179,9 +147,26 @@ namespace ClearCanvas.Common.Utilities
 			var segmentDelimiter = tempUri.Segments[0];
 
 			// Make sure the baseUri always ends with a trailing slash.
-			return baseUri.EndsWith(segmentDelimiter) 
-				? new Uri(baseUri) 
-				: new Uri(string.Concat(baseUri, segmentDelimiter));
+			return baseUri.EndsWith(segmentDelimiter)
+			       	? new Uri(baseUri)
+			       	: new Uri(string.Concat(baseUri, segmentDelimiter));
+		}
+
+		private class FtpClient : WebClient
+		{
+			public bool UsePassiveMode { get; set; }
+
+			protected override WebRequest GetWebRequest(Uri address)
+			{
+				var request = base.GetWebRequest(address);
+				var ftpWebRequest = request as FtpWebRequest;
+				if (ftpWebRequest != null)
+				{
+					ftpWebRequest.UsePassive = UsePassiveMode;
+					ftpWebRequest.UseBinary = true;
+				}
+				return request;
+			}
 		}
 	}
 }

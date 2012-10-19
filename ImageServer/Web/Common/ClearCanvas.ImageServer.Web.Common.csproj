@@ -66,12 +66,8 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices" />
-    <Reference Include="System.Web.Extensions, Version=1.0.61025.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web.Extensions.Design, Version=1.0.61025.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Extensions.Design" />
     <Reference Include="System.Xml" />
     <Reference Include="Validators, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -93,6 +89,7 @@
     <Compile Include="Data\DuplicateSopEntryController.cs" />
     <Compile Include="Data\Model\WorkQueueInfo.cs" />
     <Compile Include="EntityCollection.cs" />
+    <Compile Include="Extensions\LoginPageExtensionPoint.cs" />
     <Compile Include="HttpContextData.cs" />
     <Compile Include="Data\StudyDeleteReasonAdaptor.cs" />
     <Compile Include="Data\UserManagementController.cs" />
@@ -195,6 +192,7 @@
     <Compile Include="Utilities\NameFormatter.cs" />
     <Compile Include="Utilities\ServerUtility.cs" />
     <Compile Include="HttpApplicationExtension.cs" />
+    <Compile Include="Utilities\UsersGuideLinkHelper.cs" />
     <Compile Include="Utilities\WebStationHelper.cs" />
     <Compile Include="WebControls\UI\Timer.cs" />
     <Compile Include="WebControls\UI\AJAXScriptControl.cs">

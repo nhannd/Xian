@@ -31,5 +31,17 @@ namespace ClearCanvas.Healthcare
 			:base(key)
 		{
 		}
-    }
+
+		public ModalitySearchCriteria Modality
+		{
+			get
+			{
+				if (!this.SubCriteria.ContainsKey("Modality"))
+				{
+					this.SubCriteria["Modality"] = new ModalitySearchCriteria("Modality");
+				}
+				return (ModalitySearchCriteria)this.SubCriteria["Modality"];
+			}
+		}
+	}
 }

@@ -117,6 +117,11 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Include="Audit\AuditedInstances.cs" />
+    <Compile Include="Audit\AuditLogHelper.cs" />
+    <Compile Include="Audit\EventReceiptAction.cs" />
+    <Compile Include="Audit\EventResult.cs" />
+    <Compile Include="Audit\EventSource.cs" />
     <Compile Include="DicomAttribute.cs" />
     <Compile Include="DicomMessageBase.cs" />
     <Compile Include="DicomAttributeBinary.cs" />
@@ -129,6 +134,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="ServiceModel\Streaming\HeaderStreamingServiceClient.cs" />
     <Compile Include="Utilities\Command\AggregateCommand.cs" />
     <Compile Include="Utilities\Command\RemoveSeriesFromStudyXml.cs" />
     <Compile Include="Utilities\Command\Tests\CommandTests.cs" />
@@ -169,6 +175,7 @@
     </Compile>
     <Compile Include="Tests\DateTimeTests.cs" />
     <Compile Include="Iod\Tests\ImageOrientationPatientTests.cs" />
+    <Compile Include="Utilities\SopInstanceFactory.cs" />
     <Compile Include="Utilities\TimeParser.cs" />
     <Compile Include="TransferSyntax.cs" />
     <Compile Include="Iod\Window.cs" />

@@ -31,7 +31,7 @@ namespace ClearCanvas.Enterprise.Desktop
 	/// Abstract base class for admin summary components.
 	/// </summary>
 	[AssociateView(typeof(SummaryComponentBaseViewExtensionPoint))]
-	public abstract class SummaryComponentBase : ApplicationComponent
+	public abstract class SummaryComponentBase : ApplicationComponent, ISummaryComponent
 	{
 		#region Presentation Model
 
@@ -108,7 +108,7 @@ namespace ClearCanvas.Enterprise.Desktop
 	/// </summary>
 	/// <typeparam name="TSummary"></typeparam>
 	/// <typeparam name="TTable"></typeparam>
-	public abstract class SummaryComponentBase<TSummary, TTable> : SummaryComponentBase
+	public abstract class SummaryComponentBase<TSummary, TTable> : SummaryComponentBase, ISummaryComponent<TSummary, TTable>
 		where TSummary : class
 		where TTable : Table<TSummary>, new()
 	{
@@ -400,8 +400,9 @@ namespace ClearCanvas.Enterprise.Desktop
 			{
 				if (_selectedItems.Count == 0) return;
 
-				var action = this.Host.ShowMessageBox(SR.MessageConfirmDeleteSelectedItems, MessageBoxActions.YesNo);
-				if (action == DialogBoxAction.Yes)
+				string confirmationMessage;
+				var doConfirmation = GetDeleteConfirmationMessage(_selectedItems, out confirmationMessage);
+				if (!doConfirmation || this.Host.ShowMessageBox(confirmationMessage, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
 				{
 					string failureMessage;
 					IList<TSummary> deletedItems;
@@ -618,6 +619,16 @@ namespace ClearCanvas.Enterprise.Desktop
 		protected virtual bool SupportsDelete
 		{
 			get { return false; }
+		}
+
+		/// <summary>
+		/// Gets the message to be presented to the user to confirm the deletion of items, or returns
+		/// false to specify that no confirmation is required.
+		/// </summary>
+		protected virtual bool GetDeleteConfirmationMessage(IList<TSummary> itemsToBeDeleted, out string message)
+		{
+			message= SR.MessageConfirmDeleteSelectedItems;
+			return true;
 		}
 
 		/// <summary>

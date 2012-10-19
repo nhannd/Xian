@@ -9,60 +9,10 @@
 
 #endregion
 
-using ClearCanvas.Common;
 using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.ImageViewer.Clipboard
 {
-	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint), Enabled = false)]
-	internal class DefineAuthorityGroups : IDefineAuthorityGroups
-	{
-		#region IDefineAuthorityGroups Members
-
-		public AuthorityGroupDefinition[] GetAuthorityGroups()
-		{
-			return new[]
-			{
-				new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
-					new []
-					{
-						AuthorityTokens.Clipboard.Export.JPG,
-						AuthorityTokens.Clipboard.Export.AVI
-					}),
-
-				new AuthorityGroupDefinition(DefaultAuthorityGroups.Technologists,
-					new []
-					{
-						AuthorityTokens.Clipboard.Export.JPG,
-						AuthorityTokens.Clipboard.Export.AVI
-					}),
-
-				new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
-					new []
-					{
-						AuthorityTokens.Clipboard.Export.JPG,
-						AuthorityTokens.Clipboard.Export.AVI
-					}),
-
-				new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
-					new []
-					{
-						AuthorityTokens.Clipboard.Export.JPG,
-						AuthorityTokens.Clipboard.Export.AVI
-					}),
-
-				new AuthorityGroupDefinition(DefaultAuthorityGroups.EmergencyPhysicians,
-					new []
-					{
-						AuthorityTokens.Clipboard.Export.JPG,
-						AuthorityTokens.Clipboard.Export.AVI
-					})
-			};
-		}
-
-		#endregion
-	}
-
 	/// <summary>
 	/// Clipboard authority tokens.
 	/// </summary>

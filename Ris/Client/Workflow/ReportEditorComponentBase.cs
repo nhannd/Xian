@@ -11,6 +11,7 @@
 
 using System;
 using ClearCanvas.Common.Serialization;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
@@ -140,6 +141,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 				var activePart = _context.Report.GetPart(_context.ActiveReportPartIndex);
 				activePart.Content = _reportContent.ToJsml();
 			}
+
+			// Reset component validation since we just reloaded the report content
+			ShowValidation(false);
 		}
 
 		#region ITranscriptionEditor Members

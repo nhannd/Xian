@@ -40,7 +40,14 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             Multiple
         }
 
+        #region Constants
+
+        private const string HtmlAttributeIsTooltip = "istooltip";
+
+        #endregion
+
         #region Private members
+
         private string _onClientRowClick;
         private string _onClientRowDblClick;
         private SelectionModeEnum _selectionMode = SelectionModeEnum.Single;
@@ -48,6 +55,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         private Hashtable _selectedDataKeys = new Hashtable();
         private bool _isDataBound = false;
         private bool _selectUsingDataKeys = false;
+
         #endregion Private members
 
         #region Public Properties
@@ -101,6 +109,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         }
 
         /// <summary>
+        /// Gets or sets the ID for the tooltip content
+        /// </summary>
+        public string TooltipContainerControlID { get; set; }
+
+
+        /// <summary>
         /// Sets or gets the Mouseover highlighting enabled/disabled.
         /// </summary>
         /// <remark>
@@ -108,8 +122,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         /// </remark>
         public bool MouseHoverRowHighlightEnabled
         {
-
-
             get
             {
                 string newClientID = ClientID;
@@ -365,7 +377,14 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 ScriptManager sm = ScriptManager.GetCurrent(Page);
                 sm.RegisterScriptControl(this);    
             }
-            
+
+            if (!Page.IsPostBack)
+            {
+                if (!IsDataBound)
+                {
+                    DataBind();
+                }
+            }
         }
 
         protected override void Render(HtmlTextWriter writer)
@@ -427,7 +446,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         
         }
         
-        public void SelectRow(int rowIndex)
+        public new void SelectRow(int rowIndex)
         {
             Rows[rowIndex].RowState = DataControlRowState.Selected;
             Rows[rowIndex].Attributes["selected"] = "true";
@@ -478,6 +497,14 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                     
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            RegisterClientMouseEventsScript();
+        }
+
+
         protected override void OnRowCreated(GridViewRowEventArgs e)
         {
             base.OnRowCreated(e);
@@ -491,28 +518,43 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 e.Row.Attributes["isHeaderRow"] = "true";
                 return;
             }
-
-            // the following lines will disable text select on the row.
-            // We need to disable it because IE and firefox interpret Ctrl-Click as text selection and will display
-            // a box around the cell users click on.
-
-            // Firefox way:
-            e.Row.Attributes["onmousedown"] = "if (event.ctrlKey && typeof (event.preventDefault) != 'undefined') {event.preventDefault();}";
-            // IE way:
-            e.Row.Attributes["onselectstart"] = "return false;"; // disable select
-
-            e.Row.Attributes["isdatarow"] = "true";
-            e.Row.Attributes["rowIndex"] = (e.Row.RowIndex).ToString();
-
-            if (e.Row.RowType == DataControlRowType.DataRow && MouseHoverRowHighlightEnabled)
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                e.Row.Style["cursor"] = "hand";
-                string onMouseOver = string.Format("this.style.cursor='pointer';this.originalstyle=this.style.backgroundColor;this.style.backgroundColor='{0}';", ColorTranslator.ToHtml(RowHighlightColor));
-                string onMouseOut = "this.style.backgroundColor=this.originalstyle;";
-                e.Row.Attributes.Add("onmouseover", onMouseOver);
-                e.Row.Attributes.Add("onmouseout", onMouseOut);
+                // the following lines will disable text select on the row.
+                // We need to disable it because IE and firefox interpret Ctrl-Click as text selection and will display
+                // a box around the cell users click on.
+
+                // Firefox way:
+                e.Row.Attributes["onmousedown"] = "if (event.ctrlKey && typeof (event.preventDefault) != 'undefined') {event.preventDefault();}";
+                // IE way:
+                e.Row.Attributes["onselectstart"] = "return false;"; // disable select
+
+                e.Row.Attributes["isdatarow"] = "true";
+                e.Row.Attributes["rowIndex"] = (e.Row.RowIndex).ToString();
+
+                if (e.Row.RowType == DataControlRowType.DataRow && MouseHoverRowHighlightEnabled)
+                {
+                    e.Row.Style["cursor"] = "hand";
+                    string onMouseOver = string.Format("this.style.cursor='pointer';this.originalstyle=this.style.backgroundColor;this.style.backgroundColor='{0}';", ColorTranslator.ToHtml(RowHighlightColor));
+                    string onMouseOut = "this.style.backgroundColor=this.originalstyle;";
+                    e.Row.Attributes.Add("onmouseover", onMouseOver);
+                    e.Row.Attributes.Add("onmouseout", onMouseOut);
+                }
+
+                if (!string.IsNullOrEmpty(TooltipContainerControlID))
+                {
+                    var tooltip = e.Row.FindControl(TooltipContainerControlID) as WebControl;
+                    if (tooltip == null)
+                        throw new Exception(string.Format("Could not find TooltipContainerControlID '{0}'. Make sure it is a WebControl", TooltipContainerControlID));
+
+                    tooltip.Attributes[HtmlAttributeIsTooltip] = "true";
+
+                }
             }
+
+            
         }
+
 
         protected override void OnDataBound(EventArgs e)
         {
@@ -612,6 +654,38 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 
             return sb.ToString();
 
+        }
+
+        private void RegisterClientMouseEventsScript()
+        {
+            var script = @"var gv = $('#@@GridViewClientID@@');
+                           var rows = gv.find('[isdatarow]');";
+
+            script = script.Replace("@@GridViewClientID@@", ClientID);
+                
+            // show/hide tooltip
+            if (!string.IsNullOrEmpty(TooltipContainerControlID))
+            {
+                script += @"rows.mouseenter(function(e){
+                                $(this).find('@@TooltipSelector@@')
+                                .css('position','absolute')
+                                .css('left', e.pageX +20)
+                                .css('top', e.pageY)
+                                .show();
+                        });";
+
+                script += @"rows.mouseleave(function(){
+                                $(this).find('@@TooltipSelector@@')
+                                .hide();
+                        });";
+
+
+                var tooltipSelector = "[" + HtmlAttributeIsTooltip + "]"; // selector based on attribute
+                script = script.Replace("@@TooltipSelector@@", tooltipSelector);
+            
+            }
+
+            ScriptManager.RegisterStartupScript(this, GetType(), "MouseOverClientScript", script, true);
         }
     }
 }

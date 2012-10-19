@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Common.WorkItem
 
         internal RealWorkItemActivityMonitor()
         {
-            _connectionThread = new Thread(MonitorConnection);
+            _connectionThread = new Thread(MonitorConnection) {IsBackground = true};
             lock (_syncLock)
             {
                 _connectionThread.Start();

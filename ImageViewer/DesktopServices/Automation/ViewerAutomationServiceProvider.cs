@@ -36,6 +36,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 	{
 		#region IViewerAutomation Members
 
+		[Obsolete("Use GetViewers instead.")]
 		public GetActiveViewersResult GetActiveViewers()
 		{
 			// Done for reasons of speed, as well as the fact that a call to the service from the same thread

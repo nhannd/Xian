@@ -18,6 +18,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Core.ModelExtensions;
 using ClearCanvas.Web.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
@@ -50,16 +51,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 var webUser = Thread.CurrentPrincipal as CustomPrincipal;
                 if (webUser != null)
                 {
-                    if (Thread.CurrentPrincipal.IsInRole(Enterprise.Common.AuthorityTokens.DataAccess.AllPartitions))
-                        accessAllowed = true;
-                    else
-                    {
-                        foreach (var oid in webUser.Credentials.DataAccessAuthorityGroups)
-                        {
-                            if (partition.IsAccessAllowed(oid.ToString()))
-                                accessAllowed = true;
-                        }
-                    }
+                    accessAllowed = partition.IsUserAccessAllowed(webUser);
                 }
 
                 if (webUser==null || accessAllowed)
@@ -178,12 +170,9 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
             {
                 if (partition.AeTitle.Equals(aeTitle, StringComparison.InvariantCulture))
                 {
-                    foreach (var oid in webUser.Credentials.DataAccessAuthorityGroups)
+                    if (!partition.IsUserAccessAllowed(webUser))
                     {
-                        if (partition.IsAccessAllowed(oid.ToString()))
-                        {
-                            throw new PermissionDeniedException("");
-                        }   
+                        throw new PermissionDeniedException(string.Format("User {0} does not have permission to access partition {1}", webUser.DisplayName, partition.AeTitle));
                     }
                 }
             }

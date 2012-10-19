@@ -9,13 +9,15 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.Services.Automation;
-using ClearCanvas.Desktop;
-using System;
+using ClearCanvas.ImageViewer.Common.Automation;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.Ris.Client.ViewerIntegration
 {
@@ -62,7 +64,7 @@ namespace ClearCanvas.Ris.Client.ViewerIntegration
 		{
 			var bridge = new ViewerAutomationBridge(
 				Platform.GetService<IViewerAutomation>(), 
-				Platform.GetService<IStudyRootQuery>());
+				Platform.GetService<IStudyLocator>());
 
 			bridge.OpenStudiesBehaviour.ActivateExistingViewer = true;
 			//The viewer knows what the problem is better than us, so let it show the user an error.
@@ -77,7 +79,13 @@ namespace ClearCanvas.Ris.Client.ViewerIntegration
 			try
 			{
 				using (IViewerAutomationBridge bridge = CreateBridge())
-					bridge.OpenStudiesByAccessionNumber(accessionNumber);
+				{
+					var existingViewers = GetViewers(bridge, accessionNumber);
+					if (existingViewers != null && existingViewers.Count > 0)
+						bridge.ActivateViewer(existingViewers[0]);
+					else
+						bridge.OpenStudiesByAccessionNumber(accessionNumber);
+				}
 			}
 			catch (QueryNoMatchesException e)
 			{
@@ -96,25 +104,52 @@ namespace ClearCanvas.Ris.Client.ViewerIntegration
 
 		public void Close(string accessionNumber)
 		{
-			using (IViewerAutomationBridge bridge = CreateBridge())
+			try
 			{
-				foreach (Viewer viewer in bridge.GetViewersByAccessionNumber(accessionNumber))
-					bridge.CloseViewer(viewer);
+				using (IViewerAutomationBridge bridge = CreateBridge())
+				{
+					foreach (Viewer viewer in bridge.GetViewersByAccessionNumber(accessionNumber))
+						bridge.CloseViewer(viewer);
+				}
+			}
+			catch (FaultException<NoViewersFault>)
+			{
+				// eat this exception, as it really just means that the user has closed all viewer workspaces
 			}
 		}
 
 		public void Activate(string accessionNumber)
 		{
-			using (IViewerAutomationBridge bridge = CreateBridge())
+			try
 			{
-				foreach (Viewer viewer in bridge.GetViewersByAccessionNumber(accessionNumber))
+				using (IViewerAutomationBridge bridge = CreateBridge())
 				{
-					bridge.ActivateViewer(viewer);
-					return;
+					foreach (Viewer viewer in bridge.GetViewersByAccessionNumber(accessionNumber))
+					{
+						bridge.ActivateViewer(viewer);
+						return;
+					}
 				}
+			}
+			catch (FaultException<NoViewersFault>)
+			{
+				// eat this exception, as it really just means that the user has closed all viewer workspaces
 			}
 		}
 
 		#endregion
+
+		private static IList<Viewer> GetViewers(IViewerAutomationBridge bridge, string accessionNumber)
+		{
+			try
+			{
+				return bridge.GetViewersByAccessionNumber(accessionNumber);
+			}
+			catch (FaultException<NoViewersFault>)
+			{
+				// eat this exception, as it really just means that the user has closed all viewer workspaces
+				return new Viewer[0];
+			}
+		}
 	}
 }

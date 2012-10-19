@@ -18,9 +18,9 @@ namespace ClearCanvas.Common.Configuration
 {
     internal static class LocalFileSettingsProviderExtensions
     {
-        public static void UpgradeSharedPropertyValues(LocalFileSettingsProvider provider, SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
+        public static void UpgradeSharedPropertyValues(LocalFileSettingsProvider provider, SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename, string currentExeConfigFilename = null)
         {
-            SettingsPropertyValueCollection currentValues = GetSharedPropertyValues(provider, context, properties);
+            SettingsPropertyValueCollection currentValues = GetSharedPropertyValues(provider, context, properties, currentExeConfigFilename);
             SettingsPropertyValueCollection previousValues = GetPreviousSharedPropertyValues(provider, context, properties, previousExeConfigFilename);
 
 			foreach (SettingsProperty property in properties)
@@ -36,7 +36,7 @@ namespace ClearCanvas.Common.Configuration
 				}
 			}
 
-			SetSharedPropertyValues(provider, context, currentValues);
+			SetSharedPropertyValues(provider, context, currentValues, currentExeConfigFilename);
         }
 
         public static SettingsPropertyValueCollection GetPreviousSharedPropertyValues(LocalFileSettingsProvider provider, SettingsContext context, SettingsPropertyCollection properties, string previousExeConfigFilename)
@@ -63,13 +63,18 @@ namespace ClearCanvas.Common.Configuration
 			return values;
         }
 
-        public static SettingsPropertyValueCollection GetSharedPropertyValues(LocalFileSettingsProvider provider, SettingsContext context, SettingsPropertyCollection properties)
+        public static SettingsPropertyValueCollection GetSharedPropertyValues(LocalFileSettingsProvider provider, SettingsContext context, SettingsPropertyCollection properties, string currentExeConfigFilename = null)
         {
 			var settingsClass = (Type)context["SettingsClassType"];
-        	var storedValues = SystemConfigurationHelper.GetSettingsValues(SystemConfigurationHelper.GetExeConfiguration(), settingsClass);
+
+            var systemConfiguration = String.IsNullOrEmpty(currentExeConfigFilename)
+                              ? SystemConfigurationHelper.GetExeConfiguration()
+                              : SystemConfigurationHelper.GetExeConfiguration(currentExeConfigFilename);
+
+        	var storedValues = systemConfiguration.GetSettingsValues(settingsClass);
 
 			// Create new collection of values
-			SettingsPropertyValueCollection values = new SettingsPropertyValueCollection();
+			var values = new SettingsPropertyValueCollection();
 
 			foreach (SettingsProperty setting in properties)
 			{
@@ -86,7 +91,7 @@ namespace ClearCanvas.Common.Configuration
 			return values;
 		}
 
-        public static void SetSharedPropertyValues(LocalFileSettingsProvider provider, SettingsContext context, SettingsPropertyValueCollection values)
+        public static void SetSharedPropertyValues(LocalFileSettingsProvider provider, SettingsContext context, SettingsPropertyValueCollection values, string currentExeConfigFilename)
         {
             var valuesToStore = new Dictionary<string, string>();
 			foreach (SettingsPropertyValue value in values)
@@ -95,8 +100,12 @@ namespace ClearCanvas.Common.Configuration
 					valuesToStore[value.Name] = (string)value.SerializedValue;
 			}
 
+            var systemConfiguration = String.IsNullOrEmpty(currentExeConfigFilename)
+                                          ? SystemConfigurationHelper.GetExeConfiguration()
+                                          : SystemConfigurationHelper.GetExeConfiguration(currentExeConfigFilename);
+
         	var settingsClass = (Type)context["SettingsClassType"];
-			SystemConfigurationHelper.PutSettingsValues(SystemConfigurationHelper.GetExeConfiguration(), settingsClass, valuesToStore);
+            systemConfiguration.PutSettingsValues(settingsClass, valuesToStore);
 
             foreach (SettingsPropertyValue value in values)
                 value.IsDirty = false;

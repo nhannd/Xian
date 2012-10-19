@@ -24,15 +24,17 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree.LegacyXml
             = new System.Xml.Serialization.XmlSerializer(typeof(ServerTreeRoot),
                                 new Type[]
                                     {
-                                        typeof (ServerTreeGroup),
+                                        typeof (ServerGroup),
                                         typeof (Server),
-                                        typeof (List<ServerTreeGroup>),
+                                        typeof (List<ServerGroup>),
                                         typeof (List<Server>)
                                     });
 
-        internal static ServerTreeRoot LoadFromXml()
+        internal static ServerTreeRoot LoadFromXml(string file=null)
         {
-            string file = GetServersXmlFileName();
+            if (String.IsNullOrEmpty(file))
+                file = GetServersXmlFileName();
+
             if (File.Exists(file))
             {
                 using (Stream fStream = File.OpenRead(file))

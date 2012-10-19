@@ -14,9 +14,11 @@ using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Core.Query;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
@@ -278,7 +280,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
         public bool CanViewImages(out string reason)
         {
-            if (!Thread.CurrentPrincipal.IsInRole(ImageServerConstants.WebViewerAuthorityToken))
+            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Study.ViewImages))
             {
                 reason = "You are not authorized to view images.";
                 return false;
@@ -317,6 +319,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			reason = String.Empty;
 			return true;
 		}
+
 
 	    public bool CanScheduleReconcile(out string reason)
 		{
@@ -437,27 +440,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			// only query for device in this partition
 			criteria.ServerPartitionKey.EqualTo(Partition.Key);
 
-			if (!String.IsNullOrEmpty(PatientId))
-			{
-				string key = PatientId.Replace("*", "%");
-				key = key.Replace("?", "_");
-				criteria.PatientId.Like(key);
-			}
+            QueryHelper.SetGuiStringCondition(criteria.PatientId,PatientId);
+            QueryHelper.SetGuiStringCondition(criteria.PatientsName, PatientName);
 
-			if (!String.IsNullOrEmpty(PatientName))
-			{
-				string key = PatientName.Replace("*", "%");
-				key = key.Replace("?", "_");
-				criteria.PatientsName.Like(key);
-			}
 			criteria.PatientsName.SortAsc(0);
 
-			if (!String.IsNullOrEmpty(AccessionNumber))
-			{
-				string key = AccessionNumber.Replace("*", "%");
-				key = key.Replace("?", "_");
-				criteria.AccessionNumber.Like(key);
-			}
+            QueryHelper.SetGuiStringCondition(criteria.AccessionNumber, AccessionNumber);
 
             if (!String.IsNullOrEmpty(ToStudyDate) && !String.IsNullOrEmpty(FromStudyDate))
 			{
@@ -476,41 +464,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 criteria.StudyDate.MoreThanOrEqualTo(fromKey);
             }
 
-			if (!String.IsNullOrEmpty(StudyDescription))
-			{
-				string key = StudyDescription.Replace("*", "%");
-				key = key.Replace("?", "_");
-				criteria.StudyDescription.Like(key);
-			}
+            QueryHelper.SetGuiStringCondition(criteria.StudyDescription, StudyDescription);
+            QueryHelper.SetGuiStringCondition(criteria.ReferringPhysiciansName, ReferringPhysiciansName);
+            QueryHelper.SetGuiStringCondition(criteria.ResponsiblePerson, ResponsiblePerson);
+            QueryHelper.SetGuiStringCondition(criteria.ResponsibleOrganization, ResponsibleOrganization);
 
-            if (!String.IsNullOrEmpty(ReferringPhysiciansName))
-            {
-                string key = ReferringPhysiciansName.Replace("*", "%");
-                key = key.Replace("?", "_");
-                criteria.ReferringPhysiciansName.Like(key);
-            }
-
-            if (!String.IsNullOrEmpty(ResponsiblePerson))
-            {
-                string key = ResponsiblePerson.Replace("*", "%");
-                key = key.Replace("?", "_");
-                criteria.ResponsiblePerson.Like(key);
-            }
-
-            if (!String.IsNullOrEmpty(ResponsibleOrganization))
-            {
-                string key = ResponsibleOrganization.Replace("*", "%");
-                key = key.Replace("?", "_");
-                criteria.ResponsibleOrganization.Like(key);
-            }
-
-			if(Modalities != null && Modalities.Length > 0)
+            if(Modalities != null && Modalities.Length > 0)
 			{
 				var seriesCriteria = new SeriesSelectCriteria();
-				if (Modalities.Length == 1)
-					seriesCriteria.Modality.EqualTo(Modalities[0]);
-				else
-					seriesCriteria.Modality.In(Modalities);
+
+                QueryHelper.SetStringArrayCondition(seriesCriteria.Modality, Modalities);
 
 				criteria.SeriesRelatedEntityCondition.Exists(seriesCriteria);
 			}

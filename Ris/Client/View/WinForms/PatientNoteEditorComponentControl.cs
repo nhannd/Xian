@@ -45,9 +45,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_expiryDate.DataBindings.Add("Value", _component, "ExpiryDate", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_category.Enabled = !_component.IsReadOnly && _component.IsNewItem;
-			_comment.ReadOnly = _component.IsReadOnly || !_component.IsNewItem;
-			_expiryDate.Enabled = !_component.IsReadOnly;
+			_category.Enabled = _component.IsCommentEditable;
+			_comment.ReadOnly = !_component.IsCommentEditable;
+			_expiryDate.Enabled = _component.IsExpiryDateEditable;
 		}
 
 		private void _acceptButton_Click(object sender, EventArgs e)

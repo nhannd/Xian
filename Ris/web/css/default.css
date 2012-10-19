@@ -400,6 +400,9 @@ a.collapsibleHeading {
 	background-repeat:no-repeat; 
 }
 
+/* Bug #10564: Removed this css as it was the cause of the problem.  Not sure if we even need it anymore, since it was added 
+	a number of years ago when IE6 was the predominant version of IE in use.
+
 img {
 	background-image: expression(
 		this.runtimeStyle.backgroundImage = "none",
@@ -408,6 +411,7 @@ img {
 		this.src = imagePath + "/blank.gif"
 	);
 }
+*/
 
 textarea.disabled {
 	background:LightGrey;

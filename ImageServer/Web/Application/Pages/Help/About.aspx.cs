@@ -14,10 +14,12 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using Resources;
+using ClearCanvas.ImageServer.Web.Common.Extensions;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
 {
-    public partial class About : BasePage
+    [ExtensibleAttribute(ExtensionPoint = typeof(AboutPageExtensionPoint))]
+    public partial class About : BasePage, IAboutPage
     {
         public string LicenseKey { get; set; }
 
@@ -31,14 +33,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
                     LicenseKey = LicenseInformation.LicenseKey;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }
 
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            ForeachExtension<IAboutPageExtension>(ext => ext.OnAboutPageInit(this));
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            SetPageTitle(Titles.AboutPageTitle);
+            SetPageTitle(Titles.AboutPageTitle);            
         }
+
+        #region IAboutPage Members
+
+        public System.Web.UI.Control ExtensionContentParent
+        {
+            get
+            {
+                return ExtensionContentPlaceHolder;
+            }
+        }
+
+        #endregion
     }
 }

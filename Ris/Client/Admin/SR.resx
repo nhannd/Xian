@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ColumnBuilding" xml:space="preserve">
     <value>Building</value>
@@ -246,12 +246,6 @@
   <data name="ExceptionSaveProcedureTypeGroup" xml:space="preserve">
     <value>Unable to save Procedure Type Group</value>
   </data>
-  <data name="ExceptionSaveProtocolCode" xml:space="preserve">
-    <value>Unable to save Protocol Code</value>
-  </data>
-  <data name="ExceptionSaveProtocolGroup" xml:space="preserve">
-    <value>Unable to savev Protocol Group</value>
-  </data>
   <data name="ExceptionSaveValidationRules" xml:space="preserve">
     <value>Unable to save validation rules</value>
   </data>
@@ -309,12 +303,6 @@
   <data name="TitleAddProcedureTypeGroup" xml:space="preserve">
     <value>Add Procedure Type Group</value>
   </data>
-  <data name="TitleAddProtocolCode" xml:space="preserve">
-    <value>Add Protocol Code</value>
-  </data>
-  <data name="TitleAddProtocolGroup" xml:space="preserve">
-    <value>Add Protocol Group</value>
-  </data>
   <data name="TitleAddWorklist" xml:space="preserve">
     <value>Add Worklist</value>
   </data>
@@ -338,9 +326,6 @@
   </data>
   <data name="TitleDuplicate" xml:space="preserve">
     <value>Duplicate</value>
-  </data>
-  <data name="TitleEditProtocolGroup" xml:space="preserve">
-    <value>Edit Protocol Group</value>
   </data>
   <data name="TitleEnumAddValue" xml:space="preserve">
     <value>New Value</value>
@@ -369,23 +354,11 @@
   <data name="TitleModalities" xml:space="preserve">
     <value>Modalities</value>
   </data>
-  <data name="TitleMoveProtocolCodeDown" xml:space="preserve">
-    <value>Move down</value>
-  </data>
-  <data name="TitleMoveProtocolCodeUp" xml:space="preserve">
-    <value>Move up</value>
-  </data>
-  <data name="TitleNewProtocolCode" xml:space="preserve">
-    <value>New code</value>
-  </data>
   <data name="TitleNoteCategories" xml:space="preserve">
     <value>Note Categories</value>
   </data>
   <data name="TitleProcedureTypeGroup" xml:space="preserve">
     <value>Procedure Type Groups Admin</value>
-  </data>
-  <data name="TitleProtocolGroups" xml:space="preserve">
-    <value>Protocol Groups</value>
   </data>
   <data name="TitleUpdateDiagnosticService" xml:space="preserve">
     <value>Update Imaging Service</value>
@@ -425,5 +398,20 @@
   </data>
   <data name="ColumnDicomModality" xml:space="preserve">
     <value>DICOM Modality</value>
+  </data>
+  <data name="TitleAETitle" xml:space="preserve">
+    <value>AE Title</value>
+  </data>
+  <data name="ColumnAETitle" xml:space="preserve">
+    <value>AE Title</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ValidationAETitleInvalidCharacters" xml:space="preserve">
+    <value>The AE Title contains invalid characters.</value>
+  </data>
+  <data name="ValidationAETitleLengthIncorrect" xml:space="preserve">
+    <value>The AE Title must be 16 characters or less.</value>
   </data>
 </root>

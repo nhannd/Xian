@@ -76,6 +76,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			this._filterGroupBox.SuspendLayout();
 			this._timeGroupBox.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
@@ -89,11 +90,11 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._queue.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this._queue.ColumnHeaderTooltip = null;
 			this._queue.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._queue.Location = new System.Drawing.Point(3, 147);
+			this._queue.Location = new System.Drawing.Point(3, 173);
 			this._queue.MultiSelect = false;
 			this._queue.Name = "_queue";
 			this._queue.ReadOnly = false;
-			this._queue.Size = new System.Drawing.Size(643, 733);
+			this._queue.Size = new System.Drawing.Size(643, 707);
 			this._queue.SortButtonTooltip = null;
 			this._queue.TabIndex = 0;
 			this._queue.SelectionChanged += new System.EventHandler(this._queue_SelectionChanged);
@@ -162,14 +163,14 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._filterGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._filterGroupBox.Location = new System.Drawing.Point(3, 3);
 			this._filterGroupBox.Name = "_filterGroupBox";
-			this._filterGroupBox.Size = new System.Drawing.Size(643, 138);
+			this._filterGroupBox.Size = new System.Drawing.Size(643, 164);
 			this._filterGroupBox.TabIndex = 1;
 			this._filterGroupBox.TabStop = false;
 			this._filterGroupBox.Text = "Filter";
 			// 
 			// _showAll
 			// 
-			this._showAll.Location = new System.Drawing.Point(548, 48);
+			this._showAll.Location = new System.Drawing.Point(448, 138);
 			this._showAll.Name = "_showAll";
 			this._showAll.Size = new System.Drawing.Size(75, 23);
 			this._showAll.TabIndex = 6;
@@ -179,7 +180,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// _searchButton
 			// 
-			this._searchButton.Location = new System.Drawing.Point(548, 19);
+			this._searchButton.Location = new System.Drawing.Point(367, 138);
 			this._searchButton.Name = "_searchButton";
 			this._searchButton.Size = new System.Drawing.Size(75, 23);
 			this._searchButton.TabIndex = 5;
@@ -252,9 +253,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// tableLayoutPanel2
 			// 
-			this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.tableLayoutPanel2.AutoSize = true;
 			this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.tableLayoutPanel2.ColumnCount = 1;
@@ -264,7 +265,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
 			this.tableLayoutPanel2.RowCount = 3;
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 144F));
+			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 170F));
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel2.Size = new System.Drawing.Size(649, 883);
@@ -294,6 +295,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel1.PerformLayout();
 			this.splitContainer1.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
 			this.splitContainer1.ResumeLayout(false);
 			this.tableLayoutPanel2.ResumeLayout(false);
 			this.tableLayoutPanel2.PerformLayout();

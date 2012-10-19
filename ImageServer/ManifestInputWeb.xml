@@ -5,7 +5,7 @@
     <File name="Web\Default.aspx" />
     <File name="Web\GlobalMasterPage.master" />
     <File name="Web\KeepSessionAlive.aspx" />
-    <File name="Web\Logging.config" config="true" />
+    <File name="Web\Logging.config" ignore="true" />
     <File name="Web\PersistantImage.ashx" />
     <File name="Web\PrecompiledApp.config" />
     <File name="Web\Users.xml" />
@@ -21,6 +21,7 @@
     <File name="Web\bin\Castle.Core.dll" checksum="true" />
     <File name="Web\bin\Castle.DynamicProxy2.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.Common.dll" checksum="true" />
+    <File name="Web\bin\ClearCanvas.Common.Core.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.Desktop.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.Dicom.Codec.Jpeg.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.Dicom.Codec.Rle.dll" checksum="true" />
@@ -46,11 +47,11 @@
     <File name="Web\bin\ClearCanvas.ImageServer.Web.Application.Assembly.dll.LOCKED" ignore="true"/>
     <File name="Web\bin\ClearCanvas.ImageServer.Web.Application.Deployment.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageServer.Web.Common.dll" checksum="true" />
+    <File name="Web\bin\ClearCanvas.ImageViewer.Common.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageViewer.AnnotationProviders.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageViewer.Configuration.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageViewer.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageViewer.Layout.Basic.dll" checksum="true" />
-    <File name="Web\bin\ClearCanvas.ImageViewer.Services.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageViewer.StudyLoaders.Streaming.dll" checksum="true" />
     <File name="Web\bin\ClearCanvas.ImageViewer.Tools.Measurement.dll" checksum="true" />
@@ -68,8 +69,8 @@
     <File name="Web\bin\Ionic.Zip.dll" checksum="true" />
     <File name="Web\bin\log4net.dll" checksum="true" />
     <File name="Web\bin\nunit.framework.dll" checksum="true" />
-    <File name="Web\bin\System.Web.Extensions.dll" checksum="true" />
-    <File name="Web\bin\System.Web.Extensions.Design.dll" checksum="true" />
+    <!--File name="Web\bin\System.Web.Extensions.dll" checksum="true" />
+    <File name="Web\bin\System.Web.Extensions.Design.dll" checksum="true" /-->
     <File name="Web\bin\Validators.dll" checksum="true" />
     <File name="Web\bin\ar\AjaxControlToolkit.resources.dll" checksum="true" />
     <File name="Web\bin\cs\AjaxControlToolkit.resources.dll" checksum="true" />
@@ -99,10 +100,11 @@
     <File name="Web\Controls\PersonNameInputPanel.ascx" />
     <File name="Web\Controls\PersonNameInputPanel.js" />
     <File name="Web\Controls\SectionPanel.ascx" />
-    <File name="Web\Controls\ServerPartitionTabs.ascx" />
+    <File name="Web\Controls\ServerPartitionSelector.ascx" />
     <File name="Web\Controls\SessionTimeout.ascx" />
     <File name="Web\Controls\TimedDialog.ascx" />
-    <File name="Web\Images\favicon.ico" checksum="true" />
+	<File name="Web\Controls\UsersGuideLink.ascx" />
+	<File name="Web\Images\favicon.ico" checksum="true" />
     <File name="Web\Pages\Admin\Alerts\AlertHoverPopupDetails.ascx" />
     <File name="Web\Pages\Admin\Alerts\StudyAlertContextInfoView.ascx" />
     <File name="Web\Pages\Admin\Alerts\AlertsGridPanel.ascx" />
@@ -170,7 +172,7 @@
     <File name="Web\Pages\Admin\Dashboard\ServerPartitionGridView.ascx" />
     <File name="Web\Pages\Admin\Dashboard\StudiesSummary.ascx" />
     <File name="Web\Pages\Admin\Dashboard\StudyIntegrityQueueSummary.ascx" />
-    <File name="Web\Pages\Admin\Dashboard\WorkQueueAlertContextDataView.ascx" />
+    <!--File name="Web\Pages\Admin\Dashboard\WorkQueueAlertContextDataView.ascx" /-->
     <File name="Web\Pages\Admin\Dashboard\WorkQueueSummary.ascx" />
     <File name="Web\Pages\Admin\UserManagement\UserGroups\AddEditUserGroupsDialog.ascx" />
     <File name="Web\Pages\Admin\UserManagement\UserGroups\Default.aspx" />
@@ -222,6 +224,7 @@
     <File name="Web\Pages\Queues\StudyIntegrityQueue\SearchPanel.ascx" />
     <File name="Web\Pages\Queues\StudyIntegrityQueue\SearchPanel.js" />
     <File name="Web\Pages\Queues\StudyIntegrityQueue\StudyIntegrityQueueItemList.ascx" />
+    <File name="Web\Pages\Queues\StudyIntegrityQueue\SIQEntryTooltip.ascx" />
     <File name="Web\Pages\Queues\WorkQueue\Default.aspx" />
     <File name="Web\Pages\Queues\WorkQueue\SearchPanel.ascx" />
     <File name="Web\Pages\Queues\WorkQueue\SearchPanel.js" />

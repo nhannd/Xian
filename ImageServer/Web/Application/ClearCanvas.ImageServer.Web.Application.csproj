@@ -218,6 +218,13 @@
     <Compile Include="Controls\SectionPanel.ascx.designer.cs">
       <DependentUpon>SectionPanel.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ServerPartitionSelector.ascx.cs">
+      <DependentUpon>ServerPartitionSelector.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ServerPartitionSelector.ascx.designer.cs">
+      <DependentUpon>ServerPartitionSelector.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ServerPartitionTabs.ascx.cs">
       <DependentUpon>ServerPartitionTabs.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -238,6 +245,13 @@
     </Compile>
     <Compile Include="Controls\TimedDialog.ascx.designer.cs">
       <DependentUpon>TimedDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\UsersGuideLink.ascx.cs">
+      <DependentUpon>UsersGuideLink.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\UsersGuideLink.ascx.designer.cs">
+      <DependentUpon>UsersGuideLink.ascx</DependentUpon>
     </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -575,6 +589,13 @@
     </Compile>
     <Compile Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx.designer.cs">
       <DependentUpon>DuplicateSopDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Queues\StudyIntegrityQueue\SIQEntryTooltip.ascx.cs">
+      <DependentUpon>SIQEntryTooltip.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\StudyIntegrityQueue\SIQEntryTooltip.ascx.designer.cs">
+      <DependentUpon>SIQEntryTooltip.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\Edit\EditWorkQueueDetailsView.ascx.cs">
       <DependentUpon>EditWorkQueueDetailsView.ascx</DependentUpon>
@@ -1620,6 +1641,8 @@
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogBodyBackgroundTall.png" />
     <Content Include="App_Themes\Default\WebStation\WebstationLogo.png" />
     <Content Include="Builds\SplashScreen\ClearCanvasWebViewerLogo.png" />
+    <Content Include="Controls\ServerPartitionSelector.ascx" />
+    <Content Include="Controls\UsersGuideLink.ascx" />
     <Content Include="Pages\Admin\Alerts\StudyAlertContextInfoView.ascx" />
     <Content Include="Pages\Admin\Configure\DataRules\AddEditDataRuleDialog.ascx" />
     <Content Include="Pages\Admin\Configure\DataRules\DataRuleGridView.ascx" />
@@ -1632,6 +1655,7 @@
     <Content Include="Pages\Error\SoftwareExpiredErrorPage.aspx" />
     <Content Include="Pages\Error\LicenseErrorPage.aspx" />
     <Content Include="Pages\Help\Contact.ascx" />
+    <Content Include="Pages\Queues\StudyIntegrityQueue\SIQEntryTooltip.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\EditWorkQueueDetailsView.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\AddAuthorityGroupsDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\UpdateAuthorityGroupDialog.ascx" />

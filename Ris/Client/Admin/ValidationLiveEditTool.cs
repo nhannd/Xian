@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Client.Admin
     /// </summary>
     [MenuAction("launch", "applicationcomponent-metacontextmenu/Edit Validation Rules", "Launch")]
 	[ActionPermission("launch", ClearCanvas.Ris.Client.AuthorityTokens.Desktop.UIValidationRules)]
-    [ExtensionOf(typeof(ApplicationComponentMetaToolExtensionPoint))]
+	[ExtensionOf(typeof(ApplicationComponentMetaToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
     public class ValidationLiveEditTool : Tool<IApplicationComponentMetaToolContext>
     {
         private Shelf _shelf;

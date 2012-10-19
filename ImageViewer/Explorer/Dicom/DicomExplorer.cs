@@ -16,64 +16,6 @@ using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-    [ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint), Enabled = false)]
-	internal class DefineAuthorityGroups : IDefineAuthorityGroups
-	{
-		#region IDefineAuthorityGroups Members
-
-		/// <summary>
-		/// Get the authority group definitions.
-		/// </summary>
-		public AuthorityGroupDefinition[] GetAuthorityGroups()
-		{
-			return new AuthorityGroupDefinition[]
-            {
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
-                    DefaultAuthorityGroups.HealthcareAdministrators,
-                    false,
-				    new string[] 
-				    {
-						AuthorityTokens.DicomExplorer,
-						AuthorityTokens.Configuration.MyServers
-				   }),
-
-				new AuthorityGroupDefinition(DefaultAuthorityGroups.Clerical,
-				    new string[] 
-				    {
-						AuthorityTokens.DicomExplorer
-				   }),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.Technologists,
-                    new string[] 
-                    {
-						AuthorityTokens.DicomExplorer
-					}),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
-                    new string[] 
-                    {
-						AuthorityTokens.DicomExplorer,
-						AuthorityTokens.Configuration.MyServers
-					}),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
-                    new string[] 
-                    {
-						AuthorityTokens.DicomExplorer,
-						AuthorityTokens.Configuration.MyServers
-					}),
-
-                new AuthorityGroupDefinition(DefaultAuthorityGroups.EmergencyPhysicians,
-                    new string[] 
-                    {
-						AuthorityTokens.DicomExplorer
-					})
-            };
-		}
-
-		#endregion
-	}
-
 	public static class AuthorityTokens
 	{
 		[AuthorityToken(Description = "Grant access to the DICOM explorer.")]

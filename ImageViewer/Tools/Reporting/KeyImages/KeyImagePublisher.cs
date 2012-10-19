@@ -19,6 +19,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Clipboard;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 using ClearCanvas.ImageViewer.Common.WorkItem;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.KeyObjects;
@@ -128,6 +129,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
             while (!WorkItemActivityMonitor.IsRunning)
 			{
+				// TODO CR (Sep 12): convert this to a desktop alert
 				DialogBoxAction result = Application.ActiveDesktopWindow.ShowMessageBox(
 					SR.MessageCannotPublishKeyImagesServersNotRunning, MessageBoxActions.OkCancel);
 
@@ -176,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		        Platform.Log(LogLevel.Error, e, "An unexpected error occurred while trying to publish key images.");
 		    }
 
-
+			// TODO CR (Sep 12): convert this to a desktop alert
 			if (anyFailed)
 				Application.ActiveDesktopWindow.ShowMessageBox(SR.MessageKeyImagePublishingFailed, MessageBoxActions.Ok);
 		}

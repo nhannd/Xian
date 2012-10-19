@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -35,17 +36,14 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			var listPages = new List<IConfigurationPage>();
 
-			if (PermissionsHelper.IsInRole(Services.AuthorityTokens.Administration.DicomServer) && Common.DicomServer.DicomServer.IsSupported)
+            if (PermissionsHelper.IsInRole(AuthorityTokens.Configuration.DicomServer) && Common.DicomServer.DicomServer.IsSupported)
 				listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>(ServerConfigurationPath));
 
-			if (PermissionsHelper.IsInRole(Services.AuthorityTokens.Administration.DicomServer) && Common.DicomServer.DicomServer.IsSupported)
+            if (PermissionsHelper.IsInRole(AuthorityTokens.Configuration.DicomServer) && Common.DicomServer.DicomServer.IsSupported)
 				listPages.Add(new ConfigurationPage<DicomSendConfigurationComponent>(DicomSendConfigurationPath));
 
-            if (PermissionsHelper.IsInRole(Services.AuthorityTokens.Administration.Storage) && Common.StudyManagement.StudyStore.IsSupported)
+            if (PermissionsHelper.IsInRole(AuthorityTokens.Configuration.Storage) && Common.StudyManagement.StudyStore.IsSupported)
                 listPages.Add(new ConfigurationPage<StorageConfigurationComponent>(StorageConfigurationPath));
-
-            if (PermissionsHelper.IsInRoles(AuthorityTokens.Configuration.PriorsServers) && ServerDirectory.IsSupported)
-                listPages.Add(new ConfigurationPage<PriorsServersConfigurationComponent>(PriorsServerConfigurationPath));
 
             if (PermissionsHelper.IsInRole(AuthorityTokens.Configuration.Publishing))
                 listPages.Add(new ConfigurationPage(PublishingConfigurationPath, new PublishingConfigurationComponent()));
@@ -57,20 +55,28 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		bool IActivityMonitorQuickLinkHandler.CanHandle(ActivityMonitorQuickLink link)
 		{
-			return link == ActivityMonitorQuickLink.SystemConfiguration || 
-				link == ActivityMonitorQuickLink.LocalStorageConfiguration;
+            //Don't check SharedConfigurationDialog.CanShow because we want to show a permission message.
+		    return (link == ActivityMonitorQuickLink.SystemConfiguration) ||
+                   (link == ActivityMonitorQuickLink.LocalStorageConfiguration && PermissionsHelper.IsInRole(AuthorityTokens.Configuration.Storage));
 		}
 
 		void IActivityMonitorQuickLinkHandler.Handle(ActivityMonitorQuickLink link, IDesktopWindow window)
 		{
-			if (link == ActivityMonitorQuickLink.SystemConfiguration)
-			{
-				SharedConfigurationDialog.Show(window);
-			}
-			if (link == ActivityMonitorQuickLink.LocalStorageConfiguration)
-			{
-				SharedConfigurationDialog.Show(window, StorageConfigurationPath);
-			}
+		    try
+		    {
+                if (link == ActivityMonitorQuickLink.SystemConfiguration)
+                {
+                    SharedConfigurationDialog.Show(window);
+                }
+                if (link == ActivityMonitorQuickLink.LocalStorageConfiguration)
+                {
+                    SharedConfigurationDialog.Show(window, StorageConfigurationPath);
+                }
+		    }
+		    catch (Exception e)
+		    {
+		        ExceptionHandler.Report(e, window);
+		    }
 		}
 	}
 }

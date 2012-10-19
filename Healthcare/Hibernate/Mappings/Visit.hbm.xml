@@ -22,7 +22,7 @@
 		<property name="DischargeDisposition" column="DischargeDisposition_" type="String" length="100" not-null="false"/>
 
 		<!--  Following three encompass "Visit Type" -->
-		<many-to-one name="PatientClass" class="PatientClassEnum" column="PatientClass_"/>
+		<many-to-one name="PatientClass" class="PatientClassEnum" column="PatientClass_" not-null="true"/>
 		<many-to-one name="PatientType" class="PatientTypeEnum" column="PatientType_"/>
 		<many-to-one name="AdmissionType" class="AdmissionTypeEnum" column="AdmissionType_"/>
 

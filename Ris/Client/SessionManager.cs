@@ -12,11 +12,16 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Management;
+using System.Net;
+using System.Security.Principal;
 using System.ServiceModel;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Common.Authentication;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Login;
 
@@ -33,18 +38,44 @@ namespace ClearCanvas.Ris.Client
 	}
 
 
-	[ExtensionOf(typeof(SessionManagerExtensionPoint))]
+	[ExtensionOf(typeof(SessionManagerExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	class SessionManager : ISessionManager
 	{
+		struct LoginResult
+		{
+			public static readonly LoginResult None = new LoginResult(false, null, null);
+
+			public LoginResult(string userName, SessionToken sessionToken)
+				: this(true, userName, sessionToken)
+			{
+			}
+
+			private LoginResult(bool loggedIn, string userName, SessionToken sessionToken)
+			{
+				LoggedIn = loggedIn;
+				UserName = userName;
+				SessionToken = sessionToken;
+			}
+
+			public readonly bool LoggedIn;
+			public readonly string UserName;
+			public readonly SessionToken SessionToken;
+		}
+
+		private static SessionManager _current;
+		private LoginResult _loginResult = LoginResult.None;
+		private string _facilityCode;
+
 		#region ISessionManager Members
 
 		bool ISessionManager.InitiateSession()
 		{
 			try
 			{
-				return Login();
+				_current = this;
+				return Login(ref _facilityCode);
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				// can't use ExceptionHandler here because no desktopWindow exists yet
 				Desktop.Application.ShowMessageBox(e.Message, MessageBoxActions.Ok);
@@ -52,15 +83,17 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public void InvalidateSession()
+		{
+			// todo
+		}
+
 		void ISessionManager.TerminateSession()
 		{
 			try
 			{
-				var currentSession = LoginSession.Current;
-				if (currentSession != null)
-				{
-					currentSession.Terminate();
-				}
+				Terminate();
+				_current = null;
 			}
 			catch (Exception e)
 			{
@@ -71,7 +104,11 @@ namespace ClearCanvas.Ris.Client
 
 		public SessionStatus SessionStatus
 		{
-			get { throw new NotImplementedException(); }
+			get
+			{
+				// the RIS can only be used online, so the session status will always be online
+				return SessionStatus.Online;
+			}
 		}
 
 		public event EventHandler<SessionStatusChangedEventArgs> SessionStatusChanged;
@@ -80,38 +117,46 @@ namespace ClearCanvas.Ris.Client
 
 		#region Internal methods
 
+		internal static string FacilityCode
+		{
+			get { return _current._facilityCode; }
+		}
+
 		internal static bool RenewLogin()
 		{
-			var current = LoginSession.Current;
-			if (current == null)
+			if (_current == null)
+				return false;
+			if (!_current._loginResult.LoggedIn)
 				return false;
 
-			return Login(LoginDialogMode.RenewLogin, current.UserName, current.WorkingFacility.Code);
+			_current._loginResult = Login(LoginDialogMode.RenewLogin, _current._loginResult.UserName, ref _current._facilityCode);
+			return _current._loginResult.LoggedIn;
 		}
 
 		internal static bool ChangePassword()
 		{
-			var current = LoginSession.Current;
-			if(current == null)
+			if (_current == null)
+				return false;
+			if (!_current._loginResult.LoggedIn)
 				return false;
 
 			string newPassword;
-			return ChangePassword(current.UserName, null, out newPassword);
+			return ChangePassword(_current._loginResult.UserName, null, out newPassword);
 		}
 
 		#endregion
 
-		private static bool Login()
+		private bool Login(ref string facility)
 		{
-			return Login(LoginDialogMode.InitialLogin, null, null);
+			_loginResult = Login(LoginDialogMode.InitialLogin, null, ref facility);
+			return _loginResult.LoggedIn;
 		}
 
-		private static bool Login(LoginDialogMode mode, string userName, string facility)
+		private static LoginResult Login(LoginDialogMode mode, string userName, ref string facility)
 		{
 			var needLoginDialog = true;
 			string password = null;
 
-			var risServerDown = false;
 			var facilities = new List<FacilitySummary>();
 			try
 			{
@@ -121,12 +166,9 @@ namespace ClearCanvas.Ris.Client
 			}
 			catch (Exception e)
 			{
-				risServerDown = true;
-				Platform.Log(LogLevel.Debug, "Ris is down.  Failed to get facility choices for login dialog.");
+				Desktop.Application.ShowMessageBox("Unable to connect to RIS server.  The workstation may be configured incorrectly, or the server may be unreachable.", MessageBoxActions.Ok);
 				Platform.Log(LogLevel.Error, e);
-
-				if (DialogBoxAction.No == Desktop.Application.ShowMessageBox(SR.MessageRisServerDowntime, MessageBoxActions.YesNo))
-					return false;
+				return LoginResult.None;
 			}
 
 			while (true)
@@ -136,27 +178,22 @@ namespace ClearCanvas.Ris.Client
 					if (!ShowLoginDialog(mode, facilities, ref userName, ref facility, out password))
 					{
 						// user cancelled
-						return false;
+						return LoginResult.None;
 					}
 				}
 
 				try
 				{
-					var selectedFacility = CollectionUtils.SelectFirst(facilities, fs => fs.Code == facility);
-
 					// try to create the session
-					LoginSession.Create(userName, password, selectedFacility, risServerDown);
-
-					// successfully logged in
-					return true;
+					return DoLogin(userName, password);
 				}
 				catch (PasswordExpiredException)
 				{
 					string newPassword;
-					if(!ChangePassword(userName, password, out newPassword))
+					if (!ChangePassword(userName, password, out newPassword))
 					{
 						// user cancelled password change, so just abort everything
-						return false;
+						return LoginResult.None;
 					}
 
 					// loop again, but this time using the new password, and don't show the login dialog
@@ -179,7 +216,7 @@ namespace ClearCanvas.Ris.Client
 
 				var initialFacilityCode = LoginDialogSettings.Default.SelectedFacility;
 				var location = LoginDialogSettings.Default.DialogScreenLocation;
-				
+
 
 				// if no saved facility, just choose the first one
 				if (string.IsNullOrEmpty(initialFacilityCode) && facilityCodes.Length > 0)
@@ -214,6 +251,47 @@ namespace ClearCanvas.Ris.Client
 			return false;
 		}
 
+		private static LoginResult DoLogin(string userName, string password)
+		{
+			try
+			{
+				Platform.Log(LogLevel.Debug, "Attempting login...");
+
+				var result = LoginResult.None;
+				Platform.GetService(
+					delegate(IAuthenticationService service)
+					{
+						var request = new InitiateSessionRequest(userName, ProductInformation.Component, Dns.GetHostName(), password) { GetAuthorizations = true };
+						var response = service.InitiateSession(request);
+
+						if (response.SessionToken == null)
+							throw new Exception("Invalid session token returned from authentication service.");
+
+						// if the call succeeded, set a default principal object on this thread, containing
+						// the set of authority tokens for this user
+						Thread.CurrentPrincipal = DefaultPrincipal.CreatePrincipal(
+							new GenericIdentity(userName),
+							response.SessionToken,
+							response.AuthorityTokens);
+
+						result = new LoginResult(userName, response.SessionToken);
+					});
+
+				Platform.Log(LogLevel.Debug, "Login attempt was successful.");
+				return result;
+			}
+			catch (FaultException<UserAccessDeniedException> e)
+			{
+				Platform.Log(LogLevel.Debug, e.Detail, "Login attempt failed.");
+				throw e.Detail;
+			}
+			catch (FaultException<PasswordExpiredException> e)
+			{
+				Platform.Log(LogLevel.Debug, e.Detail, "Login attempt failed.");
+				throw e.Detail;
+			}
+		}
+
 		private static bool ChangePassword(string userName, string oldPassword, out string newPassword)
 		{
 			using (var changePasswordDialog = (IChangePasswordDialog)(new ChangePasswordDialogExtensionPoint()).CreateExtension())
@@ -226,8 +304,7 @@ namespace ClearCanvas.Ris.Client
 					{
 						try
 						{
-							LoginSession.ChangePassword(userName, changePasswordDialog.Password,
-												changePasswordDialog.NewPassword);
+							ChangePassword(userName, changePasswordDialog.Password, changePasswordDialog.NewPassword);
 
 							newPassword = changePasswordDialog.NewPassword;
 							return true;
@@ -247,9 +324,53 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		private static void ChangePassword(string userName, string oldPassword, string newPassword)
+		{
+			try
+			{
+				Platform.GetService(
+					delegate(IAuthenticationService service)
+					{
+						var request = new ChangePasswordRequest(userName, oldPassword, newPassword);
+						service.ChangePassword(request);
+					});
+			}
+			catch (FaultException<UserAccessDeniedException> e)
+			{
+				throw e.Detail;
+			}
+			catch (FaultException<RequestValidationException> e)
+			{
+				throw e.Detail;
+			}
+		}
+
+		/// <summary>
+		/// Terminates the current session.
+		/// </summary>
+		private void Terminate()
+		{
+			if (!_loginResult.LoggedIn)
+				return;
+
+			try
+			{
+				Platform.GetService(
+					delegate(IAuthenticationService service)
+					{
+						var request = new TerminateSessionRequest(_loginResult.UserName, _loginResult.SessionToken);
+						service.TerminateSession(request);
+					});
+			}
+			finally
+			{
+				_loginResult = LoginResult.None;
+			}
+		}
+
 		private static void ReportException(Exception e)
 		{
-			if(e is RequestValidationException)
+			if (e is RequestValidationException)
 			{
 				Desktop.Application.ShowMessageBox(e.Message, MessageBoxActions.Ok);
 			}

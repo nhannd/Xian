@@ -14,6 +14,7 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -22,17 +23,17 @@ namespace ClearCanvas.Ris.Client
 	{
 	}
 
-	[MenuAction("launch", "global-menus/MenuFile/Home", "Launch")]
+	[MenuAction("launch", "global-menus/MenuFile/MenuHome", "Launch")]
 	[Tooltip("launch", "Go to home page")]
 	[IconSet("launch", IconScheme.Colour, "Icons.GlobalHomeToolSmall.png", "Icons.GlobalHomeToolMedium.png", "Icons.GlobalHomeToolLarge.png")]
 	[VisibleStateObserver("launch", "Visible", "VisibleChanged")]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.HomePage.View)]
 
-	[MenuAction("toggleDowntimeMode", "global-menus/MenuTools/Downtime Mode", "ToggleDowntimeMode", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("toggleDowntimeMode", "global-menus/MenuTools/MenuDowntimeRecoveryMode", "ToggleDowntimeMode", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("toggleDowntimeMode", "DowntimeModeChecked", "DowntimeModeCheckedChanged")]
 	[ActionPermission("toggleDowntimeMode", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.HomePage.View,
-		ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Downtime.RecoveryOperations)] 
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+		ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Downtime.RecoveryOperations)]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint), FeatureToken = FeatureTokens.RIS.Core)]
 	public class GlobalHomeTool : WorklistPreviewHomeTool<FolderSystemExtensionPoint>
 	{
 		private static DesktopWindow _risWindow;
@@ -42,7 +43,7 @@ namespace ClearCanvas.Ris.Client
 			base.Initialize();
 
 			// automatically launch home page on startup, only if current user is a Staff
-			if (LoginSession.Current.IsStaff 
+			if (LoginSession.Current != null && LoginSession.Current.IsStaff 
 				&& Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.HomePage.View)
 				&& HomePageSettings.Default.ShowHomepageOnStartUp
 				&& _risWindow == null)
@@ -74,7 +75,7 @@ namespace ClearCanvas.Ris.Client
 
 		public override string Title
 		{
-			get { return DowntimeRecovery.InDowntimeRecoveryMode ? "Home (Downtime Recovery)" : "Home"; }
+			get { return DowntimeRecovery.InDowntimeRecoveryMode ? string.Format("{0} ({1})", SR.TitleHome, SR.TitleDowntimeRecovery) : SR.TitleHome; }
 		}
 
 		protected override bool IsUserClosableWorkspace
@@ -87,7 +88,7 @@ namespace ClearCanvas.Ris.Client
 			get
 			{
 				// bug 3087: only visible in the RIS window
-				return LoginSession.Current.IsStaff &&
+				return LoginSession.Current != null && LoginSession.Current.IsStaff &&
 					(_risWindow == null || _risWindow == this.Context.DesktopWindow);
 			}
 		}

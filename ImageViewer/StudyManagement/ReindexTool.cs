@@ -8,6 +8,7 @@ using ClearCanvas.ImageViewer.Common.WorkItem;
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
     [MenuAction("reindex", "global-menus/MenuTools/MenuReindex", "Reindex")]
+    [ViewerActionPermissionAttribute("reindex", AuthorityTokens.Administration.ReIndex)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ReindexTool : Tool<IDesktopToolContext>
     {
@@ -32,6 +33,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             if (!WorkItemActivityMonitor.IsRunning)
             {
                 desktopWindow.ShowMessageBox(SR.MessageReindexServiceNotRunning, MessageBoxActions.Ok);
+                return;
+            }
+
+            if (!PermissionsHelper.IsInRole(AuthorityTokens.Administration.ReIndex))
+            {
+                desktopWindow.ShowMessageBox(SR.WarningReindexPermission, MessageBoxActions.Ok);
                 return;
             }
 
