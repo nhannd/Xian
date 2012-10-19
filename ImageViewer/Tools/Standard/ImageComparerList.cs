@@ -78,6 +78,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
         {
             private readonly IResourceResolver _resourceResolver;
             private readonly string _description;
+            private string _realDescription;
 
             internal Item(ImageComparer imageComparer, bool reverse)
             {
@@ -85,6 +86,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
                 _description = imageComparer.Description;
                 Name = imageComparer.Name;
                 IsReverse = reverse;
+                _realDescription = !IsReverse
+                                       ? _resourceResolver.LocalizeString(_description)
+                                       : string.Format(SR.FormatSortByReverse, _resourceResolver.LocalizeString(_description));
+                
                 Comparer = imageComparer.GetComparer(reverse);
             }
 
@@ -94,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
             public string Description
             {
-                get { return !IsReverse ? _resourceResolver.LocalizeString(_description) : string.Format(SR.FormatSortByReverse, _resourceResolver.LocalizeString(_description)); }
+                get { return _realDescription; }
             }
         }
 

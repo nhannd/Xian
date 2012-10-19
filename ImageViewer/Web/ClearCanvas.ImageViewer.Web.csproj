@@ -72,6 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EntityHandlers\CursorFactory.cs" />
     <Compile Include="EntityHandlers\DefaultQFactorStrategy.cs" />
     <Compile Include="EntityHandlers\MessageBoxEntityHandler.cs" />
     <Compile Include="KeyImageLayoutHook.cs" />

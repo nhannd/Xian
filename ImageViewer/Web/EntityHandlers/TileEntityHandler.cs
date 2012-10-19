@@ -101,6 +101,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
         // How can other tiles actively refresh themselves when this tile does?
         private readonly int _defaultJpegQFactor = WebViewerServices.Default.JpegQualityFactor;
         private int _quality = WebViewerServices.Default.JpegQualityFactor;
+        private bool _compareImageQuality = DiagnosticsSettings.Default.CompareImageQuality;
 
 		private Tile _tile;
 		private Point _mousePosition;
@@ -110,8 +111,10 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		private IRenderingSurface _surface;
 		private Bitmap _bitmap;
-        private Message _currentMessage;
+        private MemoryStream _memoryStream;
 
+        private Message _currentMessage;
+ 
         private IJpegCompressor _jpegCompressor;
 
 		[ThreadStatic]private static ContextMenuContainer _contextMenu;
@@ -120,6 +123,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
         private bool _isMouseDown;
         private bool _refreshingClient = false;
+
         
         public TileEntityHandler()
 		{
@@ -220,7 +224,12 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			}
 		}
 
-		private PresentationImage CurrentImage
+        private MemoryStream MemoryStream
+        {
+            get { return _memoryStream ?? (_memoryStream = new MemoryStream()); }
+        }
+
+        private PresentationImage CurrentImage
 		{
 			get { return _tile.PresentationImage as PresentationImage; }
 		}
@@ -339,38 +348,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		private Cursor CreateCursor()
 		{
-			CursorToken token = _tileController.CursorToken;
-			if (token == null)
-				return null;
-
-			Cursor webCursor = new Cursor();
-			Bitmap bitmap;
-			if (token.IsSystemCursor)
-			{
-				PropertyInfo propertyInfo = typeof(Cursors).GetProperty(token.ResourceName, BindingFlags.Static | BindingFlags.Public);
-				var cursor = (System.Windows.Forms.Cursor)propertyInfo.GetValue(null, null);
-				bitmap = new Bitmap(cursor.Size.Width, cursor.Size.Height, PixelFormat.Format32bppArgb);
-				using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bitmap))
-					cursor.Draw(g, new Rectangle(Point.Empty, cursor.Size));
-
-				webCursor.HotSpot = new Position(cursor.HotSpot);
-			}
-			else
-			{
-				bitmap = new Bitmap(token.Resolver.OpenResource(token.ResourceName));
-				webCursor.HotSpot = new Position { X = bitmap.Width / 2, Y = bitmap.Height / 2 };
-			}
-
-			using (var stream = new MemoryStream())
-			{
-				bitmap.Save(stream, ImageFormat.Png);
-				stream.Position = 0;
-
-			    webCursor.Icon = Convert.ToBase64String(stream.GetBuffer());
-				stream.Close();
-			}
-
-			return webCursor;
+		    return CursorFactory.CreateCursor(_tileController.CursorToken);
 		}
 
 		private void OnCaptureChanging(object sender, ItemEventArgs<IMouseButtonHandler> e)
@@ -462,8 +440,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                 bmp1 = (Bitmap)Bitmap.Clone();
             }
 
-            MemoryStream ms = null;
-
             _quality = _defaultJpegQFactor;
             // TODO (Phoenix5): fix/restore.
             bool isDynamicQualityImage = _isMouseDown && false;
@@ -472,20 +448,21 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                 _quality = GetOptimalQFactor(Bitmap.Width, Bitmap.Height, sop);
             }
 
+            MemoryStream.SetLength(0);
+
             imageStats.SaveTime.Start();
             if (_mimeType.Equals("image/jpeg"))
             {
-                ms = _jpegCompressor.Compress(bitmap, _quality);
+                _jpegCompressor.Compress(bitmap, _quality, MemoryStream);
             }
             else if (_mimeType.Equals("image/png"))
             {
-                ms = new MemoryStream();
-                bitmap.Save(ms, ImageFormat.Png);
+                bitmap.Save(MemoryStream, ImageFormat.Png);
             }
             
             imageStats.SaveTime.End();
 
-            byte[] imageBuffer = ms.ToArray();
+            byte[] imageBuffer = MemoryStream.ToArray();
 
             if (Platform.IsLogLevelEnabled(LogLevel.Debug))
             {
@@ -493,13 +470,13 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                     sop.ImageSop.InstanceNumber, imageBuffer.Length, _quality, isDynamicQualityImage ? "[Dynamic]" : "", sop.Frame.HighBit);
             }
 
-            ms.Position = 0;
             imageStats.ImageSize.Value = (ulong)imageBuffer.LongLength;
             ApplicationContext.LogStatistics(LogNames.ServerRendering, imageStats);
 
-            if (DiagnosticsSettings.Default.CompareImageQuality)
+            if (_compareImageQuality)
             {
-                var bmp2 = new Bitmap(ms);
+                MemoryStream.Position = 0;
+                var bmp2 = new Bitmap(MemoryStream);
                 ImageComparisonResult result = BitmapComparison.Compare(ref bmp1, ref bmp2);
                 Console.WriteLine("BMP vs {0} w/ client size: {1}x{2}", _mimeType, bmp2.Height, bmp2.Width);
                 Console.WriteLine("\tR: MinError={2:0.00} MaxError={3:0.00}  Mean={0:0.00}  STD={1:0.00}", result.Channels[0].MeanError, result.Channels[0].StdDeviation, Math.Abs(result.Channels[0].MinError), Math.Abs(result.Channels[0].MaxError));

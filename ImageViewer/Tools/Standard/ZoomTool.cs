@@ -48,6 +48,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private ImageOperationApplicator _applicator;
 		private ToolModalityBehaviorHelper _toolBehavior;
 
+	    private SimpleActionModel _dropDownModel;
+
 		public ZoomTool()
 			: base(SR.TooltipZoom)
 		{
@@ -72,16 +74,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			get
 			{
-				SimpleActionModel actionModel = new SimpleActionModel(new ApplicationThemeResourceResolver(this.GetType().Assembly));
+                if (_dropDownModel == null)
+                {
+                    _dropDownModel = new SimpleActionModel(new ApplicationThemeResourceResolver(this.GetType().Assembly));
 
-				actionModel.AddAction("fit", SR.LabelZoomFit, null, SR.LabelZoomFit, delegate { SetScale(0); });
-				AddFixedZoomAction(actionModel, 1);
-				AddFixedZoomAction(actionModel, 2);
-				AddFixedZoomAction(actionModel, 4);
-				AddFixedZoomAction(actionModel, 8);
+                    _dropDownModel.AddAction("fit", SR.LabelZoomFit, null, SR.LabelZoomFit, delegate { SetScale(0); });
+                    AddFixedZoomAction(_dropDownModel, 1);
+                    AddFixedZoomAction(_dropDownModel, 2);
+                    AddFixedZoomAction(_dropDownModel, 4);
+                    AddFixedZoomAction(_dropDownModel, 8);
+                }
 
-				return actionModel;
-			}	
+                return _dropDownModel;
+            }	
 		}
 
 		private ImageSpatialTransform GetSelectedImageTransform()

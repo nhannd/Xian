@@ -24,6 +24,7 @@ namespace ClearCanvas.ImageViewer.Common.Utilities.Imaging
 
     public interface IJpegCompressor
     {
+        void Compress(Bitmap image, int quality, MemoryStream memoryStream);
         MemoryStream Compress(Bitmap image, int quality);
     }
 
@@ -39,17 +40,6 @@ namespace ClearCanvas.ImageViewer.Common.Utilities.Imaging
                 _codec = GetEncoderInfo();
             }
 
-            public MemoryStream Compress(Bitmap image, int quality)
-            {
-                var eps = new EncoderParameters(1);
-                eps.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-                ImageCodecInfo ici = _codec;
-                
-                var ms = new MemoryStream();
-                image.Save(ms, ici, eps);
-                return ms;
-            }
-
             private static ImageCodecInfo GetEncoderInfo()
             {
                 int j;
@@ -61,6 +51,26 @@ namespace ClearCanvas.ImageViewer.Common.Utilities.Imaging
                 }
                 return null;
             }
+
+            #region IJpegCompressor Members
+
+            public MemoryStream Compress(Bitmap image, int quality)
+            {
+                var memoryStream = new MemoryStream();
+                Compress(image, quality, memoryStream);
+                return memoryStream;
+            }
+
+            public void Compress(Bitmap image, int quality, MemoryStream memoryStream)
+            {
+                var eps = new EncoderParameters(1);
+                eps.Param[0] = new EncoderParameter(Encoder.Quality, quality);
+                ImageCodecInfo ici = _codec;
+
+                image.Save(memoryStream, ici, eps);
+            }
+
+            #endregion
         }
 
         public static IJpegCompressor Create()
@@ -77,6 +87,11 @@ namespace ClearCanvas.ImageViewer.Common.Utilities.Imaging
             return new DefaultCompressor();
         }
 
+        #region IJpegCompressor Members
+
+        public abstract void Compress(Bitmap image, int quality, MemoryStream memoryStream);
         public abstract MemoryStream Compress(Bitmap image, int quality);
+
+        #endregion
     }
 }

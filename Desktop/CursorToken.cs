@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -19,7 +20,7 @@ namespace ClearCanvas.Desktop
 	/// A helper class for storing information about cursors that are to be
 	/// shown in the view.
 	/// </summary>
-	public class CursorToken
+	public class CursorToken : IEquatable<CursorToken>
 	{
 		/// <summary>
 		/// Common cursors normally provided by the system.
@@ -128,10 +129,11 @@ namespace ClearCanvas.Desktop
 			VSplit
 		}; 
 		
-		private string _resourceName;
-		private ResourceResolver _resolver;
+		private readonly string _resourceName;
+        private readonly Assembly _resourceAssembly;
+        private readonly ResourceResolver _resolver;
 
-		/// <summary>
+	    /// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="systemCursor">The system cursor to show in the view.</param>
@@ -167,6 +169,7 @@ namespace ClearCanvas.Desktop
 			Platform.CheckForNullReference(resourceAssembly, "resourceAssembly");
 
 			_resourceName = resourceName;
+		    _resourceAssembly = resourceAssembly;
 			_resolver = new ApplicationThemeResourceResolver(resourceAssembly);
 		}
 
@@ -193,5 +196,31 @@ namespace ClearCanvas.Desktop
 		{
 			get { return (_resolver == null); }
 		}
-	}
+
+        public override int GetHashCode()
+        {
+            var hash = 0x1397568;
+            if (_resourceName != null)
+                hash ^= _resourceName.GetHashCode();
+            if (_resourceAssembly != null)
+                hash ^= _resourceAssembly.GetHashCode();
+
+            return hash;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as CursorToken;
+            return other != null && Equals(other);
+        }
+
+        #region IEquatable<CursorToken> Members
+
+        public bool Equals(CursorToken other)
+        {
+            return other._resourceName == _resourceName && other._resourceAssembly == _resourceAssembly;
+        }
+
+        #endregion
+    }
 }

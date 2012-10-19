@@ -59,6 +59,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 		private Pen _pen;
 		private SolidBrush _brush;
 
+	    private FontFactory _fontFactory;
+
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
@@ -67,6 +69,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		{
 			_pen = new Pen(Color.White);
 			_brush = new SolidBrush(Color.Black);
+            _fontFactory = new FontFactory();
 		}
 
 		private new GdiRenderingSurface Surface
@@ -95,18 +98,15 @@ namespace ClearCanvas.ImageViewer.Rendering
 					_brush.Dispose();
 					_brush = null;
 				}
+                if (_fontFactory != null)
+                {
+                    _fontFactory.Dispose();
+                    _fontFactory = null;
+                }
 			}
 		}
 
 		#endregion
-
-		/// <summary>
-		/// Initializes the member variables before calling <see cref="RendererBase.Render"/> or <see cref="RendererBase.Refresh"/>.
-		/// </summary>
-		protected override void Initialize(DrawArgs drawArgs)
-		{
-			base.Initialize(drawArgs);
-		}
 
 		/// <summary>
 		/// Traverses and renders the scene graph.  
@@ -347,7 +347,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			// We adjust the font size depending on the scale so that it's the same size
 			// irrespective of the zoom
 			var fontSize = CalculateScaledFontPoints(textPrimitive.SizeInPoints, Dpi);
-			Font font = CreateFont(textPrimitive.Font, fontSize, FontStyle.Regular, GraphicsUnit.Point, _defaultFont);
+			Font font = _fontFactory.CreateFont(textPrimitive.Font, fontSize, FontStyle.Regular, GraphicsUnit.Point, _defaultFont);
 
 			// Calculate how big the text will be so we can set the bounding box
 			textPrimitive.Dimensions = Surface.FinalBuffer.Graphics.MeasureString(textPrimitive.Text, font);
@@ -373,117 +373,108 @@ namespace ClearCanvas.ImageViewer.Rendering
 				_brush,
 				boundingBoxTopLeft);
 
-			font.Dispose();
-
 			textPrimitive.ResetCoordinateSystem();
 		}
 
 		/// <summary>
 		/// Draws an <see cref="AnnotationBox"/>.
 		/// </summary>
-		protected override void DrawAnnotationBox(string annotationText, AnnotationBox annotationBox)
+        protected override void DrawAnnotationBox(string annotationText, AnnotationBox annotationBox)
 		{
-			// if there's nothing to draw, there's nothing to do. go figure.
-			if (string.IsNullOrEmpty(annotationText))
-				return;
+		    // if there's nothing to draw, there's nothing to do. go figure.
+		    if (string.IsNullOrEmpty(annotationText))
+		        return;
 
-			Rectangle clientRectangle = ClearCanvas.ImageViewer.Mathematics.RectangleUtilities.CalculateSubRectangle(Surface.ClientRectangle,
-				                                                                                annotationBox.NormalizedRectangle);
-			//Deflate the client rectangle by 4 pixels to allow some space 
-			//between neighbouring rectangles whose borders coincide.
-			Rectangle.Inflate(clientRectangle, -4, -4);
+		    Rectangle clientRectangle = RectangleUtilities.CalculateSubRectangle(Surface.ClientRectangle, annotationBox.NormalizedRectangle);
+		    //Deflate the client rectangle by 4 pixels to allow some space 
+		    //between neighbouring rectangles whose borders coincide.
+		    Rectangle.Inflate(clientRectangle, -4, -4);
 
-			int fontSize = (clientRectangle.Height / annotationBox.NumberOfLines) - 1;
+		    int fontSize = (clientRectangle.Height/annotationBox.NumberOfLines) - 1;
 
-			//don't draw it if it's too small to read, anyway.
-			if (fontSize < MinimumFontSizeInPixels)
-				return;
+		    //don't draw it if it's too small to read, anyway.
+		    if (fontSize < MinimumFontSizeInPixels)
+		        return;
 
-			StringFormat format = new StringFormat();
+		    StringFormat format = new StringFormat();
 
-			if (annotationBox.Truncation == AnnotationBox.TruncationBehaviour.Truncate)
-				format.Trimming = StringTrimming.Character;
-			else
-				format.Trimming = StringTrimming.EllipsisCharacter;
+		    if (annotationBox.Truncation == AnnotationBox.TruncationBehaviour.Truncate)
+		        format.Trimming = StringTrimming.Character;
+		    else
+		        format.Trimming = StringTrimming.EllipsisCharacter;
 
-			if (annotationBox.FitWidth)
-				format.Trimming = StringTrimming.None;
+		    if (annotationBox.FitWidth)
+		        format.Trimming = StringTrimming.None;
 
-			if (annotationBox.Justification == AnnotationBox.JustificationBehaviour.Right)
-				format.Alignment = StringAlignment.Far;
-			else if (annotationBox.Justification == AnnotationBox.JustificationBehaviour.Center)
-				format.Alignment = StringAlignment.Center;
-			else
-				format.Alignment = StringAlignment.Near;
+		    if (annotationBox.Justification == AnnotationBox.JustificationBehaviour.Right)
+		        format.Alignment = StringAlignment.Far;
+		    else if (annotationBox.Justification == AnnotationBox.JustificationBehaviour.Center)
+		        format.Alignment = StringAlignment.Center;
+		    else
+		        format.Alignment = StringAlignment.Near;
 
-			if (annotationBox.VerticalAlignment == AnnotationBox.VerticalAlignmentBehaviour.Top)
-				format.LineAlignment = StringAlignment.Near;
-			else if (annotationBox.VerticalAlignment == AnnotationBox.VerticalAlignmentBehaviour.Center)
-				format.LineAlignment = StringAlignment.Center;
-			else
-				format.LineAlignment = StringAlignment.Far;
+		    if (annotationBox.VerticalAlignment == AnnotationBox.VerticalAlignmentBehaviour.Top)
+		        format.LineAlignment = StringAlignment.Near;
+		    else if (annotationBox.VerticalAlignment == AnnotationBox.VerticalAlignmentBehaviour.Center)
+		        format.LineAlignment = StringAlignment.Center;
+		    else
+		        format.LineAlignment = StringAlignment.Far;
 
-			//allow p's and q's, etc to extend slightly beyond the bounding rectangle.  Only completely visible lines are shown.
-			format.FormatFlags = StringFormatFlags.NoClip;
+		    //allow p's and q's, etc to extend slightly beyond the bounding rectangle.  Only completely visible lines are shown.
+		    format.FormatFlags = StringFormatFlags.NoClip;
 
-			if (annotationBox.NumberOfLines == 1)
-				format.FormatFlags |= StringFormatFlags.NoWrap;
+		    if (annotationBox.NumberOfLines == 1)
+		        format.FormatFlags |= StringFormatFlags.NoWrap;
 
-			FontStyle style = FontStyle.Regular;
-			if (annotationBox.Bold)
-				style |= FontStyle.Bold;
-			if (annotationBox.Italics)
-				style |= FontStyle.Italic;
+		    FontStyle style = FontStyle.Regular;
+		    if (annotationBox.Bold)
+		        style |= FontStyle.Bold;
+		    if (annotationBox.Italics)
+		        style |= FontStyle.Italic;
 
-			//don't draw it if it's too small to read, anyway.
-			if (fontSize < MinimumFontSizeInPixels)
-				return;
+		    //don't draw it if it's too small to read, anyway.
+		    if (fontSize < MinimumFontSizeInPixels)
+		        return;
 
-			Font font = CreateFont(annotationBox.Font, fontSize, style, GraphicsUnit.Pixel, AnnotationBox.DefaultFont);
-			try
-			{
-				SizeF layoutArea = new SizeF(clientRectangle.Width, clientRectangle.Height);
-				SizeF size = Surface.FinalBuffer.Graphics.MeasureString(annotationText, font, layoutArea, format);
-				if (annotationBox.FitWidth && size.Width > clientRectangle.Width)
-				{
-					fontSize = (int) (Math.Round(fontSize*clientRectangle.Width/(double) size.Width - 0.5));
+		    Font font = _fontFactory.CreateFont(annotationBox.Font, fontSize, style, GraphicsUnit.Pixel,
+		                                        AnnotationBox.DefaultFont);
+		    SizeF layoutArea = new SizeF(clientRectangle.Width, clientRectangle.Height);
+		    SizeF size = Surface.FinalBuffer.Graphics.MeasureString(annotationText, font, layoutArea, format);
+		    if (annotationBox.FitWidth && size.Width > clientRectangle.Width)
+		    {
+		        fontSize = (int) (Math.Round(fontSize*clientRectangle.Width/(double) size.Width - 0.5));
 
-					//don't draw it if it's too small to read, anyway.
-					if (fontSize < MinimumFontSizeInPixels)
-						return;
+		        //don't draw it if it's too small to read, anyway.
+		        if (fontSize < MinimumFontSizeInPixels)
+		            return;
 
-					font.Dispose();
-					font = CreateFont(annotationBox.Font, fontSize, style, GraphicsUnit.Pixel, AnnotationBox.DefaultFont);
-				}
+		        font = _fontFactory.CreateFont(annotationBox.Font, fontSize, style, GraphicsUnit.Pixel,
+		                                       AnnotationBox.DefaultFont);
+		    }
 
-				// Draw drop shadow
-				_brush.Color = Color.Black;
-				clientRectangle.Offset(1, 1);
+		    // Draw drop shadow
+		    _brush.Color = Color.Black;
+		    clientRectangle.Offset(1, 1);
 
-				Surface.FinalBuffer.Graphics.DrawString(
-					annotationText,
-					font,
-					_brush,
-					clientRectangle,
-					format);
+		    Surface.FinalBuffer.Graphics.DrawString(
+		        annotationText,
+		        font,
+		        _brush,
+		        clientRectangle,
+		        format);
 
-				_brush.Color = Color.FromName(annotationBox.Color);
-				clientRectangle.Offset(-1, -1);
+		    _brush.Color = Color.FromName(annotationBox.Color);
+		    clientRectangle.Offset(-1, -1);
 
-				Surface.FinalBuffer.Graphics.DrawString(
-					annotationText,
-					font,
-					_brush,
-					clientRectangle,
-					format);
-			}
-			finally
-			{
-				font.Dispose();
-			}
+		    Surface.FinalBuffer.Graphics.DrawString(
+		        annotationText,
+		        font,
+		        _brush,
+		        clientRectangle,
+		        format);
 		}
 
-		/// <summary>
+	    /// <summary>
 		/// Draws an error message in the Scene Graph's client area of the screen.
 		/// </summary>
 		[Obsolete("Renderer implementations are no longer responsible for handling render pipeline errors.")]
@@ -499,8 +490,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			_brush.Color = Color.WhiteSmoke;
 			Surface.FinalBuffer.Graphics.DrawString(message, font, _brush, Surface.ClipRectangle, format);
-
-			font.Dispose();
 		}
 
 		private void InternalDrawLinePrimitive(ILineSegmentGraphic line) {
@@ -625,19 +614,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 					_pen.DashPattern = new float[] { 4.0F, 4.0F };
 				else
 					_pen.DashPattern = new float[] { 2.0F, 4.0F };
-			}
-		}
-
-		private static Font CreateFont(string fontName, float fontSize, FontStyle fontStyle, GraphicsUnit graphicsUnit, string defaultFontName)
-		{
-			try
-			{
-				return new Font(fontName, fontSize, fontStyle, graphicsUnit);
-			}
-			catch (Exception ex)
-			{
-				Platform.Log(LogLevel.Error, ex);
-				return new Font(defaultFontName, fontSize, FontStyle.Regular, graphicsUnit);
 			}
 		}
 

@@ -44,6 +44,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private MemorableUndoableCommand _memorableCommand;
 		private int _initialPresentationImageIndex;
 		private IImageBox _currentImageBox;
+        private SimpleActionModel _sortMenuModel;
 
 		public StackTool()
 			: base(SR.TooltipStack)
@@ -61,15 +62,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			get
 			{
-				var actionModel = new SimpleActionModel(new ApplicationThemeResourceResolver(GetType().Assembly));
-				foreach (var item in ImageComparerList.Items)
-				{
-					var itemVar = item;
-					var action = actionModel.AddAction(itemVar.Name, itemVar.Description, null, itemVar.Description, () => Sort(itemVar));
-					action.Checked = GetSortMenuItemCheckState(itemVar);
-				}
+                if (_sortMenuModel == null)
+                {
+                    _sortMenuModel = new SimpleActionModel(new ApplicationThemeResourceResolver(GetType().Assembly));
+                    foreach (var item in ImageComparerList.Items)
+                    {
+                        var itemVar = item;
+                        var action = _sortMenuModel.AddAction(itemVar.Name, itemVar.Description, null, itemVar.Description, () => Sort(itemVar));
+                        action.Checked = GetSortMenuItemCheckState(itemVar);
+                    }
+                }
 
-				return actionModel;
+			    return _sortMenuModel;
 			}
 		}
 
