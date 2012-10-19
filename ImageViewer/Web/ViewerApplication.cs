@@ -348,9 +348,9 @@ namespace ClearCanvas.ImageViewer.Web
 
             ApplicationContext.Current.FireEvent(@event);
 
-	     //   window.ShowMessageBox("This is a message test", "Title", MessageBoxActions.OkCancel);
+	       // window.ShowMessageBox("This is a message test", "Title", MessageBoxActions.OkCancel);
 
-	       // window.ShowAlert(AlertLevel.Warning, "This is an alert warning");
+	        //window.ShowAlert(AlertLevel.Info, "This is an info alert");
 		}
 
         private static string GetProductVersionString()
