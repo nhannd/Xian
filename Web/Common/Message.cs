@@ -24,6 +24,11 @@ namespace ClearCanvas.Web.Common
         [DataMember(IsRequired = false)]
         public Guid TargetId { get; set; }
 
+        /// <summary>
+        /// NOT a data member.
+        /// </summary>
+        public int ReceiveTimeTicks { get; set; }
+
         #region Equality
 
         public override bool Equals(object obj)
@@ -64,7 +69,7 @@ namespace ClearCanvas.Web.Common
 	}
 
     [DataContract(Namespace = Namespace.Value)]
-    public class MessageSet : DataContractBase, IEnumerable
+    public class MessageSet : DataContractBase
     {
         [DataMember(IsRequired = true)]
         public DateTime Timestamp { get; set; }

@@ -43,9 +43,4 @@ namespace ClearCanvas.ImageViewer.Web.Common.Events
         [DataMember(IsRequired = true)]
         public Guid? TriggeringMessageId { get; set; }
     }
-
-    [DataContract(Namespace = ViewerNamespace.Value)]
-    public class MouseMoveProcessedEvent : Event
-    {
-    }
 }
