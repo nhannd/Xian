@@ -12,7 +12,8 @@
     <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
     <property name="State" column="State_" type="ClearCanvas.Workflow.Hibernate.ActivityStatusEnumHbm, ClearCanvas.Workflow.Hibernate" not-null="true"/>
     <property name="LastStateChangeTime" column="LastStateChangeTime_" type="DateTime" not-null="true"/>
-
+    <property name="ProcedureStepId" column="ProcedureStepId_" type="String" length="16" not-null="true"/>
+    
     <component name="Scheduling" class="ClearCanvas.Workflow.ActivityScheduling, ClearCanvas.Workflow">
       <property name="StartTime" column="ScheduledStartTime_" type="DateTime" not-null="false"/>
       <property name="EndTime" column="ScheduledEndTime_" type="DateTime" not-null="false"/>
