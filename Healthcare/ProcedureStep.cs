@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -54,6 +55,7 @@ namespace ClearCanvas.Healthcare
 
 		private Procedure _procedure;
     	private ProcedureStep _linkStep;
+        private String _procedureStepId;
 
 		#region Constructors
 
@@ -62,15 +64,16 @@ namespace ClearCanvas.Healthcare
 		/// </summary>
 		public ProcedureStep()
 		{
+            _procedureStepId = GenerateId();
 		}
 
     	/// <summary>
     	/// Constructor that assigns this step to a parent procedure.
     	/// </summary>
     	/// <param name="procedure"></param>
-    	public ProcedureStep(Procedure procedure)
+    	public ProcedureStep(Procedure procedure) : this()
 		{
-			this._procedure = procedure;
+			_procedure = procedure;
 			procedure.ProcedureSteps.Add(this);
 		}
 
@@ -162,6 +165,12 @@ namespace ClearCanvas.Healthcare
     	{
 			get { return this.State == ActivityStatus.DC && _linkStep != null; }
     	}
+
+        public virtual String ProcedureStepId
+        {
+            get { return _procedureStepId; }
+            protected set { _procedureStepId = value; }
+        }
 
 		#endregion
 
@@ -335,5 +344,11 @@ namespace ClearCanvas.Healthcare
 		protected abstract bool IsRelatedStep(ProcedureStep step);
 
 		#endregion
+
+        private string GenerateId()
+        {
+            var i = Guid.NewGuid().ToByteArray().Aggregate<byte, long>(1, (current, b) => current*((int) b + 1));
+            return string.Format("{0:x}", i - DateTime.Now.Ticks);
+        }
 	}
 }
