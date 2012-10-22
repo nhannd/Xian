@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
         {
             public const string MessageProcessing = "TileEntityHandler.MessageProcessing";
             public const string ServerRendering = "TileEntityHandler.Rendering.Server";
-            public const string ClientRoundTripRendering = "TileEntityHandler.Rendering.Client.RoundTrip";
+            public const string ClientRendering = "TileEntityHandler.Rendering.Client";
             public const string ClientStackRendering = "TileEntityHandler.Rendering.Client.Stacking";
         }
 
@@ -542,13 +542,20 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             if (!ApplicationContext.IsStatisticsLoggingEnabled)
                 return;
 
-            var roundTripRendering = message as RoundTripRenderingTimeMessage;
-            if (roundTripRendering != null)
+            var renderingStats = message as RenderingStatsMessage;
+            if (renderingStats != null)
             {
-                var stat = new StatisticsSet("RoundTripRendering");
-                var renderingTime = TimeSpan.FromMilliseconds(roundTripRendering.ValueMilliseconds);
-                stat.AddField(new TimeSpanStatistics("RoundTripRenderingTime") { Value = renderingTime });
-                ApplicationContext.LogStatistics(LogNames.ClientRoundTripRendering, stat);
+                var stat = new StatisticsSet("ClientRendering");
+                var loadTime = TimeSpan.FromMilliseconds(renderingStats.LoadTimeMilliseconds);
+                stat.AddField(new TimeSpanStatistics("LoadTime") { Value = loadTime });
+
+                var renderingTime = TimeSpan.FromMilliseconds(renderingStats.RenderTimeMilliseconds);
+                stat.AddField(new TimeSpanStatistics("RenderingTime") { Value = renderingTime});
+
+                var roundTripRenderingTime = TimeSpan.FromMilliseconds(renderingStats.RoundTripRenderingTimeMilliseconds);
+                stat.AddField(new TimeSpanStatistics("RoundTripRenderingTime") { Value = roundTripRenderingTime });
+
+                ApplicationContext.LogStatistics(LogNames.ClientRendering, stat);
             }
 
             var stackingRendering = message as StackRenderingTimesMessage;

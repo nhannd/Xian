@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Web
 			       		typeof(TileUpdatedEvent),
 			       		typeof(SessionUpdatedEvent),
 			       		typeof(MessageBoxShownEvent),
-                        typeof(RoundTripRenderingTimeMessage),
+                        typeof(RenderingStatsMessage),
                         typeof(StackRenderingTimesMessage)
 			       	};
 		}
