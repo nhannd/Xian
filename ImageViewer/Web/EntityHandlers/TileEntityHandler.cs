@@ -102,6 +102,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
         private MemoryStream _memoryStream;
 
         private readonly IJpegCompressor _jpegCompressor;
+        private readonly IPngEncoder _pngEncoder;
 
         private long? _lastMouseMoveProcessedTicks;
         private Message _currentMessage;
@@ -111,6 +112,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
         public TileEntityHandler()
 		{
             _jpegCompressor = JpegCompressor.Create();
+            _pngEncoder = PngEncoder.Create();
 		}
 
 		private Rectangle ClientRectangle
@@ -389,7 +391,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             }
             else if (_mimeType.Equals(MimeType.Png))
             {
-                bitmap.Save(MemoryStream, ImageFormat.Png);
+                _pngEncoder.Encode(bitmap, MemoryStream);
             }
             
             imageStats.SaveTime.End();
@@ -425,7 +427,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             }
             else if (_mimeType.Equals(MimeType.Png))
             {
-                bitmap.Save(MemoryStream, ImageFormat.Png);
+                _pngEncoder.Encode(bitmap, MemoryStream);
             }
 
             return MemoryStream.ToArray();

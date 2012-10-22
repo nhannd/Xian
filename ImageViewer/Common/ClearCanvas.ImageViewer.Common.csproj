@@ -180,7 +180,8 @@
     <Compile Include="Tests\DiskspaceTests.cs" />
     <Compile Include="StudyManagement\TimeOrigin.cs" />
     <Compile Include="StudyManagement\TimeUnit.cs" />
-    <Compile Include="Utilities\Imaging\IJpegCompressor.cs" />
+    <Compile Include="Utilities\Imaging\JpegCompressor.cs" />
+    <Compile Include="Utilities\Imaging\PngEncoder.cs" />
     <Compile Include="WorkItem\RetryDelayTimeUnit.cs" />
     <Compile Include="WorkItem\DicomSendSettings.cs" />
     <Compile Include="WorkItem\DicomSendSettings.Designer.cs">
