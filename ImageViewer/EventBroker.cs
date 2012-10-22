@@ -40,13 +40,14 @@ namespace ClearCanvas.ImageViewer
 
 		private event EventHandler<ItemEventArgs<Sop>> _imageLoadedEvent;
 
-		private event EventHandler<MouseCaptureChangedEventArgs> _mouseCaptureChanged;
+        private event EventHandler<MouseCaptureChangedEventArgs> _mouseCaptureChanged;
+        private event EventHandler<MouseWheelCaptureChangedEventArgs> _mouseWheelCaptureChanged;
 
 		private event EventHandler<DisplaySetChangingEventArgs> _displaySetChanging;
 		private event EventHandler<DisplaySetChangedEventArgs> _displaySetChanged;
 
 		private event EventHandler<CloneCreatedEventArgs> _cloneCreated;
-        private EventHandler _layoutCompletedEvent;
+        private event EventHandler _layoutCompletedEvent;
 
 		#endregion
 
@@ -238,6 +239,20 @@ namespace ClearCanvas.ImageViewer
 		{
 			EventsHelper.Fire(_mouseCaptureChanged, this, args);
 		}
+
+        /// <summary>
+        /// Occurs when an object has gained or lost mouse wheel capture.
+        /// </summary>
+        public event EventHandler<MouseWheelCaptureChangedEventArgs> MouseWheelCaptureChanged
+        {
+            add { _mouseWheelCaptureChanged += value; }
+            remove { _mouseWheelCaptureChanged -= value; }
+        }
+
+        internal void OnMouseWheelCaptureChanged(MouseWheelCaptureChangedEventArgs args)
+        {
+            EventsHelper.Fire(_mouseWheelCaptureChanged, this, args);
+        }
 
 		/// <summary>
 		/// Occurs when a display set is about to change.

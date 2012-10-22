@@ -17,7 +17,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 {
     internal class DefaultQFactorStrategy : IQFactorStrategy
     {
-
         private readonly Dictionary<int, int> _8bitImageSizeToQMap = new Dictionary<int, int>();
         private readonly Dictionary<int, int> _12bitImageSizeToQMap = new Dictionary<int, int>();
         private readonly Dictionary<int, int> _16bitImageSizeToQMap = new Dictionary<int, int>();

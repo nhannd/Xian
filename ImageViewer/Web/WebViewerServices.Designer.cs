@@ -25,24 +25,6 @@ namespace ClearCanvas.ImageViewer.Web {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("jpeg")]
-        public string CompressionType {
-            get {
-                return ((string)(this["CompressionType"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("80")]
-        public int JpegQualityFactor {
-            get {
-                return ((int)(this["JpegQualityFactor"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("localhost")]
         public string ArchiveServerHostname {
             get {

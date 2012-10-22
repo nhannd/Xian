@@ -73,8 +73,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntityHandlers\AlertEntityHandler.cs" />
+    <Compile Include="EntityHandlers\AuthorityTokens.cs" />
     <Compile Include="EntityHandlers\CursorFactory.cs" />
     <Compile Include="EntityHandlers\DefaultQFactorStrategy.cs" />
+    <Compile Include="EntityHandlers\ImageQualityManager.cs" />
+    <Compile Include="EntityHandlers\ImageQualitySettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ImageQualitySettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="EntityHandlers\ImageQualityTool.cs" />
     <Compile Include="EntityHandlers\MessageBoxEntityHandler.cs" />
     <Compile Include="KeyImageLayoutHook.cs" />
     <Compile Include="KnownTypeProviders.cs" />
@@ -162,6 +170,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DiagnosticsSettings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="EntityHandlers\ImageQualitySettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ImageQualitySettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="WebViewerServices.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>WebViewerServices.Designer.cs</LastGenOutput>
@@ -196,6 +208,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ImageQualityToolLarge.png" />
+    <EmbeddedResource Include="Icons\ImageQualityToolMedium.png" />
+    <EmbeddedResource Include="Icons\ImageQualityToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

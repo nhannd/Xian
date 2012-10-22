@@ -12,6 +12,7 @@
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Web.EntityHandlers;
 
 namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 {
@@ -21,6 +22,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
         private readonly string _path;
         private volatile bool _fullHeaderRetrieved;
         private bool _sopLoaded;
+        private DicomAttributeCollection _imageQualityOverride;
 
         public ImageServerSopDataSource(InstanceXml instanceXml, string path)
             : base(new DicomFile(path, new DicomAttributeCollection(), instanceXml.Collection))
@@ -32,6 +34,9 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
             sourceFile.MetaInfo[DicomTags.SopClassUid].SetString(0, instanceXml.SopClass.Uid);
 
             _path = path;
+            _imageQualityOverride = new DicomAttributeCollection();
+            _imageQualityOverride[DicomTags.LossyImageCompression].SetStringValue("01");
+            _imageQualityOverride[DicomTags.LossyImageCompressionRatio].SetEmptyValue();
         }
 
         public bool SopLoaded
@@ -55,7 +60,8 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                     if (NeedFullHeader(tag.TagValue))
                         GetFullHeader();
 
-                    return base[tag];
+                    var compressionAttribute = GetCompressionAttribute(tag.TagValue);
+                    return compressionAttribute ?? base[tag];
                 }
             }
         }
@@ -69,7 +75,8 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                     if (NeedFullHeader(tag))
                         GetFullHeader();
 
-                    return base[tag];
+                    var compressionAttribute = GetCompressionAttribute(tag);
+                    return compressionAttribute ?? base[tag];
                 }
             }
         }
@@ -81,6 +88,10 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 if (NeedFullHeader(tag.TagValue))
                     GetFullHeader();
 
+                attribute = GetCompressionAttribute(tag.TagValue);
+                if (attribute != null)
+                    return true;
+
                 return base.TryGetAttribute(tag, out attribute);
             }
         }
@@ -91,6 +102,10 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
             {
                 if (NeedFullHeader(tag))
                     GetFullHeader();
+
+                attribute = GetCompressionAttribute(tag);
+                if (attribute != null)
+                    return true;
 
                 return base.TryGetAttribute(tag, out attribute);
             }
@@ -121,6 +136,21 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
             }
 
             return false;
+        }
+
+        private DicomAttribute GetCompressionAttribute(uint tag)
+        {
+            //Hack to get the overlay to show "LOSSY" correctly.
+            if (tag == DicomTags.LossyImageCompression)
+            {
+                if (ImageQualityManager.Instance.IsImageQualityLossy)
+                    return _imageQualityOverride[DicomTags.LossyImageCompression];
+            }
+
+            if (tag == DicomTags.LossyImageCompressionRatio)
+                return _imageQualityOverride[DicomTags.LossyImageCompressionRatio];
+
+            return null;
         }
 
         private void GetFullHeader()

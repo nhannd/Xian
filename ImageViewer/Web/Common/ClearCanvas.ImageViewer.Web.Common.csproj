@@ -78,6 +78,7 @@
     <Compile Include="Messages\MouseMoveMessage.cs" />
     <Compile Include="Messages\RenderingTimeMessages.cs" />
     <Compile Include="Messages\SetLayoutActionMessage.cs" />
+    <Compile Include="MimeType.cs" />
     <Compile Include="MouseButton.cs" />
     <Compile Include="MouseButtonState.cs" />
     <Compile Include="Messages\MouseWheelMessage.cs" />

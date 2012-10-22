@@ -140,79 +140,69 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		private class MouseWheelManager
 		{
-			private readonly uint WheelStopDelayMilliseconds = 500;
+			private readonly int WheelStopDelayMilliseconds = 500;
 
 			//One per UI Thread.
 			[ThreadStatic]
 			private static MouseWheelManager _instance;
 
+		    private ITile _captureTile;
 			private IMouseWheelHandler _captureMouseWheelHandler;
-			private DateTime _timeOfLastWheel;
-			private volatile bool _stopTimer;
+
+		    private DelayedEventPublisher _delayedStop;
 
 			private MouseWheelManager()
 			{
-				_captureMouseWheelHandler = null;
-				_stopTimer = true;
 			}
 
 			public static MouseWheelManager Instance
 			{
-				get
-				{
-					if (_instance == null)
-						_instance = new MouseWheelManager();
-
-					return _instance;
-				}
+				get { return _instance ?? (_instance = new MouseWheelManager()); }
 			}
 
-			public void UpdateLastWheelTime()
+			public void SetCaptureHandler(ITile tile, IMouseWheelHandler captureMouseWheelHandler)
 			{
-				//TODO (Time Review): use Environment.TickCount
-				_timeOfLastWheel = Platform.Time;
-			}
-
-			public void SetCaptureHandler(IMouseWheelHandler captureMouseWheelHandler)
-			{
-				if (_captureMouseWheelHandler == captureMouseWheelHandler)
+				if (_captureTile == tile && _captureMouseWheelHandler == captureMouseWheelHandler)
 					return;
 
 				if (_captureMouseWheelHandler != null)
-					_captureMouseWheelHandler.StopWheel();
-
-				_captureMouseWheelHandler = captureMouseWheelHandler;
-
-				if (_captureMouseWheelHandler == null)
 				{
-					_stopTimer = true;
-					return;
+                    if (_delayedStop != null)
+                    {
+                        _delayedStop.Dispose();
+                        _delayedStop = null;
+                    }
+
+				    _captureMouseWheelHandler.StopWheel();
+                    _captureTile.ImageViewer.EventBroker.OnMouseWheelCaptureChanged(new MouseWheelCaptureChangedEventArgs(_captureTile, false));
 				}
 
+			    _captureTile = tile;
+				_captureMouseWheelHandler = captureMouseWheelHandler;
+                
+				if (_captureMouseWheelHandler == null)
+				{
+                    if (_delayedStop != null)
+                    {
+                        _delayedStop.Dispose();
+                        _delayedStop = null;
+                    }
+                    return;
+				}
+
+                _delayedStop = new DelayedEventPublisher((s, e) => SetCaptureHandler(tile, null), WheelStopDelayMilliseconds);
+
 				_captureMouseWheelHandler.StartWheel();
+                _captureTile.ImageViewer.EventBroker.OnMouseWheelCaptureChanged(new MouseWheelCaptureChangedEventArgs(_captureTile, true));
 
-				_stopTimer = false;
-				SynchronizationContext context = SynchronizationContext.Current;
-				WaitCallback del = delegate
-				                   	{
-										while (!_stopTimer)
-										{
-											Thread.Sleep(10);
-											context.Post(delegate
-												 	{
-														if (_captureMouseWheelHandler == null)
-															return;
-
-														TimeSpan elapsed = Platform.Time.Subtract(_timeOfLastWheel);
-														if (elapsed.Milliseconds >= WheelStopDelayMilliseconds)
-															SetCaptureHandler(null);
-												 	}
-												, null);
-										}
-				                   	};
-
-				ThreadPool.QueueUserWorkItem(del);
+                _delayedStop.Publish(this, EventArgs.Empty);
 			}
+
+		    public void OnMouseWheel()
+		    {
+                if (_delayedStop != null)
+                    _delayedStop.Publish(this, EventArgs.Empty);
+		    }
 		}
 
 		#endregion
@@ -324,7 +314,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		{
 			set 
 			{
-				MouseWheelManager.Instance.SetCaptureHandler(value);
+				MouseWheelManager.Instance.SetCaptureHandler(_tile, value);
 			}
 		}
 
@@ -446,7 +436,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				this.CaptureMouseWheelHandler = handler;
 
 				handler.Wheel(wheelMessage.WheelDelta);
-				MouseWheelManager.Instance.UpdateLastWheelTime();
+				MouseWheelManager.Instance.OnMouseWheel();
 				return true;
 			}
 

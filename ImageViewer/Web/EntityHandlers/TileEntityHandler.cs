@@ -41,7 +41,6 @@ using ClearCanvas.ImageViewer.Web.Common.Entities;
 using ClearCanvas.Web.Common.Messages;
 using ClearCanvas.Common;
 using Cursor=ClearCanvas.ImageViewer.Web.Common.Entities.Cursor;
-using Encoder = System.Drawing.Imaging.Encoder;
 using MouseLeaveMessage = ClearCanvas.ImageViewer.Web.Common.Messages.MouseLeaveMessage;
 
 namespace ClearCanvas.ImageViewer.Web.EntityHandlers
@@ -77,13 +76,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 		#endregion
 	}
 
-    public interface IQFactorStrategy
-    {
-        int GetOptimalQFactor(int imageWidth, int imageHeight, IImageSopProvider sop);
-    }
-
-    public class QFactorExtensionPoint : ExtensionPoint<IQFactorStrategy> { }
-
     public class TileEntityHandler : EntityHandler<TileEntity>
     {
         private static class LogNames
@@ -94,14 +86,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             public const string ClientStackRendering = "TileEntityHandler.Rendering.Client.Stacking";
         }
 
-		private readonly string _mimeType = "image/jpeg";
-
-        // TODO (Phoenix5): change how this works 
-        // TODO: Should this be at the application level?
-        // So that all images are at the same quality during sync stacking
-        // How can other tiles actively refresh themselves when this tile does?
-        private readonly int _defaultJpegQFactor = WebViewerServices.Default.JpegQualityFactor;
-        private int _quality = WebViewerServices.Default.JpegQualityFactor;
+        private string _mimeType;
+        private int _quality;
         private bool _compareImageQuality = DiagnosticsSettings.Default.CompareImageQuality;
 
 		private Tile _tile;
@@ -115,48 +101,17 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 		private Bitmap _bitmap;
         private MemoryStream _memoryStream;
 
-        private readonly IQFactorStrategy _qFactorPlugin;
         private readonly IJpegCompressor _jpegCompressor;
 
-        private bool _isMouseDown;
         private long? _lastMouseMoveProcessedTicks;
-        
         private Message _currentMessage;
 
 		[ThreadStatic]private static ContextMenuContainer _contextMenu;
 
         public TileEntityHandler()
 		{
-            if (WebViewerServices.Default.CompressionType.ToLower().Equals("jpeg"))
-                _mimeType = "image/jpeg";
-            else if (WebViewerServices.Default.CompressionType.ToLower().Equals("png"))
-                _mimeType = "image/png";
-            else
-                _mimeType = "image/jpeg"; // Default to jpeg
-
-		    _quality = _defaultJpegQFactor;
-
             _jpegCompressor = JpegCompressor.Create();
-
-            try
-            {
-                _qFactorPlugin = new QFactorExtensionPoint().CreateExtension() as IQFactorStrategy;
-            }
-            catch (Exception)
-            {
-                _qFactorPlugin = new DefaultQFactorStrategy();
-            }
 		}
-
-	    private int GetOptimalQFactor(int w, int h, IImageSopProvider sop)
-        {
-            if (_qFactorPlugin!=null)
-            {
-                return _qFactorPlugin.GetOptimalQFactor(w, h, sop);
-            }
-
-	        return _defaultJpegQFactor;
-        }
 
 		private Rectangle ClientRectangle
 		{
@@ -395,26 +350,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			if (Surface == null)
 				return null;
 
-            var sop = _tile.PresentationImage as IImageSopProvider;
-            if (sop != null)
-            {
-                //TODO (CR May 2010): sops are shared between users and threads.  This will be an issue for dynamic quality changes.
-                DicomAttribute attrib = sop.ImageSop[DicomTags.LossyImageCompression];
-                DicomAttribute ratioAttrib = sop.ImageSop[DicomTags.LossyImageCompressionRatio];
-                bool lossy = _mimeType == "image/jpeg";
-                if (lossy)
-                {
-                    attrib.SetStringValue("01");
-                }
-                else
-                {
-                    if (ratioAttrib.IsEmpty)
-                    {
-                        attrib.SetEmptyValue();
-                    }
-                }
-            }
-
             var imageStats = new RenderingStatistics(_mimeType);
 
             //long t0 = Environment.TickCount;
@@ -443,22 +378,16 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                 bmp1 = (Bitmap)Bitmap.Clone();
             }
 
-            _quality = _defaultJpegQFactor;
-            // TODO (Phoenix5): fix/restore.
-            bool isDynamicQualityImage = _isMouseDown && false;
-            if (isDynamicQualityImage)
-            {
-                _quality = GetOptimalQFactor(Bitmap.Width, Bitmap.Height, sop);
-            }
-
+            ImageQualityManager.Instance.GetImageQualityParameters(out _mimeType, out _quality);
+            
             MemoryStream.SetLength(0);
 
             imageStats.SaveTime.Start();
-            if (_mimeType.Equals("image/jpeg"))
+            if (_mimeType.Equals(MimeType.Jpeg))
             {
                 _jpegCompressor.Compress(bitmap, _quality, MemoryStream);
             }
-            else if (_mimeType.Equals("image/png"))
+            else if (_mimeType.Equals(MimeType.Png))
             {
                 bitmap.Save(MemoryStream, ImageFormat.Png);
             }
@@ -490,13 +419,11 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             var bitmap = Bitmap;
             MemoryStream.SetLength(0);
 
-            _quality = _defaultJpegQFactor;
-
-            if (_mimeType.Equals("image/jpeg"))
+            if (_mimeType.Equals(MimeType.Jpeg))
             {
                 _jpegCompressor.Compress(bitmap, _quality, MemoryStream);
             }
-            else if (_mimeType.Equals("image/png"))
+            else if (_mimeType.Equals(MimeType.Png))
             {
                 bitmap.Save(MemoryStream, ImageFormat.Png);
             }
@@ -636,7 +563,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 					var e = new MouseEventArgs(MouseButtons.Left, message.ClickCount, message.MousePosition.X, message.MousePosition.Y, 0);
 					object msg = _tileInputTranslator.OnMouseDown(e);
 				    _tileController.ProcessMessage(msg);
-                    _isMouseDown = true;
 				}
 				else if (message.MouseButtonState == MouseButtonState.Up)
 				{
@@ -648,7 +574,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 					e = new MouseEventArgs(MouseButtons.None, 0, message.MousePosition.X, message.MousePosition.Y, 0);
 					msg = _tileInputTranslator.OnMouseMove(e);
 					_tileController.ProcessMessage(msg);
-                    _isMouseDown = false;
 				}
 			}
 			else if (message.Button == MouseButton.Right)
@@ -658,7 +583,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 					var e = new MouseEventArgs(MouseButtons.Right, message.ClickCount, message.MousePosition.X, message.MousePosition.Y, 0);
 					object msg = _tileInputTranslator.OnMouseDown(e);
 					_tileController.ProcessMessage(msg);
-                    _isMouseDown = true;
 				}
 				else if (message.MouseButtonState == MouseButtonState.Up)
 				{
@@ -672,7 +596,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 					e = new MouseEventArgs(MouseButtons.None, 0, message.MousePosition.X, message.MousePosition.Y, 0);
 					msg = _tileInputTranslator.OnMouseMove(e);
 					_tileController.ProcessMessage(msg);
-                    _isMouseDown = false;
 				}
 			}
 		}

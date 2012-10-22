@@ -2,12 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Web" GeneratedClassName="WebViewerServices">
   <Profiles />
   <Settings>
-    <Setting Name="CompressionType" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">jpeg</Value>
-    </Setting>
-    <Setting Name="JpegQualityFactor" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">80</Value>
-    </Setting>
     <Setting Name="ArchiveServerHostname" Type="System.String" Scope="Application">
       <Value Profile="(Default)">localhost</Value>
     </Setting>
