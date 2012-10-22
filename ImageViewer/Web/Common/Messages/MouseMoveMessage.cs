@@ -17,6 +17,9 @@ namespace ClearCanvas.ImageViewer.Web.Common.Messages
     [DataContract(Namespace = ViewerNamespace.Value)]
     public class MouseMoveMessage : MouseMessage
     {
+        [DataMember(IsRequired = true)]
+        public bool IsDiscardable { get; set; }
+
         public override string ToString()
         {
             return String.Format("Mouse Move Message {0} {1} {2} X={3} Y={4}", 

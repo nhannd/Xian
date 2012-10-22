@@ -15,13 +15,19 @@ using ClearCanvas.Web.Common;
 namespace ClearCanvas.ImageViewer.Web.Common.Messages
 {
     [DataContract(Namespace = ViewerNamespace.Value)]
-    public class RoundTripRenderingTimeMessage : Message
+    public class RenderingStatsMessage : Message
     {
         [DataMember(IsRequired = true)]
         public Size ImageSize { get; set; }
 
         [DataMember(IsRequired = true)]
-        public double ValueMilliseconds { get; set; }
+        public double LoadTimeMilliseconds { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public double RenderTimeMilliseconds { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public double RoundTripRenderingTimeMilliseconds { get; set; }
     }
 
     [DataContract(Namespace = ViewerNamespace.Value)]

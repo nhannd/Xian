@@ -20,6 +20,7 @@ using ClearCanvas.ImageViewer.Web.Common.Messages;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Events;
 using ClearCanvas.Web.Common.Messages;
+using ClearCanvas.Web.Services;
 
 namespace ClearCanvas.ImageViewer.Web
 {
@@ -44,9 +45,8 @@ namespace ClearCanvas.ImageViewer.Web
 			       		typeof(TileUpdatedEvent),
 			       		typeof(SessionUpdatedEvent),
 			       		typeof(MessageBoxShownEvent),
-			       		typeof(AlertShownEvent),
-                        typeof(MouseMoveProcessedEvent),
-                        typeof(RoundTripRenderingTimeMessage),
+						typeof(AlertShownEvent),
+                        typeof(RenderingStatsMessage),
                         typeof(StackRenderingTimesMessage)
 			       	};
 		}
@@ -71,8 +71,7 @@ namespace ClearCanvas.ImageViewer.Web
 			       		typeof (MouseWheelMessage),
                         typeof (DismissMessageBoxMessage),
                         typeof (DismissAlertMessage),
-
-                        typeof(UpdatePropertyMessage)
+                        typeof (UpdatePropertyMessage)
 					};
 		}
 

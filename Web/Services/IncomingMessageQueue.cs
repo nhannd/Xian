@@ -9,6 +9,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Common;
@@ -41,10 +42,13 @@ namespace ClearCanvas.Web.Services
 	    }
 
 	    public bool ProcessMessageSet(MessageSet messageSet)
-		{
-			lock (_syncLock)
-			{
+	    {
+	        var ticks = Environment.TickCount;
+	        foreach (var message in messageSet.Messages)
+	            message.ReceiveTimeTicks = ticks;
 
+            lock (_syncLock)
+			{
 			    if (messageSet.Number == NextMessageSetNumber)
 				{
 					ProcessPendingMessageSets(messageSet);

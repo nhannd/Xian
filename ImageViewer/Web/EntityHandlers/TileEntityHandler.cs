@@ -88,8 +88,9 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
     {
         private static class LogNames
         {
+            public const string MessageProcessing = "TileEntityHandler.MessageProcessing";
             public const string ServerRendering = "TileEntityHandler.Rendering.Server";
-            public const string ClientRoundTripRendering = "TileEntityHandler.Rendering.Client.RoundTrip";
+            public const string ClientRendering = "TileEntityHandler.Rendering.Client";
             public const string ClientStackRendering = "TileEntityHandler.Rendering.Client.Stacking";
         }
 
@@ -106,6 +107,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 		private Tile _tile;
 		private Point _mousePosition;
 		private bool _hasCapture;
+
 		private WebTileInputTranslator _tileInputTranslator;
 		private TileController _tileController;
 
@@ -113,18 +115,16 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 		private Bitmap _bitmap;
         private MemoryStream _memoryStream;
 
+        private readonly IQFactorStrategy _qFactorPlugin;
+        private readonly IJpegCompressor _jpegCompressor;
+
+        private bool _isMouseDown;
+        private long? _lastMouseMoveProcessedTicks;
+        
         private Message _currentMessage;
- 
-        private IJpegCompressor _jpegCompressor;
 
 		[ThreadStatic]private static ContextMenuContainer _contextMenu;
 
-	    private readonly IQFactorStrategy _qFactorPlugin;
-
-        private bool _isMouseDown;
-        private bool _refreshingClient = false;
-
-        
         public TileEntityHandler()
 		{
             if (WebViewerServices.Default.CompressionType.ToLower().Equals("jpeg"))
@@ -260,6 +260,12 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 				_bitmap.Dispose();
 				_bitmap = null;
 			}
+
+            if (_memoryStream != null)
+            {
+                _memoryStream.Dispose();
+                _memoryStream = null;
+            }
 		}
 
 		public override void  SetModelObject(object modelObject)
@@ -389,9 +395,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			if (Surface == null)
 				return null;
 
-            if (_refreshingClient)
-                return GetCurrentTileBitmap();
-
             var sop = _tile.PresentationImage as IImageSopProvider;
             if (sop != null)
             {
@@ -464,12 +467,6 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
             byte[] imageBuffer = MemoryStream.ToArray();
 
-            if (Platform.IsLogLevelEnabled(LogLevel.Debug))
-            {
-                Platform.Log(LogLevel.Debug, "Render Frame #{0}. Size= {1}bytes. Q={2} {3}. Highbit={4}",
-                    sop.ImageSop.InstanceNumber, imageBuffer.Length, _quality, isDynamicQualityImage ? "[Dynamic]" : "", sop.Frame.HighBit);
-            }
-
             imageStats.ImageSize.Value = (ulong)imageBuffer.LongLength;
             ApplicationContext.LogStatistics(LogNames.ServerRendering, imageStats);
 
@@ -491,26 +488,25 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
         private byte[] GetCurrentTileBitmap()
         {
             var bitmap = Bitmap;
-            MemoryStream ms = null;
+            MemoryStream.SetLength(0);
 
             _quality = _defaultJpegQFactor;
 
             if (_mimeType.Equals("image/jpeg"))
             {
-                ms = _jpegCompressor.Compress(bitmap, _quality);
+                _jpegCompressor.Compress(bitmap, _quality, MemoryStream);
             }
             else if (_mimeType.Equals("image/png"))
             {
-                ms = new MemoryStream();
-                bitmap.Save(ms, ImageFormat.Png);
+                bitmap.Save(MemoryStream, ImageFormat.Png);
             }
 
-            return ms.ToArray();
+            return MemoryStream.ToArray();
         }
 
 		public override void ProcessMessage(Message message)
 		{
-		    _currentMessage = message;
+            _currentMessage = message;
 
             if (message is MouseLeaveMessage)
             {
@@ -546,13 +542,20 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             if (!ApplicationContext.IsStatisticsLoggingEnabled)
                 return;
 
-            var roundTripRendering = message as RoundTripRenderingTimeMessage;
-            if (roundTripRendering != null)
+            var renderingStats = message as RenderingStatsMessage;
+            if (renderingStats != null)
             {
-                var stat = new StatisticsSet("RoundTripRendering");
-                var renderingTime = TimeSpan.FromMilliseconds(roundTripRendering.ValueMilliseconds);
-                stat.AddField(new TimeSpanStatistics("RoundTripRenderingTime") { Value = renderingTime });
-                ApplicationContext.LogStatistics(LogNames.ClientRoundTripRendering, stat);
+                var stat = new StatisticsSet("ClientRendering");
+                var loadTime = TimeSpan.FromMilliseconds(renderingStats.LoadTimeMilliseconds);
+                stat.AddField(new TimeSpanStatistics("LoadTime") { Value = loadTime });
+
+                var renderingTime = TimeSpan.FromMilliseconds(renderingStats.RenderTimeMilliseconds);
+                stat.AddField(new TimeSpanStatistics("RenderingTime") { Value = renderingTime});
+
+                var roundTripRenderingTime = TimeSpan.FromMilliseconds(renderingStats.RoundTripRenderingTimeMilliseconds);
+                stat.AddField(new TimeSpanStatistics("RoundTripRenderingTime") { Value = roundTripRenderingTime });
+
+                ApplicationContext.LogStatistics(LogNames.ClientRendering, stat);
             }
 
             var stackingRendering = message as StackRenderingTimesMessage;
@@ -594,18 +597,19 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		private void ProcessMouseMoveMessage(MouseMoveMessage message)
 		{
-			//TODO (CR May 2010): should we remove this code?  We should be very careful if we do.
-			//Theoretically, this could limit us to 10 fps.
-
-            Event ack = new MouseMoveProcessedEvent
+            var messageProcessingStatistics = new MessageProcessingStatistics(message.GetType());
+            if (_lastMouseMoveProcessedTicks.HasValue)
             {
-                Identifier = Guid.NewGuid(),
-                SenderId = this.Identifier
-            };
+                var receivedBeforeLastMessageProcessed = (_lastMouseMoveProcessedTicks.Value - message.ReceiveTimeTicks) >= 0;
+                if (message.IsDiscardable && receivedBeforeLastMessageProcessed)
+                    return;
 
-            ApplicationContext.FireEvent(ack);
+                messageProcessingStatistics.TimeSinceLastMessageProcessed.Value = TimeSpan.FromMilliseconds(Environment.TickCount - _lastMouseMoveProcessedTicks.Value);
+            }
 
-			MouseButtons mouseButtons = MouseButtons.None;
+            messageProcessingStatistics.ProcessingTime.Start();
+
+            MouseButtons mouseButtons = MouseButtons.None;
 
 			switch (message.Button)
 			{
@@ -616,7 +620,12 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			var e = new MouseEventArgs(mouseButtons, 0, message.MousePosition.X, message.MousePosition.Y, 0);
 			var msg = _tileInputTranslator.OnMouseMove(e);
 			_tileController.ProcessMessage(msg);
-		}
+
+            messageProcessingStatistics.ProcessingTime.End();
+            ApplicationContext.LogStatistics(LogNames.MessageProcessing, messageProcessingStatistics);
+
+            _lastMouseMoveProcessedTicks = Environment.TickCount;
+        }
 
 		private void ProcessMouseMessage(MouseMessage message)
 		{
