@@ -129,19 +129,16 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// label1
 			// 
 			resources.ApplyResources(this.label1, "label1");
-			this.label1.MaximumSize = new System.Drawing.Size(80, 26);
 			this.label1.Name = "label1";
 			// 
 			// label2
 			// 
 			resources.ApplyResources(this.label2, "label2");
-			this.label2.MaximumSize = new System.Drawing.Size(45, 0);
 			this.label2.Name = "label2";
 			// 
 			// label3
 			// 
 			resources.ApplyResources(this.label3, "label3");
-			this.label3.MaximumSize = new System.Drawing.Size(80, 26);
 			this.label3.Name = "label3";
 			// 
 			// label4
@@ -167,7 +164,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// label9
 			// 
 			resources.ApplyResources(this.label9, "label9");
-			this.label9.MaximumSize = new System.Drawing.Size(60, 0);
 			this.label9.Name = "label9";
 			// 
 			// _tbFrequency

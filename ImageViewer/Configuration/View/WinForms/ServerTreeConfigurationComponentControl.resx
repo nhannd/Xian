@@ -128,11 +128,14 @@
   <data name="_splitContainer.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
     <value>Horizontal</value>
   </data>
+  <data name="_description.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
   <data name="_description.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 10</value>
+    <value>0, 3</value>
   </data>
   <data name="_description.Size" type="System.Drawing.Size, System.Drawing">
-    <value>456, 22</value>
+    <value>473, 30</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="_description.TabIndex" type="System.Int32, mscorlib">
@@ -152,6 +155,9 @@
   </data>
   <data name="&gt;&gt;_description.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="_splitContainer.Panel1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 3, 0, 0</value>
   </data>
   <data name="&gt;&gt;_splitContainer.Panel1.Name" xml:space="preserve">
     <value>_splitContainer.Panel1</value>

@@ -75,6 +75,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			// _splitContainer.Panel1
 			// 
 			this._splitContainer.Panel1.Controls.Add(this._description);
+			resources.ApplyResources(this._splitContainer.Panel1, "_splitContainer.Panel1");
 			// 
 			// _description
 			// 
