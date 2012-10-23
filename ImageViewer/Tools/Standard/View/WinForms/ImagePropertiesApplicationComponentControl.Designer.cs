@@ -40,10 +40,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			// 
 			// _properties
 			// 
-			this._properties.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-			this._properties.CategoryForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this._properties.BackColor = System.Drawing.Color.Gray;
+			this._properties.CategoryForeColor = System.Drawing.Color.WhiteSmoke;
+			this._properties.CommandsForeColor = System.Drawing.Color.WhiteSmoke;
 			this._properties.CommandsVisibleIfAvailable = false;
 			resources.ApplyResources(this._properties, "_properties");
+			this._properties.LineColor = System.Drawing.Color.Gray;
 			this._properties.Name = "_properties";
 			this._properties.PropertySort = System.Windows.Forms.PropertySort.Categorized;
 			this._properties.ToolbarVisible = false;
