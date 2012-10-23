@@ -143,7 +143,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this.Controls.Add(this._statusLabel);
 			this.Name = "ImportProgressControl";
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
