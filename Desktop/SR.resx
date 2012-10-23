@@ -472,4 +472,7 @@ You can configure this item, but you do not have permission to use it.</value>
   <data name="TooltipImportSettingsMetaData" xml:space="preserve">
     <value>Import settings meta-data from local plugins</value>
   </data>
+  <data name="MessageConfirmImportSettingsMetaData" xml:space="preserve">
+    <value>Import settings meta-data defined in locally installed plugins?</value>
+  </data>
 </root>

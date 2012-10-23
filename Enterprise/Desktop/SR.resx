@@ -200,6 +200,9 @@ Note: This change may not take effect immediately.</value>
   <data name="MessageConfirmDeleteSelectedItems" xml:space="preserve">
     <value>Are you sure you want to delete the selected item(s)?</value>
   </data>
+  <data name="MessageConfirmImportAuthorityGroup" xml:space="preserve">
+    <value>Import authority tokens and groups defined in locally installed plugins?</value>
+  </data>
   <data name="MessageServerOffline" xml:space="preserve">
     <value>The server is currently offline.  Please try again later.</value>
   </data>
