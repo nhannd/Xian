@@ -9,7 +9,7 @@
     <File name="ClearCanvas.ImageServer.ShredHostService.exe.config" config="true" />
     <File name="ClearCanvas.ImageServer.ShredHostService.exe.critical.config" checksum="true" config="true" />
     <File name="PrivacyNotice.rtf" />
-    <File name="Logging.config" />
+    <File name="Logging.config" config="true" ignore="true" />
     <File name="logs\" ignore="true" />
     <File name="manifest\" ignore="true" />
     <File name="common\Castle.Core.dll" checksum="true" />
