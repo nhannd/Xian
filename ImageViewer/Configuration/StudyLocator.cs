@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -11,61 +11,71 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Dicom.ServiceModel.Query;
 using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
-    //Configuration is not the right place for this, but it was in a lonely plugin
-    //all by itself, which seems ridiculous.  Badly need to do some code reorg and refactoring.
+	//Configuration is not the right place for this, but it was in a lonely plugin
+	//all by itself, which seems ridiculous.  Badly need to do some code reorg and refactoring.
 
-    //TODO (Marmot): Move to Common?
+	//TODO (Marmot): Move to Common?
 
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, UseSynchronizationContext = false, ConfigurationName = "StudyLocator", Namespace = QueryNamespace.Value)]
-	public class StudyLocator : IStudyRootQuery
+	public class StudyLocator : IStudyLocator, IStudyRootQuery
 	{
 		private delegate IList<T> QueryDelegate<T>(T criteria, IStudyRootQuery query) where T : Identifier;
-		private delegate string GetUidDelegate<T>(T identifier) where T : Identifier;
 
 		private class GenericQuery<T> where T : Identifier, new()
 		{
 			private readonly QueryDelegate<T> _query;
-			private readonly GetUidDelegate<T> _getUid;
+			private readonly bool _suppressQueryFailureFaults;
 
-			public GenericQuery(QueryDelegate<T> query, GetUidDelegate<T> getUid)
+			public GenericQuery(QueryDelegate<T> query, bool suppressQueryFailureFaults)
 			{
 				_query = query;
-				_getUid = getUid;
+				_suppressQueryFailureFaults = suppressQueryFailureFaults;
 			}
 
 			public IList<T> Query(T queryCriteria)
 			{
+				LocateFailureInfo[] failures;
+				return Query(queryCriteria, out failures);
+			}
+
+			public IList<T> Query(T queryCriteria, out LocateFailureInfo[] failures)
+			{
 				if (queryCriteria == null)
 				{
-					string message = "The argument cannot be null.";
+					const string message = "The argument cannot be null.";
 					Platform.Log(LogLevel.Error, message);
 					throw new FaultException(message);
 				}
 
-			    var results = new List<T>();
+				var results = new List<T>();
+				var failureList = new List<LocateFailureInfo>();
 				try
 				{
 					foreach (var priorsServer in ServerDirectory.GetPriorsServers(true))
 					{
 						try
 						{
-						    IList<T> r = null;
-                            priorsServer.GetService<IStudyRootQuery>(service => r = _query(queryCriteria, service));
-                            results.AddRange(r);
+							IList<T> r = null;
+							priorsServer.GetService<IStudyRootQuery>(service => r = _query(queryCriteria, service));
+							results.AddRange(r);
 						}
 						catch (Exception e)
 						{
 							QueryFailedFault fault = new QueryFailedFault();
 							fault.Description = String.Format("Failed to query server {0}.", priorsServer.Name);
 							Platform.Log(LogLevel.Error, e, fault.Description);
-							throw new FaultException<QueryFailedFault>(fault, fault.Description);
+							if (_suppressQueryFailureFaults)
+								failureList.Add(new LocateFailureInfo(fault, fault.Description) {ServerName = priorsServer.Name, ServerAE = priorsServer.AETitle});
+							else
+								throw new FaultException<QueryFailedFault>(fault, fault.Description);
 						}
 					}
 				}
@@ -81,65 +91,63 @@ namespace ClearCanvas.ImageViewer.Configuration
 					throw new FaultException<QueryFailedFault>(fault, fault.Description);
 				}
 
-			    return results;
+				failures = failureList.ToArray();
+				return results;
 			}
-		}
-
-		public StudyLocator()
-		{
 		}
 
 		#region IStudyRootQuery Members
 
 		public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)
 		{
-			QueryDelegate<StudyRootStudyIdentifier> query =
-				delegate(StudyRootStudyIdentifier criteria, IStudyRootQuery studyRootQuery)
-					{
-						return studyRootQuery.StudyQuery(criteria);
-					};
+			QueryDelegate<StudyRootStudyIdentifier> query = (criteria, studyRootQuery) => studyRootQuery.StudyQuery(criteria);
 
-			GetUidDelegate<StudyRootStudyIdentifier> getUid =
-				delegate(StudyRootStudyIdentifier result)
-					{
-						return result.StudyInstanceUid;
-					};
-
-			return new GenericQuery<StudyRootStudyIdentifier>(query, getUid).Query(queryCriteria);
+			return new GenericQuery<StudyRootStudyIdentifier>(query, false).Query(queryCriteria);
 		}
 
 		public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria)
 		{
-			QueryDelegate<SeriesIdentifier> query =
-				delegate(SeriesIdentifier criteria, IStudyRootQuery studyRootQuery)
-					{
-						return studyRootQuery.SeriesQuery(criteria);
-					};
+			QueryDelegate<SeriesIdentifier> query = (criteria, studyRootQuery) => studyRootQuery.SeriesQuery(criteria);
 
-			GetUidDelegate<SeriesIdentifier> getUid =
-				delegate(SeriesIdentifier result)
-					{
-						return result.SeriesInstanceUid;
-					};
-
-			return new GenericQuery<SeriesIdentifier>(query, getUid).Query(queryCriteria);
+			return new GenericQuery<SeriesIdentifier>(query, false).Query(queryCriteria);
 		}
 
 		public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria)
 		{
-			QueryDelegate<ImageIdentifier> query =
-				delegate(ImageIdentifier criteria, IStudyRootQuery studyRootQuery)
-					{
-						return studyRootQuery.ImageQuery(criteria);
-					};
+			QueryDelegate<ImageIdentifier> query = (criteria, studyRootQuery) => studyRootQuery.ImageQuery(criteria);
 
-			GetUidDelegate<ImageIdentifier> getUid =
-				delegate(ImageIdentifier result)
-					{
-						return result.SopInstanceUid;
-					};
+			return new GenericQuery<ImageIdentifier>(query, false).Query(queryCriteria);
+		}
 
-			return new GenericQuery<ImageIdentifier>(query, getUid).Query(queryCriteria);
+		#endregion
+
+		#region Implementation of IStudyLocator
+
+		public LocateStudiesResult LocateStudies(LocateStudiesRequest request)
+		{
+			QueryDelegate<StudyRootStudyIdentifier> query = (criteria, studyRootQuery) => studyRootQuery.StudyQuery(criteria);
+
+			LocateFailureInfo[] failures;
+			var results = new GenericQuery<StudyRootStudyIdentifier>(query, true).Query(request.Criteria, out failures);
+			return new LocateStudiesResult {Studies = results, Failures = failures};
+		}
+
+		public LocateSeriesResult LocateSeries(LocateSeriesRequest request)
+		{
+			QueryDelegate<SeriesIdentifier> query = (criteria, studyRootQuery) => studyRootQuery.SeriesQuery(criteria);
+
+			LocateFailureInfo[] failures;
+			var results = new GenericQuery<SeriesIdentifier>(query, true).Query(request.Criteria, out failures);
+			return new LocateSeriesResult {Series = results, Failures = failures};
+		}
+
+		public LocateImagesResult LocateImages(LocateImagesRequest request)
+		{
+			QueryDelegate<ImageIdentifier> query = (criteria, studyRootQuery) => studyRootQuery.ImageQuery(criteria);
+
+			LocateFailureInfo[] failures;
+			var results = new GenericQuery<ImageIdentifier>(query, true).Query(request.Criteria, out failures);
+			return new LocateImagesResult {Images = results, Failures = failures};
 		}
 
 		#endregion

@@ -10,12 +10,13 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ClearCanvas.ImageViewer.Common</RootNamespace>
     <AssemblyName>ClearCanvas.ImageViewer.Common</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>4.0</OldToolsVersion>
     <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,6 +50,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Runtime.Serialization.dll</HintPath>
@@ -74,7 +76,6 @@
     <Compile Include="Auditing\EventReceiptAction.cs" />
     <Compile Include="Auditing\EventResult.cs" />
     <Compile Include="Auditing\EventSource.cs" />
-    <Compile Include="AuthorityTokens.cs" />
     <Compile Include="Automation\DataContracts.cs" />
     <Compile Include="Automation\IDicomExplorerAutomation.cs" />
     <Compile Include="Automation\IViewerAutomation.cs" />
@@ -86,6 +87,11 @@
     <Compile Include="BufferCache.cs" />
     <Compile Include="Cache.cs" />
     <Compile Include="CompressionType.cs" />
+    <Compile Include="Configuration\ISystemConfigurationSettingsStore.cs" />
+    <Compile Include="Configuration\SystemConfigurationSettingsProvider.cs" />
+    <Compile Include="Configuration\Tests\SystemConfigurationSettingsProviderTests.cs" />
+    <Compile Include="Configuration\Tests\TestSettingsClass.cs" />
+    <Compile Include="Configuration\Tests\TestSettingsStore.cs" />
     <Compile Include="DataContracts.cs" />
     <Compile Include="DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Diagnostics.cs" />
@@ -93,9 +99,18 @@
     <Compile Include="DicomServer\DataContracts.cs" />
     <Compile Include="DicomServer\DicomServer.cs" />
     <Compile Include="DicomServer\DicomServerClient.cs" />
+    <Compile Include="DicomServer\DicomServerConfigurationServiceProvider.cs" />
+    <Compile Include="DicomServer\DicomServerSettings.cs" />
+    <Compile Include="DicomServer\DicomServerSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>DicomServerSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="DicomServer\IDicomServerConfiguration.cs" />
     <Compile Include="DicomServer\IDicomServer.cs" />
+    <Compile Include="DicomServer\Tests\DicomServerSettingsTests.cs" />
     <Compile Include="Diskspace.cs" />
+    <Compile Include="DiskspaceMonitor.cs" />
     <Compile Include="ExtensionData.cs" />
     <Compile Include="FilteredGroup.cs" />
     <Compile Include="IBlockingEnumerator.cs" />
@@ -106,13 +121,37 @@
     <Compile Include="ServerDirectory\Tests\ServerDirectoryTests.cs" />
     <Compile Include="DicomServer\Tests\DicomServerTestServiceProvider.cs" />
     <Compile Include="ServerDirectory\Tests\ServerDirectoryTestServiceProvider.cs" />
+    <Compile Include="ServiceProxyHelper.cs" />
+    <Compile Include="StorageMonitorSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>StorageMonitorSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="StudyManagement\IStudyLocator.cs" />
+    <Compile Include="StudyManagement\IStudyLocatorBridge.cs" />
+    <Compile Include="StudyManagement\StudyDeletionSettings.cs" />
     <Compile Include="StudyManagement\DataContracts.cs" />
     <Compile Include="StudyManagement\IPublishFiles.cs" />
     <Compile Include="StudyManagement\IStorageConfiguration.cs" />
     <Compile Include="StudyManagement\IStudyStoreQuery.cs" />
-    <Compile Include="StudyManagement\StoreEntries.cs" />
-    <Compile Include="StudyManagement\StoreEntryExtensions.cs" />
+    <Compile Include="RulesApplicationOptions.cs" />
+    <Compile Include="StudyManagement\RemoteStudyRootQuery.cs" />
+    <Compile Include="StudyManagement\DataContracts2.cs" />
+    <Compile Include="StudyManagement\StorageConfigurationServiceProvider.cs" />
+    <Compile Include="StudyManagement\StorageSettings.cs" />
+    <Compile Include="StudyManagement\StorageSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>StorageSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="StudyManagement\StoreStudyRootQuery.cs" />
+    <Compile Include="StudyManagement\StudyDeletionSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>StudyDeletionSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="StudyManagement\StudyLocatorBridge.cs" />
+    <Compile Include="StudyManagement\StudyLocatorServiceClient.cs" />
     <Compile Include="StudyManagement\StudyRootQueryStoreAdapter.cs" />
     <Compile Include="StudyManagement\StudyStore.cs" />
     <Compile Include="MemoryCollector.cs" />
@@ -143,6 +182,17 @@
     <Compile Include="SubscriptionManager.cs" />
     <Compile Include="StudyManagement\Tests\StudyStoreTestServiceProvider.cs" />
     <Compile Include="Tests\DiskspaceTests.cs" />
+    <Compile Include="StudyManagement\TimeOrigin.cs" />
+    <Compile Include="StudyManagement\TimeUnit.cs" />
+    <Compile Include="Utilities\Imaging\JpegCompressor.cs" />
+    <Compile Include="Utilities\Imaging\PngEncoder.cs" />
+    <Compile Include="WorkItem\RetryDelayTimeUnit.cs" />
+    <Compile Include="WorkItem\DicomSendSettings.cs" />
+    <Compile Include="WorkItem\DicomSendSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>DicomSendSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="WorkItem\EnumExtensions.cs" />
     <Compile Include="WorkItem\Tests\AutoRouteScheduledTimeTests.cs" />
     <Compile Include="WorkItem\Tests\TestActivityMonitor.cs" />
@@ -155,7 +205,10 @@
     <Compile Include="WorkItem\IWorkItemService.cs" />
     <Compile Include="WorkItem\Tests\ActivityMonitorTests.cs" />
     <Compile Include="WorkItem\Tests\ActivityMonitorTestApplication.cs" />
+    <Compile Include="WorkItem\WorkItemKnownTypeAttribute.cs" />
     <Compile Include="WorkItem\WorkItemPublishSubscribeHelper.cs" />
+    <Compile Include="WorkItem\WorkItemRequestAttribute.cs" />
+    <Compile Include="WorkItem\WorkItemRequestHelper.cs" />
     <Compile Include="WorkItem\WorkItemsChangedEventArgs.cs" />
     <Compile Include="WorkItem\WorkItemBridge.cs" />
     <Compile Include="WorkItem\WorkItemServiceClient.cs" />
@@ -175,9 +228,29 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="DataContracts.cd" />
+    <None Include="DicomServer\DicomServerSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DicomServerSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="MemoryManagementSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>MemoryManagementSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="StorageMonitorSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>StorageMonitorSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="StudyManagement\StorageSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>StorageSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="StudyManagement\StudyDeletionSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>StudyDeletionSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="WorkItem\DicomSendSettings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DicomSendSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

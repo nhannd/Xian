@@ -8,7 +8,7 @@
     <File name="uninstall.log" ignore="true" />
     <!--<File name="EULA.rtf" />-->
     <!--<File name="PrivacyNotice.rtf" />-->
-    <File name="Logging.config" />
+    <File name="Logging.config" ignore="true" />
     <File name="logs\" ignore="true" />
     <File name="manifest\" ignore="true" />
     <File name="ClearCanvas.Desktop.Executable.exe" checksum="true" />

@@ -103,11 +103,8 @@ namespace ClearCanvas.Server.ShredHost
 
 		void IMigrateLegacyShredConfigSection.Migrate()
 		{
-			ShredHostServiceSettings.Instance.ShredHostHttpPort = ShredHostHttpPort;
-			ShredHostServiceSettings.Instance.SharedHttpPort = SharedHttpPort;
-			ShredHostServiceSettings.Instance.SharedTcpPort = SharedTcpPort;
-			ShredHostServiceSettings.Instance.ServiceAddressBase = ServiceAddressBase;
-			ShredHostServiceSettings.Instance.Save();
+			// #10584 - do not migrate these settings! they are used internally by the product, and users generally do not need to change them
+			// #10645 - do not remove this interface definition, as it also acts as a NO-OP to prevent the shred config section migration
 		}
 	}
 }

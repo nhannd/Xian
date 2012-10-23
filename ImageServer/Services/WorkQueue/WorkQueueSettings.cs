@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 
-// Copyright (c) 2011, ClearCanvas Inc.
+// Copyright (c) 2012, ClearCanvas Inc.
 // All rights reserved.
 // http://www.clearcanvas.ca
 //
@@ -9,137 +9,102 @@
 
 #endregion
 
-using System.Configuration;
-using ClearCanvas.Server.ShredHost;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.ComponentModel;
+using ClearCanvas.Common.Configuration;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue {
-    
-    
-    // This class allows you to handle specific events on the settings class:
-    //  The SettingChanging event is raised before a setting's value is changed.
-    //  The PropertyChanged event is raised after a setting's value is changed.
-    //  The SettingsLoaded event is raised after the setting values are loaded.
-    //  The SettingsSaving event is raised before the setting values are saved.
-	internal sealed class WorkQueueSettings : ShredConfigSection
-	{
-		public const int DefaultWorkQueueQueryDelay = 10000;
-		public const int DefaultWorkQueueThreadCount = 10;
-		public const int DefaultPriorityWorkQueueThreadCount = 2;
-		public const int DefaultMemoryLimitedWorkQueueThreadCount = 4;
-		public const int DefaultWorkQueueMinimumFreeMemoryMB = 256;
-	    public const bool DefaultEnableStudyIntegrityValidation = true;
+namespace ClearCanvas.ImageServer.Services.WorkQueue
+{
+    internal partial class WorkQueueSettings
+    {
+        public const int DefaultWorkQueueQueryDelay = 10000;
+        public const int DefaultWorkQueueThreadCount = 10;
+        public const int DefaultPriorityWorkQueueThreadCount = 2;
+        public const int DefaultMemoryLimitedWorkQueueThreadCount = 4;
+        public const int DefaultWorkQueueMinimumFreeMemoryMB = 256;
+        public const bool DefaultEnableStudyIntegrityValidation = true;
         public const int DefaultTierMigrationProgressUpdateInSeconds = 30;
 
-		private static WorkQueueSettings _instance;
-	    
 
-	    private WorkQueueSettings()
-		{
-		}
+        private static WorkQueueSettingsProxy _instance;
 
-		public static string SettingName
-		{
-			get { return "WorkQueueSettings"; }
-		}
-
-		public static WorkQueueSettings Instance
-		{
-			get
-			{
-				if (_instance == null)
-				{
-					_instance = ShredConfigManager.GetConfigSection(SettingName) as WorkQueueSettings;
-					if (_instance == null)
-					{
-						_instance = new WorkQueueSettings();
-						ShredConfigManager.UpdateConfigSection(SettingName, _instance);
-					}
-				}
-
-				return _instance;
-			}
-		}
-
-		public static void Save()
-		{
-			ShredConfigManager.UpdateConfigSection(SettingName, _instance);
-		}
-
-		#region Public Properties
-
-		[ConfigurationProperty("WorkQueueQueryDelay", DefaultValue = DefaultWorkQueueQueryDelay)]
-		public int WorkQueueQueryDelay
-		{
-			get { return ((int)(this["WorkQueueQueryDelay"])); }
-			set { this["WorkQueueQueryDelay"] = value; }
-		}
-
-		/// <summary>
-		/// Enable/disable study integrity validation during work queue processing
-		/// </summary>
-		[SettingsDescriptionAttribute("The number of seconds delay between attempting to process a queue entry.")]
-        [ConfigurationProperty("EnableStudyIntegrityValidation", DefaultValue = DefaultEnableStudyIntegrityValidation)]
-        public bool EnableStudyIntegrityValidation
-		{
-            get { return ((bool)(this["EnableStudyIntegrityValidation"])); }
-            set { this["EnableStudyIntegrityValidation"] = value; }
-		}
-
-		[ConfigurationProperty("WorkQueueThreadCount", DefaultValue = DefaultWorkQueueThreadCount)]
-		public int WorkQueueThreadCount
-		{
-			get { return ((int)(this["WorkQueueThreadCount"])); }
-			set { this["WorkQueueThreadCount"] = value; }
-		}
-
-		[ConfigurationProperty("PriorityWorkQueueThreadCount", DefaultValue = DefaultPriorityWorkQueueThreadCount)]
-		public int PriorityWorkQueueThreadCount
-		{
-			get { return ((int)(this["PriorityWorkQueueThreadCount"])); }
-			set { this["PriorityWorkQueueThreadCount"] = value; }
-		}
-		[ConfigurationProperty("MemoryLimitedWorkQueueThreadCount", DefaultValue = DefaultMemoryLimitedWorkQueueThreadCount)]
-		public int MemoryLimitedWorkQueueThreadCount
-		{
-			get { return ((int)(this["MemoryLimitedWorkQueueThreadCount"])); }
-			set { this["MemoryLimitedWorkQueueThreadCount"] = value; }
-		}
-		
-		[ConfigurationProperty("WorkQueueMinimumFreeMemoryMB", DefaultValue = DefaultWorkQueueMinimumFreeMemoryMB)]
-		public int WorkQueueMinimumFreeMemoryMB
-		{
-			get { return ((int)(this["WorkQueueMinimumFreeMemoryMB"])); }
-			set { this["WorkQueueMinimumFreeMemoryMB"] = value; }
-		}
-
-        /// <summary>
-        /// The number of seconds to update on the progress of tier migration work queue entries.
-        /// </summary>
-        [SettingsDescriptionAttribute("The number of seconds to update on the progress of tier migration work queue entries.")]
-        [ConfigurationProperty("TierMigrationProgressUpdateInSeconds", DefaultValue = DefaultTierMigrationProgressUpdateInSeconds)]
-        public int TierMigrationProgressUpdateInSeconds
+        public static WorkQueueSettingsProxy Instance
         {
-            get { return ((int)(this["TierMigrationProgressUpdateInSeconds"])); }
-            set { this["TierMigrationProgressUpdateInSeconds"] = value; }
+            get { return _instance ?? (_instance = new WorkQueueSettingsProxy(Default)); }
         }
 
+        public sealed class WorkQueueSettingsProxy
+        {
+            private readonly WorkQueueSettings _settings;
+
+            public WorkQueueSettingsProxy(WorkQueueSettings settings)
+            {
+                _settings = settings;
+            }
+
+            private object this[string propertyName]
+            {
+                get { return _settings[propertyName]; }
+                set { ApplicationSettingsExtensions.SetSharedPropertyValue(_settings, propertyName, value); }
+            }
+
+            [DefaultValue(DefaultWorkQueueQueryDelay)]
+            public int WorkQueueQueryDelay
+            {
+                get { return (int)this["WorkQueueQueryDelay"]; }
+                set { this["WorkQueueQueryDelay"] = value; }
+            }
+
+            [DefaultValue(DefaultEnableStudyIntegrityValidation)]
+            public bool EnableStudyIntegrityValidation
+            {
+                get { return (bool)this["EnableStudyIntegrityValidation"]; }
+                set { this["EnableStudyIntegrityValidation"] = value; }
+            }
+
+            [DefaultValue(DefaultMemoryLimitedWorkQueueThreadCount)]
+            public int MemoryLimitedWorkQueueThreadCount
+            {
+                get { return (int)this["MemoryLimitedWorkQueueThreadCount"]; }
+                set { this["MemoryLimitedWorkQueueThreadCount"] = value; }
+            }
+
+            [DefaultValue(DefaultPriorityWorkQueueThreadCount)]
+            public int PriorityWorkQueueThreadCount
+            {
+                get { return (int)this["PriorityWorkQueueThreadCount"]; }
+                set { this["PriorityWorkQueueThreadCount"] = value; }
+            }
+
+            [DefaultValue(DefaultTierMigrationProgressUpdateInSeconds)]
+            public int TierMigrationProgressUpdateInSeconds
+            {
+                get { return (int)this["TierMigrationProgressUpdateInSeconds"]; }
+                set { this["TierMigrationProgressUpdateInSeconds"] = value; }
+            }
+
+            [DefaultValue(DefaultWorkQueueMinimumFreeMemoryMB)]
+            public int WorkQueueMinimumFreeMemoryMB
+            {
+                get { return (int)this["WorkQueueMinimumFreeMemoryMB"]; }
+                set { this["WorkQueueMinimumFreeMemoryMB"] = value; }
+            }
+
+            [DefaultValue(DefaultWorkQueueThreadCount)]
+            public int WorkQueueThreadCount
+            {
+                get { return (int)this["WorkQueueThreadCount"]; }
+                set { this["WorkQueueThreadCount"] = value; }
+            }
 
 
-
-		#endregion
-
-		public override object Clone()
-		{
-			WorkQueueSettings clone = new WorkQueueSettings();
-
-			clone.WorkQueueQueryDelay = _instance.WorkQueueQueryDelay;
-			clone.WorkQueueThreadCount = _instance.WorkQueueThreadCount;
-			clone.PriorityWorkQueueThreadCount = _instance.PriorityWorkQueueThreadCount;
-			clone.MemoryLimitedWorkQueueThreadCount = _instance.MemoryLimitedWorkQueueThreadCount;
-			clone.WorkQueueMinimumFreeMemoryMB = _instance.WorkQueueMinimumFreeMemoryMB;
-		    clone.EnableStudyIntegrityValidation = _instance.EnableStudyIntegrityValidation;
-		    clone.TierMigrationProgressUpdateInSeconds = _instance.TierMigrationProgressUpdateInSeconds;
-			return clone;
-		}
-	}
+            public void Save()
+            {
+                _settings.Save();
+            }
+        }
+    }
 }

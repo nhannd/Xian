@@ -304,6 +304,7 @@ namespace ClearCanvas.ImageServer.Model
             
         }
 
+
 		/// <summary>
 		/// Returns the path of the folder for the StudyStorageLocation.
 		/// </summary>
@@ -701,5 +702,6 @@ namespace ClearCanvas.ImageServer.Model
         }
 
         #endregion
+
     }
 }

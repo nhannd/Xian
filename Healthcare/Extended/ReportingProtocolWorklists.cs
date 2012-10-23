@@ -16,7 +16,7 @@ using System.Collections;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 
-namespace ClearCanvas.Healthcare
+namespace ClearCanvas.Healthcare.Extended
 {
 	/// <summary>
 	/// Abstract base class for protocoling worklists.

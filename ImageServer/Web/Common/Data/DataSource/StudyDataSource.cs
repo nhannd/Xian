@@ -18,6 +18,7 @@ using ClearCanvas.ImageServer.Core.Query;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
@@ -279,7 +280,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
         public bool CanViewImages(out string reason)
         {
-            if (!Thread.CurrentPrincipal.IsInRole(ImageServerConstants.WebViewerAuthorityToken))
+            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Study.ViewImages))
             {
                 reason = "You are not authorized to view images.";
                 return false;
@@ -318,6 +319,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			reason = String.Empty;
 			return true;
 		}
+
 
 	    public bool CanScheduleReconcile(out string reason)
 		{

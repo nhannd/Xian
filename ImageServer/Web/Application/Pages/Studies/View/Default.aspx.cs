@@ -18,11 +18,12 @@ using ClearCanvas.ImageServer.Web.Common.Security;
 using System.Text;
 using System.Threading;
 using Resources;
+using ClearCanvas.ImageServer.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.View
 {
-    
-    [PrincipalPermission(SecurityAction.Demand, Role = ImageServerConstants.WebViewerAuthorityToken)]
+
+    [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Study.ViewImages)]
     public partial class Default : System.Web.UI.Page
     {
         protected override void OnInit(EventArgs e)

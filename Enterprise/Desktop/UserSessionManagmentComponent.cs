@@ -37,7 +37,6 @@ namespace ClearCanvas.Enterprise.Desktop
         public UserSessionSummaryTable()
         {
             Columns.Add(new TableColumn<UserSessionSummary, string>("Application", row => row.Application, 1.5f));
-            Columns.Add(new TableColumn<UserSessionSummary, string>("Session ID", row => row.SessionId, 1f));
             Columns.Add(new TableColumn<UserSessionSummary, string>("Hostname", row => row.HostName, 1f));
             Columns.Add(new DateTimeTableColumn<UserSessionSummary>("Creation Time", row => row.CreationTime, 1f));
             Columns.Add(new DateTimeTableColumn<UserSessionSummary>("Expiry Time", row => row.ExpiryTime, 1f));
@@ -127,12 +126,13 @@ namespace ClearCanvas.Enterprise.Desktop
             throw new NotSupportedException("AddItems");
         }
 
-		protected override string DeleteConfirmationMessage
-		{
-			get { return SR.MessageConfirmTerminateSelectedSessions; }
-		}
+    	protected override bool GetDeleteConfirmationMessage(IList<UserSessionSummary> itemsToBeDeleted, out string message)
+    	{
+    		message = SR.MessageConfirmTerminateSelectedSessions;
+    		return true;
+    	}
 
-        protected override bool DeleteItems(IList<UserSessionSummary> items, out IList<UserSessionSummary> deletedItems, out string failureMessage)
+    	protected override bool DeleteItems(IList<UserSessionSummary> items, out IList<UserSessionSummary> deletedItems, out string failureMessage)
         {
         	List<string> terminatedSessionIds = null;
 			Platform.GetService<IUserAdminService>(service => {

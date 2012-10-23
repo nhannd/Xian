@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            ForeachExtension<ILoginPageExtension>(ext => ext.OnInit(this));
+            ForeachExtension<ILoginPageExtension>(ext => ext.OnLoginPageInit(this));
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -53,8 +53,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             VersionLabel.Text = String.IsNullOrEmpty(ServerPlatform.VersionString) ? Resources.SR.Unknown : ServerPlatform.VersionString;
             LanguageLabel.Text = Thread.CurrentThread.CurrentUICulture.NativeName;
             CopyrightLabel.Text = ProductInformation.Copyright;
-
-            ForeachExtension<ILoginPageExtension>(ext => ext.OnPageLoad());
 
             DataBind();
 

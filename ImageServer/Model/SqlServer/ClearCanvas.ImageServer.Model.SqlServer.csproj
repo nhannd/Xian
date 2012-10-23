@@ -243,7 +243,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="UpgradeScripts\UpgradeFrom_6_1_7081_10268.sql" />
+    <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_6_1_7081_10268.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

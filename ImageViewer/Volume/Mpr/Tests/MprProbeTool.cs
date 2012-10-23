@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[GroupHint("activate", "Tools.Volume.MPR.Reslicing")]
 	[MouseToolButton(XMouseButtons.Left, false)]
-	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
+	[ExtensionOf(typeof (ImageViewerToolExtensionPoint), Enabled = false)]
 	public class MprProbeTool : MouseImageViewerTool
 	{
 		private Tile _selectedTile;

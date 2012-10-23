@@ -21,6 +21,8 @@ using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Web.Common.Data.Model;
+using ClearCanvas.ImageServer.Core;
+using ClearCanvas.ImageServer.Core.ModelExtensions;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -338,7 +340,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 		public bool ReprocessWorkQueueItem(WorkQueue item)
 		{
-			IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+            // #10620: Get a list of remaining WorkQueueUids which need to be reprocess
+            // Note: currently only WorkQueueUIDs in failed StudyProcess will be reprocessed
+            var remainingWorkQueueUidPaths = item.GetAllWorkQueueUidPaths();
+
+            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
 			using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
 				// delete current workqueue
@@ -355,8 +361,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                         if (locations!=null && locations.Count>0)
                         {
                             StudyReprocessor reprocessor = new StudyReprocessor();
-                            String reason = String.Format("Reprocess failed {0}", item.WorkQueueTypeEnum);
-                            WorkQueue reprocessEntry = reprocessor.ReprocessStudy(ctx, reason, locations[0], Platform.Time);
+                            String reason = String.Format("User reprocesses failed {0}", item.WorkQueueTypeEnum);
+                            WorkQueue reprocessEntry = reprocessor.ReprocessStudy(ctx, reason, locations[0], remainingWorkQueueUidPaths, Platform.Time);
 							if (reprocessEntry!=null)
 								ctx.Commit();
                         	return reprocessEntry!=null;
@@ -369,4 +375,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
     	#endregion
     }
+
+    
 }

@@ -78,6 +78,13 @@ namespace ClearCanvas.Ris.Client
 					return new ValidationResult(success, alertMessage);
 				}));
 
+			this.Validation.Add(new ValidationRule("SelectedModality",
+				delegate
+				{
+					return new ValidationResult(IsModalityValidForFacility(this.SelectedModality, this.SelectedFacility),
+						"This modality is not valid for this performing facility.");
+				}));
+
 			base.Start();
 		}
 

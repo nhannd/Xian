@@ -24,10 +24,11 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        /// Mask used on healthcard number input fields
+        /// Mask used on Healthcard Number input fields.  The mask format is 0 for a digit character and L for a letter character.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Mask used on healthcard number input fields")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Mask used on Healthcard Number input fields.  The mask format is 0 for a digit ch" +
+            "aracter and L for a letter character.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0000 000 000")]
         public string HealthcardNumberMask {
@@ -37,10 +38,11 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        /// Mask used on healthcard version code input field
+        /// Mask used on Healthcard Version code input field.  The mask format is 0 for a digit character and L for a letter character.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Mask used on healthcard version code input field")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Mask used on Healthcard Version code input field.  The mask format is 0 for a dig" +
+            "it character and L for a letter character.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("LL")]
         public string HealthcardVersionCodeMask {
@@ -50,10 +52,11 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        /// Mask used on local telephone number input fields
+        /// Mask used on local telephone number input fields.  The mask format is 0 for a digit character and L for a letter character.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Mask used on local telephone number input fields")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Mask used on local telephone number input fields.  The mask format is 0 for a dig" +
+            "it character and L for a letter character.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("000-0000")]
         public string TelephoneNumberLocalMask {
@@ -63,10 +66,11 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        /// Mask used on full telephone number input fields
+        /// Mask used on full telephone number input fields.  The mask format is 0 for a digit character and L for a letter character.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Mask used on full telephone number input fields")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Mask used on full telephone number input fields.  The mask format is 0 for a digi" +
+            "t character and L for a letter character.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("(000) 000-0000")]
         public string TelephoneNumberFullMask {
@@ -207,10 +211,11 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        /// Mask applied to the &apos;%N&apos; placeholder in an Accession number format string
+        /// Mask applied to the &apos;%N&apos; placeholder in an Accession number format string.  The mask format is 0 for a digit character and L for a letter character.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Mask applied to the \'%N\' placeholder in an Accession number format string")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Mask applied to the \'%N\' placeholder in an Accession number format string.  The m" +
+            "ask format is 0 for a digit character and L for a letter character.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0000000 ")]
         public string AccessionNumberMask {

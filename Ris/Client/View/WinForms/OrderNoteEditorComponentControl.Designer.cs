@@ -88,6 +88,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _comment
 			// 
+			this._comment.AcceptsTab = true;
 			this._comment.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._comment.LabelText = "Comment";
 			this._comment.Location = new System.Drawing.Point(2, 2);

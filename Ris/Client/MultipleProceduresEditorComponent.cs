@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -73,6 +74,20 @@ namespace ClearCanvas.Ris.Client
 				delegate
 				{
 					return this.IsCheckedInEditable ? ValidateCheckInTime() : new ValidationResult(true, "");
+				}));
+
+			// This validation shows the icon beside the modality if it's being edited
+			this.Validation.Add(new ValidationRule("SelectedModality",
+				delegate
+				{
+					return this.IsModalityEditable ? ValidateModalityAndFacility("Modality is not valid for performing facility.") : new ValidationResult(true, "");
+				}));
+
+			// This validation shows the icon beside the facility if it's being edited
+			this.Validation.Add(new ValidationRule("SelectedFacility",
+				delegate
+				{
+					return this.IsPerformingFacilityEditable ? ValidateModalityAndFacility("Performing facility is not valid for all procedures' modalities.") : new ValidationResult(true, "");
 				}));
 
 			base.Start();
@@ -224,5 +239,18 @@ namespace ClearCanvas.Ris.Client
 
 			return new ValidationResult(true, string.Empty);
 		}
+
+		private ValidationResult ValidateModalityAndFacility(string message)
+		{
+			// Here, we exploit the knowledge that all procedures must have the same performing facility
+			// to simplify the validation logic.  Either the Modality is editable, in which case all
+			// procedures will have that modality and we just test it against selected facility, or it is not editable,
+			// in which case we need to test the modality of each procedure.
+			var valid = IsModalityEditable ? 
+				IsModalityValidForFacility(this.SelectedModality, this.SelectedFacility)
+				: _requisitions.All(r => IsModalityValidForFacility(r.Modality, this.SelectedFacility));
+			return new ValidationResult(valid, message);
+		}
+
 	}
 }

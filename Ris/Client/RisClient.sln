@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{79A9A70A-9B7A-4088-AC39-3D6658A3C1A9}"
 	ProjectSection(SolutionItems) = preProject
 		RisClient_dist.proj = RisClient_dist.proj

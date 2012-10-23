@@ -27,12 +27,17 @@ namespace ClearCanvas.Healthcare.Alerts
 
 		public override AlertNotification Test(PatientProfile profile, IPersistenceContext context)
         {
-			List<string> reasons = new List<string>();
+			var reasons = new List<string>();
 
         	TestName(profile.Name, ref reasons);
-        	TestHealthcard(profile.Healthcard, ref reasons);
 			TestAddresses(profile.Addresses, ref reasons);
 			TestTelephoneNumbers(profile.TelephoneNumbers, ref reasons);
+
+			var settings = new AlertsSettings();
+			if(settings.MissingHealthcardInfoTriggersIncompleteDemographicDataAlert)
+			{
+				TestHealthcard(profile.Healthcard, ref reasons);
+			}
 
             if (reasons.Count > 0)
                 return new AlertNotification(this.Id, reasons);

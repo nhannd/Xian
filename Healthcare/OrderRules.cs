@@ -31,6 +31,7 @@
 
 
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
 
@@ -73,6 +74,23 @@ namespace ClearCanvas.Healthcare
 			var performingDepartmentIsInPerformingFacility = procedure.PerformingDepartment == null
 				|| procedure.PerformingFacility.Equals(procedure.PerformingDepartment.Facility);
 			return new TestResult(performingDepartmentIsInPerformingFacility, SR.MessageValidateProcedurePerformingFacilityAndDepartment);
+		}
+
+		internal static TestResult ModalitiesAlignWithPerformingFacility(Procedure procedure)
+		{
+			// modality facilities must match performing facility
+			var valid = procedure.ModalityProcedureSteps.All(
+				mps => ModalityAlignsWithPerformingFacility(mps).Success);
+
+			return new TestResult(valid, SR.MessageValidateProcedurePerformingFacilityAndModalities);
+		}
+
+		internal static TestResult ModalityAlignsWithPerformingFacility(ModalityProcedureStep mps)
+		{
+			// modality facility must match performing facility
+			var valid = mps.Modality.Facility == null || mps.Modality.Facility.Equals(mps.Procedure.PerformingFacility);
+
+			return new TestResult(valid, SR.MessageValidateProcedurePerformingFacilityAndModalities);
 		}
 
 		internal static TestResult PatientProfileExistsForPerformingFacility(Procedure procedure)

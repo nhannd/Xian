@@ -5,7 +5,7 @@
     <File name="Web\Default.aspx" />
     <File name="Web\GlobalMasterPage.master" />
     <File name="Web\KeepSessionAlive.aspx" />
-    <File name="Web\Logging.config" config="true" />
+    <File name="Web\Logging.config" ignore="true" />
     <File name="Web\PersistantImage.ashx" />
     <File name="Web\PrecompiledApp.config" />
     <File name="Web\Users.xml" />
@@ -103,7 +103,8 @@
     <File name="Web\Controls\ServerPartitionSelector.ascx" />
     <File name="Web\Controls\SessionTimeout.ascx" />
     <File name="Web\Controls\TimedDialog.ascx" />
-    <File name="Web\Images\favicon.ico" checksum="true" />
+	<File name="Web\Controls\UsersGuideLink.ascx" />
+	<File name="Web\Images\favicon.ico" checksum="true" />
     <File name="Web\Pages\Admin\Alerts\AlertHoverPopupDetails.ascx" />
     <File name="Web\Pages\Admin\Alerts\StudyAlertContextInfoView.ascx" />
     <File name="Web\Pages\Admin\Alerts\AlertsGridPanel.ascx" />
@@ -223,6 +224,7 @@
     <File name="Web\Pages\Queues\StudyIntegrityQueue\SearchPanel.ascx" />
     <File name="Web\Pages\Queues\StudyIntegrityQueue\SearchPanel.js" />
     <File name="Web\Pages\Queues\StudyIntegrityQueue\StudyIntegrityQueueItemList.ascx" />
+    <File name="Web\Pages\Queues\StudyIntegrityQueue\SIQEntryTooltip.ascx" />
     <File name="Web\Pages\Queues\WorkQueue\Default.aspx" />
     <File name="Web\Pages\Queues\WorkQueue\SearchPanel.ascx" />
     <File name="Web\Pages\Queues\WorkQueue\SearchPanel.js" />

@@ -36,5 +36,19 @@ namespace ClearCanvas.Healthcare.Alerts {
                 return ((string)(this["CommonSpokenLanguages"]));
             }
         }
+        
+        /// <summary>
+        /// Causes an Incomplete Demographic Data alert to be generated if the healthcard information on a patient profie is incomplete.  Generally useful only in Canada.
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Causes an Incomplete Demographic Data alert to be generated if the healthcard inf" +
+            "ormation on a patient profie is incomplete.  Generally useful only in Canada.")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MissingHealthcardInfoTriggersIncompleteDemographicDataAlert {
+            get {
+                return ((bool)(this["MissingHealthcardInfoTriggersIncompleteDemographicDataAlert"]));
+            }
+        }
     }
 }

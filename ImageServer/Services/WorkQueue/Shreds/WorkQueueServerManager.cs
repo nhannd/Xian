@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 		/// </summary>
 		public static void ResetFailedItems()
 		{
-			WorkQueueSettings settings = WorkQueueSettings.Instance;
+			var settings = WorkQueueSettings.Instance;
 
 			WorkQueueStatusEnum pending = WorkQueueStatusEnum.Pending;
 			WorkQueueStatusEnum failed = WorkQueueStatusEnum.Failed;

@@ -44,5 +44,10 @@ namespace ClearCanvas.Ris.Application.Common
 		{
 			get { return _settings.AllowUnscheduledProcedures; }
 		}
+
+		public bool AutoGenerateMrn
+		{
+			get { return _settings.AutoGenerateMrn; }
+		}
 	}
 }

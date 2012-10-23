@@ -35,9 +35,8 @@ namespace ClearCanvas.ImageServer.Core.Command
 
         public UpdateWorkQueueCommand(DicomMessageBase message,
                         StudyStorageLocation location,
-                        bool duplicate,
-                        string extension)
-            : this(message, location, duplicate, extension, null)
+                        bool duplicate)
+            : this(message, location, duplicate, null, null)
         {
         }
 

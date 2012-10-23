@@ -76,6 +76,7 @@
 		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll"/>
 		
 		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\bin\$(Configuration)\ClearCanvas.ImageViewer.dll"/>
+		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Common\bin\$(Configuration)\ClearCanvas.ImageViewer.Common.dll"/>
 		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Layout\Basic\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.dll"/>
 		
 		<WebViewerPlugins Include="$(TrunkDirectory)\ImageViewer\Services\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.dll"/>

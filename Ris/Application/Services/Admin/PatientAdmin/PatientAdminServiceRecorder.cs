@@ -54,6 +54,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 				var patientProfile = persistenceContext.Load<PatientProfile>(response.PatientProfile.PatientProfileRef, EntityLoadFlags.None);
 
 				IncludeChangeSetFor(patientProfile);
+				IncludeChangeSetFor(patientProfile.Patient);
 
 				return new OperationData(Operations.Update, patientProfile);
 			}

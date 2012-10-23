@@ -1564,6 +1564,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Downtime Recovery Mode.
+        /// </summary>
+        internal static string MenuDowntimeRecoveryMode {
+            get {
+                return ResourceManager.GetString("MenuDowntimeRecoveryMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        internal static string MenuHome {
+            get {
+                return ResourceManager.GetString("MenuHome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Logout.
         /// </summary>
         internal static string MenuLogout {
@@ -1852,6 +1870,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Date of birth must be in the past..
+        /// </summary>
+        internal static string MessageDateOfBirthMustBeInThePast {
+            get {
+                return ResourceManager.GetString("MessageDateOfBirthMustBeInThePast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date of death must be in the past..
+        /// </summary>
+        internal static string MessageDateOfDeathMustBeInThePast {
+            get {
+                return ResourceManager.GetString("MessageDateOfDeathMustBeInThePast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Date of death must be later than or equal to date of birth..
         /// </summary>
         internal static string MessageDateOfDeathMustBeLaterThanOrEqualToDateOfBirth {
@@ -2032,7 +2068,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Expiry date cannot be in the past..
+        ///   Looks up a localized string similar to Expiry date must be in the future..
         /// </summary>
         internal static string MessageInvalidExpiryDate {
             get {
@@ -2172,6 +2208,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string MessageRisServerDowntime {
             get {
                 return ResourceManager.GetString("MessageRisServerDowntime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contact points that have already been saved cannot be deleted.  Use the Toggle Activation tool to de-activate them instead..
+        /// </summary>
+        internal static string MessageSavedContactPointsCannotBeDeleted {
+            get {
+                return ResourceManager.GetString("MessageSavedContactPointsCannotBeDeleted", resourceCulture);
             }
         }
         
@@ -2761,6 +2806,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Downtime Recovery.
+        /// </summary>
+        internal static string TitleDowntimeRecovery {
+            get {
+                return ResourceManager.GetString("TitleDowntimeRecovery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate.
         /// </summary>
         internal static string TitleDuplicate {
@@ -2811,6 +2865,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleFolderExplorer {
             get {
                 return ResourceManager.GetString("TitleFolderExplorer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        internal static string TitleHome {
+            get {
+                return ResourceManager.GetString("TitleHome", resourceCulture);
             }
         }
         
@@ -3225,6 +3288,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string WarnEditMergedPractitioner {
             get {
                 return ResourceManager.GetString("WarnEditMergedPractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One or more procedures are scheduled in the past.  Is this what you intended to do?.
+        /// </summary>
+        internal static string WarnProceduresScheduledInThePast {
+            get {
+                return ResourceManager.GetString("WarnProceduresScheduledInThePast", resourceCulture);
             }
         }
     }

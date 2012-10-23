@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// _acceptButton
 			// 
 			this._acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._acceptButton.Location = new System.Drawing.Point(443, 710);
+			this._acceptButton.Location = new System.Drawing.Point(443, 594);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 4;
@@ -81,7 +81,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// _cancelButton
 			// 
 			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._cancelButton.Location = new System.Drawing.Point(524, 710);
+			this._cancelButton.Location = new System.Drawing.Point(524, 594);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 5;
@@ -91,12 +91,12 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _mergedOrderPreviewPanel
 			// 
-			this._mergedOrderPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this._mergedOrderPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this._mergedOrderPreviewPanel.Location = new System.Drawing.Point(3, 164);
 			this._mergedOrderPreviewPanel.Name = "_mergedOrderPreviewPanel";
-			this._mergedOrderPreviewPanel.Size = new System.Drawing.Size(599, 540);
+			this._mergedOrderPreviewPanel.Size = new System.Drawing.Size(599, 424);
 			this._mergedOrderPreviewPanel.TabIndex = 3;
 			// 
 			// label1
@@ -131,7 +131,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.label2.Size = new System.Drawing.Size(384, 13);
 			this.label2.TabIndex = 0;
 			this.label2.Text = "Select the order to retain - the other orders will be merged into the selected or" +
-				"der";
+    "der";
 			// 
 			// MergeOrdersComponentControl
 			// 
@@ -146,7 +146,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._acceptButton);
 			this.Name = "MergeOrdersComponentControl";
-			this.Size = new System.Drawing.Size(605, 739);
+			this.Size = new System.Drawing.Size(605, 623);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

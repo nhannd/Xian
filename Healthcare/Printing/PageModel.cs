@@ -138,12 +138,12 @@ namespace ClearCanvas.Healthcare.Printing
 		/// </summary>
 		public class LetterheadFacade
 		{
-			private readonly PrintTemplateSettings _settings;
+			private readonly LetterheadSettings _settings;
 			private readonly AddressFacade _address;
 
 			internal LetterheadFacade()
 			{
-				_settings = new PrintTemplateSettings();
+				_settings = new LetterheadSettings();
 				var address = new Address(
 					_settings.LetterheadAddressStreet,
 					_settings.LetterheadAddressUnit,

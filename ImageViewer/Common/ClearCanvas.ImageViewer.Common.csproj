@@ -127,6 +127,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>StorageMonitorSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="StudyManagement\IStudyLocator.cs" />
+    <Compile Include="StudyManagement\IStudyLocatorBridge.cs" />
     <Compile Include="StudyManagement\StudyDeletionSettings.cs" />
     <Compile Include="StudyManagement\DataContracts.cs" />
     <Compile Include="StudyManagement\IPublishFiles.cs" />
@@ -148,6 +150,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>StudyDeletionSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="StudyManagement\StudyLocatorBridge.cs" />
+    <Compile Include="StudyManagement\StudyLocatorServiceClient.cs" />
     <Compile Include="StudyManagement\StudyRootQueryStoreAdapter.cs" />
     <Compile Include="StudyManagement\StudyStore.cs" />
     <Compile Include="MemoryCollector.cs" />

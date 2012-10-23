@@ -175,6 +175,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                                         if (result.RestoreRequested)
                                             EventsHelper.Fire(_restoreTriggerHandlers, this, null);
 
+                                        Platform.Log(LogLevel.Info, "Images for study {0} cannot be imported at this time because: {1}", result.StudyInstanceUid, result.ErrorMessage);
                                         _skippedStudies.Add(result.StudyInstanceUid);
                                         skipped = true;
                                     }

@@ -898,7 +898,7 @@
     <value>Valid Until</value>
   </data>
   <data name="MessageInvalidExpiryDate" xml:space="preserve">
-    <value>Expiry date cannot be in the past.</value>
+    <value>Expiry date must be in the future.</value>
   </data>
   <data name="MessageDateOfDeathMustBeLaterThanOrEqualToDateOfBirth" xml:space="preserve">
     <value>Date of death must be later than or equal to date of birth.</value>
@@ -1172,5 +1172,29 @@
   </data>
   <data name="MessageDiagnosticServiceMustHaveAssociatedProcedureTypes" xml:space="preserve">
     <value>At least one procedure type must be selected.</value>
+  </data>
+  <data name="MenuDowntimeRecoveryMode" xml:space="preserve">
+    <value>Downtime Recovery Mode</value>
+  </data>
+  <data name="MenuHome" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="TitleDowntimeRecovery" xml:space="preserve">
+    <value>Downtime Recovery</value>
+  </data>
+  <data name="TitleHome" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="MessageSavedContactPointsCannotBeDeleted" xml:space="preserve">
+    <value>Contact points that have already been saved cannot be deleted.  Use the Toggle Activation tool to de-activate them instead.</value>
+  </data>
+  <data name="WarnProceduresScheduledInThePast" xml:space="preserve">
+    <value>One or more procedures are scheduled in the past.  Is this what you intended to do?</value>
+  </data>
+  <data name="MessageDateOfBirthMustBeInThePast" xml:space="preserve">
+    <value>Date of birth must be in the past.</value>
+  </data>
+  <data name="MessageDateOfDeathMustBeInThePast" xml:space="preserve">
+    <value>Date of death must be in the past.</value>
   </data>
 </root>

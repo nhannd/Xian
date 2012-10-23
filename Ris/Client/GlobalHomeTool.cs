@@ -23,13 +23,13 @@ namespace ClearCanvas.Ris.Client
 	{
 	}
 
-	[MenuAction("launch", "global-menus/MenuFile/Home", "Launch")]
+	[MenuAction("launch", "global-menus/MenuFile/MenuHome", "Launch")]
 	[Tooltip("launch", "Go to home page")]
 	[IconSet("launch", IconScheme.Colour, "Icons.GlobalHomeToolSmall.png", "Icons.GlobalHomeToolMedium.png", "Icons.GlobalHomeToolLarge.png")]
 	[VisibleStateObserver("launch", "Visible", "VisibleChanged")]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.HomePage.View)]
 
-	[MenuAction("toggleDowntimeMode", "global-menus/MenuTools/Downtime Mode", "ToggleDowntimeMode", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("toggleDowntimeMode", "global-menus/MenuTools/MenuDowntimeRecoveryMode", "ToggleDowntimeMode", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("toggleDowntimeMode", "DowntimeModeChecked", "DowntimeModeCheckedChanged")]
 	[ActionPermission("toggleDowntimeMode", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.HomePage.View,
 		ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Downtime.RecoveryOperations)]
@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client
 
 		public override string Title
 		{
-			get { return DowntimeRecovery.InDowntimeRecoveryMode ? "Home (Downtime Recovery)" : "Home"; }
+			get { return DowntimeRecovery.InDowntimeRecoveryMode ? string.Format("{0} ({1})", SR.TitleHome, SR.TitleDowntimeRecovery) : SR.TitleHome; }
 		}
 
 		protected override bool IsUserClosableWorkspace

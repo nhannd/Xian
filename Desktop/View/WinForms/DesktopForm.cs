@@ -12,6 +12,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.Actions;
 using Crownwood.DotNetMagic.Common;
@@ -42,9 +43,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 #endif
 			InitializeComponent();
 
+			//Set both to be initially invisible, since there's nothing on them.
+            _toolbar.Visible = false;
+            _mainMenu.Visible = false;
+
 			// manually subscribe this event handler *after* the call to InitializeComponent()
 			_toolbar.ParentChanged += OnToolbarParentChanged;
-
             _dockingManager = new DockingManager(_toolStripContainer.ContentPanel, VisualStyle.IDE2005);
             _dockingManager.ActiveColor = SystemColors.Control;
             _dockingManager.InnerControl = _tabbedGroups;
@@ -74,7 +78,14 @@ namespace ClearCanvas.Desktop.View.WinForms
             set
             {
                 _menuModel = value;
+
+                //Unsubscribe, so we don't update visibility as the model is being figured out.
+                _mainMenu.LayoutCompleted -= OnMenuLayoutCompleted;
                 BuildToolStrip(ToolStripBuilder.ToolStripKind.Menu, _mainMenu, _menuModel);
+
+                _mainMenu.LayoutCompleted += OnMenuLayoutCompleted;
+                //Subscribe so the visibility updates if all actions suddenly become invisible or unavailable.
+                OnMenuLayoutCompleted(this, EventArgs.Empty);
             }
         }
 
@@ -87,7 +98,14 @@ namespace ClearCanvas.Desktop.View.WinForms
             set
             {
                 _toolbarModel = value;
+
+                //Unsubscribe, so we don't update visibility as the model is being figured out.
+                _toolbar.LayoutCompleted -= OnToolbarLayoutCompleted;
                 BuildToolStrip(ToolStripBuilder.ToolStripKind.Toolbar, _toolbar, _toolbarModel);
+
+                //Subscribe so the visibility updates if all actions suddenly become invisible or unavailable.
+                _toolbar.LayoutCompleted += OnToolbarLayoutCompleted;
+                OnToolbarLayoutCompleted(this, EventArgs.Empty);
             }
         }
 
@@ -130,7 +148,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     			bool verticalOrientation = ReferenceEquals(_toolbar.Parent, _toolStripContainer.LeftToolStripPanel)
     			                           || ReferenceEquals(_toolbar.Parent, _toolStripContainer.RightToolStripPanel);
 
-    			_toolbar.SuspendLayout();
+                _toolbar.SuspendLayout();
     			_toolbar.LayoutStyle = settings.WrapLongToolstrips ? ToolStripLayoutStyle.Flow : ToolStripLayoutStyle.StackWithOverflow;
     			if (settings.WrapLongToolstrips)
     				((FlowLayoutSettings) _toolbar.LayoutSettings).FlowDirection = verticalOrientation ? FlowDirection.TopDown : FlowDirection.LeftToRight;
@@ -141,11 +159,6 @@ namespace ClearCanvas.Desktop.View.WinForms
     			{
     				_toolStripContainer.SuspendLayout();
     				targetParent.Join(_toolbar);
-
-    				// this keeps the main menu above the toolbar.
-    				// very hacky, but until we have a better way of serializing the entire state of *all* toolstrips and their relationships with each other...
-    				if (ReferenceEquals(targetParent, _toolStripContainer.TopToolStripPanel))
-    					_toolStripContainer.TopToolStripPanel.Join(_mainMenu);
 
     				_toolStripContainer.ResumeLayout(true);
     			}
@@ -166,6 +179,28 @@ namespace ClearCanvas.Desktop.View.WinForms
     			settings.Save();
     		}
     	}
+
+        /// <summary>
+        /// This will fire anytime the main menu layout changes, which includes items 
+        /// changing their visibility/availability and the menu being rebuilt.
+        /// </summary>
+        private void OnToolbarLayoutCompleted(object sender, EventArgs e)
+        {
+            var anyVisible = _toolbar.Items.Cast<ToolStripItem>().Any(i => i.Available);
+            if (_toolbar.Visible != anyVisible)
+                _toolbar.Visible = anyVisible;
+        }
+
+        /// <summary>
+        /// This will fire anytime the toolbar layout changes, which includes items 
+        /// changing their visibility/availability and the toolbar being rebuilt.
+        /// </summary>
+        private void OnMenuLayoutCompleted(object sender, EventArgs e)
+        {
+            var anyVisible = _mainMenu.Items.Cast<ToolStripItem>().Any(i => i.Available);
+            if (_mainMenu.Visible != anyVisible)
+                _mainMenu.Visible = anyVisible;
+        }
 
         #endregion
 
@@ -208,17 +243,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 				if (actionModel.ChildNodes.Count > 0)
 				{
 					// Toolstrip should only be visible if there are items on it
-					toolStrip.Visible = true;
-
 					if (kind == ToolStripBuilder.ToolStripKind.Toolbar)
 						ToolStripBuilder.BuildToolStrip(kind, toolStrip.Items, actionModel.ChildNodes, ToolStripBuilder.ToolStripBuilderStyle.GetDefault(), ToolStripSettings.Default.IconSize);
 					else
 						ToolStripBuilder.BuildToolStrip(kind, toolStrip.Items, actionModel.ChildNodes);
-				}
-				else
-				{
-					toolStrip.Visible = false;
-				}
+                }
             }
 
             toolStrip.ResumeLayout();

@@ -335,6 +335,13 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
+		protected static bool IsModalityValidForFacility(ModalitySummary modality, FacilitySummary facility)
+		{
+			return modality == null
+				   || modality.Facility == null
+				   || modality.Facility.Code == facility.Code;
+		}
+
 		private void UpdateDepartmentChoices()
 		{
 			_departmentChoices = new List<DepartmentSummary>{_departmentNone};

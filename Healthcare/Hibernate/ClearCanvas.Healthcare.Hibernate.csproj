@@ -262,7 +262,6 @@
     <EmbeddedResource Include="Mappings\OrderNote.hbm.xml" />
     <EmbeddedResource Include="Mappings\NotePosting.hbm.xml" />
     <EmbeddedResource Include="healthcare.dbi.xml" />
-    <EmbeddedResource Include="Mappings\EmergencyWorklists.hbm.xml" />
     <EmbeddedResource Include="Mappings\CannedText.hbm.xml" />
     <EmbeddedResource Include="Mappings\ProtocolUrgencyEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\PatientNote.hbm.xml" />

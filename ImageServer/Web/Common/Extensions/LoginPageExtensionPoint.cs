@@ -30,13 +30,28 @@ namespace ClearCanvas.ImageServer.Web.Common.Extensions
 
     public interface ILoginPageExtension
     {
-        void OnInit(Page page);
-
-        void OnPageLoad();
+        void OnLoginPageInit(Page page);
     }
 
     [ExtensionPoint]
     public class LoginPageExtensionPoint : ExtensionPoint<ILoginPageExtension>
+    {
+
+    }
+
+
+    public interface IAboutPage
+    {
+        Control ExtensionContentParent { get; }
+    }
+
+    public interface IAboutPageExtension
+    {
+        void OnAboutPageInit(Page page);
+    }
+
+    [ExtensionPoint]
+    public class AboutPageExtensionPoint : ExtensionPoint<IAboutPageExtension>
     {
 
     }

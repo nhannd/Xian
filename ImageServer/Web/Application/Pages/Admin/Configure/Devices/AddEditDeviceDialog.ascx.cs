@@ -127,7 +127,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                                                         IPAddressTextBox.ClientID +
                                                         @"');
                                 ipBox.disabled=checkBox.checked;         
-                                ipBox.value = '';
                             }
                         </script>");
 

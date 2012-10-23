@@ -16,6 +16,7 @@ using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Common.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Common.Automation
 {
@@ -38,6 +39,7 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 	{
 		private IViewerAutomation _viewerAutomationClient;
 		private IStudyRootQueryBridge _studyRootQueryBridge;
+		private IStudyLocatorBridge _studyLocatorBridge;
 		
 		private readonly OpenStudiesBehaviour _openStudiesBehaviour = new OpenStudiesBehaviour();
 		private IComparer<StudyRootStudyIdentifier> _studyComparer;
@@ -65,6 +67,28 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		}
 
 		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public ViewerAutomationBridge(IViewerAutomation viewerAutomationClient, IStudyLocator studyLocator)
+			: this(viewerAutomationClient, new StudyLocatorBridge(studyLocator))
+		{
+		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public ViewerAutomationBridge(IViewerAutomation viewerAutomationClient, IStudyLocatorBridge studyLocatorBridge)
+		{
+			Platform.CheckForNullReference(viewerAutomationClient, "viewerAutomationClient");
+			Platform.CheckForNullReference(studyLocatorBridge, "studyLocatorBridge");
+
+			_viewerAutomationClient = viewerAutomationClient;
+			_studyLocatorBridge = studyLocatorBridge;
+
+			_studyComparer = new StudyDateTimeComparer();
+		}
+
+		/// <summary>
 		/// Gets the underlying <see cref="IViewerAutomation"/> client.
 		/// </summary>
 		protected IViewerAutomation ViewerAutomationClient
@@ -81,7 +105,15 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		}
 
 		/// <summary>
-		/// Comparer used to sort results from <see cref="IStudyRootQuery.StudyQuery"/>.
+		/// Gets the underlying <see cref="IStudyLocatorBridge"/>.
+		/// </summary>
+		protected IStudyLocatorBridge StudyLocatorBridge
+		{
+			get { return _studyLocatorBridge; }
+		}
+
+		/// <summary>
+		/// Comparer used to sort results from the study query.
 		/// </summary>
 		public IComparer<StudyRootStudyIdentifier> StudyComparer
 		{
@@ -120,21 +152,24 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// <summary>
 		/// Gets all the active viewers where the primary study has the given accession number.
 		/// </summary>
+		/// <remarks>
+		/// The accession number is matched using a case-insensitive comparison.
+		/// </remarks>
 		public IList<Viewer> GetViewersByAccessionNumber(string accessionNumber)
 		{
-			IList<StudyRootStudyIdentifier> studies = _studyRootQueryBridge.QueryByAccessionNumber(accessionNumber);
-			CheckAtLeastOneStudy(studies);
-			return GetViewers(studies);
+			return GetViewers().Where(viewer => viewer.PrimaryStudyIdentifier != null && string.Equals(viewer.PrimaryStudyIdentifier.AccessionNumber, accessionNumber, StringComparison.InvariantCultureIgnoreCase)).ToList();
 		}
 
 		/// <summary>
 		/// Gets all the active viewers where the primary study has the given patient id.
 		/// </summary>
+		/// <remarks>
+		/// The patient ID is matched using a case-insensitive comparison. This method does not support reconciled patient IDs, and must match the original patient ID.
+		/// </remarks>
 		public IList<Viewer> GetViewersByPatientId(string patientId)
 		{
-			IList<StudyRootStudyIdentifier> studies = _studyRootQueryBridge.QueryByPatientId(patientId);
-			CheckAtLeastOneStudy(studies);
-			return GetViewers(studies);
+			// TODO CR (Oct 12): Add support for patient reconciliation (after we move that concept into viewer common)
+			return GetViewers().Where(viewer => viewer.PrimaryStudyIdentifier != null && string.Equals(viewer.PrimaryStudyIdentifier.PatientId, patientId, StringComparison.InvariantCultureIgnoreCase)).ToList();
 		}
 
 		/// <summary>
@@ -150,6 +185,13 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// </summary>
 		public Viewer OpenStudies(IEnumerable<string> studyInstanceUids)
 		{
+			if (_studyLocatorBridge != null)
+			{
+				LocateFailureInfo[] failures;
+				var results = _studyLocatorBridge.LocateStudyByInstanceUid(studyInstanceUids, out failures);
+				return OpenStudies(results);
+			}
+
 			IList<StudyRootStudyIdentifier> studies = _studyRootQueryBridge.QueryByStudyInstanceUid(studyInstanceUids);
 			return OpenStudies(studies);
 		}
@@ -167,6 +209,13 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// </summary>
 		public Viewer OpenStudiesByAccessionNumber(IEnumerable<string> accessionNumbers)
 		{
+			if (_studyLocatorBridge != null)
+			{
+				LocateFailureInfo[] failures;
+				var results = accessionNumbers.SelectMany(accessionNumber => _studyLocatorBridge.LocateStudyByAccessionNumber(accessionNumber, out failures)).ToList();
+				return OpenStudies(results);
+			}
+
 			var studies = new List<StudyRootStudyIdentifier>();
 
 			foreach (string accessionNumber in accessionNumbers)
@@ -188,6 +237,13 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 		/// </summary>
 		public Viewer OpenStudiesByPatientId(IEnumerable<string> patientIds)
 		{
+			if (_studyLocatorBridge != null)
+			{
+				LocateFailureInfo[] failures;
+				var results = patientIds.SelectMany(patientId => _studyLocatorBridge.LocateStudyByPatientId(patientId, out failures)).ToList();
+				return OpenStudies(results);
+			}
+
 			var studies = new List<StudyRootStudyIdentifier>();
 
 			foreach (string patientId in patientIds)
@@ -285,6 +341,12 @@ namespace ClearCanvas.ImageViewer.Common.Automation
 				{
 					_studyRootQueryBridge.Dispose();
 					_studyRootQueryBridge = null;
+				}
+
+				if (_studyLocatorBridge != null)
+				{
+					_studyLocatorBridge.Dispose();
+					_studyLocatorBridge = null;
 				}
 			}
 		}

@@ -20,6 +20,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.Web.Enterprise.Authentication;
+using System.Collections.Generic;
 
 namespace ClearCanvas.ImageServer.Core.Process
 {
@@ -51,17 +52,23 @@ namespace ClearCanvas.ImageServer.Core.Process
         	}
         }
 
+        public WorkQueue ReprocessStudy(IUpdateContext ctx, String reason, StudyStorageLocation location, DateTime scheduleTime)
+        {
+            return ReprocessStudy(ctx, reason, location, null, Platform.Time);
+        }
+
         /// <summary>
         /// Inserts a <see cref="WorkQueue"/> request to reprocess the study
         /// </summary>
         /// <param name="ctx"></param>
         /// <param name="reason"></param>
         /// <param name="location"></param>
+        /// <param name="additionalPaths"></param>
         /// <param name="scheduleTime"></param>
         /// <returns></returns>
         /// <exception cref="InvalidStudyStateOperationException">Study is in a state that reprocessing is not allowed</exception>
         /// 
-		public WorkQueue ReprocessStudy(IUpdateContext ctx, String reason, StudyStorageLocation location, DateTime scheduleTime)
+        public WorkQueue ReprocessStudy(IUpdateContext ctx, String reason, StudyStorageLocation location, List<FilesystemDynamicPath> additionalPaths, DateTime scheduleTime)
 		{
 			Platform.CheckForNullReference(location, "location");
 
@@ -111,6 +118,11 @@ namespace ClearCanvas.ImageServer.Core.Process
 			queueData.ChangeLog.User = (Thread.CurrentPrincipal is CustomPrincipal)
 			                           	? (Thread.CurrentPrincipal as CustomPrincipal).Identity.Name
 			                           	: String.Empty;
+
+            if (additionalPaths != null)
+                queueData.AdditionalFiles = additionalPaths.ConvertAll<string>(path => path.ToString());
+            
+
 			columns.WorkQueueData = XmlUtils.SerializeAsXmlDoc(queueData);
 			IInsertWorkQueue insertBroker = ctx.GetBroker<IInsertWorkQueue>();
 			WorkQueue reprocessEntry = insertBroker.FindOne(columns);

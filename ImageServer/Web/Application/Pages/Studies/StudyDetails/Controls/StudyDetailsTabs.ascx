@@ -145,7 +145,7 @@
             </table>
         </ContentTemplate>
     </aspAjax:TabPanel>
-    <aspAjax:TabPanel ID="DataAccessTabPanel" HeaderText="<%$Resources: Titles, DataAccess %>" runat="server">
+    <aspAjax:TabPanel ID="DataAccessTabPanel" Visible="false" HeaderText="<%$Resources: Titles, DataAccess %>" runat="server">
         <ContentTemplate>
             <table width="100%" cellpadding="4" cellspacing="0"  class="StudyDetailsTabContent">
                 <tr>

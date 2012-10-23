@@ -826,12 +826,24 @@ At least one server partition is required. Please add a new server partition.</v
     <value>Jump to other authority groups</value>
   </data>
   <data name="ServerModeArchive" xml:space="preserve">
-    <value>This server is configured to operate as an archive.</value>
+    <value>This server is configured with a Partition Archive and will store studies permanently.</value>
   </data>
   <data name="ServerModeMixedMode" xml:space="preserve">
-    <value>This server is configured to operate in a mixed mode.</value>
+    <value>This server is configured with a Partition Archive and as a temporary cache.</value>
   </data>
   <data name="ServerModeTemporaryCache" xml:space="preserve">
     <value>This server is configured to operate as a temporary cache.</value>
+  </data>
+  <data name="PartitionStorageConfiguration_ArchiveConfiguredNoDeleteRule" xml:space="preserve">
+    <value>Archive exists, studies may become nearline.</value>
+  </data>
+  <data name="PartitionStorageConfiguration_DeleteRuleExists" xml:space="preserve">
+    <value>Delete rule enabled, older studies may be deleted.</value>
+  </data>
+  <data name="PartitionStorageConfiguration_NoArchiveConfiguredNoDeleteRule" xml:space="preserve">
+    <value>New processed studies will now be kept online.</value>
+  </data>
+  <data name="WorkQueueDeleteWarning" xml:space="preserve">
+    <value>Warning: deleting this WorkQueue item may result in loss of images or incorrect study information!</value>
   </data>
 </root>

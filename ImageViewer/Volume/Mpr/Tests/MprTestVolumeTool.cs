@@ -23,7 +23,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 {
-	[ExtensionOf(typeof (DesktopToolExtensionPoint))]
+	[ExtensionOf(typeof (DesktopToolExtensionPoint), Enabled = false)]
 	public class MprTestVolumeTool : Tool<IDesktopToolContext>
 	{
 		private IList<TestVolume> _volumes;

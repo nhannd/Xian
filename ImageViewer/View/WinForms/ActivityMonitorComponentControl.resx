@@ -474,6 +474,18 @@
   <data name="&gt;&gt;_localServerConfigLink.ZOrder" xml:space="preserve">
     <value>8</value>
   </data>
+  <data name="_diskSpaceMeter.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="_diskSpaceMeter.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 5</value>
+  </data>
+  <data name="_diskSpaceMeter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>250, 17</value>
+  </data>
+  <data name="_diskSpaceMeter.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
   <data name="&gt;&gt;_diskSpaceMeter.Name" xml:space="preserve">
     <value>_diskSpaceMeter</value>
   </data>
@@ -486,6 +498,32 @@
   <data name="&gt;&gt;_diskSpaceMeter.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="_diskSpaceWarningIcon.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAASFJREFUOE9jYMAD
+        zq1T+w/C+NTglLu4xfz/td0q/+8f0/4PYpNsyNk14v8/v/AAYxCbJANgtv/+EvgfhO8e0yHNFTDbYQaA
+        XHF+nQRxrgDZfnO/2v/f36JBGsCYJFcg2w4z4NcHb+LCAmQ7KNRBGkAYZsDPd57/QZhgjIBs//bKHawZ
+        pAFuwCvX/z+B+PsTO9wxArP9xzN7sEIQLsyQAWMYH0RjdcWjC03gUP5y2wSMv940+P/lsgYEQ/lgMag8
+        SC1IDzxtgGx/clgRrOHTGcX/H09Ig2mYF0DszxfV4IaC1MJT5/1TRWDbYRo/HBL9D8MwAz4elQAbCsMg
+        taDwAullAJn08qTqf5AiZM2E2HBXXN3t/n9lDz9ZGKSXpDyCTTEA+BuEmGXdKXwAAAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="_diskSpaceWarningIcon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="_diskSpaceWarningIcon.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 27</value>
+  </data>
+  <data name="_diskSpaceWarningIcon.Size" type="System.Drawing.Size, System.Drawing">
+    <value>16, 16</value>
+  </data>
+  <data name="_diskSpaceWarningIcon.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
+    <value>AutoSize</value>
+  </data>
+  <data name="_diskSpaceWarningIcon.TabIndex" type="System.Int32, mscorlib">
+    <value>30</value>
+  </data>
   <data name="&gt;&gt;_diskSpaceWarningIcon.Name" xml:space="preserve">
     <value>_diskSpaceWarningIcon</value>
   </data>
@@ -497,6 +535,27 @@
   </data>
   <data name="&gt;&gt;_diskSpaceWarningIcon.ZOrder" xml:space="preserve">
     <value>1</value>
+  </data>
+  <data name="_diskSpaceWarningMessage.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="_diskSpaceWarningMessage.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt</value>
+  </data>
+  <data name="_diskSpaceWarningMessage.Location" type="System.Drawing.Point, System.Drawing">
+    <value>25, 27</value>
+  </data>
+  <data name="_diskSpaceWarningMessage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>225, 16</value>
+  </data>
+  <data name="_diskSpaceWarningMessage.TabIndex" type="System.Int32, mscorlib">
+    <value>29</value>
+  </data>
+  <data name="_diskSpaceWarningMessage.Text" xml:space="preserve">
+    <value>don't translate me</value>
+  </data>
+  <data name="_diskSpaceWarningMessage.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;_diskSpaceWarningMessage.Name" xml:space="preserve">
     <value>_diskSpaceWarningMessage</value>
@@ -816,101 +875,6 @@
   <data name="&gt;&gt;_overviewPanel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="_diskSpaceMeter.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="_diskSpaceMeter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 5</value>
-  </data>
-  <data name="_diskSpaceMeter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>250, 17</value>
-  </data>
-  <data name="_diskSpaceMeter.TabIndex" type="System.Int32, mscorlib">
-    <value>11</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceMeter.Name" xml:space="preserve">
-    <value>_diskSpaceMeter</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceMeter.Type" xml:space="preserve">
-    <value>ClearCanvas.Desktop.View.WinForms.Meter, ClearCanvas.Desktop.View.WinForms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceMeter.Parent" xml:space="preserve">
-    <value>_diskSpacePanel</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceMeter.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="_diskSpaceWarningIcon.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAASFJREFUOE9jYMAD
-        zq1T+w/C+NTglLu4xfz/td0q/+8f0/4PYpNsyNk14v8/v/AAYxCbJANgtv/+EvgfhO8e0yHNFTDbYQaA
-        XHF+nQRxrgDZfnO/2v/f36JBGsCYJFcg2w4z4NcHb+LCAmQ7KNRBGkAYZsDPd57/QZhgjIBs//bKHawZ
-        pAFuwCvX/z+B+PsTO9wxArP9xzN7sEIQLsyQAWMYH0RjdcWjC03gUP5y2wSMv940+P/lsgYEQ/lgMag8
-        SC1IDzxtgGx/clgRrOHTGcX/H09Ig2mYF0DszxfV4IaC1MJT5/1TRWDbYRo/HBL9D8MwAz4elQAbCsMg
-        taDwAullAJn08qTqf5AiZM2E2HBXXN3t/n9lDz9ZGKSXpDyCTTEA+BuEmGXdKXwAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="_diskSpaceWarningIcon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="_diskSpaceWarningIcon.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 27</value>
-  </data>
-  <data name="_diskSpaceWarningIcon.Size" type="System.Drawing.Size, System.Drawing">
-    <value>16, 16</value>
-  </data>
-  <data name="_diskSpaceWarningIcon.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
-    <value>AutoSize</value>
-  </data>
-  <data name="_diskSpaceWarningIcon.TabIndex" type="System.Int32, mscorlib">
-    <value>30</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningIcon.Name" xml:space="preserve">
-    <value>_diskSpaceWarningIcon</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningIcon.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningIcon.Parent" xml:space="preserve">
-    <value>_diskSpacePanel</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningIcon.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="_diskSpaceWarningMessage.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="_diskSpaceWarningMessage.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt</value>
-  </data>
-  <data name="_diskSpaceWarningMessage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>25, 27</value>
-  </data>
-  <data name="_diskSpaceWarningMessage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 16</value>
-  </data>
-  <data name="_diskSpaceWarningMessage.TabIndex" type="System.Int32, mscorlib">
-    <value>29</value>
-  </data>
-  <data name="_diskSpaceWarningMessage.Text" xml:space="preserve">
-    <value>don't translate me</value>
-  </data>
-  <data name="_diskSpaceWarningMessage.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningMessage.Name" xml:space="preserve">
-    <value>_diskSpaceWarningMessage</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningMessage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningMessage.Parent" xml:space="preserve">
-    <value>_diskSpacePanel</value>
-  </data>
-  <data name="&gt;&gt;_diskSpaceWarningMessage.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <data name="splitContainer1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
@@ -935,6 +899,57 @@
   <metadata name="_workItemToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="_workItemToolStrip.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="_workItemToolStrip.AutoSize" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="_workItemToolStrip.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="toolStripLabel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>43, 29</value>
+  </data>
+  <data name="toolStripLabel1.Text" xml:space="preserve">
+    <value>Activity</value>
+  </data>
+  <data name="_activityFilter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 32</value>
+  </data>
+  <data name="toolStripLabel2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>38, 29</value>
+  </data>
+  <data name="toolStripLabel2.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="_statusFilter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 32</value>
+  </data>
+  <data name="toolStripLabel3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>40, 29</value>
+  </data>
+  <data name="toolStripLabel3.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="_textFilter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 32</value>
+  </data>
+  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>6, 32</value>
+  </data>
+  <data name="_workItemToolStrip.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="_workItemToolStrip.Size" type="System.Drawing.Size, System.Drawing">
+    <value>849, 32</value>
+  </data>
+  <data name="_workItemToolStrip.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="_workItemToolStrip.Text" xml:space="preserve">
+    <value>toolStrip1</value>
+  </data>
   <data name="&gt;&gt;_workItemToolStrip.Name" xml:space="preserve">
     <value>_workItemToolStrip</value>
   </data>
@@ -1003,72 +1018,6 @@
   </data>
   <data name="&gt;&gt;splitContainer1.ZOrder" xml:space="preserve">
     <value>0</value>
-  </data>
-  <metadata name="_workItemToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="_workItemToolStrip.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="_workItemToolStrip.AutoSize" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="_workItemToolStrip.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="_workItemToolStrip.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="_workItemToolStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>849, 26</value>
-  </data>
-  <data name="_workItemToolStrip.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="_workItemToolStrip.Text" xml:space="preserve">
-    <value>toolStrip1</value>
-  </data>
-  <data name="&gt;&gt;_workItemToolStrip.Name" xml:space="preserve">
-    <value>_workItemToolStrip</value>
-  </data>
-  <data name="&gt;&gt;_workItemToolStrip.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_workItemToolStrip.Parent" xml:space="preserve">
-    <value>panel1</value>
-  </data>
-  <data name="&gt;&gt;_workItemToolStrip.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="toolStripLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>47, 23</value>
-  </data>
-  <data name="toolStripLabel1.Text" xml:space="preserve">
-    <value>Activity</value>
-  </data>
-  <data name="_activityFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 26</value>
-  </data>
-  <data name="toolStripLabel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>39, 23</value>
-  </data>
-  <data name="toolStripLabel2.Text" xml:space="preserve">
-    <value>Status</value>
-  </data>
-  <data name="_statusFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 26</value>
-  </data>
-  <data name="toolStripLabel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>42, 23</value>
-  </data>
-  <data name="toolStripLabel3.Text" xml:space="preserve">
-    <value>Search</value>
-  </data>
-  <data name="_textFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 26</value>
-  </data>
-  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>6, 26</value>
   </data>
   <metadata name="_toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>174, 17</value>

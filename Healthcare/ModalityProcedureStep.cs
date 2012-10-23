@@ -10,15 +10,11 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
-using Iesi.Collections;
+using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Workflow;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Healthcare.Brokers;
 
 
@@ -71,6 +67,7 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// ModalityProcedureStep entity
     /// </summary>
+	[Validation(HighLevelRulesProviderMethod = "GetValidationRules")]
 	public class ModalityProcedureStep : ProcedureStep
 	{
         private string _description;
@@ -149,5 +146,17 @@ namespace ClearCanvas.Healthcare {
             get { return _modality; }
             set { _modality = value; }
         }
+
+		private static IValidationRuleSet GetValidationRules()
+		{
+			// modalities must be associated with performing facility
+			var modalityAlignsWithPerformingFacilityRule = new ValidationRule<ModalityProcedureStep>(
+				OrderRules.ModalityAlignsWithPerformingFacility);
+
+			return new ValidationRuleSet(new[]
+			{
+				modalityAlignsWithPerformingFacilityRule
+			});
+		}
 	}
 }

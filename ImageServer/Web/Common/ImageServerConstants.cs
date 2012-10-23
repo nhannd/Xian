@@ -39,9 +39,7 @@ public class ImageServerConstants
         public const string Prev = "prev";
 
         public static string[] ReasonCommentSeparator = {"::"};
-
-        public const string WebViewerAuthorityToken = "Viewer/Visible";
-
+    
         /// <summary>
         /// Sets the current theme.
         /// </summary>

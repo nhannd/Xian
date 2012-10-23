@@ -15,7 +15,7 @@ using ClearCanvas.Workflow;
 using System.Collections;
 using ClearCanvas.Healthcare.Brokers;
 
-namespace ClearCanvas.Healthcare
+namespace ClearCanvas.Healthcare.Extended
 {
 	[WorklistProcedureTypeGroupClass(typeof(PerformingGroup))]
 	[WorklistCategory("WorklistCategoryBooking")]
@@ -156,6 +156,34 @@ namespace ClearCanvas.Healthcare
 				WorklistItemField.ProcedureStepEndTime,
 				null,
 				WorklistOrdering.PrioritizeNewestItems);
+		}
+
+		/// <summary>
+		/// RegistrationToBeScheduledWorklist entity
+		/// </summary>
+		[ExtensionOf(typeof(WorklistExtensionPoint))]
+		[WorklistCategory("WorklistCategoryBooking")]
+		[WorklistClassDescription("RegistrationToBeScheduledWorklistDescription")]
+		public class RegistrationToBeScheduledWorklist : RegistrationWorklist
+		{
+			protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
+			{
+				var criteria = new RegistrationWorklistItemSearchCriteria();
+				criteria.Procedure.Status.EqualTo(ProcedureStatus.SC);
+
+				// only unscheduled items should appear in this list
+				criteria.Procedure.ScheduledStartTime.IsNull();
+
+				return new WorklistItemSearchCriteria[] { criteria };
+			}
+
+			protected override TimeDirective GetTimeDirective()
+			{
+				return new TimeDirective(
+					WorklistItemField.OrderSchedulingRequestTime,
+					null,
+					WorklistOrdering.PrioritizeOldestItems);
+			}
 		}
 	}
 }

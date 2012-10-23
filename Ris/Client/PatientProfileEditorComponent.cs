@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -97,7 +98,7 @@ namespace ClearCanvas.Ris.Client
 					{
 						_profile = new PatientProfileDetail();
 						_profile.Mrn.AssigningAuthority = formData.MrnAssigningAuthorityChoices.Count > 0
-							? formData.MrnAssigningAuthorityChoices[0]
+							? GetWorkingFacilityInformationAuthority(formData.MrnAssigningAuthorityChoices)
 							: null;
 						_profile.Healthcard.AssigningAuthority = formData.HealthcardAssigningAuthorityChoices.Count > 0
 							? formData.HealthcardAssigningAuthorityChoices[0]
@@ -177,9 +178,8 @@ namespace ClearCanvas.Ris.Client
 						|| Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Update))
 					{
 						this.Pages.Add(
-							new NavigatorPage("Patient/Notes", _notesSummary = new PatientNoteSummaryComponent(formData.NoteCategoryChoices)));
+							new NavigatorPage("Patient/Notes", _notesSummary = new PatientNoteSummaryComponent(_profile.Notes, formData.NoteCategoryChoices)));
 						_notesSummary.SetModifiedOnListChange = true;
-						_notesSummary.Subject = _profile.Notes;
 
 						var patientDocumentsPage = new NavigatorPage(
 							"Patient/Attachments",
@@ -257,5 +257,13 @@ namespace ClearCanvas.Ris.Client
 			_profile.Attachments.Clear();
 			_profile.Attachments.AddRange(_documentSummary.Attachments);
 		}
+
+		private static EnumValueInfo GetWorkingFacilityInformationAuthority(IEnumerable<EnumValueInfo> assigningAuthorityChoices)
+		{
+			return LoginSession.Current.WorkingFacility == null ?
+				assigningAuthorityChoices.FirstOrDefault()
+				: assigningAuthorityChoices.FirstOrDefault(ia => ia.Code == LoginSession.Current.WorkingFacility.InformationAuthority.Code);
+		}
+
 	}
 }
