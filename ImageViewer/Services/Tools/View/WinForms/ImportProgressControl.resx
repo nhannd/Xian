@@ -118,15 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="_statusLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_statusLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>23, 15</value>
+    <value>3, 15</value>
   </data>
   <data name="_statusLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>40, 13</value>
+    <value>60, 13</value>
   </data>
   <data name="_statusLabel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -135,7 +132,7 @@
     <value>Status:</value>
   </data>
   <data name="_statusLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopRight</value>
+    <value>MiddleRight</value>
   </data>
   <data name="&gt;&gt;_statusLabel.Name" xml:space="preserve">
     <value>_statusLabel</value>
@@ -204,14 +201,11 @@
   <data name="&gt;&gt;_processedProgress.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
-  <data name="_failedLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
   <data name="_failedLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>25, 126</value>
+    <value>3, 126</value>
   </data>
   <data name="_failedLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>38, 13</value>
+    <value>60, 13</value>
   </data>
   <data name="_failedLabel.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -220,7 +214,7 @@
     <value>Failed:</value>
   </data>
   <data name="_failedLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopRight</value>
+    <value>MiddleRight</value>
   </data>
   <data name="&gt;&gt;_failedLabel.Name" xml:space="preserve">
     <value>_failedLabel</value>
@@ -233,9 +227,6 @@
   </data>
   <data name="&gt;&gt;_failedLabel.ZOrder" xml:space="preserve">
     <value>6</value>
-  </data>
-  <data name="_processedLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
   </data>
   <data name="_processedLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 52</value>
@@ -250,7 +241,7 @@
     <value>Processed:</value>
   </data>
   <data name="_processedLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopRight</value>
+    <value>MiddleRight</value>
   </data>
   <data name="&gt;&gt;_processedLabel.Name" xml:space="preserve">
     <value>_processedLabel</value>
@@ -264,14 +255,11 @@
   <data name="&gt;&gt;_processedLabel.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="_availableLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
   <data name="_availableLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 92</value>
+    <value>3, 92</value>
   </data>
   <data name="_availableLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>53, 13</value>
+    <value>60, 13</value>
   </data>
   <data name="_availableLabel.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -280,7 +268,7 @@
     <value>Available:</value>
   </data>
   <data name="_availableLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopRight</value>
+    <value>MiddleRight</value>
   </data>
   <data name="&gt;&gt;_availableLabel.Name" xml:space="preserve">
     <value>_availableLabel</value>
