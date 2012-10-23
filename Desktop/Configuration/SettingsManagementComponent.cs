@@ -503,7 +503,7 @@ namespace ClearCanvas.Desktop.Configuration
 		{
 			try
 			{
-				DialogBoxAction action = this.Host.ShowMessageBox("Import settings meta-data defined in locally installed plugins?",
+				DialogBoxAction action = this.Host.ShowMessageBox(SR.MessageConfirmImportSettingsMetaData,
 								 MessageBoxActions.OkCancel);
 				if (action == DialogBoxAction.Ok)
 				{

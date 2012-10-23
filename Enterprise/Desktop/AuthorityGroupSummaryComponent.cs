@@ -105,7 +105,7 @@ namespace ClearCanvas.Enterprise.Desktop
 		{
 			try
 			{
-				var action = Host.ShowMessageBox("Import authority tokens and groups defined in locally installed plugins?",
+				var action = Host.ShowMessageBox(SR.MessageConfirmImportAuthorityGroup,
 								 MessageBoxActions.OkCancel);
 				if (action == DialogBoxAction.Ok)
 				{

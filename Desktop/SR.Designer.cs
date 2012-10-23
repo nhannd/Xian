@@ -772,6 +772,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Import settings meta-data defined in locally installed plugins?.
+        /// </summary>
+        public static string MessageConfirmImportSettingsMetaData {
+            get {
+                return ResourceManager.GetString("MessageConfirmImportSettingsMetaData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The application must restart in order to apply the new display language. Would you like to restart now?.
         /// </summary>
         public static string MessageDisplayLanguageChangedRestartRequired {
