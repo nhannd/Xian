@@ -15,6 +15,8 @@ using ClearCanvas.Web.Services;
 
 namespace ClearCanvas.ImageServer.Web.Common.Security
 {
+    // TODO (CR Oct 2012): Should maybe move IUserAuthentication in here because 
+    // right now there's this weird dependency on ClearCanvas.Web.Services.
     [ExtensionOf(typeof(UserAuthenticationExtensionPoint))]
     public class WebViewerUserAuthentication:IUserAuthentication
     {

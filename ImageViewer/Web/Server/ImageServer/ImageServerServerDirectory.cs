@@ -96,10 +96,13 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
         private ServerDirectoryEntry FindLocalPartition(string retrieveAeTitle)
         {
             var webUser = Thread.CurrentPrincipal as CustomPrincipal;
-            if (webUser == null)
-            {
-                throw new PermissionDeniedException("User is not logged in");
-            }
+            //User session is controlled by the ImageServer in IIS in the non-Team case, and when this code executes in ShredHostService,
+            //there is no "user", whereas in the Team case, there is one. So, we simply do what the viewer does in the case of
+            //no user, and assume the user can do everything. This code was originally added to stop unauthenticated users from
+            //accessing reports in the WebPortal, but that is controlled at the web page level, anyway (see PdfHttpHandler.cs).
+            
+            //if (webUser == null)
+            //    throw new PermissionDeniedException("User is not logged in");
 
             ServerPartition partition = ServerPartitionMonitor.Instance.GetPartition(retrieveAeTitle);
             if (partition == null)
@@ -108,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 return null;
             }
 
-            if (!partition.IsUserAccessAllowed(webUser))
+            if (webUser != null && !partition.IsUserAccessAllowed(webUser))
                 throw new PermissionDeniedException(string.Format("User '{0}' does not have permission to access to partition {1}. Check both the Server Partition and Study Data Access!", webUser.DisplayName, partition.AeTitle));
 
             return new ServerDirectoryEntry()
@@ -124,8 +127,6 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 }
             };
         }
-
-
 
         private static Device FindServer(string retrieveAeTitle)
         {
