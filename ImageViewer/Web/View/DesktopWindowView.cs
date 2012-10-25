@@ -131,6 +131,10 @@ namespace ClearCanvas.ImageViewer.Web.View
                 handler.SetModelObject(this);
 
                 MessageBox box = handler.GetEntity();
+                box.YesLabel = SR.YesLabel;
+                box.NoLabel = SR.NoLabel;
+                box.CancelLabel = SR.CancelLabel;
+                box.OkLabel = SR.OkLabel;
                 box.Message = message;
                 box.Title = title;
                 switch (buttons)

@@ -56,6 +56,18 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
         [DataMember(IsRequired = true)]
         public WebMessageBoxActions Actions { get; set; }
 
+        [DataMember(IsRequired = true)]
+        public string YesLabel { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public string NoLabel { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public string OkLabel { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public string CancelLabel { get; set; }
+
 		public override string ToString()
 		{
 			return String.Format("{0} [Title={1}, Message={2}]", base.ToString(), Title ?? "", Message ?? "");
