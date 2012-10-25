@@ -352,6 +352,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			if (Surface == null)
 				return null;
 
+            ImageQualityManager.Instance.GetImageQualityParameters(out _mimeType, out _quality);
+
             var imageStats = new RenderingStatistics(_mimeType);
 
             //long t0 = Environment.TickCount;
@@ -380,8 +382,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                 bmp1 = (Bitmap)Bitmap.Clone();
             }
 
-            ImageQualityManager.Instance.GetImageQualityParameters(out _mimeType, out _quality);
-            
+           
             MemoryStream.SetLength(0);
 
             imageStats.SaveTime.Start();
