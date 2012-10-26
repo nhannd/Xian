@@ -85,14 +85,45 @@ namespace ClearCanvas.Desktop.Help
 				this._manifest.Font = AboutSettings.Default.ManifestFontBold ? new Font(this._manifest.Font, FontStyle.Bold) : this._manifest.Font;
                 this._manifest.TextAlign = AboutSettings.Default.ManifestTextAlign;
 
-				this._closeButton.Anchor = AnchorStyles.Right | AnchorStyles.Top;
-				this._closeButton.Location = AboutSettings.Default.CloseButtonLocation;
+				this._closeButton.Location = ComputeLocation(_closeButton.Size, AboutSettings.Default.CloseButtonLocation, AboutSettings.Default.CloseButtonAnchor);
 				this._closeButton.LinkColor = AboutSettings.Default.CloseButtonLinkColor;
 			}
 
 			this.ResumeLayout();
 
 			this._closeButton.Click += new EventHandler(OnCloseClicked);
+		}
+
+		private static Point ComputeLocation(Size size, Point referencePoint, ContentAlignment referenceRelation)
+		{
+			var offset = new Size();
+			switch (referenceRelation)
+			{
+				case ContentAlignment.TopCenter:
+				case ContentAlignment.MiddleCenter:
+				case ContentAlignment.BottomCenter:
+					offset.Width = size.Width/2;
+					break;
+				case ContentAlignment.TopRight:
+				case ContentAlignment.MiddleRight:
+				case ContentAlignment.BottomRight:
+					offset.Width = size.Width;
+					break;
+			}
+			switch (referenceRelation)
+			{
+				case ContentAlignment.MiddleLeft:
+				case ContentAlignment.MiddleCenter:
+				case ContentAlignment.MiddleRight:
+					offset.Height = size.Height/2;
+					break;
+				case ContentAlignment.BottomLeft:
+				case ContentAlignment.BottomCenter:
+				case ContentAlignment.BottomRight:
+					offset.Height = size.Height;
+					break;
+			}
+			return referencePoint - offset;
 		}
 
 		private static Stream OpenResourceStream()
@@ -119,6 +150,25 @@ namespace ClearCanvas.Desktop.Help
 		private void OnCloseClicked(object sender, EventArgs e)
 		{
 			Close();
+		}
+
+		private void OnClosePreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+		{
+			if (e.KeyCode == Keys.Escape)
+			{
+				e.IsInputKey = true;
+				Close();
+			}
+		}
+
+		protected override void OnPreviewKeyDown(PreviewKeyDownEventArgs e)
+		{
+			base.OnPreviewKeyDown(e);
+			if (e.KeyCode == Keys.Escape)
+			{
+				e.IsInputKey = true;
+				Close();
+			}
 		}
 	}
 }

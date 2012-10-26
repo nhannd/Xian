@@ -93,7 +93,10 @@
       <Value Profile="(Default)">TopLeft</Value>
     </Setting>
     <Setting Name="CloseButtonLocation" Type="System.Drawing.Point" Scope="Application">
-      <Value Profile="(Default)">626, 9</Value>
+      <Value Profile="(Default)">659, 9</Value>
+    </Setting>
+    <Setting Name="CloseButtonAnchor" Type="System.Drawing.ContentAlignment" Scope="Application">
+      <Value Profile="(Default)">TopRight</Value>
     </Setting>
   </Settings>
 </SettingsFile>
