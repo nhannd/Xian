@@ -207,6 +207,19 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
         #region Protected methods
 
+        /// <summary>
+        /// Escapes special character in a text so that it can be used as a string in javascript.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        protected string Escape(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
+            return text.Replace("'", "\\'");
+        }
+
         protected override void AddAttributesToRender(HtmlTextWriter writer)
         {
             base.AddAttributesToRender(writer);

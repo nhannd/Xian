@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                              ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
             template.Replace("@@VALIDATE_WHEN_UNCHECKED@@", ValidateWhenUnchecked ? "true" : "false");
             template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue ? "true" : "false");
-            template.Replace("@@ERROR_MESSAGE@@", ErrorMessage);
+            template.Replace("@@ERROR_MESSAGE@@", Escape(ErrorMessage));
 
             Platform.Log(LogLevel.Error, template.Script);
 

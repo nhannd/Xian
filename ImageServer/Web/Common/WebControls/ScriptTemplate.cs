@@ -51,10 +51,11 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             Replace("@@INVALID_INPUT_INDICATOR_CLIENTID@@", validator.InvalidInputIndicator == null ? null : validator.InvalidInputIndicator.Container.ClientID);
             Replace("@@INVALID_INPUT_INDICATOR_TOOLTIP_CLIENTID@@", validator.InvalidInputIndicator == null ? null : validator.InvalidInputIndicator.TooltipLabel.ClientID);
             Replace("@@INVALID_INPUT_INDICATOR_TOOLTIP_CONTAINER_CLIENTID@@", validator.InvalidInputIndicator == null ? null : validator.InvalidInputIndicator.TooltipLabelContainer.ClientID);
-            Replace("@@ERROR_MESSAGE@@", validator.Text);
+            Replace("@@ERROR_MESSAGE@@", Escape(validator.Text));
             Replace("@@IGNORE_EMPTY_VALUE@@", validator.IgnoreEmptyValue? "true":"false");
             
         }
+
 
         public ScriptTemplate(Assembly assembly, string name)
         {
@@ -95,5 +96,20 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         }
 
         #endregion Public Methods
+
+
+
+        /// <summary>
+        /// Escapes special character in a text so that it can be used as a string in javascript.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        protected string Escape(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return text;
+
+            return text.Replace("'", "\\'");
+        }
     }
 }
