@@ -416,10 +416,19 @@ namespace ClearCanvas.Desktop.Help {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("626, 9")]
+        [global::System.Configuration.DefaultSettingValueAttribute("659, 9")]
         public global::System.Drawing.Point CloseButtonLocation {
             get {
                 return ((global::System.Drawing.Point)(this["CloseButtonLocation"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("TopRight")]
+        public global::System.Drawing.ContentAlignment CloseButtonAnchor {
+            get {
+                return ((global::System.Drawing.ContentAlignment)(this["CloseButtonAnchor"]));
             }
         }
         

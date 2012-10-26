@@ -69,17 +69,19 @@ namespace ClearCanvas.Desktop.Help
 			// 
 			// _closeButton
 			// 
-			this._closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this._closeButton.AutoSize = true;
 			this._closeButton.BackColor = System.Drawing.Color.Transparent;
+			this._closeButton.Cursor = System.Windows.Forms.Cursors.Hand;
 			this._closeButton.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(150)))), ((int)(((byte)(208)))));
-			this._closeButton.Location = new System.Drawing.Point(484, 9);
+			this._closeButton.Location = new System.Drawing.Point(626, 9);
 			this._closeButton.Name = "_closeButton";
 			this._closeButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this._closeButton.Size = new System.Drawing.Size(175, 13);
+			this._closeButton.Size = new System.Drawing.Size(33, 13);
 			this._closeButton.TabIndex = 0;
 			this._closeButton.TabStop = true;
 			this._closeButton.Text = "Close";
 			this._closeButton.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			this._closeButton.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnClosePreviewKeyDown);
 			// 
 			// _version
 			// 
