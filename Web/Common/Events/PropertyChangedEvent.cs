@@ -12,14 +12,13 @@
 using System;
 using System.Collections;
 using System.Runtime.Serialization;
-using System.Text;
 
 namespace ClearCanvas.Web.Common.Events
 {
-	[DataContract(Namespace = Namespace.Value)]
-	public class PropertyChangedEvent : Event
+    [DataContract(Namespace = Namespace.Value)]
+    public sealed class PropertyChangedEvent : Event
 	{
-		[DataMember(IsRequired = false)]
+        [DataMember(IsRequired = false)]
 		public string PropertyName { get; set; }
 
 		[DataMember(IsRequired = false)]

@@ -11,17 +11,14 @@
 
 using System.Runtime.Serialization;
 using System;
+using ClearCanvas.Web.Common;
 
 namespace ClearCanvas.ImageViewer.Web.Common.Entities
 {
 	[DataContract(Namespace = ViewerNamespace.Value)]
 	public class Cursor
 	{
-		public Cursor()
-		{}
-
-		[DataMember(IsRequired = false)]
-		public string Icon { get; set; }
+		public Image Icon { get; set; }
 
 		[DataMember(IsRequired = false)]
 		public Position HotSpot { get; set; }

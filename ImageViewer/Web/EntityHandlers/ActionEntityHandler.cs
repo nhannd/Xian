@@ -250,8 +250,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		protected static string LoadIcon(IAction action, IconSize size)
 		{
-			Image image = action.IconSet.CreateIcon(size, action.ResourceResolver);
-			using (MemoryStream theStream = new MemoryStream())
+			var image = action.IconSet.CreateIcon(size, action.ResourceResolver);
+			using (var theStream = new MemoryStream())
 			{
 				image.Save(theStream, ImageFormat.Png);
 				theStream.Position = 0;

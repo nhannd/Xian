@@ -42,7 +42,6 @@ namespace ClearCanvas.ImageViewer.Web
 						typeof(PropertyChangedEvent),
 
 			       		typeof(ContextMenuEvent),
-			       		typeof(TileUpdatedEvent),
 			       		typeof(SessionUpdatedEvent),
 			       		typeof(MessageBoxShownEvent),
 						typeof(AlertShownEvent),
@@ -93,7 +92,9 @@ namespace ClearCanvas.ImageViewer.Web
 			       		
 						typeof (Common.Entities.ImageBox[]),
 			       		typeof (Common.Entities.Tile[]),
-						typeof(Size),
+
+                        typeof(Image),
+                        typeof(Size),
 						typeof(Rectangle),
 						typeof(Position),
 						typeof(Cursor),

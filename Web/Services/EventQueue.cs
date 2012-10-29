@@ -123,42 +123,42 @@ namespace ClearCanvas.Web.Services
                     {
                         Event @event = _queue.Peek();
 
-
                         // In theory this should never happen
                         if (@event == null)
                         {
                             break;
                         }
 
-                        if (!@event.AllowSendInBatch)
-                        {
-                            Event theEvent = @event;
+                        // TODO (Phoenix5): Restore. 
+                        //if (!@event.AllowSendInBatch)
+                        //{
+                        //    Event theEvent = @event;
 
-                            if (_eventBatchMethod == EventBatchMethod.PerType)
-                            {
-                                // Only include the event if there's no other event of the same type to be sent.
-                                if (events.Exists(i => i.GetType() == theEvent.GetType()))
-                                    break;
-                            }
-                            else if (_eventBatchMethod == EventBatchMethod.PerTarget)
-                            {
-                                // Note: We can send messages of the same type but targetted to different
-                                // entities in the same response instead of separated ones to improve performance. 
-                                // One example in the web station is during sync stacking
-                                List<Event> speciallyMarkedEvents;
-                                if (markedEvents.TryGetValue(@event.SenderId, out speciallyMarkedEvents))
-                                {
-                                    if (speciallyMarkedEvents.Find(i => i.GetType() == @theEvent.GetType()) != null)
-                                        break;
+                        //    if (_eventBatchMethod == EventBatchMethod.PerType)
+                        //    {
+                        //        // Only include the event if there's no other event of the same type to be sent.
+                        //        if (events.Exists(i => i.GetType() == theEvent.GetType()))
+                        //            break;
+                        //    }
+                        //    else if (_eventBatchMethod == EventBatchMethod.PerTarget)
+                        //    {
+                        //        // Note: We can send messages of the same type but targetted to different
+                        //        // entities in the same response instead of separated ones to improve performance. 
+                        //        // One example in the web station is during sync stacking
+                        //        List<Event> speciallyMarkedEvents;
+                        //        if (markedEvents.TryGetValue(@event.SenderId, out speciallyMarkedEvents))
+                        //        {
+                        //            if (speciallyMarkedEvents.Find(i => i.GetType() == @theEvent.GetType()) != null)
+                        //                break;
 
-                                    markedEvents[@event.SenderId].Add(@event);
-                                }
-                                else
-                                {
-                                    markedEvents.Add(@event.SenderId, new List<Event>(new[] {@event}));
-                                }
-                            }
-                        }
+                        //            markedEvents[@event.SenderId].Add(@event);
+                        //        }
+                        //        else
+                        //        {
+                        //            markedEvents.Add(@event.SenderId, new List<Event>(new[] {@event}));
+                        //        }
+                        //    }
+                        //}
 
                         @event = _queue.Dequeue();
                         events.Add(@event);

@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -27,6 +28,7 @@ using ClearCanvas.ImageViewer.Web.Common;
 using ClearCanvas.ImageViewer.Web.Common.Events;
 using ClearCanvas.ImageViewer.Web.Utiltities;
 using ClearCanvas.Web.Common;
+using ClearCanvas.Web.Common.Events;
 using ClearCanvas.Web.Services;
 using TileEntity = ClearCanvas.ImageViewer.Web.Common.Entities.Tile;
 using ClearCanvas.ImageViewer.Rendering;
@@ -41,6 +43,8 @@ using ClearCanvas.ImageViewer.Web.Common.Entities;
 using ClearCanvas.Web.Common.Messages;
 using ClearCanvas.Common;
 using Cursor=ClearCanvas.ImageViewer.Web.Common.Entities.Cursor;
+using Encoder = System.Drawing.Imaging.Encoder;
+using Image = ClearCanvas.Web.Common.Image;
 using MouseLeaveMessage = ClearCanvas.ImageViewer.Web.Common.Messages.MouseLeaveMessage;
 
 namespace ClearCanvas.ImageViewer.Web.EntityHandlers
@@ -250,9 +254,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			entity.HasCapture = HasCapture;
 			entity.Cursor = CreateCursor();
 			entity.InformationBox = CreateInformationBox();
-		    var image = CreateImage();
-            if (image != null)
-                entity.Image = Convert.ToBase64String(image);
+		    entity.Image = CreateImage();
 		}
 
 		private void OnContextMenuRequested(object sender, ItemEventArgs<Point> e)
@@ -331,20 +333,19 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		public void Draw(bool refresh)
 		{
-            Event ev = new TileUpdatedEvent
+            Event ev = new PropertyChangedEvent
                             {
                                 Identifier = Guid.NewGuid(),
                                 SenderId = Identifier,
-                                Tile = GetEntity(),
-                                MimeType = _mimeType,
-                                Quality = _quality,
+                                PropertyName = "Image",
+                                Value = CreateImage(),
                                 TriggeringMessageId = _currentMessage != null ? _currentMessage.Identifier : (Guid?)null
                             };
 
             ApplicationContext.FireEvent(ev);
 		}
 
-        private byte[] CreateImage()
+        private Image CreateImage()
 		{
 			if (_tile.PresentationImage == null)
 				DisposeSurface();
@@ -386,11 +387,11 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             MemoryStream.SetLength(0);
 
             imageStats.SaveTime.Start();
-            if (_mimeType.Equals(MimeType.Jpeg))
+            if (_mimeType.Equals(Image.MimeTypes.Jpeg))
             {
                 _jpegCompressor.Compress(bitmap, _quality, MemoryStream);
             }
-            else if (_mimeType.Equals(MimeType.Png))
+            else if (_mimeType.Equals(Image.MimeTypes.Png))
             {
                 _pngEncoder.Encode(bitmap, MemoryStream);
             }
@@ -414,7 +415,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
             }
 
-            return imageBuffer;
+            return new Image {Data = imageBuffer, MimeType = _mimeType};
 		}
 
         private byte[] GetCurrentTileBitmap()
@@ -422,11 +423,11 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             var bitmap = Bitmap;
             MemoryStream.SetLength(0);
 
-            if (_mimeType.Equals(MimeType.Jpeg))
+            if (_mimeType.Equals(Image.MimeTypes.Jpeg))
             {
                 _jpegCompressor.Compress(bitmap, _quality, MemoryStream);
             }
-            else if (_mimeType.Equals(MimeType.Png))
+            else if (_mimeType.Equals(Image.MimeTypes.Png))
             {
                 _pngEncoder.Encode(bitmap, MemoryStream);
             }
@@ -513,7 +514,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			switch(message.PropertyName)
 			{
 				case "ClientRectangle":
-					ClientRectangle = (Common.Rectangle)message.Value;
+					ClientRectangle = (ClearCanvas.Web.Common.Rectangle)message.Value;
 					break;
 			}
 		}

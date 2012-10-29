@@ -12,9 +12,9 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.ImageViewer.Web.Common
+namespace ClearCanvas.Web.Common
 {
-	[DataContract(Namespace=ViewerNamespace.Value)]
+	[DataContract(Namespace=Namespace.Value)]
     public struct Rectangle
     {
 		public Rectangle(System.Drawing.Rectangle rectangle)
@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Web.Common
 		}
 	}
 
-	[DataContract(Namespace = ViewerNamespace.Value)]
+	[DataContract(Namespace = Namespace.Value)]
     public struct RectangleF
     {
 		public RectangleF(System.Drawing.RectangleF rectangle)

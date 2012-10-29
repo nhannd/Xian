@@ -78,17 +78,12 @@
     <Compile Include="Messages\MouseMoveMessage.cs" />
     <Compile Include="Messages\RenderingTimeMessages.cs" />
     <Compile Include="Messages\SetLayoutActionMessage.cs" />
-    <Compile Include="MimeType.cs" />
     <Compile Include="MouseButton.cs" />
     <Compile Include="MouseButtonState.cs" />
     <Compile Include="Messages\MouseWheelMessage.cs" />
-    <Compile Include="Size.cs" />
     <Compile Include="ViewerApplication.cs" />
-    <Compile Include="Position.cs" />
     <Compile Include="Messages\MouseMessage.cs" />
     <Compile Include="Entities\Tile.cs" />
-    <Compile Include="Rectangle.cs" />
-    <Compile Include="Events\TileUpdatedEvent.cs" />
     <Compile Include="Entities\Viewer.cs" />
     <Compile Include="ViewerNamespace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -27,18 +27,18 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
 		public bool Selected { get; set; }
 
 		[DataMember(IsRequired = false)]
-        public string Image { get; set; }
-
-		[DataMember(IsRequired = false)]
 		public bool HasCapture { get; set; }
 
-		[DataMember(IsRequired = false)]
-		public Cursor Cursor { get; set; }
-
-		[DataMember(IsRequired = false)]
-		public Position MousePosition { get; set; }
+        [DataMember(IsRequired = false)]
+        public Position MousePosition { get; set; }
 
         [DataMember(IsRequired = false)]
         public InformationBox InformationBox { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public Image Image { get; set; }
+        
+        [DataMember(IsRequired = false)]
+		public Cursor Cursor { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Web.Common;
+using ClearCanvas.Web.Common;
 
 namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 {
@@ -87,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
         public bool IsImageQualityLossy
         {
-            get { return _mimeType == MimeType.Jpeg; }
+            get { return _mimeType == Image.MimeTypes.Jpeg; }
         }
 
         public void GetImageQualityParameters(out string mimeType, out int jpegQuality)
@@ -109,18 +110,18 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             switch (ImageQualityOption)
             {
                 case ImageQualityOption.Diagnostic:
-                    _mimeType = MimeType.Png;
+                    _mimeType = Image.MimeTypes.Png;
                     break;
                 case ImageQualityOption.DiagnosticDynamic:
-                    _mimeType = MimeType.Jpeg;
+                    _mimeType = Image.MimeTypes.Jpeg;
                     _quality = _imageQualitySettings.JpegQualityLow;
                     break;
                 case ImageQualityOption.LossyQuality:
-                    _mimeType = MimeType.Jpeg;
+                    _mimeType = Image.MimeTypes.Jpeg;
                     _quality = _imageQualitySettings.JpegQualityHigh;
                     break;
                 case ImageQualityOption.LossyPerformance:
-                    _mimeType = MimeType.Jpeg;
+                    _mimeType = Image.MimeTypes.Jpeg;
                     _quality = _imageQualitySettings.JpegQualityLow;
                     break;
             }
@@ -131,17 +132,17 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             switch (ImageQualityOption)
             {
                 case ImageQualityOption.Diagnostic:
-                    _mimeType = MimeType.Png;
+                    _mimeType = Image.MimeTypes.Png;
                     break;
                 case ImageQualityOption.DiagnosticDynamic:
-                    _mimeType = MimeType.Png;
+                    _mimeType = Image.MimeTypes.Png;
                     break;
                 case ImageQualityOption.LossyQuality:
-                    _mimeType = MimeType.Jpeg;
+                    _mimeType = Image.MimeTypes.Jpeg;
                     _quality = _imageQualitySettings.JpegQualityHigh;
                     break;
                 case ImageQualityOption.LossyPerformance:
-                    _mimeType = MimeType.Jpeg;
+                    _mimeType = Image.MimeTypes.Jpeg;
                     _quality = _imageQualitySettings.JpegQualityHigh;
                     break;
             }

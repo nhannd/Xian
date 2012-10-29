@@ -11,6 +11,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using ClearCanvas.Web.Common;
 
 namespace ClearCanvas.ImageViewer.Web.Common.Entities
 {

@@ -11,7 +11,6 @@
 
 using System;
 using System.Runtime.Serialization;
-using System.Collections;
 
 namespace ClearCanvas.Web.Common
 {
@@ -27,10 +26,8 @@ namespace ClearCanvas.Web.Common
         [DataMember(IsRequired = true)]
         public Guid Identifier { get; set; }
 
-        /// <summary>
-        /// Indicates if this event can be sent together with other messages.
-        /// </summary>
-        public virtual bool AllowSendInBatch { get { return true; } }
+        [DataMember(IsRequired = true)]
+        public Guid? TriggeringMessageId { get; set; }
 
         #region Equality
 
