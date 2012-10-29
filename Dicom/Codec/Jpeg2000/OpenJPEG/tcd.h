@@ -1,4 +1,3 @@
-#pragma region License (non-CC)
 /*
  * Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2007, Professor Benoit Macq
@@ -29,8 +28,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#pragma endregion
-
 #ifndef __TCD_H
 #define __TCD_H
 /**
@@ -254,7 +251,7 @@ void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, 
 void tcd_makelayer_fixed(opj_tcd_t *tcd, int layno, int final);
 void tcd_rateallocate_fixed(opj_tcd_t *tcd);
 void tcd_makelayer(opj_tcd_t *tcd, int layno, double thresh, int final);
-bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_codestream_info_t *cstr_info);
+opj_bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_codestream_info_t *cstr_info);
 /**
 Encode a tile from the raw image into a buffer
 @param tcd TCD handle
@@ -271,8 +268,9 @@ Decode a tile from a buffer into a raw image
 @param src Source buffer
 @param len Length of source buffer
 @param tileno Number that identifies one of the tiles to be decoded
+@param cstr_info Codestream information structure
 */
-bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno, opj_codestream_info_t *cstr_info);
+opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno, opj_codestream_info_t *cstr_info);
 /**
 Free the memory allocated for decoding
 @param tcd TCD handle

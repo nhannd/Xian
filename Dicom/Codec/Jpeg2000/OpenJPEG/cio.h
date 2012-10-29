@@ -1,4 +1,3 @@
-#pragma region License (non-CC)
 /*
  * Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2007, Professor Benoit Macq
@@ -29,10 +28,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#pragma endregion
 
 #ifndef __CIO_H
 #define __CIO_H
+
+#if defined(_MSC_VER) || defined(__BORLANDC__)
+#define int64 __int64
+#else
+#define int64 long long
+#endif
+
 /**
 @file cio.h
 @brief Implementation of a byte input-output process (CIO)
@@ -65,7 +70,7 @@ Write some bytes
 @param n Number of bytes to write
 @return Returns the number of bytes written or 0 if an error occured
 */
-unsigned int cio_write(opj_cio_t *cio, unsigned int v, int n);
+unsigned int cio_write(opj_cio_t *cio, unsigned int64 v, int n);
 /**
 Read some bytes
 @param cio CIO handle

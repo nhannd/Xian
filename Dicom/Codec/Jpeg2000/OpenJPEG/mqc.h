@@ -1,4 +1,3 @@
-#pragma region License (non-CC)
 /*
  * Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2007, Professor Benoit Macq
@@ -29,7 +28,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#pragma endregion
 
 #ifndef __MQC_H
 #define __MQC_H
@@ -72,6 +70,9 @@ typedef struct opj_mqc {
 	unsigned char *end;
 	opj_mqc_state_t *ctxs[MQC_NUMCTXS];
 	opj_mqc_state_t **curctx;
+#ifdef MQC_PERF_OPT
+	unsigned char *buffer;
+#endif
 } opj_mqc_t;
 
 /** @name Exported functions */
@@ -190,7 +191,7 @@ Decode a symbol
 @param mqc MQC handle
 @return Returns the decoded symbol (0 or 1)
 */
-int mqc_decode(opj_mqc_t *mqc);
+int mqc_decode(opj_mqc_t *const mqc);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

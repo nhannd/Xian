@@ -1,8 +1,10 @@
 /*
- * Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
- * Copyright (c) 2002-2007, Professor Benoit Macq
- * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
- * Copyright (c) 2005, Herve Drolon, FreeImage Team
+ * $Id: cidx_manager.h 897 2011-08-28 21:43:57Z Kaori.Hagihara@gmail.com $
+ *
+ * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
+ * Copyright (c) 2002-2011, Professor Benoit Macq
+ * Copyright (c) 2003-2004, Yannick Verschueren
+ * Copyright (c) 2010-2011, Kaori Hagihara
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,61 +29,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "opj_includes.h"
+/*! \file
+ *  \brief Modification of jpip.h from 2KAN indexer
+ */
+
+
+#ifndef  CIDX_MANAGER_H_
+# define CIDX_MANAGER_H_
+
+#include "openjpeg.h"
+
 
 /* 
-==========================================================
-   local functions
-==========================================================
-*/
+ * Write Codestream index box (superbox)
+ *
+ * @param[in] offset    offset of j2k codestream
+ * @param[in] cio       file output handle
+ * @param[in] image     image data
+ * @param[in] cstr_info codestream information
+ * @param[in] j2klen    length of j2k codestream
+ * @return              length of cidx box
+ */
+int write_cidx( int offset, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t cstr_info, int j2klen);
 
 
-/* 
-==========================================================
-   RAW encoding interface
-==========================================================
-*/
-
-opj_raw_t* raw_create(void) {
-	opj_raw_t *raw = (opj_raw_t*)opj_malloc(sizeof(opj_raw_t));
-	return raw;
-}
-
-void raw_destroy(opj_raw_t *raw) {
-	if(raw) {
-		opj_free(raw);
-	}
-}
-
-int raw_numbytes(opj_raw_t *raw) {
-	return raw->bp - raw->start;
-}
-
-void raw_init_dec(opj_raw_t *raw, unsigned char *bp, int len) {
-	raw->start = bp;
-	raw->lenmax = len;
-	raw->len = 0;
-	raw->c = 0;
-	raw->ct = 0;
-}
-
-int raw_decode(opj_raw_t *raw) {
-	int d;
-	if (raw->ct == 0) {
-		raw->ct = 8;
-		if (raw->len == raw->lenmax) {
-			raw->c = 0xff;
-		} else {
-			if (raw->c == 0xff) {
-				raw->ct = 7;
-			}
-			raw->c = *(raw->start + raw->len);
-			raw->len++;
-		}
-	}
-	raw->ct--;
-	d = (raw->c >> raw->ct) & 0x01;
-	
-	return d;
-}
-
+#endif      /* !CIDX_MANAGER_H_ */

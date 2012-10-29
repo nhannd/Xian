@@ -1,4 +1,3 @@
-#pragma region License (non-CC)
 /*
  * Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2007, Professor Benoit Macq
@@ -30,7 +29,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#pragma endregion
 
 #include "opj_includes.h"
 
@@ -45,31 +43,31 @@ Get next packet in layer-resolution-component-precinct order.
 @param pi packet iterator to modify
 @return returns false if pi pointed to the last packet or else returns true 
 */
-static bool pi_next_lrcp(opj_pi_iterator_t * pi);
+static opj_bool pi_next_lrcp(opj_pi_iterator_t * pi);
 /**
 Get next packet in resolution-layer-component-precinct order.
 @param pi packet iterator to modify
 @return returns false if pi pointed to the last packet or else returns true 
 */
-static bool pi_next_rlcp(opj_pi_iterator_t * pi);
+static opj_bool pi_next_rlcp(opj_pi_iterator_t * pi);
 /**
 Get next packet in resolution-precinct-component-layer order.
 @param pi packet iterator to modify
 @return returns false if pi pointed to the last packet or else returns true 
 */
-static bool pi_next_rpcl(opj_pi_iterator_t * pi);
+static opj_bool pi_next_rpcl(opj_pi_iterator_t * pi);
 /**
 Get next packet in precinct-component-resolution-layer order.
 @param pi packet iterator to modify
 @return returns false if pi pointed to the last packet or else returns true 
 */
-static bool pi_next_pcrl(opj_pi_iterator_t * pi);
+static opj_bool pi_next_pcrl(opj_pi_iterator_t * pi);
 /**
 Get next packet in component-precinct-resolution-layer order.
 @param pi packet iterator to modify
 @return returns false if pi pointed to the last packet or else returns true 
 */
-static bool pi_next_cprl(opj_pi_iterator_t * pi);
+static opj_bool pi_next_cprl(opj_pi_iterator_t * pi);
 
 /*@}*/
 
@@ -81,7 +79,7 @@ static bool pi_next_cprl(opj_pi_iterator_t * pi);
 ==========================================================
 */
 
-static bool pi_next_lrcp(opj_pi_iterator_t * pi) {
+static opj_bool pi_next_lrcp(opj_pi_iterator_t * pi) {
 	opj_pi_comp_t *comp = NULL;
 	opj_pi_resolution_t *res = NULL;
 	long index = 0;
@@ -110,7 +108,7 @@ static bool pi_next_lrcp(opj_pi_iterator_t * pi) {
 					index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno * pi->step_c + pi->precno * pi->step_p;
 					if (!pi->include[index]) {
 						pi->include[index] = 1;
-						return true;
+						return OPJ_TRUE;
 					}
 LABEL_SKIP:;
 				}
@@ -118,10 +116,10 @@ LABEL_SKIP:;
 		}
 	}
 	
-	return false;
+	return OPJ_FALSE;
 }
 
-static bool pi_next_rlcp(opj_pi_iterator_t * pi) {
+static opj_bool pi_next_rlcp(opj_pi_iterator_t * pi) {
 	opj_pi_comp_t *comp = NULL;
 	opj_pi_resolution_t *res = NULL;
 	long index = 0;
@@ -149,7 +147,7 @@ static bool pi_next_rlcp(opj_pi_iterator_t * pi) {
 					index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno * pi->step_c + pi->precno * pi->step_p;
 					if (!pi->include[index]) {
 						pi->include[index] = 1;
-						return true;
+						return OPJ_TRUE;
 					}
 LABEL_SKIP:;
 				}
@@ -157,10 +155,10 @@ LABEL_SKIP:;
 		}
 	}
 	
-	return false;
+	return OPJ_FALSE;
 }
 
-static bool pi_next_rpcl(opj_pi_iterator_t * pi) {
+static opj_bool pi_next_rpcl(opj_pi_iterator_t * pi) {
 	opj_pi_comp_t *comp = NULL;
 	opj_pi_resolution_t *res = NULL;
 	long index = 0;
@@ -211,14 +209,14 @@ if (!pi->tp_on){
 					try1 = int_ceildiv(pi->ty1, comp->dy << levelno);
 					rpx = res->pdx + levelno;
 					rpy = res->pdy + levelno;
-					if (!((pi->y % (comp->dy << rpy) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpx))))){
+					if (!((pi->y % (comp->dy << rpy) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpy))))){
 						continue;	
 					}
 					if (!((pi->x % (comp->dx << rpx) == 0) || ((pi->x == pi->tx0) && ((trx0 << levelno) % (1 << rpx))))){
 						continue; 
 					}
 					
-					if ((res->pw==0)||(res->pw==0)) continue;
+					if ((res->pw==0)||(res->ph==0)) continue;
 					
 					if ((trx0==trx1)||(try0==try1)) continue;
 					
@@ -231,7 +229,7 @@ if (!pi->tp_on){
 						index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno * pi->step_c + pi->precno * pi->step_p;
 						if (!pi->include[index]) {
 							pi->include[index] = 1;
-							return true;
+							return OPJ_TRUE;
 						}
 LABEL_SKIP:;
 					}
@@ -240,10 +238,10 @@ LABEL_SKIP:;
 		}
 	}
 	
-	return false;
+	return OPJ_FALSE;
 }
 
-static bool pi_next_pcrl(opj_pi_iterator_t * pi) {
+static opj_bool pi_next_pcrl(opj_pi_iterator_t * pi) {
 	opj_pi_comp_t *comp = NULL;
 	opj_pi_resolution_t *res = NULL;
 	long index = 0;
@@ -292,14 +290,14 @@ static bool pi_next_pcrl(opj_pi_iterator_t * pi) {
 					try1 = int_ceildiv(pi->ty1, comp->dy << levelno);
 					rpx = res->pdx + levelno;
 					rpy = res->pdy + levelno;
-					if (!((pi->y % (comp->dy << rpy) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpx))))){
+					if (!((pi->y % (comp->dy << rpy) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpy))))){
 						continue;	
 					}
 					if (!((pi->x % (comp->dx << rpx) == 0) || ((pi->x == pi->tx0) && ((trx0 << levelno) % (1 << rpx))))){
 						continue; 
 					}
 					
-					if ((res->pw==0)||(res->pw==0)) continue;
+					if ((res->pw==0)||(res->ph==0)) continue;
 					
 					if ((trx0==trx1)||(try0==try1)) continue;
 					
@@ -312,7 +310,7 @@ static bool pi_next_pcrl(opj_pi_iterator_t * pi) {
 						index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno * pi->step_c + pi->precno * pi->step_p;
 						if (!pi->include[index]) {
 							pi->include[index] = 1;
-							return true;
+							return OPJ_TRUE;
 						}	
 LABEL_SKIP:;
 					}
@@ -321,10 +319,10 @@ LABEL_SKIP:;
 		}
 	}
 	
-	return false;
+	return OPJ_FALSE;
 }
 
-static bool pi_next_cprl(opj_pi_iterator_t * pi) {
+static opj_bool pi_next_cprl(opj_pi_iterator_t * pi) {
 	opj_pi_comp_t *comp = NULL;
 	opj_pi_resolution_t *res = NULL;
 	long index = 0;
@@ -371,14 +369,14 @@ static bool pi_next_cprl(opj_pi_iterator_t * pi) {
 					try1 = int_ceildiv(pi->ty1, comp->dy << levelno);
 					rpx = res->pdx + levelno;
 					rpy = res->pdy + levelno;
-					if (!((pi->y % (comp->dy << rpy) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpx))))){
+					if (!((pi->y % (comp->dy << rpy) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpy))))){
 						continue;	
 					}
 					if (!((pi->x % (comp->dx << rpx) == 0) || ((pi->x == pi->tx0) && ((trx0 << levelno) % (1 << rpx))))){
 						continue; 
 					}
 					
-					if ((res->pw==0)||(res->pw==0)) continue;
+					if ((res->pw==0)||(res->ph==0)) continue;
 					
 					if ((trx0==trx1)||(try0==try1)) continue;
 					
@@ -391,7 +389,7 @@ static bool pi_next_cprl(opj_pi_iterator_t * pi) {
 						index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno * pi->step_c + pi->precno * pi->step_p;
 						if (!pi->include[index]) {
 							pi->include[index] = 1;
-							return true;
+							return OPJ_TRUE;
 						}
 LABEL_SKIP:;
 					}
@@ -400,7 +398,7 @@ LABEL_SKIP:;
 		}
 	}
 	
-	return false;
+	return OPJ_FALSE;
 }
 
 /* 
@@ -709,7 +707,7 @@ void pi_destroy(opj_pi_iterator_t *pi, opj_cp_t *cp, int tileno) {
 	}
 }
 
-bool pi_next(opj_pi_iterator_t * pi) {
+opj_bool pi_next(opj_pi_iterator_t * pi) {
 	switch (pi->poc.prg) {
 		case LRCP:
 			return pi_next_lrcp(pi);
@@ -722,13 +720,13 @@ bool pi_next(opj_pi_iterator_t * pi) {
 		case CPRL:
 			return pi_next_cprl(pi);
 		case PROG_UNKNOWN:
-			return false;
+			return OPJ_FALSE;
 	}
 	
-	return false;
+	return OPJ_FALSE;
 }
 
-bool pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos, J2K_T2_MODE t2_mode,int cur_totnum_tp){
+opj_bool pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos, J2K_T2_MODE t2_mode,int cur_totnum_tp){
 	char prog[4];
 	int i;
 	int incr_top=1,resetX=0;
@@ -750,7 +748,7 @@ bool pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,
 		case RPCL: strncpy(prog, "RPCL",4);
 			break;
 		case PROG_UNKNOWN: 
-			return true;
+			return OPJ_TRUE;
 	}
 
 	if(!(cp->tp_on && ((!cp->cinema && (t2_mode == FINAL_PASS)) || cp->cinema))){
@@ -960,6 +958,6 @@ bool pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,
 			} 
 		}
 	}	
-	return false;
+	return OPJ_FALSE;
 }
 
