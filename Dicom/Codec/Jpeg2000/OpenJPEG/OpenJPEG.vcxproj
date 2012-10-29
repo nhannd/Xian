@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-	<ProjectGuid>{497CEAC5-C575-47A7-9230-610D6A3B6A2A}</ProjectGuid>
+    <ProjectGuid>{497CEAC5-C575-47A7-9230-610D6A3B6A2A}</ProjectGuid>
     <RootNamespace>OpenJPEG</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -139,6 +139,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bio.c" />
+    <ClCompile Include="cidx_manager.c" />
     <ClCompile Include="cio.c" />
     <ClCompile Include="dwt.c" />
     <ClCompile Include="event.c" />
@@ -150,12 +151,16 @@
     <ClCompile Include="mct.c" />
     <ClCompile Include="mqc.c" />
     <ClCompile Include="openjpeg.c" />
+    <ClCompile Include="phix_manager.c" />
     <ClCompile Include="pi.c" />
+    <ClCompile Include="ppix_manager.c" />
     <ClCompile Include="raw.c" />
     <ClCompile Include="t1.c" />
     <ClCompile Include="t2.c" />
     <ClCompile Include="tcd.c" />
     <ClCompile Include="tgt.c" />
+    <ClCompile Include="thix_manager.c" />
+    <ClCompile Include="tpix_manager.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bio.h" />

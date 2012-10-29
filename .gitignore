@@ -1,3 +1,5 @@
+*.opensdf
+*.sdf
 ReferencedAssemblies
 *.gen.cs
 #ignore thumbnails created by windows
@@ -28,3 +30,6 @@ obj/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
+Desktop/ClearCanvas.Desktop.xml
+Common/ClearCanvas.Common.xml
+ImageViewer/ClearCanvas.ImageViewer.xml

@@ -1,4 +1,3 @@
-#pragma region License (non-CC)
 /*
  * Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2007, Professor Benoit Macq
@@ -29,8 +28,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#pragma endregion
-
 #ifndef __T1_H
 #define __T1_H
 /**
@@ -138,8 +135,8 @@ void t1_encode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp);
 /**
 Decode the code-blocks of a tile
 @param t1 T1 handle
-@param tile The tile to decode
-@param tcp Tile coding parameters
+@param tilec The tile to decode
+@param tccp Tile coding parameters
 */
 void t1_decode_cblks(opj_t1_t* t1, opj_tcd_tilecomp_t* tilec, opj_tccp_t* tccp);
 /* ----------------------------------------------------------------------- */

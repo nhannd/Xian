@@ -1,4 +1,3 @@
-#pragma region License (non-CC)
 /*
  * Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2007, Professor Benoit Macq
@@ -29,7 +28,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#pragma endregion
 
 #include "opj_includes.h"
 
@@ -128,13 +126,13 @@ unsigned char *cio_getbp(opj_cio_t *cio) {
 /*
  * Write a byte.
  */
-bool cio_byteout(opj_cio_t *cio, unsigned char v) {
+opj_bool cio_byteout(opj_cio_t *cio, unsigned char v) {
 	if (cio->bp >= cio->end) {
 		opj_event_msg(cio->cinfo, EVT_ERROR, "write error\n");
-		return false;
+		return OPJ_FALSE;
 	}
 	*cio->bp++ = v;
-	return true;
+	return OPJ_TRUE;
 }
 
 /*
@@ -154,7 +152,7 @@ unsigned char cio_bytein(opj_cio_t *cio) {
  * v : value to write
  * n : number of bytes to write
  */
-unsigned int cio_write(opj_cio_t *cio, unsigned int v, int n) {
+unsigned int cio_write(opj_cio_t *cio, unsigned int64 v, int n) {
 	int i;
 	for (i = n - 1; i >= 0; i--) {
 		if( !cio_byteout(cio, (unsigned char) ((v >> (i << 3)) & 0xff)) )

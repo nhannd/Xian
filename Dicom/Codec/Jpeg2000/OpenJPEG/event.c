@@ -1,6 +1,5 @@
-#pragma region License (non-CC)
 /*
- * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,7 +23,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#pragma endregion
 
 #include "opj_includes.h"
 
@@ -32,7 +30,8 @@
      Utility functions
    ==========================================================*/
 
-#if !defined(_MSC_VER) && !defined(__MINGW32__)
+#ifdef OPJ_CODE_NOT_USED
+#ifndef _WIN32
 static char*
 i2a(unsigned i, char *a, unsigned r) {
 	if (i/r > 0) a = i2a(i/r,a,r);
@@ -59,8 +58,8 @@ _itoa(int i, char *a, int r) {
 	return a;
 }
 
-#endif /* !WIN32 */
-
+#endif /* !_WIN32 */
+#endif
 /* ----------------------------------------------------------------------- */
 
 opj_event_mgr_t* OPJ_CALLCONV opj_set_event_mgr(opj_common_ptr cinfo, opj_event_mgr_t *event_mgr, void *context) {
@@ -74,7 +73,7 @@ opj_event_mgr_t* OPJ_CALLCONV opj_set_event_mgr(opj_common_ptr cinfo, opj_event_
 	return NULL;
 }
 
-bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ...) {
+opj_bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ...) {
 #define MSG_SIZE 512 /* 512 bytes should be more than enough for a short message */
 	opj_msg_callback msg_handler = NULL;
 
@@ -94,30 +93,29 @@ bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ...) {
 				break;
 		}
 		if(msg_handler == NULL) {
-			return false;
+			return OPJ_FALSE;
 		}
 	} else {
-		return false;
+		return OPJ_FALSE;
 	}
 
 	if ((fmt != NULL) && (event_mgr != NULL)) {
 		va_list arg;
 		int str_length/*, i, j*/; /* UniPG */
 		char message[MSG_SIZE];
-		memset(message, 0, MSG_SIZE);
 		/* initialize the optional parameter list */
 		va_start(arg, fmt);
-		/* check the length of the format string */
-		str_length = (strlen(fmt) > MSG_SIZE) ? MSG_SIZE : strlen(fmt);
 		/* parse the format string and put the result in 'message' */
-		vsprintf(message, fmt, arg); /* UniPG */
+		str_length = vsnprintf(message, MSG_SIZE, fmt, arg); /* UniPG */
 		/* deinitialize the optional parameter list */
 		va_end(arg);
 
 		/* output the message to the user program */
-		msg_handler(message, cinfo->client_data);
+    if( str_length > -1 && str_length < MSG_SIZE )
+      msg_handler(message, cinfo->client_data);
+    else return OPJ_FALSE;
 	}
 
-	return true;
+	return OPJ_TRUE;
 }
 
