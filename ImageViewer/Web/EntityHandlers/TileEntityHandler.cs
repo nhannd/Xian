@@ -30,6 +30,7 @@ using ClearCanvas.ImageViewer.Web.Utiltities;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Events;
 using ClearCanvas.Web.Services;
+using SharpCompress.Compressor.BZip2;
 using TileEntity = ClearCanvas.ImageViewer.Web.Common.Entities.Tile;
 using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.ImageViewer.InputManagement;
@@ -42,6 +43,7 @@ using Rectangle=System.Drawing.Rectangle;
 using ClearCanvas.ImageViewer.Web.Common.Entities;
 using ClearCanvas.Web.Common.Messages;
 using ClearCanvas.Common;
+using CompressionMode = SharpCompress.Compressor.CompressionMode;
 using Cursor=ClearCanvas.ImageViewer.Web.Common.Entities.Cursor;
 using Encoder = System.Drawing.Imaging.Encoder;
 using Image = ClearCanvas.Web.Common.Image;
@@ -382,20 +384,25 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                 // make a copy in case Bitmap.Save() has any side effects.
                 bmp1 = (Bitmap)Bitmap.Clone();
             }
-
            
-            MemoryStream.SetLength(0);
 
             imageStats.SaveTime.Start();
             if (_mimeType.Equals(Image.MimeTypes.Jpeg))
             {
+                MemoryStream.SetLength(0);
                 _jpegCompressor.Compress(bitmap, _quality, MemoryStream);
             }
             else if (_mimeType.Equals(Image.MimeTypes.Png))
             {
+                MemoryStream.SetLength(0);
                 _pngEncoder.Encode(bitmap, MemoryStream);
             }
-            
+            else if (_mimeType.Equals(Image.MimeTypes.Bmp))
+            {
+                MemoryStream.SetLength(0);
+                bitmap.Save(MemoryStream, ImageFormat.Bmp);
+            }
+
             imageStats.SaveTime.End();
 
             byte[] imageBuffer = MemoryStream.ToArray();
@@ -415,7 +422,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
             }
 
-            return new Image {Data = imageBuffer, MimeType = _mimeType};
+            return new Image {Data = imageBuffer, MimeType = _mimeType, IsDataZipped = false};
 		}
 
         private byte[] GetCurrentTileBitmap()
