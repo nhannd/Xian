@@ -17,7 +17,10 @@ namespace ClearCanvas.Web.Common.Messages
 	[DataContract(Namespace = Namespace.Value)]
 	public class UpdatePropertyMessage : Message
 	{
-		[DataMember(IsRequired = false)]
+        [DataMember(IsRequired = true)]
+        public string MimeType { get; set; }
+        
+        [DataMember(IsRequired = false)]
 		public string PropertyName { get; set; }
 
 		[DataMember(IsRequired = false)]

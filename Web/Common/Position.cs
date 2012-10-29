@@ -13,9 +13,9 @@ using System;
 using System.Drawing;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.ImageViewer.Web.Common
+namespace ClearCanvas.Web.Common
 {
-    [DataContract(Namespace = ViewerNamespace.Value)]
+    [DataContract(Namespace = Namespace.Value)]
     public struct Position
     {
 		public Position(Point point)

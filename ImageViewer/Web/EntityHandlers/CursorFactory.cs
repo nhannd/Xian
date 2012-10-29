@@ -9,7 +9,9 @@ using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Web.Common;
+using ClearCanvas.Web.Common;
 using Cursor = ClearCanvas.ImageViewer.Web.Common.Entities.Cursor;
+using Image = ClearCanvas.Web.Common.Image;
 using Rectangle = System.Drawing.Rectangle;
 
 namespace ClearCanvas.ImageViewer.Web.EntityHandlers
@@ -59,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             {
                 bitmap.Save(stream, ImageFormat.Png);
                 stream.Position = 0;
-                webCursor.Icon = Convert.ToBase64String(stream.GetBuffer());
+                webCursor.Icon = new Image {Data = stream.GetBuffer(), MimeType = Image.MimeTypes.Png};
                 stream.Close();
             }
 
