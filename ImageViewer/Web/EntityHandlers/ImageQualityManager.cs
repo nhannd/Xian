@@ -1,19 +1,9 @@
 ﻿using System;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Web.Common;
 using ClearCanvas.Web.Common;
 
 namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 {
-    public interface IQFactorStrategy
-    {
-        int GetOptimalQFactor(int imageWidth, int imageHeight, IImageSopProvider sop);
-    }
-
-    public class QFactorExtensionPoint : ExtensionPoint<IQFactorStrategy> { }
-
     public enum ImageQualityOption
     {
         Diagnostic,

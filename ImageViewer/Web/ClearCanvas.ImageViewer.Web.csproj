@@ -78,7 +78,6 @@
     <Compile Include="EntityHandlers\AlertEntityHandler.cs" />
     <Compile Include="EntityHandlers\AuthorityTokens.cs" />
     <Compile Include="EntityHandlers\CursorFactory.cs" />
-    <Compile Include="EntityHandlers\DefaultQFactorStrategy.cs" />
     <Compile Include="EntityHandlers\ImageQualityManager.cs" />
     <Compile Include="EntityHandlers\ImageQualitySettings.Designer.cs">
       <AutoGen>True</AutoGen>

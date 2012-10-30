@@ -27,6 +27,7 @@ namespace ClearCanvas.Web.Services
         void LogStatistics(string logName, StatisticsSet statistics);
 
         void FireEvent(Event e);
+        void FireEvent(Event e, Action<Event> eventReleased);
         void FatalError(Exception e);
     }
 
@@ -49,7 +50,12 @@ namespace ClearCanvas.Web.Services
         public abstract void LogStatistics(StatisticsSet statistics);
         public abstract void LogStatistics(string logName, StatisticsSet statistics);
         
-        public abstract void FireEvent(Event e);
+        public void FireEvent(Event e)
+        {
+            FireEvent(e, null);
+        }
+
+        public abstract void FireEvent(Event e, Action<Event> eventReleased);
         public abstract void FatalError(Exception e);
     }
 }

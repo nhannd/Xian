@@ -114,6 +114,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
         private Message _currentMessage;
 
 		[ThreadStatic]private static ContextMenuContainer _contextMenu;
+        private int _unreleasedImageCount;
 
         public TileEntityHandler()
 		{
@@ -196,6 +197,11 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 		{
 			get { return _tile.PresentationImage as PresentationImage; }
 		}
+
+        private int UnreleasedImageCount
+        {
+            get { return Thread.VolatileRead(ref _unreleasedImageCount); }
+        }
 
 		private Common.Entities.InformationBox CreateInformationBox()
 		{
@@ -344,7 +350,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                                 TriggeringMessageId = _currentMessage != null ? _currentMessage.Identifier : (Guid?)null
                             };
 
-            ApplicationContext.FireEvent(ev);
+            Interlocked.Increment(ref _unreleasedImageCount);
+            ApplicationContext.FireEvent(ev, (e) => Interlocked.Decrement(ref _unreleasedImageCount));
 		}
 
         private Image CreateImage()
@@ -425,24 +432,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             return new Image {Data = imageBuffer, MimeType = _mimeType, IsDataZipped = false};
 		}
 
-        private byte[] GetCurrentTileBitmap()
-        {
-            var bitmap = Bitmap;
-            MemoryStream.SetLength(0);
-
-            if (_mimeType.Equals(Image.MimeTypes.Jpeg))
-            {
-                _jpegCompressor.Compress(bitmap, _quality, MemoryStream);
-            }
-            else if (_mimeType.Equals(Image.MimeTypes.Png))
-            {
-                _pngEncoder.Encode(bitmap, MemoryStream);
-            }
-
-            return MemoryStream.ToArray();
-        }
-
-		public override void ProcessMessage(Message message)
+        public override void ProcessMessage(Message message)
 		{
             _currentMessage = message;
 
@@ -538,9 +528,20 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             var messageProcessingStatistics = new MessageProcessingStatistics(message.GetType());
             if (_lastMouseMoveProcessedTicks.HasValue)
             {
-                var receivedBeforeLastMessageProcessed = (_lastMouseMoveProcessedTicks.Value - message.ReceiveTimeTicks) >= 0;
-                if (message.IsDiscardable && receivedBeforeLastMessageProcessed)
-                    return;
+                if (message.IsDiscardable)
+                {
+                    var receivedBeforeLastMessageProcessed = (_lastMouseMoveProcessedTicks.Value - message.ReceiveTimeTicks) >= 0;
+                    if (receivedBeforeLastMessageProcessed)
+                    {
+                        Platform.Log(LogLevel.Debug, "Mouse move message discarded - image was processing when received.");
+                        return;
+                    }
+                    if (UnreleasedImageCount > 0)
+                    {
+                        Platform.Log(LogLevel.Debug, "Mouse move message discarded - unreleased images.");
+                        return;
+                    }
+                }
 
                 messageProcessingStatistics.TimeSinceLastMessageProcessed.Value = TimeSpan.FromMilliseconds(Environment.TickCount - _lastMouseMoveProcessedTicks.Value);
             }
@@ -565,7 +566,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             _lastMouseMoveProcessedTicks = Environment.TickCount;
         }
 
-		private void ProcessMouseMessage(MouseMessage message)
+        private void ProcessMouseMessage(MouseMessage message)
 		{
 			if (message.Button == MouseButton.Left)
 			{
