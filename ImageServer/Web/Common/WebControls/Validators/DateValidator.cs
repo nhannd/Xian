@@ -19,13 +19,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     /// </summary>
     public static class InputDateParser
     {
-        private const string InputFormat = "dd?MM?yyyy";
+        private const string InputFormat = "yyyyMMdd";
 
         public static string DateFormat
         {
             get
             {
-                return InputFormat.Replace("?", CultureInfo.CurrentCulture.DateTimeFormat.DateSeparator);
+                return InputDateParser.InputFormat;
             }
         }
 
@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                     return true;
                 else
                 {
-                    Text = "This field is required";
+                    Text = ValidationErrors.ThisFieldIsRequired;
                     return false;
                 }
             }
@@ -77,7 +77,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             DateTime result;
             if (!InputDateParser.TryParse(value, out result))
             {
-                Text = string.Format("{0} is not a valid date for '{1}' format.", value, InputDateParser.DateFormat);
                 return false;
             }
 

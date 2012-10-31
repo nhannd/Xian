@@ -161,4 +161,7 @@
     <value>This is not a invalid number for {0}</value>
     <comment>{0} is the name of the input, eg port</comment>
   </data>
+  <data name="ThisFieldIsRequired" xml:space="preserve">
+    <value>This field is required</value>
+  </data>
 </root>

@@ -49,10 +49,13 @@ function @@CLIENTID@@_ClientSideEvaluator()
         {
             return result;
         }
-                                 
-        if (this.input.value==null)
+                                         
+        if (this.input.value==null || this.input.value =='')
         {
-            result.OK = false;
+            if (this.ignoreEmptyValue)
+                result.OK = true;
+            else
+                result.OK = false;
         } 
         else if(isDate(this.input.value, '@@DATE_FORMAT@@') == false)
         {
@@ -70,15 +73,7 @@ function @@CLIENTID@@_ClientSideEvaluator()
     
         if (result.OK == false)
         {        
-            if ('@@ERROR_MESSAGE@@' == null || '@@ERROR_MESSAGE@@'=='')
-            {
-                if(!validDateFormat) result.Message = 'Provided date \'' + this.input.value + '\' is not in the format \'@@DATE_FORMAT@@\'.';
-                else if (dateInFuture) result.Message = 'Provided date cannot be in the future.';
-                else if (this.input.value == null) result.Message = 'Date cannot be empty.';
-                else result.Message = 'Provided date is invalid.';
-            }
-            else
-                result.Message = '@@ERROR_MESSAGE@@';
+            result.Message = '@@ERROR_MESSAGE@@'.format(this.input.value);
         }
         
         return  result;

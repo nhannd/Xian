@@ -133,6 +133,15 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This field is required.
+        /// </summary>
+        public static string ThisFieldIsRequired {
+            get {
+                return ResourceManager.GetString("ThisFieldIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to parse rule : {0}.
         /// </summary>
         public static string UnableToParseServerRuleXML {
