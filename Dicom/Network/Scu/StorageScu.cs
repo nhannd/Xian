@@ -539,10 +539,10 @@ namespace ClearCanvas.Dicom.Network.Scu
 			{
 				fileToSend.SendStatus = DicomStatuses.SOPClassNotSupported;
 				fileToSend.ExtendedFailureDescription = "No valid presentation contexts for file.";
-				OnImageStoreCompleted(fileToSend);
 				_failureSubOperations++;
 				_remainingSubOperations--;
-				return false;
+                OnImageStoreCompleted(fileToSend);
+                return false;
 			}
 
 			try
@@ -565,10 +565,10 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 				fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
 				fileToSend.ExtendedFailureDescription = "Error decompressing or compressing file before send.";
-				OnImageStoreCompleted(fileToSend);
 				_failureSubOperations++;
 				_remainingSubOperations--;
-				return false;
+                OnImageStoreCompleted(fileToSend);
+                return false;
 
 			}
 			catch(DicomException e)
@@ -577,10 +577,10 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 				fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
 				fileToSend.ExtendedFailureDescription = "Unexpected exception while sending file.";
-				OnImageStoreCompleted(fileToSend);
 				_failureSubOperations++;
 				_remainingSubOperations--;
-				return false;
+                OnImageStoreCompleted(fileToSend);
+                return false;
 			}
 
 			return true;
