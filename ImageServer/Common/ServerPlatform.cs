@@ -18,6 +18,7 @@ using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Audit;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.ServiceModel;
@@ -33,7 +34,7 @@ namespace ClearCanvas.ImageServer.Common
     static public class ServerPlatform
     {
         #region Private Fields
-        private static string _dbVersion;
+        private static string _version;
         private static string _tempDir;
         private static readonly object _syncLock = new object();
     	private static DicomAuditSource _auditSource;
@@ -206,7 +207,7 @@ namespace ClearCanvas.ImageServer.Common
         }
 
         /// <summary>
-        /// Returns the version info in the database.
+        /// Returns the version number (including the suffix and the release type)
         /// </summary>
         public static String VersionString
         {
@@ -214,17 +215,16 @@ namespace ClearCanvas.ImageServer.Common
             {
                 lock (_syncLock)
                 {
-                    if (String.IsNullOrEmpty(_dbVersion))
+                    if (String.IsNullOrEmpty(_version))
                     {
                         try
                         {
-                            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-                            using (IReadContext ctx = store.OpenReadContext())
-                            {
-                                IDatabaseVersionEntityBroker broker = ctx.GetBroker<IDatabaseVersionEntityBroker>();
-                                DatabaseVersion version = broker.FindOne(new DatabaseVersionSelectCriteria());
-								_dbVersion = version != null ? version.GetVersionString() : String.Empty;
-                            }
+                            _version = StringUtilities.Combine<string>(new string[]
+                                                        {
+                                                            ProductInformation.Version.ToString(),
+                                                            ProductInformation.VersionSuffix,
+                                                            ProductInformation.Release
+                                                        }, " ", true);
                         }
                         catch (Exception ex)
                         {
@@ -233,7 +233,7 @@ namespace ClearCanvas.ImageServer.Common
                     }
                 }
 
-                return _dbVersion;
+                return _version;
             }
         }
 
