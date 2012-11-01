@@ -76,6 +76,7 @@
     <Compile Include="Edit\UpdateStudyStatistics.cs" />
     <Compile Include="Edit\WebDeleteWorkQueueEntryData.cs" />
     <Compile Include="IStudyPreProcessor.cs" />
+    <Compile Include="ModelExtensions\WorkQueueExtensions.cs" />
     <Compile Include="PatientNameRules.cs" />
     <Compile Include="PreProcessors.cs" />
     <Compile Include="Process\IInsertExtension.cs" />
