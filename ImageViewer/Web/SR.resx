@@ -121,16 +121,16 @@
     <value>Cancel</value>
   </data>
   <data name="ImageQualityMenuDiagnostic" xml:space="preserve">
-    <value>Diagnostic (lossless)</value>
+    <value>Diagnostic (all)</value>
   </data>
   <data name="ImageQualityMenuDynamic" xml:space="preserve">
-    <value>Diagnostic (dynamic)</value>
+    <value>Diagnostic (stills)</value>
   </data>
   <data name="ImageQualityMenuLossyPerformance" xml:space="preserve">
-    <value>Lossy (performance)</value>
+    <value>Lossy (fast)</value>
   </data>
   <data name="ImageQualityMenuLossyQuality" xml:space="preserve">
-    <value>Lossy (quality)</value>
+    <value>Lossy (high quality)</value>
   </data>
   <data name="MessageAccessionStudiesNotFound" xml:space="preserve">
     <value>Studies matching the specified accession number could not be found.</value>
