@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Web.Common;
@@ -26,22 +25,10 @@ namespace ClearCanvas.Web.Services
 
     public class EventQueue : IEventDeliveryStrategy, IDisposable
     {
-        private class Item
-        {
-            public Item(Event @event, Action<Event> eventReleased)
-            {
-                Event = @event;
-                EventReleased = eventReleased;
-            }
-
-            public readonly Event Event;
-            public readonly Action<Event> EventReleased;
-        }
-
         private readonly EventBatchMethod _eventBatchMethod;
         private Guid _applicationId;
         private readonly object _syncLock = new object();
-		private readonly Queue<Item> _queue;
+		private readonly Queue<Event> _queue;
 		private int _nextEventSetNumber = 1;
         
 		public EventQueue() : this(EventBatchMethod.PerTarget)
@@ -51,7 +38,7 @@ namespace ClearCanvas.Web.Services
         public EventQueue(EventBatchMethod eventBatchMethod)
         {
             _eventBatchMethod = eventBatchMethod;
-            _queue = new Queue<Item>();
+            _queue = new Queue<Event>();
         }
 
         #region IEventDeliveryStrategy Members
@@ -62,19 +49,19 @@ namespace ClearCanvas.Web.Services
             set { _applicationId = value; }
         }
 
-        void IEventDeliveryStrategy.Deliver(Event @event, Action<Event> eventReleased)
+        void IEventDeliveryStrategy.Deliver(Event @event)
 		{
-            Enqueue(@event, eventReleased);
+            Enqueue(@event);
 		}
 
         #endregion
 
-        protected virtual void Enqueue(Event @event, Action<Event> eventReleased)
+        protected virtual void Enqueue(Event @event)
         {
             Platform.CheckForNullReference(@event, "event");
             lock (_syncLock)
             {
-                _queue.Enqueue(new Item(@event, eventReleased));
+                _queue.Enqueue(@event);
             }
         }
         
@@ -115,15 +102,15 @@ namespace ClearCanvas.Web.Services
                 const int maxBatchSize = 20;
                 var markedEvents = new Dictionary<Guid, List<Event>>();
 
-                var items = new List<Item>();
+                var events = new List<Event>();
                 try
                 {
-                    while (_queue.Count > 0 && items.Count < maxBatchSize)
+                    while (_queue.Count > 0 && events.Count < maxBatchSize)
                     {
-                        var item = _queue.Peek();
+                        var @event = _queue.Peek();
 
                         // In theory this should never happen
-                        if (item == null)
+                        if (@event == null)
                         {
                             break;
                         }
@@ -159,8 +146,8 @@ namespace ClearCanvas.Web.Services
                         //    }
                         //}
 
-                        item = _queue.Dequeue();
-                        items.Add(item);
+                        @event = _queue.Dequeue();
+                        events.Add(@event);
                     }
                 }
                 catch(Exception ex)
@@ -170,34 +157,27 @@ namespace ClearCanvas.Web.Services
 
                 if (debugging)
                 {
-                    Platform.Log(LogLevel.Debug, "Sending Polling Response with {0} events", items.Count);
+                    Platform.Log(LogLevel.Debug, "Sending Polling Response with {0} events", events.Count);
 
-                    foreach(var item in items)
-                    {
-                        Platform.Log(LogLevel.Debug, "Event Sent: {0} [{1}]", item.Event.GetType().Name, item.Event.ToString());
-                    }
+                    foreach (var @event in events)
+                        Platform.Log(LogLevel.Debug, "Event Sent: {0} [{1}]", @event.GetType().Name, @event.ToString());
                 }
 
-                if (items.Count > 0)
+                if (events.Count > 0)
                 {
-                    ThreadPool.QueueUserWorkItem(o => ItemsReleased(items));
-
-                    return new EventSet
+                    var eventSet = new EventSet
                     {
-                        Events = items.Select(i => i.Event).ToArray(),
+                        Events = events.ToArray(),
                         ApplicationId = _applicationId,
                         Number = _nextEventSetNumber++,
                         HasMorePending = _queue.Count > 0,
                     };
+
+                    eventSet.Released();
+                    return eventSet;
                 }
             }
             return null;
-        }
-
-        private static void ItemsReleased(IEnumerable<Item> items)
-        {
-            foreach (var item in items.Where(item => item.EventReleased != null))
-                item.EventReleased(item.Event);
         }
 
         #region IDisposable Members

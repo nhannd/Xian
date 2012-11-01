@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.Web.Common
@@ -28,6 +29,21 @@ namespace ClearCanvas.Web.Common
 
         [DataMember(IsRequired = true)]
         public Guid? TriggeringMessageId { get; set; }
+
+        public Action<Event> DeliveredCallback { get; set; }
+        public Action<Event> ReleasedCallback { get; set; }
+
+        public void Delivered()
+        {
+            if (DeliveredCallback != null)
+                DeliveredCallback(this);
+        }
+
+        public void Released()
+        {
+            if (ReleasedCallback != null)
+                ReleasedCallback(this);
+        }
 
         #region Equality
 
@@ -85,5 +101,31 @@ namespace ClearCanvas.Web.Common
 
 		[DataMember(IsRequired = true)]
 		public Guid ApplicationId { get; set; }
-	}
+
+        public void Delivered()
+        {
+            if (Events == null || Events.Length == 0)
+                return;
+
+            foreach (var @event in Events.Where(e => e.DeliveredCallback != null))
+            {
+                var theEvent = @event;
+                theEvent.DeliveredCallback(@event);
+                theEvent.DeliveredCallback = null;
+            }
+        }
+
+        public void Released()
+        {
+            if (Events == null || Events.Length == 0)
+                return;
+
+            foreach (var @event in Events.Where(e => e.ReleasedCallback != null))
+            {
+                var theEvent = @event;
+                theEvent.ReleasedCallback(@event);
+                theEvent.ReleasedCallback = null;
+            }
+        }
+    }
 }

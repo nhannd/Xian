@@ -71,7 +71,7 @@ namespace ClearCanvas.Web.Services
     public interface IEventDeliveryStrategy
     {
         Guid ApplicationId { get; set; }
-        void Deliver(Event @event, Action<Event> eventReleased);
+        void Deliver(Event @event);
     }
 
 	public interface IApplication
@@ -154,9 +154,9 @@ namespace ClearCanvas.Web.Services
                     ThreadPool.QueueUserWorkItem(o => StatisticsLogger.Log(logName, LogLevel.Info, statistics));
             }
 
-            public override void FireEvent(Event e, Action<Event> eventReleased)
+            public override void FireEvent(Event e)
             {
-                _application.FireEvent(e, eventReleased);
+                _application.FireEvent(e);
             }
 
             public override void FatalError(Exception e)
@@ -463,10 +463,10 @@ namespace ClearCanvas.Web.Services
             }
 		}
 
-	    protected virtual void FireEvent(Event @event, Action<Event> eventReleased = null)
+	    protected virtual void FireEvent(Event @event)
 	    {
             InjectSenderName(@event);
-            _eventDeliveryStrategy.Deliver(@event, eventReleased);
+            _eventDeliveryStrategy.Deliver(@event);
 	    }
 
         private void InjectSenderName(Event @event)

@@ -92,6 +92,26 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             public const string ClientStackRendering = "TileEntityHandler.Rendering.Client.Stacking";
         }
 
+        private class Counter
+        {
+            private int _count;
+
+            public int Count
+            {
+                get { return Thread.VolatileRead(ref _count); }
+            }
+
+            public void Increment()
+            {
+                Interlocked.Increment(ref _count);
+            }
+
+            public void Decrement()
+            {
+                Interlocked.Decrement(ref _count);
+            }
+        }
+
         private string _mimeType;
         private int _quality;
         private bool _compareImageQuality = DiagnosticsSettings.Default.CompareImageQuality;
@@ -113,8 +133,14 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
         private long? _lastMouseMoveProcessedTicks;
         private Message _currentMessage;
 
-		[ThreadStatic]private static ContextMenuContainer _contextMenu;
-        private int _unreleasedImageCount;
+		[ThreadStatic]
+        private static ContextMenuContainer _contextMenu;
+        //Static, so it's the sum of all unreleased/undelivered images in all tiles.
+        [ThreadStatic]
+        private static Counter _unreleasedImageCounter;
+        [ThreadStatic]
+        private static Counter _undeliveredImageCounter;
+
 
         public TileEntityHandler()
 		{
@@ -198,9 +224,14 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			get { return _tile.PresentationImage as PresentationImage; }
 		}
 
-        private int UnreleasedImageCount
+        private Counter UnreleasedImageCounter
         {
-            get { return Thread.VolatileRead(ref _unreleasedImageCount); }
+            get { return _unreleasedImageCounter ?? (_unreleasedImageCounter = new Counter()); }
+        }
+
+        private Counter UndeliveredImageCounter
+        {
+            get { return _undeliveredImageCounter ?? (_undeliveredImageCounter = new Counter()); }
         }
 
 		private Common.Entities.InformationBox CreateInformationBox()
@@ -341,17 +372,25 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		public void Draw(bool refresh)
 		{
+            //Grab a reference because the callback will come in on a worker thread, and this thing is thread static.
+            var unreleasedCounter = UnreleasedImageCounter;
+            unreleasedCounter.Increment();
+
+            var undeliveredCounter = UndeliveredImageCounter;
+            undeliveredCounter.Increment();
+
             Event ev = new PropertyChangedEvent
                             {
                                 Identifier = Guid.NewGuid(),
                                 SenderId = Identifier,
                                 PropertyName = "Image",
                                 Value = CreateImage(),
-                                TriggeringMessageId = _currentMessage != null ? _currentMessage.Identifier : (Guid?)null
+                                TriggeringMessageId = _currentMessage != null ? _currentMessage.Identifier : (Guid?)null,
+                                ReleasedCallback = e => unreleasedCounter.Decrement(),
+                                DeliveredCallback = e => undeliveredCounter.Decrement()
                             };
 
-            Interlocked.Increment(ref _unreleasedImageCount);
-            ApplicationContext.FireEvent(ev, (e) => Interlocked.Decrement(ref _unreleasedImageCount));
+            ApplicationContext.FireEvent(ev);
 		}
 
         private Image CreateImage()
@@ -536,9 +575,9 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                         Platform.Log(LogLevel.Debug, "Mouse move message discarded - image was processing when received.");
                         return;
                     }
-                    if (UnreleasedImageCount > 0)
+                    if (UndeliveredImageCounter.Count > 0)
                     {
-                        Platform.Log(LogLevel.Debug, "Mouse move message discarded - unreleased images.");
+                        Platform.Log(LogLevel.Debug, "Mouse move message discarded - undelivered images.");
                         return;
                     }
                 }
