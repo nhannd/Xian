@@ -104,9 +104,16 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 		/// <param name="msg">The query message to be audited</param>
 		private static void AuditLog(AssociationParameters parms, EventIdentificationContentsEventOutcomeIndicator outcome, DicomMessage msg)
 		{
-		    var helper = new QueryAuditHelper(ServerPlatform.AuditSource,
-		                                      outcome, parms, msg.AffectedSopClassUid, msg.DataSet);
-			ServerPlatform.LogAuditMessage(helper);
+		    try
+		    {
+                var helper = new QueryAuditHelper(ServerPlatform.AuditSource,
+                                              outcome, parms, msg.AffectedSopClassUid, msg.DataSet);
+                ServerPlatform.LogAuditMessage(helper);
+		    }
+		    catch (Exception e)
+		    {
+		        Platform.Log(LogLevel.Warn, "Unexpected exception logging DICOM Query audit message: {0}", e.Message);
+		    }
 		}
 
         /// <summary>
