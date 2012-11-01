@@ -30,6 +30,9 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
 		public bool HasCapture { get; set; }
 
         [DataMember(IsRequired = false)]
+        public bool HasWheelCapture { get; set; }
+
+        [DataMember(IsRequired = false)]
         public Position MousePosition { get; set; }
 
         [DataMember(IsRequired = false)]

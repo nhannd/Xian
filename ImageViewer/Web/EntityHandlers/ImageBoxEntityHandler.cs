@@ -9,7 +9,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Web.Common;

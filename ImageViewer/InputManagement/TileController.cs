@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			[ThreadStatic]
 			private static MouseWheelManager _instance;
 
-		    private ITile _captureTile;
+		    private TileController _captureTileController;
 			private IMouseWheelHandler _captureMouseWheelHandler;
 
 		    private DelayedEventPublisher _delayedStop;
@@ -160,9 +160,9 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				get { return _instance ?? (_instance = new MouseWheelManager()); }
 			}
 
-			public void SetCaptureHandler(ITile tile, IMouseWheelHandler captureMouseWheelHandler)
+			public void SetCaptureHandler(TileController tileController, IMouseWheelHandler captureMouseWheelHandler)
 			{
-				if (_captureTile == tile && _captureMouseWheelHandler == captureMouseWheelHandler)
+                if (_captureTileController == tileController && _captureMouseWheelHandler == captureMouseWheelHandler)
 					return;
 
 				if (_captureMouseWheelHandler != null)
@@ -173,11 +173,12 @@ namespace ClearCanvas.ImageViewer.InputManagement
                         _delayedStop = null;
                     }
 
-				    _captureMouseWheelHandler.StopWheel();
-                    _captureTile.ImageViewer.EventBroker.OnMouseWheelCaptureChanged(new MouseWheelCaptureChangedEventArgs(_captureTile, false));
+                    EventsHelper.Fire(tileController._wheelCaptureChangingEvent, tileController, new ItemEventArgs<IMouseWheelHandler>(null));
+                    _captureMouseWheelHandler.StopWheel();
+                    _captureTileController._tile.ImageViewer.EventBroker.OnMouseWheelCaptureChanged(new MouseWheelCaptureChangedEventArgs(_captureTileController._tile, false));
 				}
 
-			    _captureTile = tile;
+			    _captureTileController = tileController;
 				_captureMouseWheelHandler = captureMouseWheelHandler;
                 
 				if (_captureMouseWheelHandler == null)
@@ -190,10 +191,11 @@ namespace ClearCanvas.ImageViewer.InputManagement
                     return;
 				}
 
-                _delayedStop = new DelayedEventPublisher((s, e) => SetCaptureHandler(tile, null), WheelStopDelayMilliseconds);
+                _delayedStop = new DelayedEventPublisher((s, e) => SetCaptureHandler(tileController, null), WheelStopDelayMilliseconds);
 
-				_captureMouseWheelHandler.StartWheel();
-                _captureTile.ImageViewer.EventBroker.OnMouseWheelCaptureChanged(new MouseWheelCaptureChangedEventArgs(_captureTile, true));
+                EventsHelper.Fire(tileController._wheelCaptureChangingEvent, tileController, new ItemEventArgs<IMouseWheelHandler>(_captureMouseWheelHandler));
+                _captureMouseWheelHandler.StartWheel();
+                _captureTileController._tile.ImageViewer.EventBroker.OnMouseWheelCaptureChanged(new MouseWheelCaptureChangedEventArgs(_captureTileController._tile, true));
 
                 _delayedStop.Publish(this, EventArgs.Empty);
 			}
@@ -227,6 +229,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		private event EventHandler _cursorTokenChanged;
 		private event EventHandler<ItemEventArgs<Point>> _contextMenuRequested;
 		private event EventHandler<ItemEventArgs<IMouseButtonHandler>> _captureChangingEvent;
+        private event EventHandler<ItemEventArgs<IMouseWheelHandler>> _wheelCaptureChangingEvent;
 
 		private XMouseButtons _activeButton;
 		private uint _clickCount;
@@ -314,7 +317,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		{
 			set 
 			{
-				MouseWheelManager.Instance.SetCaptureHandler(_tile, value);
+				MouseWheelManager.Instance.SetCaptureHandler(this, value);
 			}
 		}
 
@@ -958,6 +961,15 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			add { _captureChangingEvent += value; }
 			remove { _captureChangingEvent -= value; }
 		}
+
+        /// <summary>
+        /// For use by the view layer, so it can detect when capture is changing.
+        /// </summary>
+        public event EventHandler<ItemEventArgs<IMouseWheelHandler>> WheelCaptureChanging
+        {
+            add { _wheelCaptureChangingEvent += value; }
+            remove { _wheelCaptureChangingEvent -= value; }
+        }
 
 		#endregion
 

@@ -12,25 +12,18 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Common.Utilities.Imaging;
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Web.Common;
 using ClearCanvas.ImageViewer.Web.Common.Events;
 using ClearCanvas.ImageViewer.Web.Utiltities;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Events;
 using ClearCanvas.Web.Services;
-using SharpCompress.Compressor.BZip2;
 using TileEntity = ClearCanvas.ImageViewer.Web.Common.Entities.Tile;
 using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.ImageViewer.InputManagement;
@@ -43,9 +36,7 @@ using Rectangle=System.Drawing.Rectangle;
 using ClearCanvas.ImageViewer.Web.Common.Entities;
 using ClearCanvas.Web.Common.Messages;
 using ClearCanvas.Common;
-using CompressionMode = SharpCompress.Compressor.CompressionMode;
 using Cursor=ClearCanvas.ImageViewer.Web.Common.Entities.Cursor;
-using Encoder = System.Drawing.Imaging.Encoder;
 using Image = ClearCanvas.Web.Common.Image;
 using MouseLeaveMessage = ClearCanvas.ImageViewer.Web.Common.Messages.MouseLeaveMessage;
 
@@ -119,6 +110,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 		private Tile _tile;
 		private Point _mousePosition;
 		private bool _hasCapture;
+        private bool _hasWheelCapture;
 
 		private WebTileInputTranslator _tileInputTranslator;
 		private TileController _tileController;
@@ -130,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
         private readonly IJpegCompressor _jpegCompressor;
         private readonly IPngEncoder _pngEncoder;
 
-        private long? _lastMouseMoveProcessedTicks;
+        private long? _lastMouseMessageProcessedTicks;
         private Message _currentMessage;
 
 		[ThreadStatic]
@@ -186,6 +178,19 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 				NotifyEntityPropertyChanged("HasCapture", _hasCapture);
 			}
 		}
+
+        private bool HasWheelCapture
+        {
+            get { return _hasWheelCapture; }
+            set
+            {
+                if (value == _hasWheelCapture)
+                    return;
+
+                _hasWheelCapture = value;
+                NotifyEntityPropertyChanged("HasWheelCapture", _hasWheelCapture);
+            }
+        }
 
 		private IRenderer Renderer
 		{
@@ -281,10 +286,11 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 			_tile.RendererChanged += OnRendererChanged;
 			_tile.SelectionChanged += OnSelectionChanged;
 			_tileController.CaptureChanging += OnCaptureChanging;
-		    _tile.InformationBoxChanged += OnInformationBoxChanged;
+            _tileController.WheelCaptureChanging += OnWheelCaptureChanging;
+            _tile.InformationBoxChanged += OnInformationBoxChanged;
 		}
 
-		protected override void UpdateEntity(Common.Entities.Tile entity)
+        protected override void UpdateEntity(Common.Entities.Tile entity)
 		{
 			entity.NormalizedRectangle = _tile.NormalizedRectangle;
 			entity.ClientRectangle = ClientRectangle;
@@ -359,6 +365,11 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 		{
 			HasCapture = e.Item != null;
 		}
+
+        private void OnWheelCaptureChanging(object sender, ItemEventArgs<IMouseWheelHandler> e)
+        {
+            HasWheelCapture = e.Item != null;
+        }
 
 		private void OnSelectionChanged(object sender, ItemEventArgs<ITile> e)
 		{
@@ -557,19 +568,47 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		private void ProcessMouseWheelMessage(MouseWheelMessage message)
 		{
-			var e = new MouseEventArgs(MouseButtons.None, 1, 0, 0, message.Delta);
-			object msg = _tileInputTranslator.OnMouseWheel(e);
+            var messageProcessingStatistics = new MessageProcessingStatistics(message.GetType());
+            if (_lastMouseMessageProcessedTicks.HasValue)
+            {
+                if (message.IsDiscardable)
+                {
+                    var receivedBeforeLastMessageProcessed = (_lastMouseMessageProcessedTicks.Value - message.ReceiveTimeTicks) >= 0;
+                    if (receivedBeforeLastMessageProcessed)
+                    {
+                        Platform.Log(LogLevel.Debug, "Mouse wheel message discarded - image was processing when received.");
+                        return;
+                    }
+                    if (UndeliveredImageCounter.Count > 2)
+                    {
+                        Platform.Log(LogLevel.Debug, "Mouse wheel message discarded - undelivered images.");
+                        return;
+                    }
+                }
+
+                messageProcessingStatistics.TimeSinceLastMessageProcessed.Value = TimeSpan.FromMilliseconds(Environment.TickCount - _lastMouseMessageProcessedTicks.Value);
+            }
+
+            messageProcessingStatistics.ProcessingTime.Start();
+
+            var e = new MouseEventArgs(MouseButtons.None, 1, 0, 0, message.Delta);
+            object msg = _tileInputTranslator.OnMouseWheel(e);
 			_tileController.ProcessMessage(msg);
-		}
+
+            messageProcessingStatistics.ProcessingTime.End();
+            ApplicationContext.LogStatistics(LogNames.MessageProcessing, messageProcessingStatistics);
+
+            _lastMouseMessageProcessedTicks = Environment.TickCount;
+        }
 
 		private void ProcessMouseMoveMessage(MouseMoveMessage message)
 		{
             var messageProcessingStatistics = new MessageProcessingStatistics(message.GetType());
-            if (_lastMouseMoveProcessedTicks.HasValue)
+            if (_lastMouseMessageProcessedTicks.HasValue)
             {
                 if (message.IsDiscardable)
                 {
-                    var receivedBeforeLastMessageProcessed = (_lastMouseMoveProcessedTicks.Value - message.ReceiveTimeTicks) >= 0;
+                    var receivedBeforeLastMessageProcessed = (_lastMouseMessageProcessedTicks.Value - message.ReceiveTimeTicks) >= 0;
                     if (receivedBeforeLastMessageProcessed)
                     {
                         Platform.Log(LogLevel.Debug, "Mouse move message discarded - image was processing when received.");
@@ -582,7 +621,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                     }
                 }
 
-                messageProcessingStatistics.TimeSinceLastMessageProcessed.Value = TimeSpan.FromMilliseconds(Environment.TickCount - _lastMouseMoveProcessedTicks.Value);
+                messageProcessingStatistics.TimeSinceLastMessageProcessed.Value = TimeSpan.FromMilliseconds(Environment.TickCount - _lastMouseMessageProcessedTicks.Value);
             }
 
             messageProcessingStatistics.ProcessingTime.Start();
@@ -602,7 +641,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             messageProcessingStatistics.ProcessingTime.End();
             ApplicationContext.LogStatistics(LogNames.MessageProcessing, messageProcessingStatistics);
 
-            _lastMouseMoveProcessedTicks = Environment.TickCount;
+            _lastMouseMessageProcessedTicks = Environment.TickCount;
         }
 
         private void ProcessMouseMessage(MouseMessage message)
@@ -662,7 +701,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 				_tileController.CursorTokenChanged -= OnCursorTokenChanged;
 				_tileController.ContextMenuRequested -= OnContextMenuRequested;
 				_tileController.CaptureChanging -= OnCaptureChanging;
-				_tile.InformationBoxChanged -= OnInformationBoxChanged;
+                _tileController.WheelCaptureChanging -= OnWheelCaptureChanging;
+                _tile.InformationBoxChanged -= OnInformationBoxChanged;
 
 				if (_contextMenu != null)
 				{

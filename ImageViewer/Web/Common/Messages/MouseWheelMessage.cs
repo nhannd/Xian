@@ -19,5 +19,9 @@ namespace ClearCanvas.ImageViewer.Web.Common.Messages
     {
         [DataMember(IsRequired = true)]
         public int Delta { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public bool IsDiscardable { get; set; }
+
     }
 }
