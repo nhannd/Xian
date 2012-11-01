@@ -575,7 +575,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                         Platform.Log(LogLevel.Debug, "Mouse move message discarded - image was processing when received.");
                         return;
                     }
-                    if (UndeliveredImageCounter.Count > 0)
+                    if (UndeliveredImageCounter.Count > 2)
                     {
                         Platform.Log(LogLevel.Debug, "Mouse move message discarded - undelivered images.");
                         return;
