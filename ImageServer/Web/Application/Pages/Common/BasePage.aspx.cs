@@ -16,6 +16,8 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Web.Common;
 using Resources;
+using ClearCanvas.ImageServer.Web.Common.Extensions;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
 {
@@ -27,9 +29,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
     /// </remarks>
     public partial class BasePage : System.Web.UI.Page
     {
+        private bool _extensionLoaded;
+        protected List<object> Extensions = new List<object>();
+
         protected override void OnPreInit(EventArgs e)
         {
             base.OnPreInit(e);
+
+            LoadExtensions();
 
             ThemeManager.ApplyTheme(this);
 
@@ -37,6 +44,33 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
             if (Request.ServerVariables["http_user_agent"].IndexOf("Safari", StringComparison.CurrentCultureIgnoreCase) != -1)
                 Page.ClientTarget = "uplevel";
         
+        }
+
+        private void LoadExtensions()
+        {
+            lock (Extensions)
+            {
+                if (!_extensionLoaded)
+                {
+                    try
+                    {
+                        Extensions.Clear();
+
+                        var attrs = ClearCanvas.Common.Utilities.AttributeUtils.GetAttributes<ExtensibleAttribute>(this.GetType(), true);
+                        foreach (var attr in attrs)
+                        {
+                            var xp = Activator.CreateInstance(attr.ExtensionPoint);
+                            Extensions.AddRange((xp as ExtensionPoint).CreateExtensions());
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Platform.Log(LogLevel.Error, ex, "Unable to load page extension");
+                    }
+                }
+                
+            }
+            
         }
         
         protected void SetPageTitle(string title)
@@ -74,5 +108,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
                     ? title
                     : title + " [" + ConfigurationManager.AppSettings["ServerName"] + "]";
 		}
+
+        protected void ForeachExtension<T>(Action<T> action)
+        {
+            if (Extensions!=null)
+            {
+                foreach(var ex in Extensions)
+                {
+                    if (ex is T)
+                    {
+                        action((T) ex);
+                    }
+                }
+            }
+        }
     }
 }

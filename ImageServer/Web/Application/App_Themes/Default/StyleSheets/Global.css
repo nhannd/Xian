@@ -360,7 +360,7 @@ Global.css - Defines the global styles for the entire web application relating
     font-size: 11px;
     font-weight: normal;
     padding-left: 2px;
-    width: 100px;
+    width: 120px;
 	margin-left: 3px;
 	margin-right: 3px;
 	border: solid 1px #305ba6;
@@ -435,7 +435,6 @@ Global.css - Defines the global styles for the entire web application relating
     text-decoration: none;
     background: #8FC3E4 url(../../../PersistantImage.ashx?key=ClearButtonBackground);
     padding: 1px 3px 2px 3px;
-    margin-left: 18px;
 }
 
 .EmptySearchResultsMessage

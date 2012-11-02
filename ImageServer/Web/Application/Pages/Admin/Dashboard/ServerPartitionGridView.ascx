@@ -52,7 +52,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="<%$Resources: ColumnHeaders, PartitionStudiesCount %>">
                         <ItemTemplate>
-                            <asp:Label ID="Studies" runat="server" Text='<%# Bind("StudyCount") %>'></asp:Label>
+                            <asp:Label ID="Studies" runat="server" Text='<%# Eval("StudyCount", "{0:N0}") %>'></asp:Label>
                         </ItemTemplate>
                         <ItemStyle HorizontalAlign="Center" />
                         <HeaderStyle HorizontalAlign="Center" />

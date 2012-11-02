@@ -825,4 +825,10 @@ At least one server partition is required. Please add a new server partition.</v
   <data name="StudyDetails_JumpToNonUpdatableGroupListingSectionLink" xml:space="preserve">
     <value>Jump to other authority groups</value>
   </data>
+  <data name="Example" xml:space="preserve">
+    <value>e.g. {0}</value>
+  </data>
+  <data name="WorkQueueDeleteWarning" xml:space="preserve">
+    <value>Warning: deleting this WorkQueue item may result in loss of images or incorrect study information!</value>
+  </data>
 </root>

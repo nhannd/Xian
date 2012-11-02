@@ -11,18 +11,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using ClearCanvas.ImageServer.Web.Common.Data.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 {
@@ -40,7 +31,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
             {
                 totalStudies += partition.StudyCount;
             }
-            TotalStudiesLabel.Text = totalStudies.ToString();
+            TotalStudiesLabel.Text = totalStudies.ToString("N0");
 
             _partitions = partitions;
             StudiesDataList.DataSource = _partitions;

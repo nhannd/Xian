@@ -33,7 +33,7 @@ function ValidationUsernameParams() {
             <asp:Table runat="server" skinID="NoSkin" CellSpacing="3" CellPadding="3">
        
                 <asp:TableRow runat="server" ID="UserNameRow">
-                    <asp:TableCell runat="server"><asp:Label ID="Label2" runat="server" Text="<%$Resources: InputLabels, AdminUsers_AddEditDialog_UserID %>" CssClass="DialogTextBoxLabel" /></asp:TableCell>
+                    <asp:TableCell runat="server" Wrap="false"><asp:Label ID="Label2" runat="server" Text="<%$Resources: InputLabels, AdminUsers_AddEditDialog_UserID %>" CssClass="DialogTextBoxLabel" /></asp:TableCell>
                     <asp:TableCell><asp:TextBox runat="server" ID="UserLoginId" CssClass="DialogTextBox" Width="100%"></asp:TextBox><asp:HiddenField ID="OriginalUserLoginId" runat="server" /></asp:TableCell>
                     <asp:TableCell runat="server" HorizontalAlign="left">
                         <ccAsp:InvalidInputIndicator ID="UserLoginHelpId" runat="server" SkinID="InvalidInputIndicator" />

@@ -234,11 +234,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             PatientID.Text = Study.PatientId;
             DateTime? birthDate = String.IsNullOrEmpty(Study.PatientsBirthDate)? null:DateParser.Parse(Study.PatientsBirthDate);
-            PatientBirthDateCalendarExtender.SelectedDate = birthDate;
             if (birthDate == null)
                 PatientBirthDate.Text = String.Empty; // calendar fills in the default date if it's null, we don't want that to happen.
-
-            PatientBirthDateCalendarExtender.SelectedDate = birthDate;
 
             if (!String.IsNullOrEmpty(Study.PatientsAge))
             {
@@ -412,7 +409,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             SetupJavascript();
             EditStudyDetailsValidationSummary.HeaderText = ErrorMessages.EditStudyValidationError;
-            CalendarLink.ImageUrl = ImageServerConstants.ImageURLs.CalendarIcon;
             EnsurePredefinedReasonsLoaded();
 
             //Set up the control to handle custom reasons if the user has the authority.
@@ -433,40 +429,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             }
 
             string pattern = InputDateParser.DateFormat;
-            // Use "9" as placeholder for numbers and "/" as placeholder for the date separator 
-            // (the MaskedEditExtender will use the date separator set in the current UICulture)
-            PatientBirthDateMaskExtender.Mask =
-                pattern.Replace("d", "9").Replace("M", "9").Replace("y", "9").Replace(
-                    CultureInfo.CurrentCulture.DateTimeFormat.DateSeparator, "/");
-            PatientBirthDateCalendarExtender.Format = pattern;
             StudyDateCalendarExtender.Format = pattern;
+
+            var d = new DateTime(2008, 05, 27);
+            DateExampleLabel.Text = string.Format("({0})", string.Format(SR.Example, d.ToString(pattern)));
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
-            // Ensure the birthdate entered if invalid will not be erased by the calendar extender
-            // Note: this code is actually needed for Firefox because the server validation is used.
-            // For IE, because of client-side validation, all input is already valid on postback.
-            if (!String.IsNullOrEmpty(PatientBirthDate.Text))
-            {
-                DateTime result;
-                if (InputDateParser.TryParse(PatientBirthDate.Text, out result))
-                {
-                    // entered value is actually valid... update the calendar
-                    PatientBirthDateCalendarExtender.SelectedDate = result;
-                }
-                else
-                {
-                    PatientBirthDateCalendarExtender.SelectedDate = null;
-                }
-            }
-            else
-            {
-                // Prevents the calendar from copying its value into the textbox
-                PatientBirthDateCalendarExtender.SelectedDate = null;
-            }
 
             // Ensure the study date entered if invalid will not be erased by the calendar extender
             // Note: this code is actually needed for Firefox because the server validation is used.

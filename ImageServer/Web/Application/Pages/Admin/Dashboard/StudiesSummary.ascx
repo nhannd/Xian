@@ -19,7 +19,7 @@
         <td align="center" nowrap="nowrap"><%= ColumnHeaders.Dashboard_StudiesSummary_NumberOfStudies %></td></tr>
     </HeaderTemplate>
     <ItemTemplate>
-        <tr><td style="padding: 2px 2px 2px 4px;" nowrap="nowrap"><asp:LinkButton runat="server" ID="PartitionLink"><%#Eval("AETitle") %></asp:LinkButton></td><td align="center" style="padding: 2px;"><%#Eval("StudyCount") %></td></tr>
+        <tr><td style="padding: 2px 2px 2px 4px;" nowrap="nowrap"><asp:LinkButton runat="server" ID="PartitionLink"><%#Eval("AETitle") %></asp:LinkButton></td><td align="center" style="padding: 2px;"><%#Eval("StudyCount", "{0:N0}")%></td></tr>
     </ItemTemplate>
     <AlternatingItemStyle CssClass="OverviewAlernateRow" />
 </asp:DataList>

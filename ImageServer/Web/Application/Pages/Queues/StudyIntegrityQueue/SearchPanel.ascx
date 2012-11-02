@@ -62,13 +62,13 @@ function MultiSelect() {
                                                 <asp:Label ID="Label2" runat="server" Text="<%$Resources: SearchFieldLabels,FromDate%>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" />
                                                 <asp:LinkButton ID="ClearFromDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 8px;"/><br />
-                                                <ccUI:TextBox ID="FromDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="<%$Resources: Tooltips,SearchByStudyDate %>" style="width:85px"/>
+                                                <ccUI:TextBox ID="FromDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="<%$Resources: Tooltips,SearchByStudyDate %>"/>
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label6" runat="server" Text="<%$Resources: SearchFieldLabels,ToDate%>" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" />
                                                 <asp:LinkButton ID="ClearToDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 22px;"/><br />
-                                                <ccUI:TextBox ID="ToDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="<%$Resources: Tooltips,SearchByStudyDate %>" style="width:85px"/>
+                                                <ccUI:TextBox ID="ToDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="<%$Resources: Tooltips,SearchByStudyDate %>"/>
                                             </td>                                            
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label5" runat="server" Text="<%$Resources: SearchFieldLabels,SIQReason%>" CssClass="SearchTextBoxLabel"

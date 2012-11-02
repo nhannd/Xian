@@ -33,9 +33,9 @@ For the complete license, see http://www.clearcanvas.ca/OSLv3.0
                 <ccUI:DateTimeLabel ID="LastAccessedTime" runat="server" Value='<%# Eval("LastAccessedTime") %>' ></ccUI:DateTimeLabel>
             </ItemTemplate>
         </asp:TemplateField>
-        <asp:BoundField DataField="WriteLock" HeaderText="<%$Resources: DetailedViewFieldLabels, StudyStorage_WriteLock %>">
+        <asp:CheckBoxField DataField="WriteLock" HeaderText="<%$Resources: DetailedViewFieldLabels, StudyStorage_WriteLock %>">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
-        </asp:BoundField>
+        </asp:CheckBoxField>
         <asp:BoundField DataField="ReadLock" HeaderText="<%$Resources: DetailedViewFieldLabels, StudyStorage_ReadLock %>">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
         </asp:BoundField>

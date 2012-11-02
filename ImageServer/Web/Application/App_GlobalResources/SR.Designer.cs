@@ -740,6 +740,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to e.g. {0}.
+        /// </summary>
+        internal static string Example {
+            get {
+                return ResourceManager.GetString("Example", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Female.
         /// </summary>
         internal static string Female {
@@ -2032,6 +2041,15 @@ namespace Resources {
         internal static string WorkQueueDeleteFailed_WithException {
             get {
                 return ResourceManager.GetString("WorkQueueDeleteFailed_WithException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning: deleting this WorkQueue item may result in loss of images or incorrect study information!.
+        /// </summary>
+        internal static string WorkQueueDeleteWarning {
+            get {
+                return ResourceManager.GetString("WorkQueueDeleteWarning", resourceCulture);
             }
         }
         
