@@ -883,11 +883,38 @@ namespace ClearCanvas.ImageViewer
             try
             {
                 imageViewer.Layout();
+                imageViewer.PhysicalWorkspace.SelectDefaultImageBox();
+                imageViewer.StartPrefetching();
+                workspace.ActiveChanged += (sender, e) => imageViewer.ManagePrefetching();
             }
             catch (Exception)
             {
                 workspace.Close();
                 throw;
+            }
+        }
+        private void ManagePrefetching()
+        {
+            try
+            {
+                if (DesktopWindow.ActiveWorkspace != null && DesktopWindow.ActiveWorkspace.Component is ImageViewerComponent)
+                {
+                    if (DesktopWindow.ActiveWorkspace.Component == this)
+                        StartPrefetching();
+                    else
+                        StopPrefetching();
+                }
+                else
+                {
+                    foreach (var viewer in Application.DesktopWindows["Root"].Workspaces.Select(workspace => workspace.Component).OfType<ImageViewerComponent>())
+                    {
+                        viewer.StopPrefetching();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Platform.Log(LogLevel.Error, ex, "Could not manage prefetching.");
             }
         }
 
@@ -1018,16 +1045,24 @@ namespace ClearCanvas.ImageViewer
 
 		#region Private methods
 
-		private void StopPrefetching()
-		{
-			foreach (IStudyLoader loader in _studyLoaders)
-			{
-				if (loader.PrefetchingStrategy != null)
-					loader.PrefetchingStrategy.Stop();
-			}
-		}
 
-		private void StopLoadingPriors()
+        private void StartPrefetching()
+        {
+            foreach (var loader in _studyLoaders.Cast<IStudyLoader>().Where(loader => loader.PrefetchingStrategy != null))
+            {
+                loader.PrefetchingStrategy.Start(this);
+            }
+        }
+
+	    private void StopPrefetching()
+	    {
+	        foreach (var loader in _studyLoaders.Cast<IStudyLoader>().Where(loader => loader.PrefetchingStrategy != null))
+	        {
+	            loader.PrefetchingStrategy.Stop();
+	        }
+	    }
+
+	    private void StopLoadingPriors()
 		{
 			if (_priorStudyLoader != null)
 				_priorStudyLoader.Stop();

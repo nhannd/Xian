@@ -16,6 +16,7 @@ using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.Common;
 using System.Threading;
 using System.Diagnostics;
+using DataCache;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -32,6 +33,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		protected readonly object SyncLock = new object();
 
 		private volatile ISopFrameData[] _frameData;
+        private volatile int _frameDataCreateCount;
 
 		/// <summary>
 		/// Constructs a new <see cref="StandardSopDataSource"/>.
@@ -46,36 +48,37 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _frameData != null || Sop.IsImageSop(SopClass.GetSopClass(this.SopClassUid)); }
 		}
 
-		/// <summary>
-		/// Called by the base class to create a new <see cref="StandardSopFrameData"/> containing the data for a particular frame in the SOP instance.
-		/// </summary>
-		/// <param name="frameNumber">The 1-based number of the frame for which the data is to be retrieved.</param>
-		/// <returns>A new <see cref="StandardSopFrameData"/> containing the data for a particular frame in the SOP instance.</returns>
-		protected abstract StandardSopFrameData CreateFrameData(int frameNumber);
+	    /// <summary>
+	    /// Called by the base class to create a new <see cref="StandardSopFrameData"/> containing the data for a particular frame in the SOP instance.
+	    /// </summary>
+	    /// <param name="frameInfo"> </param>
+	    /// <returns>A new <see cref="StandardSopFrameData"/> containing the data for a particular frame in the SOP instance.</returns>
+	    protected abstract StandardSopFrameData CreateFrameData(FrameInfo frameInfo);
 
-		/// <summary>
-		/// Gets the data for a particular frame in the SOP instance.
-		/// </summary>
-		/// <param name="frameNumber">The 1-based number of the frame for which the data is to be retrieved.</param>
-		/// <returns>An <see cref="ISopFrameData"/> containing frame-specific data.</returns>
-		protected override ISopFrameData GetFrameData(int frameNumber)
+	    /// <summary>
+	    /// Gets the data for a particular frame in the SOP instance.
+	    /// </summary>
+	    /// <param name="frameInfo"> </param>
+	    /// <param name="frameNumber">The 1-based number of the frame for which the data is to be retrieved.</param>
+	    /// <returns>An <see cref="ISopFrameData"/> containing frame-specific data.</returns>
+	    protected override ISopFrameData GetFrameData(FrameInfo frameInfo)
 		{
-			if(_frameData == null)
-			{
-				lock(this.SyncLock)
-				{
-					if(_frameData == null)
-					{
-						var frameData = new ISopFrameData[this.NumberOfFrames];
-						for (int n = 0; n < frameData.Length; n++)
-							frameData[n] = this.CreateFrameData(n + 1);
-						
-						_frameData = frameData;
-					}
-				}
-			}
-
-			return _frameData[frameNumber - 1];
+			            if (_frameData == null || _frameDataCreateCount < _frameData.Length)
+            {
+                lock (SyncLock)
+                {
+                    if (_frameData == null)
+                    {
+                        _frameData = new ISopFrameData[NumberOfFrames];
+                    }
+                    if (_frameData[frameInfo.FrameNumber - 1] == null)
+                    {
+                        _frameData[frameInfo.FrameNumber - 1] = CreateFrameData(frameInfo);
+                        _frameDataCreateCount++;
+                    }
+                }
+            }
+                        return _frameData[frameInfo.FrameNumber - 1];
 		}
 
 		/// <summary>
@@ -97,8 +100,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				if (frameData != null)
 				{
-					foreach (ISopFrameData frame in frameData)
-						frame.Dispose();
+					foreach (var frame in frameData)
+					{
+					    if (frame != null)
+                            frame.Dispose();
+					}
 				}
 			}
 		}
@@ -116,9 +122,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			protected readonly object SyncLock = new object();
 
 			private readonly Dictionary<int, byte[]> _overlayData = new Dictionary<int, byte[]>(16);
-			private volatile byte[] _pixelData = null;
+		    protected readonly FrameInfo FrameInfo;
 
-			private readonly LargeObjectContainerData _largeObjectContainerData = new LargeObjectContainerData(Guid.NewGuid());
+			protected readonly LargeObjectContainerData _largeObjectContainerData = new LargeObjectContainerData(Guid.NewGuid());
 
 			/// <summary>
 			/// Constructs a new <see cref="StandardSopFrameData"/>
@@ -127,23 +133,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// <param name="parent">The parent <see cref="ISopDataSource"/> that this frame belongs to.</param>
 			/// <exception cref="ArgumentNullException">Thrown if <paramref name="parent"/> is null.</exception>
 			/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="frameNumber"/> is zero or negative.</exception>
-			protected StandardSopFrameData(int frameNumber, StandardSopDataSource parent)
-				: this(frameNumber, parent, RegenerationCost.Medium)
+			protected StandardSopFrameData(FrameInfo frameInfo, StandardSopDataSource parent)
+				: this(frameInfo, parent, RegenerationCost.Medium)
 			{
 			}
 
-			/// <summary>
-			/// Constructs a new <see cref="StandardSopFrameData"/>.
-			/// </summary>
-			/// <param name="frameNumber">The 1-based number of this frame.</param>
-			/// <param name="parent">The parent <see cref="ISopDataSource"/> that this frame belongs to.</param>
-			/// <param name="regenerationCost">The approximate cost to regenerate the pixel and/or overlay data.</param>
-			/// <exception cref="ArgumentNullException">Thrown if <paramref name="parent"/> is null.</exception>
-			/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="frameNumber"/> is zero or negative.</exception>
-			protected StandardSopFrameData(int frameNumber, StandardSopDataSource parent, RegenerationCost regenerationCost) 
-				: base(frameNumber, parent)
+		    /// <summary>
+		    /// Constructs a new <see cref="StandardSopFrameData"/>.
+		    /// </summary>
+		    /// <param name="frameInfo"> </param>
+		    /// <param name="parent">The parent <see cref="ISopDataSource"/> that this frame belongs to.</param>
+		    /// <param name="regenerationCost">The approximate cost to regenerate the pixel and/or overlay data.</param>
+		    /// <exception cref="ArgumentNullException">Thrown if <paramref name="parent"/> is null.</exception>
+		    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="frameNumber"/> is zero or negative.</exception>
+		    protected StandardSopFrameData(FrameInfo frameInfo, StandardSopDataSource parent, RegenerationCost regenerationCost) 
+				: base(frameInfo.FrameNumber, parent)
 			{
 				_largeObjectContainerData.RegenerationCost = regenerationCost;
+		        FrameInfo = frameInfo;
 			}
 
 			/// <summary>
@@ -196,42 +203,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				_largeObjectContainerData.UpdateLastAccessTime();
 
-				byte[] pixelData = _pixelData;
-				if (pixelData == null)
-				{
-					lock (this.SyncLock)
-					{
-						pixelData = _pixelData;
-						if (pixelData == null)
-						{
-							pixelData = _pixelData = CreateNormalizedPixelData();
-							if (pixelData != null)
-							{
-								//Platform.Log(LogLevel.Debug, "Created pixel data of length {0}", pixelData.Length);
-								UpdateLargeObjectInfo();
-								MemoryManager.Add(this);
-								Diagnostics.OnLargeObjectAllocated(pixelData.Length);
-							}
-						}
-					}
-				}
+			    var cached = Frame.Cache.Get(FrameInfo.CacheId);
+                if (cached != null)
+			      return cached.PixelData;
 
-				return pixelData;
+                byte[] pixelData = CreateNormalizedPixelData();
+
+                Frame.Cache.Put(FrameInfo.CacheId, new PixelCacheItem
+                {
+                    Size = pixelData.Length,
+                    PixelData = pixelData,
+                    IsCompressed = false
+                });
+			    return pixelData;
 			}
 
-			private void UpdateLargeObjectInfo()
+			protected void UpdateLargeObjectInfo()
 			{
-				if (_pixelData == null)
-				{
-					_largeObjectContainerData.LargeObjectCount = 0;
-					_largeObjectContainerData.BytesHeldCount = 0;
-				}
-				else
-				{
-					_largeObjectContainerData.LargeObjectCount = 1;
-					_largeObjectContainerData.BytesHeldCount = _pixelData.Length;
-				}
-
 				_largeObjectContainerData.LargeObjectCount += _overlayData.Count;
 				foreach (KeyValuePair<int, byte[]> pair in _overlayData)
 				{
@@ -326,8 +314,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					_largeObjectContainerData.UpdateLastAccessTime();
 
 					ReportLargeObjectsUnloaded();
-
-					_pixelData = null;
 					_overlayData.Clear();
 					this.OnUnloaded();
 
@@ -341,6 +327,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// </summary>
 			protected virtual void OnUnloaded()
 			{
+
+                Frame.Cache.ClearFromMemory(FrameInfo.CacheId);
 			}
 
 			/// <summary>
@@ -353,11 +341,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				if (disposing)
 				{
+                    Unload();
 					lock (this.SyncLock)
 					{
 						ReportLargeObjectsUnloaded();
-
-						_pixelData = null;
 						_overlayData.Clear();
 
 						MemoryManager.Remove(this);
@@ -367,9 +354,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			private void ReportLargeObjectsUnloaded()
 			{
-				if (_pixelData != null)
-					Diagnostics.OnLargeObjectReleased(_pixelData.Length);
-
 				foreach (byte[] overlayData in _overlayData.Values)
 				{
 					if (overlayData != null)

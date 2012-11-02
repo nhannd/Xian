@@ -24,45 +24,66 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 	public class RetrievePixelDataResult
 	{
 		private readonly FrameStreamingResultMetaData _metaData;
-		private DicomCompressedPixelData _compressedPixelData;
-		private byte[] _pixelData;
+		private readonly DicomCompressedPixelData _compressedPixelData;
+		private readonly byte[] _pixelData;
 
-		internal RetrievePixelDataResult(byte[] uncompressedPixelData, FrameStreamingResultMetaData resultMetaData)
+        public TimeSpan RetrieveTime;
+        public Action AsynchRelease;
+        private long _pixelLength;
+
+		public RetrievePixelDataResult(byte[] uncompressedPixelData, FrameStreamingResultMetaData resultMetaData)
 		{
 			_pixelData = uncompressedPixelData;
 			_metaData = resultMetaData;
 		}
 
-		internal RetrievePixelDataResult(DicomCompressedPixelData compressedPixelData, FrameStreamingResultMetaData resultMetaData)
+		public RetrievePixelDataResult(DicomCompressedPixelData compressedPixelData, long pixelLength, FrameStreamingResultMetaData resultMetaData)
 		{
 			_compressedPixelData = compressedPixelData;
 			_metaData = resultMetaData;
+		    _pixelLength = pixelLength;
 		}
 
+
+        public bool IsCompressed { get { return _compressedPixelData != null; } }
+
+    
 		public FrameStreamingResultMetaData MetaData
 		{
 			get { return _metaData; }	
 		}
 
-		public byte[] GetPixelData()
-		{
-			if (_compressedPixelData != null)
-			{
-				try
-				{
-					byte[] uncompressed = _compressedPixelData.GetFrame(0);
+        public byte[] RawPixelData
+        {
+            get
+            {
+                return _compressedPixelData == null ? _pixelData : _compressedPixelData.GetFrameFragmentData(0);
+            }
+        }
 
-					_pixelData = uncompressed;
-					_compressedPixelData = null;
-				}
-				catch (Exception ex)
-				{
-					throw new Exception(String.Format("Error occurred while decompressing the pixel data: {0}", ex.Message));
-				}
-			}
+        public byte[] GetPixelData()
+        {
+            byte[] rc;
+            if (_compressedPixelData != null)
+            {
+                try
+                {
+                    rc = _compressedPixelData.GetFrame(0);
+                   
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(String.Format(" Exception while decompressing pixel data: {0}", ex.Message));
+                }
+            }
+            else
+            {
+                rc = _pixelData;
+            }
 
-			return _pixelData;
-		}
+            return rc;
+        }
+
 	}
 
     /// <summary>
@@ -142,7 +163,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 
 				RetrievePixelDataResult pixelDataResult;
 				if (response.Headers["Compressed"] != null && bool.Parse(response.Headers["Compressed"]))
-					pixelDataResult = new RetrievePixelDataResult(CreateCompressedPixelData(response, buffer), result);
+					pixelDataResult = new RetrievePixelDataResult(CreateCompressedPixelData(response, buffer, buffer.Length), buffer.Length, result);
 				else
 					pixelDataResult = new RetrievePixelDataResult(buffer, result);
 
@@ -265,7 +286,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 			}
 		}
 
-		private static DicomCompressedPixelData CreateCompressedPixelData(HttpWebResponse response, byte[] pixelDataBuffer)
+		public static DicomCompressedPixelData CreateCompressedPixelData(HttpWebResponse response, byte[] pixelDataBuffer, int bufferLength)
 		{
 			string transferSyntaxUid = response.Headers["TransferSyntaxUid"];
 			TransferSyntax transferSyntax = TransferSyntax.GetTransferSyntax(transferSyntaxUid);
@@ -296,7 +317,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 
 			DicomCompressedPixelData cpd = new DicomCompressedPixelData(collection);
 			cpd.TransferSyntax = transferSyntax;
-			cpd.AddFrameFragment(pixelDataBuffer);
+            cpd.AddFrameFragment(pixelDataBuffer, bufferLength);
 
 			return cpd;
 		}

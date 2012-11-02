@@ -138,10 +138,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 		}
 
-		protected override StandardSopFrameData CreateFrameData(int frameNumber)
+		protected override StandardSopFrameData CreateFrameData(FrameInfo frameInfo)
 		{
-			Platform.CheckArgumentRange(frameNumber, 1, _throughPoints.Count, "frameNumber");
-			return new VolumeSliceSopFrameData(frameNumber, this);
+			Platform.CheckArgumentRange(frameInfo.FrameNumber, 1, _throughPoints.Count, "frameNumber");
+			return new VolumeSliceSopFrameData(frameInfo, this);
 		}
 
 		protected override void Dispose(bool disposing)
@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		protected class VolumeSliceSopFrameData : StandardSopFrameData
 		{
-			public VolumeSliceSopFrameData(int frameNumber, VolumeSliceSopDataSource parent) : base(frameNumber, parent) {}
+			public VolumeSliceSopFrameData(FrameInfo frameInfo, VolumeSliceSopDataSource parent) : base(frameInfo, parent) {}
 
 			public new VolumeSliceSopDataSource Parent
 			{

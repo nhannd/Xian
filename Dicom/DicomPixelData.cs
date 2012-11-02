@@ -19,6 +19,7 @@ using ClearCanvas.Dicom.IO;
 using ClearCanvas.Dicom.Iod;
 using System.Globalization;
 using ClearCanvas.Dicom.Iod.Macros;
+using DataCache;
 using ValueType=System.ValueType;
 
 namespace ClearCanvas.Dicom
@@ -121,6 +122,37 @@ namespace ClearCanvas.Dicom
         	if (message.TransferSyntax.LosslessCompressed || message.TransferSyntax.LossyCompressed)
                 return new DicomCompressedPixelData(message);
         	return new DicomUncompressedPixelData(message);
+        }
+
+
+        public static DicomCompressedPixelData CreateCompressedPixelData(FrameHeader tags,byte[] pixelDataBuffer, int bufferLength)
+        {
+
+            var transferSyntax = TransferSyntax.GetTransferSyntax(tags.TransferSyntaxUid);
+
+            var collection = new DicomAttributeCollection();
+            collection[DicomTags.BitsAllocated].SetUInt16(0, tags.BitsAllocated);
+            collection[DicomTags.BitsStored].SetUInt16(0, tags.BitsStored);
+            collection[DicomTags.HighBit].SetUInt16(0, tags.HighBit);
+            collection[DicomTags.Rows].SetUInt16(0, tags.Height);
+            collection[DicomTags.Columns].SetUInt16(0, tags.Width);
+            collection[DicomTags.PhotometricInterpretation].SetStringValue(tags.PhotometricInterpretation);
+            collection[DicomTags.PixelRepresentation].SetUInt16(0, tags.PixelRepresentation);
+            collection[DicomTags.SamplesPerPixel].SetUInt16(0, tags.Samples);
+            collection[DicomTags.DerivationDescription].SetStringValue(tags.DerivationDescription);
+            collection[DicomTags.LossyImageCompression].SetStringValue(tags.LossyImageCompression);
+            collection[DicomTags.LossyImageCompressionMethod].SetStringValue(tags.LossyImageCompressionMethod);
+            collection[DicomTags.LossyImageCompressionRatio].SetFloat32(0, tags.LossyImageCompressionRatio);
+            collection[DicomTags.PixelData] = new DicomFragmentSequence(DicomTags.PixelData);
+
+            if (tags.IsPlaner)
+                collection[DicomTags.PlanarConfiguration].SetUInt16(0, tags.Planar);
+
+            var cpd = new DicomCompressedPixelData(collection) { TransferSyntax = transferSyntax };
+            cpd.AddFrameFragment(pixelDataBuffer, bufferLength);
+
+
+            return cpd;
         }
 
     	#endregion
@@ -619,8 +651,11 @@ namespace ClearCanvas.Dicom
 
         private DicomAttribute _pd;
         private MemoryStream _ms;
+        private byte[] _uncompressedBuff;
 
         #endregion
+
+
 
         #region Constructors
 
@@ -671,8 +706,10 @@ namespace ClearCanvas.Dicom
         /// Internal optimization for getting pixel data for the GetFrame method.
         /// </summary>
         /// <returns></returns>
-        internal byte[] GetData()
+        public byte[] GetData()
         {
+            if (_uncompressedBuff != null)
+                return _uncompressedBuff;
             if (_ms == null) return null;
             return _ms.ToArray();
         }
@@ -757,6 +794,7 @@ namespace ClearCanvas.Dicom
         /// <param name="frameData">The data to append.</param>
         public void AppendFrame(byte[] frameData)
         {
+            
             if (_ms == null)
             {
                 _ms = _pd == null || _pd.Count == 0 ? new MemoryStream(frameData.Length * NumberOfFrames) : new MemoryStream((byte[]) _pd.Values);
@@ -764,6 +802,13 @@ namespace ClearCanvas.Dicom
 
             _ms.Seek(0, SeekOrigin.End);
             _ms.Write(frameData, 0, frameData.Length);
+            
+
+        }
+
+        public void SetFrame(byte[] frameData)
+        {
+            _uncompressedBuff = frameData;
         }
 
         /// <summary>
@@ -1594,6 +1639,8 @@ namespace ClearCanvas.Dicom
         protected List<DicomFragment> _fragments = new List<DicomFragment>();
         private readonly DicomFragmentSequence _sq;
 
+        [ThreadStatic] private static DynamicBuffer _decompressBuffer;
+
         #endregion
 
         #region Constructors
@@ -1605,6 +1652,7 @@ namespace ClearCanvas.Dicom
             : base(msg)
         {
             _sq = (DicomFragmentSequence) msg.DataSet[DicomTags.PixelData];
+  
         }
 
         /// <summary>
@@ -1616,16 +1664,6 @@ namespace ClearCanvas.Dicom
             _sq = (DicomFragmentSequence) collection[DicomTags.PixelData];
         }
 
-		public DicomCompressedPixelData(DicomMessageBase msg, byte[] frameData) : base(msg)
-		{
-			_sq = new DicomFragmentSequence(DicomTags.PixelData);
-			AddFrameFragment(frameData);
-			//ByteBuffer buffer = new ByteBuffer(frameData);
-			//DicomFragment fragment = new DicomFragment(buffer);
-			//_sq.AddFragment(fragment);
-			NumberOfFrames = 1;
-		}
-
         /// <summary>
         /// Constructor from a <see cref="DicomUncompressedPixeldata"/> instance.
         /// </summary>
@@ -1636,6 +1674,7 @@ namespace ClearCanvas.Dicom
         }
 
         #endregion
+
 
         #region Public Methods
         /// <summary>
@@ -1725,9 +1764,9 @@ namespace ClearCanvas.Dicom
         /// <returns>A byte array containing the frame.</returns>
         public override byte[] GetFrame(int frame, out string photometricInterpretation)
         {
-            DicomUncompressedPixelData pd = new DicomUncompressedPixelData(this);
+            var pd = new DicomUncompressedPixelData(this);
 
-            IDicomCodec codec = DicomCodecRegistry.GetCodec(TransferSyntax);
+            var codec = DicomCodecRegistry.GetCodec(TransferSyntax);
             if (codec == null)
             {
                 Platform.Log(LogLevel.Error, "Unable to get registered codec for {0}", TransferSyntax);
@@ -1735,27 +1774,34 @@ namespace ClearCanvas.Dicom
                 throw new DicomCodecException("No registered codec for: " + TransferSyntax.Name);
             }
 
-            DicomCodecParameters parameters = DicomCodecRegistry.GetCodecParameters(TransferSyntax, null);
+            var parameters = DicomCodecRegistry.GetCodecParameters(TransferSyntax, null);
 
+            var decompressBufferSize = UncompressedFrameSize;
+            // (YBR gets converted to RGB)
+            if (PhotometricInterpretation.StartsWith("YBR_"))
+                decompressBufferSize *= 2;
+            GetDecompressBuffer().Resize(decompressBufferSize, false);
+            pd.SetFrame(GetDecompressBuffer().Buffer); 
+ 
             codec.DecodeFrame(frame, this, pd, parameters);
 
             pd.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
 
             photometricInterpretation = pd.PhotometricInterpretation;
 
-            return pd.GetData();
+            return GetDecompressBuffer().Buffer;
         }
 
-        /// <summary>
-        /// Append a compressed pixel data fragment's worth of data.  It is assumed an entire frame is
-        /// contained within <paramref name="data"/>.
-        /// </summary>
-        /// <param name="data">The fragment data.</param>
-        public void AddFrameFragment(byte[] data)
+        private static DynamicBuffer GetDecompressBuffer()
+        {
+            return _decompressBuffer ?? (_decompressBuffer = new DynamicBuffer());
+        }
+
+        public void AddFrameFragment(byte[] data, int dataLength)
         {
             DicomFragmentSequence sequence = _sq;
-			if ((data.Length % 2) == 1)
-				throw new DicomCodecException("Fragment being appended is incorrectly an odd length: " + data.Length);
+			if ((dataLength % 2) == 1)
+                throw new DicomCodecException("Fragment being appended is incorrectly an odd length: " + dataLength);
 
             uint offset = 0;
             foreach (DicomFragment fragment in sequence.Fragments)
@@ -1763,10 +1809,7 @@ namespace ClearCanvas.Dicom
                 offset += (8 + fragment.Length);
             }
             sequence.OffsetTable.Add(offset);
-
-            ByteBuffer buffer = new ByteBuffer();
-            buffer.Append(data, 0, data.Length);
-            sequence.Fragments.Add(new DicomFragment(buffer));
+            sequence.Fragments.Add(new DicomFragment(new ByteBuffer(data,dataLength)));
         }
 
 		public void AddFrameFragment(ByteBuffer bb)
@@ -1796,14 +1839,19 @@ namespace ClearCanvas.Dicom
 
         public byte[] GetFrameFragmentData(int frame)
         {
-            List < DicomFragment > list = GetFrameFragments(frame);
+            var list = GetFrameFragments(frame);
+
+            //optimization for single fragment
+            if (list.Count == 1)
+                return list[0].GetByteArray();
+
             uint length = 0;
-            foreach (DicomFragment frag in list)
+            foreach (var frag in list)
                 length += frag.Length;
 
-            byte[] data = new byte[length];
+            var data = new byte[length];
             uint offset = 0;
-            foreach (DicomFragment frag in list)
+            foreach (var frag in list)
             {
                 Array.Copy(frag.GetByteArray(), 0, data, (int)offset, (int)frag.Length);
                 offset += frag.Length;
@@ -1934,5 +1982,6 @@ namespace ClearCanvas.Dicom
         }
 
         #endregion
+
     }
 }

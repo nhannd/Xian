@@ -325,7 +325,8 @@ namespace ClearCanvas.Dicom.Codec.Rle
 
                 encoder.MakeEvenLength();
 
-                newPixelData.AddFrameFragment(encoder.GetBuffer());
+                byte[] buff = encoder.GetBuffer();
+                newPixelData.AddFrameFragment(buff, buff.Length);
             }
         }
         #endregion
@@ -501,7 +502,7 @@ namespace ClearCanvas.Dicom.Codec.Rle
             int segmentLength = (pixelCount & 1) == 1 ? pixelCount + 1 : pixelCount;
 
             byte[] segment = new byte[segmentLength];
-            byte[] frameData = new byte[oldPixelData.UncompressedFrameSize];
+            byte[] frameData = newPixelData.GetData();
 
             for (int i = 0; i < oldPixelData.NumberOfFrames; i++)
             {
@@ -543,8 +544,6 @@ namespace ClearCanvas.Dicom.Codec.Rle
                         pos += offset;
                     }
                 }
-
-                newPixelData.AppendFrame(frameData);
             }
         }
 
@@ -558,7 +557,7 @@ namespace ClearCanvas.Dicom.Codec.Rle
             int segmentLength = (pixelCount & 1) == 1 ? pixelCount + 1 : pixelCount;
 
             byte[] segment = new byte[segmentLength];
-            byte[] frameData = new byte[oldPixelData.UncompressedFrameSize];
+            byte[] frameData = newPixelData.GetData();
 
             IList<DicomFragment> rleData = oldPixelData.GetFrameFragments(frame);
             RLEDecoder decoder = new RLEDecoder(rleData);
@@ -598,8 +597,6 @@ namespace ClearCanvas.Dicom.Codec.Rle
                     pos += offset;
                 }
             }
-
-            newPixelData.AppendFrame(frameData);
         }
 
         #endregion

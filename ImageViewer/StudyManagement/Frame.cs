@@ -16,6 +16,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom.Validation;
 using ClearCanvas.Common;
+using DataCache;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -30,14 +31,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	{
 		#region Private fields
 
-		private readonly ImageSop _parentImageSop;
-		private readonly int _frameNumber;
-		
+		private readonly ImageSop _parentImageSop;	
 		private readonly object _syncLock = new object();
 		private volatile NormalizedPixelSpacing _normalizedPixelSpacing;
 		private volatile ImagePlaneHelper _imagePlaneHelper;
+	    public static readonly IUnifiedCache Cache;
 
 		#endregion
+
+        static Frame()
+        {
+            var logger = new CacheLogger();
+            Cache = new UnifiedCache(logger);          
+        }
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="Frame"/> with the
@@ -45,15 +51,52 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		/// <param name="parentImageSop">The parent <see cref="ImageSop"/>.</param>
 		/// <param name="frameNumber">The first frame is frame 1.</param>
-		protected internal Frame(ImageSop parentImageSop, int frameNumber)
+        protected internal Frame(ImageSop parentImageSop, int frameNumber)
 		{
-			Platform.CheckForNullReference(parentImageSop, "parentImageSop");
-			Platform.CheckPositive(frameNumber, "frameNumber");
-			_parentImageSop = parentImageSop;
-			_frameNumber = frameNumber;
+		    Platform.CheckForNullReference(parentImageSop, "parentImageSop");
+		    Platform.CheckPositive(frameNumber, "frameNumber");
+		    _parentImageSop = parentImageSop;
+
+		    Info = new FrameInfo(frameNumber, _parentImageSop.DataSource.IsCacheable,
+		                         StudyInstanceUid + "#" + SeriesInstanceUid,
+		                         FrameInfo.GenerateCacheId(SopInstanceUid, frameNumber))
+		               {
+		                   Planar = _parentImageSop[DicomTags.PlanarConfiguration].GetUInt16(0, 0),
+		                   PhotometricInterpretation =
+		                       parentImageSop[DicomTags.PhotometricInterpretation].GetString(0, null),
+		                   BitsAllocated = parentImageSop[DicomTags.BitsAllocated].GetUInt16(0, 0),
+		                   BitsStored = parentImageSop[DicomTags.BitsStored].GetUInt16(0, 0),
+		                   Height = parentImageSop[DicomTags.Rows].GetUInt16(0, 0),
+		                   Width = parentImageSop[DicomTags.Columns].GetUInt16(0, 0),
+		                   Samples = parentImageSop[DicomTags.SamplesPerPixel].GetUInt16(0, 1),
+		                   PixelRepresentation = parentImageSop[DicomTags.PixelRepresentation].GetUInt16(0, 0),
+		                   LossyImageCompression =
+		                       parentImageSop[DicomTags.LossyImageCompression].GetString(0, string.Empty),
+		                   LossyImageCompressionRatio =
+		                       parentImageSop[DicomTags.LossyImageCompressionRatio].GetFloat32(0, 1.0f),
+		                   LossyImageCompressionMethod =
+		                       parentImageSop[DicomTags.LossyImageCompressionMethod].GetString(0, string.Empty),
+		                   TransferSyntaxUid = parentImageSop[DicomTags.TransferSyntaxUid].GetString(0, string.Empty),
+		                   DerivationDescription =
+		                       parentImageSop[DicomTags.DerivationDescription].GetString(0, string.Empty)
+		               };
+
+		    ushort bitsStoredDefault = 0;
+            if (Info.BitsStored > 1)
+                bitsStoredDefault = (ushort) (Info.BitsStored - 1);
+            Info.HighBit = parentImageSop[DicomTags.HighBit].GetUInt16(0, bitsStoredDefault);
+            if (Info.Planar != 0)
+                Info.IsPlaner = true;
+
 		}
 
-		/// <summary>
+        public static bool IsDiskCacheEnabled()
+        {
+            return Cache.IsDiskCacheEnabled;
+        }
+
+
+	    /// <summary>
 		/// Gets the parent <see cref="ImageSop"/>.
 		/// </summary>
 		public ImageSop ParentImageSop
@@ -90,10 +133,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public int FrameNumber
 		{
-			get { return _frameNumber; }
+			get { return Info.FrameNumber; }
 		}
 
-		#region General Image Module
+	    public FrameInfo Info { get; private set; }
+
+	    #region General Image Module
 
 		/// <summary>
 		/// Gets the patient orientation.
@@ -754,7 +799,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public byte[] GetNormalizedPixelData()
 		{
-			return _parentImageSop.DataSource.GetFrameData(FrameNumber).GetNormalizedPixelData();
+			return _parentImageSop.DataSource.GetFrameData(Info).GetNormalizedPixelData();
 		}
 
 		/// <summary>
@@ -765,7 +810,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public void UnloadPixelData()
 		{
-			_parentImageSop.DataSource.GetFrameData(FrameNumber).Unload();
+			_parentImageSop.DataSource.GetFrameData(Info).Unload();
 		}
 
 		/// <summary>

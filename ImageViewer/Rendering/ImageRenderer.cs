@@ -34,7 +34,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 			if (clientRectangle.Width <= 0 || clientRectangle.Height <= 0)
 				return;
 
-			if (imageGraphic.SizeInBytes != imageGraphic.PixelData.Raw.Length)
+		    var rawData = imageGraphic.PixelData.Raw;
+			if (imageGraphic.SizeInBytes != rawData.Length)
 				throw new InvalidOperationException(String.Format(SR.ExceptionIncorrectPixelDataSize, imageGraphic.SizeInBytes, imageGraphic.PixelData.Raw.Length));
 
 			CodeClock clock = new CodeClock();
@@ -51,6 +52,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 					imageGraphic as GrayscaleImageGraphic,
 					srcViewableRectangle,
 					dstViewableRectangle,
+                    rawData,
 					pDstPixelData,
 					dstWidth,
 					dstBytesPerPixel);
@@ -61,6 +63,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 					imageGraphic as ColorImageGraphic,
 					srcViewableRectangle,
 					dstViewableRectangle,
+                    rawData,
 					pDstPixelData,
 					dstWidth,
 					dstBytesPerPixel);
@@ -78,11 +81,12 @@ namespace ClearCanvas.ImageViewer.Rendering
 			GrayscaleImageGraphic image, 
 			RectangleF srcViewableRectangle, 
 			Rectangle dstViewableRectangle,
+            byte[] srcPixels,
 			IntPtr pDstPixelData,
 			int dstWidth,
 			int dstBytesPerPixel)
 		{
-			fixed (byte* pSrcPixelData = image.PixelData.Raw)
+            fixed (byte* pSrcPixelData = srcPixels)
 			{
 				if (image.InterpolationMode == InterpolationMode.Bilinear)
 				{
@@ -120,11 +124,12 @@ namespace ClearCanvas.ImageViewer.Rendering
 			ColorImageGraphic image,
 			RectangleF srcViewableRectangle,
 			Rectangle dstViewableRectangle,
+            byte[] srcPixels,
 			IntPtr pDstPixelData,
 			int dstWidth,
 			int dstBytesPerPixel)
 		{
-			fixed (byte* pSrcPixelData = image.PixelData.Raw)
+            fixed (byte* pSrcPixelData = srcPixels)
 			{
 				if (image.InterpolationMode == InterpolationMode.Bilinear)
 				{

@@ -24,10 +24,10 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
 	public interface IStreamingSopDataSource : IDicomMessageSopDataSource
 	{
-		new IStreamingSopFrameData GetFrameData(int frameNumber);
+		new IStreamingSopFrameData GetFrameData(FrameInfo frameInfo);
 	}
 
-	internal partial class StreamingSopDataSource : DicomMessageSopDataSource, IStreamingSopDataSource
+	public partial class StreamingSopDataSource : DicomMessageSopDataSource, IStreamingSopDataSource
 	{
 		private readonly string _host;
 		private readonly string _aeTitle;
@@ -61,10 +61,15 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		#region IStreamingSopDataSource Members
 
-		public new IStreamingSopFrameData GetFrameData(int frameNumber)
+		public new IStreamingSopFrameData GetFrameData(FrameInfo info)
 		{
-			return (IStreamingSopFrameData) base.GetFrameData(frameNumber);
+			return (IStreamingSopFrameData) base.GetFrameData(info);
 		}
+
+        public override bool IsCacheable
+        {
+            get { return true; }
+        }
 
 		#endregion
 
@@ -118,9 +123,10 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			}
 		}
 
-		protected override StandardSopFrameData CreateFrameData(int frameNumber)
+
+	    protected override StandardSopFrameData CreateFrameData(FrameInfo frameInfo)
 		{
-			return new StreamingSopFrameData(frameNumber, this);
+			return new StreamingSopFrameData(frameInfo, this);
 		}
 
 		private bool NeedFullHeader(uint tag)

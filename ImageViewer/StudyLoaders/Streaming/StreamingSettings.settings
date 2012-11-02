@@ -9,7 +9,7 @@
       <Value Profile="(Default)">http://{0}:{1}/HeaderStreaming/HeaderStreaming</Value>
     </Setting>
     <Setting Name="RetrieveConcurrency" Description="The number of concurrent threads that should be used to pre-fetch streamed image data." Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">5</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="SelectedWeighting" Description="An arbitrary weighting value for loading images in the selected image box versus all the other unselected image boxes." Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">3</Value>

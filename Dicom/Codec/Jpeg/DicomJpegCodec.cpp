@@ -163,9 +163,10 @@ void DicomJpegCodec::Decode(DicomCompressedPixelData^ oldPixelData, DicomUncompr
 		array<unsigned char>^ jpegData = oldPixelData->GetFrameFragmentData(frame);
 		pin_ptr<unsigned char> jpegPin = &jpegData[0];
 		unsigned char* jpegPtr = jpegPin;
-		size_t jpegSize = jpegData->Length;
+		System::Collections::Generic::List<DicomFragment^> frags = oldPixelData->GetFrameFragments(frame);
+        size_t jpegSize = frags[0]->Length;
 	
-		unsigned char bitsStored = GetJpegBitDepth(jpegPtr,jpegData->Length);
+		unsigned char bitsStored = GetJpegBitDepth(jpegPtr,jpegSize);
 		if (bitsStored != oldPixelData->BitsStored)
 			Platform::Log(LogLevel::Warn,"Bit depth in jpeg data ({0}) doesn't match DICOM header bit depth ({1}).",
 							bitsStored, oldPixelData->BitsStored);
@@ -193,9 +194,10 @@ void DicomJpegCodec::DecodeFrame(int frame, DicomCompressedPixelData^ oldPixelDa
 	array<unsigned char>^ jpegData = oldPixelData->GetFrameFragmentData(frame);
 	pin_ptr<unsigned char> jpegPin = &jpegData[0];
 	unsigned char* jpegPtr = jpegPin;
-	size_t jpegSize = jpegData->Length;
+	System::Collections::Generic::List<DicomFragment^> frags = oldPixelData->GetFrameFragments(frame);
+    size_t jpegSize = frags[0]->Length;
 
-	unsigned char bitsStored = GetJpegBitDepth(jpegPtr,jpegData->Length);
+	unsigned char bitsStored = GetJpegBitDepth(jpegPtr,jpegSize);
 	if (bitsStored != oldPixelData->BitsStored)
 		Platform::Log(LogLevel::Warn,"Bit depth in jpeg data ({0}) doesn't match DICOM header bit depth ({1}).",
 						bitsStored, oldPixelData->BitsStored);
