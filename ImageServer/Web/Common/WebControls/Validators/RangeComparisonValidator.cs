@@ -114,7 +114,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         {
             // Register Javascript for client-side validation
             string comparison = GreaterThan ? ">=" : "<=";
-            Platform.Log(LogLevel.Error, "RegisterClientSideValidationExtensionScripts = {0}", ErrorMessage); 
             var template =
                 new ScriptTemplate(this,
                                    "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RangeComparisonValidator.js");
