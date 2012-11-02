@@ -54,7 +54,7 @@
     <DestinationDirectories Include="$(CommonDirectory)" />
     <DestinationDirectories Include="$(PluginsDirectory)" />
     <DestinationDirectories Include="$(LogDirectory)" />
-	<DestinationDirectories Include="$(UtilitiesDirectory)"/>
+    <!--DestinationDirectories Include="$(UtilitiesDirectory)"/-->
   </ItemGroup>
 
   <!-- Config files, to be placed in distribution directory -->
