@@ -10,89 +10,53 @@
 #endregion
 
 using System;
-using System.Diagnostics;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
-	internal class StreamingCorePrefetchingStrategy : ICorePrefetchingStrategy
-	{
-		private int _activeRetrieveThreads = 0;
-		private int _activeDecompressThreads = 0;
+    internal class StreamingCorePrefetchingStrategy : ICorePrefetchingStrategy
+    {
+        #region ICorePrefetchingStrategy Members
 
-		public bool CanRetrieveFrame(Frame frame)
-		{
-			if (!(frame.ParentImageSop.DataSource is StreamingSopDataSource))
-				return false;
+        public bool CanRetrieveFrame(Frame frame)
+        {
+            return frame.ParentImageSop.DataSource is StreamingSopDataSource && !frame.Info.Cached;
+        }
 
-			StreamingSopDataSource dataSource = (StreamingSopDataSource) frame.ParentImageSop.DataSource;
-			IStreamingSopFrameData frameData = dataSource.GetFrameData(frame.FrameNumber);
-			return !frameData.PixelDataRetrieved;
-		}
+        public void RetrieveFrame(Frame frame)
+        {
+            if (frame.Info.Cached)
+                return;
 
-		public void RetrieveFrame(Frame frame)
-		{
-			Interlocked.Increment(ref _activeRetrieveThreads);
+            try
+            {
+                var dataSource = (IStreamingSopDataSource) frame.ParentImageSop.DataSource;
+                dataSource.GetFrameData(frame.Info).RetrievePixelData();
+            }
+            catch (OutOfMemoryException)
+            {
+                Platform.Log(LogLevel.Error, "Out of memory trying to retrieve pixel data.");
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Error retrieving frame pixel data.");
+            }
+        }
 
-			try
-			{
-				string message = String.Format("Retrieving Frame (active threads: {0})", Thread.VolatileRead(ref _activeRetrieveThreads));
-				Trace.WriteLine(message);
+        public bool CanDecompressFrame(Frame frame)
+        {
+            throw new NotImplementedException();
+        }
 
-				IStreamingSopDataSource dataSource = (IStreamingSopDataSource) frame.ParentImageSop.DataSource;
-				IStreamingSopFrameData frameData = dataSource.GetFrameData(frame.FrameNumber);
+        public void DecompressFrame(Frame frame)
+        {
+            throw new NotImplementedException();
+        }
 
-				frameData.RetrievePixelData();
-			}
-			catch (OutOfMemoryException)
-			{
-				Platform.Log(LogLevel.Error, "Out of memory trying to retrieve pixel data.");
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e, "Error retrieving frame pixel data.");
-			}
-			finally
-			{
-				Interlocked.Decrement(ref _activeRetrieveThreads);
-			}
-		}
+        #endregion
 
-		public bool CanDecompressFrame(Frame frame)
-		{
-			if (!(frame.ParentImageSop.DataSource is StreamingSopDataSource))
-				return false;
-
-			StreamingSopDataSource dataSource = (StreamingSopDataSource) frame.ParentImageSop.DataSource;
-			IStreamingSopFrameData frameData = dataSource.GetFrameData(frame.FrameNumber);
-			return frameData.PixelDataRetrieved;
-		}
-
-		public void DecompressFrame(Frame frame)
-		{
-			Interlocked.Increment(ref _activeDecompressThreads);
-			try
-			{
-				string message = String.Format("Decompressing Frame (active threads: {0})", Thread.VolatileRead(ref _activeDecompressThreads));
-				Trace.WriteLine(message);
-
-				//TODO: try to trigger header retrieval for data luts?
-				frame.GetNormalizedPixelData();
-			}
-			catch (OutOfMemoryException)
-			{
-				Platform.Log(LogLevel.Error, "Out of memory trying to decompress pixel data.");
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e, "Error decompressing frame pixel data.");
-			}
-			finally
-			{
-				Interlocked.Decrement(ref _activeDecompressThreads);
-			}
-		}
-	}
+    
+  
+    }
 }

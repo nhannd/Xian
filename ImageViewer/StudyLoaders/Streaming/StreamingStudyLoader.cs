@@ -24,6 +24,7 @@ using ClearCanvas.ImageViewer.Common.Auditing;
 using ClearCanvas.ImageViewer.Common.ServerDirectory;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Xml;
+using DataCache;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
@@ -71,7 +72,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
         protected virtual void InitStrategy()
         {
-            PrefetchingStrategy = new WeightedWindowPrefetchingStrategy(new StreamingCorePrefetchingStrategy(), _loaderName, SR.DescriptionPrefetchingStrategy)
+            var strategy = new WeightedWindowPrefetchingStrategy(new StreamingCorePrefetchingStrategy(), _loaderName, SR.DescriptionPrefetchingStrategy)
                                       {
                                           Enabled = StreamingSettings.Default.RetrieveConcurrency > 0,
                                           RetrievalThreadConcurrency = Math.Max(StreamingSettings.Default.RetrieveConcurrency, 1),
@@ -80,6 +81,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                                           SelectedImageBoxWeight = Math.Max(StreamingSettings.Default.SelectedWeighting, 1),
                                           UnselectedImageBoxWeight = Math.Max(StreamingSettings.Default.UnselectedWeighting, 0)
                                       };
+            if (Frame.Cache.IsDiskCacheEnabled)
+                strategy.FrameLookAheadCount = null;
+            PrefetchingStrategy = strategy;
         }
 
         protected override int OnStart(StudyLoaderArgs studyLoaderArgs)

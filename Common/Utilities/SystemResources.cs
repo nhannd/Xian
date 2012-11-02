@@ -9,107 +9,119 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace ClearCanvas.Common.Utilities
 {
-	/// <summary>
-	/// Memory and storage size units
-	/// </summary>
-	public enum SizeUnits
-	{
-		/// <summary>
-		/// Bytes
-		/// </summary>
-		Bytes,
-		/// <summary>
-		/// Kilobytes
-		/// </summary>
-		Kilobytes,
-		/// <summary>
-		/// Megabytes
-		/// </summary>
-		Megabytes,
-		/// <summary>
-		/// Gigabytes
-		/// </summary>
-		Gigabytes
-	}
+    /// <summary>
+    /// Memory and storage size units
+    /// </summary>
+    public enum SizeUnits
+    {
+        /// <summary>
+        /// Bytes
+        /// </summary>
+        Bytes,
 
-	/// <summary>
-	/// Provides convenience methods for querying system resources.
-	/// </summary>
-	public static class SystemResources
-	{
-		private static volatile PerformanceCounter _memoryPerformanceCounter;
-		private static readonly object _syncRoot = new object();
+        /// <summary>
+        /// Kilobytes
+        /// </summary>
+        Kilobytes,
 
-		private static PerformanceCounter MemoryPerformanceCounter
-		{
-			get
-			{
-				if (_memoryPerformanceCounter == null)
-				{
-					lock (_syncRoot)
-					{
-						if (_memoryPerformanceCounter == null)
-							_memoryPerformanceCounter = new PerformanceCounter("Memory", "Available Bytes");
-					}
-				}
+        /// <summary>
+        /// Megabytes
+        /// </summary>
+        Megabytes,
 
-				return _memoryPerformanceCounter;
-			}
-		}
+        /// <summary>
+        /// Gigabytes
+        /// </summary>
+        Gigabytes
+    }
 
-		/// <summary>
-		/// Gets the available physical memory.
-		/// </summary>
-		/// <param name="units"></param>
-		/// <returns></returns>
-		public static long GetAvailableMemory(SizeUnits units)
-		{
-			long availableBytes = Convert.ToInt64(MemoryPerformanceCounter.NextValue());
+    /// <summary>
+    /// Provides convenience methods for querying system resources.
+    /// </summary>
+    public static class SystemResources
+    {
+        private const ulong OneKilobyte = 1024;
+        private const ulong OneMegabyte = OneKilobyte*OneKilobyte;
+        private const ulong OneGigabyte = OneKilobyte*OneMegabyte;
 
-			if (units == SizeUnits.Bytes)
-				return availableBytes;
-			else if (units == SizeUnits.Kilobytes)
-				return availableBytes / 1024;
-			else if (units == SizeUnits.Megabytes)
-				return availableBytes / 1048576;
-			else
-				return availableBytes / 1073741824;
-		}
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
 
+
+        public static long GetAvailableMemory(SizeUnits units)
+        {
+            var memStatus = new MEMORYSTATUSEX();
+            if (GlobalMemoryStatusEx(memStatus))
+            {
+                ulong availableMemory = memStatus.ullAvailPhys;
+
+                if (units == SizeUnits.Megabytes)
+                    return (long) (availableMemory/OneMegabyte);
+
+                if (units == SizeUnits.Kilobytes)
+                    return (long) (availableMemory/OneKilobyte);
+
+                if (units == SizeUnits.Bytes)
+                    return (long) availableMemory;
+
+                return (long) (availableMemory/OneGigabyte);
+            }
+            return 0;
+        }
 
         [DllImport("kernel32.dll", EntryPoint = "GetDiskFreeSpaceExA")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out long lpFreeBytesAvailableToCaller,
-                                            out long lpTotalNumberOfBytes, out long lpTotalNumberOfFreeBytes);
+                                                      out long lpTotalNumberOfBytes, out long lpTotalNumberOfFreeBytes);
 
         public static DriveInformation GetDriveInformation(string path)
-	    {
+        {
             long available, total, free;
             bool result = GetDiskFreeSpaceEx(path, out available, out total, out free);
 
             if (result)
             {
-                return new DriveInformation()
+                return new DriveInformation
                            {
-                               RootDirectory = System.IO.Path.GetPathRoot(path),
+                               RootDirectory = Path.GetPathRoot(path),
                                Total = total,
                                Free = free
                            };
             }
 
             throw new Win32Exception(string.Format("Unable to get drive information {0}. Error code: {1}", path, 0));
-	    }
-	}
+        }
+
+        #region Nested type: MEMORYSTATUSEX
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        private class MEMORYSTATUSEX
+        {
+            public uint dwLength;
+            public uint dwMemoryLoad;
+            public ulong ullTotalPhys;
+            public ulong ullAvailPhys;
+            public ulong ullTotalPageFile;
+            public ulong ullAvailPageFile;
+            public ulong ullTotalVirtual;
+            public ulong ullAvailVirtual;
+            public ulong ullAvailExtendedVirtual;
+
+            public MEMORYSTATUSEX()
+            {
+                dwLength = (uint) Marshal.SizeOf(this);
+            }
+        }
+
+        #endregion
+    }
 
     public class DriveInformation
     {

@@ -154,6 +154,10 @@
       <Project>{9144D03E-C4A2-4B34-B3B2-89A8834B3F02}</Project>
       <Name>ClearCanvas.ImageViewer.DesktopServices</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\StudyLoaders\Streaming\ClearCanvas.ImageViewer.StudyLoaders.Streaming.csproj">
+      <Project>{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}</Project>
+      <Name>ClearCanvas.ImageViewer.StudyLoaders.Streaming</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

@@ -133,13 +133,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <exception cref="InvalidOperationException">Thrown if the SOP instance is not an image.</exception>
 		int NumberOfFrames { get; }
 
-		/// <summary>
-		/// Gets the data for a particular frame in the SOP instance, if it is an image.
-		/// </summary>
-		/// <param name="frameNumber">The 1-based number of the frame for which the data is to be retrieved.</param>
-		/// <returns>An <see cref="ISopFrameData"/> containing frame-specific data.</returns>
-		/// <exception cref="InvalidOperationException">Thrown if this <see cref="ISopDataSource"/> is not an image
-		/// (e.g. <see cref="IsImage"/> returns false).</exception>
-		ISopFrameData GetFrameData(int frameNumber);
+	    /// <summary>
+	    /// Gets the data for a particular frame in the SOP instance, if it is an image.
+	    /// </summary>
+	    /// <param name="frameInfo"> </param>
+	    /// <returns>An <see cref="ISopFrameData"/> containing frame-specific data.</returns>
+	    /// <exception cref="InvalidOperationException">Thrown if this <see cref="ISopDataSource"/> is not an image
+	    /// (e.g. <see cref="IsImage"/> returns false).</exception>
+	    ISopFrameData GetFrameData(FrameInfo frameInfo);
+        bool IsCacheable { get; }
 	}
 }

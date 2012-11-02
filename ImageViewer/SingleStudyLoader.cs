@@ -241,12 +241,6 @@ namespace ClearCanvas.ImageViewer
 				if (study != null)
 				{
 					_viewer.EventBroker.OnStudyLoaded(new StudyLoadedEventArgs(study, error));
-
-                    //We have to use the viewer's instance of the loader so that we don't end up with a prefetching
-                    //strategy per study loaded into the viewer.
-                    IPrefetchingStrategy prefetchingStrategy = _viewer.StudyLoaders[_studyLoaderName].PrefetchingStrategy;
-					if (prefetchingStrategy != null)
-						prefetchingStrategy.Start(_viewer);
 				}
 
 				if (error != null)

@@ -387,7 +387,7 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 		if ((MemoryBuffer->Length %2 ) == 1)
 			MemoryBuffer->WriteByte(0);
 			
-		newPixelData->AddFrameFragment(MemoryBuffer->ToArray());
+		newPixelData->AddFrameFragment(MemoryBuffer->ToArray(), MemoryBuffer->Length);
 	}
 	catch(DicomException^ e){
 		Console::WriteLine(e->Message);
@@ -484,7 +484,8 @@ void JPEGCODEC::Decode(DicomCompressedPixelData^ oldPixelData, DicomUncompressed
 		array<unsigned char>^ jpegData = oldPixelData->GetFrameFragmentData(frame);
 		pin_ptr<unsigned char> jpegPin = &jpegData[0];
 		unsigned char* jpegPtr = jpegPin;
-		size_t jpegSize = jpegData->Length;
+		System::Collections::Generic::List<DicomFragment^> frags = oldPixelData->GetFrameFragments(frame);
+        size_t jpegSize = frags[0]->Length;
 	
 		memset(&dinfo, 0, sizeof(dinfo));
 
@@ -537,18 +538,14 @@ void JPEGCODEC::Decode(DicomCompressedPixelData^ oldPixelData, DicomUncompressed
 
 		jpeg_start_decompress(&dinfo);
 
-		MemoryStream^ stream = gcnew MemoryStream(outsize);
-		array<unsigned char>^ rowbuf = gcnew array<unsigned char>(rowsize);
-		pin_ptr<unsigned char> rowpin = &rowbuf[0];
-		unsigned char* rowptr = rowpin;
+		array<unsigned char>^ outputBuf = newPixelData->GetData();
+	    pin_ptr<unsigned char> outputPin = &outputBuf[0];
+	    unsigned char* outputPtr = outputPin;
 
 		while (dinfo.output_scanline < dinfo.output_height) {
-			jpeg_read_scanlines(&dinfo, (JSAMPARRAY)&rowptr, 1);
-			stream->Write(rowbuf, 0, rowbuf->Length);
+			jpeg_read_scanlines(&dinfo, (JSAMPARRAY)&outputPtr, 1);
+			outputPtr += rowsize;
 		}
-
-		//oldPixelData->Unload();
-		newPixelData->AppendFrame(stream->GetBuffer());
 	}
 	catch(DicomException^ e){
 		Console::WriteLine(e->Message);

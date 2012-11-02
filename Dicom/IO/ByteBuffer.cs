@@ -20,6 +20,7 @@ namespace ClearCanvas.Dicom.IO
         #region Private Members
         private MemoryStream _ms;
         private byte[] _data;
+        private int _dataSize;
         private BinaryReader _br;
         private BinaryWriter _bw;
         private Endian _endian;
@@ -41,13 +42,24 @@ namespace ClearCanvas.Dicom.IO
         }
 
         public ByteBuffer(byte[] data)
-            : this(data, LocalMachineEndian)
+            : this(data, LocalMachineEndian, data.Length)
         {
         }
 
-        public ByteBuffer(byte[] data, Endian endian)
+        public ByteBuffer(byte[] data, int dataSize)
+            : this(data, LocalMachineEndian, dataSize)
         {
-            _data = data;
+        }
+        public ByteBuffer(byte[] data, Endian endian)
+            : this(data, endian, data.Length)
+        {
+        }
+
+        public ByteBuffer(byte[] data, Endian endian, int dataSize)
+        {
+            if (dataSize > data.Length)
+                throw new Exception("ByteBuffer constructor: data size value greater than array length");
+            SetData(data);
             _endian = endian;
             _encoding = Encoding.ASCII;
             _specificCharacterSet = null;
@@ -71,7 +83,7 @@ namespace ClearCanvas.Dicom.IO
                     else
                     {
                         _ms = new MemoryStream(_data);
-                        _data = null;
+                         SetData(null);
                     }
                 }
                 return _ms;
@@ -132,7 +144,7 @@ namespace ClearCanvas.Dicom.IO
                 if (_ms != null)
                     return (int)_ms.Length;
                 if (_data != null)
-                    return _data.Length;
+                    return _dataSize;
                 return 0;
             }
         }
@@ -144,7 +156,7 @@ namespace ClearCanvas.Dicom.IO
             _ms = null;
             _br = null;
             _bw = null;
-            _data = null;
+            SetData(null);
         }
 
         public void Chop(int count)
@@ -176,7 +188,7 @@ namespace ClearCanvas.Dicom.IO
             _bw = null;
 
             int read = 0;
-            _data = new byte[count];
+            SetData(new byte[count]);
 
             while (read < count)
             {
@@ -225,11 +237,11 @@ namespace ClearCanvas.Dicom.IO
 
             if (_data != null)
             {
-				if (_data.Length > maxSize)
+				if (_dataSize > maxSize)
 				{
 					if (s.BaseStream is FileStream)
 					{
-						int bytesLeft = _data.Length;
+						int bytesLeft = _dataSize;
 						int offset = 0;
 						while (bytesLeft > 0)
 						{
@@ -240,10 +252,10 @@ namespace ClearCanvas.Dicom.IO
 						}
 					}
 					else
-						s.Write(_data, 0, _data.Length);
+						s.Write(_data, 0, _dataSize);
 				}
 				else
-					s.Write(_data, 0, _data.Length);
+					s.Write(_data, 0, _dataSize);
             }
         }
 
@@ -278,7 +290,7 @@ namespace ClearCanvas.Dicom.IO
 
         public void FromBytes(byte[] bytes)
         {
-            _data = bytes;
+            SetData( bytes);
             _ms = null;
         }
 
@@ -286,7 +298,8 @@ namespace ClearCanvas.Dicom.IO
         {
             if (_ms != null)
             {
-                _data = _ms.ToArray();
+                SetData(_ms.ToArray());
+
                 _ms = null;
                 _br = null;
                 _bw = null;
@@ -346,14 +359,14 @@ namespace ClearCanvas.Dicom.IO
         {
             if (val == null)
             {
-                _data = null;
+                SetData(null);
             }
             else
             {
                 if (_specificCharacterSet != null)
-                    _data = DicomImplementation.CharacterParser.Encode(val, _specificCharacterSet);
+                    SetData(DicomImplementation.CharacterParser.Encode(val, _specificCharacterSet));
                 else
-                    _data = _encoding.GetBytes(val);
+                    SetData(_encoding.GetBytes(val));
             }
             _ms = null;
         }
@@ -362,21 +375,21 @@ namespace ClearCanvas.Dicom.IO
         {
             if (_specificCharacterSet != null)
             {
-                _data = DicomImplementation.CharacterParser.Encode(val, _specificCharacterSet);
-                if (_data != null && (_data.Length & 1) == 1)
+                SetData(DicomImplementation.CharacterParser.Encode(val, _specificCharacterSet));
+                if (_data != null && (_dataSize & 1) == 1)
                 {
-                    byte[] rawBytes = new byte[_data.Length + 1];
-                    rawBytes[_data.Length] = pad;
+                    byte[] rawBytes = new byte[_dataSize + 1];
+                    rawBytes[_dataSize] = pad;
 
                     _data.CopyTo(rawBytes, 0);
-                    _data = rawBytes;
+                    SetData(rawBytes);
                 }
             }
             else
             {
                 if (val==null)
                 {
-                    _data = null;
+                    SetData(null);
                 }
                 else
                 {
@@ -388,7 +401,7 @@ namespace ClearCanvas.Dicom.IO
                     if (_encoding.GetBytes(val, 0, val.Length, bytes, 0) < count)
                         bytes[count - 1] = pad;
 
-                    _data = bytes;
+                    SetData(bytes);
                 }
                 
             }
@@ -440,5 +453,10 @@ namespace ClearCanvas.Dicom.IO
             Swap(8);
         }
         #endregion
+        private void SetData(byte[] newData)
+        {
+            _data = newData;
+            _dataSize = newData == null ? 0 : newData.Length;
+        }
     }
 }
