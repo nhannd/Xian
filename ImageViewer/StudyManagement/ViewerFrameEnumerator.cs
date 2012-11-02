@@ -13,13 +13,14 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using System.Collections;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	internal class ViewerFrameEnumerator : IBlockingEnumerator<Frame>, IDisposable
+    public class ViewerFrameEnumerator : IBlockingEnumerator<Frame>, IDisposable
 	{
 		private readonly IImageViewer _viewer;
 
@@ -36,6 +37,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly int _imageWindow;
 
 		private volatile bool _isBlocking = true;
+
+        public static readonly ConcurrentDequeuePolicy ConcurrentDequeuePolicy;
+
+        static ViewerFrameEnumerator()
+        {
+            ConcurrentDequeuePolicy = new ConcurrentDequeuePolicy();
+        }
 
 		public ViewerFrameEnumerator(IImageViewer viewer, int selectedWeight, int unselectedWeight, int imageWindow, Predicate<Frame> canFetchFrame)
 		{
@@ -61,6 +69,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				_imageBoxStrategies[imageBox] = new ImageBoxFrameSelectionStrategy(imageBox, _imageWindow, _canFetchFrame, OnImageBoxDataChanged);
 
 			_selectedImageBox = _viewer.SelectedImageBox;
+
+            ConcurrentDequeuePolicy.RegisterWaitObject(_syncLock);
 		}
 
 		private void OnImageBoxRemoved(object sender, ListEventArgs<IImageBox> e)
@@ -159,22 +169,29 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				Frame nextFrame = null;
 				lock(_syncLock)
 				{
-					if (_framesToProcess.Count == 0)
-					{
-						GetNextRoundOfFrames();
-						if (_framesToProcess.Count == 0)
-						{
-							Platform.Log(LogLevel.Debug, "ViewerFrameEnumerator: no frames left.");
-							Monitor.Wait(_syncLock);
-						}
-					}
+                    //try to get next round of frames if necessary
+                    if (_framesToProcess.Count == 0)
+                    {
+                        GetNextRoundOfFrames();
+                    }
 
-					if (_framesToProcess.Count > 0)
-						nextFrame = _framesToProcess.Dequeue();
+                    //block if needed
+                    if (SystemResources.GetAvailableMemory(SizeUnits.Megabytes) <PrefetchSettings.Default.LowMemoryThresholdMb)
+                    {
+                        Monitor.Wait(_syncLock, 1000);
+                    }
+                    else
+                    {
+                        //block if there are no frames to process
+                        if (_framesToProcess.Count == 0 || !ConcurrentDequeuePolicy.CanDequeue())
+                            Monitor.Wait(_syncLock);
+
+                        //yield frame
+                        if (_framesToProcess.Count > 0 && ConcurrentDequeuePolicy.CanDequeue())
+                            nextFrame = _framesToProcess.Dequeue();
+                    }
 				}
-
-				if (nextFrame != null)
-					yield return nextFrame;
+                yield return nextFrame;
 			}
 		}
 
@@ -285,6 +302,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public void Dispose()
 		{
+            ConcurrentDequeuePolicy.UnregisterWaitObject(_syncLock);
 			IsBlocking = false;
 
 			_viewer.PhysicalWorkspace.ImageBoxes.ItemAdded -= OnImageBoxAdded;

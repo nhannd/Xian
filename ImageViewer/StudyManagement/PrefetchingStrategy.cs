@@ -27,6 +27,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly string _name;
 		private readonly string _description;
 
+        private readonly object _startStopLock;
+
 		/// <summary>
 		/// Constructs a new <see cref="PrefetchingStrategy"/> with the given <paramref name="name"/>
 		/// and <paramref name="description"/>.
@@ -35,6 +37,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			_name = name;
 			_description = description;
+            _startStopLock = new object();
 		}
 
 		/// <summary>
@@ -77,21 +80,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			Platform.CheckForNullReference(imageViewer, "imageViewer");
 
-			//Only start if we haven't already been started.
-			if (_imageViewer == null)
-			{
-				_imageViewer = imageViewer;
-				Start();
-			}
+            lock(_startStopLock)
+            {
+                if (_imageViewer == null)
+                {
+                    _imageViewer = imageViewer;
+                    Start();
+                }        
+            }		
 		}
 
 		void IPrefetchingStrategy.Stop()
 		{
-			if(_imageViewer != null)
-			{
-				Stop();
-				_imageViewer = null;
-			}
+            lock(_startStopLock)
+            {
+                if (_imageViewer != null)
+                {
+                    Stop();
+                    _imageViewer = null;
+                }                
+            }
+
 		}
 
 		#endregion

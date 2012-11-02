@@ -286,7 +286,7 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 				// Force the output fragment/frame to be even length
 				array<unsigned char>^ cbuf = gcnew array<unsigned char>(clen%2==1 ? clen+1 : clen);
 				Marshal::Copy((IntPtr)cio->buffer, cbuf, 0, clen);
-				newPixelData->AddFrameFragment(cbuf);
+				newPixelData->AddFrameFragment(cbuf, clen);
 			} else
 				throw gcnew DicomCodecException("Unable to JPEG 2000 encode image");
 		}
@@ -325,7 +325,7 @@ void DicomJpeg2000Codec::DecodeFrame(int frame, DicomCompressedPixelData^ oldPix
 	if (jparams == nullptr)
 		jparams = (DicomJpeg2000Parameters^)GetDefaultParameters();
 
-	array<unsigned char>^ destArray = gcnew array<unsigned char>(oldPixelData->UncompressedFrameSize);
+	array<unsigned char>^ destArray = newPixelData->GetData();
 	pin_ptr<unsigned char> destPin = &destArray[0];
 	unsigned char* destData = destPin;
 	int destDataSize = destArray->Length;
@@ -338,7 +338,9 @@ void DicomJpeg2000Codec::DecodeFrame(int frame, DicomCompressedPixelData^ oldPix
 	array<unsigned char>^ jpegArray = oldPixelData->GetFrameFragmentData(frame);
 	pin_ptr<unsigned char> jpegPin = &jpegArray[0];
 	unsigned char* jpegData = jpegPin;
-	int jpegDataSize = jpegArray->Length;
+	System::Collections::Generic::List<DicomFragment^> frags = oldPixelData->GetFrameFragments(frame);
+    int jpegDataSize = frags[0]->Length;
+
 
 	opj_dparameters_t dparams;
 	opj_event_mgr_t event_mgr;

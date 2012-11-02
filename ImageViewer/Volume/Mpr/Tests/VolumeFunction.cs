@@ -288,7 +288,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 				get { return true; }
 			}
 
-			protected override ISopFrameData GetFrameData(int frameNumber)
+			protected override ISopFrameData GetFrameData(FrameInfo frameInfo)
 			{
 				return _frameData;
 			}

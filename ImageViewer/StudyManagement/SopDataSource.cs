@@ -120,19 +120,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		/// <summary>
-		/// Gets the data for a particular frame in the SOP instance, if it is an image.
-		/// </summary>
-		/// <param name="frameNumber">The 1-based number of the frame for which the data is to be retrieved.</param>
-		/// <returns>An <see cref="ISopFrameData"/> containing frame-specific data.</returns>
-		/// <exception cref="InvalidOperationException">Thrown if this <see cref="ISopDataSource"/> is not an image
-		/// (e.g. <see cref="ISopDataSource.IsImage"/> returns false).</exception>
-		ISopFrameData ISopDataSource.GetFrameData(int frameNumber)
+	    /// <summary>
+	    /// Gets the data for a particular frame in the SOP instance, if it is an image.
+	    /// </summary>
+	    /// <param name="frameInfo"> </param>
+	    /// <returns>An <see cref="ISopFrameData"/> containing frame-specific data.</returns>
+	    /// <exception cref="InvalidOperationException">Thrown if this <see cref="ISopDataSource"/> is not an image
+	    /// (e.g. <see cref="ISopDataSource.IsImage"/> returns false).</exception>
+	    ISopFrameData ISopDataSource.GetFrameData(FrameInfo frameInfo)
 		{
 			CheckIsImage();
-			return GetFrameData(frameNumber);
+			return GetFrameData(frameInfo);
 		}
 
+        public virtual bool IsCacheable
+        {
+            get { return false; }
+        }
 		#endregion
 
 		/// <summary>
@@ -145,12 +149,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				throw new InvalidOperationException("This functionality cannot be used for non-images.");
 		}
 
-		/// <summary>
-		/// Gets the data for a particular frame in the SOP instance.
-		/// </summary>
-		/// <param name="frameNumber">The 1-based number of the frame for which the data is to be retrieved.</param>
-		/// <returns>An <see cref="ISopFrameData"/> containing frame-specific data.</returns>
-		protected abstract ISopFrameData GetFrameData(int frameNumber);
+	    /// <summary>
+	    /// Gets the data for a particular frame in the SOP instance.
+	    /// </summary>
+	    /// <param name="frameInfo"> </param>
+	    /// <param name="frameNumber">The 1-based number of the frame for which the data is to be retrieved.</param>
+	    /// <returns>An <see cref="ISopFrameData"/> containing frame-specific data.</returns>
+	    protected abstract ISopFrameData GetFrameData(FrameInfo frameInfo);
 
 		/// <summary>
 		/// Gets the <see cref="DicomAttribute"/> for the given tag.

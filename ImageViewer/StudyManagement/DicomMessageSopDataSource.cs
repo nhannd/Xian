@@ -192,15 +192,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region Frame Data Handling
 
-		/// <summary>
-		/// Called by the base class to create a new <see cref="StandardSopDataSource.StandardSopFrameData"/>
-		/// containing the data for a particular frame in the SOP instance.
-		/// </summary>
-		/// <param name="frameNumber">The 1-based number of the frame for which the data is to be retrieved.</param>
-		/// <returns>A new <see cref="StandardSopDataSource.StandardSopFrameData"/> containing the data for a particular frame in the SOP instance.</returns>
-		protected override StandardSopFrameData CreateFrameData(int frameNumber)
+	    /// <summary>
+	    /// Called by the base class to create a new <see cref="StandardSopDataSource.StandardSopFrameData"/>
+	    /// containing the data for a particular frame in the SOP instance.
+	    /// </summary>
+	    /// <param name="frameInfo"> </param>
+	    /// <returns>A new <see cref="StandardSopDataSource.StandardSopFrameData"/> containing the data for a particular frame in the SOP instance.</returns>
+	    protected override StandardSopFrameData CreateFrameData(FrameInfo frameInfo)
 		{
-			return new DicomMessageSopFrameData(frameNumber, this);
+			return new DicomMessageSopFrameData(frameInfo, this);
 		}
 
 		private class OverlayDataCache
@@ -250,10 +250,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// <param name="parent">The parent <see cref="DicomMessageSopDataSource"/> that this frame belongs to.</param>
 			/// <exception cref="ArgumentNullException">Thrown if <paramref name="parent"/> is null.</exception>
 			/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="frameNumber"/> is zero or negative.</exception>
-			public DicomMessageSopFrameData(int frameNumber, DicomMessageSopDataSource parent)
-				: base(frameNumber, parent)
+			public DicomMessageSopFrameData(FrameInfo frameInfo, DicomMessageSopDataSource parent)
+				: base(frameInfo, parent)
 			{
-				_frameIndex = frameNumber - 1;
+				_frameIndex = frameInfo.FrameNumber - 1;
 			}
 
 			/// <summary>
@@ -302,7 +302,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					throw new DicomCodecException("Unsupported transfer syntax");
 
 				if (photometricInterpretation.IsColor)
-					rawPixelData = ToArgb(message.DataSet, rawPixelData, photometricInterpretation);
+				{
+				    var argbPixelData = MemoryManager.Allocate<byte>(GetArgbBBufferSize(message.DataSet));
+                    ToArgb(message.DataSet, rawPixelData, argbPixelData, photometricInterpretation);
+				    rawPixelData = argbPixelData;
+				}
+					
 				else
 					NormalizeGrayscalePixels(message.DataSet, rawPixelData);
 
@@ -568,18 +573,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+        protected static int GetArgbBBufferSize(IDicomAttributeProvider dicomAttributeProvider)
+        {
+            int rows = dicomAttributeProvider[DicomTags.Rows].GetInt32(0, 0);
+            int columns = dicomAttributeProvider[DicomTags.Columns].GetInt32(0, 0);
+            return rows * columns * 4;
+        }
+
 		/// <summary>
 		/// Converts colour pixel data to ARGB.
 		/// </summary>
-		protected static byte[] ToArgb(IDicomAttributeProvider dicomAttributeProvider, byte[] pixelData, PhotometricInterpretation photometricInterpretation)
+		protected static void ToArgb(IDicomAttributeProvider dicomAttributeProvider, byte[] pixelData, byte[] argbPixelData, PhotometricInterpretation photometricInterpretation)
 		{
 			CodeClock clock = new CodeClock();
 			clock.Start();
-
-			int rows = dicomAttributeProvider[DicomTags.Rows].GetInt32(0, 0);
-			int columns = dicomAttributeProvider[DicomTags.Columns].GetInt32(0, 0);
-			int sizeInBytes = rows * columns * 4;
-			byte[] argbPixelData = MemoryManager.Allocate<byte>(sizeInBytes);
 
 			// Convert palette colour images to ARGB so we don't get interpolation artifacts
 			// when rendering.
@@ -609,8 +616,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			clock.Stop();
 			PerformanceReportBroker.PublishReport("DicomMessageSopDataSource", "ToArgb", clock.Seconds);
-
-			return argbPixelData;
 		}
 
 		#endregion

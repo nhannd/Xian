@@ -13,6 +13,7 @@ using System;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using DataCache;
 using FrameBlockingThreadPool = ClearCanvas.ImageViewer.Common.BlockingThreadPool<ClearCanvas.ImageViewer.StudyManagement.Frame>;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
@@ -26,7 +27,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly ICorePrefetchingStrategy _coreStrategy;
 		private ViewerFrameEnumerator _imageBoxEnumerator;
 		private FrameBlockingThreadPool _retrieveThreadPool;
-		private SimpleBlockingThreadPool _decompressThreadPool;
 		private bool _isStarted = false;
 		private bool _enabled = true;
 
@@ -208,16 +208,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			                      		ThreadPriority = _retrievalThreadPriority
 			                      	};
 			_retrieveThreadPool.Start();
-
-			if (DecompressionThreadConcurrency <= 0)
-				return;
-
-			_decompressThreadPool = new SimpleBlockingThreadPool(DecompressionThreadConcurrency)
-			                        	{
-			                        		ThreadPoolName = GetThreadPoolName("Decompress"),
-			                        		ThreadPriority = _decompressionThreadPriority
-			                        	};
-			_decompressThreadPool.Start();
 		}
 
 		protected override void Stop()
@@ -226,12 +216,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				_retrieveThreadPool.Stop(false);
 				_retrieveThreadPool = null;
-			}
-
-			if (_decompressThreadPool != null)
-			{
-				_decompressThreadPool.Stop(false);
-				_decompressThreadPool = null;
 			}
 
 			if (_imageBoxEnumerator != null)
@@ -253,24 +237,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_coreStrategy.RetrieveFrame(frame);
 		}
 
-		private bool CanDecompressFrame(Frame frame)
-		{
-			return _decompressThreadPool != null &&  _coreStrategy.CanDecompressFrame(frame);
-		}
-
-		private void DecompressFrame(Frame frame)
-		{
-			_coreStrategy.DecompressFrame(frame);
-		}
-
 		private void DoRetrieveFrame(Frame frame)
 		{
 			try
 			{
 				RetrieveFrame(frame);
-
-				if (CanDecompressFrame(frame))
-					_decompressThreadPool.Enqueue(() => DoDecompressFrame(frame));
 			}
 			catch (Exception ex)
 			{
@@ -279,18 +250,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		private void DoDecompressFrame(Frame frame)
-		{
-			try
-			{
-				DecompressFrame(frame);
-			}
-			catch (Exception ex)
-			{
-				// don't let an uncaught exception crash the entire preloader
-				Platform.Log(LogLevel.Warn, ex, "An error occured while trying to preload a frame.");
-			}
-		}
 
 		private string GetThreadPoolName(string operationName)
 		{

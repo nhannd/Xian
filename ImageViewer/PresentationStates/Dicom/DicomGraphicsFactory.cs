@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 				try
 				{
-					byte[] overlayData = dataSource.GetFrameData(frame.FrameNumber).GetNormalizedOverlayData(overlayPlane.Index + 1);
+					byte[] overlayData = dataSource.GetFrameData(frame.Info).GetNormalizedOverlayData(overlayPlane.Index + 1);
 					overlayPlaneGraphics.Add(new OverlayPlaneGraphic(overlayPlane, overlayData, OverlayPlaneSource.Image));
 
 					// if overlay data is null, the data source failed to retrieve the overlay data for some reason, so we also treat it as an encoding error

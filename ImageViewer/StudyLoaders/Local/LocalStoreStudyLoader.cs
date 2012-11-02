@@ -52,20 +52,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Local
 
         public LocalStoreStudyLoader() : base("DICOM_LOCAL")
         {
-            int? frameLookAhead = PreLoadingSettings.Default.FrameLookAheadCount;
-            if (PreLoadingSettings.Default.LoadAllFrames)
-                frameLookAhead = null;
-
-            var coreStrategy = new SimpleCorePrefetchingStrategy(frame => frame.ParentImageSop.DataSource is LocalStoreSopDataSource);
-            PrefetchingStrategy = new WeightedWindowPrefetchingStrategy(coreStrategy, "DICOM_LOCAL", "Simple prefetcing strategy for local images.")
-                                      {
-                                          Enabled = PreLoadingSettings.Default.Enabled,
-                                          RetrievalThreadConcurrency = PreLoadingSettings.Default.Concurrency,
-                                          FrameLookAheadCount = frameLookAhead,
-                                          SelectedImageBoxWeight = PreLoadingSettings.Default.SelectedImageBoxWeight,
-                                          UnselectedImageBoxWeight = PreLoadingSettings.Default.UnselectedImageBoxWeight,
-                                          DecompressionThreadConcurrency = 0
-                                      };
+     
         }
 
         protected override int OnStart(StudyLoaderArgs studyLoaderArgs)

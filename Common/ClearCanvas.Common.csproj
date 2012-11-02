@@ -156,6 +156,7 @@
     <Compile Include="Configuration\SettingsPropertyDescriptor.cs" />
     <Compile Include="DefaultExtensionFactory.cs" />
     <Compile Include="ExtensionPoint.cs" />
+    <Compile Include="FrameHeader.cs" />
     <Compile Include="IExtensionFactory.cs" />
     <Compile Include="IExtensionPoint.cs" />
     <Compile Include="IMessageBox.cs" />

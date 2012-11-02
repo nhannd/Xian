@@ -343,9 +343,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 				get { return _sopDataSource.TransferSyntaxUid; }
 			}
 
-			protected override ISopFrameData GetFrameData(int frameNumber)
+			protected override ISopFrameData GetFrameData(FrameInfo frameInfo)
 			{
-				return _sopDataSource.GetFrameData(frameNumber);
+				return _sopDataSource.GetFrameData(frameInfo);
 			}
 
 			public override bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute)
