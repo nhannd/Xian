@@ -10,13 +10,24 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Events;
 
 namespace ClearCanvas.Web.Services
 {
-	public interface IEntityHandler
+    /// <summary>
+    /// <see cref="EntityHandler"/>s can allow themselves to be extended (like a "tool" in the desktop)
+    /// using this interface.
+    /// </summary>
+    /// <remarks>Returned types must be derived from <see cref="EntityHandler"/>, and have a public parameterless constructor.</remarks>
+    public interface IEntityHandlerExtensionTypeProvider
+    {
+        IEnumerable<Type> GetExtensionTypes();
+    }
+
+    public interface IEntityHandler
 	{
 		Guid Identifier { get; }
 		string Name { get; }
@@ -27,7 +38,7 @@ namespace ClearCanvas.Web.Services
 		void ProcessMessage(Message message);
 	}
 
-	public abstract class EntityHandler<TEntity> : EntityHandler where TEntity : Entity, new()
+    public abstract class EntityHandler<TEntity> : EntityHandler where TEntity : Entity, new()
 	{
 		protected EntityHandler()
 		{
@@ -153,6 +164,18 @@ namespace ClearCanvas.Web.Services
 		}
 
 		#endregion
+
+        public static IEntityHandler Create(Type entityHandlerType)
+        {
+            var handler = (EntityHandler)Activator.CreateInstance(entityHandlerType);
+            handler.ApplicationContext = Services.ApplicationContext.Current;
+
+            if (handler.ApplicationContext == null)
+                throw new InvalidOperationException("The Create method must be executed on the pseudo-UI thread");
+
+            handler.ApplicationContext.EntityHandlers.Add(handler);
+            return handler;
+        }
 
 		public static THandler Create<THandler>()
 			where THandler : EntityHandler, new()

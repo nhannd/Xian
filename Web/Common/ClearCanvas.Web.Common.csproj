@@ -68,6 +68,7 @@
     <Compile Include="Application.cs" />
     <Compile Include="DataContractBase.cs" />
     <Compile Include="Events\ApplicationStoppedEvent.cs" />
+    <Compile Include="Events\ListPropertyChangedEvent.cs" />
     <Compile Include="Events\SessionUpdatedEvent.cs" />
     <Compile Include="IDuplexApplicationService.cs" />
     <Compile Include="IKnownTypeProvider.cs" />

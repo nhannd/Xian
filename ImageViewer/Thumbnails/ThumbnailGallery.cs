@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         {
         }
 
-        public ThumbnailGallery(IList<IGalleryItem> galleryItems)
+        public ThumbnailGallery(IEnumerable<IGalleryItem> galleryItems)
             : base(galleryItems)
         {
             base.GalleryItemFactory = new ThumbnailGalleryItemFactory(() => ThumbnailLoader);

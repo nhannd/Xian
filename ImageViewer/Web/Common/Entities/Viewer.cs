@@ -20,10 +20,13 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
 		[DataMember(IsRequired = false)]
 		public WebActionNode[] ToolbarActions { get; set; }
 
+        [DataMember(IsRequired = false)]
+        public WebIconSize ToolStripIconSize { get; set; }
+
 		[DataMember(IsRequired = true)]
 		public ImageBox[] ImageBoxes { get; set; }
 
         [DataMember(IsRequired = false)]
-        public WebIconSize ToolStripIconSize { get; set; }
+        public Entity[] Extensions { get; set; }
 	}
 }

@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 {
     public interface IGallery
     {
-        IList<IGalleryItem> GalleryItems { get; }
+        IObservableList<IGalleryItem> GalleryItems { get; }
     }
 
     public interface IGallery<TSourceItem> : IGallery
@@ -58,12 +58,12 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         {
         }
 
-        public Gallery(IList<IGalleryItem> galleryItems)
+        public Gallery(IEnumerable<IGalleryItem> galleryItems)
         {
-            GalleryItems = galleryItems;
+            GalleryItems = new ObservableList<IGalleryItem>(galleryItems);
         }
 
-        public Gallery(IList<IGalleryItem> galleryItems, IGalleryItemFactory<TSourceItem> galleryItemFactory)
+        public Gallery(IEnumerable<IGalleryItem> galleryItems, IGalleryItemFactory<TSourceItem> galleryItemFactory)
             : this(galleryItems)
         {
             GalleryItemFactory = galleryItemFactory;
@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
         #region IGallery Members
 
-        public IList<IGalleryItem> GalleryItems { get; private set; }
+        public IObservableList<IGalleryItem> GalleryItems { get; private set; }
 
         #endregion
 

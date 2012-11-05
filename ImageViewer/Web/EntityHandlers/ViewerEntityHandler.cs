@@ -11,33 +11,41 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Web.Common;
 using ClearCanvas.ImageViewer.Web.Common.Entities;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Web.Services;
 
 namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 {
-	public class ViewerEntityHandler : EntityHandler<Viewer>
+    public class ViewerEntityHandler : EntityHandler<Viewer>
 	{
+        public class ExtensionTypeProviderExtensionPoint : ExtensionPoint<IEntityHandlerExtensionTypeProvider>
+        {
+        }
+
 		private ImageViewerComponent _viewer;
 
 	    private readonly ToolStripSettings _toolStripSettings = new ToolStripSettings();
 		private readonly List<ImageBoxEntityHandler> _imageBoxHandlers = new List<ImageBoxEntityHandler>();
 		private readonly List<ActionNodeEntityHandler> _actionHandlers = new List<ActionNodeEntityHandler>();
+        private readonly List<IEntityHandler> _extensionHandlers = new List<IEntityHandler>();
+ 
+        private Entity[] GetExtensionEntities()
+        {
+            return _extensionHandlers.Select(h => h.GetEntity()).ToArray();
+        }
 
-	    private Common.Entities.ImageBox[] GetImageBoxEntities()
-		{
-			return CollectionUtils.Map(_imageBoxHandlers, 
-				(ImageBoxEntityHandler handler) => handler.GetEntity()).ToArray();
-		}
+        private Common.Entities.ImageBox[] GetImageBoxEntities()
+	    {
+	        return _imageBoxHandlers.Select(h => h.GetEntity()).ToArray();
+	    }
 
 		private WebActionNode[] GetToolbarActionEntities()
 		{
-			var toolbarActions = CollectionUtils.Map(_actionHandlers,
-										 (ActionNodeEntityHandler handler) => (WebActionNode)handler.GetEntity());
+			var toolbarActions = _actionHandlers.Select(h => (WebActionNode)h.GetEntity()).ToArray();
 			return FlattenWebActions(toolbarActions).ToArray();
 		}
 
@@ -50,6 +58,23 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 			UpdateActionModel(false);
 			RefreshImageBoxHandlers(false);
+
+		    try
+		    {
+		        var extensionHandlerTypeProviders = new ExtensionTypeProviderExtensionPoint().CreateExtensions().Cast<IEntityHandlerExtensionTypeProvider>();
+		        var extensionHandlerTypes = from extensionHandlerTypeProvider in extensionHandlerTypeProviders
+		                                    from type in extensionHandlerTypeProvider.GetExtensionTypes()
+		                                    select Create(type);
+
+                foreach (var extensionHandler in extensionHandlerTypes)
+		        {
+		            extensionHandler.SetModelObject(_viewer);
+		            _extensionHandlers.Add(extensionHandler);
+		        }
+		    }
+		    catch (NotSupportedException)
+		    {
+		    }
 		}
 
 		protected override void UpdateEntity(Viewer entity)
@@ -57,6 +82,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 		    entity.ToolStripIconSize = LoadToolbarIconSizeFromSettings();
 			entity.ImageBoxes = GetImageBoxEntities();
 			entity.ToolbarActions = GetToolbarActionEntities();
+		    entity.Extensions = GetExtensionEntities();
 		}
 
 		private void RefreshImageBoxHandlers(bool notify)
@@ -65,13 +91,13 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 			foreach (IImageBox imageBox in _viewer.PhysicalWorkspace.ImageBoxes)
 			{
-				ImageBoxEntityHandler newHandler = Create<ImageBoxEntityHandler>();
+				var newHandler = Create<ImageBoxEntityHandler>();
 				((IEntityHandler)newHandler).SetModelObject(imageBox);
 				_imageBoxHandlers.Add(newHandler);
 			}
 
 			if (notify)
-				base.NotifyEntityPropertyChanged("ImageBoxes", GetImageBoxEntities());
+				base.NotifyEntityPropertyChanged("ImageBoxes", GetImageBoxEntities()); 
 		}
 
 		public override void ProcessMessage(Message message)
