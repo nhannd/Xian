@@ -293,6 +293,7 @@ namespace ClearCanvas.ImageViewer.Web
 
             if (Platform.IsLogLevelEnabled(LogLevel.Debug))
                 Platform.Log(LogLevel.Debug, "Finding studies...");
+
 			var startRequest = (StartViewerApplicationRequest)request;
 			IList<StudyRootStudyIdentifier> studies = FindStudies(startRequest);
 

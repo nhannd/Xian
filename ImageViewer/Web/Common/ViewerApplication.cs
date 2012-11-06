@@ -63,7 +63,8 @@ namespace ClearCanvas.ImageViewer.Web.Common
         public string ApplicationName { get; set; }
 	}
 
-	[DataContract(Namespace = ViewerNamespace.Value)]
+    [JavascriptModule("ClearCanvas/Controllers/ImageViewer/ApplicationController")]
+    [DataContract(Namespace = ViewerNamespace.Value)]
 	public class ViewerApplication : Application
 	{
         [DataMember(IsRequired = true)]

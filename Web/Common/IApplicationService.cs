@@ -48,8 +48,27 @@ namespace ClearCanvas.Web.Common
     {
         [DataMember(IsRequired = true)]
         public Guid ApplicationId { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public JavascriptModuleInformation[] JavascriptModuleInfo { get; set; }
     }
-    
+
+    [DataContract(Namespace = Namespace.Value)]
+    public class JavascriptModuleInformation : DataContractBase
+    {
+        [DataMember(IsRequired = true)]
+        public string EntityName { get; set; }
+        
+        [DataMember(IsRequired = true)]
+        public string EntityFullName { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public string ModuleName { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public string ModulePath { get; set; }
+    }
+
 	[DataContract(Namespace = Namespace.Value)]
     public class StopApplicationRequest : DataContractBase
 	{
