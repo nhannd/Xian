@@ -11,6 +11,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Messages;
@@ -112,7 +113,9 @@ namespace ClearCanvas.ImageViewer.Web.View
 	    private void ProcessUpdatePropertyMessage(UpdatePropertyMessage message)
 	    {
             if (message.PropertyName == "TopLeftPresentationImageIndex")
-	        {
+            {
+                Platform.CheckForNullReference(message.Value, "message.Value");
+                Platform.CheckForNullReference(_imageBox, "_imageBox");
                 int newIndex = (int)message.Value;
                 if (newIndex!=_imageBox.TopLeftPresentationImageIndex)
                 {
