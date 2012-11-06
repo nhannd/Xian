@@ -18,6 +18,7 @@ using ClearCanvas.ImageViewer.Web.Common.Entities;
 using ClearCanvas.ImageViewer.Web.Common.Events;
 using ClearCanvas.ImageViewer.Web.Common.Messages;
 using ClearCanvas.Web.Common;
+using ClearCanvas.Web.Common.Entities;
 using ClearCanvas.Web.Common.Events;
 using ClearCanvas.Web.Common.Messages;
 using ClearCanvas.Web.Services;

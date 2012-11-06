@@ -18,7 +18,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InputManagement;
 
-namespace ClearCanvas.ImageViewer.Web.EntityHandlers
+namespace ClearCanvas.ImageViewer.Web.View
 {
     [DropDownAction("quality", "global-toolbars/ToolbarImageQuality/ToolbarImageQuality", "QualityOptions")]
     [IconSet("quality", "ImageQualityToolSmall.png", "ImageQualityToolMedium.png", "ImageQualityToolLarge.png")]

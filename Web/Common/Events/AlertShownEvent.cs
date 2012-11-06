@@ -10,12 +10,11 @@
 #endregion
 
 using System.Runtime.Serialization;
-using ClearCanvas.ImageViewer.Web.Common.Entities;
-using ClearCanvas.Web.Common;
+using ClearCanvas.Web.Common.Entities;
 
-namespace ClearCanvas.ImageViewer.Web.Common.Events
+namespace ClearCanvas.Web.Common.Events
 {
-    [DataContract(Namespace = ViewerNamespace.Value)]
+    [DataContract(Namespace = Namespace.Value)]
     public class AlertShownEvent : Event
     {
         [DataMember(IsRequired = true)]

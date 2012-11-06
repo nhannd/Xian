@@ -23,15 +23,15 @@ using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Web.Common.Messages;
+using ClearCanvas.ImageViewer.Web.View;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Events;
 using ClearCanvas.Web.Services;
 using ClearCanvas.ImageViewer.Web.Common;
-using ClearCanvas.ImageViewer.Web.EntityHandlers;
 using ClearCanvas.ImageViewer.Web.Common.Entities;
+using ClearCanvas.Web.Services.View;
 using Application=ClearCanvas.Desktop.Application;
 using ClearCanvas.Common.Utilities;
-using Message=ClearCanvas.Web.Common.Message;
 
 namespace ClearCanvas.ImageViewer.Web
 {
@@ -117,8 +117,7 @@ namespace ClearCanvas.ImageViewer.Web
 	{
         private static readonly object _syncLock = new object();
 		private Common.ViewerApplication _app;
-		private ImageViewerComponent _viewer;
-		private EntityHandler _viewerHandler;
+	    private WebDesktopWindow _desktopWindow;
 
         public override string InstanceName
         {
@@ -299,43 +298,42 @@ namespace ClearCanvas.ImageViewer.Web
 
 			List<LoadStudyArgs> loadArgs = CollectionUtils.Map(studies, (StudyRootStudyIdentifier identifier) => CreateLoadStudyArgs(identifier));
 
-		    DesktopWindowCreationArgs args = new DesktopWindowCreationArgs("", Identifier.ToString());
-            WebDesktopWindow window = new WebDesktopWindow(args, Application.Instance);
-            window.Open();
+		    var args = new DesktopWindowCreationArgs("", Identifier.ToString());
+            _desktopWindow = new WebDesktopWindow(args, Application.Instance);
+            _desktopWindow.Open();
 
-            _viewer = CreateViewerComponent(startRequest);
+            var viewer = CreateViewerComponent(startRequest);
 
 			try
 			{
                 if (Platform.IsLogLevelEnabled(LogLevel.Debug))
                     Platform.Log(LogLevel.Debug, "Loading study...");
-                _viewer.LoadStudies(loadArgs);
+                viewer.LoadStudies(loadArgs);
 			}
 			catch (Exception e)
 			{
-				if (!AnySopsLoaded(_viewer)) //end the app.
+                if (!AnySopsLoaded(viewer)) //end the app.
                     throw;
 
 				//Show an error and continue.
-				ExceptionHandler.Report(e, window);
+                ExceptionHandler.Report(e, _desktopWindow);
 			}
 
             if (Platform.IsLogLevelEnabled(LogLevel.Debug))
                 Platform.Log(LogLevel.Info, "Launching viewer...");
-			
-			ImageViewerComponent.Launch(_viewer, window, "");
 
-			_viewerHandler = EntityHandler.Create<ViewerEntityHandler>();
-			_viewerHandler.SetModelObject(_viewer);
+            ImageViewerComponent.Launch(viewer, _desktopWindow, "");
+
+	        // TODO (Phoenix5): Hack until the WorkspaceView does this.
+	        var view = ImageViewerComponentView.Current;
 		    _app = new Common.ViewerApplication
 		               {
 		                   Identifier = Identifier,
-		                   Viewer = (Viewer) _viewerHandler.GetEntity(),
+                           Viewer = view.GetEntity(),
 
                            VersionString = GetProductVersionString()
                                 
 			           };
-            
 
             // Push the ViewerApplication object to the client
             Event @event = new PropertyChangedEvent
@@ -346,7 +344,7 @@ namespace ClearCanvas.ImageViewer.Web
                 SenderId = request.Identifier
             };
 
-            ApplicationContext.Current.FireEvent(@event);
+            FireEvent(@event);
 
 	       // window.ShowMessageBox("This is a message test", "Title", MessageBoxActions.OkCancel);
 
@@ -383,7 +381,6 @@ namespace ClearCanvas.ImageViewer.Web
 
         public static LoadStudyArgs CreateLoadStudyArgs(StudyRootStudyIdentifier identifier)
         {
-
             // TODO: Need to think about this more. What's the best way to swap different loader?
             // Do we need to support loading studies from multiple servers? 
 
@@ -454,18 +451,10 @@ namespace ClearCanvas.ImageViewer.Web
 
 	    protected override void OnStop()
 		{
-			if (_viewerHandler != null)
-			{
-				_viewerHandler.Dispose();
-				_viewerHandler = null;
-			}
-
-			//TODO (CR May 2010): WebDesktopWindow shouldn't hang around, but we can check.
-			if (_viewer != null)
-			{
-				_viewer.Stop();
-				_viewer.Dispose();
-				_viewer = null;
+            if (_desktopWindow != null)
+            {
+                _desktopWindow.Close(UserInteraction.NotAllowed);
+                _desktopWindow = null;
 			}
 		}
 

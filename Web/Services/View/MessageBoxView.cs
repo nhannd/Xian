@@ -10,15 +10,13 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Web.Common.Messages;
-using ClearCanvas.ImageViewer.Web.View;
 using ClearCanvas.Web.Common;
-using MessageBoxEntity=ClearCanvas.ImageViewer.Web.Common.Entities.MessageBox;
-using ClearCanvas.Web.Services;
+using ClearCanvas.Web.Common.Entities;
+using ClearCanvas.Web.Common.Messages;
 
-namespace ClearCanvas.ImageViewer.Web.EntityHandlers
+namespace ClearCanvas.Web.Services.View
 {
-    public class MessageBoxEntityHandler : EntityHandler<MessageBoxEntity>
+    public class MessageBoxView : WebView<MessageBox>
     {
         private DesktopWindowView _desktopWindow;
 
@@ -27,7 +25,11 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             _desktopWindow = (DesktopWindowView)modelObject;
 		}
 
-		protected override void UpdateEntity(Common.Entities.MessageBox entity)
+        protected override void Initialize()
+        {
+        }
+
+		protected override void UpdateEntity(MessageBox entity)
 		{
 		}
 

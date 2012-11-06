@@ -60,6 +60,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -78,6 +79,8 @@
     <Compile Include="ApplicationContext.cs" />
     <Compile Include="ApplicationService.cs" />
     <Compile Include="EntityHandler.cs" />
+    <Compile Include="View\WebApplicationComponentView.cs" />
+    <Compile Include="View\WebView.cs" />
     <Compile Include="EntityHandlerStore.cs" />
     <Compile Include="EventQueue.cs" />
     <Compile Include="ExceptionTranslator.cs" />
@@ -96,12 +99,25 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ApplicationServiceSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="View\WebActionView.cs" />
+    <Compile Include="View\AlertView.cs" />
+    <Compile Include="View\ApplicationView.cs" />
+    <Compile Include="View\DesktopObjectView.cs" />
+    <Compile Include="View\DesktopWindowView.cs" />
+    <Compile Include="View\GuiToolkit.cs" />
+    <Compile Include="View\MessageBoxView.cs" />
+    <Compile Include="View\WorkspaceView.cs" />
+    <Compile Include="WebDesktopWindow.cs" />
     <Compile Include="WebSynchronizationContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Desktop\ClearCanvas.Desktop.csproj">
+      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
+      <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
       <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageViewer.Web.EntityHandlers {
+namespace ClearCanvas.ImageViewer.Web.View {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -26,9 +26,9 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("DiagnosticDynamic")]
-        public global::ClearCanvas.ImageViewer.Web.EntityHandlers.ImageQualityOption ImageQualityOption {
+        public global::ClearCanvas.ImageViewer.Web.View.ImageQualityOption ImageQualityOption {
             get {
-                return ((global::ClearCanvas.ImageViewer.Web.EntityHandlers.ImageQualityOption)(this["ImageQualityOption"]));
+                return ((global::ClearCanvas.ImageViewer.Web.View.ImageQualityOption)(this["ImageQualityOption"]));
             }
             set {
                 this["ImageQualityOption"] = value;

@@ -12,13 +12,12 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Web.Common.Messages;
 using ClearCanvas.Web.Common;
-using ClearCanvas.Web.Services;
+using ClearCanvas.Web.Common.Messages;
 
-namespace ClearCanvas.ImageViewer.Web.EntityHandlers
+namespace ClearCanvas.Web.Services.View
 {
-    public class AlertEntityHandler : EntityHandler<Common.Entities.Alert>
+    public class AlertView : WebView<Web.Common.Entities.Alert>
     {
         private DesktopWindow _desktopWindow;
         private Action<DesktopWindow> _linkAction;
@@ -29,7 +28,12 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             _desktopWindow = (DesktopWindow)modelObject;
         }
 
-        protected override void UpdateEntity(Common.Entities.Alert entity)
+        protected override void Initialize()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void UpdateEntity(Web.Common.Entities.Alert entity)
         {
         }
 

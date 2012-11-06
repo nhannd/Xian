@@ -112,11 +112,14 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CancelLabel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="MessageAccessDenied" xml:space="preserve">
     <value>You are not authorized to view images.</value>
   </data>
@@ -134,5 +137,14 @@
   </data>
   <data name="MessageUnexpectedError" xml:space="preserve">
     <value>An unexpected error has occurred on the server.</value>
+  </data>
+  <data name="NoLabel" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="OkLabel" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="YesLabel" xml:space="preserve">
+    <value>Yes</value>
   </data>
 </root>

@@ -18,8 +18,7 @@ using ClearCanvas.Web.Common.Events;
 namespace ClearCanvas.Web.Services
 {
     /// <summary>
-    /// <see cref="EntityHandler"/>s can allow themselves to be extended (like a "tool" in the desktop)
-    /// using this interface.
+    /// <see cref="EntityHandler"/>s can allow themselves to be extended (like a "tool" in the desktop) using this interface.
     /// </summary>
     /// <remarks>Returned types must be derived from <see cref="EntityHandler"/>, and have a public parameterless constructor.</remarks>
     public interface IEntityHandlerExtensionTypeProvider
@@ -28,93 +27,107 @@ namespace ClearCanvas.Web.Services
     }
 
     public interface IEntityHandler
-	{
-		Guid Identifier { get; }
-		string Name { get; }
+    {
+        Guid Identifier { get; }
+        string Name { get; }
 
-		Entity GetEntity();
+        Entity GetEntity();
 
-		void SetModelObject(object modelObject);
-		void ProcessMessage(Message message);
-	}
+        void SetModelObject(object modelObject);
+        void ProcessMessage(Message message);
+    }
 
     public abstract class EntityHandler<TEntity> : EntityHandler where TEntity : Entity, new()
-	{
-		protected EntityHandler()
-		{
-		}
+    {
+        protected EntityHandler()
+        {
+        }
 
-		protected sealed override Entity CreateEntity()
-		{
-			return new TEntity();
-		}
+        protected sealed override Entity CreateEntity()
+        {
+            return new TEntity();
+        }
 
-		protected sealed override void UpdateEntity(Entity entity)
-		{
-			UpdateEntity((TEntity)entity);
-		}
+        protected sealed override void UpdateEntity(Entity entity)
+        {
+            UpdateEntity((TEntity)entity);
+        }
 
-		protected abstract void UpdateEntity(TEntity entity);
+        protected abstract void UpdateEntity(TEntity entity);
 
-		public new TEntity GetEntity()
-		{
-			return (TEntity)base.GetEntity();
-		}
-	}
+        public new TEntity GetEntity()
+        {
+            return (TEntity)base.GetEntity();
+        }
+    }
 
-	public abstract class EntityHandler : IEntityHandler, IDisposable
-	{
-		#region Private Fields
+    public abstract class EntityHandler : IEntityHandler, IDisposable
+    {
+        #region Private Fields
 
-		private bool _disposed;
-		private string _name;
+        private bool _disposed;
+        private bool _initialized;
+        private string _name;
 
-		#endregion
-		
-		protected EntityHandler()
-		{
-			Identifier = Guid.NewGuid();
-		}
+        #endregion
 
-		public IApplicationContext ApplicationContext { get; set; }
-		public virtual string Name
-		{
-			get
-			{
-				if (_name == null)
-					_name = CreateEntity().GetType().Name;
-				return _name;
-			}
-			set
-			{
-				_name = value;
-			}
-		}
+        protected EntityHandler()
+        {
+            Identifier = Guid.NewGuid();
+            ApplicationContext = Services.ApplicationContext.Current;
 
-		#region IEntityHandler Members
+            if (ApplicationContext == null)
+                throw new InvalidOperationException("WebViews must be created on the pseudo-UI thread");
 
-		public Guid Identifier { get; set; }
+            ApplicationContext.EntityHandlers.Add(this);
+        }
 
-		public virtual Entity GetEntity()
-		{
-			Entity entity = CreateEntity();
-			UpdateEntity(entity);
-			entity.Identifier = Identifier;
-			return entity;
-		}
+        public IApplicationContext ApplicationContext { get; set; }
+        public virtual string Name
+        {
+            get
+            {
+                if (_name == null)
+                    _name = CreateEntity().Name;
+                return _name;
+            }
+            set
+            {
+                _name = value;
+            }
+        }
 
-		public abstract void SetModelObject(object modelObject);
-		public abstract void ProcessMessage(Message message);
-	
-		protected abstract Entity CreateEntity();
-		protected abstract void UpdateEntity(Entity entity);
+        #region IEntityHandler Members
+
+        public Guid Identifier { get; set; }
+
+        public virtual Entity GetEntity()
+        {
+            if (!_initialized)
+            {
+                _initialized = true;
+                Initialize();
+            }
+
+            Entity entity = CreateEntity();
+            UpdateEntity(entity);
+            entity.Identifier = Identifier;
+            return entity;
+        }
+
+        public abstract void SetModelObject(object modelObject);
+        public abstract void ProcessMessage(Message message);
+
+        protected abstract void Initialize();
+        protected abstract Entity CreateEntity();
+        protected abstract void UpdateEntity(Entity entity);
         
         protected virtual string[] GetDebugInfo()
         {
             return null;
         }
 
-		#endregion
+        #endregion
 
         /// <summary>
         /// Sends a <see cref="PropertyChangedEvent"/> event to the client. The event may not be sent immediately.
@@ -122,74 +135,51 @@ namespace ClearCanvas.Web.Services
         /// <param name="propertyName"></param>
         /// <param name="value"></param>
         protected virtual void NotifyEntityPropertyChanged(string propertyName, object value)
-		{
-            Event @event = new PropertyChangedEvent
-            {
-				Identifier = Guid.NewGuid(),
-				SenderId = Identifier,
-				Sender = Name,
-				PropertyName = propertyName,
-                Value = value,
-                DebugInfo = GetDebugInfo()
-            };
-
-            // Only fire the event if the entity handler has not been disposed.
-			if (!_disposed)
-                ApplicationContext.FireEvent(@event);
-		}
-
-
-	    protected virtual void Dispose(bool disposing)
-		{
-			if (!disposing)
-				return;
-
-			if (ApplicationContext != null)
-				ApplicationContext.EntityHandlers.Remove(this);
-		}
-
-		#region IDisposable Members
-
-		public void Dispose()
-		{
-			try
-			{
-				_disposed = true;
-				Dispose(true);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Debug, e);
-			}
-		}
-
-		#endregion
-
-        public static IEntityHandler Create(Type entityHandlerType)
         {
-            var handler = (EntityHandler)Activator.CreateInstance(entityHandlerType);
-            handler.ApplicationContext = Services.ApplicationContext.Current;
+            Event @event = new PropertyChangedEvent
+                               {
+                                   Identifier = Guid.NewGuid(),
+                                   SenderId = Identifier,
+                                   Sender = Name,
+                                   PropertyName = propertyName,
+                                   Value = value,
+                                   DebugInfo = GetDebugInfo()
+                               };
 
-            if (handler.ApplicationContext == null)
-                throw new InvalidOperationException("The Create method must be executed on the pseudo-UI thread");
-
-            handler.ApplicationContext.EntityHandlers.Add(handler);
-            return handler;
+            FireEvent(@event);
         }
 
-		public static THandler Create<THandler>()
-			where THandler : EntityHandler, new()
-		{
-			EntityHandler handler = new THandler
-			{
-				ApplicationContext = Services.ApplicationContext.Current
-			};
+        protected virtual void FireEvent(Event @event)
+        {
+            // Only fire the event if the entity handler has not been disposed and it's initial state has already been retrieved once.
+            if (!_disposed && _initialized)
+                ApplicationContext.FireEvent(@event);
+        }
 
-			if (handler.ApplicationContext == null)
-				throw new InvalidOperationException("The Create method must be executed on the pseudo-UI thread");
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+                return;
 
-			handler.ApplicationContext.EntityHandlers.Add(handler);
-			return (THandler)handler;
-		}
-	}
+            if (ApplicationContext != null)
+                ApplicationContext.EntityHandlers.Remove(this);
+        }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            try
+            {
+                _disposed = true;
+                Dispose(true);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Debug, e);
+            }
+        }
+
+        #endregion
+    }
 }

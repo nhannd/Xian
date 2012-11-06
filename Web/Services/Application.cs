@@ -19,6 +19,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Web.Common.Events;
 using ClearCanvas.Common.Utilities;
 using System.Globalization;
+using ClearCanvas.Web.Services.View;
 
 namespace ClearCanvas.Web.Services
 {

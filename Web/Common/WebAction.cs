@@ -10,14 +10,13 @@
 #endregion
 
 using System.Runtime.Serialization;
-using ClearCanvas.Web.Common;
 
-namespace ClearCanvas.ImageViewer.Web.Common.Entities
+namespace ClearCanvas.Web.Common
 {
     /// <summary>
     /// Enumeration for different standard icon sizes.
     /// </summary>
-    [DataContract(Namespace = ViewerNamespace.Value)]
+    [DataContract(Namespace = Namespace.Value)]
     public enum WebIconSize
     {
         /// <summary>
@@ -39,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
         Large
     };
 
-	[DataContract(Namespace = ViewerNamespace.Value)]
+	[DataContract(Namespace = Namespace.Value)]
 	public class WebIconSet
 	{
 		[DataMember(IsRequired = false)]
@@ -55,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
         public bool HasOverlay { get; set; }
 	}
 
-    [DataContract(Namespace = ViewerNamespace.Value)]
+    [DataContract(Namespace = Namespace.Value)]
     public class WebActionNode : Entity
     {
         [DataMember(IsRequired = true)]
@@ -66,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
     }
 
     //TODO: Why do we need to seperate WebAction and WebActionNode?
-	[DataContract(Namespace = ViewerNamespace.Value)]
+	[DataContract(Namespace = Namespace.Value)]
 	public class WebAction : WebActionNode
 	{
         [DataMember(IsRequired = true)]
@@ -93,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
 		}
 	}
 
-	[DataContract(Namespace = ViewerNamespace.Value)]
+	[DataContract(Namespace = Namespace.Value)]
 	public class WebClickAction : WebAction
 	{
 		[DataMember(IsRequired = true)]
@@ -103,21 +102,21 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
 		public bool Checked { get; set; }
 	}
 
-	[DataContract(Namespace = ViewerNamespace.Value)]
+	[DataContract(Namespace = Namespace.Value)]
 	public class WebDropDownButtonAction : WebClickAction
 	{
 		[DataMember(IsRequired = false)]
 		public WebActionNode[] DropDownActions { get; set; }		
 	}
 
-    [DataContract(Namespace = ViewerNamespace.Value)]
+    [DataContract(Namespace = Namespace.Value)]
     public class WebDropDownAction : WebAction
     {
         [DataMember(IsRequired = false)]
         public WebActionNode[] DropDownActions { get; set; }
     }
 
-    [DataContract(Namespace = ViewerNamespace.Value)]
+    [DataContract(Namespace = Namespace.Value)]
     public class WebLayoutChangerAction : WebAction
     {
         [DataMember(IsRequired = true)]

@@ -10,12 +10,11 @@
 #endregion
 
 using System.Runtime.Serialization;
-using ClearCanvas.Web.Common;
 
-namespace ClearCanvas.ImageViewer.Web.Common.Messages
+namespace ClearCanvas.Web.Common.Messages
 {
 
-    [DataContract(Namespace = ViewerNamespace.Value)]
+    [DataContract(Namespace = Namespace.Value)]
     public class DismissAlertMessage : Message
     {
         [DataMember(IsRequired = true)]

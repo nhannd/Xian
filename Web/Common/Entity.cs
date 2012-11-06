@@ -22,7 +22,7 @@ namespace ClearCanvas.Web.Common
 
 		public override string ToString()
 		{
-			return String.Format("{0}:{1}", this.GetType().Name, Identifier);
+			return String.Format("{0}:{1}", Name, Identifier);
 		}
 
         #region Equality
@@ -56,10 +56,5 @@ namespace ClearCanvas.Web.Common
         }
 
         #endregion
-
-		public static T Create<T>() where T : Entity, new()
-		{
-			return new T { Identifier = Guid.NewGuid() };
-		}
 	}
 }

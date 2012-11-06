@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using ClearCanvas.Common.Statistics;
@@ -23,7 +24,7 @@ using ClearCanvas.ImageViewer.Web.Common.Events;
 using ClearCanvas.ImageViewer.Web.Utiltities;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Events;
-using ClearCanvas.Web.Services;
+using ClearCanvas.Web.Services.View;
 using TileEntity = ClearCanvas.ImageViewer.Web.Common.Entities.Tile;
 using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.ImageViewer.InputManagement;
@@ -33,54 +34,52 @@ using ClearCanvas.ImageViewer.Web.Common.Messages;
 using Message=ClearCanvas.Web.Common.Message;
 using MouseWheelMessage=ClearCanvas.ImageViewer.Web.Common.Messages.MouseWheelMessage;
 using Rectangle=System.Drawing.Rectangle;
-using ClearCanvas.ImageViewer.Web.Common.Entities;
 using ClearCanvas.Web.Common.Messages;
 using ClearCanvas.Common;
 using Cursor=ClearCanvas.ImageViewer.Web.Common.Entities.Cursor;
 using Image = ClearCanvas.Web.Common.Image;
 using MouseLeaveMessage = ClearCanvas.ImageViewer.Web.Common.Messages.MouseLeaveMessage;
 
-namespace ClearCanvas.ImageViewer.Web.EntityHandlers
+namespace ClearCanvas.ImageViewer.Web.View
 {
 	internal class ContextMenuContainer : IDisposable
 	{
-		private readonly List<ActionNodeEntityHandler> _contextMenuHandlers;
+		private readonly List<WebActionView> _contextMenuViews;
 
 		public ContextMenuContainer(ActionModelNode modelNode)
 		{
-			_contextMenuHandlers = ActionNodeEntityHandler.Create(modelNode.ChildNodes);
+			_contextMenuViews = WebActionView.Create(modelNode.ChildNodes);
 		}
 
 		public WebActionNode[] GetWebActions()
 		{
-			return CollectionUtils.Map(_contextMenuHandlers,
-				(ActionNodeEntityHandler handler) => (WebActionNode)handler.GetEntity()).ToArray();
+			return _contextMenuViews.Select(a => (WebActionNode)a.GetEntity()).ToArray();
 		}
 
 		#region IDisposable Members
 
 		public void Dispose()
 		{
-			if (_contextMenuHandlers == null)
+			if (_contextMenuViews == null)
 				return;
 
-			foreach (ActionNodeEntityHandler handler in _contextMenuHandlers)
-				handler.Dispose();
+			foreach (WebActionView view in _contextMenuViews)
+				view.Dispose();
 
-			_contextMenuHandlers.Clear();
+			_contextMenuViews.Clear();
 		}
 
 		#endregion
 	}
 
-    public class TileEntityHandler : EntityHandler<TileEntity>
+    public class TileView : WebView<TileEntity>
     {
         private static class LogNames
         {
-            public const string MessageProcessing = "TileEntityHandler.MessageProcessing";
-            public const string ServerRendering = "TileEntityHandler.Rendering.Server";
-            public const string ClientRendering = "TileEntityHandler.Rendering.Client";
-            public const string ClientStackRendering = "TileEntityHandler.Rendering.Client.Stacking";
+            public const string MessageProcessing = "TileView.MessageProcessing";
+            public const string ServerRendering = "TileView.Rendering.Server";
+            public const string ClientRendering = "TileView.Rendering.Client";
+            public const string ClientStackRendering = "TileView.Rendering.Client.Stacking";
         }
 
         private class Counter
@@ -134,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
         private static Counter _undeliveredImageCounter;
 
 
-        public TileEntityHandler()
+        public TileView()
 		{
             _jpegCompressor = JpegCompressor.Create();
             _pngEncoder = PngEncoder.Create();
@@ -273,22 +272,25 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
             }
 		}
 
-		public override void  SetModelObject(object modelObject)
+		public override void SetModelObject(object modelObject)
 		{
 			_tile = (Tile)modelObject;
 			_tileInputTranslator = new WebTileInputTranslator();
 			_tileController = new TileController(_tile, ((ImageViewerComponent)_tile.ImageViewer).ShortcutManager);
+		}
 
-			_tileController.CursorTokenChanged += OnCursorTokenChanged;
-			_tileController.ContextMenuRequested += OnContextMenuRequested;
+        protected override void Initialize()
+        {
+            _tileController.CursorTokenChanged += OnCursorTokenChanged;
+            _tileController.ContextMenuRequested += OnContextMenuRequested;
 
-			_tile.Drawing += OnTileDrawing;
-			_tile.RendererChanged += OnRendererChanged;
-			_tile.SelectionChanged += OnSelectionChanged;
-			_tileController.CaptureChanging += OnCaptureChanging;
+            _tile.Drawing += OnTileDrawing;
+            _tile.RendererChanged += OnRendererChanged;
+            _tile.SelectionChanged += OnSelectionChanged;
+            _tileController.CaptureChanging += OnCaptureChanging;
             _tileController.WheelCaptureChanging += OnWheelCaptureChanging;
             _tile.InformationBoxChanged += OnInformationBoxChanged;
-		}
+        }
 
         protected override void UpdateEntity(Common.Entities.Tile entity)
 		{
@@ -317,7 +319,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 				_contextMenu = new ContextMenuContainer(actionModelNode);
 
-				ApplicationContext.FireEvent(new ContextMenuEvent
+				FireEvent(new ContextMenuEvent
 				{
 					Identifier = Guid.NewGuid(),
 					SenderId = Identifier,
@@ -401,7 +403,7 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
                                 DeliveredCallback = e => undeliveredCounter.Decrement()
                             };
 
-            ApplicationContext.FireEvent(ev);
+            FireEvent(ev);
 		}
 
         private Image CreateImage()

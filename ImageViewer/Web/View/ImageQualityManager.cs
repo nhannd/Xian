@@ -13,7 +13,7 @@ using System;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Web.Common;
 
-namespace ClearCanvas.ImageViewer.Web.EntityHandlers
+namespace ClearCanvas.ImageViewer.Web.View
 {
     public enum ImageQualityOption
     {

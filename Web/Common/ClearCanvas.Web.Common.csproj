@@ -67,8 +67,12 @@
   <ItemGroup>
     <Compile Include="Application.cs" />
     <Compile Include="DataContractBase.cs" />
+    <Compile Include="Entities\Alert.cs" />
+    <Compile Include="Entities\MessageBox.cs" />
+    <Compile Include="Events\AlertShownEvent.cs" />
     <Compile Include="Events\ApplicationStoppedEvent.cs" />
     <Compile Include="Events\ListPropertyChangedEvent.cs" />
+    <Compile Include="Events\MessageBoxShownEvent.cs" />
     <Compile Include="Events\SessionUpdatedEvent.cs" />
     <Compile Include="IDuplexApplicationService.cs" />
     <Compile Include="IKnownTypeProvider.cs" />
@@ -80,6 +84,9 @@
     <Compile Include="IApplicationService.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="IPollingApplicationService.cs" />
+    <Compile Include="Messages\ActionClickedMessage.cs" />
+    <Compile Include="Messages\DismissAlertMessage.cs" />
+    <Compile Include="Messages\DismissMessageBoxMessage.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="ProcessMessagesResult.cs" />
     <Compile Include="Rectangle.cs" />
@@ -90,6 +97,7 @@
     <Compile Include="Events\PropertyChangedEvent.cs" />
     <Compile Include="Messages\UpdatePropertyMessage.cs" />
     <Compile Include="Size.cs" />
+    <Compile Include="WebAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">

@@ -12,11 +12,10 @@
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Web.EntityHandlers;
+using ClearCanvas.ImageViewer.Web.View;
 
 namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 {
-
     internal class ImageServerSopDataSource : DicomMessageSopDataSource
     {
         private readonly string _path;

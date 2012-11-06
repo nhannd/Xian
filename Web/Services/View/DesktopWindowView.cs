@@ -17,12 +17,11 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Web.Common.Entities;
-using ClearCanvas.ImageViewer.Web.Common.Events;
-using ClearCanvas.ImageViewer.Web.EntityHandlers;
-using ClearCanvas.Web.Services;
+using ClearCanvas.Web.Common;
+using ClearCanvas.Web.Common.Entities;
+using ClearCanvas.Web.Common.Events;
 
-namespace ClearCanvas.ImageViewer.Web.View
+namespace ClearCanvas.Web.Services.View
 {
     /// <summary>
     /// WinForms implementation of <see cref="IDesktopWindowView"/>. 
@@ -124,13 +123,13 @@ namespace ClearCanvas.ImageViewer.Web.View
         /// <returns></returns>
         public virtual DialogBoxAction ShowMessageBox(string message, string title, MessageBoxActions buttons)
         {
-            if (ApplicationContext.Current != null)
+            if (Services.ApplicationContext.Current != null)
             {
 
-                var handler = EntityHandler.Create<MessageBoxEntityHandler>();
-                handler.SetModelObject(this);
+                var view = new MessageBoxView();
+                view.SetModelObject(this);
 
-                MessageBox box = handler.GetEntity();
+                MessageBox box = view.GetEntity();
                 box.YesLabel = SR.YesLabel;
                 box.NoLabel = SR.NoLabel;
                 box.CancelLabel = SR.CancelLabel;
@@ -161,10 +160,10 @@ namespace ClearCanvas.ImageViewer.Web.View
                     {
                         Identifier = box.Identifier,
                         MessageBox = box,
-                        SenderId = ApplicationContext.Current.ApplicationId,
+                        SenderId = Services.ApplicationContext.Current.ApplicationId,
                     };
 
-                ApplicationContext.Current.FireEvent(@event);
+                FireEvent(@event);
 
                 var context = (SynchronizationContext.Current as IWebSynchronizationContext);
                 if (context != null) context.RunModal();
@@ -181,12 +180,11 @@ namespace ClearCanvas.ImageViewer.Web.View
 
         public void ShowAlert(AlertNotificationArgs args)
         {
+            var view = new AlertView();
+            view.SetModelObject(this._window);
+            view.SetLinkAction(args.LinkAction);
 
-            var handler = EntityHandler.Create<AlertEntityHandler>();
-            handler.SetModelObject(this._window);
-            handler.SetLinkAction(args.LinkAction);
-
-            Alert alertEvent = handler.GetEntity();
+            Alert alertEvent = view.GetEntity();
             alertEvent.Message = args.Message;
 
             var image = _alertContext.GetIcon(args.Level).CreateIcon(IconSize.Large, new ResourceResolver(typeof(DesktopWindow).Assembly));
@@ -217,10 +215,10 @@ namespace ClearCanvas.ImageViewer.Web.View
                 {
                     Identifier = alertEvent.Identifier,
                     AlertEvent = alertEvent,
-                    SenderId = ApplicationContext.Current.ApplicationId,
+                    SenderId = Services.ApplicationContext.Current.ApplicationId,
                 };
 
-            ApplicationContext.Current.FireEvent(@event);            
+            FireEvent(@event);            
         }
 
         /// <summary>
@@ -296,6 +294,30 @@ namespace ClearCanvas.ImageViewer.Web.View
         /// </summary>
         public override void Show()
         {
+        }
+
+        public override void SetModelObject(object modelObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ProcessMessage(Message message)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Initialize()
+        {
+        }
+
+        protected override Entity CreateEntity()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void UpdateEntity(Entity entity)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

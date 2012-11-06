@@ -11,16 +11,16 @@
 
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer.Web
+namespace ClearCanvas.Web.Services
 {
-    internal class WebDesktopWindow : DesktopWindow
+    public class WebDesktopWindow : DesktopWindow
     {
-        internal WebDesktopWindow(DesktopWindowCreationArgs args, Application application) 
+        public WebDesktopWindow(DesktopWindowCreationArgs args, Desktop.Application application) 
             : base(args, application)
         {
         }
 
-        internal new void Open()
+        public new void Open()
         {
             base.Open();
         }

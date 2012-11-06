@@ -11,12 +11,11 @@
 
 using System;
 using System.Runtime.Serialization;
-using ClearCanvas.Web.Common;
 
-namespace ClearCanvas.ImageViewer.Web.Common.Entities
+namespace ClearCanvas.Web.Common.Entities
 {
 
-    [DataContract(Namespace = ViewerNamespace.Value)]
+    [DataContract(Namespace = Namespace.Value)]
     public enum WebMessageBoxActions
     {
         /// <summary>
@@ -44,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Web.Common.Entities
         YesNoCancel
     }
 
-    [DataContract(Namespace = ViewerNamespace.Value)]
+    [DataContract(Namespace = Namespace.Value)]
     public class MessageBox : Entity
     {
         [DataMember(IsRequired = true)]

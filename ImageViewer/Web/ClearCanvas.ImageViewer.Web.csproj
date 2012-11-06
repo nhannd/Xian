@@ -75,17 +75,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EntityHandlers\AlertEntityHandler.cs" />
-    <Compile Include="EntityHandlers\AuthorityTokens.cs" />
-    <Compile Include="EntityHandlers\CursorFactory.cs" />
-    <Compile Include="EntityHandlers\ImageQualityManager.cs" />
-    <Compile Include="EntityHandlers\ImageQualitySettings.Designer.cs">
+    <Compile Include="View\LayoutChangerActionView.cs" />
+    <Compile Include="View\CursorFactory.cs" />
+    <Compile Include="View\ImageQualityManager.cs" />
+    <Compile Include="View\ImageQualitySettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ImageQualitySettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="EntityHandlers\ImageQualityTool.cs" />
-    <Compile Include="EntityHandlers\MessageBoxEntityHandler.cs" />
+    <Compile Include="View\ImageQualityTool.cs" />
     <Compile Include="KeyImageLayoutHook.cs" />
     <Compile Include="KnownTypeProviders.cs" />
     <Compile Include="DiagnosticsSettings.Designer.cs">
@@ -93,9 +91,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>DiagnosticsSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="EntityHandlers\ActionEntityHandler.cs" />
-    <Compile Include="EntityHandlers\ImageBoxEntityHandler.cs" />
-    <Compile Include="EntityHandlers\TileEntityHandler.cs" />
+    <Compile Include="View\ImageBoxView.cs" />
+    <Compile Include="View\TileView.cs" />
     <Compile Include="Layout\WebLayoutTool.cs" />
     <Compile Include="MessageProcessingStatistics.cs" />
     <Compile Include="PriorStudyLoaderExceptionPolicy.cs" />
@@ -104,14 +101,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="View\ApplicationView.cs" />
-    <Compile Include="View\DesktopObjectView.cs" />
-    <Compile Include="View\DesktopWindowView.cs" />
-    <Compile Include="View\GuiToolkit.cs" />
-    <Compile Include="View\ImageViewerComponentView.cs" />
-    <Compile Include="View\WebView.cs" />
-    <Compile Include="View\WorkspaceView.cs" />
-    <Compile Include="WebDesktopWindow.cs" />
     <Compile Include="WebViewerServices.cs" />
     <Compile Include="RenderingStatistics.cs" />
     <Compile Include="TileInputTranslator.cs" />
@@ -119,8 +108,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utiltities\ChannelComparisonResult.cs" />
     <Compile Include="Utiltities\MathUtils.cs" />
-    <Compile Include="Utiltities\Statistics.cs" />
-    <Compile Include="EntityHandlers\ViewerEntityHandler.cs" />
+	<Compile Include="Utiltities\Statistics.cs" />
+    <Compile Include="View\ImageViewerComponentView.cs" />
     <Compile Include="ViewerApplication.cs" />
     <Compile Include="WebViewerServices.Designer.cs">
       <DependentUpon>WebViewerServices.settings</DependentUpon>
@@ -172,7 +161,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DiagnosticsSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="EntityHandlers\ImageQualitySettings.settings">
+    <None Include="View\ImageQualitySettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ImageQualitySettings.Designer.cs</LastGenOutput>
     </None>

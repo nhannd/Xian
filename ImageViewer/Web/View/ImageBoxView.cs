@@ -10,23 +10,20 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Messages;
-using ClearCanvas.Web.Services;
+using ClearCanvas.Web.Services.View;
 using ImageBoxEntity = ClearCanvas.ImageViewer.Web.Common.Entities.ImageBox;
 using TileEntity = ClearCanvas.ImageViewer.Web.Common.Entities.Tile;
 
-namespace ClearCanvas.ImageViewer.Web.EntityHandlers
+namespace ClearCanvas.ImageViewer.Web.View
 {
-	internal class ImageBoxEntityHandler : EntityHandler<ImageBoxEntity>
+	internal class ImageBoxView : WebView<ImageBoxEntity>
 	{
 		private ImageBox _imageBox;
-		private readonly List<TileEntityHandler> _tileHandlers = new List<TileEntityHandler>();
-
-		public ImageBoxEntityHandler()
-		{
-		}
+		private readonly List<TileView> _tileViews = new List<TileView>();
 
 		private int ImageCount
 		{
@@ -35,19 +32,22 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		private Common.Entities.Tile[] GetTileEntities()
 		{
-			return CollectionUtils.Map(_tileHandlers,
-				(TileEntityHandler handler) => handler.GetEntity()).ToArray();
+			return _tileViews.Select(v => v.GetEntity()).ToArray();
 		}
 
 		public override void SetModelObject(object modelObject)
 		{
 			_imageBox = (ImageBox)modelObject;
-			_imageBox.Drawing += OnImageBoxDrawing;
-			_imageBox.SelectionChanged += OnSelectionChanged;
+		}
+
+        protected override void Initialize()
+        {
+            _imageBox.Drawing += OnImageBoxDrawing;
+            _imageBox.SelectionChanged += OnSelectionChanged;
             _imageBox.LayoutCompleted += OnLayoutCompleted;
 
-			RefreshTileHandlers(false);
-		}
+            RefreshTileViews(false);
+        }
 
 		protected override void UpdateEntity(ImageBoxEntity entity)
 		{
@@ -60,8 +60,8 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		public void Draw()
 		{
-			foreach (TileEntityHandler handler in _tileHandlers)
-				handler.Draw(false);
+			foreach (TileView tileView in _tileViews)
+				tileView.Draw(false);
 
 			NotifyEntityPropertyChanged("ImageCount", ImageCount);
 			NotifyEntityPropertyChanged("TopLeftPresentationImageIndex", _imageBox.TopLeftPresentationImageIndex);
@@ -79,18 +79,18 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 
 		private void OnLayoutCompleted(object sender, System.EventArgs e)
 		{
-			RefreshTileHandlers(true);
+			RefreshTileViews(true);
 		}
 
-		private void RefreshTileHandlers(bool notify)
+		private void RefreshTileViews(bool notify)
 		{
-			DisposeTileHandlers();
+			DisposeTileViews();
 
 			foreach (ITile tile in _imageBox.Tiles)
 			{
-				TileEntityHandler newHandler = Create<TileEntityHandler>();
-				((IEntityHandler)newHandler).SetModelObject(tile);
-				_tileHandlers.Add(newHandler);
+				var newView = new TileView();
+				((IWebView)newView).SetModelObject(tile);
+				_tileViews.Add(newView);
 			}
 
 			if (!notify)
@@ -137,17 +137,17 @@ namespace ClearCanvas.ImageViewer.Web.EntityHandlers
 				_imageBox.SelectionChanged -= OnSelectionChanged;
 				_imageBox.Drawing -= OnImageBoxDrawing;
 				_imageBox.LayoutCompleted -= OnLayoutCompleted;
-				DisposeTileHandlers();
+				DisposeTileViews();
 				_imageBox = null;
 			}
 		}
 
-		private void DisposeTileHandlers()
+		private void DisposeTileViews()
 		{
-			foreach (TileEntityHandler handler in _tileHandlers)
-				handler.Dispose();
+			foreach (TileView tileView in _tileViews)
+				tileView.Dispose();
 
-			_tileHandlers.Clear();
+			_tileViews.Clear();
 		}
 	}
 }

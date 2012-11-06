@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Web.Common;
 using ClearCanvas.Web.Common;
 using Cursor = ClearCanvas.ImageViewer.Web.Common.Entities.Cursor;
 using Image = ClearCanvas.Web.Common.Image;
 using Rectangle = System.Drawing.Rectangle;
 
-namespace ClearCanvas.ImageViewer.Web.EntityHandlers
+namespace ClearCanvas.ImageViewer.Web.View
 {
     internal static class CursorFactory
     {

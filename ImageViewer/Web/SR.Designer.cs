@@ -61,15 +61,6 @@ namespace ClearCanvas.ImageViewer.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancel.
-        /// </summary>
-        internal static string CancelLabel {
-            get {
-                return ResourceManager.GetString("CancelLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Diagnostic (all).
         /// </summary>
         internal static string ImageQualityMenuDiagnostic {
@@ -152,38 +143,11 @@ namespace ClearCanvas.ImageViewer.Web {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No.
-        /// </summary>
-        internal static string NoLabel {
-            get {
-                return ResourceManager.GetString("NoLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ok.
-        /// </summary>
-        internal static string OkLabel {
-            get {
-                return ResourceManager.GetString("OkLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Layout Manager.
         /// </summary>
         internal static string TooltipLayoutManager {
             get {
                 return ResourceManager.GetString("TooltipLayoutManager", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Yes.
-        /// </summary>
-        internal static string YesLabel {
-            get {
-                return ResourceManager.GetString("YesLabel", resourceCulture);
             }
         }
     }

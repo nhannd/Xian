@@ -9,10 +9,12 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Web.Common;
 
-namespace ClearCanvas.ImageViewer.Web.View
+namespace ClearCanvas.Web.Services.View
 {
     /// <summary>
     /// WinForms implementation of <see cref="IApplicationView"/>. 
@@ -34,6 +36,7 @@ namespace ClearCanvas.ImageViewer.Web.View
         public ApplicationView()
         {
         }
+
 
         #region IApplicationView Members
 
@@ -66,6 +69,35 @@ namespace ClearCanvas.ImageViewer.Web.View
             return DialogBoxAction.Ok;
         }
 
-        #endregion         
+        #endregion
+
+        #region Overrides of WebView
+
+        public override void SetModelObject(object modelObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Initialize()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Entity CreateEntity()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void UpdateEntity(Entity entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ProcessMessage(Message message)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

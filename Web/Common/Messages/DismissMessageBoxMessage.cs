@@ -10,11 +10,10 @@
 #endregion
 
 using System.Runtime.Serialization;
-using ClearCanvas.Web.Common;
 
-namespace ClearCanvas.ImageViewer.Web.Common.Messages
+namespace ClearCanvas.Web.Common.Messages
 {
-    [DataContract(Namespace = ViewerNamespace.Value)]
+    [DataContract(Namespace = Namespace.Value)]
     public enum WebDialogBoxAction
     {
         /// <summary>
@@ -42,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Web.Common.Messages
         No = 0x0008,
     }
 
-    [DataContract(Namespace = ViewerNamespace.Value)]
+    [DataContract(Namespace = Namespace.Value)]
     public class DismissMessageBoxMessage : Message
     {
         [DataMember(IsRequired = true)]

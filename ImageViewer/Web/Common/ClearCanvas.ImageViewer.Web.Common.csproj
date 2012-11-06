@@ -63,17 +63,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\Alert.cs" />
     <Compile Include="Entities\InformationBox.cs" />
-    <Compile Include="Entities\MessageBox.cs" />
-    <Compile Include="Events\AlertShownEvent.cs" />
-    <Compile Include="Events\MessageBoxShownEvent.cs" />
-    <Compile Include="Messages\ActionClickedMessage.cs" />
     <Compile Include="Entities\Cursor.cs" />
     <Compile Include="Entities\ImageBox.cs" />
     <Compile Include="Events\ContextMenuEvent.cs" />
-    <Compile Include="Messages\DismissAlertMessage.cs" />
-    <Compile Include="Messages\DismissMessageBoxMessage.cs" />
     <Compile Include="Messages\MouseLeaveMessage.cs" />
     <Compile Include="Messages\MouseMoveMessage.cs" />
     <Compile Include="Messages\RenderingTimeMessages.cs" />
@@ -87,7 +80,6 @@
     <Compile Include="Entities\Viewer.cs" />
     <Compile Include="ViewerNamespace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Entities\WebAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">

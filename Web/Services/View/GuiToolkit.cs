@@ -14,8 +14,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
-
-namespace ClearCanvas.ImageViewer.Web.View
+namespace ClearCanvas.Web.Services.View
 {
     /// <summary>
     /// WinForms implementation of <see cref="IGuiToolkit"/>. 

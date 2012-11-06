@@ -13,6 +13,7 @@ using System;
 using System.Security.Principal;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Web.Common;
+using ClearCanvas.Web.Services.View;
 
 namespace ClearCanvas.Web.Services
 {

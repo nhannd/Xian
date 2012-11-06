@@ -11,8 +11,9 @@
 
 using System;
 using ClearCanvas.Desktop;
+using ClearCanvas.Web.Common;
 
-namespace ClearCanvas.ImageViewer.Web.View
+namespace ClearCanvas.Web.Services.View
 {
     /// <summary>
     /// Silverlight implementation of <see cref="IWorkspaceView"/>. 
@@ -39,6 +40,8 @@ namespace ClearCanvas.ImageViewer.Web.View
         protected internal WorkspaceView(Workspace workspace, DesktopWindowView desktopView)
         {
             _desktopView = desktopView;
+            var componentView = (IApplicationComponentView)ViewFactory.CreateAssociatedView(workspace.Component.GetType());
+            componentView.SetComponent((IApplicationComponent)workspace.Component);
         }
 
 
@@ -84,6 +87,30 @@ namespace ClearCanvas.ImageViewer.Web.View
         /// </summary>
         public override void Hide()
         {
+        }
+
+        public override void SetModelObject(object modelObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ProcessMessage(Message message)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Initialize()
+        {
+        }
+
+        protected override Entity CreateEntity()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void UpdateEntity(Entity entity)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
