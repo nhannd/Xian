@@ -16,10 +16,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
+using ClearCanvas.Web.Common.Entities;
 using ClearCanvas.Web.Common.Messages;
 
 namespace ClearCanvas.Web.Services.View

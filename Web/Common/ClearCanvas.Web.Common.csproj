@@ -84,6 +84,7 @@
     <Compile Include="IApplicationService.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="IPollingApplicationService.cs" />
+    <Compile Include="JavascriptModuleAttribute.cs" />
     <Compile Include="Messages\ActionClickedMessage.cs" />
     <Compile Include="Messages\DismissAlertMessage.cs" />
     <Compile Include="Messages\DismissMessageBoxMessage.cs" />
@@ -97,7 +98,7 @@
     <Compile Include="Events\PropertyChangedEvent.cs" />
     <Compile Include="Messages\UpdatePropertyMessage.cs" />
     <Compile Include="Size.cs" />
-    <Compile Include="WebAction.cs" />
+    <Compile Include="Entities\WebAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">

@@ -11,9 +11,11 @@
 
 using System.Runtime.Serialization;
 using ClearCanvas.Web.Common;
+using ClearCanvas.Web.Common.Entities;
 
 namespace ClearCanvas.ImageViewer.Web.Common.Entities
 {
+    [JavascriptModule("ClearCanvas/Controllers/ImageViewer/ViewerController")]
     [DataContract(Namespace = ViewerNamespace.Value)]
     public class Viewer : Entity
     {

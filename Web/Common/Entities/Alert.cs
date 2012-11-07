@@ -41,6 +41,7 @@ namespace ClearCanvas.Web.Common.Entities
         Error
     }
 
+    [JavascriptModule("ClearCanvas/Controllers/AlertBoxController")]
     [DataContract(Namespace = Namespace.Value)]
     public class Alert : Entity
     {

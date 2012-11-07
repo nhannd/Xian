@@ -11,8 +11,10 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Layout.Basic;
+using ClearCanvas.ImageViewer.Web.Common.Entities;
 using ClearCanvas.ImageViewer.Web.Common.Messages;
 using ClearCanvas.Web.Common;
+using ClearCanvas.Web.Common.Entities;
 using ClearCanvas.Web.Services.View;
 
 namespace ClearCanvas.ImageViewer.Web.View

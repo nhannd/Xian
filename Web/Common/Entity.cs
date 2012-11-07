@@ -14,18 +14,6 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Web.Common
 {
-    public class JavascriptModuleAttribute : Attribute
-    {
-        public JavascriptModuleAttribute(string modulePath)
-        {
-            ModulePath = modulePath;
-            ModuleName = ModulePath.Replace('/', '.');
-        }
-
-        public string ModulePath { get; private set; }
-        public string ModuleName { get; private set; }
-    }
-
     [DataContract(Namespace = Namespace.Value)]
     public abstract class Entity : DataContractBase, IEquatable<Entity>
     {

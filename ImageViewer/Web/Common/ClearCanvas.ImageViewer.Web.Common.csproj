@@ -66,6 +66,7 @@
     <Compile Include="Entities\InformationBox.cs" />
     <Compile Include="Entities\Cursor.cs" />
     <Compile Include="Entities\ImageBox.cs" />
+    <Compile Include="Entities\WebLayoutChangerAction.cs" />
     <Compile Include="Events\ContextMenuEvent.cs" />
     <Compile Include="Messages\MouseLeaveMessage.cs" />
     <Compile Include="Messages\MouseMoveMessage.cs" />

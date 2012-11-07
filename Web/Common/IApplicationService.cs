@@ -67,6 +67,9 @@ namespace ClearCanvas.Web.Common
 
         [DataMember(IsRequired = true)]
         public string ModulePath { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public bool LoadAsynchronously { get; set; }
     }
 
 	[DataContract(Namespace = Namespace.Value)]
