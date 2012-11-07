@@ -130,8 +130,8 @@ namespace ClearCanvas.ImageViewer.Web.View
 
 		void OnPhysicalWorkspaceDrawing(object sender, EventArgs e)
 		{
-			foreach (ImageBoxView imageBoxView in _imageBoxViews)
-				imageBoxView.Draw();
+            foreach (ImageBoxView imageBoxView in _imageBoxViews)
+                imageBoxView.Draw(true);
 		}
 
 		private void UpdateActionModel(bool notify)
