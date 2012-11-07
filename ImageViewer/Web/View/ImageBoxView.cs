@@ -82,13 +82,16 @@ namespace ClearCanvas.ImageViewer.Web.View
 		    }
 		}
 
-		public void Draw()
+		public void Draw(bool updateProperty)
 		{
 			foreach (TileView tileView in _tileViews)
 				tileView.Draw(false);
 
-			NotifyEntityPropertyChanged("ImageCount", ImageCount);
-			NotifyEntityPropertyChanged("TopLeftPresentationImageIndex", _imageBox.TopLeftPresentationImageIndex);
+            if (updateProperty)
+            {
+                NotifyEntityPropertyChanged("ImageCount", ImageCount);
+                NotifyEntityPropertyChanged("TopLeftPresentationImageIndex", _imageBox.TopLeftPresentationImageIndex);
+            }
 		}
 
 		private void OnSelectionChanged(object sender, ItemEventArgs<IImageBox> e)
@@ -98,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Web.View
 
 		private void OnImageBoxDrawing(object sender, System.EventArgs e)
 		{
-			Draw();
+			Draw(true);
 		}
 
 		private void OnLayoutCompleted(object sender, System.EventArgs e)
@@ -150,7 +153,7 @@ namespace ClearCanvas.ImageViewer.Web.View
                     if (!_imageBox.Selected)
                         _imageBox.SelectDefaultTile();
                     
-                    Draw();
+                    Draw(false);
                 }
 	        }
 	    }
