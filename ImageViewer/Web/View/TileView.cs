@@ -23,6 +23,7 @@ using ClearCanvas.ImageViewer.Web.Common;
 using ClearCanvas.ImageViewer.Web.Common.Events;
 using ClearCanvas.ImageViewer.Web.Utiltities;
 using ClearCanvas.Web.Common;
+using ClearCanvas.Web.Common.Entities;
 using ClearCanvas.Web.Common.Events;
 using ClearCanvas.Web.Services.View;
 using TileEntity = ClearCanvas.ImageViewer.Web.Common.Entities.Tile;

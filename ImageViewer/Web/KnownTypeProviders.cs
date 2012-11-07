@@ -18,10 +18,6 @@ using ClearCanvas.ImageViewer.Web.Common.Entities;
 using ClearCanvas.ImageViewer.Web.Common.Events;
 using ClearCanvas.ImageViewer.Web.Common.Messages;
 using ClearCanvas.Web.Common;
-using ClearCanvas.Web.Common.Entities;
-using ClearCanvas.Web.Common.Events;
-using ClearCanvas.Web.Common.Messages;
-using ClearCanvas.Web.Services;
 
 namespace ClearCanvas.ImageViewer.Web
 {
@@ -36,16 +32,7 @@ namespace ClearCanvas.ImageViewer.Web
 		{
 			return new[]
 			       	{
-						typeof(ApplicationNotFoundEvent),
-						typeof(ApplicationStartedEvent),
-						typeof(ApplicationStoppedEvent),
-						typeof(EntityUpdatedEvent),
-						typeof(PropertyChangedEvent),
-
 			       		typeof(ContextMenuEvent),
-			       		typeof(SessionUpdatedEvent),
-			       		typeof(MessageBoxShownEvent),
-						typeof(AlertShownEvent),
                         typeof(RenderingStatsMessage),
                         typeof(StackRenderingTimesMessage)
 			       	};
@@ -63,15 +50,11 @@ namespace ClearCanvas.ImageViewer.Web
 		{
 			return new[]
 			       	{
-						typeof (ActionClickedMessage),
 						typeof (SetLayoutActionMessage),
 			       		typeof (MouseMessage),
 			       		typeof (MouseLeaveMessage),
 			       		typeof (MouseMoveMessage),
-			       		typeof (MouseWheelMessage),
-                        typeof (DismissMessageBoxMessage),
-                        typeof (DismissAlertMessage),
-                        typeof (UpdatePropertyMessage)
+			       		typeof (MouseWheelMessage)
 					};
 		}
 
@@ -100,19 +83,7 @@ namespace ClearCanvas.ImageViewer.Web
 						typeof(Position),
 						typeof(Cursor),
 						typeof(Common.Entities.InformationBox),
-						typeof(MessageBox),
-                        typeof(WebMessageBoxActions),
-						typeof(Alert),
 
-						//TODO: if we ever include the desktop stuff, move this out of the viewer namespace
-						typeof(WebActionNode[]),
-						typeof(WebIconSet),
-                        typeof(WebIconSize),
-						typeof (WebActionNode),
-			       		typeof (WebAction),
-			       		typeof (WebClickAction),
-			       		typeof (WebDropDownButtonAction),
-			       		typeof (WebDropDownAction),
 			       		typeof (WebLayoutChangerAction)
 			       	};
 		}

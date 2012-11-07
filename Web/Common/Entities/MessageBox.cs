@@ -43,6 +43,7 @@ namespace ClearCanvas.Web.Common.Entities
         YesNoCancel
     }
 
+    [JavascriptModule("ClearCanvas/Controllers/MessageBoxController")]
     [DataContract(Namespace = Namespace.Value)]
     public class MessageBox : Entity
     {

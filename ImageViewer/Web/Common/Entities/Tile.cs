@@ -14,6 +14,7 @@ using ClearCanvas.Web.Common;
 
 namespace ClearCanvas.ImageViewer.Web.Common.Entities
 {
+    [JavascriptModule("ClearCanvas/Controllers/ImageViewer/TileController")]
     [DataContract(Namespace = ViewerNamespace.Value)]
     public class Tile : Entity
     {

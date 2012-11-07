@@ -16,6 +16,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Web.Common;
 using ClearCanvas.ImageViewer.Web.Common.Entities;
+using ClearCanvas.Web.Common.Entities;
 using ClearCanvas.Web.Services;
 using ClearCanvas.Web.Services.View;
 
@@ -24,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Web.View
     [ExtensionOf(typeof(ImageViewerComponentViewExtensionPoint))]
     public class ImageViewerComponentView : WebApplicationComponentView<Viewer>
 	{
-        public class ExtensionTypeProviderExtensionPoint : ExtensionPoint<IEntityHandlerExtensionTypeProvider>
+        public class ExtensionEntitiesExtensionPoint : ExtensionPoint<IEntityHandler>
         {
         }
 
@@ -99,13 +100,9 @@ namespace ClearCanvas.ImageViewer.Web.View
 
             try
             {
-                var extensionHandlerTypeProviders = new ExtensionTypeProviderExtensionPoint().CreateExtensions().Cast<IEntityHandlerExtensionTypeProvider>();
-                var extensionHandlerTypes = from extensionHandlerTypeProvider in extensionHandlerTypeProviders
-                                            from type in extensionHandlerTypeProvider.GetExtensionTypes()
-                                            select (IEntityHandler)Activator.CreateInstance(type);
-
-                foreach (var extensionHandler in extensionHandlerTypes)
+                foreach (var extensionHandler in new ExtensionEntitiesExtensionPoint().CreateExtensions().Cast<IEntityHandler>())
                 {
+                    // TODO (CR Nov 2012): Should the model object be the viewer?
                     extensionHandler.SetModelObject(_viewer);
                     _extensionHandlers.Add(extensionHandler);
                 }

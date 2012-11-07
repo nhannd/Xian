@@ -9,20 +9,32 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Messages;
+using ClearCanvas.Web.Services;
 using ClearCanvas.Web.Services.View;
 using ImageBoxEntity = ClearCanvas.ImageViewer.Web.Common.Entities.ImageBox;
 using TileEntity = ClearCanvas.ImageViewer.Web.Common.Entities.Tile;
 
 namespace ClearCanvas.ImageViewer.Web.View
 {
-	internal class ImageBoxView : WebView<ImageBoxEntity>
+	public class ImageBoxView : WebView<ImageBoxEntity>
 	{
+        public interface IOverlayEntityHandler : IEntityHandler
+        {
+            bool IsVisible { get; set; }
+        }
+
+        public class OverlayEntityHandlerExtensionPoint : ExtensionPoint<IOverlayEntityHandler>
+        {
+        }
+
 		private ImageBox _imageBox;
 		private readonly List<TileView> _tileViews = new List<TileView>();
 
@@ -57,6 +69,17 @@ namespace ClearCanvas.ImageViewer.Web.View
 			entity.Selected = _imageBox.Selected;
 			entity.TopLeftPresentationImageIndex = _imageBox.TopLeftPresentationImageIndex;
 			entity.Tiles = GetTileEntities();
+
+		    try
+		    {
+		        var handler = (IOverlayEntityHandler) new OverlayEntityHandlerExtensionPoint().CreateExtension();
+                // TODO (CR Nov 2012): Should the model object be the image box?
+                handler.SetModelObject(_imageBox);
+                entity.Overlay = handler.GetEntity();
+		    }
+		    catch (NotSupportedException)
+		    {
+		    }
 		}
 
 		public void Draw()

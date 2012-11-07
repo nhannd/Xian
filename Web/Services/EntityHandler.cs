@@ -17,15 +17,6 @@ using ClearCanvas.Web.Common.Events;
 
 namespace ClearCanvas.Web.Services
 {
-    /// <summary>
-    /// <see cref="EntityHandler"/>s can allow themselves to be extended (like a "tool" in the desktop) using this interface.
-    /// </summary>
-    /// <remarks>Returned types must be derived from <see cref="EntityHandler"/>, and have a public parameterless constructor.</remarks>
-    public interface IEntityHandlerExtensionTypeProvider
-    {
-        IEnumerable<Type> GetExtensionTypes();
-    }
-
     public interface IEntityHandler
     {
         Guid Identifier { get; }
