@@ -68,7 +68,6 @@ namespace ClearCanvas.ImageViewer.Web.View
             using (var stream = new MemoryStream())
             {
                 bitmap.Save(stream, ImageFormat.Png);
-                stream.Position = 0;
                 webCursor.Icon = new Image {Data = stream.GetBuffer(), MimeType = Image.MimeTypes.Png};
                 stream.Close();
             }
