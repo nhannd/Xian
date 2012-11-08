@@ -26,12 +26,12 @@ namespace ClearCanvas.ImageViewer.Web.View
 {
 	public class ImageBoxView : WebView<ImageBoxEntity>
 	{
-        public interface IOverlayEntityHandler : IEntityHandler
+        public interface IOverlayView : IWebView
         {
             bool IsVisible { get; set; }
         }
 
-        public class OverlayEntityHandlerExtensionPoint : ExtensionPoint<IOverlayEntityHandler>
+        public class OverlayEntityHandlerExtensionPoint : ExtensionPoint<IOverlayView>
         {
         }
 
@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Web.View
 
 		    try
 		    {
-		        var handler = (IOverlayEntityHandler) new OverlayEntityHandlerExtensionPoint().CreateExtension();
+		        var handler = (IOverlayView) new OverlayEntityHandlerExtensionPoint().CreateExtension();
                 // TODO (CR Nov 2012): Should the model object be the image box?
                 handler.SetModelObject(_imageBox);
                 entity.Overlay = handler.GetEntity();

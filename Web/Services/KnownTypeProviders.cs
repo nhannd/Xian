@@ -23,6 +23,8 @@ namespace ClearCanvas.Web.Services
 						typeof(ApplicationStoppedEvent),
 						typeof(EntityUpdatedEvent),
 						typeof(PropertyChangedEvent),
+                        typeof(ListPropertyChangedEvent),
+                        typeof(ListChangeType),
 
 			       		typeof(SessionUpdatedEvent),
 			       		typeof(MessageBoxShownEvent),

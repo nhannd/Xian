@@ -322,8 +322,6 @@ namespace ClearCanvas.ImageViewer.Web.View
 
 				FireEvent(new ContextMenuEvent
 				{
-					Identifier = Guid.NewGuid(),
-					SenderId = Identifier,
 					ActionModelRoot = new WebActionNode { Children = _contextMenu.GetWebActions() }
 				});
 			}
@@ -395,8 +393,6 @@ namespace ClearCanvas.ImageViewer.Web.View
 
             Event ev = new PropertyChangedEvent
                             {
-                                Identifier = Guid.NewGuid(),
-                                SenderId = Identifier,
                                 PropertyName = "Image",
                                 Value = CreateImage(),
                                 TriggeringMessageId = _currentMessage != null ? _currentMessage.Identifier : (Guid?)null,

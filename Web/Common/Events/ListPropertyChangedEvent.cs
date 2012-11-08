@@ -12,9 +12,7 @@ namespace ClearCanvas.Web.Common.Events
         [EnumMember]
         ItemChanged,
         [EnumMember]
-        ItemMoved,
-        [EnumMember]
-        Cleared
+        ItemMoved
     }
 
     [DataContract(Namespace = Namespace.Value)]

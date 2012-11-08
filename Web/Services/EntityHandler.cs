@@ -129,9 +129,6 @@ namespace ClearCanvas.Web.Services
         {
             Event @event = new PropertyChangedEvent
                                {
-                                   Identifier = Guid.NewGuid(),
-                                   SenderId = Identifier,
-                                   Sender = Name,
                                    PropertyName = propertyName,
                                    Value = value,
                                    DebugInfo = GetDebugInfo()
@@ -144,7 +141,16 @@ namespace ClearCanvas.Web.Services
         {
             // Only fire the event if the entity handler has not been disposed and it's initial state has already been retrieved once.
             if (!_disposed && _initialized)
+            {
+                if (@event.SenderId == Guid.Empty)
+                    @event.SenderId = Identifier;
+                if (@event.Identifier == Guid.Empty)
+                    @event.Identifier = Guid.NewGuid();
+                if (String.IsNullOrEmpty(@event.Sender))
+                    @event.Sender = Name;
+                
                 ApplicationContext.FireEvent(@event);
+            }
         }
 
         protected virtual void Dispose(bool disposing)
