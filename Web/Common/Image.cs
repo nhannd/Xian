@@ -12,16 +12,19 @@ namespace ClearCanvas.Web.Common
             public const string Bmp = "image/bmp";
         }
 
-        [DataMember(IsRequired = false)]
+        [DataMember(IsRequired = true)]
         public string MimeType { get; set; }
 
-        [DataMember(IsRequired = false)]
+        [DataMember(IsRequired = true)]
         public double JpegQuality { get; set; }
 
-        [DataMember(IsRequired = false)]
+        [DataMember(IsRequired = true)]
+        public bool IsBase64 { get; set; }
+
+        [DataMember(IsRequired = true)]
         public bool IsDataZipped { get; set; }
 
-        [DataMember(IsRequired = false)]
+        [DataMember(IsRequired = true)]
         public byte[] Data { get; set; }
     }
 }

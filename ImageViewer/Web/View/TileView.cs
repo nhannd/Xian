@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using ClearCanvas.Common.Statistics;
@@ -462,6 +463,8 @@ namespace ClearCanvas.ImageViewer.Web.View
             imageStats.SaveTime.End();
 
             byte[] imageBuffer = MemoryStream.ToArray();
+            if (!ApplicationContext.BlobsSupported)
+                imageBuffer = Encoding.UTF8.GetBytes(Convert.ToBase64String(imageBuffer));
 
             imageStats.ImageSize.Value = (ulong)imageBuffer.LongLength;
             ApplicationContext.LogStatistics(LogNames.ServerRendering, imageStats);
@@ -478,7 +481,7 @@ namespace ClearCanvas.ImageViewer.Web.View
 
             }
 
-            return new Image {Data = imageBuffer, MimeType = _mimeType, IsDataZipped = false};
+            return new Image { Data = imageBuffer, MimeType = _mimeType, IsBase64 = !ApplicationContext.BlobsSupported, IsDataZipped = false };
 		}
 
         public override void ProcessMessage(Message message)

@@ -13,7 +13,6 @@ using System;
 using System.Security.Principal;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Web.Common;
-using ClearCanvas.Web.Services.View;
 
 namespace ClearCanvas.Web.Services
 {
@@ -22,6 +21,7 @@ namespace ClearCanvas.Web.Services
         EntityHandlerStore EntityHandlers { get; }
         IPrincipal Principal { get; }
         Guid ApplicationId { get; }
+        bool BlobsSupported { get; }
         bool IsStatisticsLoggingEnabled { get; }
 
         void LogStatistics(StatisticsSet statistics);
@@ -45,6 +45,7 @@ namespace ClearCanvas.Web.Services
         public abstract EntityHandlerStore EntityHandlers { get; }
         public abstract IPrincipal Principal { get; }
         public abstract Guid ApplicationId { get; }
+        public abstract bool BlobsSupported { get; }
         public abstract bool IsStatisticsLoggingEnabled { get; }
         
         public abstract void LogStatistics(StatisticsSet statistics);

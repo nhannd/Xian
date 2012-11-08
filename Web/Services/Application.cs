@@ -138,6 +138,11 @@ namespace ClearCanvas.Web.Services
                 get { return _application.Identifier; }
             }
 
+            public override bool BlobsSupported
+            {
+                get { return _application._blobsSupported; }
+            }
+
             public override bool IsStatisticsLoggingEnabled
             {
                 get { return _application.IsStatisticsLoggingEnabled; }
@@ -196,8 +201,9 @@ namespace ClearCanvas.Web.Services
 		private System.Threading.Timer _timer;
 		private bool _timerMethodExecuting;
 	    private IEventDeliveryStrategy _eventDeliveryStrategy;
+	    private bool _blobsSupported;
 
-        protected Application()
+	    protected Application()
         {
             Identifier = Guid.NewGuid();
             _incomingMessageQueue = new IncomingMessageQueue(
@@ -347,6 +353,7 @@ namespace ClearCanvas.Web.Services
             if (info == null)
                 return;
 
+            _blobsSupported = info.BlobsSupported;
             if (false == string.IsNullOrEmpty(info.Language))
             {
                 try

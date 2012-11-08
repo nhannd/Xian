@@ -41,6 +41,9 @@ namespace ClearCanvas.Web.Common
     {
         [DataMember(IsRequired = true)]
         public string Language { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public bool BlobsSupported { get; set; }
     }
 
     [DataContract(Namespace = Namespace.Value)]
