@@ -18,15 +18,22 @@ namespace ClearCanvas.ImageViewer.Thumbnails
     internal partial class ThumbnailGalleryItemFactory : IGalleryItemFactory<IDisplaySet>
     {
         private readonly GetThumbnailLoader _getLoader;
+        private readonly bool _suppressLoadingThumbnails;
         private readonly SynchronizationContext _synchronizationContext;
 
         public ThumbnailGalleryItemFactory(GetThumbnailLoader getLoader)
+            : this(getLoader, false)
+        {
+        }
+
+        public ThumbnailGalleryItemFactory(GetThumbnailLoader getLoader, bool suppressLoadingThumbnails)
         {
             _synchronizationContext = SynchronizationContext.Current;
             if (_synchronizationContext == null)
                 throw new InvalidOperationException("It is expected that the factory will be instantiated on and accessed from a UI thread.");
 
             _getLoader = getLoader;
+            _suppressLoadingThumbnails = suppressLoadingThumbnails;
         }
 
         public IThumbnailLoader Loader { get { return _getLoader(); } }
@@ -38,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
         public IGalleryItem Create(GalleryItemCreationArgs<IDisplaySet> args)
         {
-            return new ThumbnailGalleryItem(this, args.SourceItem, args.NameAndDescriptionFormat);
+            return new ThumbnailGalleryItem(this, args.SourceItem, args.NameAndDescriptionFormat, _suppressLoadingThumbnails);
         }
 
         #endregion

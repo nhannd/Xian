@@ -27,6 +27,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         private class ThumbnailGalleryItem : GalleryItem, IThumbnailGalleryItem
         {
             private readonly ThumbnailGalleryItemFactory _factory;
+            private bool _suppressLoading;
             private LoadThumbnailRequest _pendingRequest;
             private Size _thumbnailSize;
             private bool _isImageLoaded;
@@ -34,10 +35,11 @@ namespace ClearCanvas.ImageViewer.Thumbnails
             private bool _isVisible;
             private bool _isDisposed;
 
-            internal ThumbnailGalleryItem(ThumbnailGalleryItemFactory factory, IDisplaySet displaySet, NameAndDescriptionFormat nameAndDescriptionFormat)
+            internal ThumbnailGalleryItem(ThumbnailGalleryItemFactory factory, IDisplaySet displaySet, NameAndDescriptionFormat nameAndDescriptionFormat, bool suppressLoadingThumbnails)
                 : base(displaySet)
             {
                 _factory = factory;
+                _suppressLoading = suppressLoadingThumbnails;
 
                 switch (nameAndDescriptionFormat)
                 {
@@ -134,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
                     }
                     else
                     {
-                        if (!_isImageValid)
+                        if (!_isImageValid && !_suppressLoading)
                         {
                             ImageData = Loader.GetDummyThumbnail(_factory.LoadingMessage, _thumbnailSize);
                             _isImageValid = true;

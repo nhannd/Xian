@@ -33,10 +33,20 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         {
         }
 
+        public ThumbnailGallery(bool suppressLoadingThumbnails)
+            : this(new BindingList<IGalleryItem>(), suppressLoadingThumbnails)
+        {
+        }
+
         public ThumbnailGallery(IEnumerable<IGalleryItem> galleryItems)
+            : this(galleryItems, false)
+        {
+        }
+
+        public ThumbnailGallery(IEnumerable<IGalleryItem> galleryItems, bool suppressLoadingThumbnails)
             : base(galleryItems)
         {
-            base.GalleryItemFactory = new ThumbnailGalleryItemFactory(() => ThumbnailLoader);
+            base.GalleryItemFactory = new ThumbnailGalleryItemFactory(() => ThumbnailLoader, suppressLoadingThumbnails);
             _thumbnailSize = ThumbnailSizes.Medium;
         }
 
