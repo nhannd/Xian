@@ -199,6 +199,14 @@ namespace ClearCanvas.ImageViewer.Web.View
 			_actionViews.Clear();
 		}
 
+        private void DisposeExtensionHandlers()
+        {
+            foreach (var extensionHandler in _extensionHandlers.OfType<IDisposable>())
+                extensionHandler.Dispose();
+
+            _extensionHandlers.Clear();
+        }
+
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
@@ -211,7 +219,7 @@ namespace ClearCanvas.ImageViewer.Web.View
 
 				DisposeActionViews();
 				DisposeImageBoxViews();
-
+			    DisposeExtensionHandlers();
 				_viewer = null;
 			}
 		}

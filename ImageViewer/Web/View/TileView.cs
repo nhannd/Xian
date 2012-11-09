@@ -697,13 +697,14 @@ namespace ClearCanvas.ImageViewer.Web.View
 			base.Dispose(disposing);
 			if (disposing)
 			{
-				_tile.Drawing -= OnTileDrawing;
+                _tileController.CursorTokenChanged -= OnCursorTokenChanged;
+                _tileController.ContextMenuRequested -= OnContextMenuRequested;
+                _tileController.CaptureChanging -= OnCaptureChanging;
+                _tileController.WheelCaptureChanging -= OnWheelCaptureChanging;
+                
+                _tile.Drawing -= OnTileDrawing;
 				_tile.RendererChanged -= OnRendererChanged;
 				_tile.SelectionChanged -= OnSelectionChanged;
-				_tileController.CursorTokenChanged -= OnCursorTokenChanged;
-				_tileController.ContextMenuRequested -= OnContextMenuRequested;
-				_tileController.CaptureChanging -= OnCaptureChanging;
-                _tileController.WheelCaptureChanging -= OnWheelCaptureChanging;
                 _tile.InformationBoxChanged -= OnInformationBoxChanged;
 
 				if (_contextMenu != null)

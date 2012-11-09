@@ -12,6 +12,7 @@
 using System;
 using System.Drawing;
 using System.Threading;
+using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
@@ -27,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
         private class ThumbnailGalleryItem : GalleryItem, IThumbnailGalleryItem
         {
             private readonly ThumbnailGalleryItemFactory _factory;
-            private bool _suppressLoading;
+            private bool _suppressLoadingImage;
             private LoadThumbnailRequest _pendingRequest;
             private Size _thumbnailSize;
             private bool _isImageLoaded;
@@ -39,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
                 : base(displaySet)
             {
                 _factory = factory;
-                _suppressLoading = suppressLoadingThumbnails;
+                _suppressLoadingImage = suppressLoadingThumbnails;
 
                 switch (nameAndDescriptionFormat)
                 {
@@ -136,7 +137,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
                     }
                     else
                     {
-                        if (!_isImageValid && !_suppressLoading)
+                        if (!_isImageValid && !_suppressLoadingImage)
                         {
                             ImageData = Loader.GetDummyThumbnail(_factory.LoadingMessage, _thumbnailSize);
                             _isImageValid = true;
@@ -149,9 +150,16 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
             private void OnThumbnailLoadedAsync(LoadThumbnailResult result)
             {
-                //Dispose the image on the thread on which the image was rendered because of some weirdities with current rendering implementation.
-                result.Descriptor.ReferenceImage.Dispose();
-                SynchronizationContext.Post(ignore => OnThumbnailLoaded(result), null);
+                try
+                {
+                    //Dispose the image on the thread on which the image was rendered because of some weirdities with current rendering implementation.
+                    result.Descriptor.ReferenceImage.Dispose();
+                    SynchronizationContext.Post(ignore => OnThumbnailLoaded(result), null);
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error, e);
+                }
             }
 
             private void OnThumbnailLoaded(LoadThumbnailResult result)

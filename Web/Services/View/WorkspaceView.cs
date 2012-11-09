@@ -31,6 +31,7 @@ namespace ClearCanvas.Web.Services.View
     public class WorkspaceView : DesktopObjectView, IWorkspaceView
     {
         private readonly DesktopWindowView _desktopView;
+        private IApplicationComponentView _componentView;
 
         /// <summary>
         /// Constructor.
@@ -40,8 +41,8 @@ namespace ClearCanvas.Web.Services.View
         protected internal WorkspaceView(Workspace workspace, DesktopWindowView desktopView)
         {
             _desktopView = desktopView;
-            var componentView = (IApplicationComponentView)ViewFactory.CreateAssociatedView(workspace.Component.GetType());
-            componentView.SetComponent((IApplicationComponent)workspace.Component);
+            _componentView = (IApplicationComponentView)ViewFactory.CreateAssociatedView(workspace.Component.GetType());
+            _componentView.SetComponent((IApplicationComponent)workspace.Component);
         }
 
 
@@ -119,14 +120,21 @@ namespace ClearCanvas.Web.Services.View
         /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                _desktopView.RemoveWorkspaceView(this);
-            }
             base.Dispose(disposing);
+
+            if (!disposing)
+                return;
+
+            _desktopView.RemoveWorkspaceView(this);
+
+            var componentView = _componentView as IDisposable;
+            if (componentView == null)
+                return;
+
+            componentView.Dispose();
+            _componentView = null;
         }
 
         #endregion
-
     }
 }

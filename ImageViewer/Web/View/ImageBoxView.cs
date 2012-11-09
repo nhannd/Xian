@@ -11,13 +11,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Messages;
-using ClearCanvas.Web.Services;
 using ClearCanvas.Web.Services.View;
 using ImageBoxEntity = ClearCanvas.ImageViewer.Web.Common.Entities.ImageBox;
 using TileEntity = ClearCanvas.ImageViewer.Web.Common.Entities.Tile;
@@ -37,8 +35,9 @@ namespace ClearCanvas.ImageViewer.Web.View
 
 		private ImageBox _imageBox;
 		private readonly List<TileView> _tileViews = new List<TileView>();
+	    private IOverlayView _overlayView;
 
-		private int ImageCount
+	    private int ImageCount
 		{
 			get { return _imageBox.DisplaySet != null ? _imageBox.DisplaySet.PresentationImages.Count : 0; }	
 		}
@@ -51,6 +50,16 @@ namespace ClearCanvas.ImageViewer.Web.View
 		public override void SetModelObject(object modelObject)
 		{
 			_imageBox = (ImageBox)modelObject;
+
+            try
+            {
+                _overlayView = (IOverlayView)new OverlayEntityHandlerExtensionPoint().CreateExtension();
+                // TODO (CR Nov 2012): Should the model object be the image box?
+                _overlayView.SetModelObject(_imageBox);
+            }
+            catch (NotSupportedException)
+            {
+            }
 		}
 
         protected override void Initialize()
@@ -69,17 +78,8 @@ namespace ClearCanvas.ImageViewer.Web.View
 			entity.Selected = _imageBox.Selected;
 			entity.TopLeftPresentationImageIndex = _imageBox.TopLeftPresentationImageIndex;
 			entity.Tiles = GetTileEntities();
-
-		    try
-		    {
-		        var handler = (IOverlayView) new OverlayEntityHandlerExtensionPoint().CreateExtension();
-                // TODO (CR Nov 2012): Should the model object be the image box?
-                handler.SetModelObject(_imageBox);
-                entity.Overlay = handler.GetEntity();
-		    }
-		    catch (NotSupportedException)
-		    {
-		    }
+            if (_overlayView != null)
+                entity.Overlay = _overlayView.GetEntity();
 		}
 
 		public void Draw(bool updateProperty)
@@ -161,14 +161,24 @@ namespace ClearCanvas.ImageViewer.Web.View
 	    protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
-			if (disposing && _imageBox != null)
-			{
-				_imageBox.SelectionChanged -= OnSelectionChanged;
-				_imageBox.Drawing -= OnImageBoxDrawing;
-				_imageBox.LayoutCompleted -= OnLayoutCompleted;
-				DisposeTileViews();
-				_imageBox = null;
-			}
+	        if (!disposing)
+                return;
+
+	        if (_imageBox != null)
+	        {
+	            _imageBox.SelectionChanged -= OnSelectionChanged;
+	            _imageBox.Drawing -= OnImageBoxDrawing;
+	            _imageBox.LayoutCompleted -= OnLayoutCompleted;
+	            DisposeTileViews();
+	            _imageBox = null;
+	        }
+
+	        var overlay = _overlayView as IDisposable;
+	        if (overlay == null)
+                return;
+
+	        overlay.Dispose();
+	        _overlayView = null;
 		}
 
 		private void DisposeTileViews()

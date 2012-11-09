@@ -455,6 +455,7 @@ namespace ClearCanvas.ImageViewer.Web
             if (_desktopWindow != null)
             {
                 _desktopWindow.Close(UserInteraction.NotAllowed);
+                ((IDisposable)_desktopWindow).Dispose();
                 _desktopWindow = null;
 			}
 		}

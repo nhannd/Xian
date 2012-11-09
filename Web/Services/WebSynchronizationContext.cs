@@ -157,8 +157,11 @@ namespace ClearCanvas.Web.Services
 			SetSynchronizationContext(null);
 
 			_application = null;
-			_queue = null;
-			_thread = null;
+            _thread = null;
+
+            //Don't set queue to null in case there are straggler messages after the application stops.
+            //They just won't get processed because the thread has stopped, anyway.
+			//_queue = null;
         }
 
         private void RunCommandPump()

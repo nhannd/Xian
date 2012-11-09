@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
@@ -38,7 +39,8 @@ namespace ClearCanvas.Web.Services.View
         private DialogBoxAction _result;
         private IDesktopAlertContext _alertContext;
         private DesktopWindow _window;
-
+        private List<IWorkspaceView> _workspaceViews;
+ 
         /// <summary>
         /// Constructor
         /// </summary>
@@ -46,6 +48,7 @@ namespace ClearCanvas.Web.Services.View
         protected internal DesktopWindowView(DesktopWindow window)
         {
             _window = window;
+            _workspaceViews = new List<IWorkspaceView>();
         }
 
         #region IDesktopWindowView Members
@@ -327,10 +330,17 @@ namespace ClearCanvas.Web.Services.View
         /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-			}
             base.Dispose(disposing);
+            if (!disposing)
+                return;
+        
+            if (_workspaceViews.Count == 0)
+                return;
+
+            foreach (var workspaceView in _workspaceViews)
+                workspaceView.Dispose();
+
+            _workspaceViews.Clear();
         }
 
         #endregion      
@@ -342,6 +352,7 @@ namespace ClearCanvas.Web.Services.View
         {
             workspaceView.SetVisibleStatus(true);
             workspaceView.SetActiveStatus(true);
+            _workspaceViews.Add(workspaceView);
         }
 
         internal void RemoveWorkspaceView(WorkspaceView workspaceView)
@@ -349,7 +360,9 @@ namespace ClearCanvas.Web.Services.View
             // notify that we are no longer visible
             workspaceView.SetActiveStatus(false);
             workspaceView.SetVisibleStatus(false);
+            _workspaceViews.Remove(workspaceView);
         }
+
         #endregion
     }
 }
