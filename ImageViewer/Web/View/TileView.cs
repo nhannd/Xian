@@ -360,7 +360,14 @@ namespace ClearCanvas.ImageViewer.Web.View
 
 		private Cursor CreateCursor()
 		{
-		    return CursorFactory.CreateCursor(_tileController.CursorToken);
+		    var cursor = CursorFactory.CreateCursor(_tileController.CursorToken);
+            if (cursor != null && !ApplicationContext.BlobsSupported)
+            {
+                cursor.Icon.IsBase64 = true;
+                cursor.Icon.Data = Encoding.UTF8.GetBytes(Convert.ToBase64String(cursor.Icon.Data));
+            }
+		    
+            return cursor;
 		}
 
 		private void OnCaptureChanging(object sender, ItemEventArgs<IMouseButtonHandler> e)
