@@ -115,10 +115,6 @@ namespace ClearCanvas.ImageViewer.Web
         private int _rows;
         private int _cols;
 
-        public CustomLayoutHook()
-        {
-        }
-
         public CustomLayoutHook(int rows, int cols)
         {
             _rows = rows;
@@ -129,40 +125,18 @@ namespace ClearCanvas.ImageViewer.Web
 
         public override bool HandleLayout(IHpLayoutHookContext context)
         {
-            if (_rows > 0 && _cols > 0)
-            {
-                var primaryImageSet = context.ImageViewer.LogicalWorkspace.ImageSets[0];
-                context.ImageViewer.PhysicalWorkspace.SetImageBoxGrid(_rows, _cols);
-                foreach (var imageBox in context.ImageViewer.PhysicalWorkspace.ImageBoxes)
-                    imageBox.SetTileGrid(1, 1);
-
-                context.PerformDefaultFillPhysicalWorkspace();
-
-                return true;
-            }
-            else
+            if (_rows <= 0 || _cols <= 0)
                 return false;
-            
+
+            context.ImageViewer.PhysicalWorkspace.SetImageBoxGrid(_rows, _cols);
+            foreach (var imageBox in context.ImageViewer.PhysicalWorkspace.ImageBoxes)
+                imageBox.SetTileGrid(1, 1);
+
+            context.PerformDefaultFillPhysicalWorkspace();
+
+            return true;
         }
 
         #endregion
-
-        private bool IsKeyImageDisplaySet(IDisplaySet displaySet)
-        {
-            if (displaySet == null || displaySet.PresentationImages.Count == 0)
-                return false;
-
-            var descriptor = displaySet.Descriptor as IDicomDisplaySetDescriptor;
-            if (descriptor == null)
-                return false;
-
-            const string koModality = "KO";
-
-            if (descriptor.SourceSeries != null && descriptor.SourceSeries.Modality == koModality)
-                return true;
-
-            var allImagesDescriptor = descriptor as ModalityDisplaySetDescriptor;
-            return allImagesDescriptor != null && allImagesDescriptor.Modality == koModality;
-        }
     }
 }

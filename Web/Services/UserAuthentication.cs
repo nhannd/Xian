@@ -39,15 +39,10 @@ namespace ClearCanvas.Web.Services
     }
 	public interface IUserAuthentication
 	{
-        /// <summary>
-        /// Query session information of the given session id
-        /// </summary>
-        /// <param name="sessionId"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// The implementation of this interface should not renew the session. The returned <see cref="UserSessionInfo"/> may or may not be valid. 
-        /// </remarks>
-		UserSessionInfo QuerySession(string sessionId);
+	    /// <summary>
+	    /// Validates an existing session for the given user.
+	    /// </summary>
+        UserSessionInfo ValidateSession(string userName, string sessionId);
 
         /// <summary>
         /// Renew a specified user session.
@@ -95,9 +90,8 @@ namespace ClearCanvas.Web.Services
 				Platform.Log(LogLevel.Debug, message);
 			}
 
-			var sessionInfo = _instance.QuerySession(sessionId);
-
-            if (sessionId==null)
+			var sessionInfo = _instance.ValidateSession(username, sessionId);
+            if (sessionId == null)
             {
                 throw new SessionDoesNotExistException();
             }

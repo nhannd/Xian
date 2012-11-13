@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
@@ -295,14 +296,13 @@ namespace ClearCanvas.ImageViewer.Web
                 Platform.Log(LogLevel.Debug, "Finding studies...");
 
 			var startRequest = (StartViewerApplicationRequest)request;
-			IList<StudyRootStudyIdentifier> studies = FindStudies(startRequest);
-
-			List<LoadStudyArgs> loadArgs = CollectionUtils.Map(studies, (StudyRootStudyIdentifier identifier) => CreateLoadStudyArgs(identifier));
 
 		    var args = new DesktopWindowCreationArgs("", Identifier.ToString());
             _desktopWindow = new WebDesktopWindow(args, Application.Instance);
             _desktopWindow.Open();
 
+            IList<StudyRootStudyIdentifier> studies = FindStudies(startRequest);
+            List<LoadStudyArgs> loadArgs = CollectionUtils.Map(studies, (StudyRootStudyIdentifier identifier) => CreateLoadStudyArgs(identifier));
             var viewer = CreateViewerComponent(startRequest);
 
 			try
@@ -323,33 +323,32 @@ namespace ClearCanvas.ImageViewer.Web
             if (Platform.IsLogLevelEnabled(LogLevel.Debug))
                 Platform.Log(LogLevel.Info, "Launching viewer...");
 
-            ImageViewerComponent.Launch(viewer, _desktopWindow, "");
+            SynchronizationContext.Current.Post(
+                delegate
+                    {
+                        ImageViewerComponent.Launch(viewer, _desktopWindow, "");
 
-	        // TODO (Phoenix5): Hack until the WorkspaceView does this.
-	        var view = ImageViewerComponentView.Current;
-		    _app = new Common.ViewerApplication
-		               {
-		                   Identifier = Identifier,
-                           Viewer = view.GetEntity(),
+                        // TODO (Phoenix5): Hack until the WorkspaceView does this.
+                        var view = ImageViewerComponentView.Current;
+                        _app = new Common.ViewerApplication
+                        {
+                            Identifier = Identifier,
+                            Viewer = view.GetEntity(),
 
-                           VersionString = GetProductVersionString()
-                                
-			           };
+                            VersionString = GetProductVersionString()
+                        };
 
-            // Push the ViewerApplication object to the client
-            Event @event = new PropertyChangedEvent
-            {
-                PropertyName = "Application",
-                Value = _app,
-                Identifier = Guid.NewGuid(),
-                SenderId = request.Identifier
-            };
+                        // Push the ViewerApplication object to the client
+                        Event @event = new PropertyChangedEvent
+                        {
+                            PropertyName = "Application",
+                            Value = _app,
+                            Identifier = Guid.NewGuid(),
+                            SenderId = request.Identifier
+                        };
 
-            FireEvent(@event);
-
-	       // window.ShowMessageBox("This is a message test", "Title", MessageBoxActions.OkCancel);
-
-	        //window.ShowAlert(AlertLevel.Info, "This is an info alert");
+                        FireEvent(@event);
+                    }, null);
 		}
 
         private static string GetProductVersionString()
@@ -410,7 +409,7 @@ namespace ClearCanvas.ImageViewer.Web
 
             if (keyImagesOnly)
             {
-                var layoutManager = new ImageViewer.Layout.Basic.LayoutManager() { LayoutHook = new KeyImageLayoutHook() };
+                var layoutManager = new ImageViewer.Layout.Basic.LayoutManager { LayoutHook = new KeyImageLayoutHook() };
                 //override the KO options
                 const string ko = "KO";
                 var realOptions = new KeyImageDisplaySetCreationOptions(layoutManager.DisplaySetCreationOptions[ko]);
@@ -428,15 +427,15 @@ namespace ClearCanvas.ImageViewer.Web
             }
             else
             {
-                ImageViewer.Layout.Basic.LayoutManager layoutManager;
-
-                layoutManager = new ImageViewer.Layout.Basic.LayoutManager()
+                var layoutManager = new ImageViewer.Layout.Basic.LayoutManager();
+                if (request.LoadStudyOptions != null && request.LoadStudyOptions.PreferredLayout != null)
                 {
-                    LayoutHook = (request.LoadStudyOptions!=null && request.LoadStudyOptions.PreferredLayout != null)
-                                ? new CustomLayoutHook(request.LoadStudyOptions.PreferredLayout.Rows, request.LoadStudyOptions.PreferredLayout.Columns)
-                                : new CustomLayoutHook()
-                };
-                
+                    //Use a custom layout hook if a preferred layout is specified. Otherwise, use whatever the
+                    //default layout hook is (e.g. Hanging Protocols).
+                    layoutManager.LayoutHook = new CustomLayoutHook(request.LoadStudyOptions.PreferredLayout.Rows,
+                                                                    request.LoadStudyOptions.PreferredLayout.Columns);
+                }
+
                 if (excludePriors) 
                 {
                     return new ImageViewerComponent(layoutManager, PriorStudyFinder.Null);

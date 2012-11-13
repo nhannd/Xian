@@ -20,9 +20,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
     [ExtensionOf(typeof(UserAuthenticationExtensionPoint))]
     public class WebViewerUserAuthentication:IUserAuthentication
     {
-        public UserSessionInfo QuerySession(string sessionId)
+        public UserSessionInfo ValidateSession(string userName, string sessionId)
         {
-            using(LoginService service = new LoginService())
+            using (LoginService service = new LoginService())
             {
                 var sessionInfo = service.Query(sessionId);
                 if (sessionInfo == null)

@@ -275,7 +275,7 @@ namespace ClearCanvas.Web.Services
             if (IsSessionShared || _session == null)
 				return;
 
-            //UserAuthentication.Logout(_session);
+            UserAuthentication.Logout(_session);
 		}
 
 		protected void EnsureSessionIsValid()
@@ -325,7 +325,7 @@ namespace ClearCanvas.Web.Services
             try
             {
                 ProcessMetaInfo(request.MetaInformation);
-                //AuthenticateUser(request);
+                AuthenticateUser(request);
                 _synchronizationContext = new WebSynchronizationContext(this);
                 _synchronizationContext.Send(nothing => DoStart(request), null);
             }
