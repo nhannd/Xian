@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
@@ -114,16 +115,31 @@ namespace ClearCanvas.ImageViewer.Web
 	[ExtensionOf(typeof(ApplicationExtensionPoint))]
 	public class ViewerApplication : ClearCanvas.Web.Services.Application
 	{
+        private class ToolContext : IApplicationToolContext
+        {
+        }
+
         private static readonly object _syncLock = new object();
 		private Common.ViewerApplication _app;
+
+        private ToolSet _toolSet; 
 	    private WebDesktopWindow _desktopWindow;
 
         public override string InstanceName
         {
-            get
+            get { return String.Format("WebStation (user={0})", Principal != null ? Principal.Identity.Name : "Unknown"); }
+        }
+
+        private static ToolSet CreateToolSet()
+        {
+            //We create our own application toolset because this class does not currently inherit from Desktop.Application.
+            try
             {
-                // TODO (Phoenix5): this used to show the IP address of the client. 
-                return String.Format("WebStation (user={0})", Principal != null ? Principal.Identity.Name : "Unknown");   
+                return new ToolSet(new ApplicationToolExtensionPoint().CreateExtensions().Cast<ITool>(), new ToolContext());
+            }
+            catch (NotSupportedException)
+            {
+                return null;
             }
         }
 
@@ -292,6 +308,8 @@ namespace ClearCanvas.ImageViewer.Web
             try
             {
                 findStudies.Start();
+
+                _toolSet = CreateToolSet();
 
                 lock (_syncLock)
                 {
@@ -468,26 +486,17 @@ namespace ClearCanvas.ImageViewer.Web
                 ((IDisposable)_desktopWindow).Dispose();
                 _desktopWindow = null;
 			}
+
+            if (_toolSet == null) return;
+
+            _toolSet.Dispose();
+	        _toolSet = null;
 		}
 
 		protected override ClearCanvas.Web.Common.Application GetContractObject()
 		{
 			return _app;
 		}
-
-
-        private static string GetClientAddress(OperationContext context)
-        {
-            if (context == null)
-                return "Unknown";
-
-            MessageProperties prop = context.IncomingMessageProperties;
-            RemoteEndpointMessageProperty endpoint =
-                prop[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
-
-            return endpoint != null ? endpoint.Address : "Unknown";
-        }
-        
 	}
 
     [ExtensionOf(typeof(SettingsStoreExtensionPoint))]
