@@ -108,7 +108,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utiltities\ChannelComparisonResult.cs" />
     <Compile Include="Utiltities\MathUtils.cs" />
-	<Compile Include="Utiltities\Statistics.cs" />
+    <Compile Include="Utiltities\Statistics.cs" />
     <Compile Include="View\ImageViewerComponentView.cs" />
     <Compile Include="ViewerApplication.cs" />
     <Compile Include="WebViewerServices.Designer.cs">

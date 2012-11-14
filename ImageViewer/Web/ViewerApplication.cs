@@ -11,26 +11,24 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.ServiceModel;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.ImageViewer.Common.DicomServer;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Web.Common.Messages;
 using ClearCanvas.ImageViewer.Web.View;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Events;
 using ClearCanvas.Web.Services;
 using ClearCanvas.ImageViewer.Web.Common;
-using ClearCanvas.ImageViewer.Web.Common.Entities;
-using ClearCanvas.Web.Services.View;
 using Application=ClearCanvas.Desktop.Application;
 using ClearCanvas.Common.Utilities;
 
@@ -112,7 +110,7 @@ namespace ClearCanvas.ImageViewer.Web
 		}
 	}
 
-	[Application(typeof(StartViewerApplicationRequest))]
+    [Application(typeof(StartViewerApplicationRequest))]
 	[ExtensionOf(typeof(ApplicationExtensionPoint))]
 	public class ViewerApplication : ClearCanvas.Web.Services.Application
 	{
@@ -129,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Web
             }
         }
 
-		private static IList<StudyRootStudyIdentifier> FindStudies(StartViewerApplicationRequest request)
+        private static IList<StudyRootStudyIdentifier> FindStudies(StartViewerApplicationRequest request)
 		{
 			bool invalidRequest = true;
 			List<StudyRootStudyIdentifier> results = new List<StudyRootStudyIdentifier>();
@@ -283,73 +281,88 @@ namespace ClearCanvas.ImageViewer.Web
         //    return new ProcessMessagesResult { EventSet = ev, Pending = false };
         //}
 
-	    protected override void OnStart(StartApplicationRequest request)
-		{
-			lock (_syncLock)
-			{
-                Platform.Log(LogLevel.Info, "Viewer Application is starting...");
-                if (Application.Instance == null)
-					Platform.StartApp("ClearCanvas.Desktop.Application",new string[] {"-r"});
-			}
+        protected override void OnStart(StartApplicationRequest request)
+        {
+            var startRequest = (StartViewerApplicationRequest)request;
 
-            if (Platform.IsLogLevelEnabled(LogLevel.Debug))
-                Platform.Log(LogLevel.Debug, "Finding studies...");
+            ImageViewerComponent viewer;
+            Func<object, IList<StudyRootStudyIdentifier>> findAsync = o => FindStudies(startRequest);
+            var findStudies = new Task<IList<StudyRootStudyIdentifier>>(findAsync, startRequest);
 
-			var startRequest = (StartViewerApplicationRequest)request;
+            try
+            {
+                findStudies.Start();
 
-		    var args = new DesktopWindowCreationArgs("", Identifier.ToString());
-            _desktopWindow = new WebDesktopWindow(args, Application.Instance);
-            _desktopWindow.Open();
+                lock (_syncLock)
+                {
+                    Platform.Log(LogLevel.Info, "Viewer Application is starting...");
+                    if (Application.Instance == null)
+                        Platform.StartApp("ClearCanvas.Desktop.Application", new string[] { "-r" });
+                }
 
-            IList<StudyRootStudyIdentifier> studies = FindStudies(startRequest);
-            List<LoadStudyArgs> loadArgs = CollectionUtils.Map(studies, (StudyRootStudyIdentifier identifier) => CreateLoadStudyArgs(identifier));
-            var viewer = CreateViewerComponent(startRequest);
+                if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+                    Platform.Log(LogLevel.Debug, "Finding studies...");
 
-			try
-			{
+                var args = new DesktopWindowCreationArgs("", Identifier.ToString());
+                _desktopWindow = new WebDesktopWindow(args, Application.Instance);
+                _desktopWindow.Open();
+
+                viewer = CreateViewerComponent(startRequest);
+                
+                findStudies.Wait();
+                
+                if (findStudies.Exception != null)
+                    throw findStudies.Exception;
+            }
+            finally
+            {
+                findStudies.Dispose();
+            }
+
+            var loadArgs = findStudies.Result.Select(CreateLoadStudyArgs).ToList();
+
+            try
+            {
                 if (Platform.IsLogLevelEnabled(LogLevel.Debug))
                     Platform.Log(LogLevel.Debug, "Loading study...");
+                
                 viewer.LoadStudies(loadArgs);
-			}
-			catch (Exception e)
-			{
+            }
+            catch (Exception e)
+            {
                 if (!AnySopsLoaded(viewer)) //end the app.
                     throw;
 
-				//Show an error and continue.
+                //Show an error and continue.
                 ExceptionHandler.Report(e, _desktopWindow);
-			}
+            }
 
             if (Platform.IsLogLevelEnabled(LogLevel.Debug))
                 Platform.Log(LogLevel.Info, "Launching viewer...");
 
-            SynchronizationContext.Current.Post(
-                delegate
-                    {
-                        ImageViewerComponent.Launch(viewer, _desktopWindow, "");
+            ImageViewerComponent.Launch(viewer, _desktopWindow, "");
 
-                        // TODO (Phoenix5): Hack until the WorkspaceView does this.
-                        var view = ImageViewerComponentView.Current;
-                        _app = new Common.ViewerApplication
-                        {
-                            Identifier = Identifier,
-                            Viewer = view.GetEntity(),
+            // TODO (Phoenix5): Hack until the WorkspaceView does this.
+            var view = ImageViewerComponentView.Current;
+            _app = new Common.ViewerApplication
+                       {
+                           Identifier = Identifier,
+                           Viewer = view.GetEntity(),
 
-                            VersionString = GetProductVersionString()
-                        };
+                           VersionString = GetProductVersionString()
+                       };
 
-                        // Push the ViewerApplication object to the client
-                        Event @event = new PropertyChangedEvent
-                        {
-                            PropertyName = "Application",
-                            Value = _app,
-                            Identifier = Guid.NewGuid(),
-                            SenderId = request.Identifier
-                        };
+            // Push the ViewerApplication object to the client
+            Event @event = new PropertyChangedEvent
+                               {
+                                   PropertyName = "Application",
+                                   Value = _app,
+                                   Identifier = Guid.NewGuid(),
+                                   SenderId = request.Identifier
+                               };
 
-                        FireEvent(@event);
-                    }, null);
-		}
+            FireEvent(@event);
+        }
 
         private static string GetProductVersionString()
         {
@@ -373,7 +386,7 @@ namespace ClearCanvas.ImageViewer.Web
                     continue;
 
                 if (sb.Length > 0)
-                    sb.Append(' ');
+                    sb.Append(' '); 
                 sb.Append(s);
             }
             return sb.ToString();
@@ -445,8 +458,6 @@ namespace ClearCanvas.ImageViewer.Web
                     return new ImageViewerComponent(layoutManager); 
                 } 
             }
-
-
         }
 
 	    protected override void OnStop()
