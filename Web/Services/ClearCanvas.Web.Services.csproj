@@ -80,6 +80,8 @@
     <Compile Include="ApplicationService.cs" />
     <Compile Include="EntityHandler.cs" />
     <Compile Include="KnownTypeProviders.cs" />
+    <Compile Include="View\DialogBoxView.cs" />
+    <Compile Include="View\ProgressDialogComponentView.cs" />
     <Compile Include="View\WebApplicationComponentView.cs" />
     <Compile Include="View\WebView.cs" />
     <Compile Include="EntityHandlerStore.cs" />
