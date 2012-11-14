@@ -88,13 +88,13 @@ namespace ClearCanvas.Desktop.Actions
 			}
 		}
 
-		internal static GetMenuModelDelegate CreateGetMenuModelDelegate(object target, string propertyName)
+        internal static Func<ActionModelNode> CreateGetMenuModelDelegate(object target, string propertyName)
 		{
 			PropertyInfo info;
 			MethodInfo getter;
 			GetPropertyAndGetter(target, propertyName, typeof(ActionModelNode), out info, out getter);
 
-			return (GetMenuModelDelegate)Delegate.CreateDelegate(typeof(GetMenuModelDelegate), target, getter);
+            return (Func<ActionModelNode>)Delegate.CreateDelegate(typeof(Func<ActionModelNode>), target, getter);
 		}
 	}
 }

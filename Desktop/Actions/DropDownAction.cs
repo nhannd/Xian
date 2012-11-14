@@ -9,13 +9,11 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.Actions
 {
-	internal delegate ActionModelNode GetMenuModelDelegate();
-
 	/// <summary>
 	/// Models a toolbar item that, when clicked, displays a menu containing other <see cref="IAction"/>s.
 	/// </summary>
@@ -25,7 +23,7 @@ namespace ClearCanvas.Desktop.Actions
 	/// </remarks>
 	public class DropDownAction : Action, IDropDownAction
 	{
-		private GetMenuModelDelegate _menuModelDelegate;
+        private Func<ActionModelNode> _menuModelDelegate;
 
 		/// <summary>
 		/// Constructor.
@@ -50,7 +48,7 @@ namespace ClearCanvas.Desktop.Actions
 
 		#endregion
 
-		internal void SetMenuModelDelegate(GetMenuModelDelegate menuModelDelegate)
+        public void SetMenuModelDelegate(Func<ActionModelNode> menuModelDelegate)
 		{
 			_menuModelDelegate = menuModelDelegate;
 		}

@@ -10,8 +10,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Actions
@@ -21,9 +19,9 @@ namespace ClearCanvas.Desktop.Actions
 	/// </summary>
 	public class DropDownButtonAction : ButtonAction, IDropDownAction
 	{
-		private GetMenuModelDelegate _menuModelDelegate;
+	    private Func<ActionModelNode> _menuModelDelegate;
 
-		/// <summary>
+	    /// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="actionId">The fully qualified action ID.</param>
@@ -47,7 +45,7 @@ namespace ClearCanvas.Desktop.Actions
 
 		#endregion
 
-		internal void SetMenuModelDelegate(GetMenuModelDelegate menuModelDelegate)
+        public void SetMenuModelDelegate(Func<ActionModelNode> menuModelDelegate)
 		{
 			_menuModelDelegate = menuModelDelegate;
 		}
