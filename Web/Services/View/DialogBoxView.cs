@@ -38,7 +38,7 @@ namespace ClearCanvas.Web.Services.View
         
         public override void SetTitle(string title)
         {
-            if (!_isRunningModal || Equals(_title, title))
+            if (Equals(_title, title))
                 return;
 
             _title = title;
@@ -64,7 +64,15 @@ namespace ClearCanvas.Web.Services.View
 
         public DialogBoxAction RunModal()
         {
-            FireEvent(new DialogBoxShownEvent { DialogBox = (Common.Entities.DialogBox)GetEntity() });
+            FireEvent(new DialogBoxShownEvent
+                          {
+                              //NOTE (Phoenix5): It's a bit weird that we're sending this on the application's behalf;
+                              //If there were actually a DesktopWindow data contract, we could tell
+                              //_desktopWindowView to fire it, which would be less weird.
+                              SenderId = ApplicationContext.ApplicationId,
+                              DialogBox = (Common.Entities.DialogBox)GetEntity()
+                          });
+
             _isRunningModal = true;
             ((IWebSynchronizationContext)SynchronizationContext.Current).RunModal();
 
@@ -105,12 +113,7 @@ namespace ClearCanvas.Web.Services.View
 
         public override void ProcessMessage(Common.Message message)
         {
-            var dismissDialogBoxMessage = message as DismissDialogBoxMessage;
-            if (dismissDialogBoxMessage == null)
-                return;
-
-            _result = (dismissDialogBoxMessage).Result;
-            RaiseCloseRequested();
+            //It is up to the hosted component to determine how the dialog box is closed, etc.
         }
 
         protected override void Initialize()
@@ -125,6 +128,7 @@ namespace ClearCanvas.Web.Services.View
         protected override void UpdateEntity(Common.Entity entity)
         {
             var dialogBox = (Common.Entities.DialogBox) entity;
+            dialogBox.Title = _title;
             dialogBox.ApplicationComponent = _componentView.GetEntity();
         }
 

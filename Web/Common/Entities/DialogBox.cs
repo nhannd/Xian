@@ -18,6 +18,9 @@ namespace ClearCanvas.Web.Common.Entities
     public class DialogBox : Entity
     {
         [DataMember(IsRequired = true)]
+        public string Title { get; set; }
+
+        [DataMember(IsRequired = true)]
         public Entity ApplicationComponent { get; set; }
     }
 }

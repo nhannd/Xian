@@ -91,7 +91,6 @@
     <Compile Include="JavascriptModuleAttribute.cs" />
     <Compile Include="Messages\ActionClickedMessage.cs" />
     <Compile Include="Messages\DismissAlertMessage.cs" />
-    <Compile Include="Messages\DismissDialogBoxMessage.cs" />
     <Compile Include="Messages\DismissMessageBoxMessage.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="ProcessMessagesResult.cs" />

@@ -28,7 +28,9 @@ namespace ClearCanvas.Web.Services
 
 			       		typeof(SessionUpdatedEvent),
 			       		typeof(MessageBoxShownEvent),
-						typeof(AlertShownEvent)
+						typeof(AlertShownEvent),
+                        typeof(DialogBoxDismissedEvent),
+                        typeof(DialogBoxShownEvent),
 			       	};
         }
 
@@ -69,6 +71,8 @@ namespace ClearCanvas.Web.Services
 						typeof(Position),
 						typeof(MessageBox),
                         typeof(WebMessageBoxActions),
+                        typeof(DialogBox),
+                        typeof(ProgressComponent),
 						typeof(Alert),
 
 						//TODO: if we ever include the desktop stuff, move this out of the viewer namespace
