@@ -93,7 +93,6 @@
     </Compile>
     <Compile Include="View\ImageBoxView.cs" />
     <Compile Include="View\TileView.cs" />
-    <Compile Include="Layout\WebLayoutTool.cs" />
     <Compile Include="MessageProcessingStatistics.cs" />
     <Compile Include="PriorStudyLoaderExceptionPolicy.cs" />
     <Compile Include="SR.Designer.cs">
