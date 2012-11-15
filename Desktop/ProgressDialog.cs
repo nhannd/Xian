@@ -47,35 +47,14 @@ namespace ClearCanvas.Desktop
         /// </summary>
         /// <param name="task">The <see cref="BackgroundTask"/> to execute.</param>
         /// <param name="desktopWindow">Desktop window that parents the progress dialog.</param>
-        public static void Show(BackgroundTask task, IDesktopWindow desktopWindow)
-        {
-            Show(task, desktopWindow, false, ProgressBarStyle.Blocks);
-        }
-
-        /// <summary>
-        /// Show the progress dialog to to the user.
-        /// </summary>
-        /// <param name="task">The <see cref="BackgroundTask"/> to execute.</param>
-        /// <param name="desktopWindow">Desktop window that parents the progress dialog.</param>
-        /// <param name="autoClose">Close the progress dialog after task completion.</param>
-        public static void Show(BackgroundTask task, IDesktopWindow desktopWindow, bool autoClose)
-        {
-            Show(task, desktopWindow, autoClose, ProgressBarStyle.Blocks);
-        }
-
-        /// <summary>
-        /// Show the progress dialog to to the user.
-        /// </summary>
-        /// <param name="task">The <see cref="BackgroundTask"/> to execute.</param>
-        /// <param name="desktopWindow">Desktop window that parents the progress dialog.</param>
         /// <param name="autoClose">Close the progress dialog after task completion.</param>
         /// <param name="progressBarStyle">The style of the progress bar.</param>
-        public static void Show(BackgroundTask task, IDesktopWindow desktopWindow, bool autoClose, ProgressBarStyle progressBarStyle)
+        public static void Show(BackgroundTask task, IDesktopWindow desktopWindow, bool autoClose = true, ProgressBarStyle progressBarStyle = ProgressBarStyle.Blocks, string startProgressMessage = null)
         {
         	// as the progress dialog involves UI, the task should *always* be run under the application UI culture
         	task.ThreadUICulture = Application.CurrentUICulture;
 
-            ProgressDialogComponent progressComponent = new ProgressDialogComponent(task, autoClose, progressBarStyle);
+            var progressComponent = new ProgressDialogComponent(task, autoClose, progressBarStyle, startProgressMessage);
             ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(
                 desktopWindow,
                 progressComponent,

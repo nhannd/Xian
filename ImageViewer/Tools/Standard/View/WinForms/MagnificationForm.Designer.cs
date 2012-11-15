@@ -21,7 +21,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 				}
 
 				DisposeSurface();
-				DisposeImage();
 			}
 			base.Dispose(disposing);
 		}

@@ -68,9 +68,13 @@
     <Compile Include="Application.cs" />
     <Compile Include="DataContractBase.cs" />
     <Compile Include="Entities\Alert.cs" />
+    <Compile Include="Entities\DialogBox.cs" />
     <Compile Include="Entities\MessageBox.cs" />
+    <Compile Include="Entities\ProgressComponent.cs" />
     <Compile Include="Events\AlertShownEvent.cs" />
     <Compile Include="Events\ApplicationStoppedEvent.cs" />
+    <Compile Include="Events\DialogBoxDismissedEvent.cs" />
+    <Compile Include="Events\DialogBoxShownEvent.cs" />
     <Compile Include="Events\ListPropertyChangedEvent.cs" />
     <Compile Include="Events\MessageBoxShownEvent.cs" />
     <Compile Include="Events\SessionUpdatedEvent.cs" />

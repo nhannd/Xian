@@ -18,11 +18,11 @@ namespace ClearCanvas.Web.Services.View
 {
     public class MessageBoxView : WebView<MessageBox>
     {
-        private DesktopWindowView _desktopWindow;
+        private DesktopWindowView _desktopWindowView;
 
         public override void SetModelObject(object modelObject)
 		{
-            _desktopWindow = (DesktopWindowView)modelObject;
+            _desktopWindowView = (DesktopWindowView)modelObject;
 		}
 
         protected override void Initialize()
@@ -41,16 +41,16 @@ namespace ClearCanvas.Web.Services.View
                 switch (msg.Result)
                 {
                     case WebDialogBoxAction.Yes:
-                        _desktopWindow.Dismiss(DialogBoxAction.Yes);
+                        _desktopWindowView.Dismiss(DialogBoxAction.Yes);
                         break;
                     case WebDialogBoxAction.No:
-                        _desktopWindow.Dismiss(DialogBoxAction.No);
+                        _desktopWindowView.Dismiss(DialogBoxAction.No);
                         break;
                     case WebDialogBoxAction.Ok:
-                        _desktopWindow.Dismiss(DialogBoxAction.Ok);
+                        _desktopWindowView.Dismiss(DialogBoxAction.Ok);
                         break;
                     case WebDialogBoxAction.Cancel:
-                        _desktopWindow.Dismiss(DialogBoxAction.Cancel);
+                        _desktopWindowView.Dismiss(DialogBoxAction.Cancel);
                         break;
                 }
 
@@ -61,9 +61,9 @@ namespace ClearCanvas.Web.Services.View
         protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
-			if (disposing && _desktopWindow != null)
+			if (disposing && _desktopWindowView != null)
 			{
-				_desktopWindow = null;
+				_desktopWindowView = null;
 			}
 		}
     }

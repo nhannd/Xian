@@ -19,6 +19,7 @@ using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -27,21 +28,23 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	{
 	}
 
+    public delegate void RenderMagnifiedImage(DrawArgs args);
+
 	public interface IMagnificationView : IView
 	{
-		void Open(float magnificationFactor, PresentationImage image, Point location);
-		void Close();
-		
-		void UpdateMouseLocation(Point location);
+        void Open(IPresentationImage image, Point locationTile, RenderMagnifiedImage render);
+        void UpdateMouseLocation(Point locationTile);
+        void Close();
 	}
 
-	[MenuAction("activate", "imageviewer-contextmenu/MenuMagnification", "Select", Flags = ClickActionFlags.CheckAction, InitiallyAvailable = false)]
+    [MenuAction("activate", "imageviewer-contextmenu/MenuMagnification", "Select", Flags = ClickActionFlags.CheckAction, InitiallyAvailable = false)]
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuMagnification", "Select", Flags = ClickActionFlags.CheckAction)]
 	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarMagnification", "Select", "MagnificationMenuModel", Flags = ClickActionFlags.CheckAction)]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[MouseButtonIconSet("activate", "Icons.MagnificationToolSmall.png", "Icons.MagnificationToolMedium.png", "Icons.MagnificationToolLarge.png")]
-	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
+    [CheckedStateObserver("activate", "Active", "ActivationChanged")]
+    [VisibleStateObserver("activate", "Visible", "VisibleChanged")]
 	[GroupHint("activate", "Tools.Image.Magnify")]
 
 	[MenuAction("1.5x", "magnification-dropdown/MenuMagnification1AndOneHalf", "Set1And1HalfMagnification")]
@@ -60,12 +63,31 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[CheckedStateObserver("8x", "Magnification8xChecked", "CheckedChanged")]
 	
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class MagnificationTool : MouseImageViewerTool
+	public partial class MagnificationTool : MouseImageViewerTool
 	{
 		private IMagnificationView _view = null;
 		private readonly CursorToken _cursorToken = new CursorToken("Icons.BlankCursor.png", typeof(MagnificationTool).Assembly);
 
-		public MagnificationTool()
+        static MagnificationTool()
+        {
+            IsSupported = CreateView() != null;
+        }
+
+        private static IMagnificationView CreateView()
+        {
+            try
+            {
+                return (IMagnificationView)ViewFactory.CreateView(new MagnificationViewExtensionPoint());
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static bool IsSupported { get; set; }
+
+        public MagnificationTool()
 			: base(SR.TooltipMagnification)
 		{
 			base.Behaviour |= MouseButtonHandlerBehaviour.SuppressContextMenu;
@@ -119,7 +141,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 		}
 		
-		public event EventHandler CheckedChanged;
+        public bool Visible
+        { 
+            get { return IsSupported; }
+        }
+
+        //Never fires.
+#pragma warning disable 67
+        public event EventHandler VisibleChanged;
+#pragma warning restore 67
+        
+        public event EventHandler CheckedChanged;
 
 		public override void Initialize()
 		{
@@ -197,7 +229,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{
-			if (!Enabled)
+			if (!Enabled || !Visible)
 				return false;
 
 			base.Start(mouseInformation);
@@ -207,11 +239,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				if (_view != null)
 					throw new InvalidOperationException("A magnification component is already active.");
 
-				MagnificationViewExtensionPoint extensionPoint = new MagnificationViewExtensionPoint();
-				IMagnificationView view = (IMagnificationView)ViewFactory.CreateView(extensionPoint);
-
-				view.Open(ToolSettings.Default.MagnificationFactor, 
-					(PresentationImage)SelectedPresentationImage, mouseInformation.Location);
+			    var view = CreateView();
+                _tileLocation = mouseInformation.Location;
+			    InitializeMagnificationImage();
+                view.Open(SelectedPresentationImage, mouseInformation.Location, RenderImage);
 
 				_view = view;
 				return true;
@@ -227,6 +258,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			if (_view != null)
 			{
+			    _tileLocation = mouseInformation.Location;
 				_view.UpdateMouseLocation(ConstrainPointToTile(mouseInformation));
 				return true;
 			}
@@ -247,7 +279,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				_view.Close();
 				_view = null;
 			}
-		}
+
+            DisposeMagnificationImage();
+        }
 
 		public override CursorToken GetCursorToken(Point point)
 		{

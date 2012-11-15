@@ -21,6 +21,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Entities;
 using ClearCanvas.Web.Common.Events;
+using DialogBox = ClearCanvas.Desktop.DialogBox;
 
 namespace ClearCanvas.Web.Services.View
 {
@@ -91,7 +92,9 @@ namespace ClearCanvas.Web.Services.View
         /// <returns></returns>
         public virtual IDialogBoxView CreateDialogBoxView(DialogBox dialogBox)
         {
-            throw new NotSupportedException();
+            var view = new DialogBoxView(this);
+            view.SetModelObject(dialogBox);
+            return view;
         }
 
         /// <summary>

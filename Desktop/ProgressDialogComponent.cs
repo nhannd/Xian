@@ -47,19 +47,20 @@ namespace ClearCanvas.Desktop
         private EventHandler<EventArgs> _progressUpdateEvent;
         private EventHandler<EventArgs> _progressTerminateEvent;
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="task">The task that will run in the background, reporting its progress to the foreground UI thread.</param>
-        /// <param name="autoClose">Whether or not the progress dialog should close automatically upon task completion.</param>
-        /// <param name="progressBarStyle">The style of the progress bar.</param>
-        public ProgressDialogComponent(BackgroundTask task, bool autoClose, ProgressBarStyle progressBarStyle)
+	    /// <summary>
+	    /// Constructor.
+	    /// </summary>
+	    /// <param name="task">The task that will run in the background, reporting its progress to the foreground UI thread.</param>
+	    /// <param name="autoClose">Whether or not the progress dialog should close automatically upon task completion.</param>
+	    /// <param name="progressBarStyle">The style of the progress bar.</param>
+	    /// <param name="startProgressMessage"></param>
+	    public ProgressDialogComponent(BackgroundTask task, bool autoClose, ProgressBarStyle progressBarStyle, string startProgressMessage = null)
         {
             _task = task;
             _autoClose = autoClose;
 
             _progressBar = 0;
-            _progressMessage = "";
+            _progressMessage = startProgressMessage ?? String.Empty;
             _progressBarStyle = progressBarStyle;
             _marqueeSpeed = 100;
 
