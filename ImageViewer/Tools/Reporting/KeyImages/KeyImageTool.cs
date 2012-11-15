@@ -96,9 +96,10 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		private void UpdateEnabled()
 		{
+            // TODO  Better way to address Webstation usage?
 			base.Enabled = KeyImagePublisher.IsSupportedImage(base.SelectedPresentationImage) &&
-			          WorkItemActivityMonitor.IsRunning &&
-					  PermissionsHelper.IsInRole(AuthorityTokens.KeyImages);
+					  PermissionsHelper.IsInRole(AuthorityTokens.KeyImages) &&
+                      (WorkItemActivityMonitor.IsRunning || !KeyImageClipboard.HasViewPlugin());
 
             this.ShowEnabled = WorkItemActivityMonitor.IsRunning &&
 					  PermissionsHelper.IsInRole(AuthorityTokens.KeyImages);
@@ -134,26 +135,50 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			if (!base.Enabled)
 				return;
 
-			try
-			{
-				IPresentationImage image = base.Context.Viewer.SelectedPresentationImage;
-				if (image != null)
-				{
-					KeyImageClipboard.Add(image);
-					_flashOverlayController.Flash(image);
-				}
+		    if (KeyImageClipboard.HasViewPlugin())
+		    {
+		        try
+		        {
+		            IPresentationImage image = base.Context.Viewer.SelectedPresentationImage;
+		            if (image != null)
+		            {
+		                KeyImageClipboard.Add(image);
+		                _flashOverlayController.Flash(image);
+		            }
 
-				if (_firstKeyImageCreation && this.ShowEnabled)
-				{
-					KeyImageClipboard.Show(Context.DesktopWindow, ShelfDisplayHint.DockAutoHide | ShelfDisplayHint.DockLeft);
-					_firstKeyImageCreation = false;
-				}
-			}
-			catch (Exception ex)
-			{
-				Platform.Log(LogLevel.Error, ex, "Failed to add item to the key image clipboard.");
-				ExceptionHandler.Report(ex, SR.MessageCreateKeyImageFailed, base.Context.DesktopWindow);
-			}
+		            if (_firstKeyImageCreation && this.ShowEnabled)
+		            {
+		                KeyImageClipboard.Show(Context.DesktopWindow,
+		                                       ShelfDisplayHint.DockAutoHide | ShelfDisplayHint.DockLeft);
+		                _firstKeyImageCreation = false;
+		            }
+		        }
+		        catch (Exception ex)
+		        {
+		            Platform.Log(LogLevel.Error, ex, "Failed to add item to the key image clipboard.");
+		            ExceptionHandler.Report(ex, SR.MessageCreateKeyImageFailed, base.Context.DesktopWindow);
+		        }
+		    }
+		    else
+		    {
+                try
+                {
+                    IPresentationImage image = base.Context.Viewer.SelectedPresentationImage;
+                    if (image != null)
+                    {
+                        // New Virtual Display Set
+                        KeyImageClipboard.AddVirtualDisplaySet(image);
+                        
+                        _flashOverlayController.Flash(image);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Platform.Log(LogLevel.Error, ex, "Failed to create virtual display set for key image.");
+                    ExceptionHandler.Report(ex, SR.MessageCreateKeyImageFailed, base.Context.DesktopWindow);
+                }
+            }
 		}
 		
 		#endregion

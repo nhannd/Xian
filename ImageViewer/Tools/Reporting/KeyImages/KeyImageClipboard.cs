@@ -14,8 +14,10 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Clipboard;
 using ClearCanvas.ImageViewer.Common.WorkItem;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Security.Policy;
 
@@ -155,6 +157,19 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				return null;
 		}
 
+        internal static bool HasViewPlugin()
+        {
+            try
+            {
+                var view = ViewFactory.CreateAssociatedView(typeof(KeyImageClipboardComponent));
+                return view != null;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
 		#region Event Publishing
 
 		internal static void OnDesktopWindowOpened(IDesktopWindow desktopWindow)
@@ -225,6 +240,30 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 			info.ClipboardItems.Add(ClipboardComponent.CreatePresentationImageItem(image));
 		}
+
+        public static void AddVirtualDisplaySet(IPresentationImage image)
+        {
+            Platform.CheckForNullReference(image, "image");
+            Platform.CheckForNullReference(image.ImageViewer, "image.ImageViewer");
+
+            if (!PermissionsHelper.IsInRole(AuthorityTokens.KeyImages))
+                throw new PolicyException(SR.ExceptionCreateKeyImagePermissionDenied);
+
+            IImageSopProvider sopProvider = image as IImageSopProvider;
+            if (sopProvider == null)
+                throw new ArgumentException("The image must be an IImageSopProvider.", "image");
+
+            var presentationImage = image.CreateFreshCopy();
+            
+            var a = DicomSoftcopyPresentationState.Create(image);
+            a.Deserialize(presentationImage);
+
+            var descriptor = new KeyImageDisplaySetDescriptor(new SeriesIdentifier(sopProvider.ImageSop),presentationImage,sopProvider.Frame,0);
+            var displaySet = new DisplaySet(descriptor);
+            displaySet.PresentationImages.Add(presentationImage);
+
+            image.ParentDisplaySet.ParentImageSet.DisplaySets.Add(displaySet);
+        }
 
 		public static void Show(IDesktopWindow desktopWindow)
 		{
