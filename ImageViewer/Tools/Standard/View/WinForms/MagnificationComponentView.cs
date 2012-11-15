@@ -13,7 +13,6 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
@@ -22,10 +21,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
     {
         private MagnificationForm _form;
 
-		public MagnificationComponentView()
-		{
-		}
-
 		public override object GuiElement
         {
             get { throw new InvalidOperationException("Not valid for this view type."); }
@@ -33,9 +28,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 
 		#region IMagnificationView Members
 
-		public void Open(float magnificationFactor, PresentationImage image, Point location)
+        public void Open(IPresentationImage image, Point locationTile, RenderMagnifiedImage render)
 		{
-			_form = new MagnificationForm(magnificationFactor, image, location);
+            _form = new MagnificationForm((PresentationImage)image, locationTile, render);
 			_form.Show();
 		}
 
@@ -57,5 +52,5 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 		}
 
 		#endregion
-	}
+    }
 }
