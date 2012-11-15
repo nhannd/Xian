@@ -17,10 +17,18 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml;
+using ClearCanvas.Dicom.Utilities.Xml.Nodes;
 using NUnit.Framework;
 
 namespace ClearCanvas.Dicom.Utilities.Xml.Tests
 {
+    class EmptyCollectionGetter : IDicomAttributeCollectionGetter
+    {
+        private readonly DicomAttributeCollection _collection = new DicomAttributeCollection();
+        public DicomAttributeCollection Collection { 
+            get { return _collection; }
+        }
+    }
 	[TestFixture]
 	public class InstanceXmlTests
 	{
@@ -184,7 +192,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml.Tests
 				{
 					XmlDocument xmlDocument = new XmlDocument();
 					xmlDocument.Load(ms);
-					InstanceXml instanceXml = new InstanceXml(xmlDocument.GetElementsByTagName("test")[0].FirstChild, new DicomAttributeCollection());
+                    InstanceXml instanceXml = new InstanceXml(null,new XmlNodeWrapper(xmlDocument.GetElementsByTagName("test")[0].FirstChild), new EmptyCollectionGetter());
 					Assert.IsTrue(instanceXml[DicomTags.FailedAttributesSequence].Count > 0);
 
 					int i = 0;

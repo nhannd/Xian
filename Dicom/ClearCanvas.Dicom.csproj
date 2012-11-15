@@ -119,7 +119,6 @@
       <Name>System.XML</Name>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Compile Include="Audit\AuditedInstances.cs" />
     <Compile Include="Audit\AuditLogHelper.cs" />
@@ -516,8 +515,16 @@
     <Compile Include="Utilities\StudyBuilder\StudyNode.cs" />
     <Compile Include="Utilities\StudyBuilder\StudyNodeCollection.cs" />
     <Compile Include="Utilities\Tests\DicomTagPathTests.cs" />
+    <Compile Include="Utilities\Xml\CacheLogger.cs" />
     <Compile Include="Utilities\Xml\InstanceXmlDicomAttributeCollection.cs" />
+    <Compile Include="Utilities\Xml\Nodes\INode.cs" />
+    <Compile Include="Utilities\Xml\Nodes\ReaderChildNodeEnumerator.cs" />
+    <Compile Include="Utilities\Xml\Nodes\ReaderNode.cs" />
+    <Compile Include="Utilities\Xml\Nodes\ReaderWrapper.cs" />
+    <Compile Include="Utilities\Xml\Nodes\XmlChildNodeEnumerator.cs" />
+    <Compile Include="Utilities\Xml\Nodes\XmlNodeWrapper.cs" />
     <Compile Include="Utilities\Xml\Tests\InstanceXmlTests.cs" />
+    <Compile Include="Utilities\Xml\Tests\StudyXmlReaderTests.cs" />
     <Compile Include="Utilities\Xml\Tests\StudyXmlTests.cs" />
     <Compile Include="Validation\DicomValidator.cs" />
     <Compile Include="IDicomCharacterSetParser.cs" />

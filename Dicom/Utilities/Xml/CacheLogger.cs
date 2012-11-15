@@ -20,7 +20,7 @@
 using ClearCanvas.Common;
 using DataCache;
 
-namespace ClearCanvas.ImageViewer.StudyManagement
+namespace ClearCanvas.Dicom.Utilities.Xml
 {
     internal class CacheLogger : ICacheLogger
     {

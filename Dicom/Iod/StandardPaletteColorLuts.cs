@@ -15,6 +15,7 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.Dicom.Utilities.Xml.Nodes;
 
 namespace ClearCanvas.Dicom.Iod
 {
@@ -96,7 +97,7 @@ namespace ClearCanvas.Dicom.Iod
 						var instanceNode = CollectionUtils.FirstElement(docRootNode.GetElementsByTagName("Instance")) as XmlElement;
 						if (instanceNode != null)
 						{
-							var instanceXml = new InstanceXml(instanceNode, null);
+							var instanceXml = new InstanceXml(null,new XmlNodeWrapper( instanceNode), null);
 							return Create(instanceXml.Collection);
 						}
 					}

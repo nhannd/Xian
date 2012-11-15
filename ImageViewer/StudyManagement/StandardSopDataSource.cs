@@ -205,14 +205,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			    var cached = Frame.Cache.Get(FrameInfo.CacheId);
                 if (cached != null)
-			      return cached.PixelData;
+			      return cached.Data;
 
                 byte[] pixelData = CreateNormalizedPixelData();
 
-                Frame.Cache.Put(FrameInfo.CacheId, new PixelCacheItem
+                Frame.Cache.Put(FrameInfo.CacheId, new ByteBufferCacheItem
                 {
                     Size = pixelData.Length,
-                    PixelData = pixelData,
+                    Data = pixelData,
                     IsCompressed = false
                 });
 			    return pixelData;

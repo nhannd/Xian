@@ -233,7 +233,6 @@
     <Compile Include="StudyManagement\ActivityMonitorProgressBar.cs" />
     <Compile Include="StudyManagement\ActivityMonitorQuickLink.cs" />
     <Compile Include="StudyManagement\ConcurrentDequeuePolicy.cs" />
-    <Compile Include="StudyManagement\DiskCacheLogger.cs" />
     <Compile Include="StudyManagement\FrameInfo.cs" />
     <Compile Include="StudyManagement\LocalServerWatcher.cs" />
     <Compile Include="StudyManagement\PrefetchSettings.Designer.cs">

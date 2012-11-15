@@ -99,9 +99,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                 {
                     Frame.Cache.Put(MyFrameInfo.CacheIdTopLevel,
                                     MyFrameInfo.CacheId,
-                                    new PixelCacheItem
+                                    new ByteBufferCacheItem
                                         {
-                                            PixelStream = stream,
+                                            ByteStream = stream,
                                             Size = streamLength,
                                             IsCompressed = isCompressed
                                         });
@@ -157,11 +157,11 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                 if (Frame.Cache.IsDiskCacheEnabled)
                 {
                     context.Decompressor = Decompress;
-                    var item = Frame.Cache.Get(MyFrameInfo.CacheIdTopLevel, MyFrameInfo.CacheId, context);
-                    if (item != null && item.PixelData != null)
+                    var item = Frame.Cache.Get(CacheType.Pixels, MyFrameInfo.CacheIdTopLevel, MyFrameInfo.CacheId, context);
+                    if (item != null && item.Data != null)
                     {
                         var resultMetaInfo = new FrameStreamingResultMetaData {ContentLength = item.Size};
-                        result = new RetrievePixelDataResult(item.PixelData, resultMetaInfo);
+                        result = new RetrievePixelDataResult(item.Data, resultMetaInfo);
                     }
                 }
                 return result;

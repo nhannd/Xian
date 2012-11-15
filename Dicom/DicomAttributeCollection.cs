@@ -18,6 +18,10 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom
 {
+    public interface IDicomAttributeCollectionGetter
+    {
+        DicomAttributeCollection Collection { get; }
+    }
     /// <summary>
     /// The DicomAttributeCollection class models an a collection of DICOM attributes.
     /// </summary>

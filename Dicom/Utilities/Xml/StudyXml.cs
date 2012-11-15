@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Utilities.Xml.Nodes;
 
 namespace ClearCanvas.Dicom.Utilities.Xml
 {
@@ -107,6 +108,14 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         #endregion
 
         #region Public Methods
+
+        public void Unload()
+        {
+            foreach (var series in _seriesList.Values)
+            {
+                series.Unload();
+            }
+        }
 
         /// <summary>
         /// Indexer to retrieve specific <see cref="SeriesXml"/> objects from the <see cref="StudyXml"/>.
@@ -242,7 +251,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
             if (series == null)
             {
-                series = new SeriesXml(seriesInstanceUid);
+                series = new SeriesXml(_studyInstanceUid, seriesInstanceUid);
                 this[seriesInstanceUid] = series;
             }
 
@@ -342,36 +351,40 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
             if (rootNode == null)
                 return;
+            SetMemento(new XmlNodeWrapper(rootNode));
+        }
+        public void SetMemento(INode rootNode)
+        {
 
-            XmlNode studyNode = rootNode.FirstChild;
+            if (rootNode == null)
+                return;
 
-            while (studyNode != null)
+            var studyEnumerator = rootNode.GetChildEnumerator();
+            while (studyEnumerator.MoveNext() && studyEnumerator.Current != null)
             {
+                var studyNode = studyEnumerator.Current;
                 // Just search for the first study node, parse it, then break
                 if (studyNode.Name.Equals("Study"))
                 {
-                    _studyInstanceUid = studyNode.Attributes["UID"].Value;
+                    _studyInstanceUid = studyNode.Attribute("UID");
 
                     if (studyNode.HasChildNodes)
                     {
-                        XmlNode seriesNode = studyNode.FirstChild;
-
-                        while (seriesNode != null)
+                        var seriesEnumerator = studyNode.GetChildEnumerator();
+                        while (seriesEnumerator.MoveNext() && seriesEnumerator.Current != null)
                         {
-                            String seriesInstanceUid = seriesNode.Attributes["UID"].Value;
+                            var seriesNode = seriesEnumerator.Current;
+                            var seriesInstanceUid = seriesNode.Attribute("UID");
 
-                            SeriesXml seriesStream = new SeriesXml(seriesInstanceUid);
+                            var seriesStream = new SeriesXml(_studyInstanceUid, seriesInstanceUid);
 
                             _seriesList.Add(seriesInstanceUid, seriesStream);
 
                             seriesStream.SetMemento(seriesNode);
 
-                            // Go to next node in doc
-                            seriesNode = seriesNode.NextSibling;
                         }
                     }
                 }
-                studyNode = studyNode.NextSibling;
             }
         }
 

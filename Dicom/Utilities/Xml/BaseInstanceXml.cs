@@ -11,6 +11,7 @@
 
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Utilities.Xml.Nodes;
 
 namespace ClearCanvas.Dicom.Utilities.Xml
 {
@@ -31,8 +32,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		/// Creates an instance of <see cref="BaseInstanceXml"/> from a specified Xml node.
 		/// </summary>
 		/// <param name="node"></param>
-		public BaseInstanceXml(XmlNode node)
-			: base(node, null)
+		public BaseInstanceXml(SeriesXml seriesXml, INode node)
+			: base(seriesXml, node, null)
 		{
 		}
 

@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
                 var cached = true;
                 if (Cacheable)
                     cached = Frame.Cache.IsDiskCacheEnabled &&
-                             Frame.Cache.IsCachedToDisk(CacheIdTopLevel, CacheId);
+                             Frame.Cache.IsCachedToDisk(CacheType.Pixels, CacheIdTopLevel, CacheId);
                 return cached;
             }
         }
