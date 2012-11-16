@@ -573,6 +573,66 @@ namespace ClearCanvas.ImageViewer
 		}
 	}
 
+    [Cloneable(false)]
+    public class KeyImageDisplaySetDescriptor : DicomDisplaySetDescriptor
+    {
+        private readonly string _suffix;
+        private readonly string _seriesInstanceUid;
+        private readonly string _sopInstanceUid;
+        private readonly int _frameNumber;
+        private readonly int _position;
+
+        public KeyImageDisplaySetDescriptor(ISeriesIdentifier sourceSeries, IPresentationImage image, Frame frame, int position)
+            : base(sourceSeries)
+        {
+            Platform.CheckForNullReference(sourceSeries, "sourceSeries");
+            Platform.CheckForNullReference(image, "image");
+
+            _seriesInstanceUid = sourceSeries.SeriesInstanceUid;
+            _sopInstanceUid = image.Uid;
+            _frameNumber = frame.FrameNumber;
+            _position = position;
+
+            if (sourceSeries.SeriesInstanceUid == frame.SeriesInstanceUid)
+            {
+                _suffix = String.Format(SR.SuffixFormatSingleFrameDisplaySet, frame.ParentImageSop.InstanceNumber, _frameNumber);
+            }
+            else
+            {
+                //this is a referenced frame (e.g. key iamge).
+                _suffix = String.Format(SR.SuffixFormatSingleReferencedFrameDisplaySet,
+                    frame.ParentImageSop.SeriesNumber, frame.ParentImageSop.InstanceNumber, _frameNumber);
+            }
+        }
+
+        protected KeyImageDisplaySetDescriptor(KeyImageDisplaySetDescriptor source, ICloningContext context)
+            : base(source, context)
+        {
+            context.CloneFields(source, this);
+        }
+
+        protected override string GetName()
+        {
+            if (String.IsNullOrEmpty(SourceSeries.SeriesDescription))
+                return String.Format("{0}: {1}", SourceSeries.SeriesNumber, _suffix);
+            else
+                return String.Format("{0}: {1} - {2}", SourceSeries.SeriesNumber, SourceSeries.SeriesDescription, _suffix);
+        }
+
+        protected override string GetDescription()
+        {
+            if (String.IsNullOrEmpty(SourceSeries.SeriesDescription))
+                return _suffix;
+            else
+                return String.Format("{0} - {1}", SourceSeries.SeriesDescription, _suffix);
+        }
+
+        protected override string GetUid()
+        {
+            return String.Format("{0}:{1}:{2}:{3}:{4}", SourceSeries.SeriesInstanceUid, _seriesInstanceUid, _sopInstanceUid, _frameNumber, _position);
+        }
+    }
+
 	/// <summary>
 	/// A <see cref="DisplaySetFactory"/> that splits series with multiple single or multiframe images into
 	/// separate <see cref="IDisplaySet"/>s.
