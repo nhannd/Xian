@@ -18,6 +18,9 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="TileComponent"/>
+    /// </summary>
 	[ExtensionOf(typeof(ImageBoxViewExtensionPoint))]
     public class ImageBoxView : WinFormsView, IView
     {

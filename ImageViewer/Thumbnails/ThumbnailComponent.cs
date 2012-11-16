@@ -75,6 +75,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 		private ImageSetTree _currentTree;
         private ThumbnailGallery _thumbnailGallery;
         private readonly IResourceResolver _resourceResolver;
+	    private BindingList<IGalleryItem> _galleryItems; 
 
 		public ThumbnailComponent(IDesktopWindow desktopWindow)
 		{
@@ -84,7 +85,36 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			_dummyTree = new ImageSetTree(new ObservableList<IImageSet>(), null);
 			_currentTree = _dummyTree;
 		    _thumbnailGallery = new ThumbnailGallery {NameAndDescriptionFormat = NameAndDescriptionFormat.VerboseNameNoDescription};
-		}
+            _galleryItems = new BindingList<IGalleryItem>();
+
+		    foreach (var galleryItem in _thumbnailGallery.GalleryItems)
+		        _galleryItems.Add(galleryItem);
+
+            _thumbnailGallery.GalleryItems.ItemAdded += GalleryItemAdded;
+            _thumbnailGallery.GalleryItems.ItemRemoved += GallerItemRemoved;
+            _thumbnailGallery.GalleryItems.ItemChanging += GalleryItemChanging;
+            _thumbnailGallery.GalleryItems.ItemChanged += GalleryItemChanged;
+        }
+
+        private void GalleryItemAdded(object sender, ListEventArgs<IGalleryItem> e)
+        {
+            _galleryItems.Add(e.Item);
+        }
+
+        private void GalleryItemChanging(object sender, ListEventArgs<IGalleryItem> e)
+        {
+            _galleryItems.RemoveAt(e.Index);
+        }
+
+        private void GalleryItemChanged(object sender, ListEventArgs<IGalleryItem> e)
+        {
+            _galleryItems.Insert(e.Index, e.Item);
+        }
+
+        private void GallerItemRemoved(object sender, ListEventArgs<IGalleryItem> e)
+        {
+            _galleryItems.RemoveAt(e.Index);
+        }
 
 		#region Presentation Model
 
@@ -101,7 +131,9 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 		public BindingList<IGalleryItem> Thumbnails
 		{
-            get { return (BindingList<IGalleryItem>)_thumbnailGallery.GalleryItems; }
+            get
+            {
+                return _galleryItems; }
 		}
 
 		#endregion
@@ -221,6 +253,11 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 			_desktopWindow.Workspaces.ItemActivationChanged -= OnActiveWorkspaceChanged;
 			_desktopWindow.Workspaces.ItemClosed -= OnWorkspaceClosed;
+
+            _thumbnailGallery.GalleryItems.ItemAdded -= GalleryItemAdded;
+            _thumbnailGallery.GalleryItems.ItemRemoved -= GallerItemRemoved;
+            _thumbnailGallery.GalleryItems.ItemChanging -= GalleryItemChanging;
+            _thumbnailGallery.GalleryItems.ItemChanged -= GalleryItemChanged;
 
 			SetImageViewer(null);
             _thumbnailGallery.Dispose();
