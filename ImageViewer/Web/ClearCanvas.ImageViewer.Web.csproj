@@ -92,6 +92,7 @@
       <DependentUpon>DiagnosticsSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="View\ImageBoxView.cs" />
+    <Compile Include="View\MagnificationView.cs" />
     <Compile Include="View\TileView.cs" />
     <Compile Include="MessageProcessingStatistics.cs" />
     <Compile Include="PriorStudyLoaderExceptionPolicy.cs" />
@@ -148,6 +149,10 @@
     <ProjectReference Include="..\Layout\Basic\ClearCanvas.ImageViewer.Layout.Basic.csproj">
       <Project>{EA38C1F1-C4BD-4ED7-9B60-C95DF22D6A72}</Project>
       <Name>ClearCanvas.ImageViewer.Layout.Basic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tools\Standard\ClearCanvas.ImageViewer.Tools.Standard.csproj">
+      <Project>{9AF0770C-7E9F-483F-8429-D7894F06EB6C}</Project>
+      <Name>ClearCanvas.ImageViewer.Tools.Standard</Name>
     </ProjectReference>
     <ProjectReference Include="Common\ClearCanvas.ImageViewer.Web.Common.csproj">
       <Project>{E53B5474-B705-4373-B1DE-0CC7162734A2}</Project>

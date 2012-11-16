@@ -84,7 +84,8 @@ namespace ClearCanvas.ImageViewer.Web
 						typeof(Cursor),
 						typeof(Common.Entities.InformationBox),
 
-			       		typeof (WebLayoutChangerAction)
+			       		typeof (WebLayoutChangerAction),
+			       		typeof (Magnifier)
 			       	};
 		}
 

@@ -15,6 +15,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer
@@ -76,6 +77,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public Tile()
 		{
+            ExtensionData = new ExtensionData();
 		}
 
 		#region Public properties
@@ -328,6 +330,8 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+	    public Common.ExtensionData ExtensionData { get; private set; }
+
 		#endregion
 
 		#region Public events
@@ -517,5 +521,5 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		#endregion
-	}
+    }
 }

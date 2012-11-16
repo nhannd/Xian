@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -153,6 +154,11 @@ namespace ClearCanvas.ImageViewer
 		/// Gets or sets whether the image box is currently enabled.
 		/// </summary>
 		bool Enabled { get; set; }
+
+        /// <summary>
+        /// A place for extensions to store custom data about the tile.
+        /// </summary>
+        ExtensionData ExtensionData { get; }
 
 		/// <summary>
 		/// Creates a rectangular grid of tiles.

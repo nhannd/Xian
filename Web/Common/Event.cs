@@ -21,6 +21,7 @@ namespace ClearCanvas.Web.Common
 	    [DataMember(IsRequired = false)]
         public String Sender { get; set; }
 
+	    // TODO (CR Nov 2012): Should probably be TargetId; otherwise implies you shouldn't send messages/events to other objects.
         [DataMember(IsRequired = false)]
         public Guid SenderId { get; set; }
 

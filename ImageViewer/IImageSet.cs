@@ -12,6 +12,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -66,5 +67,10 @@ namespace ClearCanvas.ImageViewer
 		/// Gets the unique identifier for this <see cref="IImageSet"/>.
 		/// </summary>
 		string Uid { get; }
-	}
+
+        /// <summary>
+        /// A place for extensions to store custom data about the image set.
+        /// </summary>
+        ExtensionData ExtensionData { get; }
+    }
 }

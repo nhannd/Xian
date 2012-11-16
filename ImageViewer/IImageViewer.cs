@@ -12,6 +12,7 @@
 using System;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
@@ -122,6 +123,11 @@ namespace ClearCanvas.ImageViewer
 		/// Gets the associated <see cref="IPriorStudyLoader"/>.
 		/// </summary>
 		IPriorStudyLoader PriorStudyLoader { get; }
+
+        /// <summary>
+        /// A place for extensions to store custom data about the viewer.
+        /// </summary>
+		ExtensionData ExtensionData { get; }
 
 		/// <summary>
 		/// Loads a study using the specified parameters.

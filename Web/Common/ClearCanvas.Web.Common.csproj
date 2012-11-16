@@ -83,7 +83,7 @@
     <Compile Include="Events\ApplicationNotFoundEvent.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Events\ApplicationStartedEvent.cs" />
-    <Compile Include="Events\EntityUpdatedEvent.cs" />
+    <Compile Include="Events\EntityEvent.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="IApplicationService.cs" />
     <Compile Include="Image.cs" />

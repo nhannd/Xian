@@ -21,7 +21,7 @@ namespace ClearCanvas.Web.Services
 						typeof(ApplicationNotFoundEvent),
 						typeof(ApplicationStartedEvent),
 						typeof(ApplicationStoppedEvent),
-						typeof(EntityUpdatedEvent),
+						typeof(EntityEvent),
 						typeof(PropertyChangedEvent),
                         typeof(ListPropertyChangedEvent),
                         typeof(ListChangeType),

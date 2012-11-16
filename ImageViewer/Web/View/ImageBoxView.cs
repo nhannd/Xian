@@ -24,6 +24,7 @@ namespace ClearCanvas.ImageViewer.Web.View
 {
 	public class ImageBoxView : WebView<ImageBoxEntity>
 	{
+	    // TODO (Phoenix5): This isn't actually necessary; just make it generic like in ImageViewerComponentView.
         public interface IOverlayView : IWebView
         {
             bool IsVisible { get; set; }

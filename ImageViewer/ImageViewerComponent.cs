@@ -19,6 +19,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Automation;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Collections.Generic;
@@ -219,6 +220,8 @@ namespace ClearCanvas.ImageViewer
 
             _shortcutManager = new ViewerShortcutManager(this);
 			_priorStudyLoader = new AsynchronousPriorStudyLoader(this, _setupHelper.GetPriorStudyFinder());
+            
+            ExtensionData = new ExtensionData();
 		}
 
 		/// <summary>
@@ -487,6 +490,8 @@ namespace ClearCanvas.ImageViewer
 				return CreateTitle(CollectionUtils.Map(this.StudyTree.Patients, (Patient patient) => (IPatientData) patient));
 			}
 		}
+
+        public ExtensionData ExtensionData { get; private set; }
 
 		#endregion
 

@@ -16,6 +16,7 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer
@@ -67,7 +68,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			this.Tiles.ItemAdded += OnTileAdded;
 			this.Tiles.ItemRemoved += OnTileRemoved;
-
+            ExtensionData = new ExtensionData();
 		}
 
 
@@ -463,6 +464,7 @@ namespace ClearCanvas.ImageViewer
 			set { _enabled = value; }
 		}
 
+        public ExtensionData ExtensionData { get; private set; }
 
         #endregion
 

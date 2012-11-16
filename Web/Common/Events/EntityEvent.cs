@@ -13,10 +13,20 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Web.Common.Events
 {
-	[DataContract(Namespace = Namespace.Value)]
-	public class EntityUpdatedEvent : Event
+    public enum EntityEventType
+    {
+        Created,
+        Updated,
+        Destroyed
+    }
+
+    [DataContract(Namespace = Namespace.Value)]
+	public class EntityEvent : Event
 	{
-		[DataMember(IsRequired = true)]
+        [DataMember(IsRequired = true)]
+        public EntityEventType EventType { get; set; }
+        
+        [DataMember(IsRequired = true)]
 		public Entity Entity { get; set; }
 	}
 }

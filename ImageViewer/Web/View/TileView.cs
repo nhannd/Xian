@@ -26,6 +26,7 @@ using ClearCanvas.ImageViewer.Web.Utiltities;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Entities;
 using ClearCanvas.Web.Common.Events;
+using ClearCanvas.Web.Services;
 using ClearCanvas.Web.Services.View;
 using TileEntity = ClearCanvas.ImageViewer.Web.Common.Entities.Tile;
 using ClearCanvas.ImageViewer.Rendering;
@@ -74,8 +75,27 @@ namespace ClearCanvas.ImageViewer.Web.View
 		#endregion
 	}
 
+    public static class Extensions
+    {
+        public static Guid GetViewId(this ITile tile)
+        {
+            return (Guid) tile.ExtensionData[typeof (TileView.IdKey)];
+        }
+    }
+
     public class TileView : WebView<TileEntity>
     {
+        public class ExtensionEntitiesExtensionPoint : ExtensionPoint<IEntityHandler>
+        {
+        }
+
+        /// <summary>
+        /// Internal type just for storing view ID in tile extension data.
+        /// </summary>
+        internal class IdKey
+        {
+        }
+
         private static class LogNames
         {
             public const string MessageProcessing = "TileView.MessageProcessing";
@@ -133,6 +153,8 @@ namespace ClearCanvas.ImageViewer.Web.View
         private static Counter _unreleasedImageCounter;
         [ThreadStatic]
         private static Counter _undeliveredImageCounter;
+
+        private List<IEntityHandler> _extensionEntities;
 
 
         public TileView()
@@ -277,8 +299,21 @@ namespace ClearCanvas.ImageViewer.Web.View
 		public override void SetModelObject(object modelObject)
 		{
 			_tile = (Tile)modelObject;
-			_tileInputTranslator = new WebTileInputTranslator();
+		    _tile.ExtensionData[typeof (IdKey)] = Identifier;
+
+            _tileInputTranslator = new WebTileInputTranslator();
 			_tileController = new TileController(_tile, ((ImageViewerComponent)_tile.ImageViewer).ShortcutManager);
+
+            try
+            {
+                _extensionEntities = new ExtensionEntitiesExtensionPoint().CreateExtensions().Cast<IEntityHandler>().ToList();
+                // TODO (CR Nov 2012): Should the model object be the tile?
+                foreach (var extensionEntity in _extensionEntities)
+                    extensionEntity.SetModelObject(_tile);
+            }
+            catch (NotSupportedException)
+            {
+            }
 		}
 
         protected override void Initialize()

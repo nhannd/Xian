@@ -12,6 +12,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -89,6 +90,11 @@ namespace ClearCanvas.ImageViewer
 		/// Gets or sets this <see cref="ITile"/>'s <see cref="ClearCanvas.ImageViewer.EditBox">EditBox</see>.
 		/// </summary>
 		EditBox EditBox { get; set; }
+
+        /// <summary>
+        /// A place for extensions to store custom data about the tile.
+        /// </summary>
+	    ExtensionData ExtensionData { get; }
 
 		/// <summary>
 		/// Selects the <see cref="ITile"/>.

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -53,6 +54,7 @@ namespace ClearCanvas.ImageViewer
 			_displaySets.ItemChanged += OnDisplaySetChanged;
 
 			Descriptor = descriptor;
+            ExtensionData = new ExtensionData();
 		}
 
 		internal void AddCopy(IDisplaySet copy)
@@ -191,7 +193,9 @@ namespace ClearCanvas.ImageViewer
 			set { _descriptor.Uid = value; }
 		}
 
-		/// <summary>
+	    public ExtensionData ExtensionData { get; private set; }
+
+	    /// <summary>
 		/// Fires just before the <see cref="ImageSet"/> is actually drawn/rendered.
 		/// </summary>
 		public event EventHandler Drawing

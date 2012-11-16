@@ -9,9 +9,7 @@
 
 #endregion
 
-using System;
 using System.Runtime.Serialization;
-using ClearCanvas.ImageViewer.Web.Common.Entities;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Entities;
 
