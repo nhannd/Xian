@@ -254,15 +254,16 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
                 throw new ArgumentException("The image must be an IImageSopProvider.", "image");
 
             var presentationImage = image.CreateFreshCopy();
-            
-            var a = DicomSoftcopyPresentationState.Create(image);
-            a.Deserialize(presentationImage);
 
             var descriptor = new KeyImageDisplaySetDescriptor(new SeriesIdentifier(sopProvider.ImageSop),presentationImage,sopProvider.Frame,0);
             var displaySet = new DisplaySet(descriptor);
             displaySet.PresentationImages.Add(presentationImage);
 
-            image.ParentDisplaySet.ParentImageSet.DisplaySets.Add(displaySet);
+            image.ImageViewer.LogicalWorkspace.ImageSets[0].DisplaySets.Add(displaySet);
+
+            var a = DicomSoftcopyPresentationState.Create(image);
+           // a.Deserialize(presentationImage);
+
         }
 
 		public static void Show(IDesktopWindow desktopWindow)

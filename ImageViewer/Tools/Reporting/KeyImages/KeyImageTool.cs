@@ -113,6 +113,32 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
 			UpdateEnabled();
+
+            if (!KeyImageClipboard.HasViewPlugin())
+            {
+                if (SelectedPresentationImage.ParentDisplaySet.Descriptor is KeyImageDisplaySetDescriptor)
+                {
+                    foreach (ClearCanvas.Desktop.Actions.Action a in this.Actions)
+                    {
+                        if (a.Path.LocalizedPath.Equals("imageviewer-contextmenu/MenuCreateKeyImage")
+                          | a.Path.LocalizedPath.Equals("global-toolbars/ToolbarStandard/Create Key Image"))
+                        {
+                            a.IconSet = new IconSet("Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png");
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (ClearCanvas.Desktop.Actions.Action a in this.Actions)
+                    {
+                        if (a.Path.LocalizedPath.Equals("imageviewer-contextmenu/MenuCreateKeyImage")
+                         || a.Path.LocalizedPath.Equals("global-toolbars/ToolbarStandard/Create Key Image"))
+                        {
+                            a.IconSet = new IconSet("Icons.CreateKeyImageToolSmall.png", "Icons.CreateKeyImageToolMedium.png", "Icons.CreateKeyImageToolLarge.png");
+                        }
+                    }
+                }
+            }
 		}
 
 		protected override void OnTileSelected(object sender, TileSelectedEventArgs e)
