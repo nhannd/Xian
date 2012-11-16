@@ -240,32 +240,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 			info.ClipboardItems.Add(ClipboardComponent.CreatePresentationImageItem(image));
 		}
-
-        public static void AddVirtualDisplaySet(IPresentationImage image)
-        {
-            Platform.CheckForNullReference(image, "image");
-            Platform.CheckForNullReference(image.ImageViewer, "image.ImageViewer");
-
-            if (!PermissionsHelper.IsInRole(AuthorityTokens.KeyImages))
-                throw new PolicyException(SR.ExceptionCreateKeyImagePermissionDenied);
-
-            IImageSopProvider sopProvider = image as IImageSopProvider;
-            if (sopProvider == null)
-                throw new ArgumentException("The image must be an IImageSopProvider.", "image");
-
-            var presentationImage = image.CreateFreshCopy();
-
-            var descriptor = new KeyImageDisplaySetDescriptor(new SeriesIdentifier(sopProvider.ImageSop),presentationImage,sopProvider.Frame,0);
-            var displaySet = new DisplaySet(descriptor);
-            displaySet.PresentationImages.Add(presentationImage);
-
-            image.ImageViewer.LogicalWorkspace.ImageSets[0].DisplaySets.Add(displaySet);
-
-            var a = DicomSoftcopyPresentationState.Create(image);
-           // a.Deserialize(presentationImage);
-
-        }
-
+     
 		public static void Show(IDesktopWindow desktopWindow)
 		{
 			Show(desktopWindow, ShelfDisplayHint.DockLeft);

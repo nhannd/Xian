@@ -574,62 +574,85 @@ namespace ClearCanvas.ImageViewer
 	}
 
     [Cloneable(false)]
-    public class KeyImageDisplaySetDescriptor : DicomDisplaySetDescriptor
+    public class KeyImageDisplaySetDescriptor : DisplaySetDescriptor
     {
         private readonly string _suffix;
-        private readonly string _seriesInstanceUid;
-        private readonly string _sopInstanceUid;
-        private readonly int _frameNumber;
-        private readonly int _position;
+        private string _name;
 
-        public KeyImageDisplaySetDescriptor(ISeriesIdentifier sourceSeries, IPresentationImage image, Frame frame, int position)
-            : base(sourceSeries)
+        [CloneCopyReference] 
+        private IStudyIdentifier _study;
+
+        public KeyImageDisplaySetDescriptor(IStudyIdentifier sourceStudy)
         {
-            Platform.CheckForNullReference(sourceSeries, "sourceSeries");
-            Platform.CheckForNullReference(image, "image");
+            Platform.CheckForNullReference(sourceStudy, "sourceStudy");
 
-            _seriesInstanceUid = sourceSeries.SeriesInstanceUid;
-            _sopInstanceUid = image.Uid;
-            _frameNumber = frame.FrameNumber;
-            _position = position;
+            _study = sourceStudy;
 
-            if (sourceSeries.SeriesInstanceUid == frame.SeriesInstanceUid)
-            {
-                _suffix = String.Format(SR.SuffixFormatSingleFrameDisplaySet, frame.ParentImageSop.InstanceNumber, _frameNumber);
-            }
-            else
-            {
-                //this is a referenced frame (e.g. key iamge).
-                _suffix = String.Format(SR.SuffixFormatSingleReferencedFrameDisplaySet,
-                    frame.ParentImageSop.SeriesNumber, frame.ParentImageSop.InstanceNumber, _frameNumber);
-            }
+            _suffix = String.Format(SR.SuffixFormatKeyImageDisplaySet);
         }
 
         protected KeyImageDisplaySetDescriptor(KeyImageDisplaySetDescriptor source, ICloningContext context)
-            : base(source, context)
         {
             context.CloneFields(source, this);
         }
 
-        protected override string GetName()
+        /// <summary>
+        /// The source study for the display set.
+        /// </summary>
+        public IStudyIdentifier SourceStudy { get { return _study; } }
+
+        /// <summary>
+        /// Gets the descriptive name of the <see cref="IDisplaySet"/>.
+        /// </summary>
+        public override string Name
         {
-            if (String.IsNullOrEmpty(SourceSeries.SeriesDescription))
-                return String.Format("{0}: {1}", SourceSeries.SeriesNumber, _suffix);
-            else
-                return String.Format("{0}: {1} - {2}", SourceSeries.SeriesNumber, SourceSeries.SeriesDescription, _suffix);
+            get
+            {
+                if (_name == null)
+                {
+                    _name = String.IsNullOrEmpty(SourceStudy.StudyDescription) 
+                        ? String.Format("{0}", _suffix) 
+                        : String.Format("{0}: {1}", SourceStudy.StudyDescription, _suffix) ;
+                }
+                return _name;
+            }
+            set { throw new InvalidOperationException("The Name property cannot be set publicly."); }
         }
 
-        protected override string GetDescription()
+        /// <summary>
+        /// Gets a description of the <see cref="IDisplaySet"/>.
+        /// </summary>
+        public override string Description
         {
-            if (String.IsNullOrEmpty(SourceSeries.SeriesDescription))
-                return _suffix;
-            else
-                return String.Format("{0} - {1}", SourceSeries.SeriesDescription, _suffix);
+            get
+            {
+                return SourceStudy.StudyDescription;
+            }
+            set { throw new InvalidOperationException("The Description property cannot be set publicly."); }
         }
 
-        protected override string GetUid()
+        /// <summary>
+        /// Gets the unique identifier for the <see cref="IDisplaySet"/>.
+        /// </summary>
+        public override string Uid
         {
-            return String.Format("{0}:{1}:{2}:{3}:{4}", SourceSeries.SeriesInstanceUid, _seriesInstanceUid, _sopInstanceUid, _frameNumber, _position);
+            get
+            {
+                return SourceStudy.StudyInstanceUid;
+            }
+            set { throw new InvalidOperationException("The Uid property cannot be set publicly."); }
+        }
+
+        /// <summary>
+        /// Gets a numeric identifier for the <see cref="IDisplaySet"/>, always "1".
+        /// </summary>
+        public override int Number
+        {
+            get
+            {
+                return 1;
+            }
+            set { throw new InvalidOperationException("The Uid property cannot be set publicly."); }
         }
     }
 
