@@ -99,6 +99,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
             // TODO  Better way to address Webstation usage?
 			base.Enabled = KeyImagePublisher.IsSupportedImage(base.SelectedPresentationImage) &&
 					  PermissionsHelper.IsInRole(AuthorityTokens.KeyImages) &&
+                      !(SelectedPresentationImage.ParentDisplaySet.Descriptor is KeyImageDisplaySetDescriptor) &&
                       (WorkItemActivityMonitor.IsRunning || !KeyImageClipboard.HasViewPlugin());
 
             this.ShowEnabled = WorkItemActivityMonitor.IsRunning &&
@@ -114,6 +115,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		{
 			UpdateEnabled();
 
+            /*
             if (!KeyImageClipboard.HasViewPlugin())
             {
                 if (SelectedPresentationImage.ParentDisplaySet.Descriptor is KeyImageDisplaySetDescriptor)
@@ -139,6 +141,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
                     }
                 }
             }
+            */
 		}
 
 		protected override void OnTileSelected(object sender, TileSelectedEventArgs e)
@@ -193,8 +196,8 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
                     if (image != null)
                     {
                         // New Virtual Display Set
-                        KeyImageClipboard.AddVirtualDisplaySet(image);
-                        
+                        KeyImageDisplaySet.AddKeyImage(image);
+
                         _flashOverlayController.Flash(image);
                     }
 
