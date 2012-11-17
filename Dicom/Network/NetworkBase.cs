@@ -402,7 +402,7 @@ namespace ClearCanvas.Dicom.Network
 
         private bool OnReceiveDimse(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset)
         {
-            var msg = new DicomMessage(command, dataset);
+            var msg = new DicomMessage(command, DicomAttributeCollection.ToProvider(dataset));
             DicomCommandField commandField = msg.CommandField;
 
             if ((commandField == DicomCommandField.CStoreRequest)
@@ -460,7 +460,7 @@ namespace ClearCanvas.Dicom.Network
 
         protected virtual void OnDimseSent(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset)
         {
-            var msg = new DicomMessage(command, dataset);
+            var msg = new DicomMessage(command, DicomAttributeCollection.ToProvider(dataset));
             DicomCommandField commandField = msg.CommandField;
 
             if ((commandField == DicomCommandField.CStoreRequest)

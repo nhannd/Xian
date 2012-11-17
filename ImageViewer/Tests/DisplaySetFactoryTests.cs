@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Tests
 
 			foreach (DicomAttributeCollection dataSet in dataSets)
 			{
-				DicomFile file = new DicomFile(null, new DicomAttributeCollection(), dataSet);
+				DicomFile file = new DicomFile(null, new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(dataSet));
 				TestDataSource dataSource = new TestDataSource(file);
 
 				//because of an exception that gets thrown from the DateTimeParser
@@ -294,7 +294,7 @@ namespace ClearCanvas.ImageViewer.Tests
 				TestDataSource multiFrameDataSource = dataSources[0];
 				DicomAttributeCollection oldDataSet = multiFrameDataSource._file.DataSet;
 				DicomAttributeCollection newDataSet = new DicomAttributeCollection();
-				DicomFile newFile = new DicomFile("", new DicomAttributeCollection(), newDataSet);
+				DicomFile newFile = new DicomFile("", new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(newDataSet));
 				//Yes this is the world's crappiest hack.
 				base.SetupMultiframeXA(newDataSet, 512,512, (uint)numberOfFrames);
 				//because of an exception that gets thrown from the DateTimeParser

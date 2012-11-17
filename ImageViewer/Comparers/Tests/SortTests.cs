@@ -693,7 +693,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			DicomAttributeCollection dataSet = new DicomAttributeCollection();
 
 			base.SetupMultiframeXA(dataSet, 512, 512, (uint)numberOfFrames);
-			DicomFile file = new DicomFile(null, new DicomAttributeCollection(), dataSet);
+			DicomFile file = new DicomFile(null, new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(dataSet));
 			TestDataSource dataSource = new TestDataSource(file);
 			file.DataSet[DicomTags.StudyInstanceUid].SetStringValue(studyUID);
 			file.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(seriesUID);

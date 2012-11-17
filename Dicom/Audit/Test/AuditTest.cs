@@ -90,7 +90,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 
 			DicomAttributeCollection collection = new DicomAttributeCollection();
 			SetupMR(collection);
-			helper.AddStorageInstance(new StorageInstance(new DicomMessage(new DicomAttributeCollection(), collection)));
+			helper.AddStorageInstance(new StorageInstance(new DicomMessage(new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collection))));
 			
 			string output = helper.Serialize(true);
 
@@ -116,7 +116,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 			DicomAttributeCollection collection = new DicomAttributeCollection();
 			SetupMR(collection);
 			helper.AddPatientParticipantObject(new AuditPatientParticipantObject(collection));
-			helper.AddStorageInstance(new StorageInstance(new DicomMessage(new DicomAttributeCollection(), collection)));
+			helper.AddStorageInstance(new StorageInstance(new DicomMessage(new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collection))));
 
 			string output = helper.Serialize(true);
 
@@ -142,7 +142,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 			DicomAttributeCollection collection = new DicomAttributeCollection();
 			SetupMR(collection);
 			helper.AddPatientParticipantObject(new AuditPatientParticipantObject(collection));
-			helper.AddStorageInstance(new StorageInstance(new DicomMessage(new DicomAttributeCollection(), collection)));
+			helper.AddStorageInstance(new StorageInstance(new DicomMessage(new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collection))));
 
 			string output = helper.Serialize(true);
 
@@ -169,7 +169,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 			DicomAttributeCollection collection = new DicomAttributeCollection();
 			SetupMR(collection);
 			helper.AddPatientParticipantObject(new AuditPatientParticipantObject(collection));
-			helper.AddStorageInstance(new StorageInstance(new DicomMessage(new DicomAttributeCollection(), collection)));
+			helper.AddStorageInstance(new StorageInstance(new DicomMessage(new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collection))));
 
 			string output = helper.Serialize(true);
 
@@ -202,7 +202,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 			DicomAttributeCollection collection = new DicomAttributeCollection();
 			SetupMultiframeXA(collection,128,128,2);
 			helper.AddPatientParticipantObject(new AuditPatientParticipantObject(collection));
-			helper.AddStorageInstance(new StorageInstance(new DicomMessage(new DicomAttributeCollection(), collection)));
+			helper.AddStorageInstance(new StorageInstance(new DicomMessage(new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collection))));
 
 			string output = helper.Serialize(true);
 
@@ -227,7 +227,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 			DicomAttributeCollection collection = new DicomAttributeCollection();
 			SetupMultiframeXA(collection, 128, 128, 2);
 			helper.AddPatientParticipantObject(new AuditPatientParticipantObject(collection));
-			helper.AddStorageInstance(new StorageInstance(new DicomMessage(new DicomAttributeCollection(), collection)));
+			helper.AddStorageInstance(new StorageInstance(new DicomMessage(new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collection))));
 
 			string output = helper.Serialize(true);
 

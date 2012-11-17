@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <param name="psSopClass">The SOP class of this type of softcopy presentation state.</param>
 		/// <param name="dataSource">An attribute collection containing the presentation state.</param>
 		protected DicomSoftcopyPresentationState(SopClass psSopClass, DicomAttributeCollection dataSource)
-			: this(psSopClass, new DicomFile("", CreateMetaInfo(dataSource), dataSource)) {}
+			: this(psSopClass, new DicomFile("", CreateMetaInfo(dataSource), DicomAttributeCollection.ToProvider(dataSource))) {}
 
 		/// <summary>
 		/// Cloning constructor.
@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		protected DicomSoftcopyPresentationState(DicomSoftcopyPresentationState source, ICloningContext context)
 		{
 			context.CloneFields(source, this);
-			_dicomFile = new DicomFile("", source._dicomFile.MetaInfo.Copy(), source._dicomFile.DataSet.Copy());
+			_dicomFile = new DicomFile("", source._dicomFile.MetaInfo.Copy(), DicomAttributeCollection.ToProvider(source._dicomFile.DataSet.Copy()));
 		}
 
 		/// <summary>

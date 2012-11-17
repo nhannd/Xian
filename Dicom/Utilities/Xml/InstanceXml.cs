@@ -34,7 +34,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 	/// <remarks>
 	/// This class may change in a future release.
 	/// </remarks>
-	public class InstanceXml : IDicomAttributeCollectionGetter
+    public class InstanceXml : IDicomAttributeCollectionProvider
 	{
 		#region Private members
 
@@ -49,7 +49,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		private XmlElement _cachedElement;
 
 		private DicomAttributeCollection _collection;
-	    private IDicomAttributeCollectionGetter _baseCollectionGetter;
+	    private IDicomAttributeCollectionProvider _baseCollectionGetter;
 
 		private IEnumerator<DicomAttribute> _baseCollectionEnumerator;
 		private IEnumerator<INode> _instanceXmlEnumerator;
@@ -57,8 +57,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 	    private IList<SourceImageInfo> _sourceImageInfoList;
 	    private bool _sourceImageInfoListLoaded;
 
-	    private bool _loaded = false;
-	    private SeriesXml _seriesXml;
+	    private readonly SeriesXml _seriesXml;
+	    private bool _xmlLoaded;
 
 	    public IList<SourceImageInfo> SourceImageInfoList
 	    {
@@ -80,6 +80,21 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		#endregion
 
 		#region Public Properties
+
+        public String SeriesInstanceUid
+        {
+            get
+            {
+                return _seriesXml == null ? "" : _seriesXml.SeriesInstanceUid;
+            }
+        }
+        public String StudyInstanceUid
+        {
+            get
+            {
+                return _seriesXml == null ? "" : _seriesXml.StudyInstanceUid;
+            }
+        }
 
 		public String SopInstanceUid
 		{
@@ -139,10 +154,11 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				return _collection;
 			}
 		}
-        private void LazyCollectionInit()
+
+	    private void LazyCollectionInit()
         {
             //load series
-            if (!_loaded && _seriesXml != null)
+            if (!_xmlLoaded && _seriesXml != null)
             {
                 _seriesXml.Load();
             }
@@ -218,7 +234,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             return null;
 	    }
 
-	    public InstanceXml(SeriesXml seriesXml, INode instanceNode, IDicomAttributeCollectionGetter baseCollectionGetter)
+	    public InstanceXml(SeriesXml seriesXml, INode instanceNode, IDicomAttributeCollectionProvider baseCollectionGetter)
 	    {
 	        _seriesXml = seriesXml;
 		    Load(instanceNode, baseCollectionGetter);
@@ -260,7 +276,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 		}
 
-        public void Load(INode instanceNode, IDicomAttributeCollectionGetter baseCollectionGetter)
+        public void Load(INode instanceNode, IDicomAttributeCollectionProvider baseCollectionGetter)
         {
             var thisCollection = new InstanceXmlDicomAttributeCollection();
             _collection = thisCollection;
@@ -274,7 +290,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                 if (!_instanceXmlEnumerator.MoveNext())
                     _instanceXmlEnumerator = null;
             }
-            _loaded = true;
+            _xmlLoaded = true;
         }
 
         public void Unload()
@@ -282,7 +298,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             _collection = null;
             _baseCollectionEnumerator = null;
             _instanceXmlEnumerator = null;
-            _loaded = false;
+            _xmlLoaded = false;
         }
 
 		#endregion

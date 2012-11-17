@@ -456,7 +456,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 			}
 			else
 			{
-				dicomFile = new DicomFile(null, message.MetaInfo.Copy(), message.DataSet.Copy());
+				dicomFile = new DicomFile(null, message.MetaInfo.Copy(), DicomAttributeCollection.ToProvider(message.DataSet.Copy()));
 				//TODO: test this!
 				dicomFile.MetaInfo[DicomTags.TransferSyntaxUid].SetStringValue(message.MetaInfo[DicomTags.TransferSyntaxUid]);
 			}

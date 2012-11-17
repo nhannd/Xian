@@ -281,16 +281,17 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Constructors
+
         /// <summary>
         /// Constructor for creating a new DicomMessage instance from existing command and data sets.
         /// </summary>
         /// <param name="command">The command set.</param>
-        /// <param name="data">The data set.</param>
-        public DicomMessage(DicomAttributeCollection command, DicomAttributeCollection data)
+        /// <param name="provider"> </param>
+        public DicomMessage(DicomAttributeCollection command, IDicomAttributeCollectionProvider provider)
         {
             MetaInfo = command ?? new DicomAttributeCollection(0x00000000, 0x0000FFFF);
 
-            DataSet = data ?? new DicomAttributeCollection(0x00040000,0xFFFFFFFF);
+            AttributeProvider = provider ?? new SimpleDicomAttributeCollectionProvider(new DicomAttributeCollection(0x00040000, 0xFFFFFFFF));
         }
 
         /// <summary>
@@ -304,7 +305,7 @@ namespace ClearCanvas.Dicom
         {
             _transferSyntax = file.TransferSyntax;
             MetaInfo = new DicomAttributeCollection(0x00000000,0x0000FFFF);
-            DataSet = file.DataSet;
+            AttributeProvider = new SimpleDicomAttributeCollectionProvider(file.DataSet);
         }
 
         /// <summary>
@@ -313,7 +314,7 @@ namespace ClearCanvas.Dicom
         public DicomMessage()
         {
             MetaInfo = new DicomAttributeCollection(0x00000000, 0x0000FFFF);
-            DataSet = new DicomAttributeCollection(0x00040000, 0xFFFFFFFF);
+            AttributeProvider = new SimpleDicomAttributeCollectionProvider(new DicomAttributeCollection(0x00040000, 0xFFFFFFFF));
         }
         #endregion
 

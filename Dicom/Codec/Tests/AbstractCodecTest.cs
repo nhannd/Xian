@@ -85,7 +85,7 @@ namespace ClearCanvas.Dicom.Codec.Tests
 			if (File.Exists(theFile.Filename))
 				File.Delete(theFile.Filename);
 
-			DicomFile saveCopy = new DicomFile(theFile.Filename, theFile.MetaInfo.Copy(), theFile.DataSet.Copy());
+			DicomFile saveCopy = new DicomFile(theFile.Filename, theFile.MetaInfo.Copy(), DicomAttributeCollection.ToProvider(theFile.DataSet.Copy()));
 
 			theFile.ChangeTransferSyntax(syntax);
 
@@ -121,7 +121,7 @@ namespace ClearCanvas.Dicom.Codec.Tests
 			if (File.Exists(theFile.Filename))
 				File.Delete(theFile.Filename);
 
-			DicomFile saveCopy = new DicomFile(theFile.Filename, theFile.MetaInfo.Copy(), theFile.DataSet.Copy());
+			DicomFile saveCopy = new DicomFile(theFile.Filename, theFile.MetaInfo.Copy(), DicomAttributeCollection.ToProvider(theFile.DataSet.Copy()));
 
 			theFile.ChangeTransferSyntax(syntax);
 
@@ -146,7 +146,7 @@ namespace ClearCanvas.Dicom.Codec.Tests
             if (File.Exists(theFile.Filename))
                 File.Delete(theFile.Filename);
 
-            DicomFile saveCopy = new DicomFile(theFile.Filename, theFile.MetaInfo.Copy(), theFile.DataSet.Copy());
+            DicomFile saveCopy = new DicomFile(theFile.Filename, theFile.MetaInfo.Copy(), DicomAttributeCollection.ToProvider(theFile.DataSet.Copy()));
 
             theFile.ChangeTransferSyntax(syntax);
 
@@ -211,7 +211,7 @@ namespace ClearCanvas.Dicom.Codec.Tests
 			if (File.Exists(theFile.Filename))
 				File.Delete(theFile.Filename);
 
-			DicomFile saveCopy = new DicomFile(theFile.Filename, theFile.MetaInfo.Copy(), theFile.DataSet.Copy());
+			DicomFile saveCopy = new DicomFile(theFile.Filename, theFile.MetaInfo.Copy(), DicomAttributeCollection.ToProvider(theFile.DataSet.Copy()));
 
 			theFile.ChangeTransferSyntax(syntax);
 

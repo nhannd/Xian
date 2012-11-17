@@ -109,7 +109,7 @@ namespace ClearCanvas.Dicom.Tests
 			IList<DicomAttributeCollection> seriesList = SetupMRSeries(2, 2, DicomUid.GenerateUid().UID);
 			foreach (DicomAttributeCollection collection in seriesList)
 			{
-				file = new DicomFile("test.dcm", new DicomAttributeCollection(), collection);
+				file = new DicomFile("test.dcm", new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collection));
 				fileCount++;
 				SetupMetaInfo(file);
 
@@ -177,7 +177,7 @@ namespace ClearCanvas.Dicom.Tests
 			IList<DicomAttributeCollection> seriesList = SetupMRSeries(3, 1, DicomUid.GenerateUid().UID);
 			foreach (DicomAttributeCollection collection in seriesList)
 			{
-				file = new DicomFile("test.dcm", new DicomAttributeCollection(), collection);
+				file = new DicomFile("test.dcm", new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collection));
 				SetupMetaInfo(file);
 				writer.AddFile(file, String.Format("DICOM\\FILE{0}", fileCount++));
 			}
@@ -185,7 +185,7 @@ namespace ClearCanvas.Dicom.Tests
 			seriesList = SetupMRSeries(4, 4, DicomUid.GenerateUid().UID);
 			foreach (DicomAttributeCollection collection in seriesList)
 			{
-				file = new DicomFile("test.dcm", new DicomAttributeCollection(), collection);
+				file = new DicomFile("test.dcm", new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collection));
 				SetupMetaInfo(file);
 				writer.AddFile(file, String.Format("DICOM\\FILE{0}", fileCount++));
 
@@ -198,7 +198,7 @@ namespace ClearCanvas.Dicom.Tests
 			seriesList = SetupMRSeries(10, 1, DicomUid.GenerateUid().UID);
 			foreach (DicomAttributeCollection collection in seriesList)
 			{
-				file = new DicomFile("test.dcm", new DicomAttributeCollection(), collection);
+				file = new DicomFile("test.dcm", new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collection));
 				SetupMetaInfo(file);
 				writer.AddFile(file, String.Format("DICOM\\FILE{0}", fileCount++));
 
@@ -211,7 +211,7 @@ namespace ClearCanvas.Dicom.Tests
 			seriesList = SetupMRSeries(4, 3, DicomUid.GenerateUid().UID);
 			foreach (DicomAttributeCollection collection in seriesList)
 			{
-				file = new DicomFile("test.dcm", new DicomAttributeCollection(), collection);
+				file = new DicomFile("test.dcm", new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collection));
 				SetupMetaInfo(file);
 				writer.AddFile(file, String.Format("DICOM\\FILE{0}", fileCount++));
 			}
@@ -232,7 +232,7 @@ namespace ClearCanvas.Dicom.Tests
 			seriesList = SetupMRSeries(4, 4, DicomUid.GenerateUid().UID);
 			foreach (DicomAttributeCollection collection in seriesList)
 			{
-				file = new DicomFile("test.dcm", new DicomAttributeCollection(), collection);
+				file = new DicomFile("test.dcm", new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collection));
 				SetupMetaInfo(file);
 				reader.AddFile(file, String.Format("DICOM\\FILE{0}", fileCount++));
 

@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                             if (queryResponsesInUtf8)
                                 ChangeCharacterSet(result, utf8);
 
-                            var response = new DicomMessage(null, result);
+                            var response = new DicomMessage(null, DicomAttributeCollection.ToProvider(result));
 
 						    //Add these to each response.
 							message.DataSet[DicomTags.RetrieveAeTitle].SetStringValue(Context.AETitle);

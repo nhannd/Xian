@@ -1080,7 +1080,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 		{
 			DateTime now = DateTime.Now;
 			DicomUid sopInstanceUid = DicomUid.GenerateUid();
-			DicomFile dicomFile = new DicomFile(string.Empty, new DicomAttributeCollection(), baseDataSet.Copy(true, true, true));
+			DicomFile dicomFile = new DicomFile(string.Empty, new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(baseDataSet.Copy(true, true, true)));
 
 			//meta info
 			dicomFile.MediaStorageSopInstanceUid = sopInstanceUid.UID;

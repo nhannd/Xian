@@ -50,6 +50,17 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             }
         }
 
+
+        public String StudyInstanceUid
+        {
+            get
+            {
+                if (_studyInstanceUid == null)
+                    return "";
+                return _studyInstanceUid;
+            }
+        }
+
     	public int NumberOfSeriesRelatedInstances
     	{
 			get { return _instanceList.Count; }
@@ -202,13 +213,13 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                 return;
 
             var seriesXml = string.Format("<Series UID=\"{0}\">{1}</Series>", _seriesInstanceUid, theSeriesNode.InnerXml);
-            //compress
- /*           Task.Factory.StartNew(() =>
-                                      {*/
-                                          if (!Cache.IsCachedToDisk(CacheType.String, _studyInstanceUid,_seriesInstanceUid))
-                                               Cache.Put(_studyInstanceUid, _seriesInstanceUid,new StringCacheItem {Data = seriesXml});
-                                     // });
             SetMemento(seriesXml);
+            //compress
+            Task.Factory.StartNew(() =>
+            {
+                if (!Cache.IsCachedToDisk(CacheType.String, _studyInstanceUid, _seriesInstanceUid))
+                    Cache.Put(_studyInstanceUid, _seriesInstanceUid, new StringCacheItem { Data = seriesXml });
+            });
 
 
         }

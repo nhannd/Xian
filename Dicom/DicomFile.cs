@@ -35,16 +35,17 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Constructors
+
         /// <summary>
         /// Create a DicomFile instance from existing MetaInfo and DataSet.
         /// </summary>
         /// <param name="filename">The name for the file.</param>
         /// <param name="metaInfo">A <see cref="DicomAttributeCollection"/> for the MetaInfo (group 0x0002 attributes).</param>
-        /// <param name="dataSet">A <see cref="DicomAttributeCollection"/> for the DataSet.</param>
-        public DicomFile(String filename, DicomAttributeCollection metaInfo, DicomAttributeCollection dataSet)
+        /// <param name="provider"> </param>
+        public DicomFile(String filename, DicomAttributeCollection metaInfo, IDicomAttributeCollectionProvider provider)
         {
             MetaInfo = metaInfo;
-            DataSet = dataSet;
+            AttributeProvider = provider;
             _filename = filename;
 
             if (!MetaInfo.Contains(DicomTags.ImplementationVersionName))
@@ -67,7 +68,7 @@ namespace ClearCanvas.Dicom
         public DicomFile(String filename)
         {
             MetaInfo = new DicomAttributeCollection(0x00020000, 0x0002FFFF);
-            DataSet = new DicomAttributeCollection(0x00040000, 0xFFFFFFFF);
+            AttributeProvider = new SimpleDicomAttributeCollectionProvider(new DicomAttributeCollection(0x00040000, 0xFFFFFFFF));
 
             ImplementationVersionName = DicomImplementation.Version;
             ImplementationClassUid = DicomImplementation.ClassUID.UID;
@@ -83,7 +84,7 @@ namespace ClearCanvas.Dicom
         public DicomFile()
         {
             MetaInfo = new DicomAttributeCollection(0x00020000, 0x0002FFFF);
-            DataSet = new DicomAttributeCollection(0x00040000, 0xFFFFFFFF);
+            AttributeProvider = new SimpleDicomAttributeCollectionProvider(new DicomAttributeCollection(0x00040000, 0xFFFFFFFF));
 
             ImplementationVersionName = DicomImplementation.Version;
             ImplementationClassUid = DicomImplementation.ClassUID.UID;
@@ -112,7 +113,7 @@ namespace ClearCanvas.Dicom
         public DicomFile(DicomMessage msg, String filename)
         {
             MetaInfo = new DicomAttributeCollection(0x00020000, 0x0002FFFF);
-            DataSet = msg.DataSet;
+            AttributeProvider = new SimpleDicomAttributeCollectionProvider(msg.DataSet);
 
             MediaStorageSopInstanceUid = msg.AffectedSopInstanceUid;
             MediaStorageSopClassUid = msg.AffectedSopClassUid;
