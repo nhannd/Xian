@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
             // TODO  Better way to address Webstation usage?
 			base.Enabled = KeyImagePublisher.IsSupportedImage(base.SelectedPresentationImage) &&
 					  PermissionsHelper.IsInRole(AuthorityTokens.KeyImages) &&
-                      (WorkItemActivityMonitor.IsRunning || !KeyImageClipboard.HasViewPlugin());
+                      (WorkItemActivityMonitor.IsRunning || !KeyImageClipboard.HasViewPlugin);
 
             this.ShowEnabled = WorkItemActivityMonitor.IsRunning &&
 					  PermissionsHelper.IsInRole(AuthorityTokens.KeyImages);
@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		{
 			UpdateEnabled();
 
-            if (!KeyImageClipboard.HasViewPlugin())
+            if (!KeyImageClipboard.HasViewPlugin)
             {
                 if (SelectedPresentationImage.ParentDisplaySet.Descriptor is KeyImageDisplaySetDescriptor)
                 {
@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			if (!base.Enabled)
 				return;
 
-		    if (KeyImageClipboard.HasViewPlugin())
+		    if (KeyImageClipboard.HasViewPlugin)
 		    {
 		        try
 		        {

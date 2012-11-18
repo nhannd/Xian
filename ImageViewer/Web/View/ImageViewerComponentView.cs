@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Web.Common;
 using ClearCanvas.ImageViewer.Web.Common.Entities;
@@ -37,6 +38,7 @@ namespace ClearCanvas.ImageViewer.Web.View
 		private readonly List<ImageBoxView> _imageBoxViews = new List<ImageBoxView>();
 		private readonly List<WebActionView> _actionViews = new List<WebActionView>();
         private readonly List<IEntityHandler> _extensionHandlers = new List<IEntityHandler>();
+        private DelayedEventPublisher _actionModelDelayedUpdate;
 
         private Entity[] GetExtensionEntities()
         {
@@ -91,6 +93,15 @@ namespace ClearCanvas.ImageViewer.Web.View
 
         protected override void Initialize()
         {
+            _actionModelDelayedUpdate = new DelayedEventPublisher(delegate
+                    {
+                        //TODO (CR May 2010): this is not ideal.  We should actually implement DropDownMenuModelChanged on the
+                        //dropdown action classes, which is really the only reason for this being here.
+
+                        foreach (var actionView in _actionViews)
+                            actionView.Update();
+                    });
+
             _viewer.PhysicalWorkspace.LayoutCompleted += OnLayoutCompleted;
             _viewer.PhysicalWorkspace.Drawing += OnPhysicalWorkspaceDrawing;
             _viewer.EventBroker.PresentationImageSelected += OnPresentationImageSelected;
@@ -119,11 +130,8 @@ namespace ClearCanvas.ImageViewer.Web.View
 
 		private void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
-			//TODO (CR May 2010): this is not ideal.  We should actually implement DropDownMenuModelChanged on the
-			//dropdown action classes, which is really the only reason for this being here.
-			foreach (var actionView in _actionViews)
-				actionView.Update();
-		}
+            _actionModelDelayedUpdate.Publish(this, EventArgs.Empty);
+        }
 
 		void OnPhysicalWorkspaceDrawing(object sender, EventArgs e)
 		{
@@ -211,17 +219,26 @@ namespace ClearCanvas.ImageViewer.Web.View
 		{
 			base.Dispose(disposing);
 
-			if (disposing && _viewer != null)
-			{
-				_viewer.PhysicalWorkspace.LayoutCompleted -= OnLayoutCompleted;
-				_viewer.PhysicalWorkspace.Drawing -= OnPhysicalWorkspaceDrawing;
-				_viewer.EventBroker.PresentationImageSelected -= OnPresentationImageSelected;
+            if (!disposing)
+                return;
 
-				DisposeActionViews();
-				DisposeImageBoxViews();
-			    DisposeExtensionHandlers();
-				_viewer = null;
-			}
+            if (_actionModelDelayedUpdate != null)
+            {
+                _actionModelDelayedUpdate.Dispose();
+                _actionModelDelayedUpdate = null;
+            }
+
+		    if (_viewer == null)
+                return;
+
+		    _viewer.PhysicalWorkspace.LayoutCompleted -= OnLayoutCompleted;
+		    _viewer.PhysicalWorkspace.Drawing -= OnPhysicalWorkspaceDrawing;
+		    _viewer.EventBroker.PresentationImageSelected -= OnPresentationImageSelected;
+
+		    DisposeActionViews();
+		    DisposeImageBoxViews();
+		    DisposeExtensionHandlers();
+		    _viewer = null;
 		}
 	}
 }

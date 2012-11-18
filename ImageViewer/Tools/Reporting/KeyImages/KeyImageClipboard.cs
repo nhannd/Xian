@@ -37,6 +37,15 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		{
 			_keyImageInformation = new Dictionary<IImageViewer, KeyImageInformation>();
 			_clipboardShelves = new Dictionary<IDesktopWindow, IShelf>();
+
+		    try
+		    {
+                HasViewPlugin = ViewFactory.CreateAssociatedView(typeof(KeyImageClipboardComponent)) != null;
+		    }
+		    catch (Exception)
+		    {
+		        HasViewPlugin = false;
+		    }
 		}
 
 		#region Event Handling
@@ -157,18 +166,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				return null;
 		}
 
-        internal static bool HasViewPlugin()
-        {
-            try
-            {
-                var view = ViewFactory.CreateAssociatedView(typeof(KeyImageClipboardComponent));
-                return view != null;
-            }
-            catch
-            {
-                return false;
-            }
-        }
+	    internal static bool HasViewPlugin { get; private set; }
 
 		#region Event Publishing
 
