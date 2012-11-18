@@ -26,6 +26,7 @@ namespace ClearCanvas.ImageViewer.Web.View
 
         private RenderMagnifiedImage _render;
 
+        private Guid _tileId;
         private PresentationImage _image;
         private IRenderingSurface _surface;
 
@@ -127,9 +128,9 @@ namespace ClearCanvas.ImageViewer.Web.View
 
             FireEvent(new EntityEvent
                           {
-                              // TODO (CR Nov 2012): Seen this a few times where the "sender" is 
-                              // not technically right - targetId?
-                              SenderId = image.Tile.GetViewId(),
+                              // TODO (Phoenix5): Seen this a few times where the "sender" is 
+                              // not technically right - targetId? Or something wrong with design>
+                              SenderId = _tileId = image.Tile.GetViewId(),
                               Entity = GetEntity(),
                               EventType = EntityEventType.Created
                           });
@@ -147,8 +148,11 @@ namespace ClearCanvas.ImageViewer.Web.View
         {
             FireEvent(new EntityEvent
             {
-                //Will be sent to "this" controller on the client.
-                EventType = EntityEventType.Destroyed
+                // TODO (Phoenix5): Seen this a few times where the "sender" is 
+                // not technically right - targetId? Or something wrong with design>
+                SenderId = _tileId,
+                EventType = EntityEventType.Destroyed,
+                Entity = new Magnifier{Identifier = Identifier}
             });
 
             if (_memoryStream != null)

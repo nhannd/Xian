@@ -469,9 +469,9 @@ namespace ClearCanvas.ImageViewer.Web.View
                 Surface.ClipRectangle = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
 
                 var drawArgs = new DrawArgs(Surface, null, Rendering.DrawMode.Render);
-                CurrentImage.Draw(drawArgs);
+                _tile.Draw(drawArgs);
                 drawArgs = new DrawArgs(Surface, null, Rendering.DrawMode.Refresh);
-                CurrentImage.Draw(drawArgs);
+                _tile.Draw(drawArgs);
                 graphics.ReleaseHdc(Surface.ContextID);
             }
 
