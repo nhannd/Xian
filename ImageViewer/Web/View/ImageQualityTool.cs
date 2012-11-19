@@ -118,11 +118,15 @@ namespace ClearCanvas.ImageViewer.Web.View
             if (_tileWithWheelCapture != null)
             {
                 _tilesToRefresh[_tileWithWheelCapture] = _tileWithWheelCapture;
-                ImageQualityManager.Instance.TileHasWheelCapture();
+                ImageQualityManager.Instance.TileGainedWheelCapture();
             }
             else
             {
                 ImageQualityManager.Instance.TileLostWheelCapture();
+
+                //The wheel is already on a delay, so if we lose wheel capture, we refresh right away.
+                _delayRender.Cancel();
+                RefreshTiles();
             }
         }
 
@@ -132,11 +136,12 @@ namespace ClearCanvas.ImageViewer.Web.View
             if (_tileWithCapture != null)
             {
                 _tilesToRefresh[_tileWithCapture] = _tileWithCapture;
-                ImageQualityManager.Instance.TileHasCapture();
+                ImageQualityManager.Instance.TileGainedCapture();
             }
             else
             {
                 ImageQualityManager.Instance.TileLostCapture();
+                _delayRender.Publish(this, EventArgs.Empty);
             }
         }
 
@@ -151,6 +156,9 @@ namespace ClearCanvas.ImageViewer.Web.View
 
         private void RefreshTiles()
         {
+            if (ImageQualityManager.Instance.TileHasCapture || ImageQualityManager.Instance.TileHasWheelCapture)
+                return; //Not time to refresh.
+
             _refreshing = true;
 
             foreach (var tileToRefresh in _tilesToRefresh.Keys)

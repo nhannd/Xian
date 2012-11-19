@@ -63,7 +63,10 @@ namespace ClearCanvas.ImageViewer.Web.View
 
         public event EventHandler ImageQualityOptionChanged;
 
-        internal void TileHasCapture()
+        internal bool TileHasCapture { get { return _tileHasCapture; } }
+        internal bool TileHasWheelCapture { get { return _tileHasWheelCapture; } }
+
+        internal void TileGainedCapture()
         {
             _tileHasCapture = true;
             SetQuality();
@@ -75,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Web.View
             SetQuality();
         }
 
-        internal void TileHasWheelCapture()
+        internal void TileGainedWheelCapture()
         {
             _tileHasWheelCapture = true;
             SetQuality();
