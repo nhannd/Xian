@@ -98,11 +98,11 @@ namespace ClearCanvas.ImageViewer
 
 			public Exception Error { get; private set; }
 
-			public void LoadStudy()
+			public void LoadStudy(bool isPrior)
 			{
 				try
 				{
-					List<Sop> sops = LoadSops();
+					List<Sop> sops = LoadSops(isPrior);
 					lock (_syncLock)
 					{
 						if (_disposed)
@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageViewer
 				}
 			}
 
-			private List<Sop> LoadSops()
+			private List<Sop> LoadSops(bool isPrior)
 			{
 			    IStudyLoader studyLoader;
 			    try
@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageViewer
                     throw new StudyLoaderNotFoundException(e);
 			    }
 
-                var args = new StudyLoaderArgs(StudyInstanceUid, Server);
+			    var args = new StudyLoaderArgs(StudyInstanceUid, Server) {IsPriorStudyLoader = isPrior};
 				int total;
 				var sops = new List<Sop>();
 				

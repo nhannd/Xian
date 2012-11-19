@@ -203,8 +203,12 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
             return series;
         }
-
         internal void SetMemento(INode theSeriesNode)
+        {
+            SetMemento(theSeriesNode, false);
+        }
+
+        internal void SetMemento(INode theSeriesNode, bool isPrior)
         {
             _dirty = true;
             _seriesInstanceUid = theSeriesNode.Attribute("UID");
@@ -214,11 +218,24 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
             var seriesXml = string.Format("<Series UID=\"{0}\">{1}</Series>", _seriesInstanceUid, theSeriesNode.InnerXml);
             SetMemento(seriesXml);
+
             //compress
             Task.Factory.StartNew(() =>
             {
-                if (!Cache.IsCachedToDisk(CacheType.String, _studyInstanceUid, _seriesInstanceUid))
-                    Cache.Put(_studyInstanceUid, _seriesInstanceUid, new StringCacheItem { Data = seriesXml });
+
+                 Cache.Put(_studyInstanceUid, _seriesInstanceUid, new StringCacheItem { Data = seriesXml });
+                if (isPrior)
+                {
+                    Unload();                    
+                }
+                else
+                {
+                    //trigger parse of entire header
+                    foreach (var instance in _instanceList.Values)
+                    {
+                        var t = instance.Collection;
+                    }
+                }
             });
 
 

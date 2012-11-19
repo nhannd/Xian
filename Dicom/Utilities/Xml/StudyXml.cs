@@ -355,6 +355,11 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         }
         public void SetMemento(INode rootNode)
         {
+            SetMemento(rootNode, false);
+        }
+
+        public void SetMemento(INode rootNode, bool isPrior)
+        {
 
             if (rootNode == null)
                 return;
@@ -380,7 +385,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
                             _seriesList.Add(seriesInstanceUid, seriesStream);
 
-                            seriesStream.SetMemento(seriesNode);
+                            seriesStream.SetMemento(seriesNode,isPrior);
 
                         }
                     }

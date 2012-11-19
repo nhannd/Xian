@@ -59,6 +59,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 	    private readonly SeriesXml _seriesXml;
 	    private bool _xmlLoaded;
+	    private object _syncObject = new object();
 
 	    public IList<SourceImageInfo> SourceImageInfoList
 	    {
@@ -138,6 +139,40 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			get { return _transferSyntax; }
 		}
 
+
+        public void Load(INode instanceNode, IDicomAttributeCollectionProvider baseCollectionGetter)
+        {
+            lock (_syncObject)
+            {
+                if (_xmlLoaded)
+                    return;
+
+                _collection = new InstanceXmlDicomAttributeCollection { ValidateVrValues = false, ValidateVrLengths = false };
+                _baseCollectionGetter = baseCollectionGetter;
+
+                if (instanceNode != null && instanceNode.HasChildNodes)
+                {
+                    _instanceXmlEnumerator = instanceNode.GetChildEnumerator();
+                    if (!_instanceXmlEnumerator.MoveNext())
+                        _instanceXmlEnumerator = null;
+                }
+                _xmlLoaded = true;
+            }
+
+        }
+
+        public void Unload()
+        {
+            lock (_syncObject)
+            {
+                _collection = null;
+                _baseCollectionEnumerator = null;
+                _instanceXmlEnumerator = null;
+                _xmlLoaded = false;
+            }
+
+        }
+
 		/// <summary>
 		/// Gets the underlying data as a <see cref="DicomAttributeCollection"/>.
 		/// </summary>
@@ -149,9 +184,12 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		{
 			get
 			{
-                LazyCollectionInit();
-				ParseTo(0xffffffff);
-				return _collection;
+                lock(_syncObject)
+                {
+                    ParseTo(0xffffffff);
+                    return _collection;                    
+                }
+
 			}
 		}
 
@@ -163,7 +201,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                 _seriesXml.Load();
             }
 
-            if (_baseCollectionGetter == null) return;
+            if (_baseCollectionGetter == null)
+                return;
             var baseCollection = _baseCollectionGetter.Collection;
             AddExcludedTagsFromBase(baseCollection);
 
@@ -176,8 +215,12 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		{
 			get
 			{
-				ParseTo(tag.TagValue);
-				return _collection[tag.TagValue];
+                lock(_syncObject)
+                {
+                    ParseTo(tag.TagValue);
+                    return _collection[tag.TagValue];                    
+                }
+
 			}
 		}
 
@@ -185,19 +228,26 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		{
 			get
 			{
-				ParseTo(tag);
-				return _collection[tag];
+                lock(_syncObject)
+                {
+                    ParseTo(tag);
+                    return _collection[tag];                    
+                }
 			}
 		}
 
 		public bool IsTagExcluded(uint tag)
 		{
-			if (_collection is IInstanceXmlDicomAttributeCollection)
-			{
-				ParseTo(tag);
-				return ((IInstanceXmlDicomAttributeCollection) _collection).IsTagExcluded(tag);
-			}
-			return false;
+            lock(_syncObject)
+            {
+                if (_collection is IInstanceXmlDicomAttributeCollection)
+                {
+                    ParseTo(tag);
+                    return ((IInstanceXmlDicomAttributeCollection)_collection).IsTagExcluded(tag);
+                }
+                return false;                
+            }
+
 		}
 
 		#endregion
@@ -276,30 +326,6 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 		}
 
-        public void Load(INode instanceNode, IDicomAttributeCollectionProvider baseCollectionGetter)
-        {
-            var thisCollection = new InstanceXmlDicomAttributeCollection();
-            _collection = thisCollection;
-            _collection.ValidateVrValues = false;
-            _collection.ValidateVrLengths = false;
-            _baseCollectionGetter = baseCollectionGetter;
- 
-            if (instanceNode != null && instanceNode.HasChildNodes)
-            {
-                _instanceXmlEnumerator = instanceNode.GetChildEnumerator();
-                if (!_instanceXmlEnumerator.MoveNext())
-                    _instanceXmlEnumerator = null;
-            }
-            _xmlLoaded = true;
-        }
-
-        public void Unload()
-        {
-            _collection = null;
-            _baseCollectionEnumerator = null;
-            _instanceXmlEnumerator = null;
-            _xmlLoaded = false;
-        }
 
 		#endregion
 
@@ -402,6 +428,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 		private void ParseTo(uint tag)
 		{
+            LazyCollectionInit();
+
             //add all base attributes up to "tag" to _collection
 			while (_baseCollectionEnumerator != null && _baseCollectionEnumerator.Current.Tag.TagValue <= tag)
 			{

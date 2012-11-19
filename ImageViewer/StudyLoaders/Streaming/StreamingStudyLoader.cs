@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
                 client = new HeaderStreamingServiceClient(new Uri(uri));
                 client.Open();
-                var studyXml = client.GetStudyXml(ServerDirectory.GetLocalServer().AETitle, headerParams);
+                var studyXml = client.GetStudyXml(ServerDirectory.GetLocalServer().AETitle, headerParams, studyLoaderArgs.IsPriorStudyLoader);
                 client.Close();
                 return studyXml;
             }

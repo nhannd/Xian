@@ -712,7 +712,7 @@ namespace ClearCanvas.ImageViewer
 			SynchronizationContext context = _uiThreadSynchronizationContext ?? SynchronizationContext.Current;
 			using (SingleStudyLoader loader = new SingleStudyLoader(context, this, loadStudyArgs))
 			{
-				loader.LoadStudy();
+				loader.LoadStudy(false);
 				if (loader.Error != null)
 					throw loader.Error;
 			}

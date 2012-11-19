@@ -78,7 +78,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
         /// <param name="callingAETitle">AE title of the local application.</param>
         /// <param name="parameters">Input parameters.</param>
         /// <returns></returns>
-        public StudyXml GetStudyXml(string callingAETitle, HeaderStreamingParameters parameters)
+        public StudyXml GetStudyXml(string callingAETitle, HeaderStreamingParameters parameters, bool isPrior)
         {
             var studyXml = new StudyXml();
             using (var stream = GetStudyHeader(callingAETitle, parameters))
@@ -86,7 +86,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
                 using (var gzStream = new GZipStream(stream, CompressionMode.Decompress))
                 {
                     var reader = new ReaderWrapper(gzStream);
-                    studyXml.SetMemento(new ReaderNode(reader));
+                    studyXml.SetMemento(new ReaderNode(reader), isPrior);
                     gzStream.Close();
                 }
             }
