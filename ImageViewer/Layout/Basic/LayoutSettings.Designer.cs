@@ -8,18 +8,22 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+
 namespace ClearCanvas.ImageViewer.Layout.Basic {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
     internal sealed partial class LayoutSettings : global::System.Configuration.ApplicationSettingsBase {
-        
-        private static LayoutSettings defaultInstance = ((LayoutSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new LayoutSettings())));
+
+        // TODO (Phoenix5): Hack for RSNA that must be removed.
+        [ThreadStatic]
+        private static LayoutSettings defaultInstance ;
         
         public static LayoutSettings Default {
             get {
-                return defaultInstance;
+                return defaultInstance ?? (defaultInstance = ((LayoutSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new LayoutSettings()))));
             }
         }
         

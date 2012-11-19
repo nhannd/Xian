@@ -30,7 +30,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		private PresetVoiLutSettings()
 		{
 			_xkeysConverter = TypeDescriptor.GetConverter(typeof(XKeys));
-			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+            // TODO (Phoenix5): Hack for RSNA that must be removed.
+            //ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }
 
 		public PresetVoiLutGroupCollection GetPresetGroups()

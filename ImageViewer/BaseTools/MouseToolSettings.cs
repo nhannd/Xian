@@ -24,7 +24,8 @@ namespace ClearCanvas.ImageViewer.BaseTools
 	{
 		public MouseToolSettings()
 		{
-			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+            // TODO (Phoenix5): Hack for RSNA that must be removed.
+			//ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 	}
 }

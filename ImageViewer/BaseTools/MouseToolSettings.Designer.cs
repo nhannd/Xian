@@ -8,18 +8,22 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+
 namespace ClearCanvas.ImageViewer.BaseTools {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
-    internal sealed partial class MouseToolSettings : global::System.Configuration.ApplicationSettingsBase {
-        
-        private static MouseToolSettings defaultInstance = ((MouseToolSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new MouseToolSettings())));
+    internal sealed partial class MouseToolSettings : global::System.Configuration.ApplicationSettingsBase
+    {
+        // TODO (Phoenix5): Hack for RSNA that must be removed.
+        [ThreadStatic]
+        private static MouseToolSettings defaultInstance;
         
         public static MouseToolSettings Default {
             get {
-                return defaultInstance;
+                return defaultInstance ?? (defaultInstance = ((MouseToolSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new MouseToolSettings()))));
             }
         }
         

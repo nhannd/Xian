@@ -25,8 +25,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public ToolSettings()
 		{
-			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
-		}
+            // TODO (Phoenix5): Hack for RSNA that must be removed.
+            //ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+        }
 
 		protected override void OnSettingsLoaded(object sender, SettingsLoadedEventArgs e)
 		{

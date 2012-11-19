@@ -117,7 +117,10 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		#region Static Profile Access
 
 		private static event EventHandler _currentProfileChanged;
-		private static MouseToolSettingsProfile _profile = null;
+
+	    // TODO (Phoenix5): Hack for RSNA that must be removed.
+        [ThreadStatic]
+		private static MouseToolSettingsProfile _profile;
 
 		public static MouseToolSettingsProfile Current
 		{

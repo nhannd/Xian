@@ -8,18 +8,22 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+
 namespace ClearCanvas.Desktop.Actions {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
     internal sealed partial class ActionModelSettings : global::System.Configuration.ApplicationSettingsBase {
-        
-        private static ActionModelSettings defaultInstance = ((ActionModelSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new ActionModelSettings())));
+
+        // TODO (Phoenix5): Hack for RSNA that must be removed.
+        [ThreadStatic]
+        private static ActionModelSettings defaultInstance;
         
         public static ActionModelSettings Default {
             get {
-                return defaultInstance;
+                return defaultInstance ?? (defaultInstance = ((ActionModelSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new ActionModelSettings()))));
             }
         }
         

@@ -720,9 +720,6 @@ namespace ClearCanvas.Desktop
 				// send quitting event
 				QuittingEventArgs args = new QuittingEventArgs();
 				OnQuitting(args);
-
-				// ensure the action model is disposed - this will cause it to be written out to the store
-				ActionModelSettings.Default.Dispose();
 			}
 			else
 			{

@@ -8,18 +8,26 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+
 namespace ClearCanvas.ImageViewer.Web.View {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
     internal sealed partial class ImageQualitySettings : global::System.Configuration.ApplicationSettingsBase {
-        
-        private static ImageQualitySettings defaultInstance = ((ImageQualitySettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new ImageQualitySettings())));
+
+        // TODO (Phoenix5): Hack for RSNA that must be removed.
+        [ThreadStatic]
+        private static ImageQualitySettings defaultInstance;
         
         public static ImageQualitySettings Default {
-            get {
-                return defaultInstance;
+            get
+            {
+                return defaultInstance ??
+                       (defaultInstance =
+                        ((ImageQualitySettings)
+                         (global::System.Configuration.ApplicationSettingsBase.Synchronized(new ImageQualitySettings()))));
             }
         }
         

@@ -36,8 +36,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private LayoutSettings()
 		{
-			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
-		}
+            // TODO (Phoenix5): Hack for RSNA that must be removed.
+            //ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+        }
 
 		public StoredLayout DefaultLayout
 		{

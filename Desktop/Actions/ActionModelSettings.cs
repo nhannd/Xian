@@ -28,7 +28,7 @@ namespace ClearCanvas.Desktop.Actions
 	[SettingsProvider(typeof(StandardSettingsProvider))]
 	//Always use the new, clean, default value for the "shared", but allow users to keep their own.
     [SharedSettingsMigrationDisabled]
-	internal sealed partial class ActionModelSettings : IDisposable
+	internal sealed partial class ActionModelSettings
     {
 		private XmlDocument _actionModelXmlDoc;
 
@@ -213,36 +213,6 @@ namespace ClearCanvas.Desktop.Actions
 				Initialize();
 
 			_actionModelXmlDoc.Save(writer);
-		}
-
-		#endregion
-
-		#region IDisposable Members
-
-		public void Dispose()
-		{
-			// if this was not a 'temporary' model, save it
-			if (_actionModelXmlDoc != null && !_temporary)
-			{
-				try
-				{
-					this.ActionModelsXml = _actionModelXmlDoc;
-
-					//Ticket #1551: temporarily disabled this until there is a UI for editing the action model (JR)
-					//this.Save();
-				}
-				catch (Exception e)
-				{
-					// don't treat this as a serious error
-					// not much we can do but log it
-					Platform.Log(LogLevel.Error, e);
-				}
-
-				_actionModelXmlDoc = null;
-			}
-
-			// unregister from the registry
-			ApplicationSettingsRegistry.Instance.UnregisterInstance(this);
 		}
 
 		#endregion

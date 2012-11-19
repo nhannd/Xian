@@ -8,18 +8,26 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
     internal sealed partial class PresetVoiLutSettings : global::System.Configuration.ApplicationSettingsBase {
-        
-        private static PresetVoiLutSettings defaultInstance = ((PresetVoiLutSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new PresetVoiLutSettings())));
+
+        // TODO (Phoenix5): Hack for RSNA that must be removed.
+        [ThreadStatic]
+        private static PresetVoiLutSettings defaultInstance;
         
         public static PresetVoiLutSettings Default {
-            get {
-                return defaultInstance;
+            get
+            {
+                return defaultInstance ??
+                       (defaultInstance =
+                        ((PresetVoiLutSettings)
+                         (global::System.Configuration.ApplicationSettingsBase.Synchronized(new PresetVoiLutSettings()))));
             }
         }
         

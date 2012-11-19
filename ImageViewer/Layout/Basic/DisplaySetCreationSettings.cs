@@ -274,8 +274,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	{
 		private DisplaySetCreationSettings()
 		{
-			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
-		}
+            // TODO (Phoenix5): Hack for RSNA that must be removed.
+            //ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+        }
 
 		#region IMigrateSettings Members
 
