@@ -99,5 +99,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
         }
 
 		#endregion
-	}
+
+        public override void UnloadAttributes()
+        {
+           //no-op
+        }
+    }
 }

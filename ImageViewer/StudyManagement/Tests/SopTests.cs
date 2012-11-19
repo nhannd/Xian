@@ -30,7 +30,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			_file = file;
 		}
 
-		protected override void Dispose(bool disposing)
+	    public override void UnloadAttributes()
+	    {
+	        //no-op
+	    }
+
+	    protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
 			_file = null;

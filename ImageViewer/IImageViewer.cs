@@ -10,6 +10,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -143,7 +144,7 @@ namespace ClearCanvas.ImageViewer
 		/// <exception cref="NotFoundLoadStudyException">The specified study could not be found.</exception>
 		/// <exception cref="LoadStudyException">One or more images could not be opened, or an unspecified error has occurred.</exception>
 		/// <exception cref="StudyLoaderNotFoundException">The specified <see cref="IStudyLoader"/> could not be found.</exception>
-		void LoadStudy(LoadStudyArgs loadStudyArgs);
+		IList<Sop> LoadStudy(LoadStudyArgs loadStudyArgs);
 
 		/// <summary>
 		/// Loads images with the specified file paths.

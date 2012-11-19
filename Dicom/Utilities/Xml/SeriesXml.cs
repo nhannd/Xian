@@ -16,6 +16,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
 using System.Xml;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml.Nodes;
 using DataCache;
 
@@ -34,7 +35,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         private String _seriesInstanceUid;
         private readonly string _studyInstanceUid;
         private BaseInstanceXml _seriesTagsStream;
-        private bool _dirty = true; 
+        private bool _dirty = true;
+        private object _synchObject;
 
         #endregion
 
@@ -61,6 +63,10 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             }
         }
 
+        public DisposableLock Lock()
+        {
+            return new DisposableLock(_synchObject);
+        }
     	public int NumberOfSeriesRelatedInstances
     	{
 			get { return _instanceList.Count; }
@@ -82,6 +88,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         {
             _seriesInstanceUid = seriesInstanceUid;
             _studyInstanceUid = studyInstanceUid;
+            _synchObject = new object();
         }
 
         #endregion

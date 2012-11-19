@@ -333,7 +333,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 				get { return _sopDataSource.SopInstanceUid; }
 			}
 
-			public override string StudyInstanceUid
+		    public override void UnloadAttributes()
+		    {
+		        //no-op
+		    }
+
+		    public override string StudyInstanceUid
 			{
 				get { return _sopDataSource.StudyInstanceUid; }
 			}

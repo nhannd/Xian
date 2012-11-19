@@ -183,6 +183,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.Tests
 		private class XSopDataSource : DicomMessageSopDataSource
 		{
 			public XSopDataSource(DicomMessageBase sourceMessage) : base(sourceMessage) {}
+		    public override void UnloadAttributes()
+		    {
+		        //no-op
+		    }
 		}
 	}
 }

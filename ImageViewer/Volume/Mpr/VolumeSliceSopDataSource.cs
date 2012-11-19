@@ -90,7 +90,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return _slicerParams; }
 		}
 
-		public override DicomAttribute this[DicomTag tag]
+	    public override void UnloadAttributes()
+	    {
+	        //no-op
+	    }
+
+	    public override DicomAttribute this[DicomTag tag]
 		{
 			get
 			{

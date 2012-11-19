@@ -59,7 +59,6 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 	    private readonly SeriesXml _seriesXml;
 	    private bool _xmlLoaded;
-	    private object _syncObject = new object();
 
 	    public IList<SourceImageInfo> SourceImageInfoList
 	    {
@@ -139,39 +138,64 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			get { return _transferSyntax; }
 		}
 
-
-        public void Load(INode instanceNode, IDicomAttributeCollectionProvider baseCollectionGetter)
+        private TResult Execute<TResult>(Func<TResult> command)
         {
-            lock (_syncObject)
+            if (_seriesXml == null)
             {
-                if (_xmlLoaded)
-                    return;
-
-                _collection = new InstanceXmlDicomAttributeCollection { ValidateVrValues = false, ValidateVrLengths = false };
-                _baseCollectionGetter = baseCollectionGetter;
-
-                if (instanceNode != null && instanceNode.HasChildNodes)
-                {
-                    _instanceXmlEnumerator = instanceNode.GetChildEnumerator();
-                    if (!_instanceXmlEnumerator.MoveNext())
-                        _instanceXmlEnumerator = null;
-                }
-                _xmlLoaded = true;
+                return command();
             }
+            using (_seriesXml.Lock())
+            {
+                return command();
+            }
+        }
+        private void Execute(Action command)
+        {
+            if (_seriesXml == null)
+            {
+                command();
+            }
+            else using (_seriesXml.Lock())
+            {
+                command();
+            }
+        }
+	    public void Load(INode instanceNode, IDicomAttributeCollectionProvider baseCollectionGetter)
+        {
+            Action command = () =>
+                                 {
+                                     if (_xmlLoaded)
+                                         return;
+
+                                     _collection = new InstanceXmlDicomAttributeCollection { ValidateVrValues = false, ValidateVrLengths = false };
+                                     _baseCollectionGetter = baseCollectionGetter;
+
+                                     if (instanceNode != null && instanceNode.HasChildNodes)
+                                     {
+                                         _instanceXmlEnumerator = instanceNode.GetChildEnumerator();
+                                         if (!_instanceXmlEnumerator.MoveNext())
+                                             _instanceXmlEnumerator = null;
+                                     }
+                                     _xmlLoaded = true;
+                                 };
+            Execute(command);
+          
+
 
         }
-
         public void Unload()
         {
-            lock (_syncObject)
-            {
-                _collection = null;
-                _baseCollectionEnumerator = null;
-                _instanceXmlEnumerator = null;
-                _xmlLoaded = false;
-            }
+            Action command = () =>
+                                 {
+                                     _collection = null;
+                                     _baseCollectionEnumerator = null;
+                                     _instanceXmlEnumerator = null;
+                                     _xmlLoaded = false;
+                                 };
+            Execute(command);
 
         }
+
 
 		/// <summary>
 		/// Gets the underlying data as a <see cref="DicomAttributeCollection"/>.
@@ -184,11 +208,11 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		{
 			get
 			{
-                lock(_syncObject)
+                return Execute(() =>
                 {
                     ParseTo(0xffffffff);
-                    return _collection;                    
-                }
+                    return _collection;
+                });
 
 			}
 		}
@@ -215,12 +239,11 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		{
 			get
 			{
-                lock(_syncObject)
-                {
-                    ParseTo(tag.TagValue);
-                    return _collection[tag.TagValue];                    
-                }
-
+                return Execute(() =>
+			                                       {
+			                                           ParseTo(tag.TagValue);
+			                                           return _collection[tag.TagValue];
+			                                       });
 			}
 		}
 
@@ -228,26 +251,25 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		{
 			get
 			{
-                lock(_syncObject)
-                {
-                    ParseTo(tag);
-                    return _collection[tag];                    
-                }
+                return Execute(() =>
+			                                       {
+			                                           ParseTo(tag);
+			                                           return _collection[tag];
+			                                       });
 			}
 		}
 
 		public bool IsTagExcluded(uint tag)
 		{
-            lock(_syncObject)
-            {
-                if (_collection is IInstanceXmlDicomAttributeCollection)
-                {
-                    ParseTo(tag);
-                    return ((IInstanceXmlDicomAttributeCollection)_collection).IsTagExcluded(tag);
-                }
-                return false;                
-            }
-
+            return Execute(() =>
+		                             {
+		                                 if (!(_collection is IInstanceXmlDicomAttributeCollection))
+		                                 {
+		                                     return false;
+		                                 }
+		                                 ParseTo(tag);
+		                                 return ((IInstanceXmlDicomAttributeCollection) _collection).IsTagExcluded(tag);
+		                             });
 		}
 
 		#endregion

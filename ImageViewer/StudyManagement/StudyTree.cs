@@ -238,9 +238,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				if (_series != null)
 				{
-					foreach (Series series in _series.Values)
-						series.SetSop(null);
-
+					foreach (var series in _series.Values)
+					{
+                        series.SetSop(null);
+                        Frame.Cache.ClearCachedToDisk(series.SeriesInstanceUid);
+					}
 					_series.Clear();
 					_series = null;
 				}

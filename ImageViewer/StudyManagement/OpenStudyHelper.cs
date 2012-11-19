@@ -171,9 +171,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			var viewer = CreateViewer(LoadPriors);
 			var desktopWindow = DesktopWindow ?? Application.ActiveDesktopWindow;
 
+		    IList<Sop> sops = null;
 			try
 			{
-				viewer.LoadStudies(_studiesToOpen);
+				sops = viewer.LoadStudies(_studiesToOpen);
 			}
 			catch (Exception e)
 			{
@@ -189,7 +190,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			var args = new LaunchImageViewerArgs(WindowBehaviour) {Title = Title};
 			ImageViewerComponent.Launch(viewer, args);
 
-			codeClock.Stop();
+		    if (sops != null)
+		    {
+                foreach (var sop in sops)
+                {
+                    sop.DataSource.UnloadAttributes();
+                }
+		    }
+		     
+
+		    codeClock.Stop();
 			Platform.Log(LogLevel.Debug, string.Format("TTFI: {0}", codeClock));
 
 			return viewer;

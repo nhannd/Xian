@@ -30,6 +30,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region ISopDataSource Members
 
+        public abstract void UnloadAttributes();
+
 		/// <summary>
 		/// Gets the Patient ID.
 		/// </summary>

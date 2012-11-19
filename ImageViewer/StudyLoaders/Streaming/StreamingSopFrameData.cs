@@ -425,5 +425,11 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
         }
 
         #endregion
+
+        public override void UnloadAttributes()
+        {
+            if (_instanceXml != null)
+               _instanceXml.Unload();
+        }
     }
 }

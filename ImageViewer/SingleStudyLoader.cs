@@ -98,27 +98,29 @@ namespace ClearCanvas.ImageViewer
 
 			public Exception Error { get; private set; }
 
-			public void LoadStudy(bool isPrior)
+			public IList<Sop> LoadStudy(bool isPrior)
 			{
 				try
 				{
-					List<Sop> sops = LoadSops(isPrior);
+				    var sops = LoadSops(isPrior);
 					lock (_syncLock)
 					{
 						if (_disposed)
 						{
 							DisposeSops(sops);
-							return;
+							return new List<Sop>();
 						}
 
 						_sops = sops;
 					}
 
 					OnSopsLoaded();
+				    return sops;
 				}
 				catch (Exception e)
 				{
 					OnLoadPriorStudyFailed(e);
+                    return new List<Sop>();
 				}
 			}
 

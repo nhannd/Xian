@@ -284,7 +284,12 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 				return _frameData;
 			}
 
-			public override DicomAttribute this[DicomTag tag]
+		    public override void UnloadAttributes()
+		    {
+		        //no-op
+		    }
+
+		    public override DicomAttribute this[DicomTag tag]
 			{
 				get { return _dataset[tag]; }
 			}
