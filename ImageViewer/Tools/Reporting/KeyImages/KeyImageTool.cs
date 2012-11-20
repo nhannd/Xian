@@ -81,6 +81,18 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		    _workItemActivityMonitor = WorkItemActivityMonitor.Create();
             _workItemActivityMonitor.IsConnectedChanged += OnIsConnectedChanged;
+            if (!KeyImageClipboard.HasViewPlugin)
+            {
+                foreach (var a in Actions)
+                {
+                    if (a.Path.LocalizedPath == "global-toolbars/ToolbarStandard/Show Key Images")
+                    {
+                        var buttonAction = a as ButtonAction;
+                        if (buttonAction != null)
+                            buttonAction.Visible = false;
+                    }
+                }
+            }
 		}
 
 	    protected override void Dispose(bool disposing)
