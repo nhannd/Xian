@@ -91,12 +91,7 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                 }
 
 				Interlocked.Increment(ref _activeRetrieveThreads);
-
-				//TODO (CR May 2010): do we need to do this all the time?
-				string message = String.Format("Retrieving Frame (active threads: {0})", Thread.VolatileRead(ref _activeRetrieveThreads));
-				Trace.WriteLine(message);
-			    Console.WriteLine(message);
-			    
+		    
                 //TODO: try to trigger header retrieval for data luts?
                 frame.GetNormalizedPixelData();
 			}

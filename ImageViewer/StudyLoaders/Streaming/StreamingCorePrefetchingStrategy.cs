@@ -38,9 +38,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 			try
 			{
-				string message = String.Format("Retrieving Frame (active threads: {0})", Thread.VolatileRead(ref _activeRetrieveThreads));
-				Trace.WriteLine(message);
-
 				IStreamingSopDataSource dataSource = (IStreamingSopDataSource) frame.ParentImageSop.DataSource;
 				IStreamingSopFrameData frameData = dataSource.GetFrameData(frame.FrameNumber);
 
