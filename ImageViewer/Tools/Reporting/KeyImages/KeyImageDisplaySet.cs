@@ -60,13 +60,29 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
             var presentationImage = image.CreateFreshCopy();
             
-            displaySet.PresentationImages.Add(presentationImage);
-
-            
             var presentationState = DicomSoftcopyPresentationState.Create(image);
             var basicImage = presentationImage as BasicPresentationImage;
             if (basicImage != null)
                 basicImage.PresentationState = presentationState;
+
+            displaySet.PresentationImages.Add(presentationImage);
+
+            foreach (var imageBox in image.ImageViewer.PhysicalWorkspace.ImageBoxes)
+            {
+                if (imageBox.DisplaySet != null && imageBox.DisplaySet.Descriptor.Uid == displaySet.Descriptor.Uid)
+                {
+                    var physicalImage = presentationImage.CreateFreshCopy();
+
+                    presentationState = DicomSoftcopyPresentationState.Create(image);
+                    basicImage = physicalImage as BasicPresentationImage;
+                    if (basicImage != null)
+                        basicImage.PresentationState = presentationState;
+
+                    imageBox.DisplaySet.PresentationImages.Add(physicalImage);
+
+                    imageBox.Draw();
+                }
+            }
         }
 
         public static void RemoveKeyImage(IPresentationImage image)
