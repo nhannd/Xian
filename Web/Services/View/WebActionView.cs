@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
@@ -35,8 +36,53 @@ namespace ClearCanvas.Web.Services.View
         IActionViewContext IActionView.Context { get; set; }
 
         #endregion
-        
-        public abstract bool IsEquivalentTo(WebActionView other);
+
+		#region Support for propagation of action state to parents
+
+    	private bool _checked = false;
+    	private bool _visible = true;
+
+		/// <summary>
+		/// Used internally for propagation of check state to parent menu branch items
+		/// </summary>
+		internal event EventHandler CheckedChanged;
+
+		/// <summary>
+		/// Used internally for propagation of visible state to parent menu branch items
+		/// </summary>
+    	internal event EventHandler VisibleChanged;
+
+		/// <summary>
+		/// Used internally for propagation of check state to parent menu branch items
+		/// </summary>
+		internal bool Checked
+    	{
+			get { return _checked; }
+    		set
+    		{
+    			if (_checked == value) return;
+    			_checked = value;
+    			EventsHelper.Fire(CheckedChanged, this, EventArgs.Empty);
+    		}
+    	}
+
+		/// <summary>
+		/// Used internally for propagation of visible state to parent menu branch items
+		/// </summary>
+    	internal bool Visible
+    	{
+			get { return _visible; }
+			set
+			{
+				if (_visible == value) return;
+				_visible = value;
+				EventsHelper.Fire(VisibleChanged, this, EventArgs.Empty);
+			}
+    	}
+
+		#endregion
+
+		public abstract bool IsEquivalentTo(WebActionView other);
 
 		public virtual void Update()
 		{ }
@@ -144,24 +190,45 @@ namespace ClearCanvas.Web.Services.View
 
 		protected override Entity CreateEntity()
 		{
-			return new WebActionNode();
+			return new WebBranchNode();
 		}
 
 		public override void SetModelObject(object modelObject)
 		{
 			ActionModelNode = (ActionModelNode)modelObject;
 			ChildViews = Create(ActionModelNode.ChildNodes);
+
+			foreach (var webActionView in ChildViews)
+			{
+				webActionView.CheckedChanged += WebActionViewOnCheckedChanged;
+				webActionView.VisibleChanged += WebActionViewOnVisibleChanged;
+			}
 		}
 
-        protected override void Initialize()
+		private void WebActionViewOnCheckedChanged(object sender, EventArgs eventArgs)
+		{
+			Checked = ChildViews.Any(s => s.Checked);
+			NotifyEntityPropertyChanged("Checked", Checked);
+		}
+
+		private void WebActionViewOnVisibleChanged(object sender, EventArgs e)
+		{
+			Visible = ChildViews.Any(s => s.Visible);
+			NotifyEntityPropertyChanged("Visible", Visible);
+		}
+
+		protected override void Initialize()
         {
         }
 
 		protected override void UpdateEntity(Entity entity)
 		{
-			var webAction = (WebActionNode)entity;
+			var webAction = (WebBranchNode)entity;
 			webAction.LocalizedText = ActionModelNode.PathSegment.LocalizedText;
 			webAction.Children = ChildViews.Select(view => (WebActionNode)view.GetEntity()).ToArray();
+			webAction.Checked = ChildViews.Any(s => s.Checked);
+			webAction.Visible = ChildViews.Any(s => s.Visible);
+			webAction.IsCheckAction = true;
 		}
 
         public override void Update()
@@ -183,7 +250,11 @@ namespace ClearCanvas.Web.Services.View
 				return;
 
 			foreach (WebActionView child in ChildViews)
+			{
+				child.CheckedChanged -= WebActionViewOnCheckedChanged;
+				child.VisibleChanged -= WebActionViewOnVisibleChanged;
 				child.Dispose();
+			}
 
 			ChildViews.Clear();
 		}
@@ -226,6 +297,8 @@ namespace ClearCanvas.Web.Services.View
 			Action.TooltipChanged += OnTooltipChanged;
 			Action.LabelChanged += OnLabelChanged;
 			Action.IconSetChanged += OnIconSetChanged;
+			Action.AvailableChanged += OnAvailableChanged;
+			Visible = Action.Available && Action.Visible;
 		}
 
 		protected override void UpdateEntity(Entity entity)
@@ -273,6 +346,13 @@ namespace ClearCanvas.Web.Services.View
 		private void OnVisibleChanged(object sender, EventArgs e)
 		{
 			NotifyEntityPropertyChanged("Visible", Action.Visible);
+			Visible = Action.Available && Action.Visible;
+		}
+
+		private void OnAvailableChanged(object sender, EventArgs e)
+		{
+			NotifyEntityPropertyChanged("Available", Action.Available);
+			Visible = Action.Available && Action.Visible;
 		}
 
 		private void OnEnabledChanged(object sender, EventArgs e)
@@ -315,6 +395,7 @@ namespace ClearCanvas.Web.Services.View
 			Action.TooltipChanged -= OnTooltipChanged;
 			Action.LabelChanged -= OnLabelChanged;
 			Action.IconSetChanged -= OnIconSetChanged;
+			Action.AvailableChanged -= OnAvailableChanged;
 		}
 	}
 
@@ -334,6 +415,7 @@ namespace ClearCanvas.Web.Services.View
 		{
             base.Initialize();
 			Action.CheckedChanged += OnCheckChanged;
+        	Checked = Action.CheckParents && Action.Checked;
 		}
 
 		protected override void UpdateEntity(Entity entity)
@@ -354,6 +436,7 @@ namespace ClearCanvas.Web.Services.View
 		private void OnCheckChanged(object sender, EventArgs e)
 		{
 			NotifyEntityPropertyChanged("Checked", Action.Checked);
+			Checked = Action.CheckParents && Action.Checked;
 		}
 
 		protected override void Dispose(bool disposing)

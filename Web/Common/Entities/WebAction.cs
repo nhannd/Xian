@@ -64,6 +64,19 @@ namespace ClearCanvas.Web.Common.Entities
         public WebActionNode[] Children { get; set; }
     }
 
+	[DataContract(Namespace = Namespace.Value)]
+	public class WebBranchNode : WebActionNode
+	{
+		[DataMember(IsRequired = true)]
+		public bool IsCheckAction { get; set; }
+
+		[DataMember(IsRequired = true)]
+		public bool Checked { get; set; }
+
+		[DataMember(IsRequired = true)]
+		public bool Visible { get; set; }
+	}
+
     //TODO: Why do we need to seperate WebAction and WebActionNode?
 	[DataContract(Namespace = Namespace.Value)]
 	public class WebAction : WebActionNode
