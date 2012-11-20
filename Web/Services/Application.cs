@@ -13,7 +13,6 @@ using System;
 using System.Security.Principal;
 using System.Threading;
 using ClearCanvas.Common.Statistics;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Common;
 using ClearCanvas.Web.Common.Events;
@@ -23,29 +22,7 @@ using ClearCanvas.Web.Services.View;
 
 namespace ClearCanvas.Web.Services
 {
-	[ExtensionOf(typeof(ExceptionTranslatorExtensionPoint))]
-	internal class UserSessionExceptionTranslator : IExceptionTranslator
-	{
-		#region IExceptionTranslator Members
-
-		public string Translate(Exception e)
-		{
-			if (e.GetType().Equals(typeof(UserAccessDeniedException)))
-				return SR.MessageAccessDenied;
-			if (e.GetType().Equals(typeof(PasswordExpiredException)))
-				return SR.MessagePasswordExpired;
-			if (e.GetType().Equals(typeof(InvalidUserSessionException)))
-				return SR.MessageSessionEnded;
-			if (e.GetType().Equals(typeof(RequestValidationException)))
-				return SR.MessageUnexpectedError;
-
-			return default(string);
-		}
-
-		#endregion
-	}
-
-	public class ApplicationAttribute : Attribute
+    public class ApplicationAttribute : Attribute
 	{
 		public ApplicationAttribute(Type startRequestType)
 		{
@@ -592,15 +569,14 @@ namespace ClearCanvas.Web.Services
 					return;
 			}
 
-            //TODO: do this here (which will fault the channel), or inside DoProcessMessages and stop the app?
-			//EnsureSessionIsValid();
-
 			_incomingMessageQueue.ProcessMessageSet(messageSet);
 		}
 
 
 	    private void DoProcessMessages(MessageSet messageSet)
 		{
+            EnsureSessionIsValid();
+
             foreach (var message in messageSet.Messages)
                 ProcessMessage(message);
 		}
@@ -654,5 +630,4 @@ namespace ClearCanvas.Web.Services
 
 		#endregion
 	}
-
 }
