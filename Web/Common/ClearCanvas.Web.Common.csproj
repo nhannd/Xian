@@ -68,6 +68,7 @@
     <Compile Include="Application.cs" />
     <Compile Include="DataContractBase.cs" />
     <Compile Include="Entities\Alert.cs" />
+    <Compile Include="Entities\DesktopWindow.cs" />
     <Compile Include="Entities\DialogBox.cs" />
     <Compile Include="Entities\MessageBox.cs" />
     <Compile Include="Entities\ProgressComponent.cs" />

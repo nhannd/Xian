@@ -52,7 +52,11 @@ namespace ClearCanvas.Web.Services.View
         /// <returns></returns>
         public virtual IDesktopWindowView CreateDesktopWindowView(DesktopWindow window)
         {
-            return new DesktopWindowView(window);
+            var view = new DesktopWindowView(window);
+
+            // NOTE: The entity is otherwise never retrieved, and therefore the handler is not initialized.
+            view.GetEntity();
+            return view;
         }
 
         /// <summary>
