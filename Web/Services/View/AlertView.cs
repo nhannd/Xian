@@ -30,7 +30,6 @@ namespace ClearCanvas.Web.Services.View
 
         protected override void Initialize()
         {
-            throw new NotImplementedException();
         }
 
         protected override void UpdateEntity(Web.Common.Entities.Alert entity)

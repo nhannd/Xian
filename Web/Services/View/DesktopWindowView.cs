@@ -21,6 +21,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Web.Common;
 using ClearCanvas.Web.Common.Entities;
 using ClearCanvas.Web.Common.Events;
+using DesktopWindow = ClearCanvas.Desktop.DesktopWindow;
 using DialogBox = ClearCanvas.Desktop.DialogBox;
 
 namespace ClearCanvas.Web.Services.View
@@ -304,12 +305,10 @@ namespace ClearCanvas.Web.Services.View
 
         public override void SetModelObject(object modelObject)
         {
-            throw new NotImplementedException();
         }
 
         public override void ProcessMessage(Message message)
         {
-            throw new NotImplementedException();
         }
 
         protected override void Initialize()
@@ -318,12 +317,11 @@ namespace ClearCanvas.Web.Services.View
 
         protected override Entity CreateEntity()
         {
-            throw new NotImplementedException();
+            return new Common.Entities.DesktopWindow();
         }
 
         protected override void UpdateEntity(Entity entity)
         {
-            throw new NotImplementedException();
         }
 
         /// <summary>
