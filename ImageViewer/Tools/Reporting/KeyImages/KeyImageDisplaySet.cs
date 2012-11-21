@@ -36,26 +36,43 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
             foreach (var set in image.ImageViewer.LogicalWorkspace.ImageSets)
             {
-                foreach (var d in set.DisplaySets)
+                if (set.Descriptor.Equals(image.ParentDisplaySet.ParentImageSet.Descriptor))
                 {
-                    var displaySetDescriptor = d.Descriptor as KeyImageDisplaySetDescriptor;
-
-                    if (displaySetDescriptor != null 
-                        && displaySetDescriptor.SourceStudy.StudyInstanceUid.Equals(sopProvider.Sop.StudyInstanceUid))
+                    foreach (var d in set.DisplaySets)
                     {
-                        displaySet = d;
-                        break;
+                        var displaySetDescriptor = d.Descriptor as KeyImageDisplaySetDescriptor;
+
+                        if (displaySetDescriptor != null
+                            &&
+                            displaySetDescriptor.SourceStudy.StudyInstanceUid.Equals(sopProvider.Sop.StudyInstanceUid))
+                        {
+                            displaySet = d;
+                            break;
+                        }
                     }
-                }
-                if (displaySet != null)
+
                     break;
+                }
             }
 
             if (displaySet == null)
             {
                 var displaySetDescriptor = new KeyImageDisplaySetDescriptor(new StudyIdentifier(sopProvider.ImageSop));
                 displaySet = new DisplaySet(displaySetDescriptor);
-                image.ImageViewer.LogicalWorkspace.ImageSets[0].DisplaySets.Add(displaySet);
+                bool displaySetAdded = false;
+                foreach (var imageSet in image.ImageViewer.LogicalWorkspace.ImageSets)
+                {
+                    if (imageSet.Descriptor.Equals(image.ParentDisplaySet.ParentImageSet.Descriptor))
+                    {
+                        imageSet.DisplaySets.Add(displaySet);
+                        displaySetAdded = true;
+                        break;
+                    }
+                }
+                if (!displaySetAdded)
+                {
+                    throw new ApplicationException(SR.MessageCreateKeyImageFailed);
+                }
             }
 
             var presentationImage = image.CreateFreshCopy();
