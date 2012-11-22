@@ -139,21 +139,20 @@ namespace ClearCanvas.ImageViewer.Web.View
 
 	    private void ProcessUpdatePropertyMessage(UpdatePropertyMessage message)
 	    {
-            if (message.PropertyName == "TopLeftPresentationImageIndex")
+            if (message.PropertyName == "Selected")
+            {
+                //This is a one-way update.
+                if ((bool)message.Value)
+                    _imageBox.SelectDefaultTile();
+            }
+            else if (message.PropertyName == "TopLeftPresentationImageIndex")
             {
                 Platform.CheckForNullReference(message.Value, "message.Value");
                 Platform.CheckForNullReference(_imageBox, "_imageBox");
-                int newIndex = (int)message.Value;
+                var newIndex = (int)message.Value;
                 if (newIndex!=_imageBox.TopLeftPresentationImageIndex)
                 {
                     _imageBox.TopLeftPresentationImageIndex = newIndex;
-
-					// Assume the image index is only updated by the client
-					// when the scroll bar is used. If this is the case, the
-					// image box should be selected.
-                    if (!_imageBox.Selected)
-                        _imageBox.SelectDefaultTile();
-                    
                     Draw(false);
                 }
 	        }
