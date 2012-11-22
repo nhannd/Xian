@@ -33,7 +33,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
         private readonly Dictionary<string, InstanceXml> _instanceList = new Dictionary<string, InstanceXml>();
         private String _seriesInstanceUid;
-        private readonly string _studyInstanceUid;
+        private readonly StudyXml _studyXml;
         private BaseInstanceXml _seriesTagsStream;
         private bool _dirty = true;
         private object _synchObject;
@@ -46,21 +46,14 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         {
             get
             {
-                if (_seriesInstanceUid == null)
-                    return "";
-                return _seriesInstanceUid;
+                return _seriesInstanceUid ?? "";
             }
         }
 
 
         public String StudyInstanceUid
         {
-            get
-            {
-                if (_studyInstanceUid == null)
-                    return "";
-                return _studyInstanceUid;
-            }
+            get { return _studyXml == null ? "" : _studyXml.StudyInstanceUid; }
         }
 
         public DisposableLock Lock()
@@ -84,10 +77,10 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             Cache = new UnifiedCache(logger);     
         }
 
-        public SeriesXml(String studyInstanceUid, String seriesInstanceUid)
+        public SeriesXml(StudyXml studyXml, String seriesInstanceUid)
         {
             _seriesInstanceUid = seriesInstanceUid;
-            _studyInstanceUid = studyInstanceUid;
+            _studyXml = studyXml;
             _synchObject = new object();
         }
 
@@ -120,9 +113,9 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
         public void Load()
         {
-             if (Cache.IsCachedToDisk(CacheType.String, _studyInstanceUid,_seriesInstanceUid))
+             if (Cache.IsCachedToDisk(CacheType.String, StudyInstanceUid,_seriesInstanceUid))
              {
-                 var item =  Cache.Get(CacheType.String, _studyInstanceUid, _seriesInstanceUid,null);
+                 var item = Cache.Get(CacheType.String, StudyInstanceUid, _seriesInstanceUid, null);
                  if (item != null && item.Data != null)
                  {
                      //unzip
@@ -230,7 +223,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             Task.Factory.StartNew(() =>
             {
 
-                 Cache.Put(_studyInstanceUid, _seriesInstanceUid, new StringCacheItem { Data = seriesXml });
+                Cache.Put(StudyInstanceUid, _seriesInstanceUid, new StringCacheItem { Data = seriesXml });
                 if (isPrior)
                 {
                     Unload();                    

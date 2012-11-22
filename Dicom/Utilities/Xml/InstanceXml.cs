@@ -48,7 +48,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		private BaseInstanceXml _baseInstance;
 		private XmlElement _cachedElement;
 
-		private DicomAttributeCollection _collection;
+        private InstanceXmlDicomAttributeCollection _collection;
 	    private IDicomAttributeCollectionProvider _baseCollectionGetter;
 
 		private IEnumerator<DicomAttribute> _baseCollectionEnumerator;
@@ -276,7 +276,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 		#region Constructors
 
-	    public InstanceXml(DicomAttributeCollection collection, SopClass sopClass, TransferSyntax syntax)
+        public InstanceXml(InstanceXmlDicomAttributeCollection collection, SopClass sopClass, TransferSyntax syntax)
 		{
 			_sopInstanceUid = collection[DicomTags.SopInstanceUid];
 
@@ -455,7 +455,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             //add all base attributes up to "tag" to _collection
 			while (_baseCollectionEnumerator != null && _baseCollectionEnumerator.Current.Tag.TagValue <= tag)
 			{
-				_collection[_baseCollectionEnumerator.Current.Tag] = _baseCollectionEnumerator.Current;
+				_collection[_baseCollectionEnumerator.Current.Tag] = _baseCollectionEnumerator.Current.Copy();
 				if (!_baseCollectionEnumerator.MoveNext())
 					_baseCollectionEnumerator = null;
 			}

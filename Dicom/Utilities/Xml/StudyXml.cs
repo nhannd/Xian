@@ -227,7 +227,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
     		Platform.CheckForNullReference(settings, "settings");
 
 			// Create a copy of the collection without pixel data
-    		DicomAttributeCollection data = new InstanceXmlDicomAttributeCollection(theFile.DataSet, true,
+    		var data = new InstanceXmlDicomAttributeCollection(theFile.DataSet, true,
     		                                                                        settings.IncludePrivateValues !=
     		                                                                        StudyXmlTagInclusion.IgnoreTag,
     		                                                                        settings.IncludeUnknownTags !=
@@ -251,7 +251,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
             if (series == null)
             {
-                series = new SeriesXml(_studyInstanceUid, seriesInstanceUid);
+                series = new SeriesXml(this, seriesInstanceUid);
                 this[seriesInstanceUid] = series;
             }
 
@@ -266,11 +266,13 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                 //             theFile.MediaStorageSopInstanceUid);
             }
 
-            instance = new InstanceXml(data, theFile.SopClass, theFile.TransferSyntax);
-    	    instance.SourceAETitle = theFile.SourceApplicationEntityTitle;
-            instance.SourceFileName = theFile.Filename;
-        	instance.FileSize = fileSize;
-            series[sopInstanceUid] = instance;
+    	    instance = new InstanceXml(data, theFile.SopClass, theFile.TransferSyntax)
+    	                   {
+    	                       SourceAETitle = theFile.SourceApplicationEntityTitle,
+    	                       SourceFileName = theFile.Filename,
+    	                       FileSize = fileSize
+    	                   };
+    	    series[sopInstanceUid] = instance;
 
             return true;
         }
@@ -381,7 +383,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                             var seriesNode = seriesEnumerator.Current;
                             var seriesInstanceUid = seriesNode.Attribute("UID");
 
-                            var seriesStream = new SeriesXml(_studyInstanceUid, seriesInstanceUid);
+                            var seriesStream = new SeriesXml(this, seriesInstanceUid);
 
                             _seriesList.Add(seriesInstanceUid, seriesStream);
 

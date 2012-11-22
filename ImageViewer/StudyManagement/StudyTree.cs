@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common;
+using DataCache;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -227,6 +228,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			if (disposing)
 			{
+                //clear xml strings from disk cache
+                if (_series != null)
+                {
+                    foreach (var series in _series.Values)
+                    {
+                        Frame.Cache.ClearCached(CacheType.String, series.SeriesInstanceUid);
+                    }
+                }
+
+
 				if (_sops != null)
 				{
 					foreach (Sop sop in _sops.Values)
@@ -241,7 +252,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					foreach (var series in _series.Values)
 					{
                         series.SetSop(null);
-                        Frame.Cache.ClearCachedToDisk(series.SeriesInstanceUid);
 					}
 					_series.Clear();
 					_series = null;

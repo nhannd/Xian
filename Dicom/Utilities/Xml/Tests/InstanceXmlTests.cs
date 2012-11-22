@@ -123,7 +123,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml.Tests
 			using (MemoryStream ms = new MemoryStream())
 			{
 				// generate the dataset
-				DicomAttributeCollection dataset = new DicomAttributeCollection();
+				var dataset = new InstanceXmlDicomAttributeCollection();
 				{
 					Trace.WriteLine("Generating dataset using Unicode data");
 					Trace.WriteLine(" * US-ASCII Characters (0-127)");
