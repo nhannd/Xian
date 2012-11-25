@@ -58,7 +58,6 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 	    private bool _sourceImageInfoListLoaded;
 
 	    private readonly SeriesXml _seriesXml;
-	    private bool _xmlLoaded;
 
 	    public IList<SourceImageInfo> SourceImageInfoList
 	    {
@@ -80,6 +79,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		#endregion
 
 		#region Public Properties
+
+        public bool IsLoaded { get; private set; }
 
         public String SeriesInstanceUid
         {
@@ -164,7 +165,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         {
             Action command = () =>
                                  {
-                                     if (_xmlLoaded)
+                                     if (IsLoaded)
                                          return;
 
                                      _collection = new InstanceXmlDicomAttributeCollection { ValidateVrValues = false, ValidateVrLengths = false };
@@ -176,7 +177,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                                          if (!_instanceXmlEnumerator.MoveNext())
                                              _instanceXmlEnumerator = null;
                                      }
-                                     _xmlLoaded = true;
+                                     IsLoaded = true;
                                  };
             Execute(command);
           
@@ -190,7 +191,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                                      _collection = null;
                                      _baseCollectionEnumerator = null;
                                      _instanceXmlEnumerator = null;
-                                     _xmlLoaded = false;
+                                     IsLoaded = false;
                                  };
             Execute(command);
 
@@ -220,7 +221,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 	    private void LazyCollectionInit()
         {
             //load series
-            if (!_xmlLoaded && _seriesXml != null)
+            if (!IsLoaded && _seriesXml != null)
             {
                 _seriesXml.Load();
             }

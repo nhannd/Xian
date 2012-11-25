@@ -77,6 +77,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
         /// </summary>
         /// <param name="callingAETitle">AE title of the local application.</param>
         /// <param name="parameters">Input parameters.</param>
+        /// <param name="isPrior">true if this is a prior study, false otherwise </param>
         /// <returns></returns>
         public StudyXml GetStudyXml(string callingAETitle, HeaderStreamingParameters parameters, bool isPrior)
         {

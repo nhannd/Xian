@@ -41,5 +41,7 @@ namespace ClearCanvas.ImageViewer
         /// Gets the server from which the study can be loaded.
         /// </summary>
 	    public IDicomServiceNode Server { get; private set; }
+
+        public int? NumberOfStudyRelatedInstances { get; set; }
 	}
 }

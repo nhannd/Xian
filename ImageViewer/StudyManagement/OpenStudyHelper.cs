@@ -141,9 +141,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Adds a study to the list of studies to be opened.
 		/// </summary>
-		public void AddStudy(string studyInstanceUid, IDicomServiceNode server)
+		public void AddStudy(string studyInstanceUid, IDicomServiceNode server, int? numberOfStudyRelatedInstances)
 		{
-			_studiesToOpen.Add(new LoadStudyArgs(studyInstanceUid, server));
+            _studiesToOpen.Add(new LoadStudyArgs(studyInstanceUid, server)
+                                   {
+                                       NumberOfStudyRelatedInstances = numberOfStudyRelatedInstances
+                                   });
 		}
 
 		/// <summary>
@@ -233,7 +236,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			OpenStudyHelper helper = new OpenStudyHelper();
 			helper.WindowBehaviour = openStudyArgs.WindowBehaviour;
 			foreach (string studyInstanceUid in openStudyArgs.StudyInstanceUids)
-				helper.AddStudy(studyInstanceUid, openStudyArgs.Server);
+				helper.AddStudy(studyInstanceUid, openStudyArgs.Server,null);
 
 			return helper.OpenStudies();
 		}

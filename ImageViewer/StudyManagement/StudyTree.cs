@@ -228,16 +228,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			if (disposing)
 			{
-                //clear xml strings from disk cache
-                if (_series != null)
-                {
-                    foreach (var series in _series.Values)
-                    {
-                        Frame.Cache.ClearCached(CacheType.String, series.SeriesInstanceUid);
-                    }
-                }
-
-
 				if (_sops != null)
 				{
 					foreach (Sop sop in _sops.Values)

@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				                 };
 
 				foreach (var study in Context.SelectedStudies)
-					helper.AddStudy(study.StudyInstanceUid, study.Server);
+					helper.AddStudy(study.StudyInstanceUid, study.Server, study.NumberOfStudyRelatedInstances);
 
 				helper.Title = ImageViewerComponent.CreateTitle(GetSelectedPatients());
 				helper.OpenStudies();

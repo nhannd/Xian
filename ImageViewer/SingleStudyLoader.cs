@@ -138,7 +138,11 @@ namespace ClearCanvas.ImageViewer
                     throw new StudyLoaderNotFoundException(e);
 			    }
 
-			    var args = new StudyLoaderArgs(StudyInstanceUid, Server) {IsPriorStudyLoader = isPrior};
+			    var args = new StudyLoaderArgs(StudyInstanceUid, Server)
+			                   {
+			                       IsPriorStudyLoader = isPrior, 
+                                   NumberOfStudyRelatedInstances = _args.NumberOfStudyRelatedInstances
+			                   };
 				int total;
 				var sops = new List<Sop>();
 				

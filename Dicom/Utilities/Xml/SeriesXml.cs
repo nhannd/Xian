@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using ClearCanvas.Common.Utilities;
@@ -36,7 +37,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         private readonly StudyXml _studyXml;
         private BaseInstanceXml _seriesTagsStream;
         private bool _dirty = true;
-        private object _synchObject;
+        private readonly object _synchObject;
 
         #endregion
 
@@ -49,7 +50,6 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                 return _seriesInstanceUid ?? "";
             }
         }
-
 
         public String StudyInstanceUid
         {
@@ -111,27 +111,29 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             }
         }
 
-        public void Load()
+        public bool Load()
         {
-             if (Cache.IsCachedToDisk(CacheType.String, StudyInstanceUid,_seriesInstanceUid))
-             {
-                 var item = Cache.Get(CacheType.String, StudyInstanceUid, _seriesInstanceUid, null);
-                 if (item != null && item.Data != null)
-                 {
-                     //unzip
-                     using (var memoryStream = new MemoryStream(item.Data))
-                     {
-                         using (var compressionStream = new GZipStream(memoryStream, CompressionMode.Decompress))
-                         {
-                             using (var reader = new StreamReader(compressionStream))
-                             {
-                                 SetMemento(reader.ReadToEnd());
-                             }
-                         }
-                     } 
-                 }
-             }
+            if (IsLoaded() || !Cache.IsCachedToDisk(CacheType.String, StudyInstanceUid, _seriesInstanceUid))
+                return false;
+            var item = Cache.Get(CacheType.String, StudyInstanceUid, _seriesInstanceUid, null);
+            if (item != null && item.Data != null)
+            {
+                //unzip
+                using (var memoryStream = new MemoryStream(item.Data))
+                {
+                    using (var compressionStream = new GZipStream(memoryStream, CompressionMode.Decompress))
+                    {
+                        using (var reader = new StreamReader(compressionStream))
+                        {
+                            SetMemento(reader.ReadToEnd());
+                            return true;
+                        }
+                    }
+                } 
+            }
+            return false;
         }
+
         public void Unload()
         {
             if (_seriesTagsStream != null)
@@ -140,6 +142,15 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             {
                 instanceXml.Unload();
             }
+        }
+
+        private bool IsLoaded()
+        {
+            if (_instanceList.Values.Any(instance => !instance.IsLoaded))
+            {
+                return false;
+            }
+            return _seriesTagsStream != null && _seriesTagsStream.IsLoaded;
         }
 
         #endregion
@@ -203,23 +214,23 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
             return series;
         }
-        internal void SetMemento(INode theSeriesNode)
-        {
-            SetMemento(theSeriesNode, false);
-        }
 
+        /// <summary>
+        /// load from xml node
+        /// </summary>
+        /// <param name="theSeriesNode"></param>
+        /// <param name="isPrior"></param>
         internal void SetMemento(INode theSeriesNode, bool isPrior)
         {
-            _dirty = true;
-            _seriesInstanceUid = theSeriesNode.Attribute("UID");
-
-            if (!theSeriesNode.HasChildNodes)
+            if (theSeriesNode == null)
                 return;
 
-            var seriesXml = string.Format("<Series UID=\"{0}\">{1}</Series>", _seriesInstanceUid, theSeriesNode.InnerXml);
-            SetMemento(seriesXml);
+           var seriesXml = string.Format("<Series UID=\"{0}\">{1}</Series>", _seriesInstanceUid, theSeriesNode.InnerXml);
+            if (!SetMemento(seriesXml))
+               return;
 
-            //compress
+            
+            //compress - if this file is already on disk, and instance number hasn't changed, then we should not do this
             Task.Factory.StartNew(() =>
             {
 
@@ -240,15 +251,41 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 
         }
-        private void SetMemento(string seriesXml)
+        /// <summary>
+        /// load from string
+        /// </summary>
+        /// <param name="seriesXml"></param>
+        /// <returns></returns>
+        internal bool SetMemento(string seriesXml)
         {
             if (String.IsNullOrEmpty(seriesXml))
-                return;
+                return false;
 
             var doc = new XmlDocument();
             doc.LoadXml(seriesXml);
+            if (doc.DocumentElement == null)
+                return false;
 
-            var enumerator = new XmlNodeWrapper(doc.DocumentElement).GetChildEnumerator();
+            if (_seriesInstanceUid == null)
+                _seriesInstanceUid = doc.DocumentElement.Attributes["UID"].Value;
+
+            var seriesNode = new XmlNodeWrapper(doc.DocumentElement);
+      
+
+            return SetMemento(seriesNode);
+        }
+
+        private bool SetMemento(INode seriesNode)
+        {
+             if (!seriesNode.HasChildNodes)
+                   return false;
+
+            _dirty = true;
+            if (_seriesInstanceUid == null)
+                _seriesInstanceUid = seriesNode.Attribute("UID");
+
+            //parse instances
+            var enumerator = seriesNode.GetChildEnumerator();
             while (enumerator.MoveNext() && enumerator.Current != null)
             {
                 var childNode = enumerator.Current;
@@ -263,7 +300,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                         {
                             if (_seriesTagsStream == null)
                             {
-                                _seriesTagsStream = new BaseInstanceXml(this, instanceNode);                                
+                                _seriesTagsStream = new BaseInstanceXml(this, instanceNode);
                             }
                             else
                             {
@@ -283,17 +320,21 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                     }
                     if (sopInstanceUid != null && _instanceList.ContainsKey(sopInstanceUid))
                     {
-                        _instanceList[sopInstanceUid].Load(childNode, _seriesTagsStream);                        
+                        _instanceList[sopInstanceUid].Load(childNode, _seriesTagsStream);
                     }
                     else
                     {
                         var instanceStream = new InstanceXml(this, childNode, _seriesTagsStream);
                         _instanceList.Add(instanceStream.SopInstanceUid, instanceStream);
                     }
-  
+
                 }
             }
+
+            return true;
+
         }
+
         #endregion
 
         #region IEnumerator Implementation

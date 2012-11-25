@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
@@ -155,8 +156,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml.Nodes
                 {
                     attributes[_reader.LocalName] = _reader.Value;
                 }
-                _reader.MoveToContent();
-                ThrowAwayEndElements();
+                if (!_reader.MoveToElement())
+                    throw new Exception("XmlReader: Move to element failed after reading attributes");
             }
             return attributes;
         }

@@ -52,6 +52,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	    {
 	        get; set;
 	    }
+
+        public int? NumberOfStudyRelatedInstances { get; set; }
 	}
 
     //TODO (Marmot): Can this stuff be moved to Common? Arguably almost everything in this namespace could move.

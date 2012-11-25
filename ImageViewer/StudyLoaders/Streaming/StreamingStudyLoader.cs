@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.ServiceModel;
@@ -97,8 +98,29 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
             AuditedInstances loadedInstances = new AuditedInstances();
             try
             {
+                StudyXml studyXml= null;
+                //try to load from disk
+                if (studyLoaderArgs.NumberOfStudyRelatedInstances != null && 
+                    SeriesXml.Cache.IsCachedToDisk(CacheType.String, null, studyLoaderArgs.StudyInstanceUid))
+                {
+                    var tempStudyXml = new StudyXml();
+                    if (tempStudyXml.Load(studyLoaderArgs.StudyInstanceUid, 
+                                    studyLoaderArgs.NumberOfStudyRelatedInstances.GetValueOrDefault(0)))
+                    {
+                        studyXml = tempStudyXml;
+                    }
+                }
 
-                StudyXml studyXml = RetrieveStudyXml(studyLoaderArgs);
+                if (studyXml == null)
+                {
+                    studyXml = RetrieveStudyXml(studyLoaderArgs);
+                    SeriesXml.Cache.Put(null, studyLoaderArgs.StudyInstanceUid, 
+                        new StringCacheItem
+                            {
+                                Data = studyXml.NumberOfStudyRelatedInstances.ToString(CultureInfo.InvariantCulture)
+                            });
+                }
+               
                 _instances = GetInstances(studyXml).GetEnumerator();
 
                 loadedInstances.AddInstance(studyXml.PatientId, studyXml.PatientsName, studyXml.StudyInstanceUid);
