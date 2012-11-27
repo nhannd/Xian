@@ -207,9 +207,12 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
 			    }
 			}
 
-		    var item = new StudyItem(study, applicationEntity.ToServiceNode());
+            var item = new StudyItem(study);    // Note: Use this constructor instead of StudyItem(IStudyRootData other, IDicomServiceNode server)
+                                                // because there's a bug which makes the InstanceAvailability not being set properly. 
+            
+		    item.Server = applicationEntity.ToServiceNode(); 
 			if (String.IsNullOrEmpty(item.InstanceAvailability))
-				item.InstanceAvailability = "ONLINE";
+				item.InstanceAvailability = "ONLINE"; //TODO (CR Nov 2012): Offline if Partition is disabled?                                                
 
 			return item;
 		}

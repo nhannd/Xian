@@ -143,9 +143,13 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                             dataSet[tag].SetNullValue();
                             break;
 
+                        case DicomTags.InstanceAvailability:
+                            dataSet[DicomTags.InstanceAvailability].SetStringValue( availability);
+                            break;
+                        
+
                         // Meta tags that should have not been in the RQ, but we've already set
                         case DicomTags.RetrieveAeTitle:
-                        case DicomTags.InstanceAvailability:
                         case DicomTags.SpecificCharacterSet:
                             break;
                     }
@@ -289,8 +293,8 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                                             {
                                                 var response = new DicomMessage();
 
-                                            	//TODO (CR May 2010): should the availability be NEARLINE?  The criteria above was for ONLINE studies.
-                                                PopulateStudy(subRead, response, tagList, row, "NEARLINE");
+                                            	//TODO (CR Nov 2012): Offline if Partition is disabled?
+                                                PopulateStudy(subRead, response, tagList, row, "ONLINE");
                                                 del(response.DataSet);
                                             });
 
@@ -308,7 +312,8 @@ namespace ClearCanvas.ImageViewer.Web.Server.ImageServer
                     find.Find(criteria, delegate(Study row)
                     {
                         var response = new DicomMessage();
-                        PopulateStudy(subRead, response, tagList, row, "NEARLINE");
+                        //TODO (CR Nov 2012): Offline if Partition is disabled?
+						PopulateStudy(subRead, response, tagList, row, "NEARLINE");
                         del(response.DataSet);
                     });
 

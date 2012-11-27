@@ -40,7 +40,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Initializes a new instance of <see cref="StudyItem"/>.
 		/// </summary>
         public StudyItem(IStudyRootData other, IDicomServiceNode server)
-			: this(other, other, null as IIdentifier)
+            // TODO (CR Nov 2012) - null is passed to the base class (ClearCanvas.Dicom.ServiceModel.Query.Identifier) causing
+            // some of the properties in the base such as SpecificCharacterSet, InstanceAvailability, RetrieveAE not being copied as one would expect
+            : this(other, other, null as IIdentifier) 
 		{
             Platform.CheckForNullReference(server, "server");
             Server = server;
@@ -50,6 +52,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
         /// Initializes a new instance of <see cref="StudyItem"/>.
         /// </summary>
         public StudyItem(IPatientData patient, IStudyData study, IDicomServiceNode server)
+            // TODO (CR Nov 2012) - null is passed to the base class (ClearCanvas.Dicom.ServiceModel.Query.Identifier) causing
+            // some of the properties in the base such as SpecificCharacterSet, InstanceAvailability, RetrieveAE not being copied as one would expect
             : base(patient, study, null)
         {
             Platform.CheckForNullReference(server, "server");
