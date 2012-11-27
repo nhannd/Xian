@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Xml.Nodes;
@@ -131,16 +132,29 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                             return false;
 
                         var cachedItems = SeriesXml.Cache.EnumerateCachedItems(studyInsanceUid);
+                        IList<Task> tasks = new List<Task>();
                         foreach (var seriesInstanceUid in cachedItems.Select(Path.GetFileNameWithoutExtension))
                         {
                             if (seriesInstanceUid == null)
                                 return false;
                             var seriesStream = new SeriesXml(this, seriesInstanceUid);
-                            if (!seriesStream.Load())
-                                return false;
+                            string uid = seriesInstanceUid;
+                            var task = Task.Factory.StartNew(() =>
+                                                      {
+                                                          if (seriesStream.Load())
+                                                          {
+                                                              lock(_seriesList)
+                                                              {
+                                                                  _seriesList.Add(uid, seriesStream);      
+                                                              }
+                                                             
+                                                          }
+                                                             
+                                                      } );
+                            tasks.Add(task);
 
-                            _seriesList.Add(seriesInstanceUid, seriesStream);
                         }
+                        Task.WaitAll(tasks.ToArray());
                         return true;
                     }
                 }
