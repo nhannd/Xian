@@ -106,18 +106,27 @@ namespace ClearCanvas.Healthcare
 			}
 		}
 
-		public static readonly PatientEvent PatientCreated = new PatientEvent("PatientCreated");
-		public static readonly PatientEvent PatientProfileModified = new PatientEvent("PatientProfileModified");
+		public static readonly PatientEvent PatientCreated = new PatientEvent(PatientCreatedEventType); 
+        public const string PatientCreatedEventType = "PatientCreated";
+		public static readonly PatientEvent PatientProfileModified = new PatientEvent(PatientProfileModifiedEventType);
+        public const string PatientProfileModifiedEventType = "PatientProfileModified";
 
-		public static readonly OrderEvent OrderCreated = new OrderEvent("OrderCreated");
-		public static readonly OrderEvent OrderModified = new OrderEvent("OrderModified");
-		public static readonly OrderEvent OrderCancelled = new OrderEvent("OrderCancelled");
+		public static readonly OrderEvent OrderCreated = new OrderEvent(OrderCreatedEventType); 
+        public const string OrderCreatedEventType = "OrderCreated";
+		public static readonly OrderEvent OrderModified = new OrderEvent(OrderModifiedEventType); 
+        public const string OrderModifiedEventType = "OrderModified";
+		public static readonly OrderEvent OrderCancelled = new OrderEvent(OrderCancelledEventType);
+        public const string OrderCancelledEventType = "OrderCancelled";
 
-		public static readonly ProcedureEvent ProcedureCreated = new ProcedureEvent("ProcedureCreated");
-		public static readonly ProcedureEvent ProcedureModified = new ProcedureEvent("ProcedureModified");
-		public static readonly ProcedureEvent ProcedureCancelled = new ProcedureEvent("ProcedureCancelled");
+		public static readonly ProcedureEvent ProcedureCreated = new ProcedureEvent(ProcedureCreatedEventType);
+        public const string ProcedureCreatedEventType = "ProcedureCreated";
+		public static readonly ProcedureEvent ProcedureModified = new ProcedureEvent(ProcedureModifiedEventType);
+        public const string ProcedureModifiedEventType = "ProcedureModified";
+		public static readonly ProcedureEvent ProcedureCancelled = new ProcedureEvent(ProcedureCancelledEventType); 
+        public const string ProcedureCancelledEventType = "ProcedureCancelled";
 
-		public static readonly ReportEvent ReportPublished = new ReportEvent("ReportPublished");
+		public static readonly ReportEvent ReportPublished = new ReportEvent(ReportPublishedEventType); 
+        public const string ReportPublishedEventType = "ReportPublished";
 
 		public const string WorkQueueItemType = "Logical HL7 Event";
 

@@ -71,6 +71,7 @@
     <Compile Include="Brokers\AccessionNumberBroker.cs" />
     <Compile Include="Brokers\DicomUidBroker.cs" />
     <Compile Include="Brokers\MrnBroker.cs" />
+    <Compile Include="Brokers\MwlWorklistItemBroker.cs" />
     <Compile Include="Brokers\ProcedureNumberBroker.cs" />
     <Compile Include="Brokers\PerformedProcedureStepBroker.cs" />
     <Compile Include="Brokers\ProtocolWorklistItemBroker.cs" />

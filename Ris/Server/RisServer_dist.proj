@@ -74,7 +74,15 @@
     <RisFiles Include="$(ShredHostDirectory)\bin\$(Configuration)\ClearCanvas.Server.ShredHost.dll" />
     <RisFiles Include="$(DicomDirectory)\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
     <RisFiles Include="$(RisShredsDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Shreds.dll" />
+    <RisFiles Include="$(RisShredsDirectory)\Mwl\bin\$(Configuration)\ClearCanvas.Ris.Shreds.Mwl.dll" />
     <RisFiles Include="$(ManifestUtilityDirectory)\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <HL7Files Include="$(HL7Directory)\bin\$(Configuration)\ClearCanvas.HL7.dll" />
+    <HL7Files Include="$(HL7Directory)\Hibernate\bin\$(Configuration)\ClearCanvas.HL7.Hibernate.dll" />
+    <HL7Files Include="$(HL7Directory)\Peers\TestPeer\bin\$(Configuration)\ClearCanvas.HL7.Peers.TestPeer.dll" />
+    <HL7Files Include="$(TrunkDirectory)\ReferencedAssemblies\NHAPI\NHapi.*" />
   </ItemGroup>
 
   <ItemGroup>
@@ -104,7 +112,7 @@
     <Copy SourceFiles="@(EnterprisePluginFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
     <Copy SourceFiles="@(ModelFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
     <Copy SourceFiles="@(RisFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
-    
+    <Copy SourceFiles="@(HL7Files)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />    
     <MakeDir Directories="$(DistributionDir)\manifest" ContinueOnError="false" />
   </Target>
 </Project>
