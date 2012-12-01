@@ -53,7 +53,8 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Iesi.Collections">
+    <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ReferencedAssemblies\NHibernate\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -143,6 +144,10 @@
     <ProjectReference Include="..\..\Healthcare\ClearCanvas.Healthcare.csproj">
       <Project>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</Project>
       <Name>ClearCanvas.Healthcare</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\HL7\ClearCanvas.HL7.csproj">
+      <Project>{126C0FC9-A62E-49BD-919B-D81C976A7024}</Project>
+      <Name>ClearCanvas.HL7</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Utilities\Manifest\ClearCanvas.Utilities.Manifest.csproj">
       <Project>{E2F1A5D4-73A4-4BA6-AA5A-87BBDEC727F8}</Project>
