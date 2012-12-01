@@ -216,6 +216,10 @@ namespace ClearCanvas.ImageViewer.AdvancedImaging.Fusion.Tests
 		private class XSopDataSource : DicomMessageSopDataSource
 		{
 			public XSopDataSource(DicomMessageBase sourceMessage) : base(sourceMessage) {}
+		    public override void UnloadAttributes()
+		    {
+		        //no-op
+		    }
 		}
 	}
 }

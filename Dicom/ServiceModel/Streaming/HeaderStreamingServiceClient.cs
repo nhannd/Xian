@@ -4,6 +4,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Xml;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.Dicom.Utilities.Xml.Nodes;
 
 namespace ClearCanvas.Dicom.ServiceModel.Streaming
 {
@@ -76,22 +77,20 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
         /// </summary>
         /// <param name="callingAETitle">AE title of the local application.</param>
         /// <param name="parameters">Input parameters.</param>
+        /// <param name="isPrior">true if this is a prior study, false otherwise </param>
         /// <returns></returns>
-        public StudyXml GetStudyXml(string callingAETitle, HeaderStreamingParameters parameters)
+        public StudyXml GetStudyXml(string callingAETitle, HeaderStreamingParameters parameters, bool isPrior)
         {
-            XmlDocument doc;
+            var studyXml = new StudyXml();
             using (var stream = GetStudyHeader(callingAETitle, parameters))
             {
                 using (var gzStream = new GZipStream(stream, CompressionMode.Decompress))
                 {
-                    doc = new XmlDocument();
-                    doc.Load(gzStream);
+                    var reader = new ReaderWrapper(gzStream);
+                    studyXml.SetMemento(new ReaderNode(reader), isPrior);
                     gzStream.Close();
                 }
             }
-
-            var studyXml = new StudyXml();
-            studyXml.SetMemento(doc);
             return studyXml;
         }
     }

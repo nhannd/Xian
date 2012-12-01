@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ClearCanvas.Common;
+using DataCache;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -238,9 +239,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				if (_series != null)
 				{
-					foreach (Series series in _series.Values)
-						series.SetSop(null);
-
+					foreach (var series in _series.Values)
+					{
+                        series.SetSop(null);
+					}
 					_series.Clear();
 					_series = null;
 				}

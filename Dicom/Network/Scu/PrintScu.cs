@@ -307,7 +307,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 		protected void CreateFilmSession(FilmSession filmSession)
 		{
-			var message = new DicomMessage(null, (DicomAttributeCollection)filmSession.DicomAttributeProvider);
+			var message = new DicomMessage(null, DicomAttributeCollection.ToProvider((DicomAttributeCollection)filmSession.DicomAttributeProvider));
 			this.Client.SendNCreateRequest(null, GetPresentationContextId(this.AssociationParameters), this.Client.NextMessageID(), message, DicomUids.BasicFilmSession);
 			_eventObject = EventObject.FilmSession;
 
@@ -324,7 +324,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 			filmBox.ReferencedFilmSessionSequenceList.Add(referencedFilmSessionSequence);
 
-			var message = new DicomMessage(null, (DicomAttributeCollection)filmBox.DicomAttributeProvider);
+			var message = new DicomMessage(null, DicomAttributeCollection.ToProvider((DicomAttributeCollection)filmBox.DicomAttributeProvider));
 			this.Client.SendNCreateRequest(null, GetPresentationContextId(this.AssociationParameters), this.Client.NextMessageID(), message, DicomUids.BasicFilmBoxSOP);
 			_eventObject = EventObject.FilmBox;
 			Platform.Log(LogLevel.Debug, "Creating film box...");
@@ -332,7 +332,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 		protected void SetImageBox(ImageBox imageBox)
 		{
-			var message = new DicomMessage(null, (DicomAttributeCollection)imageBox.DicomAttributeProvider)
+			var message = new DicomMessage(null, DicomAttributeCollection.ToProvider((DicomAttributeCollection)imageBox.DicomAttributeProvider))
 			{
 				RequestedSopClassUid = this.ColorMode == ColorMode.Color ? SopClass.BasicColorImageBoxSopClassUid : SopClass.BasicGrayscaleImageBoxSopClassUid,
 				RequestedSopInstanceUid = imageBox.SopInstanceUid.UID
@@ -345,7 +345,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 		protected void PrintFilmBox(FilmBox filmBox)
 		{
-			var message = new DicomMessage(null, null)
+			var message = new DicomMessage(null, new SimpleDicomAttributeCollectionProvider(null))
 			{
 				RequestedSopInstanceUid = filmBox.SopInstanceUid.UID,
 				RequestedSopClassUid = SopClass.BasicFilmBoxSopClassUid,
@@ -372,7 +372,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 		protected void DeleteFilmSession(FilmSession filmSession)
 		{
-			var message = new DicomMessage(null, null)
+            var message = new DicomMessage(null, null)
 			{
 				RequestedSopInstanceUid = filmSession.SopInstanceUid.UID,
 				RequestedSopClassUid = SopClass.BasicFilmSessionSopClassUid

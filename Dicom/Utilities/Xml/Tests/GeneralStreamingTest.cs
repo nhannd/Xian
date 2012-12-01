@@ -95,7 +95,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml.Tests
 				instanceCollection[DicomTags.PixelData] = null;
 
 
-				DicomFile theFile = new DicomFile("test", new DicomAttributeCollection(), instanceCollection);
+				DicomFile theFile = new DicomFile("test", new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(instanceCollection));
 				SetupMetaInfo(theFile);
 
 				studyXml.AddFile(theFile);

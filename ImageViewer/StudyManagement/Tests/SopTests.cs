@@ -30,7 +30,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			_file = file;
 		}
 
-		protected override void Dispose(bool disposing)
+	    public override void UnloadAttributes()
+	    {
+	        //no-op
+	    }
+
+	    protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
 			_file = null;
@@ -56,7 +61,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		public void TestDisposal()
 		{
 			IList<DicomAttributeCollection> collections = base.SetupMRSeries(1, 1, "test");
-			DicomFile file = new DicomFile(null, new DicomAttributeCollection(), collections[0]);
+			DicomFile file = new DicomFile(null, new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collections[0]));
 			TestDataSource dataSource = new TestDataSource(file);
 			Sop sop = Sop.Create(dataSource);
 
@@ -73,7 +78,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		public void TestReferences1()
 		{
 			IList<DicomAttributeCollection> collections = base.SetupMRSeries(1, 1, "test");
-			DicomFile file = new DicomFile(null, new DicomAttributeCollection(), collections[0]);
+			DicomFile file = new DicomFile(null, new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collections[0]));
 			TestDataSource dataSource = new TestDataSource(file);
 			Sop sop = Sop.Create(dataSource);
 
@@ -97,7 +102,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		public void TestReferences2()
 		{
 			IList<DicomAttributeCollection> collections = base.SetupMRSeries(1, 1, "test");
-			DicomFile file = new DicomFile(null, new DicomAttributeCollection(), collections[0]);
+			DicomFile file = new DicomFile(null, new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collections[0]));
 			TestDataSource dataSource = new TestDataSource(file);
 			Sop sop = Sop.Create(dataSource);
 
@@ -121,8 +126,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		public void TestCaching()
 		{
 			IList<DicomAttributeCollection> collections = base.SetupMRSeries(1, 1, "test");
-			DicomFile file1 = new DicomFile(null, new DicomAttributeCollection(), collections[0].Copy());
-			DicomFile file2 = new DicomFile(null, new DicomAttributeCollection(), collections[0].Copy());
+			DicomFile file1 = new DicomFile(null, new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collections[0].Copy()));
+			DicomFile file2 = new DicomFile(null, new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collections[0].Copy()));
 
 			TestDataSource dataSource1 = new TestDataSource(file1);
 			TestDataSource dataSource2 = new TestDataSource(file2);

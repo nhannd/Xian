@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml;
+using ClearCanvas.Dicom.Utilities.Xml.Nodes;
 using NUnit.Framework;
 
 namespace ClearCanvas.Dicom.Utilities.Xml.Tests
@@ -122,7 +123,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml.Tests
 			using (MemoryStream ms = new MemoryStream())
 			{
 				// generate the dataset
-				DicomAttributeCollection dataset = new DicomAttributeCollection();
+				var dataset = new InstanceXmlDicomAttributeCollection();
 				{
 					Trace.WriteLine("Generating dataset using Unicode data");
 					Trace.WriteLine(" * US-ASCII Characters (0-127)");
@@ -184,7 +185,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml.Tests
 				{
 					XmlDocument xmlDocument = new XmlDocument();
 					xmlDocument.Load(ms);
-					InstanceXml instanceXml = new InstanceXml(xmlDocument.GetElementsByTagName("test")[0].FirstChild, new DicomAttributeCollection());
+                    InstanceXml instanceXml = new InstanceXml(null,new XmlNodeWrapper(xmlDocument.GetElementsByTagName("test")[0].FirstChild), new SimpleDicomAttributeCollectionProvider(new DicomAttributeCollection()));
 					Assert.IsTrue(instanceXml[DicomTags.FailedAttributesSequence].Count > 0);
 
 					int i = 0;

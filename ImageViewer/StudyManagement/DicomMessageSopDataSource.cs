@@ -25,12 +25,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// An implementation of a <see cref="StandardSopDataSource"/> where a <see cref="DicomMessageBase"/>
 	/// provides all the SOP instance data.
 	/// </summary>
-	public class DicomMessageSopDataSource : StandardSopDataSource, IDicomMessageSopDataSource
+	public abstract class DicomMessageSopDataSource : StandardSopDataSource, IDicomMessageSopDataSource
 	{
 		private readonly DicomAttributeCollection _dummy;
 		private DicomMessageBase _sourceMessage;
-		private bool _loaded = false;
-		private bool _loading = false;
+
 
 		/// <summary>
 		/// Constructs a new <see cref="DicomMessageSopDataSource"/>.
@@ -39,7 +38,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		protected DicomMessageSopDataSource(DicomMessageBase sourceMessage)
 		{
 			_dummy = new DicomAttributeCollection();
-			SetSourceMessage(sourceMessage);
+            _sourceMessage = sourceMessage;
 		}
 
 		/// <summary>
@@ -77,39 +76,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		private void SetSourceMessage(DicomMessageBase sourceMessage)
+		protected virtual void SetSourceMessage(DicomMessageBase sourceMessage)
 		{
 			_sourceMessage = sourceMessage;
-			_loaded = !_sourceMessage.DataSet.IsEmpty();
-		}
-
-		/// <summary>
-		/// Called by the base class to ensure that all DICOM data attributes are loaded.
-		/// </summary>
-		protected virtual void EnsureLoaded()
-		{
-			//TODO: push up?
 		}
 
 		//TODO: is there a better way to do this?
-		private void Load()
+		protected virtual void Load()
 		{
-			lock(SyncLock)
-			{
-				if (_loaded || _loading)
-					return;
-
-				try
-				{
-					_loading = true;
-					EnsureLoaded();
-					_loaded = true;
-				}
-				finally
-				{
-					_loading = false;
-				}
-			}
 		}
 
 		/// <summary>

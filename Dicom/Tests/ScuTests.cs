@@ -48,7 +48,7 @@ namespace ClearCanvas.Dicom.Tests
 
 			foreach (DicomAttributeCollection collection in list)
 			{
-				DicomFile file = new DicomFile("test", new DicomAttributeCollection(), collection);
+				DicomFile file = new DicomFile("test", new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collection));
 				file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
 				file.MediaStorageSopClassUid = SopClass.MrImageStorage.Uid;
 				file.MediaStorageSopInstanceUid = collection[DicomTags.SopInstanceUid].ToString();
@@ -80,7 +80,7 @@ namespace ClearCanvas.Dicom.Tests
 
 			foreach (DicomAttributeCollection collection in list)
 			{
-				DicomFile file = new DicomFile("test",new DicomAttributeCollection(),collection );
+				DicomFile file = new DicomFile("test",new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(collection) );
 				file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
 				file.MediaStorageSopClassUid = SopClass.MrImageStorage.Uid;
 				file.MediaStorageSopInstanceUid = collection[DicomTags.SopInstanceUid].ToString();

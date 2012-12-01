@@ -530,7 +530,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 			anonymizer.ValidationOptions = ValidationOptions.RelaxAllChecks;
 			for (int n = 0; n < anonymized.Length; n++)
 			{
-				anonymized[n] = new DicomFile(string.Empty, originals[n].MetaInfo.Copy(true, true, true), originals[n].DataSet.Copy(true, true, true));
+				anonymized[n] = new DicomFile(string.Empty, originals[n].MetaInfo.Copy(true, true, true), DicomAttributeCollection.ToProvider(originals[n].DataSet.Copy(true, true, true)));
 				anonymizer.Anonymize(anonymized[n]);
 			}
 

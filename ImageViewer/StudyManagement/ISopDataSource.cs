@@ -142,5 +142,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	    /// (e.g. <see cref="IsImage"/> returns false).</exception>
 	    ISopFrameData GetFrameData(FrameInfo frameInfo);
         bool IsCacheable { get; }
+
+	    void UnloadAttributes();
 	}
 }

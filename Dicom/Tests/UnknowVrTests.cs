@@ -242,7 +242,7 @@ namespace ClearCanvas.Dicom.Tests
 
             DicomAttributeCollection originalDataSet = file.DataSet.Copy();
             DicomAttributeCollection originalMetaInfo = file.MetaInfo.Copy();
-            DicomFile originalFile = new DicomFile("", originalMetaInfo, originalDataSet);
+            DicomFile originalFile = new DicomFile("", originalMetaInfo, DicomAttributeCollection.ToProvider(originalDataSet));
 
             // Force a sampling of tags to UN
             ConvertAttributeToUN(dataSet, DicomTags.RetrieveAeTitle); // AE
@@ -328,7 +328,7 @@ namespace ClearCanvas.Dicom.Tests
             dataSet[fakeSQTag].AddSequenceItem(item);
 
             // Save the file
-            DicomFile originalFile = new DicomFile("", file.MetaInfo.Copy(), file.DataSet.Copy());
+            DicomFile originalFile = new DicomFile("", file.MetaInfo.Copy(), DicomAttributeCollection.ToProvider(file.DataSet.Copy()));
 
             DicomTagDictionary.TagDictionary.Remove(fakeTag);
 

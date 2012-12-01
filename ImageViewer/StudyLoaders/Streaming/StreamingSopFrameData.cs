@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.IO;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
@@ -100,7 +99,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                 {
                     Frame.Cache.Put(MyFrameInfo.CacheIdTopLevel,
                                     MyFrameInfo.CacheId,
-                                    new ByteBufferCacheItem()
+                                    new ByteBufferCacheItem
                                         {
                                             ByteStream = stream,
                                             Size = streamLength,
@@ -158,7 +157,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                 if (Frame.Cache.IsDiskCacheEnabled)
                 {
                     context.Decompressor = Decompress;
-                    var item = Frame.Cache.Get(CacheType.Pixels,MyFrameInfo.CacheIdTopLevel, MyFrameInfo.CacheId, context);
+                    var item = Frame.Cache.Get(CacheType.Pixels, MyFrameInfo.CacheIdTopLevel, MyFrameInfo.CacheId, context);
                     if (item != null && item.Data != null)
                     {
                         var resultMetaInfo = new FrameStreamingResultMetaData {ContentLength = item.Size};
@@ -241,7 +240,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
         }
 
         #endregion
-
+    
         #region Nested type: StreamingSopFrameData
 
         private class StreamingSopFrameData : StandardSopFrameData, IStreamingSopFrameData
@@ -418,13 +417,17 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                 _overlayData[0xE] = null;
                 _overlayData[0xF] = null;
             }
-
             private static DynamicBuffer GetConversionBuffer()
             {
                 return _conversionBuffer ?? (_conversionBuffer = new DynamicBuffer());
             }
         }
-
         #endregion
+
+        public override void UnloadAttributes()
+        {
+            if (_instanceXml != null)
+               _instanceXml.Unload();
+        }
     }
 }

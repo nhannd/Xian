@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
         public void RetrieveFrame(Frame frame)
         {
-            if (frame.Info.Cached)
+            if (frame == null || frame.Info.Cached)
                 return;
 
             try

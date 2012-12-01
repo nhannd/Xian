@@ -18,6 +18,33 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom
 {
+    public interface IDicomAttributeCollectionProvider
+    {
+        DicomAttributeCollection Collection { get; }
+        void Unload();
+    }
+ 
+    internal class SimpleDicomAttributeCollectionProvider : IDicomAttributeCollectionProvider
+    {
+
+        private readonly DicomAttributeCollection _collection;
+
+        public SimpleDicomAttributeCollectionProvider(DicomAttributeCollection collection)
+        {
+            _collection = collection;
+        }
+
+        public DicomAttributeCollection Collection
+        {
+            get { return _collection; }
+        }
+
+        public void Unload()
+        {
+            //no-op
+        }
+    }
+
     /// <summary>
     /// The DicomAttributeCollection class models an a collection of DICOM attributes.
     /// </summary>
@@ -187,6 +214,11 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Public Methods
+
+        public static IDicomAttributeCollectionProvider ToProvider(DicomAttributeCollection collection)
+        {
+            return (collection != null) ? new SimpleDicomAttributeCollectionProvider(collection) : null;
+        }
 
         /// <summary>
         /// Determines if an attribute collection is empty.

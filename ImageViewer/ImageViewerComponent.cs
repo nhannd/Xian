@@ -707,14 +707,15 @@ namespace ClearCanvas.ImageViewer
 		/// <exception cref="NotFoundLoadStudyException">The specified study could not be found.</exception>
 		/// <exception cref="LoadStudyException">One or more images could not be opened, or an unspecified error has occurred.</exception>
 		/// <exception cref="StudyLoaderNotFoundException">The specified <see cref="IStudyLoader"/> could not be found.</exception>
-		public void LoadStudy(LoadStudyArgs loadStudyArgs)
+		public IList<Sop> LoadStudy(LoadStudyArgs loadStudyArgs)
 		{
 			SynchronizationContext context = _uiThreadSynchronizationContext ?? SynchronizationContext.Current;
-			using (SingleStudyLoader loader = new SingleStudyLoader(context, this, loadStudyArgs))
+			using (var loader = new SingleStudyLoader(context, this, loadStudyArgs))
 			{
-				loader.LoadStudy();
+				var res = loader.LoadStudy(false);
 				if (loader.Error != null)
 					throw loader.Error;
+			    return res;
 			}
 		}
 
@@ -736,23 +737,24 @@ namespace ClearCanvas.ImageViewer
 		/// <exception cref="LoadStudyException">(When only a single study is requested) One or more images could not be opened, or an unspecified error has occurred.</exception>
 		/// <exception cref="LoadMultipleStudiesException">Thrown when one or more of the specified studies has completely or partially failed to load.</exception>
 		/// <exception cref="StudyLoaderNotFoundException">The specified <see cref="IStudyLoader"/> could not be found.</exception>
-		public void LoadStudies(IList<LoadStudyArgs> loadStudyArgs)
+		public IList<Sop> LoadStudies(IList<LoadStudyArgs> loadStudyArgs)
 		{
 			if (loadStudyArgs.Count == 0)
 				throw new ArgumentException("At least one study must be specified.");
 
 			if (loadStudyArgs.Count == 1)
 			{
-				LoadStudy(loadStudyArgs[0]);
+				return LoadStudy(loadStudyArgs[0]);
 			}
 			else
 			{
-				List<Exception> loadStudyExceptions = new List<Exception>();
-				foreach (LoadStudyArgs args in loadStudyArgs)
+				var loadStudyExceptions = new List<Exception>();
+			    var aggr = new List<Sop>();
+				foreach (var args in loadStudyArgs)
 				{
 					try
 					{
-						LoadStudy(args);
+						aggr.AddRange(LoadStudy(args));
 					}
 					catch (LoadStudyException e)
 					{
@@ -772,6 +774,7 @@ namespace ClearCanvas.ImageViewer
 
 				if (loadStudyExceptions.Count > 0)
 					throw new LoadMultipleStudiesException(loadStudyExceptions, loadStudyArgs.Count);
+			    return aggr;
 			}
 		}
 

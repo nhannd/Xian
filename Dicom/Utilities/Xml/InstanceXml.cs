@@ -19,6 +19,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Utilities.Xml.Nodes;
 
 namespace ClearCanvas.Dicom.Utilities.Xml
 {
@@ -33,7 +34,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 	/// <remarks>
 	/// This class may change in a future release.
 	/// </remarks>
-	public class InstanceXml
+    public class InstanceXml : IDicomAttributeCollectionProvider
 	{
 		#region Private members
 
@@ -42,18 +43,21 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		private readonly TransferSyntax _transferSyntax;
         private string _sourceAETitle;
         private string _sourceFileName;
-		private long _fileSize = 0;
+		private long _fileSize;
 
 		private BaseInstanceXml _baseInstance;
 		private XmlElement _cachedElement;
 
-		private DicomAttributeCollection _collection;
+        private InstanceXmlDicomAttributeCollection _collection;
+	    private IDicomAttributeCollectionProvider _baseCollectionGetter;
 
 		private IEnumerator<DicomAttribute> _baseCollectionEnumerator;
-		private IEnumerator _instanceXmlEnumerator;
+		private IEnumerator<INode> _instanceXmlEnumerator;
 
 	    private IList<SourceImageInfo> _sourceImageInfoList;
 	    private bool _sourceImageInfoListLoaded;
+
+	    private readonly SeriesXml _seriesXml;
 
 	    public IList<SourceImageInfo> SourceImageInfoList
 	    {
@@ -75,6 +79,23 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		#endregion
 
 		#region Public Properties
+
+        public bool IsLoaded { get; private set; }
+
+        public String SeriesInstanceUid
+        {
+            get
+            {
+                return _seriesXml == null ? "" : _seriesXml.SeriesInstanceUid;
+            }
+        }
+        public String StudyInstanceUid
+        {
+            get
+            {
+                return _seriesXml == null ? "" : _seriesXml.StudyInstanceUid;
+            }
+        }
 
 		public String SopInstanceUid
 		{
@@ -118,6 +139,65 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			get { return _transferSyntax; }
 		}
 
+        private TResult Execute<TResult>(Func<TResult> command)
+        {
+            if (_seriesXml == null)
+            {
+                return command();
+            }
+            using (_seriesXml.Lock())
+            {
+                return command();
+            }
+        }
+        private void Execute(Action command)
+        {
+            if (_seriesXml == null)
+            {
+                command();
+            }
+            else using (_seriesXml.Lock())
+            {
+                command();
+            }
+        }
+	    public void Load(INode instanceNode, IDicomAttributeCollectionProvider baseCollectionGetter)
+        {
+            Action command = () =>
+                                 {
+                                     if (IsLoaded)
+                                         return;
+
+                                     _collection = new InstanceXmlDicomAttributeCollection { ValidateVrValues = false, ValidateVrLengths = false };
+                                     _baseCollectionGetter = baseCollectionGetter;
+
+                                     if (instanceNode != null && instanceNode.HasChildNodes)
+                                     {
+                                         _instanceXmlEnumerator = instanceNode.GetChildEnumerator();
+                                         if (!_instanceXmlEnumerator.MoveNext())
+                                             _instanceXmlEnumerator = null;
+                                     }
+                                     IsLoaded = true;
+                                 };
+            Execute(command);
+          
+
+
+        }
+        public void Unload()
+        {
+            Action command = () =>
+                                 {
+                                     _collection = null;
+                                     _baseCollectionEnumerator = null;
+                                     _instanceXmlEnumerator = null;
+                                     IsLoaded = false;
+                                 };
+            Execute(command);
+
+        }
+
+
 		/// <summary>
 		/// Gets the underlying data as a <see cref="DicomAttributeCollection"/>.
 		/// </summary>
@@ -129,17 +209,42 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		{
 			get
 			{
-				ParseTo(0xffffffff);
-				return _collection;
+                return Execute(() =>
+                {
+                    ParseTo(0xffffffff);
+                    return _collection;
+                });
+
 			}
 		}
 
+	    private void LazyCollectionInit()
+        {
+            //load series
+            if (!IsLoaded && _seriesXml != null)
+            {
+                _seriesXml.Load();
+            }
+
+            if (_baseCollectionGetter == null)
+                return;
+            var baseCollection = _baseCollectionGetter.Collection;
+            AddExcludedTagsFromBase(baseCollection);
+
+            _baseCollectionEnumerator = baseCollection.GetEnumerator();
+            if (!_baseCollectionEnumerator.MoveNext())
+                _baseCollectionEnumerator = null;
+            _baseCollectionGetter = null;
+        }
 		public DicomAttribute this[DicomTag tag]
 		{
 			get
 			{
-				ParseTo(tag.TagValue);
-				return _collection[tag.TagValue];
+                return Execute(() =>
+			                                       {
+			                                           ParseTo(tag.TagValue);
+			                                           return _collection[tag.TagValue];
+			                                       });
 			}
 		}
 
@@ -147,26 +252,32 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		{
 			get
 			{
-				ParseTo(tag);
-				return _collection[tag];
+                return Execute(() =>
+			                                       {
+			                                           ParseTo(tag);
+			                                           return _collection[tag];
+			                                       });
 			}
 		}
 
 		public bool IsTagExcluded(uint tag)
 		{
-			if (_collection is IInstanceXmlDicomAttributeCollection)
-			{
-				ParseTo(tag);
-				return ((IInstanceXmlDicomAttributeCollection) _collection).IsTagExcluded(tag);
-			}
-			return false;
+            return Execute(() =>
+		                             {
+		                                 if (!(_collection is IInstanceXmlDicomAttributeCollection))
+		                                 {
+		                                     return false;
+		                                 }
+		                                 ParseTo(tag);
+		                                 return ((IInstanceXmlDicomAttributeCollection) _collection).IsTagExcluded(tag);
+		                             });
 		}
 
 		#endregion
 
 		#region Constructors
 
-	    public InstanceXml(DicomAttributeCollection collection, SopClass sopClass, TransferSyntax syntax)
+        public InstanceXml(InstanceXmlDicomAttributeCollection collection, SopClass sopClass, TransferSyntax syntax)
 		{
 			_sopInstanceUid = collection[DicomTags.SopInstanceUid];
 
@@ -196,56 +307,38 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             return null;
 	    }
 
-	    public InstanceXml(XmlNode instanceNode, DicomAttributeCollection baseCollection)
-		{
-			InstanceXmlDicomAttributeCollection thisCollection = new InstanceXmlDicomAttributeCollection();
-			_collection = thisCollection;
-			_collection.ValidateVrValues = false;
-			_collection.ValidateVrLengths = false;
+	    public InstanceXml(SeriesXml seriesXml, INode instanceNode, IDicomAttributeCollectionProvider baseCollectionGetter)
+	    {
+	        _seriesXml = seriesXml;
+		    Load(instanceNode, baseCollectionGetter);
 
-			if (baseCollection != null)
+			if (instanceNode.HasAttribute("UID"))
 			{
-				AddExcludedTagsFromBase(baseCollection);
-
-				_baseCollectionEnumerator = baseCollection.GetEnumerator();
-				if (!_baseCollectionEnumerator.MoveNext())
-					_baseCollectionEnumerator = null;
+				_sopInstanceUid = instanceNode.Attribute("UID");
 			}
 
-			if (!instanceNode.HasChildNodes)
-				return;
-
-			_instanceXmlEnumerator = instanceNode.ChildNodes.GetEnumerator();
-			if (!_instanceXmlEnumerator.MoveNext())
-				_instanceXmlEnumerator = null;
-
-			if (instanceNode.Attributes["UID"] != null)
-			{
-				_sopInstanceUid = instanceNode.Attributes["UID"].Value;
-			}
-
-            if (instanceNode.Attributes["SourceAETitle"] != null)
+            if (instanceNode.HasAttribute("SourceAETitle"))
             {
-                _sourceAETitle = XmlUnescapeString(instanceNode.Attributes["SourceAETitle"].Value);
+                _sourceAETitle = XmlUnescapeString(instanceNode.Attribute("SourceAETitle"));
             }
 
-			if (instanceNode.Attributes["SopClassUID"] != null)
+            if (instanceNode.HasAttribute("SopClassUID") )
 			{
-				_sopClass = SopClass.GetSopClass(instanceNode.Attributes["SopClassUID"].Value);
+				_sopClass = SopClass.GetSopClass(instanceNode.Attribute("SopClassUID"));
 			}
 
-			_transferSyntax = instanceNode.Attributes["TransferSyntaxUID"] != null 
-				? TransferSyntax.GetTransferSyntax(instanceNode.Attributes["TransferSyntaxUID"].Value) 
+            _transferSyntax = instanceNode.HasAttribute("TransferSyntaxUID") 
+				? TransferSyntax.GetTransferSyntax(instanceNode.Attribute("TransferSyntaxUID")) 
 				: TransferSyntax.ExplicitVrLittleEndian;
 
-			if (instanceNode.Attributes["SourceFileName"] != null)
+            if (instanceNode.HasAttribute("SourceFileName"))
 			{
-				_sourceFileName = instanceNode.Attributes["SourceFileName"].Value;
+				_sourceFileName = instanceNode.Attribute("SourceFileName");
 			}
 
-			if (instanceNode.Attributes["FileSize"] != null)
+            if (instanceNode.HasAttribute("FileSize"))
 			{
-				long.TryParse(instanceNode.Attributes["FileSize"].Value, out _fileSize);
+				long.TryParse(instanceNode.Attribute("FileSize"), out _fileSize);
 			}
 
 			// This should never happen
@@ -255,6 +348,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			}
 
 		}
+
 
 		#endregion
 
@@ -357,17 +451,20 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 		private void ParseTo(uint tag)
 		{
+            LazyCollectionInit();
+
+            //add all base attributes up to "tag" to _collection
 			while (_baseCollectionEnumerator != null && _baseCollectionEnumerator.Current.Tag.TagValue <= tag)
 			{
 				_collection[_baseCollectionEnumerator.Current.Tag] = _baseCollectionEnumerator.Current.Copy();
 				if (!_baseCollectionEnumerator.MoveNext())
 					_baseCollectionEnumerator = null;
 			}
-
+            //add all attributes  up to "tag" to collection
 			while (_instanceXmlEnumerator != null)
 			{
-				XmlNode node = (XmlNode)_instanceXmlEnumerator.Current;
-				String tagString = node.Attributes["Tag"].Value;
+				var node = _instanceXmlEnumerator.Current;
+				String tagString = node.Attribute("Tag");
 				uint tagValue;
 				if (tagString.StartsWith("$"))
 				{
@@ -390,89 +487,94 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			}
 		}
 
-		private static void ParseCollection(DicomAttributeCollection theCollection, XmlNode theNode)
-		{
-			XmlNode attributeNode = theNode.FirstChild;
-			while (attributeNode != null)
-			{
-				ParseAttribute(theCollection, attributeNode);
-				attributeNode = attributeNode.NextSibling;
-			}
-		}
+        private static bool ParseCollection(DicomAttributeCollection theCollection, INode theNode)
+        {
+            if (!theNode.HasChildNodes)
+            {
+                return false;
+            }
+            bool rc = false;
+            var enumerator = theNode.GetChildEnumerator();
+            while (enumerator.MoveNext() && enumerator.Current != null)
+            {
+                rc = true;
+                ParseAttribute(theCollection, enumerator.Current);
+            }
+            return rc;
+        }
 
-		private static void ParseAttribute(DicomAttributeCollection theCollection, XmlNode attributeNode)
-		{
-			if (attributeNode.Name.Equals("Attribute"))
-			{
-				DicomTag theTag = GetTagFromAttributeNode(attributeNode);
+        private static void ParseAttribute(DicomAttributeCollection theCollection, INode attributeNode)
+        {
+            if (attributeNode.Name.Equals("Attribute"))
+            {
+                var theTag = GetTagFromAttributeNode(attributeNode);
 
-				DicomAttribute attribute = theCollection[theTag];
-				if (attribute is DicomAttributeSQ)
-				{
-					DicomAttributeSQ attribSQ = (DicomAttributeSQ)attribute;
-					//set the null value in case there are no child nodes.
-					attribute.SetNullValue();
+                var attribute = theCollection[theTag];
+                if (attribute is DicomAttributeSQ)
+                {
+                    var attribSQ = (DicomAttributeSQ)attribute;
+                    //set the null value in case there are no child nodes.
+                    attribute.SetNullValue();
 
-					if (attributeNode.HasChildNodes)
-					{
-						XmlNode itemNode = attributeNode.FirstChild;
+                    if (attributeNode.HasChildNodes)
+                    {
+                        var enumerator = attributeNode.GetChildEnumerator();
+                        while (enumerator.MoveNext() && enumerator.Current != null)
+                        {
+                            DicomSequenceItem theItem = new InstanceXmlDicomSequenceItem();
 
-						while (itemNode != null)
-						{
-							DicomSequenceItem theItem = new InstanceXmlDicomSequenceItem();
+                            if (!ParseCollection(theItem, enumerator.Current))
+                            {
+                                Platform.Log(LogLevel.Warn, "failed to parse collection for sequence tag {0}", theTag);
+                            }
+                            attribSQ.AddSequenceItem(theItem);
 
-							ParseCollection(theItem, itemNode);
 
-							attribSQ.AddSequenceItem(theItem);
+                        }
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        attribute.SetStringValue(attributeNode.Content);
+                    }
+                    catch (Exception e)
+                    {
+                        Platform.Log(LogLevel.Error, e,
+                                     "Unexpected exception with tag {0} setting value '{1}'.  Ignoring tag value.",
+                                     attribute.Tag,
+                                     attributeNode.Content);
+                    }
 
-							itemNode = itemNode.NextSibling;
-						}
-					}
-				}
-				else
-				{
-					// Cleanup the common XML character replacements
-					string tempString = attributeNode.InnerText;
-					tempString = XmlUnescapeString(tempString);
-					try
-					{
-						attribute.SetStringValue(tempString);
-					}
-					catch (Exception e)
-					{
-						Platform.Log(LogLevel.Error, e,
-									 "Unexpected exception with tag {0} setting value '{1}'.  Ignoring tag value.",
-									 attribute.Tag,
-									 tempString);
-					}
+                    ((IPrivateInstanceXmlDicomAttributeCollection)theCollection).ExcludedTagsHelper.Remove(theTag);
+                }
+            }
+            else if (attributeNode.Name.Equals("EmptyAttribute"))
+            {
+                //Means that the tag should not be in this collection, but is in the base.  So, we remove it.
+                DicomTag theTag = GetTagFromAttributeNode(attributeNode);
 
-					((IPrivateInstanceXmlDicomAttributeCollection)theCollection).ExcludedTagsHelper.Remove(theTag);
-				}
-			}
-			else if (attributeNode.Name.Equals("EmptyAttribute"))
-			{
-				//Means that the tag should not be in this collection, but is in the base.  So, we remove it.
-				DicomTag theTag = GetTagFromAttributeNode(attributeNode);
+                //NOTE: we want these attributes to be in the collection and empty so that
+                //the base collection doesn't need to be modified in order to insert
+                //excluded tags in the correct order.
+                theCollection[theTag].SetEmptyValue();
 
-				//NOTE: we want these attributes to be in the collection and empty so that
-				//the base collection doesn't need to be modified in order to insert
-				//excluded tags in the correct order.
-				theCollection[theTag].SetEmptyValue();
+                ((IPrivateInstanceXmlDicomAttributeCollection)theCollection).ExcludedTagsHelper.Remove(theTag);
+            }
+            else if (attributeNode.Name.Equals("ExcludedAttribute"))
+            {
+                DicomTag theTag = GetTagFromAttributeNode(attributeNode);
 
-				((IPrivateInstanceXmlDicomAttributeCollection) theCollection).ExcludedTagsHelper.Remove(theTag);
-			}
-			else if (attributeNode.Name.Equals("ExcludedAttribute"))
-			{
-				DicomTag theTag = GetTagFromAttributeNode(attributeNode);
+                //NOTE: we want these attributes to be in the collection and empty so that
+                //the base collection doesn't need to be modified in order to insert
+                //excluded tags in the correct order.
+                theCollection[theTag].SetEmptyValue();
 
-				//NOTE: we want these attributes to be in the collection and empty so that
-				//the base collection doesn't need to be modified in order to insert
-				//excluded tags in the correct order.
-				theCollection[theTag].SetEmptyValue();
+                ((IPrivateInstanceXmlDicomAttributeCollection)theCollection).ExcludedTagsHelper.Add(theTag);
+            }
+        }
 
-				((IPrivateInstanceXmlDicomAttributeCollection)theCollection).ExcludedTagsHelper.Add(theTag);
-			}
-		}
 
 		private void SwitchToCachedXml()
 		{
@@ -493,7 +595,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			if (!_cachedElement.HasChildNodes)
 				return;
 
-			_instanceXmlEnumerator = _cachedElement.ChildNodes.GetEnumerator();
+            _instanceXmlEnumerator = new XmlChildNodeEnumerator(_cachedElement);
 			if (!_instanceXmlEnumerator.MoveNext())
 				_instanceXmlEnumerator = null;
 		}
@@ -760,9 +862,9 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			return instance;
 		}
 
-		private static DicomTag GetTagFromAttributeNode(XmlNode attributeNode)
+		private static DicomTag GetTagFromAttributeNode(INode attributeNode)
 		{
-			String tag = attributeNode.Attributes["Tag"].Value;
+			String tag = attributeNode.Attribute("Tag");
 
 			DicomTag theTag;
 			if (tag.StartsWith("$"))
@@ -773,7 +875,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			{
 				uint tagValue = uint.Parse(tag, NumberStyles.HexNumber);
 				theTag = DicomTagDictionary.GetDicomTag(tagValue);
-				DicomVr xmlVr = DicomVr.GetVR(attributeNode.Attributes["VR"].Value);
+				DicomVr xmlVr = DicomVr.GetVR(attributeNode.Attribute("VR"));
 				if (theTag == null)
 					theTag = new DicomTag(tagValue, "Unknown tag", "UnknownTag", xmlVr, false, 1, uint.MaxValue, false);
 

@@ -26,7 +26,7 @@ namespace ClearCanvas.Dicom.Tests
         {
             string filename = "OutOfRange.dcm";
 
-            DicomFile file = new DicomFile(filename, new DicomAttributeCollection(), new DicomAttributeCollection());
+            DicomFile file = new DicomFile(filename, new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(new DicomAttributeCollection()));
             SetupMR(file.DataSet);
             SetupMetaInfo(file);
 

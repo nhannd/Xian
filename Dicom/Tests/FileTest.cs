@@ -26,7 +26,7 @@ namespace ClearCanvas.Dicom.Tests
 
             file = new DicomFile("filename");
 
-            file = new DicomFile(null, new DicomAttributeCollection(), new DicomAttributeCollection());
+            file = new DicomFile(null, new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(new DicomAttributeCollection()));
 
 
         }

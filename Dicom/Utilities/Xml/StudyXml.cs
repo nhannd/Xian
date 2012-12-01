@@ -12,8 +12,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Utilities.Xml.Nodes;
+using DataCache;
 
 namespace ClearCanvas.Dicom.Utilities.Xml
 {
@@ -25,8 +31,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         #region Private members
 
         private readonly Dictionary<string, SeriesXml> _seriesList = new Dictionary<string, SeriesXml>();
-        private String _studyInstanceUid = null;
-        private XmlDocument _doc = null;
+        private String _studyInstanceUid;
+        private XmlDocument _doc;
 
         #endregion
 
@@ -39,9 +45,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         {
             get
             {
-                if (_studyInstanceUid == null)
-                    return string.Empty;
-                return _studyInstanceUid;
+                return _studyInstanceUid ?? string.Empty;
             }
         }
 
@@ -49,14 +53,13 @@ namespace ClearCanvas.Dicom.Utilities.Xml
     	{
     		get
     		{
-    			foreach (SeriesXml series in _seriesList.Values)
-					foreach (InstanceXml instance in series)
-					{
-						DicomAttribute attrib;
-						if (instance.Collection.TryGetAttribute(DicomTags.PatientsName, out attrib))
-							return attrib.GetString(0, string.Empty);
-					}
-    			return string.Empty;
+    		    foreach (var instance in _seriesList.Values.SelectMany(series => series))
+    		    {
+    		        DicomAttribute attrib;
+    		        if (instance.Collection.TryGetAttribute(DicomTags.PatientsName, out attrib))
+    		            return attrib.GetString(0, string.Empty);
+    		    }
+    		    return string.Empty;
     		}
     	}
 
@@ -64,14 +67,13 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		{
 			get
 			{
-				foreach (SeriesXml series in _seriesList.Values)
-					foreach (InstanceXml instance in series)
-					{
-						DicomAttribute attrib;
-						if (instance.Collection.TryGetAttribute(DicomTags.PatientId, out attrib))
-							return attrib.GetString(0, string.Empty);
-					}
-				return string.Empty;
+			    foreach (var instance in _seriesList.Values.SelectMany(series => series))
+			    {
+			        DicomAttribute attrib;
+			        if (instance.Collection.TryGetAttribute(DicomTags.PatientId, out attrib))
+			            return attrib.GetString(0, string.Empty);
+			    }
+			    return string.Empty;
 			}
 		}
 		public int NumberOfStudyRelatedSeries
@@ -83,11 +85,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
     	{
     		get
     		{
-    			int total = 0;
-				foreach (SeriesXml series in _seriesList.Values)
-					total += series.NumberOfSeriesRelatedInstances;
-
-				return total;
+    		    return _seriesList.Values.Sum(series => series.NumberOfSeriesRelatedInstances);
     		}
     	}
 
@@ -107,6 +105,61 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         #endregion
 
         #region Public Methods
+
+        public void Unload()
+        {
+            foreach (var series in _seriesList.Values)
+            {
+                series.Unload();
+            }
+        }
+
+        public bool Load(string studyInsanceUid, int numberOfStudyRelatedInstances)
+        {
+            var studyInfo = SeriesXml.Cache.Get(CacheType.String, null, studyInsanceUid,null);
+            if (studyInfo == null || studyInfo.Data == null)
+                return false;
+
+            _studyInstanceUid = studyInsanceUid;
+            using (var memoryStream = new MemoryStream(studyInfo.Data))
+            {
+                using (var compressionStream = new GZipStream(memoryStream, CompressionMode.Decompress))
+                {
+                    using (var reader = new StreamReader(compressionStream))
+                    {
+                        var numberOfInstances =  int.Parse(reader.ReadToEnd());
+                        if (numberOfInstances != numberOfStudyRelatedInstances)
+                            return false;
+
+                        var cachedItems = SeriesXml.Cache.EnumerateCachedItems(studyInsanceUid);
+                        IList<Task> tasks = new List<Task>();
+                        foreach (var seriesInstanceUid in cachedItems.Select(Path.GetFileNameWithoutExtension))
+                        {
+                            if (seriesInstanceUid == null)
+                                return false;
+                            var seriesStream = new SeriesXml(this, seriesInstanceUid);
+                            string uid = seriesInstanceUid;
+                            var task = Task.Factory.StartNew(() =>
+                                                      {
+                                                          if (seriesStream.Load())
+                                                          {
+                                                              lock(_seriesList)
+                                                              {
+                                                                  _seriesList.Add(uid, seriesStream);      
+                                                              }
+                                                             
+                                                          }
+                                                             
+                                                      } );
+                            tasks.Add(task);
+
+                        }
+                        Task.WaitAll(tasks.ToArray());
+                        return true;
+                    }
+                }
+            }            
+        }
 
         /// <summary>
         /// Indexer to retrieve specific <see cref="SeriesXml"/> objects from the <see cref="StudyXml"/>.
@@ -218,7 +271,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
     		Platform.CheckForNullReference(settings, "settings");
 
 			// Create a copy of the collection without pixel data
-    		DicomAttributeCollection data = new InstanceXmlDicomAttributeCollection(theFile.DataSet, true,
+    		var data = new InstanceXmlDicomAttributeCollection(theFile.DataSet, true,
     		                                                                        settings.IncludePrivateValues !=
     		                                                                        StudyXmlTagInclusion.IgnoreTag,
     		                                                                        settings.IncludeUnknownTags !=
@@ -242,7 +295,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
             if (series == null)
             {
-                series = new SeriesXml(seriesInstanceUid);
+                series = new SeriesXml(this, seriesInstanceUid);
                 this[seriesInstanceUid] = series;
             }
 
@@ -257,11 +310,13 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                 //             theFile.MediaStorageSopInstanceUid);
             }
 
-            instance = new InstanceXml(data, theFile.SopClass, theFile.TransferSyntax);
-    	    instance.SourceAETitle = theFile.SourceApplicationEntityTitle;
-            instance.SourceFileName = theFile.Filename;
-        	instance.FileSize = fileSize;
-            series[sopInstanceUid] = instance;
+    	    instance = new InstanceXml(data, theFile.SopClass, theFile.TransferSyntax)
+    	                   {
+    	                       SourceAETitle = theFile.SourceApplicationEntityTitle,
+    	                       SourceFileName = theFile.Filename,
+    	                       FileSize = fileSize
+    	                   };
+    	    series[sopInstanceUid] = instance;
 
             return true;
         }
@@ -336,42 +391,49 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                 return;
 
             // There should be one root node.
-            XmlNode rootNode = theDocument.FirstChild;
+            var rootNode = theDocument.FirstChild;
             while (rootNode != null && !rootNode.Name.Equals("ClearCanvasStudyXml"))
                 rootNode = rootNode.NextSibling;
+
+            if (rootNode != null)
+            {
+                SetMemento(new XmlNodeWrapper(rootNode));
+            }
+        }
+        public void SetMemento(INode rootNode)
+        {
+            SetMemento(rootNode, false);
+        }
+
+        public void SetMemento(INode rootNode, bool isPrior)
+        {
 
             if (rootNode == null)
                 return;
 
-            XmlNode studyNode = rootNode.FirstChild;
-
-            while (studyNode != null)
+            var studyEnumerator = rootNode.GetChildEnumerator();
+            while (studyEnumerator.MoveNext() && studyEnumerator.Current != null)
             {
+                var studyNode = studyEnumerator.Current;
                 // Just search for the first study node, parse it, then break
                 if (studyNode.Name.Equals("Study"))
                 {
-                    _studyInstanceUid = studyNode.Attributes["UID"].Value;
+                    _studyInstanceUid = studyNode.Attribute("UID");
 
                     if (studyNode.HasChildNodes)
                     {
-                        XmlNode seriesNode = studyNode.FirstChild;
-
-                        while (seriesNode != null)
+                        var seriesEnumerator = studyNode.GetChildEnumerator();
+                        while (seriesEnumerator.MoveNext() && seriesEnumerator.Current != null)
                         {
-                            String seriesInstanceUid = seriesNode.Attributes["UID"].Value;
+                            var seriesNode = seriesEnumerator.Current;
+                            var seriesInstanceUid = seriesNode.Attribute("UID");
 
-                            SeriesXml seriesStream = new SeriesXml(seriesInstanceUid);
-
+                            var seriesStream = new SeriesXml(this, seriesInstanceUid);
+                             seriesStream.SetMemento(seriesNode, isPrior);    
                             _seriesList.Add(seriesInstanceUid, seriesStream);
-
-                            seriesStream.SetMemento(seriesNode);
-
-                            // Go to next node in doc
-                            seriesNode = seriesNode.NextSibling;
                         }
                     }
                 }
-                studyNode = studyNode.NextSibling;
             }
         }
 

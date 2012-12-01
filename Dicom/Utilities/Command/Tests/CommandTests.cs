@@ -365,7 +365,7 @@ namespace ClearCanvas.Dicom.Utilities.Command.Tests
                 foreach (var i in images)
                 {
                     string file = Path.Combine(directory, i[DicomTags.SopInstanceUid] + ".dcm");
-                    processor.AddCommand(new SaveDicomFileCommand(file, new DicomFile(file,new DicomAttributeCollection(), i), false));
+                    processor.AddCommand(new SaveDicomFileCommand(file, new DicomFile(file, new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(i)), false));
                     processor.AddCommand(new InsertInstanceXmlCommand(studyXml, file));
                 }
 
@@ -398,7 +398,7 @@ namespace ClearCanvas.Dicom.Utilities.Command.Tests
                 foreach (var i in images)
                 {
                     string file = Path.Combine(directory, i[DicomTags.SopInstanceUid] + ".dcm");
-                    processor.AddCommand(new SaveDicomFileCommand(file, new DicomFile(file, new DicomAttributeCollection(), i), false));
+                    processor.AddCommand(new SaveDicomFileCommand(file, new DicomFile(file, new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(i)), false));
                     processor.AddCommand(new InsertInstanceXmlCommand(studyXml, file));
                 }
 

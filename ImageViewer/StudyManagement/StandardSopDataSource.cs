@@ -209,7 +209,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
                 byte[] pixelData = CreateNormalizedPixelData();
 
-                Frame.Cache.Put(FrameInfo.CacheId, new ByteBufferCacheItem()
+                Frame.Cache.Put(FrameInfo.CacheId, new ByteBufferCacheItem
                 {
                     Size = pixelData.Length,
                     Data = pixelData,

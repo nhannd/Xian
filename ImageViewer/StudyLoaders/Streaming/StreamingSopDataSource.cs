@@ -34,12 +34,15 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		private readonly string _wadoUriPrefix;
 		private readonly int _wadoServicePort;
 		private volatile bool _fullHeaderRetrieved = false;
+        private InstanceXml _instanceXml;
 
 		public StreamingSopDataSource(InstanceXml instanceXml, string host, string aeTitle, string wadoUriPrefix, int wadoServicePort)
-			: base(new DicomFile("", new DicomAttributeCollection(), instanceXml.Collection))
+			: base(new DicomFile("", new DicomAttributeCollection(), instanceXml))
 		{
+		    _instanceXml = instanceXml;
+
 			//These don't get set properly for instance xml.
-			DicomFile sourceFile = (DicomFile)SourceMessage;
+			var sourceFile = (DicomFile)SourceMessage;
 			sourceFile.TransferSyntaxUid = instanceXml.TransferSyntax.UidString;
 			sourceFile.MediaStorageSopInstanceUid = instanceXml.SopInstanceUid;
 
@@ -73,6 +76,52 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		#endregion
 
+
+        /// <summary>
+        /// Gets the study instance UID.
+        /// </summary>
+        public override string StudyInstanceUid
+        {
+            get
+            {
+                return _instanceXml == null ? "" : _instanceXml.StudyInstanceUid;
+            }
+        }
+
+        /// <summary>
+        /// Gets the series instance UID.
+        /// </summary>
+        public override string SeriesInstanceUid
+        {
+            get
+            {
+                return _instanceXml == null ? "" : _instanceXml.SeriesInstanceUid;
+            }
+        }
+        
+        public override string TransferSyntaxUid
+        {
+            get
+            {
+                return _instanceXml == null ? "" : _instanceXml.TransferSyntax.UidString;
+            }
+        }
+        
+        public override string SopInstanceUid
+        {
+            get
+            {
+                return _instanceXml == null ? "" : _instanceXml.SopInstanceUid;
+            }
+        }
+        public override string SopClassUid
+        {
+            get
+            {
+                var sourceFile = (DicomFile)SourceMessage;
+                return sourceFile.MetaInfo[DicomTags.SopClassUid];
+            }
+        }
 		public override DicomAttribute this[DicomTag tag]
 		{
 			get

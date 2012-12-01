@@ -199,7 +199,7 @@ namespace ClearCanvas.ImageViewer
 					var loader = new SingleStudyLoader(_synchronizationContext, _imageViewer, result){ LoadOnlineOnly = true };
 
 					_singleStudyLoaders.Add(loader);
-					loader.LoadStudy();
+					loader.LoadStudy(true);
 				}
 			}
 

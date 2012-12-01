@@ -162,7 +162,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		{
 			DicomAttributeCollection dataSet = new DicomAttributeCollection();
 			base.SetupMR(dataSet);
-			DicomFile file = new DicomFile(null, new DicomAttributeCollection(), dataSet);
+			DicomFile file = new DicomFile(null, new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(dataSet));
 			TestDataSource dataSource = new TestDataSource(file);
 			file.DataSet[DicomTags.PatientId].SetStringValue(patientId);
 			file.DataSet[DicomTags.StudyInstanceUid].SetStringValue(studyUid);

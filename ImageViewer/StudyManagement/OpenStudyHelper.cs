@@ -141,9 +141,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Adds a study to the list of studies to be opened.
 		/// </summary>
-		public void AddStudy(string studyInstanceUid, IDicomServiceNode server)
+		public void AddStudy(string studyInstanceUid, IDicomServiceNode server, int? numberOfStudyRelatedInstances)
 		{
-			_studiesToOpen.Add(new LoadStudyArgs(studyInstanceUid, server));
+            _studiesToOpen.Add(new LoadStudyArgs(studyInstanceUid, server)
+                                   {
+                                       NumberOfStudyRelatedInstances = numberOfStudyRelatedInstances
+                                   });
 		}
 
 		/// <summary>
@@ -171,9 +174,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			var viewer = CreateViewer(LoadPriors);
 			var desktopWindow = DesktopWindow ?? Application.ActiveDesktopWindow;
 
+		    IList<Sop> sops = null;
 			try
 			{
-				viewer.LoadStudies(_studiesToOpen);
+				sops = viewer.LoadStudies(_studiesToOpen);
 			}
 			catch (Exception e)
 			{
@@ -189,7 +193,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			var args = new LaunchImageViewerArgs(WindowBehaviour) {Title = Title};
 			ImageViewerComponent.Launch(viewer, args);
 
-			codeClock.Stop();
+		    if (sops != null)
+		    {
+                foreach (var sop in sops)
+                {
+                    sop.DataSource.UnloadAttributes();
+                }
+		    }
+		     
+
+		    codeClock.Stop();
 			Platform.Log(LogLevel.Debug, string.Format("TTFI: {0}", codeClock));
 
 			return viewer;
@@ -223,7 +236,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			OpenStudyHelper helper = new OpenStudyHelper();
 			helper.WindowBehaviour = openStudyArgs.WindowBehaviour;
 			foreach (string studyInstanceUid in openStudyArgs.StudyInstanceUids)
-				helper.AddStudy(studyInstanceUid, openStudyArgs.Server);
+				helper.AddStudy(studyInstanceUid, openStudyArgs.Server,null);
 
 			return helper.OpenStudies();
 		}

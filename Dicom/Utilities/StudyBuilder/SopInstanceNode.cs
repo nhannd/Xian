@@ -37,7 +37,7 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		/// <param name="sourceDicomFile">The <see cref="DicomFile"/> from which to initialize this node.</param>
 		public SopInstanceNode(DicomMessageBase sourceDicomFile)
 		{
-			_dicomFile = new DicomFile("", sourceDicomFile.MetaInfo.Copy(), sourceDicomFile.DataSet.Copy());
+			_dicomFile = new DicomFile("", sourceDicomFile.MetaInfo.Copy(), DicomAttributeCollection.ToProvider(sourceDicomFile.DataSet.Copy()));
 
 			_instanceUid = sourceDicomFile.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
 			if (_instanceUid == "")
@@ -51,7 +51,7 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		private SopInstanceNode(SopInstanceNode source)
 		{
 			_instanceUid = StudyBuilder.NewUid();
-			_dicomFile = new DicomFile("", source._dicomFile.MetaInfo.Copy(true, true, true), source._dicomFile.DataSet.Copy(true, true, true));
+			_dicomFile = new DicomFile("", source._dicomFile.MetaInfo.Copy(true, true, true), DicomAttributeCollection.ToProvider(source._dicomFile.DataSet.Copy(true, true, true)));
 		}
 
 		#region Data Properties

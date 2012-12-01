@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Core.Storage.DicomQuery.Tests
                 sop[DicomTags.SeriesInstanceUid].SetString(0, seriesUid);
                 sop[DicomTags.Modality].SetString(0, modality);
 
-                var file = new DicomFile("", new DicomAttributeCollection(), sop);
+                var file = new DicomFile("", new DicomAttributeCollection(), DicomAttributeCollection.ToProvider(sop));
                 xml.AddFile(file);
             }
 

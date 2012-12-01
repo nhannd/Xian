@@ -12,7 +12,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Utilities.Xml.Nodes;
+using DataCache;
 
 namespace ClearCanvas.Dicom.Utilities.Xml
 {
@@ -26,9 +33,11 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         private Dictionary<string, InstanceXml> _sourceImageList;
 
         private readonly Dictionary<string, InstanceXml> _instanceList = new Dictionary<string, InstanceXml>();
-        private String _seriesInstanceUid = null;
-        private BaseInstanceXml _seriesTagsStream = null;
-        private bool _dirty = true; 
+        private String _seriesInstanceUid;
+        private readonly StudyXml _studyXml;
+        private BaseInstanceXml _seriesTagsStream;
+        private bool _dirty = true;
+        private readonly object _synchObject;
 
         #endregion
 
@@ -38,24 +47,41 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         {
             get
             {
-                if (_seriesInstanceUid == null)
-                    return "";
-                return _seriesInstanceUid;
+                return _seriesInstanceUid ?? "";
             }
         }
 
+        public String StudyInstanceUid
+        {
+            get { return _studyXml == null ? "" : _studyXml.StudyInstanceUid; }
+        }
+
+        public DisposableLock Lock()
+        {
+            return new DisposableLock(_synchObject);
+        }
     	public int NumberOfSeriesRelatedInstances
     	{
 			get { return _instanceList.Count; }
     	}
 
+        public static IUnifiedCache Cache { get; private set; }
+
         #endregion
 
         #region Constructors
 
-        public SeriesXml(String seriesInstanceUid)
+        static SeriesXml()
+        {
+            var logger = new CacheLogger();
+            Cache = new UnifiedCache(logger);     
+        }
+
+        public SeriesXml(StudyXml studyXml, String seriesInstanceUid)
         {
             _seriesInstanceUid = seriesInstanceUid;
+            _studyXml = studyXml;
+            _synchObject = new object();
         }
 
         #endregion
@@ -83,6 +109,48 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
                 _dirty = true;
             }
+        }
+
+        public bool Load()
+        {
+            if (IsLoaded() || !Cache.IsCachedToDisk(CacheType.String, StudyInstanceUid, _seriesInstanceUid))
+                return false;
+            var item = Cache.Get(CacheType.String, StudyInstanceUid, _seriesInstanceUid, null);
+            if (item != null && item.Data != null)
+            {
+                //unzip
+                using (var memoryStream = new MemoryStream(item.Data))
+                {
+                    using (var compressionStream = new GZipStream(memoryStream, CompressionMode.Decompress))
+                    {
+                        using (var reader = new StreamReader(compressionStream))
+                        {
+                            SetMemento(reader.ReadToEnd());
+                            return true;
+                        }
+                    }
+                } 
+            }
+            return false;
+        }
+
+        public void Unload()
+        {
+            if (_seriesTagsStream != null)
+                _seriesTagsStream.Unload();
+            foreach (var instanceXml in _instanceList.Values)
+            {
+                instanceXml.Unload();
+            }
+        }
+
+        private bool IsLoaded()
+        {
+            if (_instanceList.Values.Any(instance => !instance.IsLoaded))
+            {
+                return false;
+            }
+            return _seriesTagsStream != null && _seriesTagsStream.IsLoaded;
         }
 
         #endregion
@@ -147,27 +215,97 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             return series;
         }
 
-        internal void SetMemento(XmlNode theSeriesNode)
+        /// <summary>
+        /// load from xml node
+        /// </summary>
+        /// <param name="theSeriesNode"></param>
+        /// <param name="isPrior"></param>
+        internal void SetMemento(INode theSeriesNode, bool isPrior)
         {
-            _dirty = true;
-            _seriesInstanceUid = theSeriesNode.Attributes["UID"].Value;
-
-            if (!theSeriesNode.HasChildNodes)
+            if (theSeriesNode == null)
                 return;
 
-            XmlNode childNode = theSeriesNode.FirstChild;
+           var seriesXml = string.Format("<Series UID=\"{0}\">{1}</Series>", _seriesInstanceUid, theSeriesNode.InnerXml);
+            if (!SetMemento(seriesXml))
+               return;
 
-            while (childNode != null)
+            
+            //compress - if this file is already on disk, and instance number hasn't changed, then we should not do this
+            Task.Factory.StartNew(() =>
             {
+
+                Cache.Put(StudyInstanceUid, _seriesInstanceUid, new StringCacheItem { Data = seriesXml });
+                if (isPrior)
+                {
+                    Unload();                    
+                }
+                else
+                {
+                    //trigger parse of entire header
+                    foreach (var instance in _instanceList.Values)
+                    {
+                        var t = instance.Collection;
+                    }
+                }
+            });
+
+
+        }
+        /// <summary>
+        /// load from string
+        /// </summary>
+        /// <param name="seriesXml"></param>
+        /// <returns></returns>
+        internal bool SetMemento(string seriesXml)
+        {
+            if (String.IsNullOrEmpty(seriesXml))
+                return false;
+
+            var doc = new XmlDocument();
+            doc.LoadXml(seriesXml);
+            if (doc.DocumentElement == null)
+                return false;
+
+            if (_seriesInstanceUid == null)
+                _seriesInstanceUid = doc.DocumentElement.Attributes["UID"].Value;
+
+            var seriesNode = new XmlNodeWrapper(doc.DocumentElement);
+      
+
+            return SetMemento(seriesNode);
+        }
+
+        private bool SetMemento(INode seriesNode)
+        {
+             if (!seriesNode.HasChildNodes)
+                   return false;
+
+            _dirty = true;
+            if (_seriesInstanceUid == null)
+                _seriesInstanceUid = seriesNode.Attribute("UID");
+
+            //parse instances
+            var enumerator = seriesNode.GetChildEnumerator();
+            while (enumerator.MoveNext() && enumerator.Current != null)
+            {
+                var childNode = enumerator.Current;
                 // Just search for the first study node, parse it, then break
                 if (childNode.Name.Equals("BaseInstance"))
                 {
+                    //there should be at most one child node
                     if (childNode.HasChildNodes)
                     {
-                        XmlNode instanceNode = childNode.FirstChild;
+                        var instanceNode = childNode.FirstChild;
                         if (instanceNode.Name.Equals("Instance"))
                         {
-                            _seriesTagsStream = new BaseInstanceXml(instanceNode);
+                            if (_seriesTagsStream == null)
+                            {
+                                _seriesTagsStream = new BaseInstanceXml(this, instanceNode);
+                            }
+                            else
+                            {
+                                _seriesTagsStream.Load(instanceNode, null);
+                            }
                         }
                     }
                 }
@@ -175,19 +313,26 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                 {
                     // This assumes the BaseInstance is in the xml ahead of the actual instances, note, however,
                     // that if there is only 1 instance in the series, there will be no base instance value
-
-                    InstanceXml instanceStream;
-
-                    if (_seriesTagsStream == null)
-                        instanceStream = new InstanceXml(childNode, null);
+                    string sopInstanceUid = null;
+                    if (childNode.HasAttribute("UID"))
+                    {
+                        sopInstanceUid = childNode.Attribute("UID");
+                    }
+                    if (sopInstanceUid != null && _instanceList.ContainsKey(sopInstanceUid))
+                    {
+                        _instanceList[sopInstanceUid].Load(childNode, _seriesTagsStream);
+                    }
                     else
-						instanceStream = new InstanceXml(childNode, _seriesTagsStream.Collection);
+                    {
+                        var instanceStream = new InstanceXml(this, childNode, _seriesTagsStream);
+                        _instanceList.Add(instanceStream.SopInstanceUid, instanceStream);
+                    }
 
-                    _instanceList.Add(instanceStream.SopInstanceUid, instanceStream);
                 }
-
-                childNode = childNode.NextSibling;
             }
+
+            return true;
+
         }
 
         #endregion

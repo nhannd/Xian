@@ -39,12 +39,14 @@ namespace ClearCanvas.Dicom
             internal set;
         }
 
+        public IDicomAttributeCollectionProvider AttributeProvider { get; internal set; }
+
         /// <summary>
         /// The DataSet for the message.
         /// </summary>
         public DicomAttributeCollection DataSet
         {
-            get; internal set;
+            get { return AttributeProvider.Collection; }
         }
 
         public void ChangeTransferSyntax(TransferSyntax newTransferSyntax)

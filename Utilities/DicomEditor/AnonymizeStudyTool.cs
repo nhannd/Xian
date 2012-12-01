@@ -123,7 +123,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                                 DicomFile file = (localSopDataSource).File;
 
                                 // make sure we anonymize a new instance, not the same instance that the Sop cache holds!!
-                                file = new DicomFile(filename, file.MetaInfo.Copy(), file.DataSet.Copy());
+                                file = new DicomFile(filename, file.MetaInfo.Copy(), DicomAttributeCollection.ToProvider(file.DataSet.Copy()));
                                 anonymizer.Anonymize(file);
 
                                 // TODO (CR Jun 2012): Importing each file separately?
