@@ -97,6 +97,7 @@
     <Compile Include="AttachedDocument.cs" />
     <Compile Include="Brokers\IDicomUidBroker.cs" />
     <Compile Include="Brokers\IMrnBroker.cs" />
+    <Compile Include="Brokers\IMwlWorklistItemBroker.cs" />
     <Compile Include="Brokers\IPerformedProcedureStepBroker.cs" />
     <Compile Include="Brokers\IProcedureNumberBroker.cs" />
     <Compile Include="Brokers\IProtocolWorklistItemBroker.cs" />
@@ -132,6 +133,8 @@
       <DependentUpon>LogicalHL7EventSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="MergeWorkQueueItem.cs" />
+    <Compile Include="MwlWorklistItem.cs" />
+    <Compile Include="MwlWorklistItemSearchCriteria.cs" />
     <Compile Include="OrderMergeHistoryVirtualOrderNoteProvider.cs" />
     <Compile Include="OrderMergeInfo.cs" />
     <Compile Include="OrderRules.cs" />

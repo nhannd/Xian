@@ -74,6 +74,7 @@
     <RisFiles Include="$(ShredHostDirectory)\bin\$(Configuration)\ClearCanvas.Server.ShredHost.dll" />
     <RisFiles Include="$(DicomDirectory)\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
     <RisFiles Include="$(RisShredsDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Shreds.dll" />
+    <RisFiles Include="$(RisShredsDirectory)\Mwl\bin\$(Configuration)\ClearCanvas.Ris.Shreds.Mwl.dll" />
     <RisFiles Include="$(ManifestUtilityDirectory)\bin\$(Configuration)\ClearCanvas.Utilities.Manifest.dll" />
   </ItemGroup>
 

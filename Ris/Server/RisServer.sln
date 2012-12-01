@@ -98,6 +98,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.HL7.Peers.TestP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Utilities.Manifest", "..\..\Utilities\Manifest\ClearCanvas.Utilities.Manifest.csproj", "{E2F1A5D4-73A4-4BA6-AA5A-87BBDEC727F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Shreds.Mwl", "..\Shreds\Mwl\ClearCanvas.Ris.Shreds.Mwl.csproj", "{774ABC40-7ED2-4CD3-AFE4-7DF296B4C5F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -204,6 +206,10 @@ Global
 		{E2F1A5D4-73A4-4BA6-AA5A-87BBDEC727F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2F1A5D4-73A4-4BA6-AA5A-87BBDEC727F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2F1A5D4-73A4-4BA6-AA5A-87BBDEC727F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{774ABC40-7ED2-4CD3-AFE4-7DF296B4C5F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{774ABC40-7ED2-4CD3-AFE4-7DF296B4C5F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{774ABC40-7ED2-4CD3-AFE4-7DF296B4C5F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{774ABC40-7ED2-4CD3-AFE4-7DF296B4C5F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

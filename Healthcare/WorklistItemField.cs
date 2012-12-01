@@ -130,6 +130,9 @@ namespace ClearCanvas.Healthcare
 		public static readonly WorklistItemField ProcedureStepName = new WorklistItemField(WorklistItemFieldLevel.ProcedureStep);
 
 		public static readonly WorklistItemField ProcedureStepState = new WorklistItemField(WorklistItemFieldLevel.ProcedureStep);
+
+        public static readonly WorklistItemField ProcedureStepId = new WorklistItemField(WorklistItemFieldLevel.ProcedureStep);
+		
 		
 		#endregion
 
