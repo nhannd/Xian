@@ -33,8 +33,9 @@ using namespace ClearCanvas::Dicom;
 using namespace ClearCanvas::Dicom::Codec;
 
 extern "C" {
-#include "OpenJPEG/openjpeg.h"
-#include "OpenJPEG/j2k.h"
+
+    #include "OpenJPEG\opj_includes.h"
+
 
 	void opj_error_callback(const char *msg, void *usr) {
 		Platform::Log(LogLevel::Error, "OpenJPEG: {0}", gcnew String(msg));

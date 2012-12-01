@@ -307,6 +307,12 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             return null;
 	    }
 
+        public InstanceXml(SeriesXml seriesXml, XmlNode instanceNode, IDicomAttributeCollectionProvider baseCollectionGetter) : 
+                                                              this(seriesXml, new XmlNodeWrapper(instanceNode),baseCollectionGetter )
+        {
+            
+        }
+
 	    public InstanceXml(SeriesXml seriesXml, INode instanceNode, IDicomAttributeCollectionProvider baseCollectionGetter)
 	    {
 	        _seriesXml = seriesXml;

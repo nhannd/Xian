@@ -38,4 +38,4 @@
 #define PACKAGE_URL "http://www.openjpeg.org/"
 #define PACKAGE_BUGREPORT "http://code.google.com/p/openjpeg/"
 
-#define PACKAGE_VERSION "1.4.0"
+#define OPJ_PACKAGE_VERSION "2.0.0"

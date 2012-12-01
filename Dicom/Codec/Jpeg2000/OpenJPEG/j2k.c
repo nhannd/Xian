@@ -313,7 +313,7 @@ static int j2k_get_num_tp(opj_cp_t *cp,int pino,int tileno){
 }
 
 /**	mem allocation for TLM marker*/
-int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_j2k_t *j2k ){
+static int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_j2k_t *j2k ){
 	int pino,tileno,totnum_tp=0;
 
 	OPJ_ARG_NOT_USED(img_numcomp);
@@ -468,6 +468,12 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 	}
 #endif /* USE_JPWL */
 
+  /* prevent division by zero */
+  if (!(cp->tdx * cp->tdy)) {
+    opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: invalid tile size (tdx: %d, tdy: %d)\n", cp->tdx, cp->tdy);
+    return;
+  }
+
 	image->comps = (opj_image_comp_t*) opj_calloc(image->numcomps, sizeof(opj_image_comp_t));
 	for (i = 0; i < image->numcomps; i++) {
 		int tmp, w, h;
@@ -505,6 +511,12 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 			
 		}
 #endif /* USE_JPWL */
+
+    /* prevent division by zero */
+    if (!(image->comps[i].dx * image->comps[i].dy)) {
+      opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: invalid component size (dx: %d, dy: %d)\n", image->comps[i].dx, image->comps[i].dy);
+      return;
+    }
 
 		/* TODO: unused ? */
 		w = int_ceildiv(image->x1 - image->x0, image->comps[i].dx);
@@ -823,6 +835,12 @@ static void j2k_read_coc(opj_j2k_t *j2k) {
 	
 	len = cio_read(cio, 2);		/* Lcoc */
 	compno = cio_read(cio, image->numcomps <= 256 ? 1 : 2);	/* Ccoc */
+  if (compno >= image->numcomps) {
+    opj_event_msg(j2k->cinfo, EVT_ERROR,
+      "bad component number in COC (%d out of a maximum of %d)\n",
+      compno, image->numcomps);
+    return;
+  }
 	tcp->tccps[compno].csty = cio_read(cio, 1);	/* Scoc */
 	j2k_read_cox(j2k, compno);
 }
@@ -1004,8 +1022,15 @@ static void j2k_read_qcc(opj_j2k_t *j2k) {
 
 		/* keep your private count of tiles */
 		backup_compno++;
-	};
+	}
 #endif /* USE_JPWL */
+
+  if ((compno < 0) || (compno >= numcomp)) {
+    opj_event_msg(j2k->cinfo, EVT_ERROR,
+      "bad component number in QCC (%d out of a maximum of %d)\n",
+      compno, j2k->image->numcomps);
+    return;
+  }
 
 	j2k_read_qcx(j2k, compno, len - 2 - (numcomp <= 256 ? 1 : 2));
 }
@@ -1589,6 +1614,13 @@ static void j2k_read_rgn(opj_j2k_t *j2k) {
 		}
 	};
 #endif /* USE_JPWL */
+
+  if (compno >= numcomps) {
+    opj_event_msg(j2k->cinfo, EVT_ERROR,
+      "bad component number in RGN (%d out of a maximum of %d)\n",
+      compno, j2k->image->numcomps);
+    return;
+  }
 
 	tcp->tccps[compno].roishift = cio_read(cio, 1);				/* SPrgn */
 }

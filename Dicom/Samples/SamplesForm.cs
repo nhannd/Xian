@@ -411,7 +411,7 @@ namespace ClearCanvas.Dicom.Samples
 			try
 			{
 				theDoc.LoadXml(textBoxQueryMessage.Text);
-				var instanceXml = new InstanceXml(theDoc.DocumentElement, null);
+				var instanceXml = new InstanceXml(null,theDoc.DocumentElement, null);
 				DicomAttributeCollection queryMessage = instanceXml.Collection;
 
 				if (queryMessage == null)
@@ -572,7 +572,7 @@ namespace ClearCanvas.Dicom.Samples
             try
             {
                 theDoc.LoadXml(textBoxMoveMessage.Text);
-                var instanceXml = new InstanceXml(theDoc.DocumentElement, null);
+                var instanceXml = new InstanceXml(null,theDoc.DocumentElement, null);
                 DicomAttributeCollection queryMessage = instanceXml.Collection;
 
                 if (queryMessage == null)
