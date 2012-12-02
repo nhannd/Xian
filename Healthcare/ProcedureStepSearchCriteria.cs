@@ -50,6 +50,17 @@ namespace ClearCanvas.Healthcare {
             return new ProcedureStepSearchCriteria(this);
         }
 
+        public ISearchCondition<string> ProcedureStepId
+        {
+            get
+            {
+                if (!this.SubCriteria.ContainsKey("ProcedureStepId"))
+                {
+                    this.SubCriteria["ProcedureStepId"] = new SearchCondition<string>("ProcedureStepId");
+                }
+                return (ISearchCondition<string>)this.SubCriteria["ProcedureStepId"];
+            }
+        }
 		
         public new ProcedureStepSchedulingSearchCriteria Scheduling
         {
