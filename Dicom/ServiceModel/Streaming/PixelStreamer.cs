@@ -24,7 +24,6 @@ using System.Text;
 using System.Web;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using DataCache;
 
 namespace ClearCanvas.Dicom.ServiceModel.Streaming
 {

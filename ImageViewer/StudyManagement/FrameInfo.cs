@@ -18,7 +18,7 @@
 #endregion
 
 using ClearCanvas.Common;
-using DataCache;
+using ClearCanvas.Common.Caching;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             Cacheable = cacheable;
             CacheIdTopLevel = cacheIdTopLevel;
             CacheId = cacheId;
-            ArgBufferSize = GetContext.UnsetConversionBufferSize;
+            ArgBufferSize = StreamGetContext.UnsetConversionBufferSize;
         }
 
         public int FrameNumber { get; private set; }
@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
                 var cached = true;
                 if (Cacheable)
                     cached = Frame.Cache.IsDiskCacheEnabled &&
-                             Frame.Cache.IsCachedToDisk(CacheType.Pixels, CacheIdTopLevel, CacheId);
+                             Frame.Cache.IsCachedToDisk(StreamCacheType.Pixels, CacheIdTopLevel, CacheId);
                 return cached;
             }
         }

@@ -11,6 +11,7 @@
 
 using System;
 using System.IO;
+using ClearCanvas.Common.Caching;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Modules;
@@ -99,7 +100,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                 {
                     Frame.Cache.Put(MyFrameInfo.CacheIdTopLevel,
                                     MyFrameInfo.CacheId,
-                                    new ByteBufferCacheItem
+                                    new StreamByteBufferCacheItem
                                         {
                                             ByteStream = stream,
                                             Size = streamLength,
@@ -129,7 +130,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                 }
             }
 
-            public byte[] GetUncompressedPixelData(GetContext context)
+            public byte[] GetUncompressedPixelData(StreamGetContext context)
             {
                 RetrievePixelDataResult result;
                 if (_retrieveResult != null)
@@ -151,13 +152,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                 return result.GetPixelData();
             }
 
-            private RetrievePixelDataResult GetFromCache(GetContext context)
+            private RetrievePixelDataResult GetFromCache(StreamGetContext context)
             {
                 RetrievePixelDataResult result = null;
                 if (Frame.Cache.IsDiskCacheEnabled)
                 {
                     context.Decompressor = Decompress;
-                    var item = Frame.Cache.Get(CacheType.Pixels, MyFrameInfo.CacheIdTopLevel, MyFrameInfo.CacheId, context);
+                    var item = Frame.Cache.Get(StreamCacheType.Pixels, MyFrameInfo.CacheIdTopLevel, MyFrameInfo.CacheId, context);
                     if (item != null && item.Data != null)
                     {
                         var resultMetaInfo = new FrameStreamingResultMetaData {ContentLength = item.Size};
@@ -289,7 +290,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
             protected override byte[] CreateNormalizedPixelData()
             {
-                var context = new GetContext
+                var context = new StreamGetContext
                                   {
                                       Decompressor = null,
                                       PostProcessor = PostProcess,

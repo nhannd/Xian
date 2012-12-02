@@ -18,8 +18,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Caching;
 using ClearCanvas.Dicom.Utilities.Xml.Nodes;
-using DataCache;
+
 
 namespace ClearCanvas.Dicom.Utilities.Xml
 {
@@ -116,7 +117,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
         public bool Load(string studyInsanceUid, int numberOfStudyRelatedInstances)
         {
-            var studyInfo = SeriesXml.Cache.Get(CacheType.String, null, studyInsanceUid,null);
+            var studyInfo = SeriesXml.Cache.Get(StreamCacheType.String, null, studyInsanceUid,null);
             if (studyInfo == null || studyInfo.Data == null)
                 return false;
 

@@ -143,6 +143,7 @@
     <Compile Include="Authorization\AuthorityTokenAttribute.cs" />
     <Compile Include="Authorization\AuthorityTokenDefinition.cs" />
     <Compile Include="Authorization\IDefineAuthorityGroups.cs" />
+    <Compile Include="Caching\IStreamingCache.cs" />
     <Compile Include="ClassNameExtensionFilter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -155,6 +156,7 @@
     <Compile Include="Configuration\SettingsGroupDescriptor.cs" />
     <Compile Include="Configuration\SettingsPropertyDescriptor.cs" />
     <Compile Include="DefaultExtensionFactory.cs" />
+    <Compile Include="DynamicBuffer.cs" />
     <Compile Include="ExtensionPoint.cs" />
     <Compile Include="FrameHeader.cs" />
     <Compile Include="IExtensionFactory.cs" />

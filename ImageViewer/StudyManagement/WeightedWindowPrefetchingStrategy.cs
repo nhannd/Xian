@@ -13,7 +13,6 @@ using System;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using DataCache;
 using FrameBlockingThreadPool = ClearCanvas.ImageViewer.Common.BlockingThreadPool<ClearCanvas.ImageViewer.StudyManagement.Frame>;
 
 namespace ClearCanvas.ImageViewer.StudyManagement

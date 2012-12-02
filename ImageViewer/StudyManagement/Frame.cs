@@ -11,13 +11,13 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common.Caching;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Dicom.Validation;
 using ClearCanvas.Common;
-using DataCache;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly object _syncLock = new object();
 		private volatile NormalizedPixelSpacing _normalizedPixelSpacing;
 		private volatile ImagePlaneHelper _imagePlaneHelper;
-        public static IUnifiedCache Cache { get; private set; }
+        public static IStreamingCache Cache { get; private set; }
 
 		#endregion
 

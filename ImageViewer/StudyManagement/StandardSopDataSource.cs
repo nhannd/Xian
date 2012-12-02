@@ -11,12 +11,9 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common.Caching;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Common;
-using ClearCanvas.Common;
-using System.Threading;
-using System.Diagnostics;
-using DataCache;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -209,7 +206,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
                 byte[] pixelData = CreateNormalizedPixelData();
 
-                Frame.Cache.Put(FrameInfo.CacheId, new ByteBufferCacheItem
+                Frame.Cache.Put(FrameInfo.CacheId, new StreamByteBufferCacheItem
                 {
                     Size = pixelData.Length,
                     Data = pixelData,

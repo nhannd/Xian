@@ -17,6 +17,7 @@ using System.IO.Compression;
 using System.ServiceModel;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Caching;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.Dicom.Utilities.Xml;
@@ -101,7 +102,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                 StudyXml studyXml= null;
                 //try to load from disk
                 if (studyLoaderArgs.NumberOfStudyRelatedInstances != null && 
-                    SeriesXml.Cache.IsCachedToDisk(CacheType.String, null, studyLoaderArgs.StudyInstanceUid))
+                    SeriesXml.Cache.IsCachedToDisk(StreamCacheType.String, null, studyLoaderArgs.StudyInstanceUid))
                 {
                     var tempStudyXml = new StudyXml();
                     if (tempStudyXml.Load(studyLoaderArgs.StudyInstanceUid, 
@@ -115,7 +116,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
                 {
                     studyXml = RetrieveStudyXml(studyLoaderArgs);
                     SeriesXml.Cache.Put(null, studyLoaderArgs.StudyInstanceUid, 
-                        new StringCacheItem
+                        new StreamStringCacheItem
                             {
                                 Data = studyXml.NumberOfStudyRelatedInstances.ToString(CultureInfo.InvariantCulture)
                             });

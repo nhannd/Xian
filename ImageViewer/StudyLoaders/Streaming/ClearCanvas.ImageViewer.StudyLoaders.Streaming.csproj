@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="StreamingCache.cs" />
     <Compile Include="WebStation\WebStationStreamingStudyLoader.cs" />
     <Compile Include="WebStation\WebStationStreamingSettings.cs" />
     <Compile Include="WebStation\WebStationStreamingSettings.Designer.cs">

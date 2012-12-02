@@ -17,9 +17,10 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
+using ClearCanvas.Common.Caching;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml.Nodes;
-using DataCache;
+
 
 namespace ClearCanvas.Dicom.Utilities.Xml
 {
@@ -65,7 +66,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			get { return _instanceList.Count; }
     	}
 
-        public static IUnifiedCache Cache { get; private set; }
+        public static IStreamingCache Cache { get; private set; }
 
         #endregion
 
@@ -73,8 +74,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
         static SeriesXml()
         {
-            var logger = new CacheLogger();
-            Cache = new UnifiedCache(logger);     
+            Cache = new StreamingCacheExtensionPoint().CreateExtension() as IStreamingCache;
         }
 
         public SeriesXml(StudyXml studyXml, String seriesInstanceUid)
@@ -113,9 +113,9 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
         public bool Load()
         {
-            if (IsLoaded() || !Cache.IsCachedToDisk(CacheType.String, StudyInstanceUid, _seriesInstanceUid))
+            if (IsLoaded() || !Cache.IsCachedToDisk(StreamCacheType.String, StudyInstanceUid, _seriesInstanceUid))
                 return false;
-            var item = Cache.Get(CacheType.String, StudyInstanceUid, _seriesInstanceUid, null);
+            var item = Cache.Get(StreamCacheType.String, StudyInstanceUid, _seriesInstanceUid, null);
             if (item != null && item.Data != null)
             {
                 //unzip
@@ -234,7 +234,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             Task.Factory.StartNew(() =>
             {
 
-                Cache.Put(StudyInstanceUid, _seriesInstanceUid, new StringCacheItem { Data = seriesXml });
+                Cache.Put(StudyInstanceUid, _seriesInstanceUid, new StreamStringCacheItem { Data = seriesXml });
                 if (isPrior)
                 {
                     Unload();                    

@@ -19,7 +19,6 @@ using ClearCanvas.Dicom.IO;
 using ClearCanvas.Dicom.Iod;
 using System.Globalization;
 using ClearCanvas.Dicom.Iod.Macros;
-using DataCache;
 using ValueType=System.ValueType;
 
 namespace ClearCanvas.Dicom
