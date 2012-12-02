@@ -260,8 +260,7 @@
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.View.WinForms.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\AnnotationProviders\bin\$(Configuration)\ClearCanvas.ImageViewer.AnnotationProviders.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Interpolators\$(PlatformSubFolder)\BilinearInterpolation.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\DataCache\bin\$(Configuration)\DataCache.dll" />
-    <!-- PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\DataCache.dll" / -->
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\DataCache.dll" />
 
     <!-- Configuration -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll" />
